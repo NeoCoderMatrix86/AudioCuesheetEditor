@@ -23,7 +23,7 @@ jobs:
     - name: Publish .NET Core Project
       run: dotnet publish AudioCuesheetEditor/AudioCuesheetEditor.csproj -c Release -o release --nologo
     
-    # changes the base-tag in index.html from '/' to 'BlazorGitHubPagesDemo' to match GitHub Pages repository subdirectory
+    # changes the base-tag in index.html from '/' to 'AudioCuesheetEditor' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to AudioCuesheetEditor
       run: sed -i 's/<base href="\/" \/>/<base href="\/AudioCuesheetEditor\/" \/>/g' release/wwwroot/index.html
     
