@@ -1,7 +1,112 @@
-﻿@page "/"
+﻿<!--
+This file is part of AudioCuesheetEditor.
 
-<h1>Hello, world!</h1>
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Welcome to your new app.
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@page "/"
+<!--TODO: Werkzeugleiste-->
+<!--TODO: Drag & Drop Dateien (und automatische Auswertung des ganzen)-->
+
+<h3>Cuesheet Data</h3>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="cdTitleLabel">CD Title</span>
+    </div>
+    <!--TODO: Null safety for cuesheet-->
+    <input type="text" class="form-control" id="cdTitle" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="Enter CD title here" @bind="@cuesheet.Title">
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="cdArtistLabel">CD Artist</span>
+    </div>
+    <!--TODO: Null safety for cuesheet-->
+    <input type="text" class="form-control" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="Enter CD artist here" @bind="@cuesheet.Artist">
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="cdCatalogueNumberLabel">CD Cataloguenumber</span>
+    </div>
+    <input type="text" class="form-control" id="cdCatalogueNumber" aria-label="CD Cataloguenumber" aria-describedby="cdCatalogueNumberLabel" placeholder="Enter CD cataloguenumber here">
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="cdTextFileLabel">CD Textfile</span>
+    </div>
+    <input type="file" class="form-control" id="cdTextFile" accept="text/plain" aria-label="CD Textfile" aria-describedby="cdTextFileLabel" placeholder="Enter CD textfile here">
+</div>
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
+    </div>
+    <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here">
+</div>
+
+<h3>Cuesheet Tracks</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Position</th>
+            <th>Artist</th>
+            <th>Title</th>
+            <th>Begin</th>
+            <th>End</th>
+            <th>Length</th>
+            <th>Icon</th>
+        </tr>
+        @foreach (var track in cuesheet.Tracks)
+        {
+            <tr>
+                <!--TODO-->
+                <td>TODO</td>
+                <td>@track.Artist</td>
+                <td>@track.Title</td>
+                <td>@track.Begin</td>
+                <td>@track.End</td>
+                <td>TODO</td>
+                <td>TODO</td>
+            </tr>
+        }
+    </thead>
+    <!--TODO: Tracks, Buttons, etc. -->
+</table>
+
+@code {
+    private Cuesheet cuesheet;
+
+    protected override Task OnInitializedAsync()
+    {
+        //DEBUG Only for Design purpose
+        cuesheet = new Cuesheet();
+        cuesheet.Artist = "Demo Artist";
+        cuesheet.Title = "Demo Title";
+        var begin = TimeSpan.Zero;
+        for (int i = 1; i < 10; i++)
+        {
+            var track = new Track(cuesheet);
+            track.Artist = String.Format("Demo Track Artist {0}", i);
+            track.Title = String.Format("Demo Track Title {0}", i);
+            track.Begin = begin;
+            begin = begin.Add(new TimeSpan(0, i, i));
+            track.End = begin;
+            cuesheet.AddTrack(track);
+        }
+        //DEBUG
+        return base.OnInitializedAsync();
+    }
+}
+
