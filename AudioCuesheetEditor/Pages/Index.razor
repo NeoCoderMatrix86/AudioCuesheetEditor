@@ -47,6 +47,30 @@ along with Foobar.  If not, see
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
+                    <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
+                </div>
+                <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here">
+            </div>
+        </CollapseBody>
+    </Collapse>
+    <Collapse Visible="@cuesheetOptionalInfoVisible">
+        <CollapseHeader>
+            <Blazorise.Link Clicked="CuesheetOptionalInfoHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                <h3>Cuesheet optional Information</h3>
+                <div>
+                    @((MarkupString)chevronCuesheetOptionalInfo)
+                </div>
+            </Blazorise.Link>
+        </CollapseHeader>
+        <CollapseBody>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="cdTextFileLabel">CD Textfile</span>
+                </div>
+                <input type="file" class="form-control" id="cdTextFile" accept="text/plain" aria-label="CD Textfile" aria-describedby="cdTextFileLabel" placeholder="Enter CD textfile here">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
                     <span class="input-group-text" id="cdCatalogueNumberLabel">CD Cataloguenumber</span>
                 </div>
                 <input type="text" class="form-control" id="cdCatalogueNumber" aria-label="CD Cataloguenumber" aria-describedby="cdCatalogueNumberLabel" placeholder="Enter CD cataloguenumber here">
@@ -95,27 +119,13 @@ along with Foobar.  If not, see
 </Accordion>
 
 
-<!--TODO-->
-
-<div class="input-group mb-3">
-    <div class="input-group-prepend">
-        <span class="input-group-text" id="cdTextFileLabel">CD Textfile</span>
-    </div>
-    <input type="file" class="form-control" id="cdTextFile" accept="text/plain" aria-label="CD Textfile" aria-describedby="cdTextFileLabel" placeholder="Enter CD textfile here">
-</div>
-<div class="input-group mb-3">
-    <div class="input-group-prepend">
-        <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
-    </div>
-    <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here">
-</div>
-
-
 @code {
-    private Boolean cuesheetDataVisible;
-    private Boolean cuesheetTracksVisible;
-    private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-    private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
+    private Boolean cuesheetDataVisible = true;
+    private Boolean cuesheetOptionalInfoVisible = false;
+    private Boolean cuesheetTracksVisible = true;
+    private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    private String chevronCuesheetOptionalInfo = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
+    private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
 
     private Cuesheet cuesheet;
 
@@ -144,26 +154,30 @@ along with Foobar.  If not, see
     private void CuesheetDataHeaderClicked()
     {
         cuesheetDataVisible = !cuesheetDataVisible;
-        if (cuesheetDataVisible == true)
-        {
-            chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-        }
-        else
-        {
-            chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-        }
+        SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
+    }
+
+    private void CuesheetOptionalInfoHeaderClicked()
+    {
+        cuesheetOptionalInfoVisible = !cuesheetOptionalInfoVisible;
+        SwitchChevron(cuesheetOptionalInfoVisible, ref chevronCuesheetOptionalInfo);
     }
 
     private void CuesheetTracksHeaderClicked()
     {
         cuesheetTracksVisible = !cuesheetTracksVisible;
-        if (cuesheetTracksVisible == true)
+        SwitchChevron(cuesheetTracksVisible, ref chevronCuesheetTracks);
+    }
+
+    private void SwitchChevron(Boolean chevronUp, ref String chevron)
+    {
+        if (chevronUp == true)
         {
-            chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
         }
         else
         {
-            chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
+            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
         }
     }
 }
