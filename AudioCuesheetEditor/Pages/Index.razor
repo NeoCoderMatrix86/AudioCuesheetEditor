@@ -89,33 +89,33 @@ along with Foobar.  If not, see
             </Blazorise.Link>
         </CollapseHeader>
         <CollapseBody>
-            <table class="table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th>Position</th>
-                        <th>Artist</th>
-                        <th>Title</th>
-                        <th>Begin</th>
-                        <th>End</th>
-                        <th>Length</th>
-                        <th>Icon</th>
-                    </tr>
-                    @foreach (var track in cuesheet.Tracks)
-                    {
-                        <tr>
-                            <!--TODO-->
-                            <td><input type="number" class="form-control" @bind="@track.Position" /></td>
-                            <td><input type="text" class="form-control" @bind="@track.Artist" /></td>
-                            <td><input type="text" class="form-control" @bind="@track.Title" /></td>
-                            <td>@track.Begin</td>
-                            <td>@track.End</td>
-                            <td>@track.Length</td>
-                            <td>TODO</td>
+            <div class="table-responsive-md">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr class="thead-light">
+                            <th>#</th>
+                            <th>Artist</th>
+                            <th>Title</th>
+                            <th>Begin</th>
+                            <th>End</th>
+                            <th>Length</th>
                         </tr>
-                    }
-                </thead>
-                <!--TODO: Tracks, Buttons, etc. -->
-            </table>
+                        @foreach (var track in cuesheet.Tracks)
+                        {
+                            <tr>
+                                <!--TODO-->
+                                <td><input type="number" class="form-control" @bind="@track.Position" /></td>
+                                <td><input type="text" class="form-control" @bind="@track.Artist" /></td>
+                                <td><input type="text" class="form-control" @bind="@track.Title" /></td>
+                                <td><input type="text" class="form-control" @bind="@track.Begin" /></td>
+                                <td><input type="text" class="form-control" @bind="@track.End" /></td>
+                                <td><input type="text" class="form-control" @bind="@track.Length" /></td>
+                            </tr>
+                        }
+                    </thead>
+                    <!--TODO: Tracks, Buttons, etc. -->
+                </table>
+            </div>
             <button class="btn btn-primary" @onclick="AddTrackClicked">Add new track</button>
         </CollapseBody>
     </Collapse>
@@ -139,20 +139,20 @@ along with Foobar.  If not, see
     protected override Task OnInitializedAsync()
     {
         //TODO: DEBUG Only for Design purpose
-        cuesheet.Artist = "Demo Artist";
-        cuesheet.Title = "Demo Title";
-        var begin = TimeSpan.Zero;
-        for (uint i = 1; i < 25; i++)
-        {
-            var track = new Track(cuesheet);
-            track.Position = i;
-            track.Artist = String.Format("Demo Track Artist {0}", i);
-            track.Title = String.Format("Demo Track Title {0}", i);
-            track.Begin = begin;
-            begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
-            track.End = begin;
-            cuesheet.AddTrack(track);
-        }
+        //cuesheet.Artist = "Demo Artist";
+        //cuesheet.Title = "Demo Title";
+        //var begin = TimeSpan.Zero;
+        //for (uint i = 1; i < 25; i++)
+        //{
+        //    var track = new Track(cuesheet);
+        //    track.Position = i;
+        //    track.Artist = String.Format("Demo Track Artist {0}", i);
+        //    track.Title = String.Format("Demo Track Title {0}", i);
+        //    track.Begin = begin;
+        //    begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
+        //    track.End = begin;
+        //    cuesheet.AddTrack(track);
+        //}
         //DEBUG
         return base.OnInitializedAsync();
     }
