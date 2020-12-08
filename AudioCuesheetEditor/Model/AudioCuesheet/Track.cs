@@ -31,9 +31,54 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Cuesheet = cuesheet;
         }
         public Cuesheet Cuesheet { get; private set; }
+        public int? Position { get; set; }
         public String Artist { get; set; }
         public String Title { get; set; }
-        public TimeSpan Begin { get; set; }
-        public TimeSpan End { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
+        public TimeSpan? Length 
+        {
+            get
+            {
+                if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
+                {
+                    return End - Begin;
+                }
+                else
+                {
+                    //TODO: ValidationError (via Interface, etc.)
+                    return null;
+                }
+            }
+            set
+            {
+                if ((Begin.HasValue == false) && (End.HasValue == false))
+                {
+                    Begin = TimeSpan.Zero;
+                    End = Begin.Value + value;
+                }
+                else
+                {
+                    if ((Begin.HasValue == true) && (End.HasValue == true))
+                    {
+                        if (Begin.Value > End.Value)
+                        {
+                            End = Begin.Value + value;
+                        }
+                    }
+                    else
+                    {
+                        if (End.HasValue == false)
+                        {
+                            End = Begin.Value + value;
+                        }
+                        if (Begin.HasValue == false)
+                        {
+                            Begin = End.Value - value;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

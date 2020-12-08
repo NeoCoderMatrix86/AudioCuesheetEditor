@@ -78,12 +78,12 @@ along with Foobar.  If not, see
                     {
                         <tr>
                             <!--TODO-->
-                            <td>TODO</td>
+                            <td>@track.Position</td>
                             <td>@track.Artist</td>
                             <td>@track.Title</td>
                             <td>@track.Begin</td>
                             <td>@track.End</td>
-                            <td>TODO</td>
+                            <td>@track.Length</td>
                             <td>TODO</td>
                         </tr>
                     }
@@ -129,6 +129,7 @@ along with Foobar.  If not, see
         for (int i = 1; i < 10; i++)
         {
             var track = new Track(cuesheet);
+            track.Position = i;
             track.Artist = String.Format("Demo Track Artist {0}", i);
             track.Title = String.Format("Demo Track Title {0}", i);
             track.Begin = begin;
