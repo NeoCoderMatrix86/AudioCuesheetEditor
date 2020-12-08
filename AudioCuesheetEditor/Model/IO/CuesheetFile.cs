@@ -42,10 +42,13 @@ namespace AudioCuesheetEditor.Model.IO
         }
         public Cuesheet Cuesheet { get; private set; }
 
-        public void GenerateCuesheetFile()
+        public byte[] GenerateCuesheetFile()
         {
             //TODO: Generation
+            byte[] cuesheetFile = null;
             
+
+            return cuesheetFile;
         }
     }
 }

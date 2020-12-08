@@ -194,6 +194,18 @@ along with Foobar.  If not, see
     private void DownloadCuesheetFileClicked()
     {
         //TODO
+
+        // Generate a text file
+        byte[] file = System.Text.Encoding.UTF8.GetBytes("Hello world!");
+
+        string fileName = "test.txt";
+        string contentType = "text/plain";
+
+        // Check if the IJSRuntime is the WebAssembly implementation of the JSRuntime
+        if (JSRuntime is IJSUnmarshalledRuntime webAssemblyJSRuntime)
+        {
+            webAssemblyJSRuntime.InvokeUnmarshalled<string, string, byte[], bool>("BlazorDownloadFileFast", fileName, contentType, file);
+        }
     }
 }
 
