@@ -45,15 +45,17 @@ along with Foobar.  If not, see
                 <!--TODO: Null safety for cuesheet-->
                 <input type="text" class="form-control" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="Enter CD artist here" @bind="@cuesheet.Artist">
             </div>
-            <div class="input-group mb-3">
+            <!--TODO-->
+            @*<div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
                 </div>
                 <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here">
-            </div>
+            </div>*@
         </CollapseBody>
     </Collapse>
-    <Collapse Visible="@cuesheetOptionalInfoVisible">
+    <!--TODO-->
+    @*<Collapse Visible="@cuesheetOptionalInfoVisible">
         <CollapseHeader>
             <Blazorise.Link Clicked="CuesheetOptionalInfoHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
                 <h3>Cuesheet optional Information</h3>
@@ -76,7 +78,7 @@ along with Foobar.  If not, see
                 <input type="text" class="form-control" id="cdCatalogueNumber" aria-label="CD Cataloguenumber" aria-describedby="cdCatalogueNumberLabel" placeholder="Enter CD cataloguenumber here">
             </div>
         </CollapseBody>
-    </Collapse>
+    </Collapse>*@
     <Collapse Visible="@cuesheetTracksVisible">
         <CollapseHeader>
             <Blazorise.Link Clicked="CuesheetTracksHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
@@ -139,7 +141,7 @@ along with Foobar.  If not, see
         for (int i = 1; i < 10; i++)
         {
             var track = new Track(cuesheet);
-            track.Position = i;
+            //track.Position = i;
             track.Artist = String.Format("Demo Track Artist {0}", i);
             track.Title = String.Format("Demo Track Title {0}", i);
             track.Begin = begin;
