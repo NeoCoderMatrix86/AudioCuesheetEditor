@@ -31,7 +31,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Cuesheet = cuesheet;
         }
         public Cuesheet Cuesheet { get; private set; }
-        public int? Position { get; set; }
+        public uint? Position { get; set; }
         public String Artist { get; set; }
         public String Title { get; set; }
         public TimeSpan? Begin { get; set; }
