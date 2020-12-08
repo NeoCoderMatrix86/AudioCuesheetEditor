@@ -17,12 +17,15 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
 {
     public class CuesheetFile
     {
+        public static readonly String DefaultFileName = "Cuesheet.cue";
+
         public static readonly String CuesheetArtist = "PERFORMER";
         public static readonly String CuesheetTitle = "TITLE";
         public static readonly String CuesheetFileName = "FILE";
@@ -31,6 +34,7 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String TrackArtist = "PERFORMER";
         public static readonly String TrackTitle = "TITLE";
         public static readonly String TrackIndex01 = "INDEX 01";
+        public static readonly String Tab = "\t";
 
         public CuesheetFile(Cuesheet cuesheet)
         {
@@ -42,10 +46,21 @@ namespace AudioCuesheetEditor.Model.IO
         }
         public Cuesheet Cuesheet { get; private set; }
 
-        public void GenerateCuesheetFile()
+        public byte[] GenerateCuesheetFile()
         {
-            //TODO: Generation
-            
+            var builder = new StringBuilder();
+            builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
+            builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
+            //TODO: File,etc.
+            foreach (var track in Cuesheet.Tracks)
+            {
+                //TODO: validate each track
+                builder.AppendLine(String.Format("{0}{1} {2:00} {3}", Tab, CuesheetTrack, track.Position, CuesheetTrackAudio));
+                builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", Tab, Tab, TrackTitle, track.Title));
+                builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", Tab, Tab, TrackArtist, track.Artist));
+                builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Tab, Tab, TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+            }
+            return Encoding.UTF8.GetBytes(builder.ToString());
         }
     }
 }

@@ -1,3 +1,4 @@
+using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -28,6 +29,8 @@ namespace AudioCuesheetEditor
             })
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
+
+            builder.Services.AddBlazorDownloadFile();
 
             await builder.Build().RunAsync();
         }

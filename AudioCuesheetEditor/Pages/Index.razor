@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 
 @page "/"
 @inject IJSRuntime JSRuntime
+@inject IBlazorDownloadFileService BlazorDownloadFileService
 <!--TODO: Werkzeugleiste-->
 <!--TODO: Drag & Drop Dateien (und automatische Auswertung des ganzen)-->
 
@@ -141,7 +142,7 @@ along with Foobar.  If not, see
         cuesheet.Artist = "Demo Artist";
         cuesheet.Title = "Demo Title";
         var begin = TimeSpan.Zero;
-        for (uint i = 1; i < 10; i++)
+        for (uint i = 1; i < 25; i++)
         {
             var track = new Track(cuesheet);
             track.Position = i;
@@ -193,7 +194,9 @@ along with Foobar.  If not, see
 
     private void DownloadCuesheetFileClicked()
     {
-        //TODO
+        var cuesheetFile = new CuesheetFile(cuesheet);
+        var fileData = cuesheetFile.GenerateCuesheetFile();
+        BlazorDownloadFileService.DownloadFile(CuesheetFile.DefaultFileName, fileData, "text/plain");
     }
 }
 
