@@ -99,6 +99,7 @@ along with Foobar.  If not, see
                             <th>Begin</th>
                             <th>End</th>
                             <th>Length</th>
+                            <th>Warning</th>
                         </tr>
                         @foreach (var track in cuesheet.Tracks)
                         {
@@ -110,6 +111,7 @@ along with Foobar.  If not, see
                                 <td><input type="text" class="form-control" @bind="@track.Begin" /></td>
                                 <td><input type="text" class="form-control" @bind="@track.End" /></td>
                                 <td><input type="text" class="form-control" @bind="@track.Length" /></td>
+                                <td>@((MarkupString)track.GetValidationErrors())</td>
                             </tr>
                         }
                     </thead>
@@ -139,20 +141,20 @@ along with Foobar.  If not, see
     protected override Task OnInitializedAsync()
     {
         //TODO: DEBUG Only for Design purpose
-        //cuesheet.Artist = "Demo Artist";
-        //cuesheet.Title = "Demo Title";
-        //var begin = TimeSpan.Zero;
-        //for (uint i = 1; i < 25; i++)
-        //{
-        //    var track = new Track(cuesheet);
-        //    track.Position = i;
-        //    track.Artist = String.Format("Demo Track Artist {0}", i);
-        //    track.Title = String.Format("Demo Track Title {0}", i);
-        //    track.Begin = begin;
-        //    begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
-        //    track.End = begin;
-        //    cuesheet.AddTrack(track);
-        //}
+        cuesheet.Artist = "Demo Artist";
+        cuesheet.Title = "Demo Title";
+        var begin = TimeSpan.Zero;
+        for (uint i = 1; i < 25; i++)
+        {
+            var track = new Track(cuesheet);
+            track.Position = i;
+            track.Artist = String.Format("Demo Track Artist {0}", i);
+            track.Title = String.Format("Demo Track Title {0}", i);
+            track.Begin = begin;
+            begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
+            track.End = begin;
+            cuesheet.AddTrack(track);
+        }
         //DEBUG
         return base.OnInitializedAsync();
     }

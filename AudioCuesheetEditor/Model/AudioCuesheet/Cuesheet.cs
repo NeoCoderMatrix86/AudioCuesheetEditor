@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,11 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Cuesheet
+    public class Cuesheet : Validateable
     {
         private readonly List<Track> tracks;
+        private String artist;
+        private String title;
 
         public Cuesheet()
         {
@@ -33,8 +36,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get { return tracks.AsReadOnly(); }
         }
-        public String Artist { get; set; }
-        public String Title { get; set; }
+        public String Artist 
+        {
+            get { return artist; }
+            set { artist = value; OnValidateablePropertyChanged(); }
+        }
+        public String Title 
+        {
+            get { return title; }
+            set { title = value; OnValidateablePropertyChanged(); }
+        }
         public void AddTrack(Track track)
         {
             if (track == null)
@@ -42,6 +53,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Add(track);
+        }
+
+        protected override void Validate()
+        {
+            if (String.IsNullOrEmpty(Artist) == true)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Artist)), ValidationErrorType.Warning));
+            }
+            if (String.IsNullOrEmpty(Title) == true)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Title)), ValidationErrorType.Warning));
+            }
         }
     }
 }

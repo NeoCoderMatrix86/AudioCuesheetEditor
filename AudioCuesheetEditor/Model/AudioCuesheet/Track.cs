@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +21,13 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track
+    public class Track : Validateable
     {
+        private uint? position;
+        private String artist;
+        private String title;
+        private TimeSpan? begin;
+        private TimeSpan? end;
         public Track(Cuesheet cuesheet)
         {
             if (cuesheet == null)
@@ -31,11 +37,31 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Cuesheet = cuesheet;
         }
         public Cuesheet Cuesheet { get; private set; }
-        public uint? Position { get; set; }
-        public String Artist { get; set; }
-        public String Title { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
+        public uint? Position 
+        {
+            get { return position; }
+            set { position = value; OnValidateablePropertyChanged(); }
+        }
+        public String Artist 
+        {
+            get { return artist; }
+            set { artist = value; OnValidateablePropertyChanged(); }
+        }
+        public String Title 
+        {
+            get { return title; }
+            set { title = value; OnValidateablePropertyChanged(); }
+        }
+        public TimeSpan? Begin 
+        {
+            get { return begin; }
+            set { begin = value; OnValidateablePropertyChanged(); }
+        }
+        public TimeSpan? End 
+        {
+            get { return end; }
+            set { end = value; OnValidateablePropertyChanged(); }
+        }
         public TimeSpan? Length 
         {
             get
@@ -46,7 +72,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 else
                 {
-                    //TODO: ValidationError (via Interface, etc.)
                     return null;
                 }
             }
@@ -78,7 +103,33 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                     }
                 }
+                OnValidateablePropertyChanged();
             }
+        }
+
+        protected override void Validate()
+        {
+            if (Position == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Position)), ValidationErrorType.Error));
+            }
+            if (String.IsNullOrEmpty(Artist) == true)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Artist)), ValidationErrorType.Warning));
+            }
+            if (String.IsNullOrEmpty(Title) == true)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Title)), ValidationErrorType.Warning));
+            }
+            if (Begin == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Begin)), ValidationErrorType.Error));
+            }
+            if (End == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(End)), ValidationErrorType.Error));
+            }
+            //TODO: more Validation
         }
     }
 }
