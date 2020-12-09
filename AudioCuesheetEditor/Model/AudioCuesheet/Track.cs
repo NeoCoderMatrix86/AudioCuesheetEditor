@@ -23,7 +23,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Track : Validateable
     {
-        private uint? position;
         private String artist;
         private String title;
         private TimeSpan? begin;
@@ -35,13 +34,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(cuesheet));
             }
             Cuesheet = cuesheet;
+            Position = cuesheet.NextFreePosition;
+            Validate();
         }
         public Cuesheet Cuesheet { get; private set; }
-        public uint? Position 
-        {
-            get { return position; }
-            set { position = value; OnValidateablePropertyChanged(); }
-        }
+        public uint? Position { get; private set; }
         public String Artist 
         {
             get { return artist; }

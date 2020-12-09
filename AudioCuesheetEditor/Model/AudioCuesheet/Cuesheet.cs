@@ -23,6 +23,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Cuesheet : Validateable
     {
+        private readonly object syncLock = new object();
+
         private readonly List<Track> tracks;
         private String artist;
         private String title;
@@ -31,10 +33,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             tracks = new List<Track>();
         }
-
         public IReadOnlyList<Track> Tracks
         {
             get { return tracks.AsReadOnly(); }
+        }
+        public uint NextFreePosition
+        {
+            get 
+            {
+                uint nextFreePosition = 1;
+                if (Tracks.Count > 0)
+                {
+                    lock (syncLock)
+                    {
+                        var track = Tracks.Where(x => x.Position != null && x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
+                        if (track != null)
+                        {
+                            nextFreePosition = track.Position.Value + 1;
+                        }
+                    }
+                }
+                return nextFreePosition;
+            }
         }
         public String Artist 
         {
@@ -54,7 +74,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.Add(track);
         }
-
         protected override void Validate()
         {
             if (String.IsNullOrEmpty(Artist) == true)
@@ -65,6 +84,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Title)), ValidationErrorType.Warning));
             }
+            //TODO: Check for track positions
         }
     }
 }

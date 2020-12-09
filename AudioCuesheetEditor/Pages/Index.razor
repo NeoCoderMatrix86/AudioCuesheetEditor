@@ -105,7 +105,7 @@ along with Foobar.  If not, see
                         {
                             <tr>
                                 <!--TODO-->
-                                <td><input type="number" class="form-control" @bind="@track.Position" /></td>
+                                <td>@track.Position</td>
                                 <td><input type="text" class="form-control" @bind="@track.Artist" /></td>
                                 <td><input type="text" class="form-control" @bind="@track.Title" /></td>
                                 <td><input type="text" class="form-control" @bind="@track.Begin" /></td>
@@ -141,20 +141,19 @@ along with Foobar.  If not, see
     protected override Task OnInitializedAsync()
     {
         //TODO: DEBUG Only for Design purpose
-        cuesheet.Artist = "Demo Artist";
-        cuesheet.Title = "Demo Title";
-        var begin = TimeSpan.Zero;
-        for (uint i = 1; i < 25; i++)
-        {
-            var track = new Track(cuesheet);
-            track.Position = i;
-            track.Artist = String.Format("Demo Track Artist {0}", i);
-            track.Title = String.Format("Demo Track Title {0}", i);
-            track.Begin = begin;
-            begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
-            track.End = begin;
-            cuesheet.AddTrack(track);
-        }
+        //cuesheet.Artist = "Demo Artist";
+        //cuesheet.Title = "Demo Title";
+        //var begin = TimeSpan.Zero;
+        //for (uint i = 1; i < 25; i++)
+        //{
+        //    var track = new Track(cuesheet);
+        //    track.Artist = String.Format("Demo Track Artist {0}", i);
+        //    track.Title = String.Format("Demo Track Title {0}", i);
+        //    track.Begin = begin;
+        //    begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
+        //    track.End = begin;
+        //    cuesheet.AddTrack(track);
+        //}
         //DEBUG
         return base.OnInitializedAsync();
     }
