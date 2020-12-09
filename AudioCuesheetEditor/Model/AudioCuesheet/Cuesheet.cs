@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,9 +34,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             tracks = new List<Track>();
         }
-        public IReadOnlyList<Track> Tracks
+        public IReadOnlyCollection<Track> Tracks
         {
-            get { return tracks.AsReadOnly(); }
+            get { return tracks.OrderBy(x => x.Position).ToList().AsReadOnly(); }
         }
         public uint NextFreePosition
         {
@@ -66,6 +67,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return title; }
             set { title = value; OnValidateablePropertyChanged(); }
         }
+        public AudioFile AudioFile { get; set; }
+
         public void AddTrack(Track track)
         {
             if (track == null)
@@ -83,6 +86,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if (String.IsNullOrEmpty(Title) == true)
             {
                 validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Title)), ValidationErrorType.Warning));
+            }
+            if (AudioFile == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(AudioFile)), ValidationErrorType.Error));
             }
             //TODO: Check for track positions
         }

@@ -48,10 +48,11 @@ namespace AudioCuesheetEditor.Model.IO
 
         public byte[] GenerateCuesheetFile()
         {
+            //TODO: Check cuesheet for exportability
             var builder = new StringBuilder();
             builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
             builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
-            //TODO: File,etc.
+            builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.AudioFile.FileName, Cuesheet.AudioFile.AudioFileType));
             foreach (var track in Cuesheet.Tracks)
             {
                 //TODO: validate each track

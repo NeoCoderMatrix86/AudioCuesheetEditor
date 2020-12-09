@@ -45,13 +45,12 @@ along with Foobar.  If not, see
                 </div>
                 <input type="text" class="form-control" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="Enter CD artist here" @bind="@cuesheet.Artist">
             </div>
-            <!--TODO-->
-            @*<div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
-                    </div>
-                    <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here">
-                </div>*@
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
+                </div>
+                <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here" onchange="audioFileChanged(this)">
+            </div>
         </CollapseBody>
     </Collapse>
     <!--TODO-->
@@ -140,6 +139,9 @@ along with Foobar.  If not, see
 
     protected override Task OnInitializedAsync()
     {
+        var dotNetReference = DotNetObjectReference.Create(this);
+        JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
+
         //TODO: DEBUG Only for Design purpose
         //cuesheet.Artist = "Demo Artist";
         //cuesheet.Title = "Demo Title";
@@ -199,5 +201,17 @@ along with Foobar.  If not, see
         var fileData = cuesheetFile.GenerateCuesheetFile();
         BlazorDownloadFileService.DownloadFile(CuesheetFile.DefaultFileName, fileData, "text/plain");
     }
-}
 
+    [JSInvokable()]
+    public void AudioFileChanged(String fileName)
+    {
+        if (String.IsNullOrEmpty(fileName) == false)
+        {
+            cuesheet.AudioFile = new AudioFile(fileName);
+        }
+        else
+        {
+            cuesheet.AudioFile = null;
+        }
+    }
+}
