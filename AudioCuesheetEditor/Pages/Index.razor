@@ -40,19 +40,19 @@ along with Foobar.  If not, see
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="cdTitleLabel">@localizer["CDTitle"]</span>
                 </div>
-                <input type="text" class="form-control" id="cdTitle" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDtitlehere"]" @bind="@cuesheet.Title">
+                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, nameof(Cuesheet.Title))" id="cdTitle" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDtitlehere"]" @bind="@cuesheet.Title" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.Title))">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="cdArtistLabel">@localizer["CDArtist"]</span>
                 </div>
-                <input type="text" class="form-control" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDartisthere"]" @bind="@cuesheet.Artist">
+                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, nameof(Cuesheet.Artist))" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDartisthere"]" @bind="@cuesheet.Artist" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.Artist))">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="cdAudioFileLabel">@localizer["Audiofile"]</span>
                 </div>
-                <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="@localizer["Enteraudiofilehere"]" onchange="audioFileChanged(this)">
+                <input type="file" class="form-control @GetCSSClassAlert(cuesheet, nameof(Cuesheet.AudioFile))" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="@localizer["Enteraudiofilehere"]" onchange="audioFileChanged(this)" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.AudioFile))">
             </div>
         </CollapseBody>
     </Collapse>
@@ -110,11 +110,11 @@ along with Foobar.  If not, see
                             <tr>
                                 <!--TODO-->
                                 <td>@track.Position</td>
-                                <td><input type="text" class="form-control" @bind="@track.Artist" /></td>
-                                <td><input type="text" class="form-control" @bind="@track.Title" /></td>
-                                <td><input type="text" class="form-control" @bind="@track.Begin" /></td>
-                                <td><input type="text" class="form-control" @bind="@track.End" /></td>
-                                <td><input type="text" class="form-control" @bind="@track.Length" /></td>
+                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Artist))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Artist))" /></td>
+                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Title))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Title))" /></td>
+                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Begin))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Begin))" /></td>
+                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.End))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.End))" /></td>
+                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Length))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Length))" /></td>
                                 <td>@((MarkupString)track.GetValidationErrors())</td>
                             </tr>
                         }
@@ -130,7 +130,6 @@ along with Foobar.  If not, see
 <br />
 
 <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
-
 
 @code {
     private Boolean cuesheetDataVisible = true;
@@ -220,5 +219,38 @@ along with Foobar.  If not, see
         {
             cuesheet.AudioFile = null;
         }
+        StateHasChanged();
+    }
+
+    private String GetCSSClassAlert(Validateable validateable,String property)
+    {
+        String cssClass = String.Empty;
+        var validationErrors = validateable.GetValidationErrorsFiltered(property);
+        if (validationErrors.Count() >= 1)
+        {
+            if (validationErrors.Count() > 1)
+            {
+                if (cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
+                {
+                    cssClass = "alert-danger";
+                }
+                else
+                {
+                    cssClass = "alert-warning";
+                }
+            }
+            else
+            {
+                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Error)
+                {
+                    cssClass = "alert-danger";
+                }
+                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Warning)
+                {
+                    cssClass = "alert-warning";
+                }
+            }
+        }
+        return cssClass;
     }
 }

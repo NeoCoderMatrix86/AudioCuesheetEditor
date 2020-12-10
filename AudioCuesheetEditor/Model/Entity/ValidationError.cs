@@ -20,6 +20,12 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
+    public enum ValidationErrorFilterType
+    {
+        All,
+        WarningOnly,
+        ErrorOnly
+    }
     public enum ValidationErrorType
     {
         Warning,
@@ -29,11 +35,21 @@ namespace AudioCuesheetEditor.Model.Entity
     {
         public String Message { get; private set; }
         public ValidationErrorType Type { get; private set; }
+        public String PropertyName { get; private set; }
 
-        public ValidationError(String message, ValidationErrorType validationErrorType)
+        public ValidationError(String message, String property, ValidationErrorType validationErrorType)
         {
+            if (String.IsNullOrEmpty(message) == true)
+            {
+                throw new ArgumentNullException(nameof(message));
+            }
+            if (String.IsNullOrEmpty(property) == true)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             Message = message;
             Type = validationErrorType;
+            PropertyName = property;
         }
     }
 }

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using AudioCuesheetEditorTests.Utility;
+using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -32,6 +33,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
             cuesheet.AddTrack(new Track(TestHelper.GetCuesheetController()));
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
+        }
+
+        [TestMethod()]
+        public void CuesheetTest()
+        {
+            var cuesheet = new Cuesheet(TestHelper.GetCuesheetController());
+            Assert.IsNull(cuesheet.AudioFile);
+            var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
+            Assert.IsNotNull(validationErrorAudioFile);
+            cuesheet.AudioFile = new IO.AudioFile("AudioFile01.ogg");
+            validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
+            Assert.IsNull(validationErrorAudioFile);
         }
     }
 }

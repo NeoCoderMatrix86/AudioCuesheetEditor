@@ -34,9 +34,31 @@ namespace AudioCuesheetEditor.Model.Entity
             get { return validationErrors.AsReadOnly(); }
         }
 
-        public String GetValidationErrors(String seperator = "<br />")
+        public IReadOnlyCollection<ValidationError> GetValidationErrorsFiltered(String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All)
         {
-            return String.Join(seperator, ValidationErrors.OrderBy(y => y.Type).Select(x => x.Message));
+            IReadOnlyCollection<ValidationError> returnValue = ValidationErrors;
+            if (String.IsNullOrEmpty(property) == false)
+            {
+                returnValue = ValidationErrors.Where(x => x.PropertyName == property).ToList().AsReadOnly();
+            }
+            switch (validationErrorFilterType)
+            {
+                case ValidationErrorFilterType.ErrorOnly:
+                    returnValue = returnValue.Where(x => x.Type == ValidationErrorType.Error).ToList().AsReadOnly();
+                    break;
+                case ValidationErrorFilterType.WarningOnly:
+                    returnValue = returnValue.Where(x => x.Type == ValidationErrorType.Warning).ToList().AsReadOnly();
+                    break;
+                case ValidationErrorFilterType.All:
+                default:
+                    break;
+            }
+            return returnValue;
+        }
+
+        public String GetValidationErrors(String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All,  String seperator = "<br />")
+        {
+            return String.Join(seperator, GetValidationErrorsFiltered(property, validationErrorFilterType).OrderBy(y => y.Type).Select(x => x.Message));
         }
 
         public event EventHandler ValidateablePropertyChanged;

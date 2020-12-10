@@ -32,11 +32,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private readonly List<Track> tracks;
         private String artist;
         private String title;
+        private AudioFile audioFile;
 
         public Cuesheet(CuesheetController cuesheetController)
         {
             _cuesheetController = cuesheetController;
             tracks = new List<Track>();
+            Validate();
         }
         public IReadOnlyCollection<Track> Tracks
         {
@@ -71,7 +73,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return title; }
             set { title = value; OnValidateablePropertyChanged(); }
         }
-        public AudioFile AudioFile { get; set; }
+        public AudioFile AudioFile 
+        {
+            get { return audioFile; }
+            set { audioFile = value; OnValidateablePropertyChanged(); }
+        }
 
         public void AddTrack(Track track)
         {
@@ -85,15 +91,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), nameof(Artist), ValidationErrorType.Warning));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), nameof(Title), ValidationErrorType.Warning));
             }
             if (AudioFile == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("AudioFile")), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), nameof(AudioFile), ValidationErrorType.Error));
             }
             //TODO: Check for track positions
         }
