@@ -19,6 +19,8 @@ along with Foobar.  If not, see
 @page "/"
 @inject IJSRuntime JSRuntime
 @inject IBlazorDownloadFileService BlazorDownloadFileService
+@inject IStringLocalizer<Localization> localizer
+
 <!--TODO: Werkzeugleiste-->
 <!--TODO: Drag & Drop Dateien (und automatische Auswertung des ganzen)-->
 
@@ -26,7 +28,7 @@ along with Foobar.  If not, see
     <Collapse Visible="@cuesheetDataVisible">
         <CollapseHeader>
             <Blazorise.Link Clicked="CuesheetDataHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                <h3>Cuesheet Data</h3>
+                <h3>@localizer["CuesheetData"]</h3>
                 <div>
                     @((MarkupString)chevronCuesheetData)
                 </div>
@@ -35,24 +37,26 @@ along with Foobar.  If not, see
         <CollapseBody>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="cdTitleLabel">CD Title</span>
+                    <span class="input-group-text" id="cdTitleLabel">@localizer["CDTitle"]</span>
                 </div>
-                <input type="text" class="form-control" id="cdTitle" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="Enter CD title here" @bind="@cuesheet.Title">
+                <input type="text" class="form-control" id="cdTitle" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDtitlehere"]" @bind="@cuesheet.Title">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="cdArtistLabel">CD Artist</span>
+                    <span class="input-group-text" id="cdArtistLabel">@localizer["CDArtist"]</span>
                 </div>
-                <input type="text" class="form-control" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="Enter CD artist here" @bind="@cuesheet.Artist">
+                <input type="text" class="form-control" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDartisthere"]" @bind="@cuesheet.Artist">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="cdAudioFileLabel">Audiofile</span>
+                    <span class="input-group-text" id="cdAudioFileLabel">@localizer["Audiofile"]</span>
                 </div>
-                <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="Enter audiofile here" onchange="audioFileChanged(this)">
+                <input type="file" class="form-control" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="@localizer["Enteraudiofilehere"]" onchange="audioFileChanged(this)">
             </div>
         </CollapseBody>
     </Collapse>
+    <!--TODO: Cuesheet Validation Errors-->
+
     <!--TODO-->
     @*<Collapse Visible="@cuesheetOptionalInfoVisible">
             <CollapseHeader>
@@ -81,7 +85,7 @@ along with Foobar.  If not, see
     <Collapse Visible="@cuesheetTracksVisible">
         <CollapseHeader>
             <Blazorise.Link Clicked="CuesheetTracksHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                <h3>Cuesheet Tracks</h3>
+                <h3>@localizer["CuesheetTracks"]</h3>
                 <div>
                     @((MarkupString)chevronCuesheetTracks)
                 </div>
@@ -93,12 +97,12 @@ along with Foobar.  If not, see
                     <thead>
                         <tr class="thead-light">
                             <th>#</th>
-                            <th>Artist</th>
-                            <th>Title</th>
-                            <th>Begin</th>
-                            <th>End</th>
-                            <th>Length</th>
-                            <th>Warning</th>
+                            <th>@localizer["Artist"]</th>
+                            <th>@localizer["Title"]</th>
+                            <th>@localizer["Begin"]</th>
+                            <th>@localizer["End"]</th>
+                            <th>@localizer["Length"]</th>
+                            <th>@localizer["Warning"]</th>
                         </tr>
                         @foreach (var track in cuesheet.Tracks)
                         {
@@ -117,14 +121,14 @@ along with Foobar.  If not, see
                     <!--TODO: Tracks, Buttons, etc. -->
                 </table>
             </div>
-            <button class="btn btn-primary" @onclick="AddTrackClicked">Add new track</button>
+            <button class="btn btn-primary" @onclick="AddTrackClicked">@localizer["Addnewtrack"]</button>
         </CollapseBody>
     </Collapse>
 </Accordion>
 
 <br />
 
-<button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">Download cuesheet file</button>
+<button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
 
 
 @code {

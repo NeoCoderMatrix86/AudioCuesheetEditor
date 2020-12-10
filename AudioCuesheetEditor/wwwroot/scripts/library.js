@@ -8,3 +8,7 @@ GLOBAL.SetDotNetReference = function (dotNetReference) {
 function audioFileChanged(eventSrc) {
     GLOBAL.DotNetReference.invokeMethodAsync("AudioFileChanged", eventSrc.files[0].name);
 }
+window.blazorCulture = {
+    get: () => localStorage['BlazorCulture'],
+    set: (value) => localStorage['BlazorCulture'] = value
+};

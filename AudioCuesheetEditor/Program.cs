@@ -1,3 +1,4 @@
+using AudioCuesheetEditor.Extensions;
 using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap;
@@ -22,6 +23,7 @@ namespace AudioCuesheetEditor
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddLocalization();
 
             builder.Services.AddBlazorise(options =>
             {
@@ -32,7 +34,11 @@ namespace AudioCuesheetEditor
 
             builder.Services.AddBlazorDownloadFile();
 
-            await builder.Build().RunAsync();
+            var host = builder.Build();
+
+            await host.SetDefaultCulture();
+
+            await host.RunAsync();
         }
     }
 }
