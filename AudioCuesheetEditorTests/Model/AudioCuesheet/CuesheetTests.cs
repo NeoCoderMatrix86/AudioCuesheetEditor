@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AudioCuesheetEditorTests.Utility;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -27,9 +28,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void AddTrackTest()
         {
-            var cuesheet = new Cuesheet();
+            var cuesheet = new Cuesheet(TestHelper.GetCuesheetController());
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            cuesheet.AddTrack(new Track(cuesheet));
+            cuesheet.AddTrack(new Track(TestHelper.GetCuesheetController()));
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
         }
     }

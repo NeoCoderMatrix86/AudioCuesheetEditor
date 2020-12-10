@@ -3,6 +3,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AudioCuesheetEditorTests.Utility;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -13,7 +14,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public void TrackTest()
         {
             //Tests for Length
-            var track = new Track(new Cuesheet());
+            var track = new Track(TestHelper.GetCuesheetController());
             Assert.IsNull(track.Length);
             track.Length = new TimeSpan(0, 2, 30);
             Assert.IsNotNull(track.Length);

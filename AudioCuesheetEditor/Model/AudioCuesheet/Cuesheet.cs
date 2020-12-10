@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using System;
@@ -24,14 +25,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Cuesheet : Validateable
     {
+        private readonly CuesheetController _cuesheetController;
+
         private readonly object syncLock = new object();
 
         private readonly List<Track> tracks;
         private String artist;
         private String title;
 
-        public Cuesheet()
+        public Cuesheet(CuesheetController cuesheetController)
         {
+            _cuesheetController = cuesheetController;
             tracks = new List<Track>();
         }
         public IReadOnlyCollection<Track> Tracks
@@ -47,10 +51,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     lock (syncLock)
                     {
-                        var track = Tracks.Where(x => x.Position != null && x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
+                        var track = Tracks.Where(x => x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
                         if (track != null)
                         {
-                            nextFreePosition = track.Position.Value + 1;
+                            nextFreePosition = track.Position + 1;
                         }
                     }
                 }
@@ -81,15 +85,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Artist)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), ValidationErrorType.Warning));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Title)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), ValidationErrorType.Warning));
             }
             if (AudioFile == null)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(AudioFile)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("AudioFile")), ValidationErrorType.Error));
             }
             //TODO: Check for track positions
         }

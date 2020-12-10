@@ -6,6 +6,12 @@ using System.Text;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using System.IO;
 using System.Linq;
+using AudioCuesheetEditor.Controller;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging.Abstractions;
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using AudioCuesheetEditorTests.Utility;
 
 namespace AudioCuesheetEditor.Model.IO.Tests
 {
@@ -15,22 +21,18 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void GenerateCuesheetFileTest()
         {
-            var cuesheet = new Cuesheet
-            {
-                Artist = "Demo Artist",
-                Title = "Demo Title",
-                AudioFile = new AudioFile("Testfile.mp3")
-            };
+            Cuesheet cuesheet = TestHelper.GetCuesheetController().Cuesheet;
+            cuesheet.Artist = "Demo Artist";
+            cuesheet.Title = "Demo Title";
+            cuesheet.AudioFile = new AudioFile("Testfile.mp3");
             var begin = TimeSpan.Zero;
-            for (uint i = 1; i < 25; i++)
+            for (int i = 1; i < 25; i++)
             {
-                var track = new Track(cuesheet)
-                {
-                    Artist = String.Format("Demo Track Artist {0}", i),
-                    Title = String.Format("Demo Track Title {0}", i),
-                    Begin = begin
-                };
-                begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
+                var track = TestHelper.GetCuesheetController().NewTrack();
+                track.Artist = String.Format("Demo Track Artist {0}", i);
+                track.Title = String.Format("Demo Track Title {0}", i);
+                track.Begin = begin;
+                begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
                 cuesheet.AddTrack(track);
             }
@@ -52,6 +54,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackArtist, track.Artist));
                 Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
             }
+            File.Delete(fileName);
         }
     }
 }

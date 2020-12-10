@@ -1,3 +1,4 @@
+using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Extensions;
 using BlazorDownloadFile;
 using Blazorise;
@@ -33,6 +34,8 @@ namespace AudioCuesheetEditor
             .AddFontAwesomeIcons();
 
             builder.Services.AddBlazorDownloadFile();
+
+            builder.Services.AddScoped<CuesheetController>();
 
             var host = builder.Build();
 

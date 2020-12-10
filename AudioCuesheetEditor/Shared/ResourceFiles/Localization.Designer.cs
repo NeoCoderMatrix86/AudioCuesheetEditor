@@ -133,6 +133,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Culture set: ähnelt.
+        /// </summary>
+        public static string CultureSetting {
+            get {
+                return ResourceManager.GetString("CultureSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Download cuesheet file ähnelt.
         /// </summary>
         public static string Downloadcuesheet {

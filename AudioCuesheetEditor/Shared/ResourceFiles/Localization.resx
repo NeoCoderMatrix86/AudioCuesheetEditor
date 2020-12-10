@@ -141,8 +141,8 @@
   <data name="CuesheetTracks" xml:space="preserve">
     <value>Cuesheet tracks</value>
   </data>
-  <data name="Culture" xml:space="preserve">
-    <value>Culture:</value>
+  <data name="CultureSetting" xml:space="preserve">
+    <value>Culture set:</value>
   </data>
   <data name="Downloadcuesheet" xml:space="preserve">
     <value>Download cuesheet file</value>

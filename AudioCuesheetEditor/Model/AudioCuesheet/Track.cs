@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using System;
 using System.Collections.Generic;
@@ -23,22 +24,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Track : Validateable
     {
+        private readonly CuesheetController _cuesheetController;
+
         private String artist;
         private String title;
         private TimeSpan? begin;
         private TimeSpan? end;
-        public Track(Cuesheet cuesheet)
+        public Track(CuesheetController cuesheetController)
         {
-            if (cuesheet == null)
-            {
-                throw new ArgumentNullException(nameof(cuesheet));
-            }
-            Cuesheet = cuesheet;
-            Position = cuesheet.NextFreePosition;
+            _cuesheetController = cuesheetController;
+            Position = _cuesheetController.GetNextFreePosition();
             Validate();
         }
-        public Cuesheet Cuesheet { get; private set; }
-        public uint? Position { get; private set; }
+        public uint Position { get; private set; }
         public String Artist 
         {
             get { return artist; }
@@ -106,25 +104,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         protected override void Validate()
         {
-            if (Position == null)
-            {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Position)), ValidationErrorType.Error));
-            }
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Artist)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Artist")), ValidationErrorType.Warning));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Title)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), ValidationErrorType.Warning));
             }
             if (Begin == null)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(Begin)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Begin")), ValidationErrorType.Error));
             }
             if (End == null)
             {
-                validationErrors.Add(new ValidationError(String.Format("{0} has no value!", nameof(End)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("End")), ValidationErrorType.Error));
             }
             //TODO: more Validation
         }
