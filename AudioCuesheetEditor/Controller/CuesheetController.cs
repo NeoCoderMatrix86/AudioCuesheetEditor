@@ -14,6 +14,8 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
 using System;
@@ -28,6 +30,7 @@ namespace AudioCuesheetEditor.Controller
         private readonly IStringLocalizer<Localization> _localizer;
 
         private Cuesheet cuesheet;
+        private readonly Dictionary<FieldReference, Guid> fieldIdentifier = new Dictionary<FieldReference, Guid>();
 
         public CuesheetController(IStringLocalizer<Localization> localizer)
         {
@@ -41,13 +44,13 @@ namespace AudioCuesheetEditor.Controller
 
         public Cuesheet Cuesheet
         {
-            get 
-            { 
+            get
+            {
                 if (cuesheet == null)
                 {
                     cuesheet = new Cuesheet(this);
                 }
-                return cuesheet; 
+                return cuesheet;
             }
         }
 
@@ -65,6 +68,36 @@ namespace AudioCuesheetEditor.Controller
         public uint GetNextFreePosition()
         {
             return Cuesheet.NextFreePosition;
+        }
+
+        public String GetFieldIdentifier(IValidateable validateable, String property)
+        {
+            if (validateable == null)
+            {
+                throw new ArgumentNullException(nameof(validateable));
+            }
+            var identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
+            if (identifier.Key == null)
+            {
+                fieldIdentifier.Add(FieldReference.Create(validateable, property), Guid.NewGuid());
+                identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
+            }
+            return String.Format("{0}_{1}", identifier.Key.DisplayName, identifier.Value.ToString());
+        }
+
+        public String GetFieldIdentifier(FieldReference fieldReference)
+        {
+            if (fieldReference == null)
+            {
+                throw new ArgumentNullException(nameof(fieldReference));
+            }
+            var identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
+            if (identifier.Key == null)
+            {
+                fieldIdentifier.Add(fieldReference, Guid.NewGuid());
+                identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
+            }
+            return String.Format("{0}_{1}", identifier.Key.DisplayName, identifier.Value.ToString());
         }
     }
 }

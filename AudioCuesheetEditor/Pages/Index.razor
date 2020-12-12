@@ -28,7 +28,7 @@ along with Foobar.  If not, see
 <Accordion>
     <Collapse Visible="@cuesheetDataVisible">
         <CollapseHeader>
-            <Blazorise.Link Clicked="CuesheetDataHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+            <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
                 <h3>@localizer["CuesheetData"]</h3>
                 <div>
                     @((MarkupString)chevronCuesheetData)
@@ -38,21 +38,21 @@ along with Foobar.  If not, see
         <CollapseBody>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="cdTitleLabel">@localizer["CDTitle"]</span>
+                    <span class="input-group-text" id="cdArtistLabel">@localizer["CDArtist"]</span>
                 </div>
-                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, nameof(Cuesheet.Title))" id="cdTitle" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDtitlehere"]" @bind="@cuesheet.Title" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.Title))">
+                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDartisthere"]" @bind="@cuesheet.Artist" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.Artist))">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="cdArtistLabel">@localizer["CDArtist"]</span>
+                    <span class="input-group-text" id="cdTitleLabel">@localizer["CDTitle"]</span>
                 </div>
-                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, nameof(Cuesheet.Artist))" id="cdArtist" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDartisthere"]" @bind="@cuesheet.Artist" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.Artist))">
+                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDtitlehere"]" @bind="@cuesheet.Title" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.Title))">
             </div>
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="cdAudioFileLabel">@localizer["Audiofile"]</span>
                 </div>
-                <input type="file" class="form-control @GetCSSClassAlert(cuesheet, nameof(Cuesheet.AudioFile))" id="cdAudioFile" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="@localizer["Enteraudiofilehere"]" onchange="audioFileChanged(this)" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.AudioFile))">
+                <input type="file" class="form-control @GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="@localizer["Enteraudiofilehere"]" onchange="audioFileChanged(this)" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(nameof(Cuesheet.AudioFile))">
             </div>
         </CollapseBody>
     </Collapse>
@@ -85,7 +85,7 @@ along with Foobar.  If not, see
         </Collapse>*@
     <Collapse Visible="@cuesheetTracksVisible">
         <CollapseHeader>
-            <Blazorise.Link Clicked="CuesheetTracksHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+            <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
                 <h3>@localizer["CuesheetTracks"]</h3>
                 <div>
                     @((MarkupString)chevronCuesheetTracks)
@@ -107,22 +107,74 @@ along with Foobar.  If not, see
                         </tr>
                         @foreach (var track in cuesheet.Tracks)
                         {
-                            <tr>
-                                <!--TODO-->
-                                <td>@track.Position</td>
-                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Artist))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Artist))" /></td>
-                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Title))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Title))" /></td>
-                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Begin))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Begin))" /></td>
-                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.End))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.End))" /></td>
-                                <td><input type="text" class="form-control @GetCSSClassAlert(track, nameof(Track.Length))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Length))" /></td>
-                                <td>@((MarkupString)track.GetValidationErrors())</td>
-                            </tr>
+                    <tr>
+                        <!--TODO-->
+                        <td>@track.Position</td>
+                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Title))" /></td>
+                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Artist))" /></td>
+                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" class="form-control @GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Begin))" /></td>
+                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.End))" /></td>
+                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(nameof(Track.Length))" /></td>
+                        <td>@((MarkupString)track.GetValidationErrors())</td>
+                    </tr>
                         }
                     </thead>
                     <!--TODO: Tracks, Buttons, etc. -->
                 </table>
             </div>
             <button class="btn btn-primary" @onclick="AddTrackClicked">@localizer["Addnewtrack"]</button>
+        </CollapseBody>
+    </Collapse>
+    <Collapse Visible="@summaryVisibile">
+        <CollapseHeader>
+            <Blazorise.Link Clicked="(() => HeaderClicked(ref summaryVisibile, ref chevronSummary))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                <h3>@localizer["CuesheetResult"]</h3>
+                <div>
+                    @((MarkupString)chevronSummary)
+                </div>
+            </Blazorise.Link>
+        </CollapseHeader>
+        <CollapseBody>
+            <Accordion>
+                <Collapse Visible="processingHintsVisibile">
+                    <CollapseHeader>
+                        <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsVisibile, ref chevronProcessingHints))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                            <h3>@localizer["ProcessingHints"]</h3>
+                            <div>
+                                @((MarkupString)chevronProcessingHints)
+                            </div>
+                        </Blazorise.Link>
+                    </CollapseHeader>
+                    <CollapseBody>
+                        <Accordion>
+                            @if (GetValidationErrors(ValidationErrorFilterType.WarningOnly).Count() > 0)
+                            {
+                                <Collapse Visible="processingHintsWarningVisible">
+                                    <CollapseHeader>
+                                        <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsWarningVisible, ref chevronProcessingHintsWarning))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                            <h3>@localizer["Warnings"]</h3>
+                                            <div>
+                                                @((MarkupString)chevronProcessingHintsWarning)
+                                            </div>
+                                        </Blazorise.Link>
+                                    </CollapseHeader>
+                                    <CollapseBody>
+                                        @foreach(var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
+                                        {
+                                            <a onclick="document.getElementById('@cuesheetController.GetFieldIdentifier(validationError.FieldReference)').focus();">
+                                                <div class="alert alert-warning" role="alert">
+                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message
+                                                </div>
+                                            </a>
+                                        }
+                                    </CollapseBody>
+                                </Collapse>
+                            }
+                            <!--TODO:Error und Download-->
+                        </Accordion>
+                    </CollapseBody>
+                </Collapse>
+            </Accordion>
         </CollapseBody>
     </Collapse>
 </Accordion>
@@ -135,9 +187,16 @@ along with Foobar.  If not, see
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetOptionalInfoVisible = false;
     private Boolean cuesheetTracksVisible = true;
+    private Boolean summaryVisibile = false;
+    private Boolean processingHintsVisibile = false;
+    private Boolean processingHintsWarningVisible = true;
+
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronCuesheetOptionalInfo = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    private String chevronSummary = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
+    private String chevronProcessingHints = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
+    private String chevronProcessingHintsWarning = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
 
     private Cuesheet cuesheet;
 
@@ -166,22 +225,10 @@ along with Foobar.  If not, see
         return base.OnInitializedAsync();
     }
 
-    private void CuesheetDataHeaderClicked()
+    private void HeaderClicked(ref Boolean visible, ref String chevron)
     {
-        cuesheetDataVisible = !cuesheetDataVisible;
-        SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
-    }
-
-    private void CuesheetOptionalInfoHeaderClicked()
-    {
-        cuesheetOptionalInfoVisible = !cuesheetOptionalInfoVisible;
-        SwitchChevron(cuesheetOptionalInfoVisible, ref chevronCuesheetOptionalInfo);
-    }
-
-    private void CuesheetTracksHeaderClicked()
-    {
-        cuesheetTracksVisible = !cuesheetTracksVisible;
-        SwitchChevron(cuesheetTracksVisible, ref chevronCuesheetTracks);
+        visible = !visible;
+        SwitchChevron(visible, ref chevron);
     }
 
     private void SwitchChevron(Boolean chevronUp, ref String chevron)
@@ -222,7 +269,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private String GetCSSClassAlert(Validateable validateable,String property)
+    private String GetCSSClassAlert(Validateable validateable, String property)
     {
         String cssClass = String.Empty;
         var validationErrors = validateable.GetValidationErrorsFiltered(property);
@@ -252,5 +299,15 @@ along with Foobar.  If not, see
             }
         }
         return cssClass;
+    }
+
+    private IReadOnlyCollection<AudioCuesheetEditor.Model.Entity.ValidationError> GetValidationErrors(ValidationErrorFilterType validationErrorFilterType)
+    {
+        List<AudioCuesheetEditor.Model.Entity.ValidationError> validationErrors = cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType).ToList();
+        foreach(var track in cuesheet.Tracks)
+        {
+            validationErrors.AddRange(track.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType));
+        }
+        return validationErrors.AsReadOnly();
     }
 }

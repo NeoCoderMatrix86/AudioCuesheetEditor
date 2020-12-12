@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         {
             var cuesheet = new Cuesheet(TestHelper.GetCuesheetController());
             Assert.IsNull(cuesheet.AudioFile);
-            var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
+            var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
             cuesheet.AudioFile = new IO.AudioFile("AudioFile01.ogg");
             validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();

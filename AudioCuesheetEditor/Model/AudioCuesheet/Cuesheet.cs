@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -91,15 +92,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), nameof(Artist), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), nameof(Title), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning));
             }
             if (AudioFile == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), nameof(AudioFile), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
             }
             //TODO: Check for track positions
         }

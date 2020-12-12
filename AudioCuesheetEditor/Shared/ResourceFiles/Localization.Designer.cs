@@ -124,6 +124,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet result ähnelt.
+        /// </summary>
+        public static string CuesheetResult {
+            get {
+                return ResourceManager.GetString("CuesheetResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet tracks ähnelt.
         /// </summary>
         public static string CuesheetTracks {
@@ -214,6 +223,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Processing hints ähnelt.
+        /// </summary>
+        public static string ProcessingHints {
+            get {
+                return ResourceManager.GetString("ProcessingHints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Title ähnelt.
         /// </summary>
         public static string Title {
@@ -228,6 +246,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Warning {
             get {
                 return ResourceManager.GetString("Warning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warnings ähnelt.
+        /// </summary>
+        public static string Warnings {
+            get {
+                return ResourceManager.GetString("Warnings", resourceCulture);
             }
         }
     }

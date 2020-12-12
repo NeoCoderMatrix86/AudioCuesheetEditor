@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,21 +36,21 @@ namespace AudioCuesheetEditor.Model.Entity
     {
         public String Message { get; private set; }
         public ValidationErrorType Type { get; private set; }
-        public String PropertyName { get; private set; }
+        public FieldReference FieldReference { get; private set; }
 
-        public ValidationError(String message, String property, ValidationErrorType validationErrorType)
+        public ValidationError(String message, FieldReference fieldReference, ValidationErrorType validationErrorType)
         {
             if (String.IsNullOrEmpty(message) == true)
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            if (String.IsNullOrEmpty(property) == true)
+            if (fieldReference == null)
             {
-                throw new ArgumentNullException(nameof(property));
+                throw new ArgumentNullException(nameof(fieldReference));
             }
             Message = message;
             Type = validationErrorType;
-            PropertyName = property;
+            FieldReference = fieldReference;
         }
     }
 }
