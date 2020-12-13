@@ -206,7 +206,14 @@ along with Foobar.  If not, see
                         </Blazorise.Link>
                     </CollapseHeader>
                     <CollapseBody>
-                        <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
+                        @if (cuesheet.CanWriteCuesheetFile == true)
+                        {
+                            <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
+                        }
+                        else
+                        {
+                            <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled>@localizer["Downloadcuesheet"]</button> 
+                        }
                     </CollapseBody>
                 </Collapse>
             </Accordion>

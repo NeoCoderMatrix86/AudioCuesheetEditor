@@ -79,6 +79,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return audioFile; }
             set { audioFile = value; OnValidateablePropertyChanged(); }
         }
+        public Boolean CanWriteCuesheetFile
+        {
+            get
+            {
+                var cuesheetFile = new CuesheetFile(this);
+                return cuesheetFile.IsExportable;
+            }
+        }
 
         public void AddTrack(Track track)
         {
