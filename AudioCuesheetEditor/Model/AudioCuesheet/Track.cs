@@ -27,6 +27,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     {
         private readonly CuesheetController _cuesheetController;
 
+        private uint position;
         private String artist;
         private String title;
         private TimeSpan? begin;
@@ -34,11 +35,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Track(CuesheetController cuesheetController)
         {
             _cuesheetController = cuesheetController;
-            Position = _cuesheetController.GetNextFreePosition();
+            position = _cuesheetController.GetNextFreePosition();
             Validate();
         }
 
-        public uint Position { get; private set; }
+        public uint Position 
+        {
+            get { return position; }
+            set { position = value; OnValidateablePropertyChanged(); }
+        }
         public String Artist 
         {
             get { return artist; }
@@ -106,6 +111,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         protected override void Validate()
         {
+            if (Position == 0)
+            {
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasInvalidValue"), _cuesheetController.GetLocalizedString("Position")), FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error));
+            }
             if (String.IsNullOrEmpty(Artist) == true)
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Artist")), FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning));

@@ -151,6 +151,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delete this track ähnelt.
+        /// </summary>
+        public static string DeleteTrackTooltip {
+            get {
+                return ResourceManager.GetString("DeleteTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Download cuesheet file ähnelt.
         /// </summary>
         public static string Downloadcuesheet {
@@ -214,6 +223,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} has invalid value! ähnelt.
+        /// </summary>
+        public static string HasInvalidValue {
+            get {
+                return ResourceManager.GetString("HasInvalidValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die {0} has no value! ähnelt.
         /// </summary>
         public static string HasNoValue {
@@ -228,6 +246,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Length {
             get {
                 return ResourceManager.GetString("Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Move this track one position down ähnelt.
+        /// </summary>
+        public static string MoveTrackDownTooltip {
+            get {
+                return ResourceManager.GetString("MoveTrackDownTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Move this track one position up ähnelt.
+        /// </summary>
+        public static string MoveTrackUpTooltip {
+            get {
+                return ResourceManager.GetString("MoveTrackUpTooltip", resourceCulture);
             }
         }
         

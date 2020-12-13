@@ -24,6 +24,12 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
+    public enum MoveDirection
+    {
+        Up,
+        Down
+    }
+
     public class Cuesheet : Validateable
     {
         private readonly CuesheetController _cuesheetController;
@@ -96,6 +102,76 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.Add(track);
         }
+
+        public void RemoveTrack(Track track)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            tracks.Remove(track);
+        }
+
+        public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
+        {
+            Boolean movePossible = false;
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            lock (syncLock)
+            {
+                var index = Tracks.ToList().IndexOf(track);
+                if (moveDirection == MoveDirection.Up)
+                {
+                    if (index > 0)
+                    {
+                        movePossible = true;
+                    }
+                }
+                if (moveDirection == MoveDirection.Down)
+                {
+                    if ((index + 1) < Tracks.Count())
+                    {
+                        movePossible = true;
+                    }
+                }
+            }
+            return movePossible;
+        }
+
+        public void MoveTrack(Track track, MoveDirection moveDirection)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            lock (syncLock)
+            {
+                var index = Tracks.ToList().IndexOf(track);
+                if (moveDirection == MoveDirection.Up)
+                {
+                    if (index > 0)
+                    {
+                        var previousTrack = Tracks.ElementAt(index - 1);
+                        var position = previousTrack.Position;
+                        previousTrack.Position = track.Position;
+                        track.Position = position;
+                    }
+                }
+                if (moveDirection == MoveDirection.Down)
+                {
+                    if ((index + 1) < Tracks.Count())
+                    {
+                        var nextTrack = Tracks.ElementAt(index + 1);
+                        var position = nextTrack.Position;
+                        nextTrack.Position = track.Position;
+                        track.Position = position;
+                    }
+                }
+            }
+        }
+
         protected override void Validate()
         {
             if (String.IsNullOrEmpty(Artist) == true)

@@ -147,6 +147,9 @@
   <data name="CultureSetting" xml:space="preserve">
     <value>Kultureinstellung:</value>
   </data>
+  <data name="DeleteTrackTooltip" xml:space="preserve">
+    <value>Diesen Track löschen</value>
+  </data>
   <data name="Downloadcuesheet" xml:space="preserve">
     <value>Cuesheet herunterladen</value>
   </data>
@@ -168,11 +171,20 @@
   <data name="ExportResult" xml:space="preserve">
     <value>Ergebnis exportieren</value>
   </data>
+  <data name="HasInvalidValue" xml:space="preserve">
+    <value>{0} hat einen ungültigen Wert!</value>
+  </data>
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} hat keinen Wert!</value>
   </data>
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
+  </data>
+  <data name="MoveTrackDownTooltip" xml:space="preserve">
+    <value>Diesen Track eine Position nach unten schieben</value>
+  </data>
+  <data name="MoveTrackUpTooltip" xml:space="preserve">
+    <value>Diesen Track eine Position nach oben schieben</value>
   </data>
   <data name="PleaseCheckProcessingHints" xml:space="preserve">
     <value>Bitte prüfen sie die Bearbeitungshinweise auf Fehler. Andernfalls ist Datei nicht exportierbar.</value>

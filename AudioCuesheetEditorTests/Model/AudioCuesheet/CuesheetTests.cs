@@ -29,7 +29,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void AddTrackTest()
         {
-            var cuesheet = new Cuesheet(TestHelper.GetCuesheetController());
+            var cuesheet = TestHelper.GetCuesheetController().Cuesheet;
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
             cuesheet.AddTrack(new Track(TestHelper.GetCuesheetController()));
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
@@ -45,6 +45,34 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.AudioFile = new IO.AudioFile("AudioFile01.ogg");
             validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
             Assert.IsNull(validationErrorAudioFile);
+        }
+
+        [TestMethod()]
+        public void MoveTrackTest()
+        {
+            var cuesheet = TestHelper.GetCuesheetController().Cuesheet;
+            var track1 = TestHelper.GetCuesheetController().NewTrack();
+            cuesheet.AddTrack(track1);
+            var track2 = TestHelper.GetCuesheetController().NewTrack();
+            cuesheet.AddTrack(track2);
+            var track3 = TestHelper.GetCuesheetController().NewTrack();
+            cuesheet.AddTrack(track3);
+            Assert.AreEqual(cuesheet.Tracks.Count, 3);
+            Assert.IsTrue(track1.Position == 1);
+            cuesheet.MoveTrack(track1, MoveDirection.Up);
+            Assert.IsTrue(track1.Position == 1);
+            Assert.IsTrue(track3.Position == 3);
+            cuesheet.MoveTrack(track3, MoveDirection.Down);
+            Assert.IsTrue(track3.Position == 3);
+            Assert.IsTrue(track2.Position == 2);
+            cuesheet.MoveTrack(track2, MoveDirection.Up);
+            Assert.IsTrue(track2.Position == 1);
+            Assert.IsTrue(track1.Position == 2);
+            cuesheet.MoveTrack(track2, MoveDirection.Down);
+            cuesheet.MoveTrack(track2, MoveDirection.Down);
+            Assert.IsTrue(track2.Position == 3);
+            Assert.IsTrue(track1.Position == 1);
+            Assert.IsTrue(track3.Position == 2);
         }
     }
 }
