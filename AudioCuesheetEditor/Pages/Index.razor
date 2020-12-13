@@ -105,20 +105,22 @@ along with Foobar.  If not, see
                             <th>@localizer["Length"]</th>
                             <th>@localizer["Warning"]</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @foreach (var track in cuesheet.Tracks)
                         {
-                    <tr>
-                        <!--TODO-->
-                        <td>@track.Position</td>
-                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" /></td>
-                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" /></td>
-                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" class="form-control @GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" /></td>
-                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" /></td>
-                        <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" /></td>
-                        <td>@((MarkupString)track.GetValidationErrors())</td>
-                    </tr>
+                            <tr>
+                                <!--TODO-->
+                                <td>@track.Position</td>
+                                <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" /></td>
+                                <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" /></td>
+                                <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" class="form-control @GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" /></td>
+                                <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" /></td>
+                                <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" /></td>
+                                <td>@((MarkupString)track.GetValidationErrors())</td>
+                            </tr>
                         }
-                    </thead>
+                    </tbody>
                     <!--TODO: Tracks, Buttons, etc. -->
                 </table>
             </div>
