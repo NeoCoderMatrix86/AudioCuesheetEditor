@@ -110,6 +110,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Remove(track);
+            RePositionTracks();
         }
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
@@ -187,6 +188,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
             }
             //TODO: Check for track positions
+        }
+
+        private void RePositionTracks()
+        {
+            uint position = 1;
+            foreach (var track in Tracks)
+            {
+                if (track.Position != position)
+                {
+                    track.Position = position;
+                }
+                position++;
+            }
         }
     }
 }
