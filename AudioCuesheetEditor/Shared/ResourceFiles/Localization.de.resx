@@ -162,6 +162,12 @@
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>CD Titel eingeben</value>
   </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="ExportResult" xml:space="preserve">
+    <value>Ergebnis exportieren</value>
+  </data>
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} hat keinen Wert!</value>
   </data>

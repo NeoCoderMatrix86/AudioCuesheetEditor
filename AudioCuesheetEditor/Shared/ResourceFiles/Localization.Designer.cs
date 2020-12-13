@@ -196,6 +196,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Errors ähnelt.
+        /// </summary>
+        public static string Errors {
+            get {
+                return ResourceManager.GetString("Errors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export result ähnelt.
+        /// </summary>
+        public static string ExportResult {
+            get {
+                return ResourceManager.GetString("ExportResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die {0} has no value! ähnelt.
         /// </summary>
         public static string HasNoValue {
