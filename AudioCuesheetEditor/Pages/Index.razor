@@ -245,6 +245,14 @@ along with Foobar.  If not, see
     protected override Task OnInitializedAsync()
     {
         cuesheet = cuesheetController.Cuesheet;
+        cuesheet.ValidateablePropertyChanged += delegate {
+            //TODO: Should be customizable via options
+            if (cuesheet.ValidationErrors.Count() > 0)
+            {
+                processingHintsVisibile = true;
+                SwitchChevron(processingHintsVisibile, ref chevronProcessingHints);
+            }
+        };
 
         var dotNetReference = DotNetObjectReference.Create(this);
         JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
@@ -287,7 +295,16 @@ along with Foobar.  If not, see
 
     private void AddTrackClicked()
     {
-        cuesheet.AddTrack(cuesheetController.NewTrack());
+        var track = cuesheetController.NewTrack();
+        track.ValidateablePropertyChanged += delegate {
+            //TODO: Should be customizable via options
+            if (track.ValidationErrors.Count() > 0)
+            {
+                processingHintsVisibile = true;
+                SwitchChevron(processingHintsVisibile, ref chevronProcessingHints);
+            }
+        };
+        cuesheet.AddTrack(track);
     }
 
     private void DownloadCuesheetFileClicked()
