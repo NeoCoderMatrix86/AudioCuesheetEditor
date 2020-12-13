@@ -212,7 +212,7 @@ along with Foobar.  If not, see
                         }
                         else
                         {
-                            <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled>@localizer["Downloadcuesheet"]</button> 
+                            <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PleaseCheckProcessingHints"]">@localizer["Downloadcuesheet"]</button> 
                         }
                     </CollapseBody>
                 </Collapse>

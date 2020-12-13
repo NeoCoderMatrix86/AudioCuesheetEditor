@@ -232,6 +232,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please check processing hints for errors. Otherwise the file is not exportable. ähnelt.
+        /// </summary>
+        public static string PleaseCheckProcessingHints {
+            get {
+                return ResourceManager.GetString("PleaseCheckProcessingHints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Position ähnelt.
         /// </summary>
         public static string Position {
