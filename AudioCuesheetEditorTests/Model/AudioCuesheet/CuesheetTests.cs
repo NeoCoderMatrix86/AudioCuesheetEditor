@@ -52,6 +52,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void MoveTrackTest()
         {
+            //DEBUG
+            Assert.IsTrue(false);
+            //DEBUG
             var testHelper = new TestHelper();
             var cuesheet = testHelper.CuesheetController.Cuesheet;
             var track1 = testHelper.CuesheetController.NewTrack();
