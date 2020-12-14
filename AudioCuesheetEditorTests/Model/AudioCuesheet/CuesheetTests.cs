@@ -29,16 +29,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void AddTrackTest()
         {
-            var cuesheet = TestHelper.GetCuesheetController().Cuesheet;
+            var testHelper = new TestHelper();
+            var cuesheet = testHelper.CuesheetController.Cuesheet;
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            cuesheet.AddTrack(new Track(TestHelper.GetCuesheetController()));
+            cuesheet.AddTrack(new Track(testHelper.CuesheetController));
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
         }
 
         [TestMethod()]
         public void CuesheetTest()
         {
-            var cuesheet = new Cuesheet(TestHelper.GetCuesheetController());
+            var testHelper = new TestHelper();
+            var cuesheet = testHelper.CuesheetController.Cuesheet;
             Assert.IsNull(cuesheet.AudioFile);
             var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
@@ -50,12 +52,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void MoveTrackTest()
         {
-            var cuesheet = TestHelper.GetCuesheetController().Cuesheet;
-            var track1 = TestHelper.GetCuesheetController().NewTrack();
+            var testHelper = new TestHelper();
+            var cuesheet = testHelper.CuesheetController.Cuesheet;
+            var track1 = testHelper.CuesheetController.NewTrack();
             cuesheet.AddTrack(track1);
-            var track2 = TestHelper.GetCuesheetController().NewTrack();
+            var track2 = testHelper.CuesheetController.NewTrack();
             cuesheet.AddTrack(track2);
-            var track3 = TestHelper.GetCuesheetController().NewTrack();
+            var track3 = testHelper.CuesheetController.NewTrack();
             cuesheet.AddTrack(track3);
             Assert.AreEqual(cuesheet.Tracks.Count, 3);
             Assert.IsTrue(track1.Position == 1);

@@ -21,14 +21,15 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void GenerateCuesheetFileTest()
         {
-            Cuesheet cuesheet = TestHelper.GetCuesheetController().Cuesheet;
+            var testHelper = new TestHelper();
+            Cuesheet cuesheet = testHelper.CuesheetController.Cuesheet;
             cuesheet.Artist = "Demo Artist";
             cuesheet.Title = "Demo Title";
             cuesheet.AudioFile = new AudioFile("Testfile.mp3");
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
             {
-                var track = TestHelper.GetCuesheetController().NewTrack();
+                var track = testHelper.CuesheetController.NewTrack();
                 track.Artist = String.Format("Demo Track Artist {0}", i);
                 track.Title = String.Format("Demo Track Title {0}", i);
                 track.Begin = begin;
@@ -38,6 +39,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNotNull(generatedFile);
             var fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
             var fileContent = File.ReadAllLines(fileName);

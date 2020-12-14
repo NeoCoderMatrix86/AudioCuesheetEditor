@@ -30,7 +30,8 @@ namespace AudioCuesheetEditor.Controller.Tests
         [TestMethod()]
         public void GetFieldIdentifierTest()
         {
-            var cuesheetController = TestHelper.GetCuesheetController();
+            var testHelper = new TestHelper();
+            var cuesheetController = testHelper.CuesheetController;
             var cuesheet = cuesheetController.Cuesheet;
             Assert.IsNotNull(cuesheet);
             var identifier = cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist));

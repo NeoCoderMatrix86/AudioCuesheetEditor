@@ -11,18 +11,14 @@ namespace AudioCuesheetEditorTests.Utility
 {
     internal class TestHelper
     {
-        private static CuesheetController cuesheetController;
-
-        public static CuesheetController GetCuesheetController()
+        public TestHelper()
         {
-            if (cuesheetController == null)
-            {
-                var options = Options.Create(new LocalizationOptions());
-                var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
-                var localizer = new StringLocalizer<Localization>(factory);
-                cuesheetController = new CuesheetController(localizer);
-            }
-            return cuesheetController;
+            var options = Options.Create(new LocalizationOptions());
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<Localization>(factory);
+            CuesheetController = new CuesheetController(localizer);
         }
+
+        public CuesheetController CuesheetController { get; private set; }
     }
 }
