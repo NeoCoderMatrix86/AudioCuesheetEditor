@@ -135,6 +135,21 @@
   <data name="CDTitle" xml:space="preserve">
     <value>CD Titel</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="ConfirmDeleteOfAllTracks" xml:space="preserve">
+    <value>Möchten Sie wirklich alle Tracks löschen? Dies kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="ConfirmRequired" xml:space="preserve">
+    <value>Bestätigung erforderlich</value>
+  </data>
+  <data name="ConfirmResetCuesheet" xml:space="preserve">
+    <value>Möchten Sie wirklich das Cuesheet zurücksetzen? Dies kann nicht rückgangig gemacht werden.</value>
+  </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet Daten</value>
   </data>
@@ -146,6 +161,12 @@
   </data>
   <data name="CultureSetting" xml:space="preserve">
     <value>Kultureinstellung:</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="DeleteAllTracks" xml:space="preserve">
+    <value>Alle Tracks löschen</value>
   </data>
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Diesen Track löschen</value>
@@ -180,6 +201,9 @@
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
   </data>
+  <data name="LengthHasNoValue" xml:space="preserve">
+    <value>Länge hat keinen Wert! Bitte prüfen Sie Beginn und Ende.</value>
+  </data>
   <data name="MoveTrackDownTooltip" xml:space="preserve">
     <value>Diesen Track eine Position nach unten schieben</value>
   </data>
@@ -194,6 +218,9 @@
   </data>
   <data name="ProcessingHints" xml:space="preserve">
     <value>Bearbeitungshinweise</value>
+  </data>
+  <data name="ResetCuesheet" xml:space="preserve">
+    <value>Cuesheet zurücksetzen</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Titel</value>

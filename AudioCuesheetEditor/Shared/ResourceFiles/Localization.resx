@@ -135,6 +135,21 @@
   <data name="CDTitle" xml:space="preserve">
     <value>CD title</value>
   </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="ConfirmDeleteOfAllTracks" xml:space="preserve">
+    <value>Do you really want to delete all tracks? This can not be reversed.</value>
+  </data>
+  <data name="ConfirmRequired" xml:space="preserve">
+    <value>Confirmation required</value>
+  </data>
+  <data name="ConfirmResetCuesheet" xml:space="preserve">
+    <value>Do you really want to reset the cuesheet? This can not be reversed.</value>
+  </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet data</value>
   </data>
@@ -146,6 +161,12 @@
   </data>
   <data name="CultureSetting" xml:space="preserve">
     <value>Culture set:</value>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="DeleteAllTracks" xml:space="preserve">
+    <value>Delete all tracks</value>
   </data>
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Delete this track</value>
@@ -180,6 +201,9 @@
   <data name="Length" xml:space="preserve">
     <value>Length</value>
   </data>
+  <data name="LengthHasNoValue" xml:space="preserve">
+    <value>Length has no value! Please check Begin and End.</value>
+  </data>
   <data name="MoveTrackDownTooltip" xml:space="preserve">
     <value>Move this track one position down</value>
   </data>
@@ -194,6 +218,9 @@
   </data>
   <data name="ProcessingHints" xml:space="preserve">
     <value>Processing hints</value>
+  </data>
+  <data name="ResetCuesheet" xml:space="preserve">
+    <value>Reset cuesheet</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Title</value>

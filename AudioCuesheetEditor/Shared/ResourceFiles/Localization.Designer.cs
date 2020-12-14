@@ -115,6 +115,51 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
+        /// </summary>
+        public static string Close {
+            get {
+                return ResourceManager.GetString("Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Confirm ähnelt.
+        /// </summary>
+        public static string Confirm {
+            get {
+                return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you really want to delete all tracks? This can not be reversed. ähnelt.
+        /// </summary>
+        public static string ConfirmDeleteOfAllTracks {
+            get {
+                return ResourceManager.GetString("ConfirmDeleteOfAllTracks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Confirmation required ähnelt.
+        /// </summary>
+        public static string ConfirmRequired {
+            get {
+                return ResourceManager.GetString("ConfirmRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you really want to reset the cuesheet? This can not be reversed. ähnelt.
+        /// </summary>
+        public static string ConfirmResetCuesheet {
+            get {
+                return ResourceManager.GetString("ConfirmResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet data ähnelt.
         /// </summary>
         public static string CuesheetData {
@@ -147,6 +192,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string CultureSetting {
             get {
                 return ResourceManager.GetString("CultureSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Decline ähnelt.
+        /// </summary>
+        public static string Decline {
+            get {
+                return ResourceManager.GetString("Decline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delete all tracks ähnelt.
+        /// </summary>
+        public static string DeleteAllTracks {
+            get {
+                return ResourceManager.GetString("DeleteAllTracks", resourceCulture);
             }
         }
         
@@ -250,6 +313,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Length has no value! Please check Begin and End. ähnelt.
+        /// </summary>
+        public static string LengthHasNoValue {
+            get {
+                return ResourceManager.GetString("LengthHasNoValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Move this track one position down ähnelt.
         /// </summary>
         public static string MoveTrackDownTooltip {
@@ -291,6 +363,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ProcessingHints {
             get {
                 return ResourceManager.GetString("ProcessingHints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset cuesheet ähnelt.
+        /// </summary>
+        public static string ResetCuesheet {
+            get {
+                return ResourceManager.GetString("ResetCuesheet", resourceCulture);
             }
         }
         

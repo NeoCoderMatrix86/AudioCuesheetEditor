@@ -131,6 +131,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("End")), FieldReference.Create(this, nameof(End)), ValidationErrorType.Error));
             }
+            if (Length == null)
+            {
+                validationErrors.Add(new ValidationError(_cuesheetController.GetLocalizedString("LengthHasNoValue"), FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error));
+            }
             //TODO: more Validation
         }
     }

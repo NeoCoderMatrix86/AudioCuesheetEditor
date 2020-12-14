@@ -113,6 +113,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             RePositionTracks();
         }
 
+        public void RemoveAllTracks()
+        {
+            tracks.Clear();
+        }
+
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
         {
             Boolean movePossible = false;
