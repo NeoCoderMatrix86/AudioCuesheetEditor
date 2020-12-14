@@ -101,6 +101,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Add(track);
+            ReCalculateTrackProperties();
+            OnValidateablePropertyChanged();
         }
 
         public void RemoveTrack(Track track)
@@ -111,7 +113,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.Remove(track);
             OnValidateablePropertyChanged();
-            RePositionTracks();
+            ReCalculateTrackProperties();
         }
 
         public void RemoveAllTracks()
@@ -178,6 +180,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+            ReCalculateTrackProperties();
         }
 
         protected override void Validate()
@@ -205,16 +208,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void RePositionTracks()
+        public void ReCalculateTrackProperties()
         {
             uint position = 1;
-            foreach (var track in Tracks)
+            TimeSpan? trackEnd = TimeSpan.Zero;
+            lock (syncLock)
             {
-                if (track.Position != position)
+                foreach (var track in Tracks)
                 {
-                    track.Position = position;
+                    if (track.Position != position)
+                    {
+                        track.Position = position;
+                    }
+                    if ((track.Begin == null) && (trackEnd != null))
+                    {
+                        track.Begin = trackEnd;
+                    }
+                    trackEnd = track.End;
+                    position++;
                 }
-                position++;
             }
         }
     }
