@@ -110,12 +110,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Remove(track);
+            OnValidateablePropertyChanged();
             RePositionTracks();
         }
 
         public void RemoveAllTracks()
         {
             tracks.Clear();
+            OnValidateablePropertyChanged();
         }
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
@@ -192,7 +194,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
             }
-            //TODO: Check for track positions
+            //Check track overlapping
+            TimeSpan begin = TimeSpan.Zero;
+            foreach(var track in Tracks)
+            {
+                if ((track.Begin == null) || (track.Begin != begin))
+                {
+                    validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("TrackHasInvalidValue"), track.Position, _cuesheetController.GetLocalizedString("Begin"), track.Begin), FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning));
+                }
+            }
         }
 
         private void RePositionTracks()

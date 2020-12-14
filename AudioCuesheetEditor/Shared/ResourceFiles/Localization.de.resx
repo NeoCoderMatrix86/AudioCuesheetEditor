@@ -192,6 +192,12 @@
   <data name="ExportResult" xml:space="preserve">
     <value>Ergebnis exportieren</value>
   </data>
+  <data name="HasInvalidBegin" xml:space="preserve">
+    <value>Beginn ist nicht gültig (muss größer oder gleich 00:00:00 sein). Bitte geben Sie eine gültige Zeit an.</value>
+  </data>
+  <data name="HasInvalidEnd" xml:space="preserve">
+    <value>Ende ist nicht gültig (muss größer oder gleich 00:00:00 sein). Bitte geben Sie eine gültige Zeit an.</value>
+  </data>
   <data name="HasInvalidValue" xml:space="preserve">
     <value>{0} hat einen ungültigen Wert!</value>
   </data>
@@ -210,6 +216,9 @@
   <data name="MoveTrackUpTooltip" xml:space="preserve">
     <value>Diesen Track eine Position nach oben schieben</value>
   </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Hinweise</value>
+  </data>
   <data name="PleaseCheckProcessingHints" xml:space="preserve">
     <value>Bitte prüfen sie die Bearbeitungshinweise auf Fehler. Andernfalls ist Datei nicht exportierbar.</value>
   </data>
@@ -224,6 +233,9 @@
   </data>
   <data name="Title" xml:space="preserve">
     <value>Titel</value>
+  </data>
+  <data name="TrackHasInvalidValue" xml:space="preserve">
+    <value>Track {0} hat einen ungültigen Wert {1} ({2})!</value>
   </data>
   <data name="Warning" xml:space="preserve">
     <value>Warnung</value>

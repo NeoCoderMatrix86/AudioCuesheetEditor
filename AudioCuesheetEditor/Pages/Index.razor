@@ -108,7 +108,7 @@ along with Foobar.  If not, see
                             <th>@localizer["Begin"]</th>
                             <th>@localizer["End"]</th>
                             <th>@localizer["Length"]</th>
-                            <th>@localizer["Warning"]</th>
+                            <th>@localizer["Notifications"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -311,21 +311,6 @@ along with Foobar.  If not, see
         var dotNetReference = DotNetObjectReference.Create(this);
         JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
 
-        //TODO: DEBUG Only for Design purpose
-        //cuesheet.Artist = "Demo Artist";
-        //cuesheet.Title = "Demo Title";
-        //var begin = TimeSpan.Zero;
-        //for (uint i = 1; i < 25; i++)
-        //{
-        //    var track = cuesheetController.NewTrack();
-        //    track.Artist = String.Format("Demo Track Artist {0}", i);
-        //    track.Title = String.Format("Demo Track Title {0}", i);
-        //    track.Begin = begin;
-        //    begin = begin.Add(new TimeSpan(0, (int)i, (int)i));
-        //    track.End = begin;
-        //    cuesheet.AddTrack(track);
-        //}
-        //DEBUG
         return base.OnInitializedAsync();
     }
 

@@ -286,6 +286,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
+        /// </summary>
+        public static string HasInvalidBegin {
+            get {
+                return ResourceManager.GetString("HasInvalidBegin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die End is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
+        /// </summary>
+        public static string HasInvalidEnd {
+            get {
+                return ResourceManager.GetString("HasInvalidEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die {0} has invalid value! ähnelt.
         /// </summary>
         public static string HasInvalidValue {
@@ -340,6 +358,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Notifications ähnelt.
+        /// </summary>
+        public static string Notifications {
+            get {
+                return ResourceManager.GetString("Notifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please check processing hints for errors. Otherwise the file is not exportable. ähnelt.
         /// </summary>
         public static string PleaseCheckProcessingHints {
@@ -381,6 +408,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Track {0} has invalid Value {1} ({2})! ähnelt.
+        /// </summary>
+        public static string TrackHasInvalidValue {
+            get {
+                return ResourceManager.GetString("TrackHasInvalidValue", resourceCulture);
             }
         }
         
