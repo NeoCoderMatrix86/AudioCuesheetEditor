@@ -18,14 +18,17 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: '5.0.100-preview.2.20176.6'
-    
+
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+      
     # Only publish when unit tests are ok
-    - name: Run Unit Tests
-      run: dotnet test
+    - name: Test
+      run: dotnet test --no-restore
 
     # publishes Blazor project to the release-folder
     - name: Publish .NET Core Project
-      run: dotnet publish AudioCuesheetEditor/AudioCuesheetEditor.csproj -c Release -o release --nologo
+      run: dotnet publish --no-restore AudioCuesheetEditor/AudioCuesheetEditor.csproj -c Release -o release --nologo
     
     # changes the base-tag in index.html from '/' to 'AudioCuesheetEditor' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to AudioCuesheetEditor
