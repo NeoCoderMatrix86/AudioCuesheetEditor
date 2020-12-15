@@ -15,9 +15,9 @@ jobs:
     
     # sets up .NET
     - name: Setup .NET
-      uses: actions/setup-dotnet@v1.7.2
+      uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0
+        dotnet-version: 5.x
     
     # Only publish when unit tests are ok
     - name: Run Unit Tests
