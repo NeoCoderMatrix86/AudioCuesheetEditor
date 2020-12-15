@@ -13,9 +13,9 @@ jobs:
     # uses GitHub's checkout action to checkout code form the master branch
     - uses: actions/checkout@v2
     
-    # sets up .NET Core SDK 3.1
-    - name: Setup .NET Core SDK
-      uses: actions/setup-dotnet@v1
+    # sets up .NET
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1.7.2
       with:
         dotnet-version: 5.0
     
