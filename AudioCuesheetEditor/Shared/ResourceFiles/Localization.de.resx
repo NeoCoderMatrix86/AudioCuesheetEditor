@@ -150,6 +150,9 @@
   <data name="ConfirmDeleteOfAllTracks" xml:space="preserve">
     <value>Möchten Sie wirklich alle Tracks löschen? Dies kann nicht rückgängig gemacht werden.</value>
   </data>
+  <data name="ConfirmImportCuesheet" xml:space="preserve">
+    <value>Möchten Sie wirklich diese Datei importieren? Dies kann nicht rückgängig gemacht werden und ungespeicherte Änderungen gehen verloren!</value>
+  </data>
   <data name="ConfirmRequired" xml:space="preserve">
     <value>Bestätigung erforderlich</value>
   </data>

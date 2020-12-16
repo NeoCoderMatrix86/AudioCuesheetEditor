@@ -237,6 +237,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             uint position = 1;
             TimeSpan? trackEnd = TimeSpan.Zero;
+            Track previousTrack = null;
             lock (syncLock)
             {
                 foreach (var track in Tracks)
@@ -249,6 +250,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         track.Begin = trackEnd;
                     }
+                    if ((track.Begin != null) && (previousTrack != null) && (previousTrack.End == null))
+                    {
+                        previousTrack.End = track.Begin;
+                    }
+                    previousTrack = track;
                     trackEnd = track.End;
                     position++;
                 }

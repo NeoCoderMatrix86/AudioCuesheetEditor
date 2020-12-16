@@ -50,13 +50,15 @@ namespace AudioCuesheetEditor.Model.IO
             SchemeLength = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Length), SchemeCharacter);
             SchemePosition = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Position), SchemeCharacter);
 
-            Dictionary<String, String> availableSchemes = new Dictionary<string, string>();
-            availableSchemes.Add(nameof(Track.Position), SchemePosition);
-            availableSchemes.Add(nameof(Track.Artist), SchemeArtist);
-            availableSchemes.Add(nameof(Track.Title), SchemeTitle);
-            availableSchemes.Add(nameof(Track.Begin), SchemeBegin);
-            availableSchemes.Add(nameof(Track.End), SchemeEnd);
-            availableSchemes.Add(nameof(Track.Length), SchemeLength);
+            Dictionary<String, String> availableSchemes = new Dictionary<string, string>
+            {
+                { nameof(Track.Position), SchemePosition },
+                { nameof(Track.Artist), SchemeArtist },
+                { nameof(Track.Title), SchemeTitle },
+                { nameof(Track.Begin), SchemeBegin },
+                { nameof(Track.End), SchemeEnd },
+                { nameof(Track.Length), SchemeLength }
+            };
 
             AvailableSchemes = availableSchemes;
         }

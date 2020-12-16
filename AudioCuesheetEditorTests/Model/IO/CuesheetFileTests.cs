@@ -73,5 +73,59 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             }
             File.Delete(fileName);
         }
+
+        [TestMethod()]
+        public void ImportCuesheetTest()
+        {
+            //Prepare text input file
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("PERFORMER \"Sample CD Artist\"");
+            builder.AppendLine("TITLE \"Sample CD Title\"");
+            builder.AppendLine("FILE \"AC DC - TNT.mp3\" MP3");
+            builder.AppendLine("TRACK 01 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 1\"");
+            builder.AppendLine("	TITLE \"Sample Title 1\"");
+            builder.AppendLine("	INDEX 01 00:00:00");
+            builder.AppendLine("TRACK 02 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 2\"");
+            builder.AppendLine("	TITLE \"Sample Title 2\"");
+            builder.AppendLine("	INDEX 01 05:00:00");
+            builder.AppendLine("TRACK 03 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 3\"");
+            builder.AppendLine("	TITLE \"Sample Title 3\"");
+            builder.AppendLine("	INDEX 01 09:23:00");
+            builder.AppendLine("TRACK 04 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 4\"");
+            builder.AppendLine("	TITLE \"Sample Title 4\"");
+            builder.AppendLine("	INDEX 01 15:54:00");
+            builder.AppendLine("TRACK 05 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 5\"");
+            builder.AppendLine("	TITLE \"Sample Title 5\"");
+            builder.AppendLine("	INDEX 01 20:13:00");
+            builder.AppendLine("TRACK 06 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 6\"");
+            builder.AppendLine("	TITLE \"Sample Title 6\"");
+            builder.AppendLine("	INDEX 01 24:54:00");
+            builder.AppendLine("TRACK 07 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 7\"");
+            builder.AppendLine("	TITLE \"Sample Title 7\"");
+            builder.AppendLine("	INDEX 01 31:54:00");
+            builder.AppendLine("TRACK 08 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 8\"");
+            builder.AppendLine("	TITLE \"Sample Title 8\"");
+            builder.AppendLine("	INDEX 01 45:51:00");
+
+            var tempFile = Path.GetTempFileName();
+            File.WriteAllText(tempFile, builder.ToString());
+
+            var testHelper = new TestHelper();
+            var cuesheet = CuesheetFile.ImportCuesheet(testHelper.CuesheetController, new MemoryStream(File.ReadAllBytes(tempFile)));
+
+            Assert.IsNotNull(cuesheet);
+            Assert.IsTrue(cuesheet.IsValid);
+            Assert.AreEqual(cuesheet.Tracks.Count, 8);
+
+            File.Delete(tempFile);
+        }
     }
 }

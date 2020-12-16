@@ -150,6 +150,9 @@
   <data name="ConfirmDeleteOfAllTracks" xml:space="preserve">
     <value>Do you really want to delete all tracks? This can not be reversed.</value>
   </data>
+  <data name="ConfirmImportCuesheet" xml:space="preserve">
+    <value>Do you really want to import this file? This can not be reversed and unsaved changes are lost!</value>
+  </data>
   <data name="ConfirmRequired" xml:space="preserve">
     <value>Confirmation required</value>
   </data>

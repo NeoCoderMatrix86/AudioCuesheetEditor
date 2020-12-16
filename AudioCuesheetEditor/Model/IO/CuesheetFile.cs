@@ -13,11 +13,14 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
@@ -36,6 +39,70 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String TrackIndex01 = "INDEX 01";
         public static readonly String Tab = "\t";
 
+        public static Cuesheet ImportCuesheet(CuesheetController cuesheetController, MemoryStream fileContent)
+        {
+            if (fileContent == null)
+            {
+                throw new ArgumentNullException(nameof(fileContent));
+            }
+            var cuesheet = new Cuesheet(cuesheetController);
+            fileContent.Position = 0;
+            using var reader = new StreamReader(fileContent);
+            var regexCuesheetArtist = new Regex("^" + CuesheetArtist);
+            var regexCuesheetTitle = new Regex("^" + CuesheetTitle);
+            var regexCuesheetFile = new Regex("^" + CuesheetFileName);
+            var regexTrackBegin = new Regex("^" + CuesheetTrack + " [0-9]{1,} " + CuesheetTrackAudio);
+            var regexTrackArtist = new Regex("^[\t]{1,}" + TrackArtist);
+            var regexTrackTitle = new Regex("^[\t]{1,}" + TrackTitle);
+            var regexTrackIndex = new Regex("^[\t]{1,}" + TrackIndex01);
+            Track track = null;
+            while (reader.EndOfStream == false)
+            {
+                var line = reader.ReadLine();
+                if (regexCuesheetArtist.IsMatch(line) == true)
+                {
+                    var artist = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
+                    cuesheet.Artist = artist;
+                }
+                if (regexCuesheetTitle.IsMatch(line) == true)
+                {
+                    var title = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
+                    cuesheet.Title = title;
+                }
+                if (regexCuesheetFile.IsMatch(line) == true)
+                {
+                    var audioFile = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
+                    cuesheet.AudioFile = new AudioFile(audioFile);
+                }
+                if (regexTrackBegin.IsMatch(line) == true)
+                {
+                    track = new Track(cuesheetController);
+                }
+                if (regexTrackArtist.IsMatch(line) == true)
+                {
+                    var artist = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
+                    track.Artist = artist;
+                }
+                if (regexTrackTitle.IsMatch(line) == true)
+                {
+                    var title = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
+                    track.Title = title;
+                }
+                if (regexTrackIndex.IsMatch(line) == true)
+                {
+                    //TODO: Match frames also and import
+                    var regExValue = new Regex("[0-9]{2}:[0-9]{2}");
+                    var match = regExValue.Match(line);
+                    var begin = TimeSpan.Parse("00:" + match.Value);
+                    track.Begin = begin;
+                    cuesheet.AddTrack(track);
+                    track = null;
+                }
+            }
+            return cuesheet;
+
+        }
+
         public CuesheetFile(Cuesheet cuesheet)
         {
             if (cuesheet == null)
@@ -44,6 +111,7 @@ namespace AudioCuesheetEditor.Model.IO
             }
             Cuesheet = cuesheet;
         }
+
         public Cuesheet Cuesheet { get; private set; }
 
         public byte[] GenerateCuesheetFile()
@@ -73,13 +141,13 @@ namespace AudioCuesheetEditor.Model.IO
         {
             get
             {
-                if (Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count() > 0)
+                if (Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
                 {
                     return false;
                 }
                 foreach(var track in Cuesheet.Tracks)
                 {
-                    if (track.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count() > 0)
+                    if (track.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
                     {
                         return false;
                     }

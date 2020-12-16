@@ -42,6 +42,12 @@ along with Foobar.  If not, see
                 </div>
                 <InputFile class="form-control" accept="text/plain" aria-label="Textfile" aria-describedby="importTextFileLabel" OnChange="OnInputFileTextImportChange"></InputFile>
             </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="importCuesheetFileLabel">@localizer["Cuesheet"]</span>
+                </div>
+                <InputFile class="form-control" accept=".cue" aria-label="Cuesheetfile" aria-describedby="importCuesheetFileLabel" OnChange="OnInputFileCuesheetChange"></InputFile>
+            </div>
         </CollapseBody>
     </Collapse>
     <Collapse Visible="@cuesheetDataVisible">
@@ -577,6 +583,28 @@ along with Foobar.  If not, see
             cuesheet.Import(textImportFile);
             modalTextImport.Hide();
             textImportFile = null;
+        }
+    }
+
+    private async Task OnInputFileCuesheetChange(InputFileChangeEventArgs e)
+    {
+        if (e.File != null)
+        {
+            var stream = e.File.OpenReadStream();
+            MemoryStream memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            stream.Close();
+            //Display a confirm warning
+            modalConfirmDialog.Title = localizer["ConfirmRequired"];
+            modalConfirmDialog.Text = localizer["ConfirmImportCuesheet"];
+            void importCuesheetDelegate(object sender, EventArgs args)
+            {
+                cuesheet = cuesheetController.Import(memoryStream);
+                modalConfirmDialog.Confirmed -= importCuesheetDelegate;
+                StateHasChanged();
+            };
+            modalConfirmDialog.Confirmed += importCuesheetDelegate;
+            modalConfirmDialog.ShowModal();
         }
     }
 }

@@ -160,6 +160,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you really want to import this file? This can not be reversed and unsaved changes are lost! ähnelt.
+        /// </summary>
+        public static string ConfirmImportCuesheet {
+            get {
+                return ResourceManager.GetString("ConfirmImportCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Confirmation required ähnelt.
         /// </summary>
         public static string ConfirmRequired {

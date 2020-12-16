@@ -15,11 +15,13 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -98,6 +100,12 @@ namespace AudioCuesheetEditor.Controller
                 identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
             }
             return String.Format("{0}_{1}", identifier.Key.DisplayName, identifier.Value.ToString());
+        }
+
+        public Cuesheet Import(MemoryStream fileContent)
+        {
+            cuesheet = CuesheetFile.ImportCuesheet(this, fileContent);
+            return Cuesheet;
         }
     }
 }
