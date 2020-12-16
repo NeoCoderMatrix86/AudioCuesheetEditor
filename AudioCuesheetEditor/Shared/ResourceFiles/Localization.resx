@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Abort" xml:space="preserve">
+    <value>Abort</value>
+  </data>
+  <data name="AddIdentifierToImportScheme" xml:space="preserve">
+    <value>Add identifier to import scheme</value>
+  </data>
   <data name="Addnewtrack" xml:space="preserve">
     <value>Add new track</value>
   </data>
@@ -186,6 +192,15 @@
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>Enter CD title here</value>
   </data>
+  <data name="EnterTextImportSchemeHere" xml:space="preserve">
+    <value>Enter textscheme for import here</value>
+  </data>
+  <data name="EnterTextImportSchemeTooltip" xml:space="preserve">
+    <value>Enter textscheme for import here. Identification will be done using regular expressions.</value>
+  </data>
+  <data name="ErrorDuringTextImport" xml:space="preserve">
+    <value>An error occured during text import</value>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Errors</value>
   </data>
@@ -203,6 +218,12 @@
   </data>
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} has no value!</value>
+  </data>
+  <data name="ImportFiles" xml:space="preserve">
+    <value>Import files</value>
+  </data>
+  <data name="ImportNotPossible" xml:space="preserve">
+    <value>Import is not possible due to errors. Please check import errors!</value>
   </data>
   <data name="Length" xml:space="preserve">
     <value>Length</value>
@@ -230,6 +251,18 @@
   </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Reset cuesheet</value>
+  </data>
+  <data name="StartTrackImport" xml:space="preserve">
+    <value>Start import of tracks</value>
+  </data>
+  <data name="Textfile" xml:space="preserve">
+    <value>Textfile</value>
+  </data>
+  <data name="TextImportAssistance" xml:space="preserve">
+    <value>Import textfile assistant</value>
+  </data>
+  <data name="TextImportScheme" xml:space="preserve">
+    <value>Import Textscheme</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Title</value>

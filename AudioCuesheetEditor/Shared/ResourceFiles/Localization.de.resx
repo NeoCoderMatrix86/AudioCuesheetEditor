@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Abort" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="AddIdentifierToImportScheme" xml:space="preserve">
+    <value>Platzhalter zum Importschema hinzufügen</value>
+  </data>
   <data name="Addnewtrack" xml:space="preserve">
     <value>Neuen Track hinzufügen</value>
   </data>
@@ -186,6 +192,15 @@
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>CD Titel eingeben</value>
   </data>
+  <data name="EnterTextImportSchemeHere" xml:space="preserve">
+    <value>Textschema für den Import hier eingeben</value>
+  </data>
+  <data name="EnterTextImportSchemeTooltip" xml:space="preserve">
+    <value>Textschema für den Import hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
+  </data>
+  <data name="ErrorDuringTextImport" xml:space="preserve">
+    <value>Ein Fehler ist während des Textimport aufgetreten</value>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Fehler</value>
   </data>
@@ -203,6 +218,12 @@
   </data>
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} hat keinen Wert!</value>
+  </data>
+  <data name="ImportFiles" xml:space="preserve">
+    <value>Import aus vorhandenen Dateien</value>
+  </data>
+  <data name="ImportNotPossible" xml:space="preserve">
+    <value>Import ist nicht möglich, weil der Textimport Fehler aufweist. Bitte prüfen Sie die Fehler!</value>
   </data>
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
@@ -230,6 +251,18 @@
   </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Cuesheet zurücksetzen</value>
+  </data>
+  <data name="StartTrackImport" xml:space="preserve">
+    <value>Tracks importieren</value>
+  </data>
+  <data name="Textfile" xml:space="preserve">
+    <value>Textdatei</value>
+  </data>
+  <data name="TextImportAssistance" xml:space="preserve">
+    <value>Importassistent für Textdateien</value>
+  </data>
+  <data name="TextImportScheme" xml:space="preserve">
+    <value>Import Textschema</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Titel</value>

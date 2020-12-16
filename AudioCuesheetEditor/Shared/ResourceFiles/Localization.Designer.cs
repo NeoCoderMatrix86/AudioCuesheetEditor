@@ -61,6 +61,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Abort ähnelt.
+        /// </summary>
+        public static string Abort {
+            get {
+                return ResourceManager.GetString("Abort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add identifier to import scheme ähnelt.
+        /// </summary>
+        public static string AddIdentifierToImportScheme {
+            get {
+                return ResourceManager.GetString("AddIdentifierToImportScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Add new track ähnelt.
         /// </summary>
         public static string Addnewtrack {
@@ -268,6 +286,33 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeHere {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here. Identification will be done using regular expressions. ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTooltip {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An error occured during text import ähnelt.
+        /// </summary>
+        public static string ErrorDuringTextImport {
+            get {
+                return ResourceManager.GetString("ErrorDuringTextImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Errors ähnelt.
         /// </summary>
         public static string Errors {
@@ -318,6 +363,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string HasNoValue {
             get {
                 return ResourceManager.GetString("HasNoValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import files ähnelt.
+        /// </summary>
+        public static string ImportFiles {
+            get {
+                return ResourceManager.GetString("ImportFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import is not possible due to errors. Please check import errors! ähnelt.
+        /// </summary>
+        public static string ImportNotPossible {
+            get {
+                return ResourceManager.GetString("ImportNotPossible", resourceCulture);
             }
         }
         
@@ -399,6 +462,42 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ResetCuesheet {
             get {
                 return ResourceManager.GetString("ResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start import of tracks ähnelt.
+        /// </summary>
+        public static string StartTrackImport {
+            get {
+                return ResourceManager.GetString("StartTrackImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textfile ähnelt.
+        /// </summary>
+        public static string Textfile {
+            get {
+                return ResourceManager.GetString("Textfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import textfile assistant ähnelt.
+        /// </summary>
+        public static string TextImportAssistance {
+            get {
+                return ResourceManager.GetString("TextImportAssistance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import Textscheme ähnelt.
+        /// </summary>
+        public static string TextImportScheme {
+            get {
+                return ResourceManager.GetString("TextImportScheme", resourceCulture);
             }
         }
         

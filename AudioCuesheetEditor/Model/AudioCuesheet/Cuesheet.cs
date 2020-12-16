@@ -49,7 +49,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         public IReadOnlyCollection<Track> Tracks
         {
-            get { return tracks.OrderBy(x => x.Position).ToList().AsReadOnly(); }
+            get { return tracks.OrderBy(x => x.Position.HasValue == false).ThenBy(x => x.Position).ToList().AsReadOnly(); }
         }
         public uint NextFreePosition
         {
@@ -60,10 +60,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     lock (syncLock)
                     {
-                        var track = Tracks.Where(x => x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
+                        var track = Tracks.Where(x => x.Position != null && x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
                         if (track != null)
                         {
-                            nextFreePosition = track.Position + 1;
+                            nextFreePosition = track.Position.Value + 1;
                         }
                     }
                 }
@@ -141,7 +141,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 if (moveDirection == MoveDirection.Down)
                 {
-                    if ((index + 1) < Tracks.Count())
+                    if ((index + 1) < Tracks.Count)
                     {
                         movePossible = true;
                     }
@@ -171,7 +171,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 if (moveDirection == MoveDirection.Down)
                 {
-                    if ((index + 1) < Tracks.Count())
+                    if ((index + 1) < Tracks.Count)
                     {
                         var nextTrack = Tracks.ElementAt(index + 1);
                         var position = nextTrack.Position;
@@ -181,6 +181,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
             ReCalculateTrackProperties();
+        }
+
+        public void Import(TextImportFile textImportFile)
+        {
+            if (textImportFile == null)
+            {
+                throw new ArgumentNullException(nameof(textImportFile));
+            }
+            if (textImportFile.IsValid == false)
+            {
+                throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
+            }
+            foreach (var importTrack in textImportFile.Tracks)
+            {
+                var track = _cuesheetController.NewTrack();
+                track.CopyValuesFromImportTrack(importTrack);
+                AddTrack(track);
+            }
         }
 
         protected override void Validate()
@@ -198,17 +216,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
             }
             //Check track overlapping
-            TimeSpan begin = TimeSpan.Zero;
-            foreach(var track in Tracks)
+            lock (syncLock)
             {
-                if ((track.Begin == null) || (track.Begin != begin))
+                TimeSpan begin = TimeSpan.Zero;
+                foreach (var track in Tracks)
                 {
-                    validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("TrackHasInvalidValue"), track.Position, _cuesheetController.GetLocalizedString("Begin"), track.Begin), FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning));
+                    if ((track.Begin == null) || (track.Begin != begin))
+                    {
+                        validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("TrackHasInvalidValue"), track.Position, _cuesheetController.GetLocalizedString("Begin"), track.Begin), FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning));
+                    }
+                    if (track.End != null)
+                    {
+                        begin = track.End.Value;
+                    }
                 }
             }
         }
 
-        public void ReCalculateTrackProperties()
+        private void ReCalculateTrackProperties()
         {
             uint position = 1;
             TimeSpan? trackEnd = TimeSpan.Zero;

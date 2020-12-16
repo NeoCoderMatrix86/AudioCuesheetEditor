@@ -13,26 +13,20 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.IO;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Model.IO.Tests
+namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    [TestClass()]
-    public class AudioFileTests
+    public interface ITrack
     {
-        [TestMethod()]
-        public void AudioFileTest()
-        {
-            var audioFile = new AudioFile("test.mp3");
-            Assert.IsNotNull(audioFile.FileName);
-            Assert.AreEqual(audioFile.AudioFileType, "MP3");
-            audioFile = new AudioFile("Test");
-            Assert.AreEqual(audioFile.AudioFileType, String.Empty);
-            Assert.IsNotNull(audioFile.FileName);
-        }
+        public uint? Position { get; set; }
+        public String Artist { get; set; }
+        public String Title { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
+        public TimeSpan? Length { get; set; }
     }
 }

@@ -23,11 +23,11 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable
+    public class Track : Validateable, ITrack
     {
         private readonly CuesheetController _cuesheetController;
 
-        private uint position;
+        private uint? position;
         private String artist;
         private String title;
         private TimeSpan? begin;
@@ -35,11 +35,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Track(CuesheetController cuesheetController)
         {
             _cuesheetController = cuesheetController;
-            position = _cuesheetController.GetNextFreePosition();
             Validate();
         }
 
-        public uint Position 
+        public uint? Position 
         {
             get { return position; }
             set { position = value; OnValidateablePropertyChanged(); }
@@ -109,9 +108,23 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        public void CopyValuesFromImportTrack(ImportTrack importTrack)
+        {
+            Position = importTrack.Position;
+            Artist = importTrack.Artist;
+            Title = importTrack.Title;
+            Begin = importTrack.Begin;
+            End = importTrack.End;
+            Length = importTrack.Length;
+        }
+
         protected override void Validate()
         {
-            if (Position == 0)
+            if (Position == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Position")), FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error));
+            }
+            if ((Position != null) && (Position == 0))
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasInvalidValue"), _cuesheetController.GetLocalizedString("Position")), FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error));
             }

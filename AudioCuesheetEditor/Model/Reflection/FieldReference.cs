@@ -90,7 +90,7 @@ namespace AudioCuesheetEditor.Model.Reflection
             propertyInfo = Owner.GetType().GetProperty(property, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             if (propertyInfo == null)
             {
-                throw new ArgumentException(nameof(property));
+                throw new ArgumentException(String.Format("Property {0} could not be found!", property),nameof(property));
             }
         }
 
