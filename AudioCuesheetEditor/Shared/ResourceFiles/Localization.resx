@@ -207,6 +207,9 @@
   <data name="Errors" xml:space="preserve">
     <value>Errors</value>
   </data>
+  <data name="ExportProfiles" xml:space="preserve">
+    <value>Export Profiles</value>
+  </data>
   <data name="ExportResult" xml:space="preserve">
     <value>Export result</value>
   </data>
@@ -243,6 +246,9 @@
   <data name="Notifications" xml:space="preserve">
     <value>Notifications</value>
   </data>
+  <data name="OpenExportProfilesDialog" xml:space="preserve">
+    <value>Display Export Profiles</value>
+  </data>
   <data name="PleaseCheckProcessingHints" xml:space="preserve">
     <value>Please check processing hints for errors. Otherwise the file is not exportable.</value>
   </data>
@@ -254,6 +260,9 @@
   </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Reset cuesheet</value>
+  </data>
+  <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
+    <value>Scheme contains placeholder that can not be resolved!</value>
   </data>
   <data name="StartTrackImport" xml:space="preserve">
     <value>Start import of tracks</value>

@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class Cuesheet : Validateable
+    public class Cuesheet : Validateable, ICuesheet
     {
         private readonly CuesheetController _cuesheetController;
 

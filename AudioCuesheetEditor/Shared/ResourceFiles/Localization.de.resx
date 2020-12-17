@@ -207,6 +207,9 @@
   <data name="Errors" xml:space="preserve">
     <value>Fehler</value>
   </data>
+  <data name="ExportProfiles" xml:space="preserve">
+    <value>Export Profile</value>
+  </data>
   <data name="ExportResult" xml:space="preserve">
     <value>Ergebnis exportieren</value>
   </data>
@@ -243,6 +246,9 @@
   <data name="Notifications" xml:space="preserve">
     <value>Hinweise</value>
   </data>
+  <data name="OpenExportProfilesDialog" xml:space="preserve">
+    <value>Export Profile anzeigen</value>
+  </data>
   <data name="PleaseCheckProcessingHints" xml:space="preserve">
     <value>Bitte prüfen sie die Bearbeitungshinweise auf Fehler. Andernfalls ist Datei nicht exportierbar.</value>
   </data>
@@ -254,6 +260,9 @@
   </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Cuesheet zurücksetzen</value>
+  </data>
+  <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
+    <value>Schema enthält Platzhalter, die nicht aufgelöst werden können!</value>
   </data>
   <data name="StartTrackImport" xml:space="preserve">
     <value>Tracks importieren</value>

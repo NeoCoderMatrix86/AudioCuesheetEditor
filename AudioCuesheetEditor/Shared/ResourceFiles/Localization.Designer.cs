@@ -331,6 +331,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export Profiles ähnelt.
+        /// </summary>
+        public static string ExportProfiles {
+            get {
+                return ResourceManager.GetString("ExportProfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Export result ähnelt.
         /// </summary>
         public static string ExportResult {
@@ -439,6 +448,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Display Export Profiles ähnelt.
+        /// </summary>
+        public static string OpenExportProfilesDialog {
+            get {
+                return ResourceManager.GetString("OpenExportProfilesDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please check processing hints for errors. Otherwise the file is not exportable. ähnelt.
         /// </summary>
         public static string PleaseCheckProcessingHints {
@@ -471,6 +489,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ResetCuesheet {
             get {
                 return ResourceManager.GetString("ResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Scheme contains placeholder that can not be resolved! ähnelt.
+        /// </summary>
+        public static string SchemeContainsPlaceholdersThatCanNotBeSolved {
+            get {
+                return ResourceManager.GetString("SchemeContainsPlaceholdersThatCanNotBeSolved", resourceCulture);
             }
         }
         

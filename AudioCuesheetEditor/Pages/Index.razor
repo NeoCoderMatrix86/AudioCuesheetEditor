@@ -285,6 +285,7 @@ along with Foobar.  If not, see
                         {
                             <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PleaseCheckProcessingHints"]">@localizer["Downloadcuesheet"]</button> 
                         }
+                        <button class="btn btn-primary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</button>
                     </CollapseBody>
                 </Collapse>
             </Accordion>
@@ -386,6 +387,27 @@ along with Foobar.  If not, see
     </ModalContent>
 </Modal>
 
+<Modal @ref="modalExportProfiles">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>
+                @localizer["ExportProfiles"]
+            </ModalTitle>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ModalExportProfilesCloseClicked">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </ModalHeader>
+        <ModalBody>
+            <!--TODO-->
+        </ModalBody>
+        <ModalFooter>
+            <!--TODO-->
+            <button class="btn btn-secondary" data-dismiss="modal" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
 @code {
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetOptionalInfoVisible = false;
@@ -413,6 +435,7 @@ along with Foobar.  If not, see
     private ModalConfirmDialog modalConfirmDialog;
 
     private Modal modalTextImport;
+    private Modal modalExportProfiles;
 
     protected override Task OnInitializedAsync()
     {
@@ -606,5 +629,10 @@ along with Foobar.  If not, see
             modalConfirmDialog.Confirmed += importCuesheetDelegate;
             modalConfirmDialog.ShowModal();
         }
+    }
+
+    private void ModalExportProfilesCloseClicked()
+    {
+        modalExportProfiles.Hide();
     }
 }
