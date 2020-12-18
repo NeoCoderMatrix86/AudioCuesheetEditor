@@ -79,6 +79,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add new export profile ähnelt.
+        /// </summary>
+        public static string AddNewExportProfile {
+            get {
+                return ResourceManager.GetString("AddNewExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Add new track ähnelt.
         /// </summary>
         public static string Addnewtrack {
@@ -268,6 +277,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delete current export profile ähnelt.
+        /// </summary>
+        public static string DeleteExportProfile {
+            get {
+                return ResourceManager.GetString("DeleteExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delete this track ähnelt.
         /// </summary>
         public static string DeleteTrackTooltip {
@@ -435,6 +453,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ExportProfileIsNotExportable {
             get {
                 return ResourceManager.GetString("ExportProfileIsNotExportable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Name ähnelt.
+        /// </summary>
+        public static string ExportProfileName {
+            get {
+                return ResourceManager.GetString("ExportProfileName", resourceCulture);
             }
         }
         

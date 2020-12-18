@@ -30,25 +30,20 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         private readonly IStringLocalizer<Localization> localizer;
 
-        public ExportProfile(IStringLocalizer<Localization> localizer, Cuesheet cuesheet)
+        public ExportProfile(IStringLocalizer<Localization> localizer)
         {
-            if (cuesheet == null)
-            {
-                throw new ArgumentNullException(nameof(cuesheet));
-            }
             if (localizer == null)
             {
                 throw new ArgumentNullException(nameof(localizer));
             }
             this.localizer = localizer;
-            Cuesheet = cuesheet;
             SchemeHead = new ExportScheme(this.localizer, SchemeType.Header);
             SchemeTracks = new ExportScheme(this.localizer, SchemeType.Body);
             SchemeFooter = new ExportScheme(this.localizer, SchemeType.Footer);
             FileName = DefaultFileName;
-            Name = nameof(ExportProfile);
+            var random = new Random();
+            Name = String.Format("{0}_{1}", nameof(ExportProfile), random.Next(1, 100));
         }
-        public Cuesheet Cuesheet { get; private set; }
         public String Name { get; set; }
         public ExportScheme SchemeHead { get; private set; }
         public ExportScheme SchemeTracks { get; private set; }
@@ -73,17 +68,17 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 return true;
             }
         }
-        public byte[] GenerateExport()
+        public byte[] GenerateExport(Cuesheet cuesheet)
         {
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();
-                builder.AppendLine(SchemeHead.GetExportResult(Cuesheet));
-                foreach(var track in Cuesheet.Tracks)
+                builder.AppendLine(SchemeHead.GetExportResult(cuesheet));
+                foreach(var track in cuesheet.Tracks)
                 {
                     builder.AppendLine(SchemeTracks.GetExportResult(track));
                 }
-                builder.AppendLine(SchemeFooter.GetExportResult(Cuesheet));
+                builder.AppendLine(SchemeFooter.GetExportResult(cuesheet));
                 return Encoding.UTF8.GetBytes(builder.ToString());
             }
             else

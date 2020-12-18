@@ -123,6 +123,9 @@
   <data name="AddIdentifierToImportScheme" xml:space="preserve">
     <value>Platzhalter zum Importschema hinzufügen</value>
   </data>
+  <data name="AddNewExportProfile" xml:space="preserve">
+    <value>Neues Exportprofil hinzufügen</value>
+  </data>
   <data name="Addnewtrack" xml:space="preserve">
     <value>Neuen Track hinzufügen</value>
   </data>
@@ -186,6 +189,9 @@
   <data name="DeleteAllTracks" xml:space="preserve">
     <value>Alle Tracks löschen</value>
   </data>
+  <data name="DeleteExportProfile" xml:space="preserve">
+    <value>Aktuelles Exportprofil löschen</value>
+  </data>
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Diesen Track löschen</value>
   </data>
@@ -242,6 +248,9 @@
   </data>
   <data name="ExportProfileIsNotExportable" xml:space="preserve">
     <value>Export Profil ist nicht exportierbar. Bitte prüfen Sie die Validierungsfehler und beheben Sie diese, um die Exportdatei herunterzuladen.</value>
+  </data>
+  <data name="ExportProfileName" xml:space="preserve">
+    <value>Name</value>
   </data>
   <data name="ExportProfiles" xml:space="preserve">
     <value>Export Profile</value>

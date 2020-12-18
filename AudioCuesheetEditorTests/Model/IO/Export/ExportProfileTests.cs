@@ -51,7 +51,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             }
 
             //Test class
-            var exportProfile = new ExportProfile(testHelper.Localizer, cuesheet);
+            var exportProfile = new ExportProfile(testHelper.Localizer);
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
@@ -59,7 +59,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             exportProfile.SchemeFooter.Scheme = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor";
             Assert.IsTrue(exportProfile.SchemeFooter.IsValid);
             Assert.IsTrue(exportProfile.IsExportable);
-            var fileContent = exportProfile.GenerateExport();
+            var fileContent = exportProfile.GenerateExport(cuesheet);
             Assert.IsNotNull(fileContent);
             var tempFile = Path.GetTempFileName();
             File.WriteAllBytes(tempFile, fileContent);
@@ -81,7 +81,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
 
             //Check multiline export
 
-            exportProfile = new ExportProfile(testHelper.Localizer, cuesheet);
+            exportProfile = new ExportProfile(testHelper.Localizer);
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = String.Format("%Track.Position%{0}%Track.Artist%{1}%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%", Environment.NewLine, Environment.NewLine);
@@ -89,7 +89,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             exportProfile.SchemeFooter.Scheme = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor";
             Assert.IsTrue(exportProfile.SchemeFooter.IsValid);
             Assert.IsTrue(exportProfile.IsExportable);
-            fileContent = exportProfile.GenerateExport();
+            fileContent = exportProfile.GenerateExport(cuesheet);
             Assert.IsNotNull(fileContent);
             tempFile = Path.GetTempFileName();
             File.WriteAllBytes(tempFile, fileContent);

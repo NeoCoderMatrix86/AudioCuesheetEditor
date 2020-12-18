@@ -277,16 +277,23 @@ along with Foobar.  If not, see
                         </Blazorise.Link>
                     </CollapseHeader>
                     <CollapseBody>
-                        @if (cuesheet.CanWriteCuesheetFile == true)
-                        {
-                            <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
-                        }
-                        else
-                        {
-                            <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PleaseCheckProcessingHints"]">@localizer["Downloadcuesheet"]</button> 
-                        }
-                        <!--TODO: Disable when cuesheet is invalid-->
-                        <button class="btn btn-primary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</button>
+                        <div class="form-group row">
+                            @if (cuesheet.CanWriteCuesheetFile == true)
+                            {
+                                <div class="col-2">
+                                    <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-2">
+                                    <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PleaseCheckProcessingHints"]">@localizer["Downloadcuesheet"]</button>
+                                </div>
+                                }
+                                <div class="col-2">
+                                    <button class="btn btn-secondary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</button>
+                                </div>
+                            </div>
                     </CollapseBody>
                 </Collapse>
             </Accordion>
@@ -406,10 +413,17 @@ along with Foobar.  If not, see
                     <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
                 </FieldBody>
             </Field>
-            <!--TODO: Add Export Profile Button-->
+            <button class="btn btn-primary" @onclick="OnAddNewExportProfileClicked">@localizer["AddNewExportProfile"]</button>
+            <button class="btn btn-danger" @onclick="OnDeleteExportProfileClicked">@localizer["DeleteExportProfile"]</button>
             <hr />
             @if (SelectedExportProfile != null)
             {
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="exportProfileNameLabel">@localizer["ExportProfileName"]</span>
+                    </div>
+                    <input class="form-control" aria-describedby="exportProfileFilenameLabel" @bind="SelectedExportProfile.Name" />
+                </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="exportProfileFilenameLabel">@localizer["ExportProfileFilename"]</span>
@@ -623,14 +637,14 @@ along with Foobar.  If not, see
         {
             var list = new List<SelectExportProfileModel>();
             //TODO: Make this saveable
-            var exportProfile = new ExportProfile(localizer, cuesheet);
+            var exportProfile = new ExportProfile(localizer);
             exportProfile.FileName = "Export.csv";
             exportProfile.Name = "CSV Export";
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
             exportProfile.SchemeFooter.Scheme = String.Empty;
             list.Add(new SelectExportProfileModel(exportProfile));
-            exportProfile = new ExportProfile(localizer, cuesheet);
+            exportProfile = new ExportProfile(localizer);
             exportProfile.FileName = "Tracks.txt";
             exportProfile.Name = "Tracks only";
             exportProfile.SchemeHead.Scheme = String.Empty;
@@ -837,8 +851,11 @@ along with Foobar.  If not, see
         {
             if ((exportProfileModels != null) && (selectedExportProfileId != Guid.Empty))
             {
-                Console.WriteLine(String.Join(",", exportProfileModels.Select(x => x.Id)) + " " + selectedExportProfileId);
-                return exportProfileModels.First(x => x.Id.ToString() == selectedExportProfileId.ToString()).ExportProfile;
+                var exportProfile = exportProfileModels.FirstOrDefault(x => x.Id == selectedExportProfileId);
+                if (exportProfile != null) 
+                {
+                    return exportProfile.ExportProfile;
+                }
             }
             return null;
         }
@@ -848,7 +865,26 @@ along with Foobar.  If not, see
     {
         if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
         {
-            BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(), "text/plain");
+            BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
+        }
+    }
+
+    private void OnAddNewExportProfileClicked()
+    {
+        var list = exportProfileModels.ToList();
+        list.Add(new SelectExportProfileModel(new ExportProfile(localizer)));
+        exportProfileModels = list.AsReadOnly();
+        selectedExportProfileId = list.Last().Id;
+    }
+
+    private void OnDeleteExportProfileClicked()
+    {
+        var list = exportProfileModels.ToList();
+        list.RemoveAll(x => x.Id == selectedExportProfileId);
+        exportProfileModels = list.AsReadOnly();
+        if (exportProfileModels.Count > 0)
+        {
+            selectedExportProfileId = exportProfileModels.First().Id;
         }
     }
 }

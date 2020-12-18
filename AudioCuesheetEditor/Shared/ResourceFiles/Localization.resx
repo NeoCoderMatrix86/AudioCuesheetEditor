@@ -123,6 +123,9 @@
   <data name="AddIdentifierToImportScheme" xml:space="preserve">
     <value>Add identifier to import scheme</value>
   </data>
+  <data name="AddNewExportProfile" xml:space="preserve">
+    <value>Add new export profile</value>
+  </data>
   <data name="Addnewtrack" xml:space="preserve">
     <value>Add new track</value>
   </data>
@@ -186,6 +189,9 @@
   <data name="DeleteAllTracks" xml:space="preserve">
     <value>Delete all tracks</value>
   </data>
+  <data name="DeleteExportProfile" xml:space="preserve">
+    <value>Delete current export profile</value>
+  </data>
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Delete this track</value>
   </data>
@@ -242,6 +248,9 @@
   </data>
   <data name="ExportProfileIsNotExportable" xml:space="preserve">
     <value>Export profile is not exportable. Please check the validation errors and fix them in order to download the export.</value>
+  </data>
+  <data name="ExportProfileName" xml:space="preserve">
+    <value>Name</value>
   </data>
   <data name="ExportProfiles" xml:space="preserve">
     <value>Export Profiles</value>
