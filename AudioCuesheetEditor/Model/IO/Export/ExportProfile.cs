@@ -28,9 +28,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
     {
         public static readonly String DefaultFileName = "Export.txt";
 
-        private readonly StringLocalizer<Localization> localizer;
+        private readonly IStringLocalizer<Localization> localizer;
 
-        public ExportProfile(StringLocalizer<Localization> localizer, Cuesheet cuesheet)
+        public ExportProfile(IStringLocalizer<Localization> localizer, Cuesheet cuesheet)
         {
             if (cuesheet == null)
             {
@@ -46,8 +46,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
             SchemeTracks = new ExportScheme(this.localizer, SchemeType.Body);
             SchemeFooter = new ExportScheme(this.localizer, SchemeType.Footer);
             FileName = DefaultFileName;
+            Name = nameof(ExportProfile);
         }
         public Cuesheet Cuesheet { get; private set; }
+        public String Name { get; set; }
         public ExportScheme SchemeHead { get; private set; }
         public ExportScheme SchemeTracks { get; private set; }
         public ExportScheme SchemeFooter { get; private set; }
@@ -67,17 +69,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 if (SchemeFooter.IsValid == false)
                 {
                     return SchemeFooter.IsValid;
-                }
-                if (Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
-                {
-                    return false;
-                }
-                foreach (var track in Cuesheet.Tracks)
-                {
-                    if (track.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
-                    {
-                        return false;
-                    }
                 }
                 return true;
             }

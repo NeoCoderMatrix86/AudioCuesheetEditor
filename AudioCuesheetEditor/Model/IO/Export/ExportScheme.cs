@@ -49,7 +49,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
         private String scheme;
-        private readonly StringLocalizer<Localization> localizer;
+        private readonly IStringLocalizer<Localization> localizer;
 
         static ExportScheme()
         {
@@ -82,7 +82,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             };
         }
 
-        public ExportScheme(StringLocalizer<Localization> localizer, SchemeType schemeType)
+        public ExportScheme(IStringLocalizer<Localization> localizer, SchemeType schemeType)
         {
             if (localizer == null)
             {
@@ -102,34 +102,33 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public String GetExportResult(ICuesheetEntity cuesheetEntity)
         {
             String result = null;
-            switch (SchemeType)
+            if (String.IsNullOrEmpty(Scheme) == false)
             {
-                case SchemeType.Header:
-                case SchemeType.Footer:
-                    var cuesheet = (Cuesheet)cuesheetEntity;
-                    result = Scheme.Replace(SchemeCuesheetArtist, cuesheet.Artist).Replace(SchemeCuesheetTitle, cuesheet.Title).Replace(SchemeCuesheeFile, cuesheet.AudioFile?.FileName);
-                    break;
-                case SchemeType.Body:
-                    var track = (Track)cuesheetEntity;
-                    result = Scheme
-                        .Replace(SchemeTrackArtist, track.Artist)
-                        .Replace(SchemeTrackTitle, track.Title)
-                        .Replace(SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
-                        .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
-                        .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
-                        .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty);
-                    break;
+                switch (SchemeType)
+                {
+                    case SchemeType.Header:
+                    case SchemeType.Footer:
+                        var cuesheet = (Cuesheet)cuesheetEntity;
+                        result = Scheme.Replace(SchemeCuesheetArtist, cuesheet.Artist).Replace(SchemeCuesheetTitle, cuesheet.Title).Replace(SchemeCuesheeFile, cuesheet.AudioFile?.FileName);
+                        break;
+                    case SchemeType.Body:
+                        var track = (Track)cuesheetEntity;
+                        result = Scheme
+                            .Replace(SchemeTrackArtist, track.Artist)
+                            .Replace(SchemeTrackTitle, track.Title)
+                            .Replace(SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
+                            .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
+                            .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
+                            .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty);
+                        break;
+                }
             }
             return result;
         }
 
         protected override void Validate()
         {
-            if (String.IsNullOrEmpty(Scheme))
-            {
-                validationErrors.Add(new ValidationError(String.Format(localizer["HasNoValue"], nameof(Scheme)), FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Error));
-            }
-            else
+            if (String.IsNullOrEmpty(Scheme) == false)
             {
                 Boolean addValidationError = false;
                 switch (SchemeType)
