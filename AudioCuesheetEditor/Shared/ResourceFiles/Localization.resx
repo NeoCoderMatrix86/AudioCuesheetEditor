@@ -123,8 +123,20 @@
   <data name="AddIdentifierToImportScheme" xml:space="preserve">
     <value>Add identifier to import scheme</value>
   </data>
+  <data name="AddNewExportProfile" xml:space="preserve">
+    <value>Add new export profile</value>
+  </data>
   <data name="Addnewtrack" xml:space="preserve">
     <value>Add new track</value>
+  </data>
+  <data name="AddPlaceholderToExportSchemeFooter" xml:space="preserve">
+    <value>Add placeholder to the export footer scheme</value>
+  </data>
+  <data name="AddPlaceholderToExportSchemeHead" xml:space="preserve">
+    <value>Add placeholder to the export head scheme</value>
+  </data>
+  <data name="AddPlaceholderToExportSchemeTrack" xml:space="preserve">
+    <value>Add placeholder to the export track scheme</value>
   </data>
   <data name="Artist" xml:space="preserve">
     <value>Artist</value>
@@ -177,11 +189,17 @@
   <data name="DeleteAllTracks" xml:space="preserve">
     <value>Delete all tracks</value>
   </data>
+  <data name="DeleteExportProfile" xml:space="preserve">
+    <value>Delete current export profile</value>
+  </data>
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Delete this track</value>
   </data>
   <data name="Downloadcuesheet" xml:space="preserve">
     <value>Download cuesheet file</value>
+  </data>
+  <data name="DownloadExport" xml:space="preserve">
+    <value>Download export file</value>
   </data>
   <data name="End" xml:space="preserve">
     <value>End</value>
@@ -195,6 +213,24 @@
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>Enter CD title here</value>
   </data>
+  <data name="EnterExportSchemeFooterHere" xml:space="preserve">
+    <value>Enter scheme for export of footer here</value>
+  </data>
+  <data name="EnterExportSchemeFooterHereTooltip" xml:space="preserve">
+    <value>Enter scheme for export of footer here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %.</value>
+  </data>
+  <data name="EnterExportSchemeHeadHere" xml:space="preserve">
+    <value>Enter scheme for export of header here</value>
+  </data>
+  <data name="EnterExportSchemeHeadHereTooltip" xml:space="preserve">
+    <value>Enter scheme for export of header here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %.</value>
+  </data>
+  <data name="EnterExportSchemeTrackHere" xml:space="preserve">
+    <value>Enter scheme for export of tracks here</value>
+  </data>
+  <data name="EnterExportSchemeTrackHereTooltip" xml:space="preserve">
+    <value>Enter scheme for export of tracks here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %.</value>
+  </data>
   <data name="EnterTextImportSchemeHere" xml:space="preserve">
     <value>Enter textscheme for import here</value>
   </data>
@@ -206,6 +242,36 @@
   </data>
   <data name="Errors" xml:space="preserve">
     <value>Errors</value>
+  </data>
+  <data name="ExportProfileFilename" xml:space="preserve">
+    <value>Filename</value>
+  </data>
+  <data name="ExportProfileIsNotExportable" xml:space="preserve">
+    <value>Export profile is not exportable. Please check the validation errors and fix them in order to download the export.</value>
+  </data>
+  <data name="ExportProfileName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ExportProfiles" xml:space="preserve">
+    <value>Export Profiles</value>
+  </data>
+  <data name="ExportProfileSchemeFooter" xml:space="preserve">
+    <value>Scheme footer</value>
+  </data>
+  <data name="ExportProfileSchemeFooterValidationErrors" xml:space="preserve">
+    <value>Export profile footer scheme validation errors</value>
+  </data>
+  <data name="ExportProfileSchemeHead" xml:space="preserve">
+    <value>Scheme header</value>
+  </data>
+  <data name="ExportProfileSchemeHeadValidationErrors" xml:space="preserve">
+    <value>Export profile head scheme validation errors</value>
+  </data>
+  <data name="ExportProfileSchemeTrack" xml:space="preserve">
+    <value>Scheme tracks</value>
+  </data>
+  <data name="ExportProfileSchemeTrackValidationErrors" xml:space="preserve">
+    <value>Export profile track scheme validation errors</value>
   </data>
   <data name="ExportResult" xml:space="preserve">
     <value>Export result</value>
@@ -243,6 +309,9 @@
   <data name="Notifications" xml:space="preserve">
     <value>Notifications</value>
   </data>
+  <data name="OpenExportProfilesDialog" xml:space="preserve">
+    <value>Display Export Profiles</value>
+  </data>
   <data name="PleaseCheckProcessingHints" xml:space="preserve">
     <value>Please check processing hints for errors. Otherwise the file is not exportable.</value>
   </data>
@@ -254,6 +323,12 @@
   </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Reset cuesheet</value>
+  </data>
+  <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
+    <value>Scheme contains placeholder that can not be resolved!</value>
+  </data>
+  <data name="SelectExportProfile" xml:space="preserve">
+    <value>Select export profile</value>
   </data>
   <data name="StartTrackImport" xml:space="preserve">
     <value>Start import of tracks</value>

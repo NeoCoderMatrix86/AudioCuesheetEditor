@@ -79,11 +79,47 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add new export profile ähnelt.
+        /// </summary>
+        public static string AddNewExportProfile {
+            get {
+                return ResourceManager.GetString("AddNewExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Add new track ähnelt.
         /// </summary>
         public static string Addnewtrack {
             get {
                 return ResourceManager.GetString("Addnewtrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add placeholder to the export footer scheme ähnelt.
+        /// </summary>
+        public static string AddPlaceholderToExportSchemeFooter {
+            get {
+                return ResourceManager.GetString("AddPlaceholderToExportSchemeFooter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add placeholder to the export head scheme ähnelt.
+        /// </summary>
+        public static string AddPlaceholderToExportSchemeHead {
+            get {
+                return ResourceManager.GetString("AddPlaceholderToExportSchemeHead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add placeholder to the export track scheme ähnelt.
+        /// </summary>
+        public static string AddPlaceholderToExportSchemeTrack {
+            get {
+                return ResourceManager.GetString("AddPlaceholderToExportSchemeTrack", resourceCulture);
             }
         }
         
@@ -241,6 +277,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delete current export profile ähnelt.
+        /// </summary>
+        public static string DeleteExportProfile {
+            get {
+                return ResourceManager.GetString("DeleteExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delete this track ähnelt.
         /// </summary>
         public static string DeleteTrackTooltip {
@@ -255,6 +300,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Downloadcuesheet {
             get {
                 return ResourceManager.GetString("Downloadcuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download export file ähnelt.
+        /// </summary>
+        public static string DownloadExport {
+            get {
+                return ResourceManager.GetString("DownloadExport", resourceCulture);
             }
         }
         
@@ -295,6 +349,60 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of footer here ähnelt.
+        /// </summary>
+        public static string EnterExportSchemeFooterHere {
+            get {
+                return ResourceManager.GetString("EnterExportSchemeFooterHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of footer here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %. ähnelt.
+        /// </summary>
+        public static string EnterExportSchemeFooterHereTooltip {
+            get {
+                return ResourceManager.GetString("EnterExportSchemeFooterHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of header here ähnelt.
+        /// </summary>
+        public static string EnterExportSchemeHeadHere {
+            get {
+                return ResourceManager.GetString("EnterExportSchemeHeadHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of header here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %. ähnelt.
+        /// </summary>
+        public static string EnterExportSchemeHeadHereTooltip {
+            get {
+                return ResourceManager.GetString("EnterExportSchemeHeadHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of tracks here ähnelt.
+        /// </summary>
+        public static string EnterExportSchemeTrackHere {
+            get {
+                return ResourceManager.GetString("EnterExportSchemeTrackHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of tracks here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %. ähnelt.
+        /// </summary>
+        public static string EnterExportSchemeTrackHereTooltip {
+            get {
+                return ResourceManager.GetString("EnterExportSchemeTrackHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here ähnelt.
         /// </summary>
         public static string EnterTextImportSchemeHere {
@@ -327,6 +435,96 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Errors {
             get {
                 return ResourceManager.GetString("Errors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Filename ähnelt.
+        /// </summary>
+        public static string ExportProfileFilename {
+            get {
+                return ResourceManager.GetString("ExportProfileFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export profile is not exportable. Please check the validation errors and fix them in order to download the export. ähnelt.
+        /// </summary>
+        public static string ExportProfileIsNotExportable {
+            get {
+                return ResourceManager.GetString("ExportProfileIsNotExportable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Name ähnelt.
+        /// </summary>
+        public static string ExportProfileName {
+            get {
+                return ResourceManager.GetString("ExportProfileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export Profiles ähnelt.
+        /// </summary>
+        public static string ExportProfiles {
+            get {
+                return ResourceManager.GetString("ExportProfiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Scheme footer ähnelt.
+        /// </summary>
+        public static string ExportProfileSchemeFooter {
+            get {
+                return ResourceManager.GetString("ExportProfileSchemeFooter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export profile footer scheme validation errors ähnelt.
+        /// </summary>
+        public static string ExportProfileSchemeFooterValidationErrors {
+            get {
+                return ResourceManager.GetString("ExportProfileSchemeFooterValidationErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Scheme header ähnelt.
+        /// </summary>
+        public static string ExportProfileSchemeHead {
+            get {
+                return ResourceManager.GetString("ExportProfileSchemeHead", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export profile head scheme validation errors ähnelt.
+        /// </summary>
+        public static string ExportProfileSchemeHeadValidationErrors {
+            get {
+                return ResourceManager.GetString("ExportProfileSchemeHeadValidationErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Scheme tracks ähnelt.
+        /// </summary>
+        public static string ExportProfileSchemeTrack {
+            get {
+                return ResourceManager.GetString("ExportProfileSchemeTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export profile track scheme validation errors ähnelt.
+        /// </summary>
+        public static string ExportProfileSchemeTrackValidationErrors {
+            get {
+                return ResourceManager.GetString("ExportProfileSchemeTrackValidationErrors", resourceCulture);
             }
         }
         
@@ -439,6 +637,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Display Export Profiles ähnelt.
+        /// </summary>
+        public static string OpenExportProfilesDialog {
+            get {
+                return ResourceManager.GetString("OpenExportProfilesDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please check processing hints for errors. Otherwise the file is not exportable. ähnelt.
         /// </summary>
         public static string PleaseCheckProcessingHints {
@@ -471,6 +678,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ResetCuesheet {
             get {
                 return ResourceManager.GetString("ResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Scheme contains placeholder that can not be resolved! ähnelt.
+        /// </summary>
+        public static string SchemeContainsPlaceholdersThatCanNotBeSolved {
+            get {
+                return ResourceManager.GetString("SchemeContainsPlaceholdersThatCanNotBeSolved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select export profile ähnelt.
+        /// </summary>
+        public static string SelectExportProfile {
+            get {
+                return ResourceManager.GetString("SelectExportProfile", resourceCulture);
             }
         }
         

@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public interface ITrack
+    public interface ITrack : ICuesheetEntity
     {
         public uint? Position { get; set; }
         public String Artist { get; set; }

@@ -277,14 +277,23 @@ along with Foobar.  If not, see
                         </Blazorise.Link>
                     </CollapseHeader>
                     <CollapseBody>
-                        @if (cuesheet.CanWriteCuesheetFile == true)
-                        {
-                            <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
-                        }
-                        else
-                        {
-                            <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PleaseCheckProcessingHints"]">@localizer["Downloadcuesheet"]</button> 
-                        }
+                        <div class="form-group row">
+                            @if (cuesheet.CanWriteCuesheetFile == true)
+                            {
+                                <div class="col-2">
+                                    <button Class="btn btn-primary" @onclick="DownloadCuesheetFileClicked">@localizer["Downloadcuesheet"]</button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-2">
+                                    <button Class="btn btn-primary disabled" @onclick="DownloadCuesheetFileClicked" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PleaseCheckProcessingHints"]">@localizer["Downloadcuesheet"]</button>
+                                </div>
+                                }
+                                <div class="col-2">
+                                    <button class="btn btn-secondary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</button>
+                                </div>
+                            </div>
                     </CollapseBody>
                 </Collapse>
             </Accordion>
@@ -386,7 +395,198 @@ along with Foobar.  If not, see
     </ModalContent>
 </Modal>
 
+<Modal @ref="modalExportProfiles">
+    <ModalBackdrop />
+    <ModalContent IsCentered="true">
+        <ModalHeader>
+            <ModalTitle>
+                @localizer["ExportProfiles"]
+            </ModalTitle>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ModalExportProfilesCloseClicked">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </ModalHeader>
+        <ModalBody>
+            <Field Horizontal="true" JustifyContent="JustifyContent.End">
+                <FieldLabel ColumnSize="ColumnSize.Is2">@localizer["SelectExportProfile"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10">
+                    <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
+                </FieldBody>
+            </Field>
+            <button class="btn btn-primary" @onclick="OnAddNewExportProfileClicked">@localizer["AddNewExportProfile"]</button>
+            <button class="btn btn-danger" @onclick="OnDeleteExportProfileClicked">@localizer["DeleteExportProfile"]</button>
+            <hr />
+            @if (SelectedExportProfile != null)
+            {
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="exportProfileNameLabel">@localizer["ExportProfileName"]</span>
+                    </div>
+                    <input class="form-control" aria-describedby="exportProfileFilenameLabel" @bind="SelectedExportProfile.Name" />
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="exportProfileFilenameLabel">@localizer["ExportProfileFilename"]</span>
+                    </div>
+                    <input class="form-control" aria-describedby="exportProfileFilenameLabel" @bind="SelectedExportProfile.FileName" />
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="exportProfileSchemeHeadLabel">@localizer["ExportProfileSchemeHead"]</span>
+                    </div>
+                    <input class="form-control" aria-describedby="exportProfileSchemeHeadLabel" @bind="SelectedExportProfile.SchemeHead.Scheme" placeholder="@localizer["EnterExportSchemeHeadHere"]" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]" />
+                    <div class="input-group-append">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                @localizer["AddPlaceholderToExportSchemeHead"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
+                                {
+                                    <DropdownItem @onclick="() => SelectedExportProfile.SchemeHead.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </div>
+                @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeHead.IsValid == false))
+                {
+                    <h5>@localizer["ExportProfileSchemeHeadValidationErrors"]</h5>
+                    @if (SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly).Count > 0)
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            @foreach (var validationError in SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly))
+                            {
+                                <p>@validationError.Message</p>
+                            }
+                        </div>
+                    }
+                    @if (SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly).Count > 0)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @foreach (var validationError in SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly))
+                            {
+                                <p>@validationError.Message</p>
+                            }
+                        </div>
+                    }
+                }
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="exportProfileSchemeTrackLabel">@localizer["ExportProfileSchemeTrack"]</span>
+                    </div>
+                    <input class="form-control" aria-describedby="exportProfileSchemeTrackLabel" @bind="SelectedExportProfile.SchemeTracks.Scheme" placeholder="@localizer["EnterExportSchemeTrackHere"]" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeTrackHereTooltip"]" />
+                    <div class="input-group-append">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                @localizer["AddPlaceholderToExportSchemeTrack"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                @foreach (var availableScheme in ExportScheme.AvailableTrackSchemes)
+                                {
+                                    <DropdownItem @onclick="() => SelectedExportProfile.SchemeTracks.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </div>
+                @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeTracks.IsValid == false))
+                {
+                    <h5>@localizer["ExportProfileSchemeTrackValidationErrors"]</h5>
+                    @if (SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly).Count > 0)
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            @foreach (var validationError in SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly))
+                            {
+                                <p>@validationError.Message</p>
+                            }
+                        </div>
+                    }
+                    @if (SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly).Count > 0)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @foreach (var validationError in SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly))
+                            {
+                                <p>@validationError.Message</p>
+                            }
+                        </div>
+                    }
+                }
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="exportProfileSchemeFooterLabel">@localizer["ExportProfileSchemeFooter"]</span>
+                    </div>
+                    <input class="form-control" aria-describedby="exportProfileSchemeFooterLabel" @bind="SelectedExportProfile.SchemeFooter.Scheme" placeholder="@localizer["EnterExportSchemeFooterHere"]" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeFooterHereTooltip"]" />
+                    <div class="input-group-append">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                @localizer["AddPlaceholderToExportSchemeFooter"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
+                                {
+                                    <DropdownItem @onclick="() => SelectedExportProfile.SchemeFooter.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </div>
+                @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeFooter.IsValid == false))
+                {
+                    <h5>@localizer["ExportProfileSchemeFooterValidationErrors"]</h5>
+                    @if (SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly).Count > 0)
+                    {
+                        <div class="alert alert-warning" role="alert">
+                            @foreach (var validationError in SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly))
+                            {
+                                <p>@validationError.Message</p>
+                            }
+                        </div>
+                    }
+                    @if (SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly).Count > 0)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @foreach (var validationError in SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly))
+                            {
+                                <p>@validationError.Message</p>
+                            }
+                        </div>
+                    }
+                }
+            }
+        </ModalBody>
+        <ModalFooter>
+            @if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
+            {
+                <button class="btn btn-primary" data-dismiss="modal" @onclick="OnDownloadExportProfileClicked">@localizer["DownloadExport"]</button>
+            }
+            else
+            {
+                <button class="btn btn-primary disabled" disabled data-dismiss="modal" data-toggle="tooltip" data-placement="top" title="@localizer["ExportProfileIsNotExportable"]">@localizer["DownloadExport"]</button>
+            }
+            <button class="btn btn-secondary" data-dismiss="modal" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
 @code {
+
+    public class SelectExportProfileModel
+    {
+        public Guid Id { get; private set; }
+        public ExportProfile ExportProfile { get; set; }
+
+        public SelectExportProfileModel(ExportProfile exportProfile)
+        {
+            if (exportProfile == null)
+            {
+                throw new ArgumentNullException(nameof(exportProfile));
+            }
+            Id = Guid.NewGuid();
+            ExportProfile = exportProfile;
+        }
+    }
+
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetOptionalInfoVisible = false;
     private Boolean cuesheetTracksVisible = true;
@@ -410,9 +610,13 @@ along with Foobar.  If not, see
     private Cuesheet cuesheet;
     private TextImportFile textImportFile;
 
+    private IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
+    private Guid selectedExportProfileId;
+
     private ModalConfirmDialog modalConfirmDialog;
 
     private Modal modalTextImport;
+    private Modal modalExportProfiles;
 
     protected override Task OnInitializedAsync()
     {
@@ -428,6 +632,28 @@ along with Foobar.  If not, see
 
         var dotNetReference = DotNetObjectReference.Create(this);
         JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
+
+        if (exportProfileModels == null)
+        {
+            var list = new List<SelectExportProfileModel>();
+            //TODO: Make this saveable
+            var exportProfile = new ExportProfile(localizer);
+            exportProfile.FileName = "Export.csv";
+            exportProfile.Name = "CSV Export";
+            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
+            exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
+            exportProfile.SchemeFooter.Scheme = String.Empty;
+            list.Add(new SelectExportProfileModel(exportProfile));
+            exportProfile = new ExportProfile(localizer);
+            exportProfile.FileName = "Tracks.txt";
+            exportProfile.Name = "Tracks only";
+            exportProfile.SchemeHead.Scheme = String.Empty;
+            exportProfile.SchemeTracks.Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%";
+            exportProfile.SchemeFooter.Scheme = String.Empty;
+            list.Add(new SelectExportProfileModel(exportProfile));
+            exportProfileModels = list.AsReadOnly();
+            selectedExportProfileId = exportProfileModels.First().Id;
+        }
 
         return base.OnInitializedAsync();
     }
@@ -605,6 +831,60 @@ along with Foobar.  If not, see
             };
             modalConfirmDialog.Confirmed += importCuesheetDelegate;
             modalConfirmDialog.ShowModal();
+        }
+    }
+
+    private void ModalExportProfilesCloseClicked()
+    {
+        modalExportProfiles.Hide();
+    }
+
+    private void SelectedExportProfileChanged(Guid newValue)
+    {
+        selectedExportProfileId = newValue;
+        StateHasChanged();
+    }
+
+    private ExportProfile SelectedExportProfile
+    {
+        get
+        {
+            if ((exportProfileModels != null) && (selectedExportProfileId != Guid.Empty))
+            {
+                var exportProfile = exportProfileModels.FirstOrDefault(x => x.Id == selectedExportProfileId);
+                if (exportProfile != null) 
+                {
+                    return exportProfile.ExportProfile;
+                }
+            }
+            return null;
+        }
+    }
+
+    private void OnDownloadExportProfileClicked()
+    {
+        if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
+        {
+            BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
+        }
+    }
+
+    private void OnAddNewExportProfileClicked()
+    {
+        var list = exportProfileModels.ToList();
+        list.Add(new SelectExportProfileModel(new ExportProfile(localizer)));
+        exportProfileModels = list.AsReadOnly();
+        selectedExportProfileId = list.Last().Id;
+    }
+
+    private void OnDeleteExportProfileClicked()
+    {
+        var list = exportProfileModels.ToList();
+        list.RemoveAll(x => x.Id == selectedExportProfileId);
+        exportProfileModels = list.AsReadOnly();
+        if (exportProfileModels.Count > 0)
+        {
+            selectedExportProfileId = exportProfileModels.First().Id;
         }
     }
 }
