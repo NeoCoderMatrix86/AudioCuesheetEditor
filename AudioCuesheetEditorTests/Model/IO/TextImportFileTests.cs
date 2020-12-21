@@ -134,6 +134,38 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.AreEqual(textImportFile.Tracks.ToArray()[0].Title, "Sample Title 1");
             Assert.AreEqual(textImportFile.Tracks.ToArray()[0].End, new TimeSpan(0, 5, 0));
 
+            File.Delete(tempFile);
+
+            //Prepare next test
+
+            //Prepare text input file
+            builder = new StringBuilder();
+            builder.AppendLine("Sample Artist 1 - Sample Title 1				00:05:00");
+            builder.AppendLine("Sample Artist 2 - Sample Title 2				00:09:23");
+            builder.AppendLine("Sample Artist 3 - Sample Title 3				00:15:54");
+            builder.AppendLine("Sample Artist 4 - Sample Title 4				00:20:13");
+            builder.AppendLine("Sample Artist 5 - Sample Title 5				00:24:54");
+            builder.AppendLine("Sample Artist 6 - Sample Title 6				00:31:54");
+            builder.AppendLine("Sample Artist 7 - Sample Title 7				00:45:54");
+            builder.AppendLine("Sample Artist 8 - Sample Title 8				01:15:54");
+            builder.AppendLine("Sample Artist 9 - Sample Title 9");
+
+            tempFile = Path.GetTempFileName();
+            File.WriteAllText(tempFile, builder.ToString());
+
+            //Test TextImportFile
+            textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)))
+            {
+                ImportScheme = "%Artist% - %Title%[\t]{1,}%End%"
+            };
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsTrue(textImportFile.Tracks.Count == 9);
+            Assert.AreEqual(textImportFile.Tracks.ToArray()[0].Artist, "Sample Artist 1");
+            Assert.AreEqual(textImportFile.Tracks.ToArray()[0].Title, "Sample Title 1");
+            Assert.AreEqual(textImportFile.Tracks.ToArray()[7].End, new TimeSpan(1, 15, 54));
+
+            File.Delete(tempFile);
+
         }
     }
 }
