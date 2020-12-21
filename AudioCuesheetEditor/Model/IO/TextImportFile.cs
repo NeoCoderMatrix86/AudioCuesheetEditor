@@ -115,53 +115,56 @@ namespace AudioCuesheetEditor.Model.IO
                         foreach (var regexRelation in regices)
                         {
                             var match = regexRelation.Value.Match(line);
-                            var propertyValueBefore = line.Substring(index, match.Index - index);
-                            var propertyBefore = track.GetType().GetProperty(regexRelation.Key.Item1, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                            var propertyValueAfter = line.Substring(match.Index + match.Length);
-                            var propertyAfter = track.GetType().GetProperty(regexRelation.Key.Item2, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                            //Check if other regices might match the value after
-                            Boolean otherMatchRegEx = false;
-                            var elementIndex = regices.ToList().IndexOf(regexRelation);
-                            for (int i = elementIndex; i < regices.Count; i++)
+                            if (match.Success == true)
                             {
-                                var nextRegExRelation = regices.ElementAt(i);
-                                if (nextRegExRelation.Value.IsMatch(propertyValueAfter) == true)
+                                var propertyValueBefore = line.Substring(index, match.Index - index);
+                                var propertyBefore = track.GetType().GetProperty(regexRelation.Key.Item1, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                                var propertyValueAfter = line.Substring(match.Index + match.Length);
+                                var propertyAfter = track.GetType().GetProperty(regexRelation.Key.Item2, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                                //Check if other regices might match the value after
+                                Boolean otherMatchRegEx = false;
+                                var elementIndex = regices.ToList().IndexOf(regexRelation);
+                                for (int i = elementIndex; i < regices.Count; i++)
                                 {
-                                    otherMatchRegEx = true;
-                                    i = regices.Count;
+                                    var nextRegExRelation = regices.ElementAt(i);
+                                    if (nextRegExRelation.Value.IsMatch(propertyValueAfter) == true)
+                                    {
+                                        otherMatchRegEx = true;
+                                        i = regices.Count;
+                                    }
                                 }
-                            }
 
-                            if (propertyBefore.PropertyType == typeof(TimeSpan?))
-                            {
-                                //TODO: Format
-                                propertyBefore.SetValue(track, TimeSpan.Parse(propertyValueBefore));
-                            }
-                            if (propertyBefore.PropertyType == typeof(uint?))
-                            {
-                                propertyBefore.SetValue(track, Convert.ToUInt32(propertyValueBefore));
-                            }
-                            if (propertyBefore.PropertyType == typeof(String))
-                            {
-                                propertyBefore.SetValue(track, propertyValueBefore);
-                            }
-                            if (otherMatchRegEx == false)
-                            {
-                                if (propertyAfter.PropertyType == typeof(TimeSpan?))
+                                if (propertyBefore.PropertyType == typeof(TimeSpan?))
                                 {
                                     //TODO: Format
-                                    propertyAfter.SetValue(track, TimeSpan.Parse(propertyValueAfter));
+                                    propertyBefore.SetValue(track, TimeSpan.Parse(propertyValueBefore));
                                 }
-                                if (propertyAfter.PropertyType == typeof(uint?))
+                                if (propertyBefore.PropertyType == typeof(uint?))
                                 {
-                                    propertyAfter.SetValue(track, Convert.ToUInt32(propertyValueAfter));
+                                    propertyBefore.SetValue(track, Convert.ToUInt32(propertyValueBefore));
                                 }
-                                if (propertyAfter.PropertyType == typeof(String))
+                                if (propertyBefore.PropertyType == typeof(String))
                                 {
-                                    propertyAfter.SetValue(track, propertyValueAfter);
+                                    propertyBefore.SetValue(track, propertyValueBefore);
                                 }
+                                if (otherMatchRegEx == false)
+                                {
+                                    if (propertyAfter.PropertyType == typeof(TimeSpan?))
+                                    {
+                                        //TODO: Format
+                                        propertyAfter.SetValue(track, TimeSpan.Parse(propertyValueAfter));
+                                    }
+                                    if (propertyAfter.PropertyType == typeof(uint?))
+                                    {
+                                        propertyAfter.SetValue(track, Convert.ToUInt32(propertyValueAfter));
+                                    }
+                                    if (propertyAfter.PropertyType == typeof(String))
+                                    {
+                                        propertyAfter.SetValue(track, propertyValueAfter);
+                                    }
+                                }
+                                index = match.Index + match.Length;
                             }
-                            index = match.Index + match.Length;
                         }
                         tracks.Add(track);
                     }
