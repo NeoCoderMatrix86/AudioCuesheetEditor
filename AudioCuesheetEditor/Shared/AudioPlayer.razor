@@ -1,0 +1,266 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inject IStringLocalizer<Localization> localizer
+@inject IHowl Howl
+@inject IHowlGlobal HowlGlobal
+
+<Card>
+    <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
+    <CardBody>
+        <div class="row">
+            <div class="col-1">
+                @CurrentPlaybackPosition
+            </div>
+            <div class="col-10">
+                <!--TODO: Change to Timespan when Blazorise supports this (https://github.com/stsrki/Blazorise/issues/1636) -->
+                <Slider TValue="double" Min="0.0" Max="100.0" ValueChanged="OnSliderValueChanged" Value="CurrentSliderValue"></Slider>
+            </div>
+            <div class="col-1">
+                @Howl.TotalTime
+            </div>
+        </div>
+        <div class="row">
+            @if (PlaybackPossible == true)
+            {
+                <div class="col-1">
+                    @if (AudioIsPlaying == true)
+                    {
+                        <button class="btn btn-primary oi oi-media-pause" @onclick="() => Howl.Pause(soundId)"></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary oi oi-media-play" @onclick="OnPlayClicked"></button>
+                    }
+                </div>
+                <div>
+                    @if (PreviousButtonEnabled == true)
+                    {
+                        <button class="btn btn-secondary oi oi-media-step-backward" @onclick="() => OnPlayNextPreviousTrackClicked(true)" data-toggle="tooltip" data-placement="top" title="@localizer["PlayPreviousTrackTooltip"]"></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary oi oi-media-step-backward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayPreviousTrackTooltip"]"></button>
+                    }
+                    <button class="btn btn-primary oi oi-media-stop" @onclick="() => Howl.Stop()"></button>
+                    @if (NextButtonEnabled == true)
+                    {
+                        <button class="btn btn-secondary oi oi-media-step-forward" @onclick="() => OnPlayNextPreviousTrackClicked()" data-toggle="tooltip" data-placement="top" title="@localizer["PlayNextTrackTooltip"]"></button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-secondary oi oi-media-step-forward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayNextTrackTooltip"]"></button>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="col-1">
+                    <button class="btn btn-primary oi oi-media-play disabled" disabled></button>
+                </div>
+                <div>
+                    <button class="btn btn-secondary oi oi-media-step-backward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayPreviousTrackTooltip"]"></button>
+                    <button class="btn btn-primary oi oi-media-stop disabled" disabled></button>
+                    <button class="btn btn-secondary oi oi-media-step-forward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayNextTrackTooltip"]"></button>
+                </div>
+            }
+        </div>
+    </CardBody>
+</Card>
+
+@code {
+
+    [Parameter]
+    //TODO: Attach to set and load the playback directly to get total time
+    public String AudioFileObjectURL { get; set; }
+    [Parameter]
+    public Cuesheet Cuesheet { get; set; }
+    [Parameter]
+    public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
+
+    private Timer audioUpdateTimer;
+    public TimeSpan CurrentPlaybackPosition { get; private set; }
+    public Boolean AudioIsPlaying { get; private set; }
+    private int? soundId;
+    private Track currentlyPlayingTrack;
+
+    public Boolean PlaybackPossible
+    {
+        get { return ((String.IsNullOrEmpty(AudioFileObjectURL) == false) && (Cuesheet != null) && (Cuesheet.AudioFile != null) && (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == false)); }
+    }
+
+    public Boolean PreviousButtonEnabled
+    {
+        get
+        {
+            Boolean enabled = false;
+            if (CurrentlyPlayingTrack != null)
+            {
+                var index = Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                if (index >= 1)
+                {
+                    enabled = true;
+                }
+            }
+            return enabled;
+        }
+    }
+
+    public Boolean NextButtonEnabled
+    {
+        get
+        {
+            Boolean enabled = false;
+            if (CurrentlyPlayingTrack != null)
+            {
+                var index = Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                if (index < (Cuesheet.Tracks.Count - 1))
+                {
+                    enabled = true;
+                }
+            }
+            return enabled;
+        }
+    }
+
+    public Track CurrentlyPlayingTrack
+    {
+        get { return currentlyPlayingTrack; }
+        private set
+        {
+            currentlyPlayingTrack = value;
+            CurrentlyPlayingTrackChanged.InvokeAsync(CurrentlyPlayingTrack);
+        }
+    }
+
+    protected Double CurrentSliderValue
+    {
+        get
+        {
+            Double sliderValue = 0.0;
+            if (Howl.TotalTime != TimeSpan.Zero)
+            {
+                sliderValue = (CurrentPlaybackPosition / Howl.TotalTime) * 100.0;
+            }
+            return sliderValue;
+        }
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        //Setup audio timer
+        audioUpdateTimer = new Timer(500);
+        audioUpdateTimer.AutoReset = true;
+        audioUpdateTimer.Elapsed += async delegate
+        {
+            AudioIsPlaying = await Howl.IsPlaying();
+            if (AudioIsPlaying == true)
+            {
+                CurrentPlaybackPosition = await Howl.GetCurrentTime();
+            }
+            else
+            {
+                CurrentPlaybackPosition = TimeSpan.Zero;
+            }
+            if (Cuesheet != null)
+            {
+                CurrentlyPlayingTrack = Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition && x.End.Value > CurrentPlaybackPosition);
+            }
+            StateHasChanged();
+        };
+
+        Howl.OnPlay += e =>
+        {
+            audioUpdateTimer.Start();
+        };
+
+        Howl.OnStop += e =>
+        {
+            audioUpdateTimer.Stop();
+            CurrentPlaybackPosition = TimeSpan.Zero;
+            AudioIsPlaying = false;
+            soundId = null;
+            StateHasChanged();
+        };
+
+        return base.OnInitializedAsync();
+    }
+
+    private void OnSliderValueChanged(Double newvalue)
+    {
+        var newPosition = newvalue * Howl.TotalTime / 100.0;
+        Howl.Seek(newPosition);
+    }
+
+    private async Task OnPlayClicked()
+    {
+        if (soundId != null)
+        {
+            await Howl.Pause(soundId);
+        }
+        else
+        {
+            if (String.IsNullOrEmpty(AudioFileObjectURL) == true)
+            {
+                throw new ArgumentNullException(nameof(AudioFileObjectURL));
+            }
+            if ((Cuesheet == null) || (Cuesheet.AudioFile == null) || (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == true))
+            {
+                throw new ArgumentNullException(nameof(Cuesheet.AudioFile.AudioFileType));
+            }
+            var options = new HowlOptions
+            {
+                Sources = new[] { AudioFileObjectURL },
+                Formats = new[] { Cuesheet.AudioFile.AudioFileType.ToLower() },
+                Html5 = true
+            };
+            soundId = await Howl.Play(options);
+        }
+    }
+
+    public async Task OnPlayTrackClicked(Track trackToPlay)
+    {
+        if ((trackToPlay != null) && (trackToPlay.Begin != null))
+        {
+            if (AudioIsPlaying == false)
+            {
+                await OnPlayClicked();
+            }
+            await Howl.Seek(trackToPlay.Begin.Value);
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnPlayNextPreviousTrackClicked(Boolean previous = false)
+    {
+        if (CurrentlyPlayingTrack != null)
+        {
+            var index = Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+            Track trackToPlay = null;
+            if (previous == false)
+            {
+                trackToPlay = Cuesheet.Tracks.ElementAtOrDefault(index + 1);
+            }
+            else
+            {
+                trackToPlay = Cuesheet.Tracks.ElementAtOrDefault(index - 1);
+            }
+            await OnPlayTrackClicked(trackToPlay);
+        }
+    }
+}

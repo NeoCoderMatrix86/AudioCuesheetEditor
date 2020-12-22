@@ -4,6 +4,7 @@ using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
+using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,6 +33,9 @@ namespace AudioCuesheetEditor
             })
             .AddBootstrapProviders()
             .AddFontAwesomeIcons();
+
+            builder.Services.AddScoped<IHowl, Howl>();
+            builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
             builder.Services.AddBlazorDownloadFile();
 
