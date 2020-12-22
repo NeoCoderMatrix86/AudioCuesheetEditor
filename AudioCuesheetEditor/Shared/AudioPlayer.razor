@@ -98,6 +98,10 @@ along with Foobar.  If not, see
 
 @code {
 
+    private Timer audioUpdateTimer;
+    private int? soundId;
+    private Track currentlyPlayingTrack;
+
     [Parameter]
     //TODO: Attach to set and load the playback directly to get total time
     public String AudioFileObjectURL { get; set; }
@@ -106,12 +110,9 @@ along with Foobar.  If not, see
     [Parameter]
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
 
-    private Timer audioUpdateTimer;
     public TimeSpan? CurrentPlaybackPosition { get; private set; }
     public TimeSpan? TotalTime { get; private set; }
     public Boolean AudioIsPlaying { get; private set; }
-    private int? soundId;
-    private Track currentlyPlayingTrack;
 
     public Boolean PlaybackPossible
     {
