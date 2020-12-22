@@ -142,6 +142,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio player ähnelt.
+        /// </summary>
+        public static string AudioPlayer {
+            get {
+                return ResourceManager.GetString("AudioPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin ähnelt.
         /// </summary>
         public static string Begin {
@@ -255,6 +264,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string CultureSetting {
             get {
                 return ResourceManager.GetString("CultureSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die This track is played ähnelt.
+        /// </summary>
+        public static string CurrentTrackIsPlayed {
+            get {
+                return ResourceManager.GetString("CurrentTrackIsPlayed", resourceCulture);
             }
         }
         
@@ -646,6 +664,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Jump playback position to next track beginning ähnelt.
+        /// </summary>
+        public static string PlayNextTrackTooltip {
+            get {
+                return ResourceManager.GetString("PlayNextTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Jump playback position to previous track beginning ähnelt.
+        /// </summary>
+        public static string PlayPreviousTrackTooltip {
+            get {
+                return ResourceManager.GetString("PlayPreviousTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please check processing hints for errors. Otherwise the file is not exportable. ähnelt.
         /// </summary>
         public static string PleaseCheckProcessingHints {
@@ -696,6 +732,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string SelectExportProfile {
             get {
                 return ResourceManager.GetString("SelectExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start playing this track ähnelt.
+        /// </summary>
+        public static string StartPlaybackThisTrack {
+            get {
+                return ResourceManager.GetString("StartPlaybackThisTrack", resourceCulture);
             }
         }
         

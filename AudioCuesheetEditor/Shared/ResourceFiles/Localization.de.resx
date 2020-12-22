@@ -144,6 +144,9 @@
   <data name="Audiofile" xml:space="preserve">
     <value>Audio Datei</value>
   </data>
+  <data name="AudioPlayer" xml:space="preserve">
+    <value>Audio Player</value>
+  </data>
   <data name="Begin" xml:space="preserve">
     <value>Begin</value>
   </data>
@@ -182,6 +185,9 @@
   </data>
   <data name="CultureSetting" xml:space="preserve">
     <value>Kultureinstellung:</value>
+  </data>
+  <data name="CurrentTrackIsPlayed" xml:space="preserve">
+    <value>Dieser Track wird aktuell wiedergegeben</value>
   </data>
   <data name="Decline" xml:space="preserve">
     <value>Abbrechen</value>
@@ -312,6 +318,12 @@
   <data name="OpenExportProfilesDialog" xml:space="preserve">
     <value>Export Profile anzeigen</value>
   </data>
+  <data name="PlayNextTrackTooltip" xml:space="preserve">
+    <value>Wiedergabeposition auf Begin von nächstem Track setzen</value>
+  </data>
+  <data name="PlayPreviousTrackTooltip" xml:space="preserve">
+    <value>Wiedergabeposition auf Begin von vorherigen Track setzen</value>
+  </data>
   <data name="PleaseCheckProcessingHints" xml:space="preserve">
     <value>Bitte prüfen sie die Bearbeitungshinweise auf Fehler. Andernfalls ist Datei nicht exportierbar.</value>
   </data>
@@ -329,6 +341,9 @@
   </data>
   <data name="SelectExportProfile" xml:space="preserve">
     <value>Exportprofil auswählen</value>
+  </data>
+  <data name="StartPlaybackThisTrack" xml:space="preserve">
+    <value>Diesen Track wiedergeben</value>
   </data>
   <data name="StartTrackImport" xml:space="preserve">
     <value>Tracks importieren</value>
