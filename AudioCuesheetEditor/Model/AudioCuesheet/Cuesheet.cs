@@ -258,6 +258,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     trackEnd = track.End;
                     position++;
                 }
+                //TODO: Get last end from audio file end
             }
         }
     }

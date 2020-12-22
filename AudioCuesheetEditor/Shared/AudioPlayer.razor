@@ -25,13 +25,27 @@ along with Foobar.  If not, see
     <CardBody>
         <div class="row">
             <div class="col-1">
-                @CurrentPlaybackPosition
+                @if (CurrentPlaybackPosition != null)
+                {
+                    @CurrentPlaybackPosition
+                }
+                else
+                {
+                    <div>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</div>
+                }
             </div>
             <div class="col-10">
                 <Slider TValue="double" Min="0.0" Max="100.0" ValueChanged="OnSliderValueChanged" Value="CurrentSliderValue"></Slider>
             </div>
             <div class="col-1">
-                @Howl.TotalTime
+                @if(TotalTime != null)
+                {
+                    @TotalTime
+                }
+                else
+                {
+                    <div>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</div>
+                }
             </div>
         </div>
         <div class="row">
@@ -93,7 +107,8 @@ along with Foobar.  If not, see
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
 
     private Timer audioUpdateTimer;
-    public TimeSpan CurrentPlaybackPosition { get; private set; }
+    public TimeSpan? CurrentPlaybackPosition { get; private set; }
+    public TimeSpan? TotalTime { get; private set; }
     public Boolean AudioIsPlaying { get; private set; }
     private int? soundId;
     private Track currentlyPlayingTrack;
@@ -152,9 +167,9 @@ along with Foobar.  If not, see
         get
         {
             Double sliderValue = 0.0;
-            if (Howl.TotalTime != TimeSpan.Zero)
+            if ((TotalTime != null) && (CurrentPlaybackPosition != null))
             {
-                sliderValue = (CurrentPlaybackPosition / Howl.TotalTime) * 100.0;
+                sliderValue = (CurrentPlaybackPosition.Value / TotalTime.Value) * 100.0;
             }
             return sliderValue;
         }
@@ -171,14 +186,14 @@ along with Foobar.  If not, see
             if (AudioIsPlaying == true)
             {
                 CurrentPlaybackPosition = await Howl.GetCurrentTime();
-            }
-            else
-            {
-                CurrentPlaybackPosition = TimeSpan.Zero;
+                if (TotalTime == null)
+                {
+                    TotalTime = Howl.TotalTime;
+                }
             }
             if (Cuesheet != null)
             {
-                CurrentlyPlayingTrack = Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition && x.End.Value > CurrentPlaybackPosition);
+                CurrentlyPlayingTrack = Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition.Value && x.End.Value > CurrentPlaybackPosition.Value);
             }
             StateHasChanged();
         };
@@ -191,7 +206,8 @@ along with Foobar.  If not, see
         Howl.OnStop += e =>
         {
             audioUpdateTimer.Stop();
-            CurrentPlaybackPosition = TimeSpan.Zero;
+            CurrentPlaybackPosition = null;
+            TotalTime = null;
             AudioIsPlaying = false;
             soundId = null;
             StateHasChanged();
@@ -202,7 +218,7 @@ along with Foobar.  If not, see
 
     private void OnSliderValueChanged(Double newvalue)
     {
-        var newPosition = newvalue * Howl.TotalTime / 100.0;
+        var newPosition = newvalue * TotalTime.Value / 100.0;
         Howl.Seek(newPosition);
     }
 
