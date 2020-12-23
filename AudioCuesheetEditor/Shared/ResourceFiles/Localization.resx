@@ -201,6 +201,11 @@
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Delete this track</value>
   </data>
+  <data name="DescribeHowTheErrorOccured" xml:space="preserve">
+    <value>Please describe how the error occured:
+1.What were you trying to do?
+2.Does this error occure, if you try it again?</value>
+  </data>
   <data name="Downloadcuesheet" xml:space="preserve">
     <value>Download cuesheet file</value>
   </data>
@@ -246,8 +251,17 @@
   <data name="ErrorDuringTextImport" xml:space="preserve">
     <value>An error occured during text import</value>
   </data>
+  <data name="ErrorReport" xml:space="preserve">
+    <value>Error report</value>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Errors</value>
+  </data>
+  <data name="Exception" xml:space="preserve">
+    <value>Exception</value>
+  </data>
+  <data name="ExceptionOccuredPleaseFillErrorReport" xml:space="preserve">
+    <value>An internal exception has occured and the application has stopped working. Please fill out the error report and send it to the developer, so the Bug can get fixed.</value>
   </data>
   <data name="ExportProfileFilename" xml:space="preserve">
     <value>Filename</value>
@@ -315,6 +329,9 @@
   <data name="Notifications" xml:space="preserve">
     <value>Notifications</value>
   </data>
+  <data name="OnceYouSubmitTheErrorReport" xml:space="preserve">
+    <value>Once you submit the error report, you will get redirected to formspree.io. This is normal, since the error report will get send by them. Afterwards you can go back in browser history and use the application again. Thanks for your help!</value>
+  </data>
   <data name="OpenExportProfilesDialog" xml:space="preserve">
     <value>Display Export Profiles</value>
   </data>
@@ -342,6 +359,9 @@
   <data name="SelectExportProfile" xml:space="preserve">
     <value>Select export profile</value>
   </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
   <data name="StartPlaybackThisTrack" xml:space="preserve">
     <value>Start playing this track</value>
   </data>
@@ -368,5 +388,8 @@
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnings</value>
+  </data>
+  <data name="YourEmailAddress" xml:space="preserve">
+    <value>Your emailaddress (optional)</value>
   </data>
 </root>
