@@ -1,0 +1,70 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@page "/ErrorReport"
+@inject IStringLocalizer<Localization> localizer
+@inject IJSRuntime JSRuntime
+
+<h5>@localizer["ExceptionOccuredPleaseFillErrorReport"]</h5>
+
+<form action="https://formspree.io/f/mwkwwokw" method="POST">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="yourEmailAddressLabel">@localizer["YourEmailAddress"]</span>
+        </div>
+        <input type="text" class="form-control" name="_replyto" aria-label="YourEmailAddress" aria-describedby="yourEmailAddressLabel">
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="errorReportLabel">@localizer["ErrorReport"]</span>
+        </div>
+        <textarea rows="10" class="form-control" name="errorReport" aria-label="ErrorReport" aria-describedby="errorReportLabel">@DescribeHowTheErrorOccured</textarea>
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="exceptionLabel">@localizer["Exception"]</span>
+        </div>
+        <textarea rows="10" class="form-control disabled" disabled aria-label="Exception" aria-describedby="exceptionLabel" name="message" @bind="Exception"></textarea>
+    </div>
+
+    <p>@localizer["OnceYouSubmitTheErrorReport"]</p>
+
+    <button class="btn btn-primary" type="submit">@localizer["Send"]</button>
+</form>
+
+@code {
+    public static String Exception { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        //Reset browser history
+        JSRuntime.InvokeVoidAsync("removeBrowserHistoryEntry", null);
+        return base.OnInitializedAsync();
+    }
+
+    public MarkupString DescribeHowTheErrorOccured
+    {
+        get
+        {
+            MarkupString describeHowTheErrorOccured = (MarkupString)(localizer["DescribeHowTheErrorOccured"].Value.Replace(Environment.NewLine, "<br/>"));
+            return describeHowTheErrorOccured;
+        }
+    }
+}

@@ -201,6 +201,11 @@
   <data name="DeleteTrackTooltip" xml:space="preserve">
     <value>Diesen Track löschen</value>
   </data>
+  <data name="DescribeHowTheErrorOccured" xml:space="preserve">
+    <value>Bitte beschreiben Sie, wie der Fehler aufgetreten ist:
+1.Was haben Sie vor dem Fehler gemacht?
+2.Tritt der Fehler erneut auf, wenn Sie es nochmal versuchen?</value>
+  </data>
   <data name="Downloadcuesheet" xml:space="preserve">
     <value>Cuesheet herunterladen</value>
   </data>
@@ -246,8 +251,17 @@
   <data name="ErrorDuringTextImport" xml:space="preserve">
     <value>Ein Fehler ist während des Textimport aufgetreten</value>
   </data>
+  <data name="ErrorReport" xml:space="preserve">
+    <value>Fehlerbericht</value>
+  </data>
   <data name="Errors" xml:space="preserve">
     <value>Fehler</value>
+  </data>
+  <data name="Exception" xml:space="preserve">
+    <value>Ausnahme</value>
+  </data>
+  <data name="ExceptionOccuredPleaseFillErrorReport" xml:space="preserve">
+    <value>Es ist ein interner Fehler aufgetetreten und die Anwendung wurde gestoppt. Bitte füllen Sie den Fehlerbericht aus und senden Sie ihn an die Entwickler, damit der Fehler behoben werden kann.</value>
   </data>
   <data name="ExportProfileFilename" xml:space="preserve">
     <value>Dateiname</value>
@@ -315,6 +329,9 @@
   <data name="Notifications" xml:space="preserve">
     <value>Hinweise</value>
   </data>
+  <data name="OnceYouSubmitTheErrorReport" xml:space="preserve">
+    <value>Sobald Sie den Fehlerbericht abgesendet haben, werden die auf die Seite formspree.io weitergeleitet. Das ist normal, weil der Bericht dadurch versendet wird. Im Anschluss können Sie über die Browserhistorie wieder zurück gehen und die Applikation erneut benutzen. Vielen Dank für ihre Unterstützung!</value>
+  </data>
   <data name="OpenExportProfilesDialog" xml:space="preserve">
     <value>Export Profile anzeigen</value>
   </data>
@@ -342,6 +359,9 @@
   <data name="SelectExportProfile" xml:space="preserve">
     <value>Exportprofil auswählen</value>
   </data>
+  <data name="Send" xml:space="preserve">
+    <value>Abschicken</value>
+  </data>
   <data name="StartPlaybackThisTrack" xml:space="preserve">
     <value>Diesen Track wiedergeben</value>
   </data>
@@ -368,5 +388,8 @@
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnungen</value>
+  </data>
+  <data name="YourEmailAddress" xml:space="preserve">
+    <value>Ihre Emailaddresse (Optional)</value>
   </data>
 </root>

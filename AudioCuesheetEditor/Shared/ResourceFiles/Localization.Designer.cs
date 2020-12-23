@@ -313,6 +313,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please describe how the error occured:\\n1.What were you trying to do?\\n2.Does this error occure, if you try it again? ähnelt.
+        /// </summary>
+        public static string DescribeHowTheErrorOccured {
+            get {
+                return ResourceManager.GetString("DescribeHowTheErrorOccured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Download cuesheet file ähnelt.
         /// </summary>
         public static string Downloadcuesheet {
@@ -448,11 +457,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error report ähnelt.
+        /// </summary>
+        public static string ErrorReport {
+            get {
+                return ResourceManager.GetString("ErrorReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Errors ähnelt.
         /// </summary>
         public static string Errors {
             get {
                 return ResourceManager.GetString("Errors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Exception ähnelt.
+        /// </summary>
+        public static string Exception {
+            get {
+                return ResourceManager.GetString("Exception", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An internal exception has occured and the application has stopped working. Please fill out the error report and send it to the developer, so the Bug can get fixed. ähnelt.
+        /// </summary>
+        public static string ExceptionOccuredPleaseFillErrorReport {
+            get {
+                return ResourceManager.GetString("ExceptionOccuredPleaseFillErrorReport", resourceCulture);
             }
         }
         
@@ -655,6 +691,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Once you submit the error report, you will get redirected to formspree.io. This is normal, since the error report will get send by them. Afterwards you can go back in browser history and use the application again. Thanks for your help! ähnelt.
+        /// </summary>
+        public static string OnceYouSubmitTheErrorReport {
+            get {
+                return ResourceManager.GetString("OnceYouSubmitTheErrorReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Display Export Profiles ähnelt.
         /// </summary>
         public static string OpenExportProfilesDialog {
@@ -736,6 +781,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Send ähnelt.
+        /// </summary>
+        public static string Send {
+            get {
+                return ResourceManager.GetString("Send", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Start playing this track ähnelt.
         /// </summary>
         public static string StartPlaybackThisTrack {
@@ -813,6 +867,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Warnings {
             get {
                 return ResourceManager.GetString("Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Your emailaddress (optional) ähnelt.
+        /// </summary>
+        public static string YourEmailAddress {
+            get {
+                return ResourceManager.GetString("YourEmailAddress", resourceCulture);
             }
         }
     }
