@@ -14,10 +14,32 @@
 
     <script src="scripts/howler.core.min.js"></script>
     <script src="_content/Howler.Blazor/JsInteropHowl.js"></script>
+    <style>
+        .center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .container {
+            height: 100%;
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
-    <app>Loading...</app>
+    <app>
+        <div class="container">
+            <div class="center">
+                <img src="loading.gif" />
+            </div>
+            <div class="center">
+                <p>Loading application, please stand by ...</p>
+            </div>
+        </div>
+    </app>
 
     <noscript>Your browser does not support JavaScript! Without JavaScript this App can not run! Please make shure you open this App with a compatible browser.</noscript>
 
