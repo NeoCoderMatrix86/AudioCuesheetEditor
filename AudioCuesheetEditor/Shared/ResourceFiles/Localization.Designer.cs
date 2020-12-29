@@ -178,6 +178,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Change ähnelt.
+        /// </summary>
+        public static string Change {
+            get {
+                return ResourceManager.GetString("Change", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;strong&gt;Choose files&lt;/strong&gt;&lt;span&gt; or drag them here&lt;/span&gt; ähnelt.
+        /// </summary>
+        public static string ChooseFileOrDrag {
+            get {
+                return ResourceManager.GetString("ChooseFileOrDrag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
         /// </summary>
         public static string Close {
@@ -313,7 +331,9 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Please describe how the error occured:\\n1.What were you trying to do?\\n2.Does this error occure, if you try it again? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please describe how the error occured:
+        ///1.What were you trying to do?
+        ///2.Does this error occure, if you try it again? ähnelt.
         /// </summary>
         public static string DescribeHowTheErrorOccured {
             get {
@@ -336,6 +356,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string DownloadExport {
             get {
                 return ResourceManager.GetString("DownloadExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Drop input files here ähnelt.
+        /// </summary>
+        public static string DropFiles {
+            get {
+                return ResourceManager.GetString("DropFiles", resourceCulture);
             }
         }
         
@@ -646,6 +675,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid file ähnelt.
+        /// </summary>
+        public static string InvalidFile {
+            get {
+                return ResourceManager.GetString("InvalidFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Length ähnelt.
         /// </summary>
         public static string Length {
@@ -867,6 +905,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Warnings {
             get {
                 return ResourceManager.GetString("Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You selected or dropped a file (&quot;{0}&quot;) that can not be processed. Please select only valid files (Textfiles, Cuesheets, Audiofiles)! ähnelt.
+        /// </summary>
+        public static string YouDroppedAFileThatCanNotBeProcessed {
+            get {
+                return ResourceManager.GetString("YouDroppedAFileThatCanNotBeProcessed", resourceCulture);
             }
         }
         

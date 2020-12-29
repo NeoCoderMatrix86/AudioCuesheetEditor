@@ -156,6 +156,12 @@
   <data name="CDTitle" xml:space="preserve">
     <value>CD Titel</value>
   </data>
+  <data name="Change" xml:space="preserve">
+    <value>Ändern</value>
+  </data>
+  <data name="ChooseFileOrDrag" xml:space="preserve">
+    <value>&lt;strong&gt;Wählen Sie die Dateien&lt;/strong&gt;&lt;span&gt; oder ziehen Sie diese hier her&lt;/span&gt;</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Schließen</value>
   </data>
@@ -211,6 +217,9 @@
   </data>
   <data name="DownloadExport" xml:space="preserve">
     <value>Exportdatei herunterladen</value>
+  </data>
+  <data name="DropFiles" xml:space="preserve">
+    <value>Eingabedateien hier her ziehen</value>
   </data>
   <data name="End" xml:space="preserve">
     <value>Ende</value>
@@ -314,6 +323,9 @@
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import ist nicht möglich, weil der Textimport Fehler aufweist. Bitte prüfen Sie die Fehler!</value>
   </data>
+  <data name="InvalidFile" xml:space="preserve">
+    <value>Ungültige Datei</value>
+  </data>
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
   </data>
@@ -388,6 +400,9 @@
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnungen</value>
+  </data>
+  <data name="YouDroppedAFileThatCanNotBeProcessed" xml:space="preserve">
+    <value>Sie haben eine ungültige Datei selektiert ("{0}"), die nicht verarbeitet werden kann. Bitte wählen Sie nur gültige Dateien (Textimportdateien, Cuesheets, Audiodateien)!</value>
   </data>
   <data name="YourEmailAddress" xml:space="preserve">
     <value>Ihre Emailaddresse (Optional)</value>

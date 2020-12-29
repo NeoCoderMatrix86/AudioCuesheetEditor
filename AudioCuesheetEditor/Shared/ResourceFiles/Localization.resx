@@ -156,6 +156,12 @@
   <data name="CDTitle" xml:space="preserve">
     <value>CD title</value>
   </data>
+  <data name="Change" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="ChooseFileOrDrag" xml:space="preserve">
+    <value>&lt;strong&gt;Choose files&lt;/strong&gt;&lt;span&gt; or drag them here&lt;/span&gt;</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -211,6 +217,9 @@
   </data>
   <data name="DownloadExport" xml:space="preserve">
     <value>Download export file</value>
+  </data>
+  <data name="DropFiles" xml:space="preserve">
+    <value>Drop input files here</value>
   </data>
   <data name="End" xml:space="preserve">
     <value>End</value>
@@ -314,6 +323,9 @@
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import is not possible due to errors. Please check import errors!</value>
   </data>
+  <data name="InvalidFile" xml:space="preserve">
+    <value>Invalid file</value>
+  </data>
   <data name="Length" xml:space="preserve">
     <value>Length</value>
   </data>
@@ -388,6 +400,9 @@
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnings</value>
+  </data>
+  <data name="YouDroppedAFileThatCanNotBeProcessed" xml:space="preserve">
+    <value>You selected or dropped a file ("{0}") that can not be processed. Please select only valid files (Textfiles, Cuesheets, Audiofiles)!</value>
   </data>
   <data name="YourEmailAddress" xml:space="preserve">
     <value>Your emailaddress (optional)</value>

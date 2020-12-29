@@ -116,6 +116,7 @@ along with Foobar.  If not, see
 
     public Boolean PlaybackPossible
     {
+        //TODO: Also check for mime type of audio file
         get { return ((String.IsNullOrEmpty(AudioFileObjectURL) == false) && (Cuesheet != null) && (Cuesheet.AudioFile != null) && (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == false)); }
     }
 
