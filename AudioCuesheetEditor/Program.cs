@@ -31,8 +31,7 @@ namespace AudioCuesheetEditor
             {
                 options.ChangeTextOnKeyPress = true;
             })
-            .AddBootstrapProviders()
-            .AddFontAwesomeIcons();
+            .AddBootstrapProviders();
 
             builder.Services.AddScoped<IHowl, Howl>();
             builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();

@@ -20,9 +20,9 @@ along with Foobar.  If not, see
 @inject NavigationManager NavManager
 @inject IStringLocalizer<Localization> localizer
 
-<strong>@localizer["CultureSetting"]</strong>
+@localizer["CultureSetting"]
 
-<select class="form-control" @bind="Culture" style="width:300px; margin-left:10px;">
+<select class="form-control ml-1" @bind="Culture" style="width:150px; display:inherit;">
     @foreach (var culture in Cultures)
     {
         <option value="@culture">@culture.DisplayName</option>
