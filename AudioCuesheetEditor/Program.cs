@@ -3,7 +3,6 @@ using AudioCuesheetEditor.Extensions;
 using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap;
-using Blazorise.Icons.FontAwesome;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +40,7 @@ namespace AudioCuesheetEditor
             builder.Services.AddScoped<CuesheetController>();
 
             var host = builder.Build();
+            host.Services.UseBootstrapProviders();
 
             await host.SetDefaultCulture();
 

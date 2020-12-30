@@ -435,7 +435,7 @@ along with Foobar.  If not, see
             <ModalTitle>
                 @localizer["TextImportAssistance"]
             </ModalTitle>
-            <CloseButton @onclick="TextImportAbortClicked"><span aria-hidden="true">&times;</span></CloseButton>
+            <CloseButton @onclick="TextImportAbortClicked"/>
         </ModalHeader>
         <ModalBody>
             @if ((textImportFile != null) && (textImportFile.AnalyseException != null))
@@ -512,12 +512,12 @@ along with Foobar.  If not, see
 
 <Modal @ref="modalExportProfiles">
     <ModalBackdrop />
-    <ModalContent Centered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
                 @localizer["ExportProfiles"]
             </ModalTitle>
-            <CloseButton @onclick="ModalExportProfilesCloseClicked"><span aria-hidden="true">&times;</span></CloseButton>
+            <CloseButton @onclick="ModalExportProfilesCloseClicked"/>
         </ModalHeader>
         <ModalBody>
             <Field Horizontal="true" JustifyContent="JustifyContent.End">
@@ -1094,6 +1094,7 @@ along with Foobar.  If not, see
         modalConfirmDialog.ModalSize = ModalSize.Small;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
+            modalConfirmDialog.Confirmed -= restartApplicationDelegate;
             navigationManager.NavigateTo(navigationManager.Uri, true);
         };
         modalConfirmDialog.Confirmed += restartApplicationDelegate;
