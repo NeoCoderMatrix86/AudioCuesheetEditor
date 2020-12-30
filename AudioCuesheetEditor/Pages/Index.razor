@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                     </BarDropdownToggle>
                     <BarDropdownMenu>
                         <BarDropdownItem>
-                            <Tooltip Placement="Placement.Right" Text="@TooltipDownloadCuesheet">
+                            <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false,"PleaseCheckProcessingHints")">
                                 <Button Color="Color.Primary" @onclick="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
                             </Tooltip>
                         </BarDropdownItem>
@@ -430,14 +430,12 @@ along with Foobar.  If not, see
 
 <Modal @ref="modalTextImport">
     <ModalBackdrop />
-    <ModalContent IsCentered="true">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
                 @localizer["TextImportAssistance"]
             </ModalTitle>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="TextImportAbortClicked">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <CloseButton @onclick="TextImportAbortClicked"><span aria-hidden="true">&times;</span></CloseButton>
         </ModalHeader>
         <ModalBody>
             @if ((textImportFile != null) && (textImportFile.AnalyseException != null))
@@ -504,29 +502,22 @@ along with Foobar.  If not, see
             </div>
         </ModalBody>
         <ModalFooter>
-            @if ((textImportFile != null) && (textImportFile.AnalyseException == null))
-            {
-                <button class="btn btn-primary" @onclick="TextImportStartClicked">@localizer["StartTrackImport"]</button>
-            }
-            else
-            {
-                <button class="btn btn-primary disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["ImportNotPossible"]">@localizer["StartTrackImport"]</button>
-            }
-            <button class="btn btn-secondary" data-dismiss="modal" @onclick="TextImportAbortClicked">@localizer["Abort"]</button>
+            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "ImportNotPossible")">
+                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" @onclick="TextImportStartClicked">@localizer["StartTrackImport"]</Button>
+            </Tooltip>
+            <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 <Modal @ref="modalExportProfiles">
     <ModalBackdrop />
-    <ModalContent IsCentered="true">
+    <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>
                 @localizer["ExportProfiles"]
             </ModalTitle>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="ModalExportProfilesCloseClicked">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <CloseButton @onclick="ModalExportProfilesCloseClicked"><span aria-hidden="true">&times;</span></CloseButton>
         </ModalHeader>
         <ModalBody>
             <Field Horizontal="true" JustifyContent="JustifyContent.End">
@@ -678,15 +669,10 @@ along with Foobar.  If not, see
             }
         </ModalBody>
         <ModalFooter>
-            @if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
-            {
-                <button class="btn btn-primary" data-dismiss="modal" @onclick="OnDownloadExportProfileClicked">@localizer["DownloadExport"]</button>
-            }
-            else
-            {
-                <button class="btn btn-primary disabled" disabled data-dismiss="modal" data-toggle="tooltip" data-placement="top" title="@localizer["ExportProfileIsNotExportable"]">@localizer["DownloadExport"]</button>
-            }
-            <button class="btn btn-secondary" data-dismiss="modal" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</button>
+            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "ExportProfileIsNotExportable")">
+                <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" @onclick="OnDownloadExportProfileClicked">@localizer["DownloadExport"]</Button>
+            </Tooltip>
+            <Button Color="Color.Secondary" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -824,6 +810,7 @@ along with Foobar.  If not, see
         //Display a confirm warning
         modalConfirmDialog.Title = localizer["ConfirmRequired"];
         modalConfirmDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
+        modalConfirmDialog.ModalSize = ModalSize.Small;
         void deleteTracksDelegate(object sender, EventArgs args)
         {
             cuesheet.RemoveAllTracks();
@@ -839,6 +826,7 @@ along with Foobar.  If not, see
         //Display a confirm warning
         modalConfirmDialog.Title = localizer["ConfirmRequired"];
         modalConfirmDialog.Text = localizer["ConfirmResetCuesheet"];
+        modalConfirmDialog.ModalSize = ModalSize.Small;
         void newCuesheetDelegate(object sender, EventArgs args)
         {
             cuesheet = cuesheetController.NewCuesheet();
@@ -955,6 +943,7 @@ along with Foobar.  If not, see
             //Display a confirm warning
             modalConfirmDialog.Title = localizer["ConfirmRequired"];
             modalConfirmDialog.Text = localizer["ConfirmImportCuesheet"];
+            modalConfirmDialog.ModalSize = ModalSize.Small;
             void importCuesheetDelegate(object sender, EventArgs args)
             {
                 cuesheet = cuesheetController.Import(memoryStream);
@@ -1102,6 +1091,7 @@ along with Foobar.  If not, see
         //Display a confirm warning
         modalConfirmDialog.Title = localizer["ConfirmRequired"];
         modalConfirmDialog.Text = localizer["ConfirmRestartOfApplication"];
+        modalConfirmDialog.ModalSize = ModalSize.Small;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
             navigationManager.NavigateTo(navigationManager.Uri, true);
@@ -1110,16 +1100,15 @@ along with Foobar.  If not, see
         modalConfirmDialog.ShowModal();
     }
 
-    protected String TooltipDownloadCuesheet
+    private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
     {
-        get
+        if (expressionToCheck == true)
         {
-            String tooltip = null;
-            if (cuesheet.CanWriteCuesheetFile == false)
-            {
-                tooltip = localizer["PleaseCheckProcessingHints"];
-            }
-            return tooltip;
+            return localizer[localizedStringName];
+        }
+        else
+        {
+            return null;
         }
     }
 }
