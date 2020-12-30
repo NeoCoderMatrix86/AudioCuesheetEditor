@@ -250,6 +250,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please confirm, that you want to restart the whole application. All data will be lost if not saved before! ähnelt.
+        /// </summary>
+        public static string ConfirmRestartOfApplication {
+            get {
+                return ResourceManager.GetString("ConfirmRestartOfApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet data ähnelt.
         /// </summary>
         public static string CuesheetData {
@@ -792,11 +801,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
+        /// </summary>
+        public static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reset cuesheet ähnelt.
         /// </summary>
         public static string ResetCuesheet {
             get {
                 return ResourceManager.GetString("ResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restart complete application ähnelt.
+        /// </summary>
+        public static string RestartCompleteApplication {
+            get {
+                return ResourceManager.GetString("RestartCompleteApplication", resourceCulture);
             }
         }
         

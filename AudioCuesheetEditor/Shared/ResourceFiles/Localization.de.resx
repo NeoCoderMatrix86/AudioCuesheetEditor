@@ -180,6 +180,9 @@
   <data name="ConfirmResetCuesheet" xml:space="preserve">
     <value>Möchten Sie wirklich das Cuesheet zurücksetzen? Dies kann nicht rückgangig gemacht werden.</value>
   </data>
+  <data name="ConfirmRestartOfApplication" xml:space="preserve">
+    <value>Bitte Bestätigen Sie, dass die komplette Anwendung neugestartet werden soll. Alle ungespeicherten Änderungen werden dadurch verloren!</value>
+  </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet Daten</value>
   </data>
@@ -362,8 +365,14 @@
   <data name="ProcessingHints" xml:space="preserve">
     <value>Bearbeitungshinweise</value>
   </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Cuesheet zurücksetzen</value>
+  </data>
+  <data name="RestartCompleteApplication" xml:space="preserve">
+    <value>Komplette Anwendung neustarten</value>
   </data>
   <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
     <value>Schema enthält Platzhalter, die nicht aufgelöst werden können!</value>

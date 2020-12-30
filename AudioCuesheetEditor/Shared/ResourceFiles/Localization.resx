@@ -180,6 +180,9 @@
   <data name="ConfirmResetCuesheet" xml:space="preserve">
     <value>Do you really want to reset the cuesheet? This can not be reversed.</value>
   </data>
+  <data name="ConfirmRestartOfApplication" xml:space="preserve">
+    <value>Please confirm, that you want to restart the whole application. All data will be lost if not saved before!</value>
+  </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet data</value>
   </data>
@@ -362,8 +365,14 @@
   <data name="ProcessingHints" xml:space="preserve">
     <value>Processing hints</value>
   </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Reset cuesheet</value>
+  </data>
+  <data name="RestartCompleteApplication" xml:space="preserve">
+    <value>Restart complete application</value>
   </data>
   <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
     <value>Scheme contains placeholder that can not be resolved!</value>
