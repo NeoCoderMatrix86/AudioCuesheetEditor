@@ -124,34 +124,45 @@ along with Foobar.  If not, see
                             </Blazorise.Link>
                         </CollapseHeader>
                         <CollapseBody>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="cdArtistLabel">@localizer["CDArtist"]</span>
-                                </div>
-                                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" aria-label="CD Artist" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDartisthere"]" @bind="@cuesheet.Artist" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))">
-                            </div>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="cdTitleLabel">@localizer["CDTitle"]</span>
-                                </div>
-                                <input type="text" class="form-control @GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" aria-label="CD Title" aria-describedby="cdTitleLabel" placeholder="@localizer["EnterCDtitlehere"]" @bind="@cuesheet.Title" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))">
-                            </div>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="cdAudioFileLabel">@localizer["Audiofile"]</span>
-                                </div>
-                                @if (cuesheet.AudioFile == null)
-                                {
-                                    <input type="file" class="form-control @GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="audio/*" aria-label="Audiofile" aria-describedby="cdAudioFileLabel" placeholder="@localizer["Enteraudiofilehere"]" onchange="audioFileChanged('@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))')" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))">
-                                }
-                                else
-                                {
-                                    <input type="text" disabled class="form-control disabled" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))" value="@cuesheet.AudioFile.FileName">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" @onclick="OnChangeAudioFileClicked">@localizer["Change"]</button>
-                                    </div>
-                                }
-                            </div>
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDArtist"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@localizer["EnterCDartisthere"]" @bind-Text="cuesheet.Artist" ChangeTextOnKeyPress="false" />
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTitle"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@localizer["EnterCDtitlehere"]" @bind-Text="cuesheet.Title" ChangeTextOnKeyPress="false" />
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Audiofile"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        @if (cuesheet.AudioFile == null)
+                                        {
+                                            var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
+                                            <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="audio/*" OnChange="OnAudioFileChanged"></InputFile>
+                                        }
+                                        else
+                                        {
+                                            <Addons>
+                                                <Addon AddonType="AddonType.Body">
+                                                    <TextEdit Disabled="true" Text="@cuesheet.AudioFile.FileName" />
+                                                </Addon>
+                                                <Addon AddonType="AddonType.End">
+                                                    <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
+                                                </Addon>
+                                            </Addons>
+                                        }
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
                         </CollapseBody>
                     </Collapse>
                     <!--TODO: Optional Infos-->
@@ -301,7 +312,7 @@ along with Foobar.  If not, see
 
                 <br />
 
-                <AudioPlayer @ref="audioPlayer" AudioFileObjectURL="@audioFileObjectURL" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
+                <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
             </Column>
             <Column ColumnSize="ColumnSize.IsQuarter" Display="@DisplayProcessingHints">
                 <Card>
@@ -657,7 +668,6 @@ along with Foobar.  If not, see
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
 
-    private String audioFileObjectURL;
     private String invalidFileName;
 
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
@@ -793,21 +803,6 @@ along with Foobar.  If not, see
         var cuesheetFile = new CuesheetFile(cuesheet);
         var fileData = cuesheetFile.GenerateCuesheetFile();
         BlazorDownloadFileService.DownloadFile(CuesheetFile.DefaultFileName, fileData, "text/plain");
-    }
-
-    [JSInvokable()]
-    public void AudioFileChanged(String fileName, String objectURL)
-    {
-        if (String.IsNullOrEmpty(fileName) == false)
-        {
-            cuesheet.AudioFile = new AudioFile(fileName);
-        }
-        else
-        {
-            cuesheet.AudioFile = null;
-        }
-        audioFileObjectURL = objectURL;
-        StateHasChanged();
     }
 
     private String GetCSSClassAlert(Validateable validateable, String property)
@@ -985,7 +980,7 @@ along with Foobar.  If not, see
             if (file.ContentType.StartsWith("audio/") == true)
             {
                 recognized = true;
-                await JSRuntime.InvokeVoidAsync("audioFileChanged", "dropInputfiles");
+                await OnAudioFileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
             if (recognized == false)
             {
@@ -1007,7 +1002,7 @@ along with Foobar.  If not, see
                     case ".flac":
                     case ".wav":
                         recognized = true;
-                        await JSRuntime.InvokeVoidAsync("audioFileChanged", "dropInputfiles");
+                        await OnAudioFileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
                         break;
                     default:
                         invalidFileName = file.Name;
@@ -1082,5 +1077,18 @@ along with Foobar.  If not, see
             result = parsedTimeSpan;
         }
         setAction(result);
+    }
+
+    private async Task OnAudioFileChanged(InputFileChangeEventArgs e)
+    {
+        if (e.File != null)
+        {
+            var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
+            cuesheet.AudioFile = new AudioFile(e.File.Name, audioFileObjectURL, e.File.ContentType);
+        }
+        else
+        {
+            cuesheet.AudioFile = null;
+        }
     }
 }

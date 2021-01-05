@@ -6,7 +6,8 @@ GLOBAL.SetDotNetReference = function (dotNetReference) {
         GLOBAL.DotNetReference = dotNetReference;
     }
 };
-function audioFileChanged(domId) {
+
+function getObjectURL(domId) {
     if (audioFileObjectURL != null) {
         URL.revokeObjectURL(audioFileObjectURL);
     }
@@ -19,8 +20,8 @@ function audioFileChanged(domId) {
     }
     if (file != null) {
         audioFileObjectURL = URL.createObjectURL(file);
-        GLOBAL.DotNetReference.invokeMethodAsync("AudioFileChanged", file.name, audioFileObjectURL);
     }
+    return audioFileObjectURL;
 }
 
 function triggerClick(domId) {

@@ -23,11 +23,6 @@ namespace AudioCuesheetEditor.Model.IO
 {
     public class AudioFile
     {
-        public String FileName { get; private set; }
-        public String AudioFileType
-        {
-            get { return Path.GetExtension(FileName).Replace(".", "").ToUpper(); }
-        }
         public AudioFile(String fileName)
         {
             if (String.IsNullOrEmpty(fileName))
@@ -35,6 +30,40 @@ namespace AudioCuesheetEditor.Model.IO
                 throw new ArgumentNullException(nameof(fileName));
             }
             FileName = fileName;
+        }
+
+        public AudioFile(String fileName, String objectURL, String contentType) : this(fileName)
+        {
+            if (String.IsNullOrEmpty(objectURL))
+            {
+                throw new ArgumentNullException(nameof(objectURL));
+            }
+            if (String.IsNullOrEmpty(contentType))
+            {
+                throw new ArgumentNullException(nameof(contentType));
+            }
+            ObjectURL = objectURL;
+            ContentType = contentType;
+        }
+
+        public String FileName { get; private set; }
+        public String ObjectURL { get; private set; }
+        public String ContentType { get; private set; }
+        public String AudioFileType
+        {
+            get { return Path.GetExtension(FileName).Replace(".", "").ToUpper(); }
+        }
+        public Boolean PlaybackPossible
+        {
+            get
+            {
+                Boolean playbackPossible = false;
+                if ((String.IsNullOrEmpty(FileName) == false) && (String.IsNullOrEmpty(ObjectURL) == false) && (String.IsNullOrEmpty(AudioFileType) == false) && ((String.IsNullOrEmpty(ContentType) == true) || (ContentType.StartsWith("audio/"))))
+                {
+                    playbackPossible = true;
+                }
+                return playbackPossible;
+            }
         }
     }
 }

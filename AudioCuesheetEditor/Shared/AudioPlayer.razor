@@ -102,9 +102,7 @@ along with Foobar.  If not, see
     private int? soundId;
     private Track currentlyPlayingTrack;
 
-    [Parameter]
     //TODO: Attach to set and load the playback directly to get total time
-    public String AudioFileObjectURL { get; set; }
     [Parameter]
     public Cuesheet Cuesheet { get; set; }
     [Parameter]
@@ -116,8 +114,7 @@ along with Foobar.  If not, see
 
     public Boolean PlaybackPossible
     {
-        //TODO: Also check for mime type of audio file
-        get { return ((String.IsNullOrEmpty(AudioFileObjectURL) == false) && (Cuesheet != null) && (Cuesheet.AudioFile != null) && (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == false)); }
+        get { return ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.PlaybackPossible == true)); }
     }
 
     public Boolean PreviousButtonEnabled
@@ -232,17 +229,13 @@ along with Foobar.  If not, see
         }
         else
         {
-            if (String.IsNullOrEmpty(AudioFileObjectURL) == true)
+            if ((Cuesheet == null) || (Cuesheet.AudioFile == null) || (Cuesheet.AudioFile.PlaybackPossible == false))
             {
-                throw new ArgumentNullException(nameof(AudioFileObjectURL));
-            }
-            if ((Cuesheet == null) || (Cuesheet.AudioFile == null) || (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == true))
-            {
-                throw new ArgumentNullException(nameof(Cuesheet.AudioFile.AudioFileType));
+                throw new ArgumentNullException(nameof(Cuesheet.AudioFile));
             }
             var options = new HowlOptions
             {
-                Sources = new[] { AudioFileObjectURL },
+                Sources = new[] { Cuesheet.AudioFile.ObjectURL },
                 Formats = new[] { Cuesheet.AudioFile.AudioFileType.ToLower() },
                 Html5 = true
             };

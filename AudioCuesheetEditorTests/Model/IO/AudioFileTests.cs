@@ -33,6 +33,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             audioFile = new AudioFile("Test");
             Assert.AreEqual(audioFile.AudioFileType, String.Empty);
             Assert.IsNotNull(audioFile.FileName);
+            audioFile = new AudioFile("test.ogg", "TestobjectURL", "contentType");
+            Assert.IsNotNull(audioFile.FileName);
+            Assert.AreEqual(audioFile.AudioFileType, "OGG");
+            Assert.IsNotNull(audioFile.ObjectURL);
+            Assert.IsFalse(audioFile.PlaybackPossible);
         }
     }
 }
