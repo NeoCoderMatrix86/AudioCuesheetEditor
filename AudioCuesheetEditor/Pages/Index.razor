@@ -100,18 +100,22 @@ along with Foobar.  If not, see
                             </Blazorise.Link>
                         </CollapseHeader>
                         <CollapseBody>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="importTextFileLabel">@localizer["Textfile"]</span>
-                                </div>
-                                <InputFile class="form-control" accept="text/plain" aria-label="Textfile" aria-describedby="importTextFileLabel" OnChange="OnInputFileTextImportChange"></InputFile>
-                            </div>
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="importCuesheetFileLabel">@localizer["Cuesheet"]</span>
-                                </div>
-                                <InputFile class="form-control" accept=".cue" aria-label="Cuesheetfile" aria-describedby="importCuesheetFileLabel" OnChange="OnInputFileCuesheetChange"></InputFile>
-                            </div>
+                            <Tooltip Placement="Placement.Top" Text="@localizer["ImportTextfileTooltip"]">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <InputFile class="form-control" accept="text/plain" OnChange="OnInputFileTextImportChange"></InputFile>
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                            <Tooltip Placement="Placement.Top" Text="@localizer["ImportCuesheetTooltip"]">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <InputFile class="form-control" accept=".cue" OnChange="OnInputFileCuesheetChange"></InputFile>
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
                         </CollapseBody>
                     </Collapse>
                     <Collapse Visible="@cuesheetDataVisible">

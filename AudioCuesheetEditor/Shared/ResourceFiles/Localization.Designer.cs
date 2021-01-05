@@ -684,6 +684,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import a cuesheet file and extract all data from it ähnelt.
+        /// </summary>
+        public static string ImportCuesheetTooltip {
+            get {
+                return ResourceManager.GetString("ImportCuesheetTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import files ähnelt.
         /// </summary>
         public static string ImportFiles {
@@ -698,6 +707,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ImportNotPossible {
             get {
                 return ResourceManager.GetString("ImportNotPossible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import a plain text file and extract data via regular expressions ähnelt.
+        /// </summary>
+        public static string ImportTextfileTooltip {
+            get {
+                return ResourceManager.GetString("ImportTextfileTooltip", resourceCulture);
             }
         }
         

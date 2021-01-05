@@ -326,11 +326,17 @@
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} hat keinen Wert!</value>
   </data>
+  <data name="ImportCuesheetTooltip" xml:space="preserve">
+    <value>Importieren Sie ein Cuesheet und extrahieren Sie alle Daten daraus</value>
+  </data>
   <data name="ImportFiles" xml:space="preserve">
     <value>Import aus vorhandenen Dateien</value>
   </data>
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import ist nicht möglich, weil der Textimport Fehler aufweist. Bitte prüfen Sie die Fehler!</value>
+  </data>
+  <data name="ImportTextfileTooltip" xml:space="preserve">
+    <value>Textdatei importieren und Daten über reguläre Ausdrücke extrahieren</value>
   </data>
   <data name="InvalidFile" xml:space="preserve">
     <value>Ungültige Datei</value>

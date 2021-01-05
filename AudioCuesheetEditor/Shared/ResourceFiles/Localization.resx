@@ -326,11 +326,17 @@
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} has no value!</value>
   </data>
+  <data name="ImportCuesheetTooltip" xml:space="preserve">
+    <value>Import a cuesheet file and extract all data from it</value>
+  </data>
   <data name="ImportFiles" xml:space="preserve">
     <value>Import files</value>
   </data>
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import is not possible due to errors. Please check import errors!</value>
+  </data>
+  <data name="ImportTextfileTooltip" xml:space="preserve">
+    <value>Import a plain text file and extract data via regular expressions</value>
   </data>
   <data name="InvalidFile" xml:space="preserve">
     <value>Invalid file</value>
