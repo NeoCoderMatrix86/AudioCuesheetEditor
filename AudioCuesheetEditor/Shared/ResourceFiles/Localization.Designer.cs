@@ -918,6 +918,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Controls ähnelt.
+        /// </summary>
+        public static string TrackTableControls {
+            get {
+                return ResourceManager.GetString("TrackTableControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Warning ähnelt.
         /// </summary>
         public static string Warning {

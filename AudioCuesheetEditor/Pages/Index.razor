@@ -51,7 +51,7 @@ along with Foobar.  If not, see
                     </BarDropdownToggle>
                     <BarDropdownMenu Class="dropdown-menu-right">
                         <BarDropdownItem>
-                            <Button Color="Color.Danger" @onclick="DeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
+                            <Button Color="Color.Danger" @onclick="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                         </BarDropdownItem>
                         <BarDropdownItem>
                             <Button Color="Color.Danger" @onclick="RestartCuesheetClicked">@localizer["ResetCuesheet"]</Button>
@@ -189,161 +189,112 @@ along with Foobar.  If not, see
                             </Blazorise.Link>
                         </CollapseHeader>
                         <CollapseBody>
-                            <div class="table-responsive-md">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr class="thead-light">
-                                            <th>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-menu-button-wide" viewBox="0 0 16 16">
-                                                    <path fill-rule="evenodd" d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v2A1.5 1.5 0 0 1 14.5 5h-13A1.5 1.5 0 0 1 0 3.5v-2zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-13zM14 7H2a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zM2 6a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H2z" />
-                                                    <path fill-rule="evenodd" d="M15 11H1v-1h14v1zM2 12.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0-10a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm0 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z" />
-                                                    <path d="M12.823 2.823l-.396-.396A.25.25 0 0 1 12.604 2h.792a.25.25 0 0 1 .177.427l-.396.396a.25.25 0 0 1-.354 0z" />
-                                                </svg>
-                                            </th>
-                                            <th>#</th>
-                                            <th>@localizer["Artist"]</th>
-                                            <th>@localizer["Title"]</th>
-                                            <th>@localizer["Begin"]</th>
-                                            <th>@localizer["End"]</th>
-                                            <th>@localizer["Length"]</th>
-                                            <th>@localizer["Notifications"]</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var track in cuesheet.Tracks)
-                                        {
-                                            @if ((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track))
-                                            {
-                                                <tr class="table-primary" data-toggle="tooltip" data-placement="top" title="@localizer["CurrentTrackIsPlayed"]">
-                                                    <td>
-                                                        <div class="btn-toolbar">
-                                                            <div class="btn-group btn-group-sm mr-1">
-                                                                <button class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="@localizer["StartPlaybackThisTrack"]" @onclick="() => audioPlayer.OnPlayTrackClicked(track)">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
-                                                                        <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                            <div class="btn-group btn-group-sm" role="group">
-                                                                @if (cuesheet.MoveTrackPossible(track, MoveDirection.Up) == true)
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm" @onclick="() => cuesheet.MoveTrack(track, MoveDirection.Up)" data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackUpTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackUpTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                <button class="btn btn-warning btn-sm" @onclick="() => cuesheet.RemoveTrack(track)" data-toggle="tooltip" data-placement="top" title="@localizer["DeleteTrackTooltip"]">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                                    </svg>
-                                                                </button>
-                                                                @if (cuesheet.MoveTrackPossible(track, MoveDirection.Down) == true)
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm" @onclick="() => cuesheet.MoveTrack(track, MoveDirection.Down)" data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackDownTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackDownTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>@track.Position</td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" class="form-control @GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" /></td>
-                                                    <td>@((MarkupString)track.GetValidationErrors())</td>
-                                                </tr>
-                                            }
-                                            else
-                                            {
-                                                <tr>
-                                                    <td>
-                                                        <div class="btn-toolbar">
-                                                            <div class="btn-group btn-group-sm mr-1">
-                                                                <button class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="@localizer["StartPlaybackThisTrack"]" @onclick="() => audioPlayer.OnPlayTrackClicked(track)">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
-                                                                        <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-                                                                    </svg>
-                                                                </button>
-                                                            </div>
-                                                            <div class="btn-group btn-group-sm" role="group">
-                                                                @if (cuesheet.MoveTrackPossible(track, MoveDirection.Up) == true)
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm" @onclick="() => cuesheet.MoveTrack(track, MoveDirection.Up)" data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackUpTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackUpTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                <button class="btn btn-warning btn-sm" @onclick="() => cuesheet.RemoveTrack(track)" data-toggle="tooltip" data-placement="top" title="@localizer["DeleteTrackTooltip"]">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                                    </svg>
-                                                                </button>
-                                                                @if (cuesheet.MoveTrackPossible(track, MoveDirection.Down) == true)
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm" @onclick="() => cuesheet.MoveTrack(track, MoveDirection.Down)" data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackDownTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <button class="btn btn-secondary btn-sm disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["MoveTrackDownTooltip"]">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                        </svg>
-                                                                    </button>
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>@track.Position</td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind="@track.Artist" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind="@track.Title" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" @bind="@track.Begin" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" @bind="@track.End" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" /></td>
-                                                    <td><input type="text" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" class="form-control @GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" @bind="@track.Length" data-toggle="tooltip" data-placement="top" title="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" /></td>
-                                                    <td>@((MarkupString)track.GetValidationErrors())</td>
-                                                </tr>
-                                            }
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                            <button class="btn btn-primary" @onclick="AddTrackClicked">@localizer["Addnewtrack"]</button>
-                            <button class="btn btn-warning" @onclick="DeleteAllTracksClicked">@localizer["DeleteAllTracks"]</button>
+                            <Table Bordered="true" Responsive="true" Narrow="true">
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
+                                        <TableHeaderCell>#</TableHeaderCell>
+                                        <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
+                                        <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
+                                        <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
+                                        <TableHeaderCell>@localizer["End"]</TableHeaderCell>
+                                        <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                                        <TableHeaderCell>@localizer["Notifications"]</TableHeaderCell>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    @foreach (var track in cuesheet.Tracks)
+                                    {
+                                        <TableRow Color="((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    <Buttons>
+                                                        <Tooltip Placement="Placement.Right" Text="@localizer["StartPlaybackThisTrack"]">
+                                                            <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
+                                                                    <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+                                                                </svg>
+                                                            </Button>
+                                                        </Tooltip>
+                                                        <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackUpTooltip"]">
+                                                            <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+                                                                </svg>
+                                                            </Button>
+                                                        </Tooltip>
+                                                        <Tooltip Placement="Placement.Right" Text="@localizer["DeleteTrackTooltip"]">
+                                                            <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                                </svg>
+                                                            </Button>
+                                                        </Tooltip>
+                                                        <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackDownTooltip"]">
+                                                            <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                                                                    <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+                                                                </svg>
+                                                            </Button>
+                                                        </Tooltip>
+                                                    </Buttons>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    @track.Position
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
+                                                    </Tooltip>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Title" />
+                                                    </Tooltip>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                                                        <!--TODO: Use pattern-->
+                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
+                                                    </Tooltip>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                                                        <!--TODO: Use pattern-->
+                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
+                                                    </Tooltip>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                                                        <!--TODO: Use pattern-->
+                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
+                                                    </Tooltip>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                    @((MarkupString)track.GetValidationErrors())
+                                                </Tooltip>
+                                            </TableRowCell>
+                                        </TableRow>
+                                    }
+                                </TableBody>
+                            </Table>
+                            <Button Color="Color.Primary" Clicked="OnAddTrackClicked">@localizer["Addnewtrack"]</Button>
+                            <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                         </CollapseBody>
                     </Collapse>
                 </Accordion>
@@ -666,7 +617,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
@@ -791,7 +741,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private void AddTrackClicked()
+    private void OnAddTrackClicked()
     {
         var track = cuesheetController.NewTrack();
         track.ValidateablePropertyChanged += delegate
@@ -806,7 +756,7 @@ along with Foobar.  If not, see
         cuesheet.AddTrack(track);
     }
 
-    private void DeleteAllTracksClicked()
+    private void OnDeleteAllTracksClicked()
     {
         //Display a confirm warning
         modalConfirmDialog.Title = localizer["ConfirmRequired"];
@@ -1112,5 +1062,25 @@ along with Foobar.  If not, see
         {
             return null;
         }
+    }
+
+    private String GetTimespanAsString(TimeSpan? timeSpan)
+    {
+        String resultString = null;
+        if ((timeSpan != null) && (timeSpan.HasValue))
+        {
+            resultString = timeSpan.Value.ToString();
+        }
+        return resultString;
+    }
+
+    private void OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    {
+        TimeSpan? result = null;
+        if (TimeSpan.TryParse(value, out TimeSpan parsedTimeSpan) == true)
+        {
+            result = parsedTimeSpan;
+        }
+        setAction(result);
     }
 }

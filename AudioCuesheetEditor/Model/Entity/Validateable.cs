@@ -58,7 +58,12 @@ namespace AudioCuesheetEditor.Model.Entity
 
         public String GetValidationErrors(String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All,  String seperator = "<br />")
         {
-            return String.Join(seperator, GetValidationErrorsFiltered(property, validationErrorFilterType).OrderBy(y => y.Type).Select(x => x.Message));
+            var errorsFiltered = GetValidationErrorsFiltered(property, validationErrorFilterType);
+            if (errorsFiltered.Any())
+            {
+                return String.Join(seperator, errorsFiltered.OrderBy(y => y.Type).Select(x => x.Message));
+            }
+            return null;
         }
 
         public event EventHandler ValidateablePropertyChanged;

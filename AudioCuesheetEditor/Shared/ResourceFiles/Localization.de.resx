@@ -404,6 +404,9 @@
   <data name="TrackHasInvalidValue" xml:space="preserve">
     <value>Track {0} hat einen ungültigen Wert {1} ({2})!</value>
   </data>
+  <data name="TrackTableControls" xml:space="preserve">
+    <value>Steuerung</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Warnung</value>
   </data>
