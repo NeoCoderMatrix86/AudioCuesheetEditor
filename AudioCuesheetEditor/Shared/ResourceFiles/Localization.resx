@@ -236,6 +236,12 @@
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>Enter CD title here</value>
   </data>
+  <data name="EnterExportProfileFilenameHere" xml:space="preserve">
+    <value>Enter name of file for export profile here</value>
+  </data>
+  <data name="EnterExportProfileNameHere" xml:space="preserve">
+    <value>Enter name of export profile here</value>
+  </data>
   <data name="EnterExportSchemeFooterHere" xml:space="preserve">
     <value>Enter scheme for export of footer here</value>
   </data>
@@ -379,6 +385,9 @@
   </data>
   <data name="SelectExportProfile" xml:space="preserve">
     <value>Select export profile</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Select placeholder</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Send</value>

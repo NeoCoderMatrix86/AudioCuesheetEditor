@@ -476,144 +476,129 @@ along with Foobar.  If not, see
                     <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
                 </FieldBody>
             </Field>
-            <button class="btn btn-primary" @onclick="OnAddNewExportProfileClicked">@localizer["AddNewExportProfile"]</button>
-            <button class="btn btn-danger" @onclick="OnDeleteExportProfileClicked">@localizer["DeleteExportProfile"]</button>
+            <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@localizer["AddNewExportProfile"]</Button>
+            <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@localizer["DeleteExportProfile"]</Button>
             <hr />
             @if (SelectedExportProfile != null)
             {
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="exportProfileNameLabel">@localizer["ExportProfileName"]</span>
-                    </div>
-                    <input class="form-control" aria-describedby="exportProfileFilenameLabel" @bind="SelectedExportProfile.Name" />
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="exportProfileFilenameLabel">@localizer["ExportProfileFilename"]</span>
-                    </div>
-                    <input class="form-control" aria-describedby="exportProfileFilenameLabel" @bind="SelectedExportProfile.FileName" />
-                </div>
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="exportProfileSchemeHeadLabel">@localizer["ExportProfileSchemeHead"]</span>
-                    </div>
-                    <input class="form-control" aria-describedby="exportProfileSchemeHeadLabel" @bind="SelectedExportProfile.SchemeHead.Scheme" placeholder="@localizer["EnterExportSchemeHeadHere"]" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]" />
-                    <div class="input-group-append">
-                        <Dropdown>
-                            <DropdownToggle Color="Color.Secondary">
-                                @localizer["AddPlaceholderToExportSchemeHead"]
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
-                                {
-                                    <DropdownItem @onclick="() => SelectedExportProfile.SchemeHead.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
-                                }
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-                </div>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileName"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                        <TextEdit Placeholder="@localizer["EnterExportProfileNameHere"]" @bind-Text="SelectedExportProfile.Name" />
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileFilename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                        <TextEdit Placeholder="@localizer["EnterExportProfileFilenameHere"]" @bind-Text="SelectedExportProfile.FileName" />
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileSchemeHead"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <!--TODO: Wait for Bug result: https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeHeadHereTooltip"]">
+                                    <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" />
+                                </Tooltip>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @localizer["SelectPlaceholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeHead.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
                 @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeHead.IsValid == false))
                 {
-                    <h5>@localizer["ExportProfileSchemeHeadValidationErrors"]</h5>
-                    @if (SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly).Count > 0)
+                    <Heading Size="HeadingSize.Is6">@localizer["ExportProfileSchemeHeadValidationErrors"]</Heading>
+                    @foreach (var validationError in SelectedExportProfile.SchemeHead.ValidationErrors.OrderBy(x => x.Type))
                     {
-                        <div class="alert alert-warning" role="alert">
-                            @foreach (var validationError in SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly))
-                            {
-                                <p>@validationError.Message</p>
-                            }
-                        </div>
-                    }
-                    @if (SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly).Count > 0)
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            @foreach (var validationError in SelectedExportProfile.SchemeHead.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly))
-                            {
-                                <p>@validationError.Message</p>
-                            }
-                        </div>
+                        <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
+                            <AlertMessage>@validationError.Message</AlertMessage>
+                        </Alert>
                     }
                 }
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="exportProfileSchemeTrackLabel">@localizer["ExportProfileSchemeTrack"]</span>
-                    </div>
-                    <input class="form-control" aria-describedby="exportProfileSchemeTrackLabel" @bind="SelectedExportProfile.SchemeTracks.Scheme" placeholder="@localizer["EnterExportSchemeTrackHere"]" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeTrackHereTooltip"]" />
-                    <div class="input-group-append">
-                        <Dropdown>
-                            <DropdownToggle Color="Color.Secondary">
-                                @localizer["AddPlaceholderToExportSchemeTrack"]
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                @foreach (var availableScheme in ExportScheme.AvailableTrackSchemes)
-                                {
-                                    <DropdownItem @onclick="() => SelectedExportProfile.SchemeTracks.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
-                                }
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-                </div>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileSchemeTrack"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <!--TODO: Wait for Bug result: https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeTrackHereTooltip"]">
+                                    <TextEdit Placeholder="@localizer["EnterExportSchemeTrackHere"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" />
+                                </Tooltip>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @localizer["SelectPlaceholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in ExportScheme.AvailableTrackSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeTracks.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
                 @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeTracks.IsValid == false))
                 {
-                    <h5>@localizer["ExportProfileSchemeTrackValidationErrors"]</h5>
-                    @if (SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly).Count > 0)
+                    <Heading Size="HeadingSize.Is6">@localizer["ExportProfileSchemeTrackValidationErrors"]</Heading>
+                    @foreach (var validationError in SelectedExportProfile.SchemeTracks.ValidationErrors.OrderBy(x => x.Type))
                     {
-                        <div class="alert alert-warning" role="alert">
-                            @foreach (var validationError in SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly))
-                            {
-                                <p>@validationError.Message</p>
-                            }
-                        </div>
-                    }
-                    @if (SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly).Count > 0)
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            @foreach (var validationError in SelectedExportProfile.SchemeTracks.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly))
-                            {
-                                <p>@validationError.Message</p>
-                            }
-                        </div>
+                        <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
+                            <AlertMessage>@validationError.Message</AlertMessage>
+                        </Alert>
                     }
                 }
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="exportProfileSchemeFooterLabel">@localizer["ExportProfileSchemeFooter"]</span>
-                    </div>
-                    <input class="form-control" aria-describedby="exportProfileSchemeFooterLabel" @bind="SelectedExportProfile.SchemeFooter.Scheme" placeholder="@localizer["EnterExportSchemeFooterHere"]" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeFooterHereTooltip"]" />
-                    <div class="input-group-append">
-                        <Dropdown>
-                            <DropdownToggle Color="Color.Secondary">
-                                @localizer["AddPlaceholderToExportSchemeFooter"]
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
-                                {
-                                    <DropdownItem @onclick="() => SelectedExportProfile.SchemeFooter.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
-                                }
-                            </DropdownMenu>
-                        </Dropdown>
-                    </div>
-                </div>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileSchemeFooter"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <!--TODO: Wait for Bug result: https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeFooterHereTooltip"]">
+                                    <TextEdit Placeholder="@localizer["EnterExportSchemeFooterHere"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" />
+                                </Tooltip>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @localizer["SelectPlaceholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeFooter.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
                 @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeFooter.IsValid == false))
                 {
-                    <h5>@localizer["ExportProfileSchemeFooterValidationErrors"]</h5>
-                    @if (SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly).Count > 0)
+                    <Heading Size="HeadingSize.Is6">@localizer["ExportProfileSchemeFooterValidationErrors"]</Heading>
+                    @foreach (var validationError in SelectedExportProfile.SchemeFooter.ValidationErrors.OrderBy(x => x.Type))
                     {
-                        <div class="alert alert-warning" role="alert">
-                            @foreach (var validationError in SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.WarningOnly))
-                            {
-                                <p>@validationError.Message</p>
-                            }
-                        </div>
-                    }
-                    @if (SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly).Count > 0)
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            @foreach (var validationError in SelectedExportProfile.SchemeFooter.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly))
-                            {
-                                <p>@validationError.Message</p>
-                            }
-                        </div>
+                        <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
+                            <AlertMessage>@validationError.Message</AlertMessage>
+                        </Alert>
                     }
                 }
             }

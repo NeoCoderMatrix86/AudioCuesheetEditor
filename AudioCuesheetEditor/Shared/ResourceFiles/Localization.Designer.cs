@@ -414,6 +414,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter name of file for export profile here ähnelt.
+        /// </summary>
+        public static string EnterExportProfileFilenameHere {
+            get {
+                return ResourceManager.GetString("EnterExportProfileFilenameHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter name of export profile here ähnelt.
+        /// </summary>
+        public static string EnterExportProfileNameHere {
+            get {
+                return ResourceManager.GetString("EnterExportProfileNameHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Enter scheme for export of footer here ähnelt.
         /// </summary>
         public static string EnterExportSchemeFooterHere {
@@ -842,6 +860,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string SelectExportProfile {
             get {
                 return ResourceManager.GetString("SelectExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select placeholder ähnelt.
+        /// </summary>
+        public static string SelectPlaceholder {
+            get {
+                return ResourceManager.GetString("SelectPlaceholder", resourceCulture);
             }
         }
         

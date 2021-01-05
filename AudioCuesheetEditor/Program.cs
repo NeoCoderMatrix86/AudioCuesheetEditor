@@ -29,6 +29,8 @@ namespace AudioCuesheetEditor
             builder.Services.AddBlazorise(options =>
             {
                 options.ChangeTextOnKeyPress = true;
+                options.DelayTextOnKeyPress = true;
+                options.DelayTextOnKeyPressInterval = 300;
             })
             .AddBootstrapProviders();
 
