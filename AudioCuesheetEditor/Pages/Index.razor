@@ -220,7 +220,7 @@ along with Foobar.  If not, see
                                 <TableBody>
                                     @foreach (var track in cuesheet.Tracks)
                                     {
-                                        <TableRow Color="((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
+                                        <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                     <Buttons>
@@ -403,7 +403,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                 <TextEdit Placeholder="@localizer["EnterTextImportSchemeHere"]" @bind-Text="textImportFile.ImportScheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterTextImportSchemeTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
@@ -512,7 +512,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                 <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]"/>
                             </Addon>
                             <Addon AddonType="AddonType.End">
@@ -550,7 +550,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                 <TextEdit Placeholder="@localizer["EnterExportSchemeTrackHere"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeTrackHereTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
@@ -588,7 +588,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                 <TextEdit Placeholder="@localizer["EnterExportSchemeFooterHere"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeFooterHereTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
