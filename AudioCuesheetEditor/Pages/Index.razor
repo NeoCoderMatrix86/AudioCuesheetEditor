@@ -475,8 +475,8 @@ along with Foobar.  If not, see
         </ModalHeader>
         <ModalBody>
             <Field Horizontal="true" JustifyContent="JustifyContent.End">
-                <FieldLabel ColumnSize="ColumnSize.Is2">@localizer["SelectExportProfile"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is10">
+                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["SelectExportProfile"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is9">
                     <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
                 </FieldBody>
             </Field>
@@ -486,26 +486,28 @@ along with Foobar.  If not, see
             @if (SelectedExportProfile != null)
             {
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileName"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["ExportProfileName"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
                         <TextEdit Placeholder="@localizer["EnterExportProfileNameHere"]" @bind-Text="SelectedExportProfile.Name" />
                     </FieldBody>
                 </Field>
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileFilename"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["ExportProfileFilename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
                         <TextEdit Placeholder="@localizer["EnterExportProfileFilenameHere"]" @bind-Text="SelectedExportProfile.FileName" />
                     </FieldBody>
                 </Field>
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileSchemeHead"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeHeadHereTooltip"]" >
+                            @localizer["ExportProfileSchemeHead"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Wait for Bug result: https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeHeadHereTooltip"]">
-                                    <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" />
-                                </Tooltip>
+                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]"/>
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -534,14 +536,16 @@ along with Foobar.  If not, see
                     }
                 }
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileSchemeTrack"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeTrackHereTooltip"]">
+                            @localizer["ExportProfileSchemeTrack"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Wait for Bug result: https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeTrackHereTooltip"]">
-                                    <TextEdit Placeholder="@localizer["EnterExportSchemeTrackHere"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" />
-                                </Tooltip>
+                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <TextEdit Placeholder="@localizer["EnterExportSchemeTrackHere"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeTrackHereTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -570,14 +574,16 @@ along with Foobar.  If not, see
                     }
                 }
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ExportProfileSchemeFooter"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeFooterHereTooltip"]">
+                            @localizer["ExportProfileSchemeFooter"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Wait for Bug result: https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeFooterHereTooltip"]">
-                                    <TextEdit Placeholder="@localizer["EnterExportSchemeFooterHere"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" />
-                                </Tooltip>
+                                <!--Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                                <TextEdit Placeholder="@localizer["EnterExportSchemeFooterHere"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeFooterHereTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
