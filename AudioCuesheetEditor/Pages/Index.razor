@@ -389,7 +389,7 @@ along with Foobar.  If not, see
             <ModalTitle>
                 @localizer["TextImportAssistance"]
             </ModalTitle>
-            <CloseButton @onclick="TextImportAbortClicked"/>
+            <CloseButton Clicked="TextImportAbortClicked" />
         </ModalHeader>
         <ModalBody>
             @if (textImportFile != null)
