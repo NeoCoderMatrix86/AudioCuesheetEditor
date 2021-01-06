@@ -981,7 +981,7 @@ along with Foobar.  If not, see
             if (file.ContentType.StartsWith("audio/") == true)
             {
                 recognized = true;
-                await OnAudioFileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
+                await SetAudioFile(file, "dropInputfiles");
             }
             if (recognized == false)
             {
@@ -1003,7 +1003,7 @@ along with Foobar.  If not, see
                     case ".flac":
                     case ".wav":
                         recognized = true;
-                        await OnAudioFileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
+                        await SetAudioFile(file, "dropInputfiles");
                         break;
                     default:
                         invalidFileName = file.Name;
@@ -1082,10 +1082,15 @@ along with Foobar.  If not, see
 
     private async Task OnAudioFileChanged(InputFileChangeEventArgs e)
     {
-        if (e.File != null)
+        await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
+    }
+
+    private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
+    {
+        if (browserFile != null)
         {
-            var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
-            cuesheet.AudioFile = new AudioFile(e.File.Name, audioFileObjectURL, e.File.ContentType);
+            var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
+            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, browserFile.ContentType);
         }
         else
         {
