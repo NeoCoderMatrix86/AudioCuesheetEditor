@@ -178,6 +178,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Change ähnelt.
+        /// </summary>
+        public static string Change {
+            get {
+                return ResourceManager.GetString("Change", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;strong&gt;Choose files&lt;/strong&gt;&lt;span&gt; or drag them here&lt;/span&gt; ähnelt.
+        /// </summary>
+        public static string ChooseFileOrDrag {
+            get {
+                return ResourceManager.GetString("ChooseFileOrDrag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Close ähnelt.
         /// </summary>
         public static string Close {
@@ -228,6 +246,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ConfirmResetCuesheet {
             get {
                 return ResourceManager.GetString("ConfirmResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please confirm, that you want to restart the whole application. All data will be lost if not saved before! ähnelt.
+        /// </summary>
+        public static string ConfirmRestartOfApplication {
+            get {
+                return ResourceManager.GetString("ConfirmRestartOfApplication", resourceCulture);
             }
         }
         
@@ -313,7 +340,9 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Please describe how the error occured:\\n1.What were you trying to do?\\n2.Does this error occure, if you try it again? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please describe how the error occured:
+        ///1.What were you trying to do?
+        ///2.Does this error occure, if you try it again? ähnelt.
         /// </summary>
         public static string DescribeHowTheErrorOccured {
             get {
@@ -336,6 +365,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string DownloadExport {
             get {
                 return ResourceManager.GetString("DownloadExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Drop input files here ähnelt.
+        /// </summary>
+        public static string DropFiles {
+            get {
+                return ResourceManager.GetString("DropFiles", resourceCulture);
             }
         }
         
@@ -372,6 +410,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string EnterCDtitlehere {
             get {
                 return ResourceManager.GetString("EnterCDtitlehere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter name of file for export profile here ähnelt.
+        /// </summary>
+        public static string EnterExportProfileFilenameHere {
+            get {
+                return ResourceManager.GetString("EnterExportProfileFilenameHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter name of export profile here ähnelt.
+        /// </summary>
+        public static string EnterExportProfileNameHere {
+            get {
+                return ResourceManager.GetString("EnterExportProfileNameHere", resourceCulture);
             }
         }
         
@@ -628,6 +684,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import a cuesheet file and extract all data from it ähnelt.
+        /// </summary>
+        public static string ImportCuesheetTooltip {
+            get {
+                return ResourceManager.GetString("ImportCuesheetTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import files ähnelt.
         /// </summary>
         public static string ImportFiles {
@@ -642,6 +707,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ImportNotPossible {
             get {
                 return ResourceManager.GetString("ImportNotPossible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import a plain text file and extract data via regular expressions ähnelt.
+        /// </summary>
+        public static string ImportTextfileTooltip {
+            get {
+                return ResourceManager.GetString("ImportTextfileTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid file ähnelt.
+        /// </summary>
+        public static string InvalidFile {
+            get {
+                return ResourceManager.GetString("InvalidFile", resourceCulture);
             }
         }
         
@@ -754,11 +837,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
+        /// </summary>
+        public static string Reset {
+            get {
+                return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reset cuesheet ähnelt.
         /// </summary>
         public static string ResetCuesheet {
             get {
                 return ResourceManager.GetString("ResetCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Restart complete application ähnelt.
+        /// </summary>
+        public static string RestartCompleteApplication {
+            get {
+                return ResourceManager.GetString("RestartCompleteApplication", resourceCulture);
             }
         }
         
@@ -777,6 +878,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string SelectExportProfile {
             get {
                 return ResourceManager.GetString("SelectExportProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select placeholder ähnelt.
+        /// </summary>
+        public static string SelectPlaceholder {
+            get {
+                return ResourceManager.GetString("SelectPlaceholder", resourceCulture);
             }
         }
         
@@ -853,6 +963,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Controls ähnelt.
+        /// </summary>
+        public static string TrackTableControls {
+            get {
+                return ResourceManager.GetString("TrackTableControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Warning ähnelt.
         /// </summary>
         public static string Warning {
@@ -867,6 +986,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Warnings {
             get {
                 return ResourceManager.GetString("Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You selected or dropped a file (&quot;{0}&quot;) that can not be processed. Please select only valid files (Textfiles, Cuesheets, Audiofiles)! ähnelt.
+        /// </summary>
+        public static string YouDroppedAFileThatCanNotBeProcessed {
+            get {
+                return ResourceManager.GetString("YouDroppedAFileThatCanNotBeProcessed", resourceCulture);
             }
         }
         

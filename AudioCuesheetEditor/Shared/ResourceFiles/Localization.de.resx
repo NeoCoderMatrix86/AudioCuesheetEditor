@@ -145,7 +145,7 @@
     <value>Audio Datei</value>
   </data>
   <data name="AudioPlayer" xml:space="preserve">
-    <value>Audio Player</value>
+    <value>Wiedergabe</value>
   </data>
   <data name="Begin" xml:space="preserve">
     <value>Begin</value>
@@ -155,6 +155,12 @@
   </data>
   <data name="CDTitle" xml:space="preserve">
     <value>CD Titel</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Ändern</value>
+  </data>
+  <data name="ChooseFileOrDrag" xml:space="preserve">
+    <value>&lt;strong&gt;Wählen Sie die Dateien&lt;/strong&gt;&lt;span&gt; oder ziehen Sie diese hier her&lt;/span&gt;</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Schließen</value>
@@ -173,6 +179,9 @@
   </data>
   <data name="ConfirmResetCuesheet" xml:space="preserve">
     <value>Möchten Sie wirklich das Cuesheet zurücksetzen? Dies kann nicht rückgangig gemacht werden.</value>
+  </data>
+  <data name="ConfirmRestartOfApplication" xml:space="preserve">
+    <value>Bitte Bestätigen Sie, dass die komplette Anwendung neugestartet werden soll. Alle ungespeicherten Änderungen werden dadurch verloren!</value>
   </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet Daten</value>
@@ -212,6 +221,9 @@
   <data name="DownloadExport" xml:space="preserve">
     <value>Exportdatei herunterladen</value>
   </data>
+  <data name="DropFiles" xml:space="preserve">
+    <value>Eingabedateien hier her ziehen</value>
+  </data>
   <data name="End" xml:space="preserve">
     <value>Ende</value>
   </data>
@@ -223,6 +235,12 @@
   </data>
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>CD Titel eingeben</value>
+  </data>
+  <data name="EnterExportProfileFilenameHere" xml:space="preserve">
+    <value>Geben Sie hier den Dateinamen für das Exportprofil an</value>
+  </data>
+  <data name="EnterExportProfileNameHere" xml:space="preserve">
+    <value>Geben Sie hier den Namen des Exportprofils an</value>
   </data>
   <data name="EnterExportSchemeFooterHere" xml:space="preserve">
     <value>Bitte geben Sie hier das Fuß Schema für den Export an</value>
@@ -308,11 +326,20 @@
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} hat keinen Wert!</value>
   </data>
+  <data name="ImportCuesheetTooltip" xml:space="preserve">
+    <value>Importieren Sie ein Cuesheet und extrahieren Sie alle Daten daraus</value>
+  </data>
   <data name="ImportFiles" xml:space="preserve">
     <value>Import aus vorhandenen Dateien</value>
   </data>
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import ist nicht möglich, weil der Textimport Fehler aufweist. Bitte prüfen Sie die Fehler!</value>
+  </data>
+  <data name="ImportTextfileTooltip" xml:space="preserve">
+    <value>Textdatei importieren und Daten über reguläre Ausdrücke extrahieren</value>
+  </data>
+  <data name="InvalidFile" xml:space="preserve">
+    <value>Ungültige Datei</value>
   </data>
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
@@ -350,14 +377,23 @@
   <data name="ProcessingHints" xml:space="preserve">
     <value>Bearbeitungshinweise</value>
   </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Cuesheet zurücksetzen</value>
+  </data>
+  <data name="RestartCompleteApplication" xml:space="preserve">
+    <value>Komplette Anwendung neustarten</value>
   </data>
   <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
     <value>Schema enthält Platzhalter, die nicht aufgelöst werden können!</value>
   </data>
   <data name="SelectExportProfile" xml:space="preserve">
     <value>Exportprofil auswählen</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Platzhalter auswählen</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Abschicken</value>
@@ -383,11 +419,17 @@
   <data name="TrackHasInvalidValue" xml:space="preserve">
     <value>Track {0} hat einen ungültigen Wert {1} ({2})!</value>
   </data>
+  <data name="TrackTableControls" xml:space="preserve">
+    <value>Steuerung</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Warnung</value>
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnungen</value>
+  </data>
+  <data name="YouDroppedAFileThatCanNotBeProcessed" xml:space="preserve">
+    <value>Sie haben eine ungültige Datei selektiert ("{0}"), die nicht verarbeitet werden kann. Bitte wählen Sie nur gültige Dateien (Textimportdateien, Cuesheets, Audiodateien)!</value>
   </data>
   <data name="YourEmailAddress" xml:space="preserve">
     <value>Ihre Emailaddresse (Optional)</value>

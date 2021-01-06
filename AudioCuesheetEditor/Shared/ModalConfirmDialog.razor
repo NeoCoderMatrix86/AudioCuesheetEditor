@@ -1,10 +1,8 @@
 ﻿@inject IStringLocalizer<Localization> localizer
 
-<!--TODO: Update to Blazorise 0.9.2, since there is a Bug in Blazorise Modals-->
-
 <Modal @ref="modalRef">
     <ModalBackdrop />
-    <ModalContent IsCentered="true">
+    <ModalContent Centered="true" Size="@modalSize">
         <ModalHeader>
             <ModalTitle>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
@@ -13,9 +11,7 @@
                 </svg>
                 @Title
             </ModalTitle>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="HideModal">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <CloseButton @onclick="HideModal"/>
         </ModalHeader>
         <ModalBody>
             @Text
@@ -29,6 +25,7 @@
 
 @code {
     private Modal modalRef;
+    private ModalSize modalSize = ModalSize.Default;
 
     public String Title;
     public String Text;
@@ -43,6 +40,12 @@
     public void HideModal()
     {
         modalRef.Hide();
+    }
+
+    public ModalSize ModalSize
+    {
+        get { return modalSize; }
+        set { modalSize = value; }
     }
 
     protected virtual void OnConfirmed(EventArgs args)

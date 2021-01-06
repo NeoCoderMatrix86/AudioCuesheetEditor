@@ -6,13 +6,29 @@ GLOBAL.SetDotNetReference = function (dotNetReference) {
         GLOBAL.DotNetReference = dotNetReference;
     }
 };
-function audioFileChanged(eventSrc) {
+
+function getObjectURL(domId) {
     if (audioFileObjectURL != null) {
         URL.revokeObjectURL(audioFileObjectURL);
     }
-    audioFileObjectURL = URL.createObjectURL(eventSrc.files[0]);
-    GLOBAL.DotNetReference.invokeMethodAsync("AudioFileChanged", eventSrc.files[0].name, audioFileObjectURL);
+    var element = document.getElementById(domId);
+    var file = null;
+    for (var i = 0, f; f = element.files[i]; i++) {
+        if (f.type.startsWith("audio/")) {
+            file = f;
+        }
+    }
+    if (file != null) {
+        audioFileObjectURL = URL.createObjectURL(file);
+    }
+    return audioFileObjectURL;
 }
+
+function triggerClick(domId) {
+    var element = document.getElementById(domId);
+    element.click();
+}
+
 window.blazorCulture = {
     get: () => localStorage['BlazorCulture'],
     set: (value) => localStorage['BlazorCulture'] = value
@@ -37,3 +53,26 @@ console.error = function (msg) {
 window.addEventListener("unhandledrejection", function (promiseRejectionEvent) {
     reportError(promiseRejectionEvent.reason.message);
 });
+
+function dragLeave(e, domElement) {
+    e.preventDefault();
+    e.stopPropagation();
+    domElement.classList.remove('is-dragover');
+}
+
+function dragOver(e, domElement) {
+    e.preventDefault();
+    e.stopPropagation();
+    domElement.classList.add('is-dragover');
+}
+
+function dropFiles(e, domElement, domID) {
+    e.preventDefault();
+    e.stopPropagation();
+    domElement.classList.remove('is-dragover');
+    var dropedFiles = e.dataTransfer.files;
+    var element = document.getElementById(domID);
+    element.files = dropedFiles;
+    var event = new Event('change');
+    element.dispatchEvent(event);
+}

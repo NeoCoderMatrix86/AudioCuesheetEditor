@@ -156,6 +156,12 @@
   <data name="CDTitle" xml:space="preserve">
     <value>CD title</value>
   </data>
+  <data name="Change" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="ChooseFileOrDrag" xml:space="preserve">
+    <value>&lt;strong&gt;Choose files&lt;/strong&gt;&lt;span&gt; or drag them here&lt;/span&gt;</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -173,6 +179,9 @@
   </data>
   <data name="ConfirmResetCuesheet" xml:space="preserve">
     <value>Do you really want to reset the cuesheet? This can not be reversed.</value>
+  </data>
+  <data name="ConfirmRestartOfApplication" xml:space="preserve">
+    <value>Please confirm, that you want to restart the whole application. All data will be lost if not saved before!</value>
   </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet data</value>
@@ -212,6 +221,9 @@
   <data name="DownloadExport" xml:space="preserve">
     <value>Download export file</value>
   </data>
+  <data name="DropFiles" xml:space="preserve">
+    <value>Drop input files here</value>
+  </data>
   <data name="End" xml:space="preserve">
     <value>End</value>
   </data>
@@ -223,6 +235,12 @@
   </data>
   <data name="EnterCDtitlehere" xml:space="preserve">
     <value>Enter CD title here</value>
+  </data>
+  <data name="EnterExportProfileFilenameHere" xml:space="preserve">
+    <value>Enter name of file for export profile here</value>
+  </data>
+  <data name="EnterExportProfileNameHere" xml:space="preserve">
+    <value>Enter name of export profile here</value>
   </data>
   <data name="EnterExportSchemeFooterHere" xml:space="preserve">
     <value>Enter scheme for export of footer here</value>
@@ -308,11 +326,20 @@
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} has no value!</value>
   </data>
+  <data name="ImportCuesheetTooltip" xml:space="preserve">
+    <value>Import a cuesheet file and extract all data from it</value>
+  </data>
   <data name="ImportFiles" xml:space="preserve">
     <value>Import files</value>
   </data>
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import is not possible due to errors. Please check import errors!</value>
+  </data>
+  <data name="ImportTextfileTooltip" xml:space="preserve">
+    <value>Import a plain text file and extract data via regular expressions</value>
+  </data>
+  <data name="InvalidFile" xml:space="preserve">
+    <value>Invalid file</value>
   </data>
   <data name="Length" xml:space="preserve">
     <value>Length</value>
@@ -350,14 +377,23 @@
   <data name="ProcessingHints" xml:space="preserve">
     <value>Processing hints</value>
   </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
   <data name="ResetCuesheet" xml:space="preserve">
     <value>Reset cuesheet</value>
+  </data>
+  <data name="RestartCompleteApplication" xml:space="preserve">
+    <value>Restart complete application</value>
   </data>
   <data name="SchemeContainsPlaceholdersThatCanNotBeSolved" xml:space="preserve">
     <value>Scheme contains placeholder that can not be resolved!</value>
   </data>
   <data name="SelectExportProfile" xml:space="preserve">
     <value>Select export profile</value>
+  </data>
+  <data name="SelectPlaceholder" xml:space="preserve">
+    <value>Select placeholder</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Send</value>
@@ -383,11 +419,17 @@
   <data name="TrackHasInvalidValue" xml:space="preserve">
     <value>Track {0} has invalid Value {1} ({2})!</value>
   </data>
+  <data name="TrackTableControls" xml:space="preserve">
+    <value>Controls</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnings</value>
+  </data>
+  <data name="YouDroppedAFileThatCanNotBeProcessed" xml:space="preserve">
+    <value>You selected or dropped a file ("{0}") that can not be processed. Please select only valid files (Textfiles, Cuesheets, Audiofiles)!</value>
   </data>
   <data name="YourEmailAddress" xml:space="preserve">
     <value>Your emailaddress (optional)</value>

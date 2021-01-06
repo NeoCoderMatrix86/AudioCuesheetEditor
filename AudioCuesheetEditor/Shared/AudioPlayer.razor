@@ -23,88 +23,61 @@ along with Foobar.  If not, see
 <Card>
     <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
     <CardBody>
-        <div class="row">
-            <div class="col-1">
+        <Row>
+            <Column ColumnSize="ColumnSize.Is1">
                 @if (CurrentPlaybackPosition != null)
                 {
                     @CurrentPlaybackPosition
                 }
                 else
                 {
-                    <div>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</div>
+                    @String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)
                 }
-            </div>
-            <div class="col-10">
+            </Column>
+            <Column ColumnSize="ColumnSize.Is10">
                 <Slider TValue="double" Min="0.0" Max="100.0" ValueChanged="OnSliderValueChanged" Value="CurrentSliderValue"></Slider>
-            </div>
-            <div class="col-1">
-                @if(TotalTime != null)
+            </Column>
+            <Column ColumnSize="ColumnSize.Is1">
+                @if (TotalTime != null)
                 {
                     @TotalTime
                 }
                 else
                 {
-                    <div>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</div>
+                    @String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)
                 }
-            </div>
-        </div>
-        <div class="row">
-            @if (PlaybackPossible == true)
-            {
-                <div class="col-1">
-                    @if (AudioIsPlaying == true)
-                    {
-                        <button class="btn btn-primary oi oi-media-pause" @onclick="() => Howl.Pause(soundId)"></button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-primary oi oi-media-play" @onclick="OnPlayClicked"></button>
-                    }
-                </div>
-                <div>
-                    @if (PreviousButtonEnabled == true)
-                    {
-                        <button class="btn btn-secondary oi oi-media-step-backward" @onclick="() => OnPlayNextPreviousTrackClicked(true)" data-toggle="tooltip" data-placement="top" title="@localizer["PlayPreviousTrackTooltip"]"></button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-secondary oi oi-media-step-backward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayPreviousTrackTooltip"]"></button>
-                    }
-                    <button class="btn btn-primary oi oi-media-stop" @onclick="() => Howl.Stop()"></button>
-                    @if (NextButtonEnabled == true)
-                    {
-                        <button class="btn btn-secondary oi oi-media-step-forward" @onclick="() => OnPlayNextPreviousTrackClicked()" data-toggle="tooltip" data-placement="top" title="@localizer["PlayNextTrackTooltip"]"></button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-secondary oi oi-media-step-forward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayNextTrackTooltip"]"></button>
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="col-1">
-                    <button class="btn btn-primary oi oi-media-play disabled" disabled></button>
-                </div>
-                <div>
-                    <button class="btn btn-secondary oi oi-media-step-backward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayPreviousTrackTooltip"]"></button>
-                    <button class="btn btn-primary oi oi-media-stop disabled" disabled></button>
-                    <button class="btn btn-secondary oi oi-media-step-forward disabled" disabled data-toggle="tooltip" data-placement="top" title="@localizer["PlayNextTrackTooltip"]"></button>
-                </div>
-            }
-        </div>
+            </Column>
+        </Row>
+        <Row>
+            <Column ColumnSize="ColumnSize.Is1">
+                @if (AudioIsPlaying == true)
+                {
+                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="() => Howl.Pause(soundId)" Disabled="!PlaybackPossible"/>
+                }
+                else
+                {
+                    <Button Color="Color.Primary" Class="oi oi-media-play" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
+                }
+            </Column>
+            <Column>
+                <Tooltip Placement="Placement.Top" Text="@localizer["PlayPreviousTrackTooltip"]">
+                    <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
+                </Tooltip>
+                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop()"/>
+                <Tooltip Placement="Placement.Top" Text="@localizer["PlayNextTrackTooltip"]">
+                    <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)"/>
+                </Tooltip>
+            </Column>
+        </Row>
     </CardBody>
 </Card>
 
 @code {
-
     private Timer audioUpdateTimer;
     private int? soundId;
     private Track currentlyPlayingTrack;
 
-    [Parameter]
     //TODO: Attach to set and load the playback directly to get total time
-    public String AudioFileObjectURL { get; set; }
     [Parameter]
     public Cuesheet Cuesheet { get; set; }
     [Parameter]
@@ -116,7 +89,7 @@ along with Foobar.  If not, see
 
     public Boolean PlaybackPossible
     {
-        get { return ((String.IsNullOrEmpty(AudioFileObjectURL) == false) && (Cuesheet != null) && (Cuesheet.AudioFile != null) && (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == false)); }
+        get { return ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.PlaybackPossible == true)); }
     }
 
     public Boolean PreviousButtonEnabled
@@ -192,7 +165,7 @@ along with Foobar.  If not, see
                     TotalTime = Howl.TotalTime;
                 }
             }
-            if (Cuesheet != null)
+            if ((Cuesheet != null) && (CurrentPlaybackPosition.HasValue == true))
             {
                 CurrentlyPlayingTrack = Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition.Value && x.End.Value > CurrentPlaybackPosition.Value);
             }
@@ -207,8 +180,9 @@ along with Foobar.  If not, see
         Howl.OnStop += e =>
         {
             audioUpdateTimer.Stop();
-            CurrentPlaybackPosition = null;
             TotalTime = null;
+            CurrentlyPlayingTrack = null;
+            CurrentPlaybackPosition = null;
             AudioIsPlaying = false;
             soundId = null;
             StateHasChanged();
@@ -217,10 +191,14 @@ along with Foobar.  If not, see
         return base.OnInitializedAsync();
     }
 
-    private void OnSliderValueChanged(Double newvalue)
+    private async Task OnSliderValueChanged(Double newvalue)
     {
         var newPosition = newvalue * TotalTime.Value / 100.0;
-        Howl.Seek(newPosition);
+        if (AudioIsPlaying == false)
+        {
+            await OnPlayClicked();
+        }
+        await Howl.Seek(newPosition);
     }
 
     private async Task OnPlayClicked()
@@ -231,17 +209,13 @@ along with Foobar.  If not, see
         }
         else
         {
-            if (String.IsNullOrEmpty(AudioFileObjectURL) == true)
+            if ((Cuesheet == null) || (Cuesheet.AudioFile == null) || (Cuesheet.AudioFile.PlaybackPossible == false))
             {
-                throw new ArgumentNullException(nameof(AudioFileObjectURL));
-            }
-            if ((Cuesheet == null) || (Cuesheet.AudioFile == null) || (String.IsNullOrEmpty(Cuesheet.AudioFile.AudioFileType) == true))
-            {
-                throw new ArgumentNullException(nameof(Cuesheet.AudioFile.AudioFileType));
+                throw new ArgumentNullException(nameof(Cuesheet.AudioFile));
             }
             var options = new HowlOptions
             {
-                Sources = new[] { AudioFileObjectURL },
+                Sources = new[] { Cuesheet.AudioFile.ObjectURL },
                 Formats = new[] { Cuesheet.AudioFile.AudioFileType.ToLower() },
                 Html5 = true
             };
