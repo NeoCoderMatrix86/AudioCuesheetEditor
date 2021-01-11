@@ -45,6 +45,11 @@ along with Foobar.  If not, see
             </BarItem>
             <!--TODO: Options with javascript localstorage -->
             <BarItem>
+                <Button Color="Color.Info">
+                    <BarLink To="/Help" Style="color:white;">@localizer["Help"]</BarLink>
+                </Button>
+            </BarItem>
+            <BarItem>
                 <BarDropdown>
                     <BarDropdownToggle Class="btn btn-danger" Style="color:white;">
                         @localizer["Reset"]
@@ -488,7 +493,7 @@ along with Foobar.  If not, see
             </Field>
             <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@localizer["AddNewExportProfile"]</Button>
             <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@localizer["DeleteExportProfile"]</Button>
-            <hr />
+            <Divider />
             @if (SelectedExportProfile != null)
             {
                 <Field Horizontal="true">

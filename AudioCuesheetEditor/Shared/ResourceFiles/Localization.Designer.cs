@@ -70,6 +70,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die About ähnelt.
+        /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die About AudioCuesheetEditor ähnelt.
+        /// </summary>
+        public static string AboutAudioCuesheetEditor {
+            get {
+                return ResourceManager.GetString("AboutAudioCuesheetEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Add identifier to import scheme ähnelt.
         /// </summary>
         public static string AddIdentifierToImportScheme {
@@ -259,6 +277,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Create a Cuesheet ähnelt.
+        /// </summary>
+        public static string CreateCuesheet {
+            get {
+                return ResourceManager.GetString("CreateCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet data ähnelt.
         /// </summary>
         public static string CuesheetData {
@@ -347,6 +374,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string DescribeHowTheErrorOccured {
             get {
                 return ResourceManager.GetString("DescribeHowTheErrorOccured", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Donate for this project ähnelt.
+        /// </summary>
+        public static string DonateForThisProject {
+            get {
+                return ResourceManager.GetString("DonateForThisProject", resourceCulture);
             }
         }
         
@@ -684,6 +720,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Help ähnelt.
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import a cuesheet file and extract all data from it ähnelt.
         /// </summary>
         public static string ImportCuesheetTooltip {
@@ -711,11 +756,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import of files ähnelt.
+        /// </summary>
+        public static string ImportOfFiles {
+            get {
+                return ResourceManager.GetString("ImportOfFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import a plain text file and extract data via regular expressions ähnelt.
         /// </summary>
         public static string ImportTextfileTooltip {
             get {
                 return ResourceManager.GetString("ImportTextfileTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Introduction ähnelt.
+        /// </summary>
+        public static string Introduction {
+            get {
+                return ResourceManager.GetString("Introduction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;strong&gt;AudioCuesheet&lt;/strong&gt; is a web application for writting audio cuesheet files. Audio cuesheet files are little text files which provide information about the provided audio file like artist, name, etc. AudioCuesheetEditor is an application that helps you writting valid cuesheet files by checking and validation input data. You can also import data from files to minimize your work. ähnelt.
+        /// </summary>
+        public static string IntroductionText {
+            get {
+                return ResourceManager.GetString("IntroductionText", resourceCulture);
             }
         }
         
@@ -743,6 +815,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string LengthHasNoValue {
             get {
                 return ResourceManager.GetString("LengthHasNoValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Licence ähnelt.
+        /// </summary>
+        public static string Licence {
+            get {
+                return ResourceManager.GetString("Licence", resourceCulture);
             }
         }
         
@@ -833,6 +914,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ProcessingHints {
             get {
                 return ResourceManager.GetString("ProcessingHints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Quick links ähnelt.
+        /// </summary>
+        public static string QuickLinks {
+            get {
+                return ResourceManager.GetString("QuickLinks", resourceCulture);
             }
         }
         
@@ -972,6 +1062,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Version ähnelt.
+        /// </summary>
+        public static string Version {
+            get {
+                return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Warning ähnelt.
         /// </summary>
         public static string Warning {
@@ -986,6 +1085,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Warnings {
             get {
                 return ResourceManager.GetString("Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Written by Sven Baus (&lt;a href=&apos;mailto&amp;#58;%73&amp;#46;ba&amp;#117;%7386%4&amp;#48;g&amp;#37;6D%78&amp;#46;ne%&amp;#55;4&apos;&gt;s&amp;#46;baus8&amp;#54;&amp;#64;&amp;#103;mx&amp;#46;net&lt;/a&gt;) ähnelt.
+        /// </summary>
+        public static string WrittenBy {
+            get {
+                return ResourceManager.GetString("WrittenBy", resourceCulture);
             }
         }
         
