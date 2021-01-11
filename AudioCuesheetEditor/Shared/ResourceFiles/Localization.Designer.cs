@@ -286,6 +286,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src=&quot;/images/CreateCuesheet1.png&quot;/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the &quot;Add new track&quot; button. A new track is added and you can edit its properties like Artist [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string CreateCuesheetText {
+            get {
+                return ResourceManager.GetString("CreateCuesheetText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet data ähnelt.
         /// </summary>
         public static string CuesheetData {
@@ -684,6 +693,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Features ähnelt.
+        /// </summary>
+        public static string Features {
+            get {
+                return ResourceManager.GetString("Features", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;/ul&gt; ähnelt.
+        /// </summary>
+        public static string FeaturesText {
+            get {
+                return ResourceManager.GetString("FeaturesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidBegin {
@@ -779,15 +806,6 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Introduction {
             get {
                 return ResourceManager.GetString("Introduction", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;strong&gt;AudioCuesheet&lt;/strong&gt; is a web application for writting audio cuesheet files. Audio cuesheet files are little text files which provide information about the provided audio file like artist, name, etc. AudioCuesheetEditor is an application that helps you writting valid cuesheet files by checking and validation input data. You can also import data from files to minimize your work. ähnelt.
-        /// </summary>
-        public static string IntroductionText {
-            get {
-                return ResourceManager.GetString("IntroductionText", resourceCulture);
             }
         }
         
@@ -1062,6 +1080,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Validation ähnelt.
+        /// </summary>
+        public static string Validation {
+            get {
+                return ResourceManager.GetString("Validation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src=&quot;/images/Validation1.png&quot;/&gt; ähnelt.
+        /// </summary>
+        public static string ValidationText {
+            get {
+                return ResourceManager.GetString("ValidationText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Version ähnelt.
         /// </summary>
         public static string Version {
@@ -1085,6 +1121,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Warnings {
             get {
                 return ResourceManager.GetString("Warnings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die What is AudioCuesheetEditor? ähnelt.
+        /// </summary>
+        public static string WhatIsAudioCuesheetEditor {
+            get {
+                return ResourceManager.GetString("WhatIsAudioCuesheetEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;strong&gt;AudioCuesheet&lt;/strong&gt; is a web application for writting audio cuesheet files. Audio cuesheet files are little text files which provide information about the provided audio file like artist, name, etc. AudioCuesheetEditor is an application that helps you writting valid cuesheet files by checking and validation input data. You can also import data from files to minimize your work. ähnelt.
+        /// </summary>
+        public static string WhatIsAudioCuesheetEditorText {
+            get {
+                return ResourceManager.GetString("WhatIsAudioCuesheetEditorText", resourceCulture);
             }
         }
         

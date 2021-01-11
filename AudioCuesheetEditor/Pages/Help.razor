@@ -23,17 +23,25 @@ along with Foobar.  If not, see
 <Heading Size="HeadingSize.Is1">@localizer["Help"]</Heading>
 
 <Heading Size="HeadingSize.Is5">@localizer["QuickLinks"]</Heading>
-<Blazorise.Link To="#headingIntroduction">@localizer["Introduction"]</Blazorise.Link><br />
-<Blazorise.Link To="#headingCreateCuesheet">@localizer["CreateCuesheet"]</Blazorise.Link><br />
-<Blazorise.Link To="#headingImportOfFiles">@localizer["ImportOfFiles"]</Blazorise.Link><br />
+<Blazorise.Link To="#headingIntroduction">@localizer["Introduction"]</Blazorise.Link>
+<br />
+<Blazorise.Link To="#headingCreateCuesheet">@localizer["CreateCuesheet"]</Blazorise.Link>
+<br />
+<Blazorise.Link To="#headingImportOfFiles">@localizer["ImportOfFiles"]</Blazorise.Link>
+<br />
 
 <Heading id="headingIntroduction" Size="HeadingSize.Is2">@localizer["Introduction"]</Heading>
-<!--TODO: Content-->
-@((MarkupString)localizer["IntroductionText"].Value)
+<Heading Size="HeadingSize.Is3">@localizer["WhatIsAudioCuesheetEditor"]</Heading>
+@((MarkupString)localizer["WhatIsAudioCuesheetEditorText"].Value)
+<Heading Size="HeadingSize.Is3">@localizer["Features"]</Heading>
+@((MarkupString)localizer["FeaturesText"].Value)
+<Heading Size="HeadingSize.Is3">@localizer["Validation"]</Heading>
+@((MarkupString)localizer["ValidationText"].Value)
 <Heading id="headingCreateCuesheet" Size="HeadingSize.Is2">@localizer["CreateCuesheet"]</Heading>
-<!--TODO: Content-->
+@((MarkupString)localizer["CreateCuesheetText"].Value)
 <Heading id="headingImportOfFiles" Size="HeadingSize.Is2">@localizer["ImportOfFiles"]</Heading>
 <!--TODO: Content-->
+
 
 @code {
     private new IFluentSpacing LayoutContentMargin = Margin.Is2;

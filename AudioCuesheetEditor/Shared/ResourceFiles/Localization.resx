@@ -359,7 +359,7 @@
   <data name="Introduction" xml:space="preserve">
     <value>Introduction</value>
   </data>
-  <data name="IntroductionText" xml:space="preserve">
+  <data name="WhatIsAudioCuesheetEditorText" xml:space="preserve">
     <value>&lt;strong&gt;AudioCuesheet&lt;/strong&gt; is a web application for writting audio cuesheet files. Audio cuesheet files are little text files which provide information about the provided audio file like artist, name, etc. AudioCuesheetEditor is an application that helps you writting valid cuesheet files by checking and validation input data. You can also import data from files to minimize your work.</value>
   </data>
   <data name="InvalidFile" xml:space="preserve">
@@ -461,6 +461,9 @@
   <data name="Warnings" xml:space="preserve">
     <value>Warnings</value>
   </data>
+  <data name="WhatIsAudioCuesheetEditor" xml:space="preserve">
+    <value>What is AudioCuesheetEditor?</value>
+  </data>
   <data name="WrittenBy" xml:space="preserve">
     <value>Written by Sven Baus (&lt;a href='mailto&amp;#58;%73&amp;#46;ba&amp;#117;%7386%4&amp;#48;g&amp;#37;6D%78&amp;#46;ne%&amp;#55;4'&gt;s&amp;#46;baus8&amp;#54;&amp;#64;&amp;#103;mx&amp;#46;net&lt;/a&gt;)</value>
   </data>
@@ -469,5 +472,20 @@
   </data>
   <data name="YourEmailAddress" xml:space="preserve">
     <value>Your emailaddress (optional)</value>
+  </data>
+  <data name="CreateCuesheetText" xml:space="preserve">
+    <value>Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src="/images/CreateCuesheet1.png"/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the "Add new track" button. A new track is added and you can edit its properties like Artist, Title or Begin, End or Length. Please keep in mind, that every tracks begin gets calculated from the end of the previous track. Therefore its adviced to edit one track and fill its data before adding a new one.&lt;br /&gt;&lt;img src="/images/CreateCuesheet2.png"/&gt;&lt;br/&gt;When you have added all tracks from the audio file and filled all necessary fields, you can export the cuesheet in the top by clickin "Export result" and then "Download cuesheet file". You can also export the result in other formats like XML, CSV or text by clicking "Export result" and then "Display Export Profilfes".&lt;br/&gt;&lt;img src="/images/CreateCuesheet3.png"/&gt;</value>
+  </data>
+  <data name="Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="FeaturesText" xml:space="preserve">
+    <value>&lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;/ul&gt;</value>
+  </data>
+  <data name="Validation" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="ValidationText" xml:space="preserve">
+    <value>AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don't block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src="/images/Validation1.png"/&gt;</value>
   </data>
 </root>
