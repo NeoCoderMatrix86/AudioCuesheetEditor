@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 
 @inherits LayoutComponentBase
 @inject NavigationManager navigationManager
+@inject IStringLocalizer<Localization> localizer
 
 <Layout>
     <LayoutHeader>
@@ -39,7 +40,7 @@ along with Foobar.  If not, see
                 </span>
             </BarItem>
             <BarItem>
-                <a href="about" style="color:white;" class="ml-md-auto">About</a>
+                <BarLink To="about" Style="color: white;">@localizer["About"]</BarLink>
             </BarItem>
         </Bar>
     </LayoutHeader>

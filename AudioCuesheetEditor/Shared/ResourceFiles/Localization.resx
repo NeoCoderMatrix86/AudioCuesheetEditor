@@ -120,6 +120,12 @@
   <data name="Abort" xml:space="preserve">
     <value>Abort</value>
   </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutAudioCuesheetEditor" xml:space="preserve">
+    <value>About AudioCuesheetEditor</value>
+  </data>
   <data name="AddIdentifierToImportScheme" xml:space="preserve">
     <value>Add identifier to import scheme</value>
   </data>
@@ -183,6 +189,9 @@
   <data name="ConfirmRestartOfApplication" xml:space="preserve">
     <value>Please confirm, that you want to restart the whole application. All data will be lost if not saved before!</value>
   </data>
+  <data name="CreateCuesheet" xml:space="preserve">
+    <value>Create a Cuesheet</value>
+  </data>
   <data name="CuesheetData" xml:space="preserve">
     <value>Cuesheet data</value>
   </data>
@@ -214,6 +223,9 @@
     <value>Please describe how the error occured:
 1.What were you trying to do?
 2.Does this error occure, if you try it again?</value>
+  </data>
+  <data name="DonateForThisProject" xml:space="preserve">
+    <value>Donate for this project</value>
   </data>
   <data name="Downloadcuesheet" xml:space="preserve">
     <value>Download cuesheet file</value>
@@ -326,6 +338,9 @@
   <data name="HasNoValue" xml:space="preserve">
     <value>{0} has no value!</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
   <data name="ImportCuesheetTooltip" xml:space="preserve">
     <value>Import a cuesheet file and extract all data from it</value>
   </data>
@@ -335,8 +350,17 @@
   <data name="ImportNotPossible" xml:space="preserve">
     <value>Import is not possible due to errors. Please check import errors!</value>
   </data>
+  <data name="ImportOfFiles" xml:space="preserve">
+    <value>Import of files</value>
+  </data>
   <data name="ImportTextfileTooltip" xml:space="preserve">
     <value>Import a plain text file and extract data via regular expressions</value>
+  </data>
+  <data name="Introduction" xml:space="preserve">
+    <value>Introduction</value>
+  </data>
+  <data name="WhatIsAudioCuesheetEditorText" xml:space="preserve">
+    <value>&lt;strong&gt;AudioCuesheet&lt;/strong&gt; is a web application for writting audio cuesheet files. Audio cuesheet files are little text files which provide information about the provided audio file like artist, name, etc. AudioCuesheetEditor is an application that helps you writting valid cuesheet files by checking and validation input data. You can also import data from files to minimize your work.</value>
   </data>
   <data name="InvalidFile" xml:space="preserve">
     <value>Invalid file</value>
@@ -346,6 +370,9 @@
   </data>
   <data name="LengthHasNoValue" xml:space="preserve">
     <value>Length has no value! Please check Begin and End.</value>
+  </data>
+  <data name="Licence" xml:space="preserve">
+    <value>Licence</value>
   </data>
   <data name="MoveTrackDownTooltip" xml:space="preserve">
     <value>Move this track one position down</value>
@@ -376,6 +403,9 @@
   </data>
   <data name="ProcessingHints" xml:space="preserve">
     <value>Processing hints</value>
+  </data>
+  <data name="QuickLinks" xml:space="preserve">
+    <value>Quick links</value>
   </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
@@ -422,16 +452,55 @@
   <data name="TrackTableControls" xml:space="preserve">
     <value>Controls</value>
   </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
   <data name="Warning" xml:space="preserve">
     <value>Warning</value>
   </data>
   <data name="Warnings" xml:space="preserve">
     <value>Warnings</value>
   </data>
+  <data name="WhatIsAudioCuesheetEditor" xml:space="preserve">
+    <value>What is AudioCuesheetEditor?</value>
+  </data>
+  <data name="WrittenBy" xml:space="preserve">
+    <value>Written by Sven Baus (&lt;a href='mailto&amp;#58;%73&amp;#46;ba&amp;#117;%7386%4&amp;#48;g&amp;#37;6D%78&amp;#46;ne%&amp;#55;4'&gt;s&amp;#46;baus8&amp;#54;&amp;#64;&amp;#103;mx&amp;#46;net&lt;/a&gt;)</value>
+  </data>
   <data name="YouDroppedAFileThatCanNotBeProcessed" xml:space="preserve">
     <value>You selected or dropped a file ("{0}") that can not be processed. Please select only valid files (Textfiles, Cuesheets, Audiofiles)!</value>
   </data>
   <data name="YourEmailAddress" xml:space="preserve">
     <value>Your emailaddress (optional)</value>
+  </data>
+  <data name="CreateCuesheetText" xml:space="preserve">
+    <value>Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src="images/CreateCuesheet1.png"/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the "Add new track" button. A new track is added and you can edit its properties like Artist, Title or Begin, End or Length. Please keep in mind, that every tracks begin gets calculated from the end of the previous track. Therefore its adviced to edit one track and fill its data before adding a new one.&lt;br /&gt;&lt;img src="images/CreateCuesheet2.png"/&gt;&lt;br/&gt;When you have added all tracks from the audio file and filled all necessary fields, you can export the cuesheet in the top by clickin "Export result" and then "Download cuesheet file". You can also export the result in other formats like XML, CSV or text by clicking "Export result" and then "Display Export Profilfes".&lt;br/&gt;&lt;img src="images/CreateCuesheet3.png"/&gt;</value>
+  </data>
+  <data name="Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="FeaturesText" xml:space="preserve">
+    <value>&lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;/ul&gt;</value>
+  </data>
+  <data name="Validation" xml:space="preserve">
+    <value>Validation</value>
+  </data>
+  <data name="ValidationText" xml:space="preserve">
+    <value>AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don't block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src="images/Validation1.png"/&gt;</value>
+  </data>
+  <data name="ImportOfCuesheetFiles" xml:space="preserve">
+    <value>Import of cuesheet files</value>
+  </data>
+  <data name="ImportOfTextFiles" xml:space="preserve">
+    <value>Import of text files</value>
+  </data>
+  <data name="ImportOfTextFilesText" xml:space="preserve">
+    <value>You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by " - " and then track title. Afterwards some tabs come and you can see information about the track end time. So in this example we can work with the regular expression "%Artist% - %Title%[\t]{1,}%End%". Each field of track can be accessed via "%Fieldname%". You can start importing a textfile by dragging it from the file system to the dropzone or by manually selecting it from file chooser dialog.&lt;br/&gt;&lt;img src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;A new dialog will appear where you can see the result of import and can edit the regular expression for import to your favor to match all the details you have in the textfile.&lt;br/&gt;&lt;img src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Changing the import textscheme will result in changes of the import result and the data to import will be shown to you.&lt;br/&gt;&lt;img src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;You can select the valid track fields by pressing the button "Select placeholder" and afterwards selecting the placeholder you want to add:&lt;br/&gt;&lt;img src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;If you enter an invalid text import scheme, that doesn't match the text file, an error will be displayed to you:&lt;br/&gt;&lt;img src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Errors will always block import of text, so you have to correct them at first before import can take place. Afterwards you can import the textfile and see the result.&lt;br/&gt;&lt;img src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;&lt;img src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;</value>
+  </data>
+  <data name="ImportOfCuesheetFilesText" xml:space="preserve">
+    <value>You can import already finished cuesheets and edit them. It doesn't matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Confirming this dialog will import the cuesheet and afterwards display the result.&lt;br/&gt;&lt;img src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;A sample cuesheet file can be found &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;here&lt;/a&gt;.</value>
+  </data>
+  <data name="ScrollToTop" xml:space="preserve">
+    <value>Scroll to top</value>
   </data>
 </root>

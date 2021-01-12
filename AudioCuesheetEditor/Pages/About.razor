@@ -18,21 +18,23 @@ along with Foobar.  If not, see
 
 @page "/about"
 @inject HttpClient Http
+@inject IStringLocalizer<Localization> localizer
 
-<h1>About AudioCuesheetEditor</h1>
-<h3>Version: @VersionString</h3>
-
-<p>Written by Sven Baus (<a href='mailto&#58;%73&#46;ba&#117;%7386%4&#48;g&#37;6D%78&#46;ne%&#55;4'>s&#46;baus8&#54;&#64;&#103;mx&#46;net</a>)</p>
-
-<a href="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" target="_blank">Donate for this project</a>
-<br />
-<a href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor" target="_blank">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</a>
-
-<br />
-<br />
-<h3>Licence</h3>
-
-<p>@((MarkupString)licence)</p>
+<Layout>
+    <LayoutContent Margin="Margin.Is2">
+        <Heading Size="HeadingSize.Is1">@localizer["AboutAudioCuesheetEditor"]</Heading>
+        <Heading Size="HeadingSize.Is3">@localizer["Version"] : @VersionString</Heading>
+        <Paragraph>@((MarkupString)localizer["WrittenBy"].Value)</Paragraph>
+        <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@localizer["DonateForThisProject"]</Blazorise.Link>
+        <br />
+        <br />
+        <Blazorise.Link To="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor" Target="Target.Blank">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</Blazorise.Link>
+        <br />
+        <br />
+        <Heading Size="HeadingSize.Is3">@localizer["Licence"]</Heading>
+        <Paragraph>@((MarkupString)licence)</Paragraph>
+    </LayoutContent>
+</Layout>
 
 @code {
 

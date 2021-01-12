@@ -1,0 +1,83 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@page "/Help"
+@inject IStringLocalizer<Localization> localizer
+
+<Layout>
+    <LayoutHeader><Heading Size="HeadingSize.Is1">@localizer["Help"]</Heading></LayoutHeader>
+    <LayoutContent Margin="Margin.Is2">
+        <Heading Size="HeadingSize.Is5">@localizer["QuickLinks"]</Heading>
+        <Blazorise.Link To="#headingIntroduction">@localizer["Introduction"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#whatIsAudioCuesheetEditor">@localizer["WhatIsAudioCuesheetEditor"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#features">@localizer["Features"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#validation">@localizer["Validation"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#headingCreateCuesheet">@localizer["CreateCuesheet"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#headingImportOfFiles">@localizer["ImportOfFiles"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#importOfTextFiles">@localizer["ImportOfTextFiles"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#importOfCuesheetFiles">@localizer["ImportOfCuesheetFiles"]</Blazorise.Link>
+        <br />
+
+        <Heading id="headingIntroduction" Size="HeadingSize.Is2">
+            @localizer["Introduction"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        <Heading id="whatIsAudioCuesheetEditor" Size="HeadingSize.Is3">
+            @localizer["WhatIsAudioCuesheetEditor"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["WhatIsAudioCuesheetEditorText"].Value)
+        <Heading id="features" Size="HeadingSize.Is3">
+            @localizer["Features"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["FeaturesText"].Value)
+        <Heading id="validation" Size="HeadingSize.Is3">
+            @localizer["Validation"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["ValidationText"].Value)
+        <Heading id="headingCreateCuesheet" Size="HeadingSize.Is2">
+            @localizer["CreateCuesheet"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["CreateCuesheetText"].Value)
+        <Heading id="headingImportOfFiles" Size="HeadingSize.Is2">
+            @localizer["ImportOfFiles"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        <Heading id="importOfTextFiles" Size="HeadingSize.Is3">
+            @localizer["ImportOfTextFiles"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["ImportOfTextFilesText"].Value)
+        <Heading id="importOfCuesheetFiles" Size="HeadingSize.Is3">
+            @localizer["ImportOfCuesheetFiles"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["ImportOfCuesheetFilesText"].Value)
+    </LayoutContent>
+</Layout>
+
