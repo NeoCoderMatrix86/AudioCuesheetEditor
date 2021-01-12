@@ -304,6 +304,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import of Cuesheet ähnelt.
+        /// </summary>
+        public static string CuesheetfileImport {
+            get {
+                return ResourceManager.GetString("CuesheetfileImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet result ähnelt.
         /// </summary>
         public static string CuesheetResult {

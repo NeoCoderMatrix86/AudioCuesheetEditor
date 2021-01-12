@@ -117,7 +117,7 @@ along with Foobar.  If not, see
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        <InputFile class="form-control" accept=".cue" OnChange="OnInputFileCuesheetChange"></InputFile>
+                                        <InputFile class="form-control" accept="@CuesheetFile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
@@ -897,23 +897,33 @@ along with Foobar.  If not, see
     {
         if (e.File != null)
         {
-            //TODO: Check for file mimetype
-            var stream = e.File.OpenReadStream();
-            MemoryStream memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            stream.Close();
-            //Display a confirm warning
-            modalDialog.Title = localizer["ConfirmRequired"];
-            modalDialog.Text = localizer["ConfirmImportCuesheet"];
-            modalDialog.ModalSize = ModalSize.Small;
-            void importCuesheetDelegate(object sender, EventArgs args)
+            if (cuesheetController.CheckFileMimeType(e.File, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
             {
-                cuesheet = cuesheetController.Import(memoryStream);
-                modalDialog.Confirmed -= importCuesheetDelegate;
-                StateHasChanged();
-            };
-            modalDialog.Confirmed += importCuesheetDelegate;
-            modalDialog.ShowModal();
+                var stream = e.File.OpenReadStream();
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                stream.Close();
+                //Display a confirm warning
+                modalDialog.Title = localizer["ConfirmRequired"];
+                modalDialog.Text = localizer["ConfirmImportCuesheet"];
+                modalDialog.ModalSize = ModalSize.Small;
+                void importCuesheetDelegate(object sender, EventArgs args)
+                {
+                    cuesheet = cuesheetController.Import(memoryStream);
+                    modalDialog.Confirmed -= importCuesheetDelegate;
+                    StateHasChanged();
+                };
+                modalDialog.Confirmed += importCuesheetDelegate;
+                modalDialog.ShowModal();
+            }
+            else
+            {
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["CuesheetfileImport"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
         }
     }
 
@@ -1009,7 +1019,7 @@ along with Foobar.  If not, see
                         recognized = true;
                         await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
                         break;
-                    case ".cue":
+                    case CuesheetFile.FileExtension:
                         recognized = true;
                         await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
                         break;

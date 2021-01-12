@@ -503,6 +503,9 @@
   <data name="ScrollToTop" xml:space="preserve">
     <value>Nach oben springen</value>
   </data>
+  <data name="CuesheetfileImport" xml:space="preserve">
+    <value>Cuesheetimport</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Fehler</value>
   </data>
