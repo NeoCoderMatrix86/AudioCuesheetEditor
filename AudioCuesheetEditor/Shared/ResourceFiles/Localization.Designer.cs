@@ -1017,6 +1017,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Scroll to top ähnelt.
+        /// </summary>
+        public static string ScrollToTop {
+            get {
+                return ResourceManager.GetString("ScrollToTop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Select export profile ähnelt.
         /// </summary>
         public static string SelectExportProfile {

@@ -500,4 +500,7 @@
   <data name="ImportOfCuesheetFilesText" xml:space="preserve">
     <value>Sie können bereits fertige Cuesheets importieren und bearbeiten. Dabei ist es nicht wichtig, woher die Datei stammt (von diesem oder einem anderen Programm), sondern nur das Format. Um ein Cuesheet zu importieren, ziehen Sie es aus ihrem Dateisystem auf die Ablagefläche oder wählen Sie es manuell über den Dateiauswahldialog:&lt;br/&gt;&lt;img src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;Eine Bestätigung wird abgefragt, da alle vorhandenen Daten ersetzt werden.&lt;br/&gt;&lt;img src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Das Bestätigen des Dialogs importiert das Cuesheet und im Anschluss ist das Ergebnis sichtbar.&lt;br/&gt;&lt;img src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;Ein Beispielcuesheet kann &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;hier&lt;/a&gt; gefunden werden.</value>
   </data>
+  <data name="ScrollToTop" xml:space="preserve">
+    <value>Nach oben springen</value>
+  </data>
 </root>

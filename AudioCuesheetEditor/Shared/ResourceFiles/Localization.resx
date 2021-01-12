@@ -500,4 +500,7 @@
   <data name="ImportOfCuesheetFilesText" xml:space="preserve">
     <value>You can import already finished cuesheets and edit them. It doesn't matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Confirming this dialog will import the cuesheet and afterwards display the result.&lt;br/&gt;&lt;img src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;A sample cuesheet file can be found &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;here&lt;/a&gt;.</value>
   </data>
+  <data name="ScrollToTop" xml:space="preserve">
+    <value>Scroll to top</value>
+  </data>
 </root>
