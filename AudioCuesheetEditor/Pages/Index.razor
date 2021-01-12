@@ -109,7 +109,7 @@ along with Foobar.  If not, see
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        <InputFile class="form-control" accept="text/plain" OnChange="OnInputFileTextImportChange"></InputFile>
+                                        <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
@@ -385,7 +385,7 @@ along with Foobar.  If not, see
     </LayoutContent>
 </Layout>
 
-<ModalConfirmDialog @ref="modalConfirmDialog" />
+<ModalDialog @ref="modalDialog" />
 
 <Modal @ref="modalTextImport">
     <ModalBackdrop />
@@ -691,7 +691,7 @@ along with Foobar.  If not, see
     private IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
     private Guid selectedExportProfileId;
 
-    private ModalConfirmDialog modalConfirmDialog;
+    private ModalDialog modalDialog;
     private Alert alertInvalidFile;
 
     private Modal modalTextImport;
@@ -775,33 +775,33 @@ along with Foobar.  If not, see
     private void OnDeleteAllTracksClicked()
     {
         //Display a confirm warning
-        modalConfirmDialog.Title = localizer["ConfirmRequired"];
-        modalConfirmDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
-        modalConfirmDialog.ModalSize = ModalSize.Small;
+        modalDialog.Title = localizer["ConfirmRequired"];
+        modalDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
+        modalDialog.ModalSize = ModalSize.Small;
         void deleteTracksDelegate(object sender, EventArgs args)
         {
             cuesheet.RemoveAllTracks();
-            modalConfirmDialog.Confirmed -= deleteTracksDelegate;
+            modalDialog.Confirmed -= deleteTracksDelegate;
             StateHasChanged();
         };
-        modalConfirmDialog.Confirmed += deleteTracksDelegate;
-        modalConfirmDialog.ShowModal();
+        modalDialog.Confirmed += deleteTracksDelegate;
+        modalDialog.ShowModal();
     }
 
     private void RestartCuesheetClicked()
     {
         //Display a confirm warning
-        modalConfirmDialog.Title = localizer["ConfirmRequired"];
-        modalConfirmDialog.Text = localizer["ConfirmResetCuesheet"];
-        modalConfirmDialog.ModalSize = ModalSize.Small;
+        modalDialog.Title = localizer["ConfirmRequired"];
+        modalDialog.Text = localizer["ConfirmResetCuesheet"];
+        modalDialog.ModalSize = ModalSize.Small;
         void newCuesheetDelegate(object sender, EventArgs args)
         {
             cuesheet = cuesheetController.NewCuesheet();
-            modalConfirmDialog.Confirmed -= newCuesheetDelegate;
+            modalDialog.Confirmed -= newCuesheetDelegate;
             StateHasChanged();
         };
-        modalConfirmDialog.Confirmed += newCuesheetDelegate;
-        modalConfirmDialog.ShowModal();
+        modalDialog.Confirmed += newCuesheetDelegate;
+        modalDialog.ShowModal();
     }
 
     private void DownloadCuesheetFileClicked()
@@ -857,13 +857,23 @@ along with Foobar.  If not, see
     {
         if (e.File != null)
         {
-            //TODO: Check for file mimetype
-            var stream = e.File.OpenReadStream();
-            MemoryStream memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            stream.Close();
-            textImportFile = new TextImportFile(memoryStream);
-            modalTextImport.Show();
+            if (cuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
+            {
+                var stream = e.File.OpenReadStream();
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                stream.Close();
+                textImportFile = new TextImportFile(memoryStream);
+                modalTextImport.Show();
+            }
+            else
+            {
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["TextfileImport"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
         }
     }
 
@@ -893,17 +903,17 @@ along with Foobar.  If not, see
             await stream.CopyToAsync(memoryStream);
             stream.Close();
             //Display a confirm warning
-            modalConfirmDialog.Title = localizer["ConfirmRequired"];
-            modalConfirmDialog.Text = localizer["ConfirmImportCuesheet"];
-            modalConfirmDialog.ModalSize = ModalSize.Small;
+            modalDialog.Title = localizer["ConfirmRequired"];
+            modalDialog.Text = localizer["ConfirmImportCuesheet"];
+            modalDialog.ModalSize = ModalSize.Small;
             void importCuesheetDelegate(object sender, EventArgs args)
             {
                 cuesheet = cuesheetController.Import(memoryStream);
-                modalConfirmDialog.Confirmed -= importCuesheetDelegate;
+                modalDialog.Confirmed -= importCuesheetDelegate;
                 StateHasChanged();
             };
-            modalConfirmDialog.Confirmed += importCuesheetDelegate;
-            modalConfirmDialog.ShowModal();
+            modalDialog.Confirmed += importCuesheetDelegate;
+            modalDialog.ShowModal();
         }
     }
 
@@ -975,10 +985,11 @@ along with Foobar.  If not, see
         Boolean importedAllFiles = true;
         foreach (var file in e.GetMultipleFiles())
         {
+            //TODO: redesign with controller
             var files = new List<IBrowserFile>();
             files.Add(file);
             Boolean recognized = false;
-            if (file.ContentType == "text/plain")
+            if (file.ContentType.ToLower() == TextImportFile.MimeType)
             {
                 recognized = true;
                 await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
@@ -994,7 +1005,7 @@ along with Foobar.  If not, see
                 var extension = Path.GetExtension(file.Name).ToLower();
                 switch (extension)
                 {
-                    case ".txt":
+                    case TextImportFile.FileExtension:
                         recognized = true;
                         await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
                         break;
@@ -1041,16 +1052,16 @@ along with Foobar.  If not, see
     private void OnRestartCompleteApplicationClicked()
     {
         //Display a confirm warning
-        modalConfirmDialog.Title = localizer["ConfirmRequired"];
-        modalConfirmDialog.Text = localizer["ConfirmRestartOfApplication"];
-        modalConfirmDialog.ModalSize = ModalSize.Small;
+        modalDialog.Title = localizer["ConfirmRequired"];
+        modalDialog.Text = localizer["ConfirmRestartOfApplication"];
+        modalDialog.ModalSize = ModalSize.Small;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
-            modalConfirmDialog.Confirmed -= restartApplicationDelegate;
+            modalDialog.Confirmed -= restartApplicationDelegate;
             navigationManager.NavigateTo(navigationManager.Uri, true);
         };
-        modalConfirmDialog.Confirmed += restartApplicationDelegate;
-        modalConfirmDialog.ShowModal();
+        modalDialog.Confirmed += restartApplicationDelegate;
+        modalDialog.ShowModal();
     }
 
     private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)

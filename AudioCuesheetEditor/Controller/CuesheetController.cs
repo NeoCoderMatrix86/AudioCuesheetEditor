@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -107,6 +108,25 @@ namespace AudioCuesheetEditor.Controller
         {
             cuesheet = CuesheetFile.ImportCuesheet(this, fileContent);
             return Cuesheet;
+        }
+
+        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
+        {
+            Boolean fileMimeTypeMatches = false;
+            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
+            {
+                if (String.IsNullOrEmpty(file.ContentType) == false)
+                {
+                    fileMimeTypeMatches = file.ContentType.ToLower() == mimeType.ToLower();
+                }
+                else
+                {
+                    //Try to find by file extension
+                    var extension = Path.GetExtension(file.Name).ToLower();
+                    fileMimeTypeMatches = extension == fileExtension.ToLower();
+                }
+            }
+            return fileMimeTypeMatches;
         }
     }
 }

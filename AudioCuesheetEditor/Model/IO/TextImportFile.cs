@@ -30,6 +30,9 @@ namespace AudioCuesheetEditor.Model.IO
     {
         public const String SchemeCharacter = "%";
 
+        public const String MimeType = "text/plain";
+        public const String FileExtension = ".txt";
+
         public static readonly String SchemeArtist;
         public static readonly String SchemeTitle;
         public static readonly String SchemeBegin;

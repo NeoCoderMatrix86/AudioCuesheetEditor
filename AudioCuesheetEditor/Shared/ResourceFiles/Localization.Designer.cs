@@ -549,6 +549,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error ähnelt.
+        /// </summary>
+        public static string Error {
+            get {
+                return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die An error occured during text import ähnelt.
         /// </summary>
         public static string ErrorDuringTextImport {
@@ -707,6 +716,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string FeaturesText {
             get {
                 return ResourceManager.GetString("FeaturesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The file &quot;{0}&quot; you supplied does not match the requested operation: &quot;{1}&quot;. Please provide a valid file! ähnelt.
+        /// </summary>
+        public static string FileHasInvalidMimeType {
+            get {
+                return ResourceManager.GetString("FileHasInvalidMimeType", resourceCulture);
             }
         }
         
@@ -909,6 +927,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Okay ähnelt.
+        /// </summary>
+        public static string Ok {
+            get {
+                return ResourceManager.GetString("Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Once you submit the error report, you will get redirected to formspree.io. This is normal, since the error report will get send by them. Afterwards you can go back in browser history and use the application again. Thanks for your help! ähnelt.
         /// </summary>
         public static string OnceYouSubmitTheErrorReport {
@@ -1076,6 +1103,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Textfile {
             get {
                 return ResourceManager.GetString("Textfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textfile import ähnelt.
+        /// </summary>
+        public static string TextfileImport {
+            get {
+                return ResourceManager.GetString("TextfileImport", resourceCulture);
             }
         }
         
