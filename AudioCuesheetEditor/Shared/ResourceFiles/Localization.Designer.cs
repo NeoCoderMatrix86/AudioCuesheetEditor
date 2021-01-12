@@ -286,7 +286,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src=&quot;/images/CreateCuesheet1.png&quot;/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the &quot;Add new track&quot; button. A new track is added and you can edit its properties like Artist [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src=&quot;images/CreateCuesheet1.png&quot;/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the &quot;Add new track&quot; button. A new track is added and you can edit its properties like Artist, [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string CreateCuesheetText {
             get {
@@ -783,11 +783,47 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import of cuesheet files ähnelt.
+        /// </summary>
+        public static string ImportOfCuesheetFiles {
+            get {
+                return ResourceManager.GetString("ImportOfCuesheetFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import already finished cuesheets and edit them. It doesn&apos;t matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img src=&quot;images/ImportCuesheet1.png&quot;/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img src=&quot;images/ImportCuesheet2.png&quot;/&gt;&lt;br/&gt;Confirming this dialog will import the cuesh [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string ImportOfCuesheetFilesText {
+            get {
+                return ResourceManager.GetString("ImportOfCuesheetFilesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import of files ähnelt.
         /// </summary>
         public static string ImportOfFiles {
             get {
                 return ResourceManager.GetString("ImportOfFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import of text files ähnelt.
+        /// </summary>
+        public static string ImportOfTextFiles {
+            get {
+                return ResourceManager.GetString("ImportOfTextFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you can see information about the track end time. So i [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string ImportOfTextFilesText {
+            get {
+                return ResourceManager.GetString("ImportOfTextFilesText", resourceCulture);
             }
         }
         
@@ -1089,7 +1125,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src=&quot;/images/Validation1.png&quot;/&gt; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src=&quot;images/Validation1.png&quot;/&gt; ähnelt.
         /// </summary>
         public static string ValidationText {
             get {

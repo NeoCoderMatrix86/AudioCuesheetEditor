@@ -40,8 +40,10 @@ along with Foobar.  If not, see
 <Heading id="headingCreateCuesheet" Size="HeadingSize.Is2">@localizer["CreateCuesheet"]</Heading>
 @((MarkupString)localizer["CreateCuesheetText"].Value)
 <Heading id="headingImportOfFiles" Size="HeadingSize.Is2">@localizer["ImportOfFiles"]</Heading>
-<!--TODO: Content-->
-
+<Heading Size="HeadingSize.Is3">@localizer["ImportOfTextFiles"]</Heading>
+@((MarkupString)localizer["ImportOfTextFilesText"].Value)
+<Heading Size="HeadingSize.Is3">@localizer["ImportOfCuesheetFiles"]</Heading>
+@((MarkupString)localizer["ImportOfCuesheetFilesText"].Value)
 
 @code {
     private new IFluentSpacing LayoutContentMargin = Margin.Is2;
