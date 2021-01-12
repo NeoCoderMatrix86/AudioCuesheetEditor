@@ -110,7 +110,7 @@ namespace AudioCuesheetEditor.Controller
             return Cuesheet;
         }
 
-        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
+        public static Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
         {
             Boolean fileMimeTypeMatches = false;
             if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
@@ -124,6 +124,22 @@ namespace AudioCuesheetEditor.Controller
                     //Try to find by file extension
                     var extension = Path.GetExtension(file.Name).ToLower();
                     fileMimeTypeMatches = extension == fileExtension.ToLower();
+                }
+            }
+            return fileMimeTypeMatches;
+        }
+
+        public static Boolean CheckFileMimeType(IBrowserFile file, Dictionary<String, String> mimeTypes)
+        {
+            Boolean fileMimeTypeMatches = false;
+            if ((file != null) && (mimeTypes != null))
+            {
+                fileMimeTypeMatches = mimeTypes.ContainsValue(file.ContentType);
+                if (fileMimeTypeMatches == false)
+                {
+                    //Try to find by file extension
+                    var extension = Path.GetExtension(file.Name).ToLower();
+                    fileMimeTypeMatches = mimeTypes.ContainsKey(extension);
                 }
             }
             return fileMimeTypeMatches;

@@ -23,6 +23,17 @@ namespace AudioCuesheetEditor.Model.IO
 {
     public class AudioFile
     {
+        public static readonly Dictionary<String, String> MimeTypes = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase)
+        {
+            { ".mp3", "audio/mpeg"},
+            {".oga", "audio/ogg"},
+            {".ogg", "audio/ogg"},
+            {".opus", "audio/ogg"},
+            {".wav", "audio/wav"},
+            {".wave", "audio/wav"},
+            {".flac", "audio/flac"}
+        };
+
         public AudioFile(String fileName)
         {
             if (String.IsNullOrEmpty(fileName))

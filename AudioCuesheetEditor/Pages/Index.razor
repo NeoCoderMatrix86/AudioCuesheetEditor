@@ -156,7 +156,7 @@ along with Foobar.  If not, see
                                         @if (cuesheet.AudioFile == null)
                                         {
                                             var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                            <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="audio/*" OnChange="OnAudioFileChanged"></InputFile>
+                                            <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged"></InputFile>
                                         }
                                         else
                                         {
@@ -857,7 +857,7 @@ along with Foobar.  If not, see
     {
         if (e.File != null)
         {
-            if (cuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
             {
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
@@ -897,7 +897,7 @@ along with Foobar.  If not, see
     {
         if (e.File != null)
         {
-            if (cuesheetController.CheckFileMimeType(e.File, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
             {
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
@@ -995,50 +995,27 @@ along with Foobar.  If not, see
         Boolean importedAllFiles = true;
         foreach (var file in e.GetMultipleFiles())
         {
-            //TODO: redesign with controller
+            Boolean recognized = false;
             var files = new List<IBrowserFile>();
             files.Add(file);
-            Boolean recognized = false;
-            if (file.ContentType.ToLower() == TextImportFile.MimeType)
+            if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
             {
                 recognized = true;
                 await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
-            if (file.ContentType.StartsWith("audio/") == true)
+            if (CuesheetController.CheckFileMimeType(file, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
+            {
+                recognized = true;
+                await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
+            }
+            if (CuesheetController.CheckFileMimeType(file, AudioFile.MimeTypes) == true)
             {
                 recognized = true;
                 await SetAudioFile(file, "dropInputfiles");
             }
             if (recognized == false)
             {
-                //Try to find by file extension
-                var extension = Path.GetExtension(file.Name).ToLower();
-                switch (extension)
-                {
-                    case TextImportFile.FileExtension:
-                        recognized = true;
-                        await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
-                        break;
-                    case CuesheetFile.FileExtension:
-                        recognized = true;
-                        await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
-                        break;
-                    case ".mp3":
-                    case ".mp4":
-                    case ".ogg":
-                    case ".flac":
-                    case ".wav":
-                        recognized = true;
-                        await SetAudioFile(file, "dropInputfiles");
-                        break;
-                    default:
-                        invalidFileName = file.Name;
-                        alertInvalidFile.Show();
-                        break;
-                }
-            }
-            if (recognized == false)
-            {
+                alertInvalidFile.Show();
                 importedAllFiles = false;
             }
         }
@@ -1108,7 +1085,21 @@ along with Foobar.  If not, see
 
     private async Task OnAudioFileChanged(InputFileChangeEventArgs e)
     {
-        await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
+        if (e.File != null)
+        {
+            if (CuesheetController.CheckFileMimeType(e.File, AudioFile.MimeTypes) == true)
+            {
+                await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
+            }
+            else
+            {
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["AudioFile"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
+        }
     }
 
     private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
