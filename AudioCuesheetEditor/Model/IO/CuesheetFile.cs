@@ -27,6 +27,9 @@ namespace AudioCuesheetEditor.Model.IO
 {
     public class CuesheetFile
     {
+        public const String MimeType = "text/*";
+        public const String FileExtension = ".cue";
+
         public static readonly String DefaultFileName = "Cuesheet.cue";
 
         public static readonly String CuesheetArtist = "PERFORMER";

@@ -503,4 +503,19 @@
   <data name="ScrollToTop" xml:space="preserve">
     <value>Nach oben springen</value>
   </data>
+  <data name="CuesheetfileImport" xml:space="preserve">
+    <value>Cuesheetimport</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="FileHasInvalidMimeType" xml:space="preserve">
+    <value>Die Datei "{0}" kann nicht für die angeforderte Operation verwendet werden: "{1}". Bitte nutzen Sie eine gültige, passende Datei!</value>
+  </data>
+  <data name="Ok" xml:space="preserve">
+    <value>Okay</value>
+  </data>
+  <data name="TextfileImport" xml:space="preserve">
+    <value>Import Textdatei</value>
+  </data>
 </root>
