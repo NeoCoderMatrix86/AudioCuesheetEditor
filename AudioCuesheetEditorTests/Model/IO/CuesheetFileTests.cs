@@ -27,6 +27,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditorTests.Properties;
 
 namespace AudioCuesheetEditor.Model.IO.Tests
 {
@@ -126,6 +127,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.AreEqual(cuesheet.Tracks.Count, 8);
 
             File.Delete(tempFile);
+
+            testHelper = new TestHelper();
+            cuesheet = CuesheetFile.ImportCuesheet(testHelper.CuesheetController, new MemoryStream(Resources.Playlist_Bug_30));
+            Assert.IsNotNull(cuesheet);
+            Assert.IsTrue(cuesheet.IsValid);
         }
     }
 }
