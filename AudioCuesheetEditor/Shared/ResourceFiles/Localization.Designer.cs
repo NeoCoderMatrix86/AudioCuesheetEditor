@@ -187,6 +187,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die CD Textfile ähnelt.
+        /// </summary>
+        public static string CDTextfile {
+            get {
+                return ResourceManager.GetString("CDTextfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die CD title ähnelt.
         /// </summary>
         public static string CDTitle {

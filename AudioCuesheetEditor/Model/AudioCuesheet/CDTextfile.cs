@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,11 +20,20 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public interface ICuesheet : ICuesheetEntity
+    public class CDTextfile
     {
-        public String Artist { get; set; }
-        public String Title { get; set; }
-        public AudioFile AudioFile { get; set; }
-        public CDTextfile CDTextfile { get; set; }
+        public const String MimeType = "text/*";
+        public const String FileExtension = ".cdt";
+
+        public CDTextfile(String fileName)
+        {
+            if (String.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+            FileName = fileName;
+        }
+
+        public String FileName { get; private set; }
     }
 }

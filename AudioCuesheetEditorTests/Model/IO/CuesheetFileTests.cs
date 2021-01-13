@@ -72,6 +72,14 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
             }
             File.Delete(fileName);
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+            generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNotNull(generatedFile);
+            fileName = Path.GetTempFileName();
+            File.WriteAllBytes(fileName, generatedFile);
+            fileContent = File.ReadAllLines(fileName);
+            Assert.AreEqual(fileContent[3], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
+            File.Delete(fileName);
         }
 
         [TestMethod()]
@@ -82,6 +90,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("PERFORMER \"Sample CD Artist\"");
             builder.AppendLine("TITLE \"Sample CD Title\"");
             builder.AppendLine("FILE \"AC DC - TNT.mp3\" MP3");
+            builder.AppendLine("CDTEXTFILE \"Testfile.cdt\"");
             builder.AppendLine("TRACK 01 AUDIO");
             builder.AppendLine("	PERFORMER \"Sample Artist 1\"");
             builder.AppendLine("	TITLE \"Sample Title 1\"");
@@ -124,6 +133,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);
             Assert.AreEqual(cuesheet.Tracks.Count, 8);
+            Assert.IsNotNull(cuesheet.CDTextfile);
 
             File.Delete(tempFile);
         }

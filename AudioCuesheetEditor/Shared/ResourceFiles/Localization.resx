@@ -518,4 +518,7 @@
   <data name="TextfileImport" xml:space="preserve">
     <value>Textfile import</value>
   </data>
+  <data name="CDTextfile" xml:space="preserve">
+    <value>CD Textfile</value>
+  </data>
 </root>

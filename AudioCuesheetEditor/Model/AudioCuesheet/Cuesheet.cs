@@ -40,6 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String artist;
         private String title;
         private AudioFile audioFile;
+        private CDTextfile cDTextfile;
 
         public Cuesheet(CuesheetController cuesheetController)
         {
@@ -85,6 +86,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return audioFile; }
             set { audioFile = value; OnValidateablePropertyChanged(); }
         }
+
+        public CDTextfile CDTextfile 
+        {
+            get { return cDTextfile; }
+            set { cDTextfile = value; OnValidateablePropertyChanged(); }
+        }
+
         public Boolean CanWriteCuesheetFile
         {
             get
@@ -214,6 +222,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if (AudioFile == null)
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
+            }
+            if (CDTextfile == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CDTextfile")), FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning));
             }
             //Check track overlapping
             lock (syncLock)

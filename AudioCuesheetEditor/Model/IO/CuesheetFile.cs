@@ -41,6 +41,7 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String TrackTitle = "TITLE";
         public static readonly String TrackIndex01 = "INDEX 01";
         public static readonly String Tab = "\t";
+        public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
 
         public static Cuesheet ImportCuesheet(CuesheetController cuesheetController, MemoryStream fileContent)
         {
@@ -58,6 +59,7 @@ namespace AudioCuesheetEditor.Model.IO
             var regexTrackArtist = new Regex("^[\t]{1,}" + TrackArtist);
             var regexTrackTitle = new Regex("^[\t]{1,}" + TrackTitle);
             var regexTrackIndex = new Regex("^[\t]{1,}" + TrackIndex01);
+            var regexCDTextfile = new Regex(String.Format("^{0}", CuesheetCDTextfile));
             Track track = null;
             while (reader.EndOfStream == false)
             {
@@ -76,6 +78,11 @@ namespace AudioCuesheetEditor.Model.IO
                 {
                     var audioFile = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
                     cuesheet.AudioFile = new AudioFile(audioFile);
+                }
+                if (regexCDTextfile.IsMatch(line) == true)
+                {
+                    var cdTextfile = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
+                    cuesheet.CDTextfile = new CDTextfile(cdTextfile);
                 }
                 if (regexTrackBegin.IsMatch(line) == true)
                 {
@@ -125,6 +132,10 @@ namespace AudioCuesheetEditor.Model.IO
                 builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
                 builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
                 builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.AudioFile.FileName, Cuesheet.AudioFile.AudioFileType));
+                if (Cuesheet.CDTextfile != null)
+                {
+                    builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetCDTextfile, Cuesheet.CDTextfile.FileName));
+                }
                 foreach (var track in Cuesheet.Tracks)
                 {
                     builder.AppendLine(String.Format("{0}{1} {2:00} {3}", Tab, CuesheetTrack, track.Position, CuesheetTrackAudio));
