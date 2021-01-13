@@ -1015,6 +1015,7 @@ along with Foobar.  If not, see
             }
             if (recognized == false)
             {
+                invalidFileName = e.File.Name;
                 alertInvalidFile.Show();
                 importedAllFiles = false;
             }
