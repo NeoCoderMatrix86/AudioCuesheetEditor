@@ -73,13 +73,19 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             }
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+            cuesheet.CatalogueNumber.Value = "0123456789123";
             generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNotNull(generatedFile);
             fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
             fileContent = File.ReadAllLines(fileName);
-            Assert.AreEqual(fileContent[3], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
+            Assert.AreEqual(fileContent[0], String.Format("{0} {1}", CuesheetFile.CuesheetCatalogueNumber, cuesheet.CatalogueNumber.Value));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
             File.Delete(fileName);
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+            cuesheet.CatalogueNumber.Value = "Testvalue";
+            generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNull(generatedFile);
         }
 
         [TestMethod()]
@@ -91,6 +97,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("TITLE \"Sample CD Title\"");
             builder.AppendLine("FILE \"AC DC - TNT.mp3\" MP3");
             builder.AppendLine("CDTEXTFILE \"Testfile.cdt\"");
+            builder.AppendLine("CATALOG 0123456789012");
             builder.AppendLine("TRACK 01 AUDIO");
             builder.AppendLine("	PERFORMER \"Sample Artist 1\"");
             builder.AppendLine("	TITLE \"Sample Title 1\"");

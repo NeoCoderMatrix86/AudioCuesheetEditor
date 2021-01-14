@@ -111,7 +111,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.Import(textImportFile);
 
             Assert.IsNull(cuesheet.CDTextfile);
-            Assert.AreEqual(cuesheet.ValidationErrors.Count, 4);
+            Assert.AreEqual(cuesheet.ValidationErrors.Count, 5);
 
             File.Delete(tempFile);
         }
