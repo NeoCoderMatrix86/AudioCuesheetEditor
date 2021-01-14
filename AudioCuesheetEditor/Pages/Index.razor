@@ -172,33 +172,39 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        @if (cuesheet.CDTextfile == null)
+                                        {
+                                            var cdTextFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile))));
+                                            <InputFile class="@cdTextFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" OnChange="OnCDTextfileChanged"></InputFile>
+                                        }
+                                        else
+                                        {
+                                            <Addons>
+                                                <Addon AddonType="AddonType.Body">
+                                                    <TextEdit Disabled="true" Text="@cuesheet.CDTextfile.FileName" />
+                                                </Addon>
+                                                <Addon AddonType="AddonType.End">
+                                                    <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeCDTextfileClicked">@localizer["Change"]</Button>
+                                                </Addon>
+                                            </Addons>
+                                        }
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["EnterCatalogueNumberHere"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
                         </CollapseBody>
                     </Collapse>
-                    <!--TODO: Optional Infos-->
-                    @*<Collapse Visible="@cuesheetOptionalInfoVisible">
-                <CollapseHeader>
-                    <Blazorise.Link Clicked="CuesheetOptionalInfoHeaderClicked" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                        <h3>Cuesheet optional Information</h3>
-                        <div>
-                            @((MarkupString)chevronCuesheetOptionalInfo)
-                        </div>
-                    </Blazorise.Link>
-                </CollapseHeader>
-                <CollapseBody>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="cdTextFileLabel">CD Textfile</span>
-                        </div>
-                        <input type="file" class="form-control" id="cdTextFile" accept="text/plain" aria-label="CD Textfile" aria-describedby="cdTextFileLabel" placeholder="Enter CD textfile here">
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="cdCatalogueNumberLabel">CD Cataloguenumber</span>
-                        </div>
-                        <input type="text" class="form-control" id="cdCatalogueNumber" aria-label="CD Cataloguenumber" aria-describedby="cdCatalogueNumberLabel" placeholder="Enter CD cataloguenumber here">
-                    </div>
-                </CollapseBody>
-            </Collapse>*@
                     <Collapse Visible="@cuesheetTracksVisible">
                         <CollapseHeader>
                             <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
@@ -666,7 +672,6 @@ along with Foobar.  If not, see
     }
 
     private Boolean cuesheetDataVisible = true;
-    private Boolean cuesheetOptionalInfoVisible = false;
     private Boolean cuesheetTracksVisible = true;
     private Boolean processingHintsVisibile = false;
     private Boolean processingHintsWarningVisible = true;
@@ -677,7 +682,6 @@ along with Foobar.  If not, see
     private String invalidFileName;
 
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronCuesheetOptionalInfo = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronProcessingHints = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronProcessingHintsWarning = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
@@ -1013,6 +1017,11 @@ along with Foobar.  If not, see
                 recognized = true;
                 await SetAudioFile(file, "dropInputfiles");
             }
+            if (CuesheetController.CheckFileMimeType(file, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
+            {
+                recognized = true;
+                OnCDTextfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
+            }
             if (recognized == false)
             {
                 invalidFileName = e.File.Name;
@@ -1114,5 +1123,32 @@ along with Foobar.  If not, see
         {
             cuesheet.AudioFile = null;
         }
+    }
+
+    private void OnCDTextfileChanged(InputFileChangeEventArgs e)
+    {
+        if (e.File != null)
+        {
+            if (CuesheetController.CheckFileMimeType(e.File, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
+            {
+                cuesheet.CDTextfile = new CDTextfile(e.File.Name);
+            }
+            else
+            {
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["CDTextfile"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
+        }
+    }
+
+    private async Task OnChangeCDTextfileClicked()
+    {
+        cuesheet.CDTextfile = null;
+        StateHasChanged();
+        await Task.Delay(1);
+        await JSRuntime.InvokeVoidAsync("triggerClick", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile)));
     }
 }

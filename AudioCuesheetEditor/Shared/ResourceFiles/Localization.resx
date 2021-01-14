@@ -518,4 +518,19 @@
   <data name="TextfileImport" xml:space="preserve">
     <value>Textfile import</value>
   </data>
+  <data name="CDTextfile" xml:space="preserve">
+    <value>CD Textfile</value>
+  </data>
+  <data name="CatalogueNumber" xml:space="preserve">
+    <value>Catalogue number</value>
+  </data>
+  <data name="CataloguenumberContainsNonDigits" xml:space="preserve">
+    <value>Cataloguenumber contains non digits.</value>
+  </data>
+  <data name="EnterCatalogueNumberHere" xml:space="preserve">
+    <value>Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number.</value>
+  </data>
+  <data name="HasInvalidLength" xml:space="preserve">
+    <value>{0} has invalid length({1})!</value>
+  </data>
 </root>
