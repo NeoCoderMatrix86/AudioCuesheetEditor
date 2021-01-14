@@ -52,6 +52,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         }
 
         [TestMethod()]
+        public void EmptyCuesheetTracksValidationTest()
+        {
+            var testHelper = new TestHelper();
+            var cuesheet = testHelper.CuesheetController.Cuesheet;
+            Assert.AreEqual(cuesheet.Tracks.Count, 0);
+            var validationErrorTracks = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Tracks)));
+            Assert.IsNotNull(validationErrorTracks);
+            cuesheet.AddTrack(new Track(testHelper.CuesheetController));
+            Assert.IsNull(validationErrorTracks);
+        }
+
+        [TestMethod()]
         public void MoveTrackTest()
         {
             var testHelper = new TestHelper();
