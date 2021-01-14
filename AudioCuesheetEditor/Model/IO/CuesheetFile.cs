@@ -62,7 +62,6 @@ namespace AudioCuesheetEditor.Model.IO
             var regexTrackIndex = new Regex("^[\t]{1,}" + TrackIndex01);
             var regexCDTextfile = new Regex(String.Format("^{0}", CuesheetCDTextfile));
             var regexCatalogueNumber = new Regex(String.Format("^{0} ", CuesheetCatalogueNumber));
-            //TODO: Cataloguenumber
             Track track = null;
             while (reader.EndOfStream == false)
             {
