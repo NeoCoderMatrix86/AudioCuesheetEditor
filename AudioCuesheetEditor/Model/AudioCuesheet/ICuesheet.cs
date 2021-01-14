@@ -27,5 +27,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public String Title { get; set; }
         public AudioFile AudioFile { get; set; }
         public CDTextfile CDTextfile { get; set; }
+        public CatalogueNumber CatalogueNumber { get; }
     }
 }

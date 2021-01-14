@@ -46,8 +46,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             _cuesheetController = cuesheetController;
             tracks = new List<Track>();
+            CatalogueNumber = new CatalogueNumber(_cuesheetController);
+            CatalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
             Validate();
         }
+
         public IReadOnlyCollection<Track> Tracks
         {
             get { return tracks.OrderBy(x => x.Position.HasValue == false).ThenBy(x => x.Position).ToList().AsReadOnly(); }
@@ -92,6 +95,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return cDTextfile; }
             set { cDTextfile = value; OnValidateablePropertyChanged(); }
         }
+
+        public CatalogueNumber CatalogueNumber { get; private set; }
 
         public Boolean CanWriteCuesheetFile
         {
@@ -227,6 +232,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CDTextfile")), FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning));
             }
+            if (CatalogueNumber == null)
+            {
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CatalogueNumber")), FieldReference.Create(this, nameof(CatalogueNumber)), ValidationErrorType.Warning));
+            }
+            else
+            {
+                _ = CatalogueNumber.IsValid;
+                validationErrors.AddRange(CatalogueNumber.ValidationErrors);
+            }
             //Check track overlapping
             lock (syncLock)
             {
@@ -243,6 +257,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+        }
+
+        private void CatalogueNumber_ValidateablePropertyChanged(object sender, EventArgs e)
+        {
+            OnValidateablePropertyChanged();
         }
 
         private void ReCalculateTrackProperties()
