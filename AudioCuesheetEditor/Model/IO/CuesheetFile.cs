@@ -56,10 +56,10 @@ namespace AudioCuesheetEditor.Model.IO
             var regexCuesheetArtist = new Regex("^" + CuesheetArtist);
             var regexCuesheetTitle = new Regex("^" + CuesheetTitle);
             var regexCuesheetFile = new Regex("^" + CuesheetFileName);
-            var regexTrackBegin = new Regex("^" + CuesheetTrack + " [0-9]{1,} " + CuesheetTrackAudio);
-            var regexTrackArtist = new Regex("^[\t]{1,}" + TrackArtist);
-            var regexTrackTitle = new Regex("^[\t]{1,}" + TrackTitle);
-            var regexTrackIndex = new Regex("^[\t]{1,}" + TrackIndex01);
+            var regexTrackBegin = new Regex(CuesheetTrack + " [0-9]{1,} " + CuesheetTrackAudio);
+            var regexTrackArtist = new Regex("(?<!^)" + TrackArtist);
+            var regexTrackTitle = new Regex("(?<!^)" + TrackTitle);
+            var regexTrackIndex = new Regex("(?<!^)" + TrackIndex01);
             var regexCDTextfile = new Regex(String.Format("^{0}", CuesheetCDTextfile));
             var regexCatalogueNumber = new Regex(String.Format("^{0} ", CuesheetCatalogueNumber));
             Track track = null;
@@ -110,14 +110,18 @@ namespace AudioCuesheetEditor.Model.IO
                     //TODO: Match frames also and import
                     var regExValue = new Regex("[0-9]{2}:[0-9]{2}");
                     var match = regExValue.Match(line);
-                    var begin = TimeSpan.Parse("00:" + match.Value);
-                    track.Begin = begin;
+                    if (match.Success == true) 
+                    {
+                        var minutes = int.Parse(match.Value.Substring(0, 2));
+                        var seconds = int.Parse(match.Value.Substring(3, 2));
+                        var begin = new TimeSpan(0, minutes, seconds);
+                        track.Begin = begin;
+                    }
                     cuesheet.AddTrack(track);
                     track = null;
                 }
             }
             return cuesheet;
-
         }
 
         public CuesheetFile(Cuesheet cuesheet)
