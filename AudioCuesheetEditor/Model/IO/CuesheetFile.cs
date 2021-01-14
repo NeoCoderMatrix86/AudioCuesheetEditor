@@ -129,13 +129,13 @@ namespace AudioCuesheetEditor.Model.IO
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();
-                builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
-                builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
-                builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.AudioFile.FileName, Cuesheet.AudioFile.AudioFileType));
                 if (Cuesheet.CDTextfile != null)
                 {
                     builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetCDTextfile, Cuesheet.CDTextfile.FileName));
                 }
+                builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
+                builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
+                builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.AudioFile.FileName, Cuesheet.AudioFile.AudioFileType));
                 foreach (var track in Cuesheet.Tracks)
                 {
                     builder.AppendLine(String.Format("{0}{1} {2:00} {3}", Tab, CuesheetTrack, track.Position, CuesheetTrackAudio));
