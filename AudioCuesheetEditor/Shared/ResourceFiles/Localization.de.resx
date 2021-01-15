@@ -533,4 +533,7 @@
   <data name="HasInvalidLength" xml:space="preserve">
     <value>{0} hat eine ungültige Länge ({1})!</value>
   </data>
+  <data name="Filename" xml:space="preserve">
+    <value>Dateiname:</value>
+  </data>
 </root>

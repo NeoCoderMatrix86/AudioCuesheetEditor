@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Localization> localizer
 @inject CuesheetController cuesheetController
 @inject NavigationManager navigationManager
+@inject OptionsController optionsController
 
 <Layout>
     <LayoutHeader Fixed="true">
@@ -33,8 +34,8 @@ along with Foobar.  If not, see
                     </BarDropdownToggle>
                     <BarDropdownMenu>
                         <BarDropdownItem>
-                            <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false,"PleaseCheckProcessingHints")">
-                                <Button Color="Color.Primary" @onclick="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
+                            <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false, "PleaseCheckProcessingHints")">
+                                <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
                             </Tooltip>
                         </BarDropdownItem>
                         <BarDropdownItem>
@@ -319,7 +320,7 @@ along with Foobar.  If not, see
                                     }
                                 </TableBody>
                             </Table>
-                            <Button Color="Color.Primary" Clicked="OnAddTrackClicked">@localizer["Addnewtrack"]</Button>
+                            <Button Color="Color.Primary" Clicked="() => cuesheet.AddTrack(cuesheetController.NewTrack())">@localizer["Addnewtrack"]</Button>
                             <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                         </CollapseBody>
                     </Collapse>
@@ -639,6 +640,30 @@ along with Foobar.  If not, see
     </ModalContent>
 </Modal>
 
+<Modal @ref="modalDownloadCuesheet">
+    <ModalBackdrop/>
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>
+                @localizer["Downloadcuesheet"]
+            </ModalTitle>
+            <CloseButton Clicked="() => modalDownloadCuesheet.Hide()" />
+        </ModalHeader>
+        <ModalBody>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Filename"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
+                </FieldBody>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
 @code {
     public class SelectExportProfileModel
     {
@@ -673,7 +698,6 @@ along with Foobar.  If not, see
 
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetTracksVisible = true;
-    private Boolean processingHintsVisibile = false;
     private Boolean processingHintsWarningVisible = true;
     private Boolean processingHintsErrorVisible = true;
     private Boolean importVisible = false;
@@ -683,7 +707,6 @@ along with Foobar.  If not, see
 
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronProcessingHints = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronProcessingHintsWarning = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronProcessingHintsError = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
@@ -700,23 +723,15 @@ along with Foobar.  If not, see
 
     private Modal modalTextImport;
     private Modal modalExportProfiles;
+    private Modal modalDownloadCuesheet;
     private AudioPlayer audioPlayer;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         cuesheet = cuesheetController.Cuesheet;
-        cuesheet.ValidateablePropertyChanged += delegate
-        {
-            //TODO: Should be customizable via options
-            if (cuesheet.ValidationErrors.Count() > 0)
-            {
-                processingHintsVisibile = true;
-                SwitchChevron(processingHintsVisibile, ref chevronProcessingHints);
-            }
-        };
 
         var dotNetReference = DotNetObjectReference.Create(this);
-        JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
+        await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
 
         if (exportProfileModels == null)
         {
@@ -737,10 +752,7 @@ along with Foobar.  If not, see
             exportProfile.SchemeFooter.Scheme = String.Empty;
             list.Add(new SelectExportProfileModel(exportProfile));
             exportProfileModels = list.AsReadOnly();
-            selectedExportProfileId = exportProfileModels.First().Id;
         }
-
-        return base.OnInitializedAsync();
     }
 
     private void HeaderClicked(ref Boolean visible, ref String chevron)
@@ -759,21 +771,6 @@ along with Foobar.  If not, see
         {
             chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
         }
-    }
-
-    private void OnAddTrackClicked()
-    {
-        var track = cuesheetController.NewTrack();
-        track.ValidateablePropertyChanged += delegate
-        {
-            //TODO: Should be customizable via options
-            if (track.ValidationErrors.Count() > 0)
-            {
-                processingHintsVisibile = true;
-                SwitchChevron(processingHintsVisibile, ref chevronProcessingHints);
-            }
-        };
-        cuesheet.AddTrack(track);
     }
 
     private void OnDeleteAllTracksClicked()
@@ -806,13 +803,6 @@ along with Foobar.  If not, see
         };
         modalDialog.Confirmed += newCuesheetDelegate;
         modalDialog.ShowModal();
-    }
-
-    private void DownloadCuesheetFileClicked()
-    {
-        var cuesheetFile = new CuesheetFile(cuesheet);
-        var fileData = cuesheetFile.GenerateCuesheetFile();
-        BlazorDownloadFileService.DownloadFile(CuesheetFile.DefaultFileName, fileData, "text/plain");
     }
 
     private String GetCSSClassAlert(Validateable validateable, String property)
@@ -958,11 +948,11 @@ along with Foobar.  If not, see
         }
     }
 
-    private void OnDownloadExportProfileClicked()
+    private async Task OnDownloadExportProfileClicked()
     {
         if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
         {
-            BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
+            await BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
         }
     }
 
@@ -1150,5 +1140,13 @@ along with Foobar.  If not, see
         StateHasChanged();
         await Task.Delay(1);
         await JSRuntime.InvokeVoidAsync("triggerClick", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile)));
+    }
+
+    private async Task DownloadCuesheetFileClicked()
+    {
+        var cuesheetFile = new CuesheetFile(cuesheet);
+        var fileData = cuesheetFile.GenerateCuesheetFile();
+        await optionsController.SaveOptions();
+        await BlazorDownloadFileService.DownloadFile(optionsController.Options.CuesheetFileName, fileData, "text/plain");
     }
 }

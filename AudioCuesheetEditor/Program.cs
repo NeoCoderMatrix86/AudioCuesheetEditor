@@ -40,6 +40,7 @@ namespace AudioCuesheetEditor
             builder.Services.AddBlazorDownloadFile();
 
             builder.Services.AddScoped<CuesheetController>();
+            builder.Services.AddScoped<OptionsController>();
 
             var host = builder.Build();
             host.Services.UseBootstrapProviders();

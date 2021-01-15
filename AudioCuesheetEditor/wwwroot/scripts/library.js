@@ -29,10 +29,11 @@ function triggerClick(domId) {
     element.click();
 }
 
-window.blazorCulture = {
-    get: () => localStorage['BlazorCulture'],
-    set: (value) => localStorage['BlazorCulture'] = value
-};
+window.ApplicationOptions = {
+    get: () => localStorage['ApplicationOptions'],
+    set: (value) => localStorage['ApplicationOptions'] = value
+}
+
 //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
 function removeBrowserHistoryEntry() {
     window.history.replaceState({}, 'ErrorReport', '/');
