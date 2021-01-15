@@ -85,7 +85,6 @@ namespace AudioCuesheetEditor.Model.IO
                 lines.Add(reader.ReadLine());
             }
             fileLines = lines.AsReadOnly();
-            //TODO: Save via options
             ImportScheme = DefaultImportScheme;
         }
 

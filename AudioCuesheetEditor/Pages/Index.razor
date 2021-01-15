@@ -841,6 +841,7 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
+                textImportFile.ImportScheme = optionsController.Options.TextImportScheme;
                 modalTextImport.Show();
             }
             else
@@ -860,10 +861,12 @@ along with Foobar.  If not, see
         textImportFile = null;
     }
 
-    private void TextImportStartClicked()
+    private async Task TextImportStartClicked()
     {
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
+            optionsController.Options.TextImportScheme = textImportFile.ImportScheme;
+            await optionsController.SaveOptions();
             cuesheet.Import(textImportFile);
             modalTextImport.Hide();
             textImportFile = null;

@@ -68,6 +68,10 @@ namespace AudioCuesheetEditor.Model.Options
                 list.Add(exportProfile);
                 ExportProfiles = list.AsReadOnly();
             }
+            if (String.IsNullOrEmpty(TextImportScheme) == true)
+            {
+                TextImportScheme = TextImportFile.DefaultImportScheme;
+            }
         }
 
         public String CuesheetFileName { get; set; }
@@ -88,5 +92,6 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
+        public String TextImportScheme { get; set; }
     }
 }
