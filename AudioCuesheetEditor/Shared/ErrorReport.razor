@@ -41,10 +41,15 @@ along with Foobar.  If not, see
         <div class="input-group-prepend">
             <span class="input-group-text" id="exceptionLabel">@localizer["Exception"]</span>
         </div>
-        <textarea rows="10" class="form-control disabled" disabled aria-label="Exception" aria-describedby="exceptionLabel" name="message" @bind="Exception"></textarea>
+        <textarea rows="10" class="form-control disabled" disabled aria-label="Exception" aria-describedby="exceptionLabel" name="exception" @bind="Exception"></textarea>
     </div>
 
-    <!--TODO: Read localStorage and send it with the report-->
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="optionsLabel">@localizer["Options"]</span>
+        </div>
+        <textarea rows="3" class="form-control disabled" disabled aria-label="Options" aria-describedby="optionsLabel" name="options" @bind="Options"></textarea>
+    </div>
 
     <p>@localizer["OnceYouSubmitTheErrorReport"]</p>
 
@@ -53,12 +58,13 @@ along with Foobar.  If not, see
 
 @code {
     public static String Exception { get; set; }
+    public String Options { get; private set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         //Reset browser history
-        JSRuntime.InvokeVoidAsync("removeBrowserHistoryEntry", null);
-        return base.OnInitializedAsync();
+        await JSRuntime.InvokeVoidAsync("removeBrowserHistoryEntry", null);
+        Options = await JSRuntime.InvokeAsync<String>("ApplicationOptions.get");
     }
 
     public MarkupString DescribeHowTheErrorOccured

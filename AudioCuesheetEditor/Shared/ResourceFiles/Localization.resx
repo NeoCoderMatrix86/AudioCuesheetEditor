@@ -536,4 +536,7 @@
   <data name="Filename" xml:space="preserve">
     <value>Filename:</value>
   </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
 </root>
