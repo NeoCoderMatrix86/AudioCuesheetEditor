@@ -147,7 +147,7 @@
   <data name="Artist" xml:space="preserve">
     <value>Künstler</value>
   </data>
-  <data name="Audiofile" xml:space="preserve">
+  <data name="AudioFile" xml:space="preserve">
     <value>Audio Datei</value>
   </data>
   <data name="AudioPlayer" xml:space="preserve">

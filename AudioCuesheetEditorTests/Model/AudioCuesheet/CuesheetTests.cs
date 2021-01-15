@@ -31,10 +31,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void AddTrackTest()
         {
-            var testHelper = new TestHelper();
-            var cuesheet = testHelper.CuesheetController.Cuesheet;
+            var cuesheet = new Cuesheet();
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            cuesheet.AddTrack(new Track(testHelper.CuesheetController));
+            cuesheet.AddTrack(new Track());
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
         }
 
@@ -42,7 +41,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public void CuesheetTest()
         {
             var testHelper = new TestHelper();
-            var cuesheet = testHelper.CuesheetController.Cuesheet;
+            var cuesheet = new Cuesheet();
             Assert.IsNull(cuesheet.AudioFile);
             var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
@@ -54,13 +53,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void MoveTrackTest()
         {
-            var testHelper = new TestHelper();
-            var cuesheet = testHelper.CuesheetController.Cuesheet;
-            var track1 = testHelper.CuesheetController.NewTrack();
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
             cuesheet.AddTrack(track1);
-            var track2 = testHelper.CuesheetController.NewTrack();
+            var track2 = new Track();
             cuesheet.AddTrack(track2);
-            var track3 = testHelper.CuesheetController.NewTrack();
+            var track3 = new Track();
             cuesheet.AddTrack(track3);
             Assert.AreEqual(cuesheet.Tracks.Count, 3);
             Assert.IsTrue(track1.Position.Value == 1);
@@ -106,8 +104,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(textImportFile.Tracks.Count == 8);
             Assert.IsTrue(textImportFile.IsValid);
 
-            var testHelper = new TestHelper();
-            var cuesheet = testHelper.CuesheetController.Cuesheet;
+            var cuesheet = new Cuesheet();
             cuesheet.Import(textImportFile);
 
             Assert.IsNull(cuesheet.CDTextfile);

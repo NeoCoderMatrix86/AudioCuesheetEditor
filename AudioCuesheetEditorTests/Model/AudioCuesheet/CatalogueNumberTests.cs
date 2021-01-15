@@ -30,8 +30,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void CatalogueNumberTest()
         {
-            var testHelper = new TestHelper();
-            var catalogueNumber = new CatalogueNumber(testHelper.CuesheetController);
+            var catalogueNumber = new CatalogueNumber();
             Assert.IsFalse(catalogueNumber.IsValid);
             Assert.IsTrue(catalogueNumber.ValidationErrors.Count == 1);
             catalogueNumber.Value = "Testvalue";

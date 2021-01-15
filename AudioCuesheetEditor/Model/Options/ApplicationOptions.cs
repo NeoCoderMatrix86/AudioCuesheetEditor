@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Shared;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
 using System;
@@ -42,7 +43,30 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(CultureName) == true)
             {
-                CultureName = CultureInfo.CurrentCulture.DisplayName;
+                CultureName = CultureSelector.DefaultCultureName;
+            }
+            if (ExportProfiles == null)
+            {
+                var list = new List<ExportProfile>();
+                var exportProfile = new ExportProfile()
+                {
+                    FileName = "Export.csv",
+                    Name = "CSV Export"
+                };
+                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
+                exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
+                exportProfile.SchemeFooter.Scheme = String.Empty;
+                list.Add(exportProfile);
+                exportProfile = new ExportProfile()
+                {
+                    FileName = "Tracks.txt",
+                    Name = "Tracks only"
+                };
+                exportProfile.SchemeHead.Scheme = String.Empty;
+                exportProfile.SchemeTracks.Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%";
+                exportProfile.SchemeFooter.Scheme = String.Empty;
+                list.Add(exportProfile);
+                ExportProfiles = list.AsReadOnly();
             }
         }
 
@@ -63,5 +87,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
+        public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
     }
 }

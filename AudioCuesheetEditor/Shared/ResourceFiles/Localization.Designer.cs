@@ -153,9 +153,9 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
-        public static string Audiofile {
+        public static string AudioFile {
             get {
-                return ResourceManager.GetString("Audiofile", resourceCulture);
+                return ResourceManager.GetString("AudioFile", resourceCulture);
             }
         }
         

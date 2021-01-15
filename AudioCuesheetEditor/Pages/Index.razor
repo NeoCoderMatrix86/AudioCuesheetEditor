@@ -134,7 +134,7 @@ along with Foobar.  If not, see
                             </Blazorise.Link>
                         </CollapseHeader>
                         <CollapseBody>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))">
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDArtist"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
@@ -142,7 +142,7 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))">
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTitle"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
@@ -150,9 +150,9 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))">
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))">
                                 <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Audiofile"]</FieldLabel>
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
                                         @if (cuesheet.AudioFile == null)
                                         {
@@ -173,7 +173,7 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))">
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
@@ -196,7 +196,7 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))">
+                            <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
                                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
@@ -275,21 +275,21 @@ along with Foobar.  If not, see
                                             </TableRowCell>
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
                                                     </Tooltip>
                                                 </Tooltip>
                                             </TableRowCell>
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Title" />
                                                     </Tooltip>
                                                 </Tooltip>
                                             </TableRowCell>
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                                         <!--TODO: Use pattern-->
                                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
                                                     </Tooltip>
@@ -297,7 +297,7 @@ along with Foobar.  If not, see
                                             </TableRowCell>
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                                         <!--TODO: Use pattern-->
                                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
                                                     </Tooltip>
@@ -305,7 +305,7 @@ along with Foobar.  If not, see
                                             </TableRowCell>
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                                         <!--TODO: Use pattern-->
                                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
                                                     </Tooltip>
@@ -313,14 +313,14 @@ along with Foobar.  If not, see
                                             </TableRowCell>
                                             <TableRowCell>
                                                 <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    @((MarkupString)track.GetValidationErrors())
+                                                    @((MarkupString)track.GetValidationErrors(localizer))
                                                 </Tooltip>
                                             </TableRowCell>
                                         </TableRow>
                                     }
                                 </TableBody>
                             </Table>
-                            <Button Color="Color.Primary" Clicked="() => cuesheet.AddTrack(cuesheetController.NewTrack())">@localizer["Addnewtrack"]</Button>
+                            <Button Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track())">@localizer["Addnewtrack"]</Button>
                             <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                         </CollapseBody>
                     </Collapse>
@@ -353,7 +353,7 @@ along with Foobar.  If not, see
                                         {
                                             <a onclick="document.getElementById('@cuesheetController.GetFieldIdentifier(validationError.FieldReference)').focus();">
                                                 <div class="alert alert-warning" role="alert">
-                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message
+                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)
                                                 </div>
                                             </a>
                                         }
@@ -376,7 +376,7 @@ along with Foobar.  If not, see
                                         {
                                             <a onclick="document.getElementById('@cuesheetController.GetFieldIdentifier(validationError.FieldReference)').focus();">
                                                 <div class="alert alert-danger" role="alert">
-                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message
+                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)
                                                 </div>
                                             </a>
                                         }
@@ -549,7 +549,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeHead.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(localizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -587,7 +587,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeTracks.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(localizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -625,7 +625,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeFooter.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(localizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -712,7 +712,7 @@ along with Foobar.  If not, see
     private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
 
-    private Cuesheet cuesheet;
+    private Cuesheet cuesheet = new Cuesheet();
     private TextImportFile textImportFile;
 
     private IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
@@ -728,30 +728,13 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
-        cuesheet = cuesheetController.Cuesheet;
-
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
 
         if (exportProfileModels == null)
         {
-            var list = new List<SelectExportProfileModel>();
-            //TODO: Make this saveable
-            var exportProfile = new ExportProfile(localizer);
-            exportProfile.FileName = "Export.csv";
-            exportProfile.Name = "CSV Export";
-            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
-            exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
-            exportProfile.SchemeFooter.Scheme = String.Empty;
-            list.Add(new SelectExportProfileModel(exportProfile));
-            exportProfile = new ExportProfile(localizer);
-            exportProfile.FileName = "Tracks.txt";
-            exportProfile.Name = "Tracks only";
-            exportProfile.SchemeHead.Scheme = String.Empty;
-            exportProfile.SchemeTracks.Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%";
-            exportProfile.SchemeFooter.Scheme = String.Empty;
-            list.Add(new SelectExportProfileModel(exportProfile));
-            exportProfileModels = list.AsReadOnly();
+            exportProfileModels = optionsController.Options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
+            selectedExportProfileId = exportProfileModels.First().Id;
         }
     }
 
@@ -797,7 +780,7 @@ along with Foobar.  If not, see
         modalDialog.ModalSize = ModalSize.Small;
         void newCuesheetDelegate(object sender, EventArgs args)
         {
-            cuesheet = cuesheetController.NewCuesheet();
+            cuesheet = new Cuesheet();
             modalDialog.Confirmed -= newCuesheetDelegate;
             StateHasChanged();
         };
@@ -903,7 +886,7 @@ along with Foobar.  If not, see
                 modalDialog.ModalSize = ModalSize.Small;
                 void importCuesheetDelegate(object sender, EventArgs args)
                 {
-                    cuesheet = cuesheetController.Import(memoryStream);
+                    cuesheet = CuesheetFile.ImportCuesheet(memoryStream);
                     modalDialog.Confirmed -= importCuesheetDelegate;
                     StateHasChanged();
                 };
@@ -921,8 +904,9 @@ along with Foobar.  If not, see
         }
     }
 
-    private void ModalExportProfilesCloseClicked()
+    private async Task ModalExportProfilesCloseClicked()
     {
+        await SaveExportProfiles();
         modalExportProfiles.Hide();
     }
 
@@ -952,6 +936,7 @@ along with Foobar.  If not, see
     {
         if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
         {
+            await SaveExportProfiles();
             await BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
         }
     }
@@ -959,7 +944,7 @@ along with Foobar.  If not, see
     private void OnAddNewExportProfileClicked()
     {
         var list = exportProfileModels.ToList();
-        list.Add(new SelectExportProfileModel(new ExportProfile(localizer)));
+        list.Add(new SelectExportProfileModel(new ExportProfile()));
         exportProfileModels = list.AsReadOnly();
         selectedExportProfileId = list.Last().Id;
     }
@@ -1044,6 +1029,7 @@ along with Foobar.  If not, see
         modalDialog.ModalSize = ModalSize.Small;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
+            //TODO: Reset localStorage
             modalDialog.Confirmed -= restartApplicationDelegate;
             navigationManager.NavigateTo(navigationManager.Uri, true);
         };
@@ -1148,5 +1134,14 @@ along with Foobar.  If not, see
         var fileData = cuesheetFile.GenerateCuesheetFile();
         await optionsController.SaveOptions();
         await BlazorDownloadFileService.DownloadFile(optionsController.Options.CuesheetFileName, fileData, "text/plain");
+    }
+
+    private async Task SaveExportProfiles()
+    {
+        if (exportProfileModels != null)
+        {
+            optionsController.Options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
+            await optionsController.SaveOptions();
+        }
     }
 }

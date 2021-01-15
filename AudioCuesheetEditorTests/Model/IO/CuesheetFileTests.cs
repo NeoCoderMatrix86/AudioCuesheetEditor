@@ -38,17 +38,21 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         public void GenerateCuesheetFileTest()
         {
             var testHelper = new TestHelper();
-            Cuesheet cuesheet = testHelper.CuesheetController.Cuesheet;
-            cuesheet.Artist = "Demo Artist";
-            cuesheet.Title = "Demo Title";
-            cuesheet.AudioFile = new AudioFile("Testfile.mp3");
+            Cuesheet cuesheet = new Cuesheet
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                AudioFile = new AudioFile("Testfile.mp3")
+            };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
             {
-                var track = testHelper.CuesheetController.NewTrack();
-                track.Artist = String.Format("Demo Track Artist {0}", i);
-                track.Title = String.Format("Demo Track Title {0}", i);
-                track.Begin = begin;
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
                 cuesheet.AddTrack(track);
@@ -135,8 +139,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            var testHelper = new TestHelper();
-            var cuesheet = CuesheetFile.ImportCuesheet(testHelper.CuesheetController, new MemoryStream(File.ReadAllBytes(tempFile)));
+            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);
@@ -145,10 +148,10 @@ namespace AudioCuesheetEditor.Model.IO.Tests
 
             File.Delete(tempFile);
 
-            testHelper = new TestHelper();
-            cuesheet = CuesheetFile.ImportCuesheet(testHelper.CuesheetController, new MemoryStream(Resources.Playlist_Bug_30));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30));
             Assert.IsNotNull(cuesheet);
-            Assert.IsTrue(cuesheet.IsValid);
+            var testHelper = new TestHelper();
+            Assert.IsNull(cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
         }
     }
 }

@@ -13,7 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,36 +22,33 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
-    public enum ValidationErrorFilterType
+    public class ValidationMessage
     {
-        All,
-        WarningOnly,
-        ErrorOnly
-    }
-    public enum ValidationErrorType
-    {
-        Warning,
-        Error
-    }
-    public class ValidationError
-    {
-        public ValidationMessage Message { get; private set; }
-        public ValidationErrorType Type { get; private set; }
-        public FieldReference FieldReference { get; private set; }
-
-        public ValidationError(FieldReference fieldReference, ValidationErrorType validationErrorType, String message, params object[] messageParameter)
+        private readonly object[] args;
+        public ValidationMessage(String message, params object[] args)
         {
             if (String.IsNullOrEmpty(message) == true)
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            if (fieldReference == null)
+            Message = message;
+            this.args = args;
+        }
+        public String Message { get; private set; }
+        public LocalizedString GetMessageLocalized(IStringLocalizer<Localization> localizer)
+        {
+            var arguments = args;
+            if (arguments != null)
             {
-                throw new ArgumentNullException(nameof(fieldReference));
+                for (int i = 0; i < arguments.Length;i++)
+                {
+                    if ((arguments[i] != null) && (arguments[i].GetType() == typeof(String)))
+                    {
+                        arguments[i] = localizer[(String)arguments[i]];
+                    }
+                }
             }
-            Message = new ValidationMessage(message, messageParameter);
-            Type = validationErrorType;
-            FieldReference = fieldReference;
+            return localizer[Message, arguments];
         }
     }
 }

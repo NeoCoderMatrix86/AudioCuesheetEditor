@@ -31,7 +31,7 @@ namespace AudioCuesheetEditorTests.Utility
             var options = Options.Create(new LocalizationOptions());
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
             Localizer = new StringLocalizer<Localization>(factory);
-            CuesheetController = new CuesheetController(Localizer);
+            CuesheetController = new CuesheetController();
         }
 
         public StringLocalizer<Localization> Localizer { get; private set; }
