@@ -178,11 +178,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Catalogue number ähnelt.
+        /// </summary>
+        public static string CatalogueNumber {
+            get {
+                return ResourceManager.GetString("CatalogueNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cataloguenumber contains non digits. ähnelt.
+        /// </summary>
+        public static string CataloguenumberContainsNonDigits {
+            get {
+                return ResourceManager.GetString("CataloguenumberContainsNonDigits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die CD artist ähnelt.
         /// </summary>
         public static string CDArtist {
             get {
                 return ResourceManager.GetString("CDArtist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die CD Textfile ähnelt.
+        /// </summary>
+        public static string CDTextfile {
+            get {
+                return ResourceManager.GetString("CDTextfile", resourceCulture);
             }
         }
         
@@ -446,6 +473,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Enteraudiofilehere {
             get {
                 return ResourceManager.GetString("Enteraudiofilehere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number. ähnelt.
+        /// </summary>
+        public static string EnterCatalogueNumberHere {
+            get {
+                return ResourceManager.GetString("EnterCatalogueNumberHere", resourceCulture);
             }
         }
         
@@ -752,6 +788,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string HasInvalidEnd {
             get {
                 return ResourceManager.GetString("HasInvalidEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} has invalid length({1})! ähnelt.
+        /// </summary>
+        public static string HasInvalidLength {
+            get {
+                return ResourceManager.GetString("HasInvalidLength", resourceCulture);
             }
         }
         

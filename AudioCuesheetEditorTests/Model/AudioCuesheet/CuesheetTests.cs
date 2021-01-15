@@ -123,7 +123,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var cuesheet = testHelper.CuesheetController.Cuesheet;
             cuesheet.Import(textImportFile);
 
-            Assert.AreEqual(cuesheet.ValidationErrors.Count, 3);
+            Assert.IsNull(cuesheet.CDTextfile);
+            Assert.AreEqual(cuesheet.ValidationErrors.Count, 5);
 
             File.Delete(tempFile);
         }

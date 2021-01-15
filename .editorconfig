@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# IDE0016: throw-Ausdruck verwenden
+csharp_style_throw_expression = false:suggestion
+
+# IDE0057: Bereichsoperator verwenden
+csharp_style_prefer_range_operator = false:suggestion
