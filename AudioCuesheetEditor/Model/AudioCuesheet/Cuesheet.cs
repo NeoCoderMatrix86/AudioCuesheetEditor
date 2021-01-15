@@ -228,6 +228,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
             }
+            if (tracks.Count < 1)
+            {
+                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Tracks")), FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error));
+            }
             if (CDTextfile == null)
             {
                 validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CDTextfile")), FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning));
