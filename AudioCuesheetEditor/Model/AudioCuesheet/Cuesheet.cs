@@ -111,7 +111,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Add(track);
+            track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
             ReCalculateTrackProperties();
+            OnValidateablePropertyChanged();
+        }
+
+        private void Track_ValidateablePropertyChanged(object sender, EventArgs e)
+        {
             OnValidateablePropertyChanged();
         }
 
@@ -122,6 +128,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Remove(track);
+            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
             OnValidateablePropertyChanged();
             ReCalculateTrackProperties();
         }
