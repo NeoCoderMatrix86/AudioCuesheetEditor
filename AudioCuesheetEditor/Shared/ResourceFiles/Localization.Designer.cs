@@ -801,6 +801,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Files (optional) ähnelt.
+        /// </summary>
+        public static string Files {
+            get {
+                return ResourceManager.GetString("Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidBegin {
