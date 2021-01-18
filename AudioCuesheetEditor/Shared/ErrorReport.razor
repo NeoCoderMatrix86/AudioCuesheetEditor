@@ -39,6 +39,14 @@ along with Foobar.  If not, see
 
     <div class="input-group mb-3">
         <div class="input-group-prepend">
+            <span class="input-group-text" id="filesReportLabel">@localizer["Files"]</span>
+        </div>
+        <InputFile Class="form-control" multiple OnChange="OnFilesChanged"></InputFile>
+        <textarea class="form-control disabled" hidden disabled aria-label="FilesBase64" aria-describedby="filesReportLabel" name="FilesBase64" @bind="filesAsBase64"></textarea>
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
             <span class="input-group-text" id="exceptionLabel">@localizer["Exception"]</span>
         </div>
         <textarea rows="10" class="form-control disabled" disabled aria-label="Exception" aria-describedby="exceptionLabel" name="exception" @bind="Exception"></textarea>
@@ -59,6 +67,7 @@ along with Foobar.  If not, see
 @code {
     public static String Exception { get; set; }
     public String Options { get; private set; }
+    private String filesAsBase64;
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,6 +82,23 @@ along with Foobar.  If not, see
         {
             MarkupString describeHowTheErrorOccured = (MarkupString)(localizer["DescribeHowTheErrorOccured"].Value.Replace(Environment.NewLine, "<br/>"));
             return describeHowTheErrorOccured;
+        }
+    }
+
+    private async Task OnFilesChanged(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        if (files != null)
+        {
+            filesAsBase64 = null;
+            foreach (var file in files)
+            {
+                var stream = file.OpenReadStream();
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                stream.Close();
+                filesAsBase64 += String.Format("{0}<br/>", Convert.ToBase64String(memoryStream.ToArray()));
+            }
         }
     }
 }
