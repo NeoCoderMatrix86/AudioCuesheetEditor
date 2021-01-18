@@ -810,6 +810,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} has invalid Count ({1})! ähnelt.
+        /// </summary>
+        public static string HasInvalidCount {
+            get {
+                return ResourceManager.GetString("HasInvalidCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die End is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidEnd {
@@ -1265,6 +1274,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string TrackHasInvalidValue {
             get {
                 return ResourceManager.GetString("TrackHasInvalidValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tracks ähnelt.
+        /// </summary>
+        public static string Tracks {
+            get {
+                return ResourceManager.GetString("Tracks", resourceCulture);
             }
         }
         

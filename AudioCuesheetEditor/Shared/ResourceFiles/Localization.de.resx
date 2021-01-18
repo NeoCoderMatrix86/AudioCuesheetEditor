@@ -554,4 +554,10 @@
   <data name="Save" xml:space="preserve">
     <value>Speichern</value>
   </data>
+  <data name="HasInvalidCount" xml:space="preserve">
+    <value>{0} hat eine ungültige Menge ({1})!</value>
+  </data>
+  <data name="Tracks" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
 </root>

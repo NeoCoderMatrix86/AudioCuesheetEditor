@@ -227,7 +227,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (tracks.Count < 1)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Tracks")), FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error, "HasInvalidCount", nameof(Tracks), 0));
             }
             if (CDTextfile == null)
             {
