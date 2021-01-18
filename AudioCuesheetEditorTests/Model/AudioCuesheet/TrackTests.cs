@@ -29,8 +29,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public void TrackTest()
         {
             //Tests for Length
-            var testHelper = new TestHelper();
-            var track = new Track(testHelper.CuesheetController);
+            var track = new Track();
             Assert.IsNull(track.Length);
             track.Length = new TimeSpan(0, 2, 30);
             Assert.IsNotNull(track.Length);

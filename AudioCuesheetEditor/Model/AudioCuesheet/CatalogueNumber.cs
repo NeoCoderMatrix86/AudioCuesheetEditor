@@ -25,11 +25,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class CatalogueNumber : Validateable
     {
-        private readonly CuesheetController _cuesheetController;
-
-        public CatalogueNumber(CuesheetController cuesheetController)
+        public CatalogueNumber()
         {
-            _cuesheetController = cuesheetController;
             Validate();
         }
 
@@ -43,17 +40,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Value))
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CatalogueNumber")), FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "HasNoValue", "CatalogueNumber"));
             }
             else
             {
                 if (Value.All(Char.IsDigit) == false)
                 {
-                    validationErrors.Add(new ValidationError(_cuesheetController.GetLocalizedString("CataloguenumberContainsNonDigits"), FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "CataloguenumberContainsNonDigits"));
                 }
                 if (Value.Length != 13)
                 {
-                    validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasInvalidLength"), _cuesheetController.GetLocalizedString("CatalogueNumber"), 13), FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "HasInvalidLength", "CatalogueNumber", 13));
                 }
             }
         }

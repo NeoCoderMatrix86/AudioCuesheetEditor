@@ -33,25 +33,28 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
         public void ExportProfileTest()
         {
             //Prepare cuesheet
-            var testHelper = new TestHelper();
-            Cuesheet cuesheet = testHelper.CuesheetController.Cuesheet;
-            cuesheet.Artist = "Demo Artist";
-            cuesheet.Title = "Demo Title";
-            cuesheet.AudioFile = new AudioFile("Testfile.mp3");
+            Cuesheet cuesheet = new Cuesheet
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                AudioFile = new AudioFile("Testfile.mp3")
+            };            
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
             {
-                var track = testHelper.CuesheetController.NewTrack();
-                track.Artist = String.Format("Demo Track Artist {0}", i);
-                track.Title = String.Format("Demo Track Title {0}", i);
-                track.Begin = begin;
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
                 cuesheet.AddTrack(track);
             }
 
             //Test class
-            var exportProfile = new ExportProfile(testHelper.Localizer);
+            var exportProfile = new ExportProfile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
@@ -81,7 +84,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
 
             //Check multiline export
 
-            exportProfile = new ExportProfile(testHelper.Localizer);
+            exportProfile = new ExportProfile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = String.Format("%Track.Position%{0}%Track.Artist%{1}%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%", Environment.NewLine, Environment.NewLine);

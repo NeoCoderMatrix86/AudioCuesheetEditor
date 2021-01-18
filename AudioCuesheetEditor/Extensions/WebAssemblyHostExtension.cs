@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Controller;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -26,22 +27,13 @@ namespace AudioCuesheetEditor.Extensions
 {
     public static class WebAssemblyHostExtension
     {
-        public static readonly CultureInfo DefaultCultureInfo = new CultureInfo("en-US");
-
         public async static Task SetDefaultCulture(this WebAssemblyHost host)
         {
-            var jsInterop = host.Services.GetRequiredService<IJSRuntime>();
-            var result = await jsInterop.InvokeAsync<string>("blazorCulture.get");
+            var optionsController = host.Services.GetRequiredService<OptionsController>();
+            await optionsController.LoadOptions();
 
-            CultureInfo culture = DefaultCultureInfo;
-
-            if (result != null)
-            {
-                culture = new CultureInfo(result);
-            }
-
-            CultureInfo.DefaultThreadCurrentCulture = culture;
-            CultureInfo.DefaultThreadCurrentUICulture = culture;
+            CultureInfo.DefaultThreadCurrentCulture = optionsController.Options.Culture;
+            CultureInfo.DefaultThreadCurrentUICulture = optionsController.Options.Culture;
         }
     }
 }

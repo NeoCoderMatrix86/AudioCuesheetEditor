@@ -32,8 +32,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public class Cuesheet : Validateable, ICuesheet
     {
-        private readonly CuesheetController _cuesheetController;
-
         private readonly object syncLock = new object();
 
         private readonly List<Track> tracks;
@@ -42,11 +40,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private AudioFile audioFile;
         private CDTextfile cDTextfile;
 
-        public Cuesheet(CuesheetController cuesheetController)
+        public Cuesheet()
         {
-            _cuesheetController = cuesheetController;
             tracks = new List<Track>();
-            CatalogueNumber = new CatalogueNumber(_cuesheetController);
+            CatalogueNumber = new CatalogueNumber();
             CatalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
             Validate();
         }
@@ -208,7 +205,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             foreach (var importTrack in textImportFile.Tracks)
             {
-                var track = _cuesheetController.NewTrack();
+                var track = new Track();
                 track.CopyValuesFromImportTrack(importTrack);
                 AddTrack(track);
             }
@@ -218,15 +215,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "HasNoValue", nameof(Artist)));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "HasNoValue", nameof(Title)));
             }
             if (AudioFile == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error, "HasNoValue", nameof(AudioFile)));
             }
             if (tracks.Count < 1)
             {
@@ -234,11 +231,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (CDTextfile == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CDTextfile")), FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "HasNoValue", nameof(CDTextfile)));
             }
             if (CatalogueNumber == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("CatalogueNumber")), FieldReference.Create(this, nameof(CatalogueNumber)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CatalogueNumber)), ValidationErrorType.Warning, "HasNoValue", nameof(CatalogueNumber)));
             }
             else
             {
@@ -253,7 +250,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     if ((track.Begin == null) || (track.Begin != begin))
                     {
-                        validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("TrackHasInvalidValue"), track.Position, _cuesheetController.GetLocalizedString("Begin"), track.Begin), FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning, "TrackHasInvalidValue", track.Position, nameof(Track.Begin), track.Begin));
                     }
                     if (track.End != null)
                     {

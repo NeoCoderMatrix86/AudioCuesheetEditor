@@ -44,13 +44,13 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
         public static readonly String CuesheetCatalogueNumber = "CATALOG";
 
-        public static Cuesheet ImportCuesheet(CuesheetController cuesheetController, MemoryStream fileContent)
+        public static Cuesheet ImportCuesheet(MemoryStream fileContent)
         {
             if (fileContent == null)
             {
                 throw new ArgumentNullException(nameof(fileContent));
             }
-            var cuesheet = new Cuesheet(cuesheetController);
+            var cuesheet = new Cuesheet();
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);
             var regexCuesheetArtist = new Regex("^" + CuesheetArtist);
@@ -93,7 +93,7 @@ namespace AudioCuesheetEditor.Model.IO
                 }
                 if (regexTrackBegin.IsMatch(line) == true)
                 {
-                    track = new Track(cuesheetController);
+                    track = new Track();
                 }
                 if (regexTrackArtist.IsMatch(line) == true)
                 {

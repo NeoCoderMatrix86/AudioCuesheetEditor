@@ -25,16 +25,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Track : Validateable, ITrack
     {
-        private readonly CuesheetController _cuesheetController;
-
         private uint? position;
         private String artist;
         private String title;
         private TimeSpan? begin;
         private TimeSpan? end;
-        public Track(CuesheetController cuesheetController)
+        public Track()
         {
-            _cuesheetController = cuesheetController;
             Validate();
         }
 
@@ -122,45 +119,45 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (Position == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Position")), FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "HasNoValue", nameof(Position)));
             }
             if ((Position != null) && (Position == 0))
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasInvalidValue"), _cuesheetController.GetLocalizedString("Position")), FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "HasInvalidValue", nameof(Position)));
             }
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Artist")), FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "HasNoValue", nameof(Artist)));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "HasNoValue", nameof(Title)));
             }
             if (Begin == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Begin")), FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "HasNoValue", nameof(Begin)));
             }
             else
             {
                 if (Begin < TimeSpan.Zero)
                 {
-                    validationErrors.Add(new ValidationError(_cuesheetController.GetLocalizedString("HasInvalidBegin"), FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "HasInvalidBegin"));
                 }
             }
             if (End == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("End")), FieldReference.Create(this, nameof(End)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "HasNoValue", nameof(End)));
             }
             else
             {
                 if (End < TimeSpan.Zero)
                 {
-                    validationErrors.Add(new ValidationError(_cuesheetController.GetLocalizedString("HasInvalidEnd"), FieldReference.Create(this, nameof(End)), ValidationErrorType.Error));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "HasInvalidEnd"));
                 }
             }
             if (Length == null)
             {
-                validationErrors.Add(new ValidationError(_cuesheetController.GetLocalizedString("LengthHasNoValue"), FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "LengthHasNoValue"));
             }
         }
     }

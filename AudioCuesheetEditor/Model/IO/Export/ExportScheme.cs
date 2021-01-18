@@ -21,12 +21,15 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SchemeType
     {
+        Unknown,
         Header,
         Body,
         Footer
@@ -49,7 +52,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
         private String scheme;
-        private readonly IStringLocalizer<Localization> localizer;
+        private SchemeType schemeType;
 
         static ExportScheme()
         {
@@ -82,22 +85,18 @@ namespace AudioCuesheetEditor.Model.IO.Export
             };
         }
 
-        public ExportScheme(IStringLocalizer<Localization> localizer, SchemeType schemeType)
-        {
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
-            this.localizer = localizer;
-            SchemeType = schemeType;
-        }
+        public ExportScheme() { }
 
         public String Scheme 
         {
             get { return scheme; }
             set { scheme = value; OnValidateablePropertyChanged(); }
         }
-        public SchemeType SchemeType { get; private set; }
+        public SchemeType SchemeType 
+        {
+            get { return schemeType; }
+            set { schemeType = value; OnValidateablePropertyChanged(); }
+        }
         
         public String GetExportResult(ICuesheetEntity cuesheetEntity)
         {
@@ -120,6 +119,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty);
+                        break;
+                    default:
+                        //Nothing to do
                         break;
                 }
             }
@@ -145,7 +147,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         if (addValidationError == true)
                         {
-                            validationErrors.Add(new ValidationError(localizer["SchemeContainsPlaceholdersThatCanNotBeSolved"], FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning));
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
                         }
                         break;
                     case SchemeType.Body:
@@ -159,8 +161,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         if (addValidationError == true)
                         {
-                            validationErrors.Add(new ValidationError(localizer["SchemeContainsPlaceholdersThatCanNotBeSolved"], FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning));
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
                         }
+                        break;
+                    case SchemeType.Unknown:
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "HasInvalidValue", nameof(SchemeType)));
                         break;
                 }
             }

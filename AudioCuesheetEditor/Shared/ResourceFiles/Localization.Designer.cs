@@ -153,9 +153,9 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
-        public static string Audiofile {
+        public static string AudioFile {
             get {
-                return ResourceManager.GetString("Audiofile", resourceCulture);
+                return ResourceManager.GetString("AudioFile", resourceCulture);
             }
         }
         
@@ -295,6 +295,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost! ähnelt.
+        /// </summary>
+        public static string ConfirmResetOfApplication {
+            get {
+                return ResourceManager.GetString("ConfirmResetOfApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please confirm, that you want to restart the whole application. All data will be lost if not saved before! ähnelt.
         /// </summary>
         public static string ConfirmRestartOfApplication {
@@ -336,6 +345,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string CuesheetfileImport {
             get {
                 return ResourceManager.GetString("CuesheetfileImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet filename ähnelt.
+        /// </summary>
+        public static string CuesheetFileName {
+            get {
+                return ResourceManager.GetString("CuesheetFileName", resourceCulture);
             }
         }
         
@@ -774,6 +792,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Filename: ähnelt.
+        /// </summary>
+        public static string Filename {
+            get {
+                return ResourceManager.GetString("Filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidBegin {
@@ -1008,6 +1035,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Options ähnelt.
+        /// </summary>
+        public static string Options {
+            get {
+                return ResourceManager.GetString("Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Jump playback position to next track beginning ähnelt.
         /// </summary>
         public static string PlayNextTrackTooltip {
@@ -1062,11 +1098,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reload options ähnelt.
+        /// </summary>
+        public static string ReloadOptions {
+            get {
+                return ResourceManager.GetString("ReloadOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
         /// </summary>
         public static string Reset {
             get {
                 return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset complete application ähnelt.
+        /// </summary>
+        public static string ResetCompleteApplication {
+            get {
+                return ResourceManager.GetString("ResetCompleteApplication", resourceCulture);
             }
         }
         
@@ -1085,6 +1139,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string RestartCompleteApplication {
             get {
                 return ResourceManager.GetString("RestartCompleteApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         
