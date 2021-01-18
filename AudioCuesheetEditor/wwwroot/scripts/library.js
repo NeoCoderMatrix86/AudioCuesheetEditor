@@ -29,6 +29,10 @@ function triggerClick(domId) {
     element.click();
 }
 
+function resetLocalStorage() {
+    localStorage.clear();
+}
+
 window.ApplicationOptions = {
     get: () => localStorage['ApplicationOptions'],
     set: (value) => localStorage['ApplicationOptions'] = value

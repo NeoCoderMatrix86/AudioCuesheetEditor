@@ -536,7 +536,13 @@
   <data name="Filename" xml:space="preserve">
     <value>Dateiname:</value>
   </data>
+  <data name="ConfirmResetOfApplication" xml:space="preserve">
+    <value>Bitte Bestätigen Sie, dass die komplette Anwendung auf Werkseinstellungen zurückgesetzt werden soll. Alle Daten werden gelöscht und die Anwedung neu geladen. Alle nicht gespeicherten Daten sind gelöscht!</value>
+  </data>
   <data name="Options" xml:space="preserve">
     <value>Optionen</value>
+  </data>
+  <data name="ResetCompleteApplication" xml:space="preserve">
+    <value>Komplette Anwendung zurücksetzen</value>
   </data>
 </root>

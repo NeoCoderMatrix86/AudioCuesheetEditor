@@ -536,7 +536,13 @@
   <data name="Filename" xml:space="preserve">
     <value>Filename:</value>
   </data>
+  <data name="ConfirmResetOfApplication" xml:space="preserve">
+    <value>Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost!</value>
+  </data>
   <data name="Options" xml:space="preserve">
     <value>Options</value>
+  </data>
+  <data name="ResetCompleteApplication" xml:space="preserve">
+    <value>Reset complete application</value>
   </data>
 </root>

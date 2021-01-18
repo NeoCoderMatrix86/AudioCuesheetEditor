@@ -66,6 +66,9 @@ along with Foobar.  If not, see
                         <BarDropdownItem>
                             <Button Color="Color.Danger" @onclick="OnRestartCompleteApplicationClicked">@localizer["RestartCompleteApplication"]</Button>
                         </BarDropdownItem>
+                        <BarDropdownItem>
+                            <Button Color="Color.Danger" @onclick="OnResetCompleteApplicationClicked">@localizer["ResetCompleteApplication"]</Button>
+                        </BarDropdownItem>
                     </BarDropdownMenu>
                 </BarDropdown>
             </BarItem>
@@ -1032,12 +1035,28 @@ along with Foobar.  If not, see
         modalDialog.ModalSize = ModalSize.Small;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
-            //TODO: Reset localStorage
             modalDialog.Confirmed -= restartApplicationDelegate;
             navigationManager.NavigateTo(navigationManager.Uri, true);
         };
         modalDialog.Confirmed += restartApplicationDelegate;
         modalDialog.ShowModal();
+    }
+
+    private void OnResetCompleteApplicationClicked()
+    {
+        //Display a confirm warning
+        modalDialog.Title = localizer["ConfirmRequired"];
+        modalDialog.Text = localizer["ConfirmResetOfApplication"];
+        modalDialog.ModalSize = ModalSize.Small;
+        modalDialog.Confirmed += OnRestartApplicationConfirmed;
+        modalDialog.ShowModal();
+    }
+
+    private async void OnRestartApplicationConfirmed(object sender, EventArgs args)
+    {
+        await JSRuntime.InvokeVoidAsync("resetLocalStorage");
+        modalDialog.Confirmed -= OnRestartApplicationConfirmed;
+        navigationManager.NavigateTo(navigationManager.Uri, true);
     }
 
     private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)

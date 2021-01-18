@@ -36,7 +36,7 @@ namespace AudioCuesheetEditor.Model.Options
 
         public void SetDefaultValues()
         {
-            //TODO Declare defaults
+            //Declare defaults
             if (String.IsNullOrEmpty(CuesheetFileName) == true)
             {
                 CuesheetFileName = CuesheetFile.DefaultFileName;
