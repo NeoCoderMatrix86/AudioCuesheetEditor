@@ -24,20 +24,13 @@ along with Foobar.  If not, see
 @localizer["CultureSetting"]
 
 <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName" Style="width: 150px; display: inherit;">
-    @foreach (var culture in Cultures)
+    @foreach (var culture in OptionsController.AvailableCultures)
     {
         <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
     }
 </Select>
 
 @code{
-    public const String DefaultCultureName = "en-US";
-
-    CultureInfo[] Cultures = new[]
-    {
-        new CultureInfo("en-US"),
-        new CultureInfo("de-DE")
-    };
 
     private async Task OnCultureSelectionChanged(String value)
     {

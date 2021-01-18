@@ -19,6 +19,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace AudioCuesheetEditor.Controller
 {
     public class OptionsController
     {
+        public const String DefaultCultureName = "en-US";
+
         private readonly IJSRuntime jsRuntime;
 
         public OptionsController(IJSRuntime runtime)
@@ -55,6 +58,19 @@ namespace AudioCuesheetEditor.Controller
                 optionsJson = JsonSerializer.Serialize(Options);
             }
             await jsRuntime.InvokeVoidAsync("ApplicationOptions.set", optionsJson);
+        }
+
+        public static IReadOnlyCollection<CultureInfo> AvailableCultures
+        {
+            get
+            {
+                var cultures = new List<CultureInfo>
+                {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("de-DE")
+                };
+                return cultures.AsReadOnly();
+            }
         }
     }
 }

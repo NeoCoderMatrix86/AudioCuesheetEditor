@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Shared;
@@ -43,7 +44,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(CultureName) == true)
             {
-                CultureName = CultureSelector.DefaultCultureName;
+                CultureName = OptionsController.DefaultCultureName;
             }
             if (ExportProfiles == null)
             {

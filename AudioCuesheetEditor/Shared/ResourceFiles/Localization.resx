@@ -545,4 +545,13 @@
   <data name="ResetCompleteApplication" xml:space="preserve">
     <value>Reset complete application</value>
   </data>
+  <data name="CuesheetFileName" xml:space="preserve">
+    <value>Cuesheet filename</value>
+  </data>
+  <data name="ReloadOptions" xml:space="preserve">
+    <value>Reload options</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
 </root>

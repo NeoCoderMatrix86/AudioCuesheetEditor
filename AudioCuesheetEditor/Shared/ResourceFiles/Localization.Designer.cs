@@ -349,6 +349,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet filename ähnelt.
+        /// </summary>
+        public static string CuesheetFileName {
+            get {
+                return ResourceManager.GetString("CuesheetFileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet result ähnelt.
         /// </summary>
         public static string CuesheetResult {
@@ -1089,6 +1098,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reload options ähnelt.
+        /// </summary>
+        public static string ReloadOptions {
+            get {
+                return ResourceManager.GetString("ReloadOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
         /// </summary>
         public static string Reset {
@@ -1121,6 +1139,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string RestartCompleteApplication {
             get {
                 return ResourceManager.GetString("RestartCompleteApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         

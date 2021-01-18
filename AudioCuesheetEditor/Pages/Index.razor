@@ -44,7 +44,6 @@ along with Foobar.  If not, see
                     </BarDropdownMenu>
                 </BarDropdown>
             </BarItem>
-            <!--TODO: Options with javascript localstorage -->
             <BarItem>
                 <Button Color="Color.Info">
                     <BarLink To="Help" Style="color:white;">@localizer["Help"]</BarLink>
@@ -71,6 +70,14 @@ along with Foobar.  If not, see
                         </BarDropdownItem>
                     </BarDropdownMenu>
                 </BarDropdown>
+            </BarItem>
+            <BarItem>
+                <Button Color="Color.Light" Clicked="() => modalOptions.Show()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                    </svg>
+                </Button>
             </BarItem>
         </Bar>
     </LayoutHeader>
@@ -478,7 +485,7 @@ along with Foobar.  If not, see
         </ModalBody>
         <ModalFooter>
             <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "ImportNotPossible")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" @onclick="TextImportStartClicked">@localizer["StartTrackImport"]</Button>
+                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["StartTrackImport"]</Button>
             </Tooltip>
             <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@localizer["Abort"]</Button>
         </ModalFooter>
@@ -636,7 +643,7 @@ along with Foobar.  If not, see
         </ModalBody>
         <ModalFooter>
             <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "ExportProfileIsNotExportable")">
-                <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" @onclick="OnDownloadExportProfileClicked">@localizer["DownloadExport"]</Button>
+                <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@localizer["DownloadExport"]</Button>
             </Tooltip>
             <Button Color="Color.Secondary" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</Button>
         </ModalFooter>
@@ -663,6 +670,47 @@ along with Foobar.  If not, see
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
             <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Modal @ref="modalOptions">
+    <ModalBackdrop />
+    <ModalContent Centered="true" Size="ModalSize.Large">
+        <ModalHeader>
+            <ModalTitle>@localizer["Options"]</ModalTitle>
+            <CloseButton Clicked="() => modalOptions.Hide()" />
+        </ModalHeader>
+        <ModalBody>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CultureSetting"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.CultureName">
+                        @foreach (var culture in OptionsController.AvailableCultures)
+                        {
+                            <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
+                        }
+                    </Select>
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CuesheetFileName"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportScheme"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme" />
+                </FieldBody>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
+            <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@localizer["ReloadOptions"]</Button>
+            <Button Color="Color.Danger" Clicked="OnResetOptionsClicked">@localizer["Reset"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => modalOptions.Hide()">@localizer["Close"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
@@ -727,6 +775,7 @@ along with Foobar.  If not, see
     private Modal modalTextImport;
     private Modal modalExportProfiles;
     private Modal modalDownloadCuesheet;
+    private Modal modalOptions;
     private AudioPlayer audioPlayer;
 
     protected override async Task OnInitializedAsync()
@@ -1165,5 +1214,24 @@ along with Foobar.  If not, see
             optionsController.Options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
             await optionsController.SaveOptions();
         }
+    }
+
+    private async Task OnSaveOptionsClicked()
+    {
+        await optionsController.SaveOptions();
+        modalOptions.Hide();
+        navigationManager.NavigateTo(navigationManager.Uri, true);
+    }
+
+    private async Task OnReloadOptionsClicked()
+    {
+        await optionsController.LoadOptions();
+    }
+
+    private async Task OnResetOptionsClicked()
+    {
+        await JSRuntime.InvokeVoidAsync("resetLocalStorage");
+        await optionsController.LoadOptions();
+        navigationManager.NavigateTo(navigationManager.Uri, true);
     }
 }
