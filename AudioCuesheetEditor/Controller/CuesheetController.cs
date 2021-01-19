@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.Controller
                 fieldIdentifier.Add(FieldReference.Create(validateable, property), Guid.NewGuid());
                 identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
             }
-            return String.Format("{0}_{1}", identifier.Key.DisplayName, identifier.Value.ToString());
+            return String.Format("{0}_{1}", identifier.Key.CompleteName, identifier.Value.ToString());
         }
 
         public String GetFieldIdentifier(FieldReference fieldReference)
@@ -60,7 +60,7 @@ namespace AudioCuesheetEditor.Controller
                 fieldIdentifier.Add(fieldReference, Guid.NewGuid());
                 identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
             }
-            return String.Format("{0}_{1}", identifier.Key.DisplayName, identifier.Value.ToString());
+            return String.Format("{0}_{1}", identifier.Key.CompleteName, identifier.Value.ToString());
         }
 
         public static Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)

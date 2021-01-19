@@ -54,6 +54,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
             var testhelper = new TestHelper();
             Assert.IsNull(testObject.GetValidationErrors(testhelper.Localizer, validationErrorFilterType: ValidationErrorFilterType.ErrorOnly));
             Assert.IsTrue(testObject.ValidationErrors.Count > 0);
+            Assert.IsNotNull(testObject.GetValidationErrors(testhelper.Localizer, nameof(ValidateableTestClass.TestProperty)));
         }
     }
 }
