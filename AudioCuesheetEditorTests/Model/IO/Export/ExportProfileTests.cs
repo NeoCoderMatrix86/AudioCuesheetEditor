@@ -53,9 +53,12 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 cuesheet.AddTrack(track);
             }
 
+            cuesheet.CatalogueNumber.Value = "Testcatalognumber";
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+
             //Test class
             var exportProfile = new ExportProfile();
-            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
+            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
             Assert.IsTrue(exportProfile.SchemeTracks.IsValid);
@@ -67,7 +70,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var tempFile = Path.GetTempFileName();
             File.WriteAllBytes(tempFile, fileContent);
             var content = File.ReadAllLines(tempFile);
-            Assert.AreEqual(content[0], "Demo Artist;Demo Title");
+            Assert.AreEqual(content[0], "Demo Artist;Demo Title;Testcatalognumber;Testfile.cdt");
             for (int i = 1; i < content.Length - 1;i++)
             {
                 Assert.IsFalse(String.IsNullOrEmpty(content[i]));
@@ -109,7 +112,6 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.AreEqual(content[^1], "Exported Demo Title from Demo Artist using AudioCuesheetEditor");
 
             File.Delete(tempFile);
-
         }
     }
 }
