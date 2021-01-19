@@ -219,7 +219,7 @@ along with Foobar.  If not, see
                     <Collapse Visible="@cuesheetTracksVisible">
                         <CollapseHeader>
                             <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <h3>@localizer["CuesheetTracks"]</h3>
+                                <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
                                 <div>
                                     @((MarkupString)chevronCuesheetTracks)
                                 </div>
@@ -330,7 +330,7 @@ along with Foobar.  If not, see
                                     }
                                 </TableBody>
                             </Table>
-                            <Button Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track())">@localizer["Addnewtrack"]</Button>
+                            <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track())">@localizer["Addnewtrack"]</Button>
                             <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                         </CollapseBody>
                     </Collapse>
@@ -346,13 +346,14 @@ along with Foobar.  If not, see
                         <CardTitle Size="3">@localizer["ProcessingHints"]</CardTitle>
                     </CardHeader>
                     <CardBody>
+                        <Paragraph>@localizer["ValidationDescription"]</Paragraph>
                         <Accordion>
                             @if (GetValidationErrors(ValidationErrorFilterType.WarningOnly).Count() > 0)
                             {
                                 <Collapse Visible="processingHintsWarningVisible">
                                     <CollapseHeader>
                                         <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsWarningVisible, ref chevronProcessingHintsWarning))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                            <h3>@localizer["Warnings"]</h3>
+                                            <Heading Size="HeadingSize.Is3">@localizer["Warnings"]</Heading>
                                             <div>
                                                 @((MarkupString)chevronProcessingHintsWarning)
                                             </div>
@@ -361,11 +362,19 @@ along with Foobar.  If not, see
                                     <CollapseBody>
                                         @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
                                         {
-                                            <a onclick="document.getElementById('@cuesheetController.GetFieldIdentifier(validationError.FieldReference)').focus();">
-                                                <div class="alert alert-warning" role="alert">
-                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)
-                                                </div>
-                                            </a>
+                                            var functionName = "focusElement";
+                                            <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                                                <Alert Color="Color.Warning" Visible="true">
+                                                    @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
+                                                    {
+                                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                    }
+                                                </Alert>
+                                            </Blazorise.Link>
                                         }
                                     </CollapseBody>
                                 </Collapse>
@@ -375,7 +384,7 @@ along with Foobar.  If not, see
                                 <Collapse Visible="processingHintsErrorVisible">
                                     <CollapseHeader>
                                         <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsErrorVisible, ref chevronProcessingHintsError))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                            <h3>@localizer["Errors"]</h3>
+                                            <Heading Size="HeadingSize.Is3">@localizer["Errors"]</Heading>
                                             <div>
                                                 @((MarkupString)chevronProcessingHintsError)
                                             </div>
@@ -384,11 +393,19 @@ along with Foobar.  If not, see
                                     <CollapseBody>
                                         @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.ErrorOnly))
                                         {
-                                            <a onclick="document.getElementById('@cuesheetController.GetFieldIdentifier(validationError.FieldReference)').focus();">
-                                                <div class="alert alert-danger" role="alert">
-                                                    @localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)
-                                                </div>
-                                            </a>
+                                            var functionName = "focusElement";
+                                            <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                                                <Alert Color="Color.Danger" Visible="true">
+                                                    @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
+                                                    {
+                                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                    }
+                                                    else
+                                                    {
+                                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                    }
+                                                </Alert>
+                                            </Blazorise.Link>
                                         }
                                     </CollapseBody>
                                 </Collapse>

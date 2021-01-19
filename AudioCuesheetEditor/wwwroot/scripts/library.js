@@ -29,6 +29,11 @@ function triggerClick(domId) {
     element.click();
 }
 
+function focusElement(domId) {
+    var element = document.getElementById(domId);
+    element.focus();
+}
+
 function resetLocalStorage() {
     localStorage.clear();
 }

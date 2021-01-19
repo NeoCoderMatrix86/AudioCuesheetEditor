@@ -16,6 +16,8 @@
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class CatalogueNumber : Validateable
+    public class CatalogueNumber : Validateable, IEntityDisplayName
     {
         public CatalogueNumber()
         {
@@ -53,6 +55,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "HasInvalidLength", "CatalogueNumber", 13));
                 }
             }
+        }
+
+        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        {
+            return localizer[nameof(Cuesheet)];
         }
     }
 }

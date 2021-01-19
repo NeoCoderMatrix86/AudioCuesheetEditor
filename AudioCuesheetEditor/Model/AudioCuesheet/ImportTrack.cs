@@ -13,6 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,5 +30,26 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }
+
+        public string GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        {
+            String identifierString = null;
+            if (Position != null)
+            {
+                identifierString += String.Format("{0},", Position);
+            }
+            if (identifierString == null)
+            {
+                if (String.IsNullOrEmpty(Artist) == false)
+                {
+                    identifierString += String.Format("{0},", Artist);
+                }
+                if (String.IsNullOrEmpty(Title) == false)
+                {
+                    identifierString += String.Format("{0},", Title);
+                }
+            }
+            return String.Format("{0} ({1})", localizer[nameof(Track)], identifierString);
+        }
     }
 }
