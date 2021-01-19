@@ -174,12 +174,9 @@ namespace AudioCuesheetEditor.Model.IO
                 {
                     return false;
                 }
-                foreach(var track in Cuesheet.Tracks)
-                {
-                    if (track.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
-                    {
-                        return false;
-                    }
+                if (Cuesheet.Tracks.Any(x => x.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0) == true)
+                { 
+                    return false;
                 }
                 return true;
             }
