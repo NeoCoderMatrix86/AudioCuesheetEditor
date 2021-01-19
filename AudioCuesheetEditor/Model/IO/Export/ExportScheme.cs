@@ -40,7 +40,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public static readonly String SchemeCuesheetArtist;
         public static readonly String SchemeCuesheetTitle;
-        public static readonly String SchemeCuesheeFile;
+        public static readonly String SchemeCuesheetAudiofile;
+        public static readonly String SchemeCuesheetCDTextfile;
+        public static readonly String SchemeCuesheetCatalogueNumber;
         public static readonly String SchemeTrackArtist;
         public static readonly String SchemeTrackTitle;
         public static readonly String SchemeTrackBegin;
@@ -58,13 +60,17 @@ namespace AudioCuesheetEditor.Model.IO.Export
         {
             SchemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
             SchemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            SchemeCuesheeFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.AudioFile), SchemeCharacter);
+            SchemeCuesheetAudiofile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.AudioFile), SchemeCharacter);
+            SchemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
+            SchemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CatalogueNumber), SchemeCharacter);
 
             AvailableCuesheetSchemes = new Dictionary<string, string>
             {
                 { nameof(Cuesheet.Artist), SchemeCuesheetArtist },
                 { nameof(Cuesheet.Title), SchemeCuesheetTitle },
-                { nameof(Cuesheet.AudioFile), SchemeCuesheeFile }
+                { nameof(Cuesheet.AudioFile), SchemeCuesheetAudiofile },
+                { nameof(Cuesheet.CDTextfile), SchemeCuesheetCDTextfile },
+                { nameof(Cuesheet.CatalogueNumber), SchemeCuesheetCatalogueNumber }
             };
 
             SchemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
@@ -108,7 +114,12 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     case SchemeType.Header:
                     case SchemeType.Footer:
                         var cuesheet = (Cuesheet)cuesheetEntity;
-                        result = Scheme.Replace(SchemeCuesheetArtist, cuesheet.Artist).Replace(SchemeCuesheetTitle, cuesheet.Title).Replace(SchemeCuesheeFile, cuesheet.AudioFile?.FileName);
+                        result = Scheme
+                            .Replace(SchemeCuesheetArtist, cuesheet.Artist)
+                            .Replace(SchemeCuesheetTitle, cuesheet.Title)
+                            .Replace(SchemeCuesheetAudiofile, cuesheet.AudioFile?.FileName)
+                            .Replace(SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
+                            .Replace(SchemeCuesheetCatalogueNumber, cuesheet.CatalogueNumber?.Value);
                         break;
                     case SchemeType.Body:
                         var track = (Track)cuesheetEntity;
