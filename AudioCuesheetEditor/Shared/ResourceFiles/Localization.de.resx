@@ -525,7 +525,7 @@
     <value>Katalognummer</value>
   </data>
   <data name="CataloguenumberContainsNonDigits" xml:space="preserve">
-    <value>Katalognummer enthält nichts nur Zahlen.</value>
+    <value>Katalognummer enthält nicht nur Zahlen.</value>
   </data>
   <data name="EnterCatalogueNumberHere" xml:space="preserve">
     <value>Geben Sie hier die Katalognummer des Cuesheets an. Die Katalognummer ist eine 13 stellige Zahl.</value>
