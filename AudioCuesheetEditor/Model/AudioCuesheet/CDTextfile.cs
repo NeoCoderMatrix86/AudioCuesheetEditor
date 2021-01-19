@@ -13,27 +13,27 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Extensions
+namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public static class WebAssemblyHostExtension
+    public class CDTextfile
     {
-        public async static Task SetDefaultCulture(this WebAssemblyHost host)
-        {
-            var optionsController = host.Services.GetRequiredService<OptionsController>();
-            await optionsController.LoadOptions();
+        public const String MimeType = "text/*";
+        public const String FileExtension = ".cdt";
 
-            CultureInfo.DefaultThreadCurrentCulture = optionsController.Options.Culture;
-            CultureInfo.DefaultThreadCurrentUICulture = optionsController.Options.Culture;
+        public CDTextfile(String fileName)
+        {
+            if (String.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+            FileName = fileName;
         }
+
+        public String FileName { get; private set; }
     }
 }

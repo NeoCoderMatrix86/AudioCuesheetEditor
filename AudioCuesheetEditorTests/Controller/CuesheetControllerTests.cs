@@ -32,7 +32,7 @@ namespace AudioCuesheetEditor.Controller.Tests
         {
             var testHelper = new TestHelper();
             var cuesheetController = testHelper.CuesheetController;
-            var cuesheet = cuesheetController.Cuesheet;
+            var cuesheet = new Cuesheet();
             Assert.IsNotNull(cuesheet);
             var identifier = cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist));
             Assert.IsTrue(identifier.StartsWith(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist))));

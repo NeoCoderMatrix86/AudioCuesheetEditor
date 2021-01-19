@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditorTests.Utility;
 
 namespace AudioCuesheetEditor.Model.Entity.Tests
 {
@@ -36,7 +37,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
         {
             if (String.IsNullOrEmpty(TestProperty))
             {
-                validationErrors.Add(new ValidationError("Testmessage", FieldReference.Create(this, nameof(TestProperty)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(TestProperty)), ValidationErrorType.Warning, "Testmessage"));
             }
         }
     }
@@ -50,7 +51,8 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
             {
                 TestProperty = String.Empty
             };
-            Assert.IsNull(testObject.GetValidationErrors(validationErrorFilterType: ValidationErrorFilterType.ErrorOnly));
+            var testhelper = new TestHelper();
+            Assert.IsNull(testObject.GetValidationErrors(testhelper.Localizer, validationErrorFilterType: ValidationErrorFilterType.ErrorOnly));
             Assert.IsTrue(testObject.ValidationErrors.Count > 0);
         }
     }

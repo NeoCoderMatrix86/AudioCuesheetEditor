@@ -32,21 +32,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public class Cuesheet : Validateable, ICuesheet
     {
-        private readonly CuesheetController _cuesheetController;
-
         private readonly object syncLock = new object();
 
         private readonly List<Track> tracks;
         private String artist;
         private String title;
         private AudioFile audioFile;
+        private CDTextfile cDTextfile;
 
-        public Cuesheet(CuesheetController cuesheetController)
+        public Cuesheet()
         {
-            _cuesheetController = cuesheetController;
             tracks = new List<Track>();
+            CatalogueNumber = new CatalogueNumber();
+            CatalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
             Validate();
         }
+
         public IReadOnlyCollection<Track> Tracks
         {
             get { return tracks.OrderBy(x => x.Position.HasValue == false).ThenBy(x => x.Position).ToList().AsReadOnly(); }
@@ -85,6 +86,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return audioFile; }
             set { audioFile = value; OnValidateablePropertyChanged(); }
         }
+
+        public CDTextfile CDTextfile 
+        {
+            get { return cDTextfile; }
+            set { cDTextfile = value; OnValidateablePropertyChanged(); }
+        }
+
+        public CatalogueNumber CatalogueNumber { get; private set; }
+
         public Boolean CanWriteCuesheetFile
         {
             get
@@ -101,7 +111,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Add(track);
+            track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
             ReCalculateTrackProperties();
+            OnValidateablePropertyChanged();
+        }
+
+        private void Track_ValidateablePropertyChanged(object sender, EventArgs e)
+        {
             OnValidateablePropertyChanged();
         }
 
@@ -112,6 +128,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Remove(track);
+            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
             OnValidateablePropertyChanged();
             ReCalculateTrackProperties();
         }
@@ -195,7 +212,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             foreach (var importTrack in textImportFile.Tracks)
             {
-                var track = _cuesheetController.NewTrack();
+                var track = new Track();
                 track.CopyValuesFromImportTrack(importTrack);
                 AddTrack(track);
             }
@@ -205,15 +222,32 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"),_cuesheetController.GetLocalizedString("Artist")), FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "HasNoValue", nameof(Artist)));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Title")), FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "HasNoValue", nameof(Title)));
             }
             if (AudioFile == null)
             {
-                validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("HasNoValue"), _cuesheetController.GetLocalizedString("Audiofile")), FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error, "HasNoValue", nameof(AudioFile)));
+            }
+            if (tracks.Count < 1)
+            {
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error, "HasInvalidCount", nameof(Tracks), 0));
+            }
+            if (CDTextfile == null)
+            {
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "HasNoValue", nameof(CDTextfile)));
+            }
+            if (CatalogueNumber == null)
+            {
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CatalogueNumber)), ValidationErrorType.Warning, "HasNoValue", nameof(CatalogueNumber)));
+            }
+            else
+            {
+                _ = CatalogueNumber.IsValid;
+                validationErrors.AddRange(CatalogueNumber.ValidationErrors);
             }
             //Check track overlapping
             lock (syncLock)
@@ -223,7 +257,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     if ((track.Begin == null) || (track.Begin != begin))
                     {
-                        validationErrors.Add(new ValidationError(String.Format(_cuesheetController.GetLocalizedString("TrackHasInvalidValue"), track.Position, _cuesheetController.GetLocalizedString("Begin"), track.Begin), FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning, "TrackHasInvalidValue", track.Position, nameof(Track.Begin), track.Begin));
                     }
                     if (track.End != null)
                     {
@@ -231,6 +265,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+        }
+
+        private void CatalogueNumber_ValidateablePropertyChanged(object sender, EventArgs e)
+        {
+            OnValidateablePropertyChanged();
         }
 
         private void ReCalculateTrackProperties()

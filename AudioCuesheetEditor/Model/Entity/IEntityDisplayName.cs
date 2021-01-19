@@ -13,28 +13,17 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace AudioCuesheetEditorTests.Utility
+namespace AudioCuesheetEditor.Model.Entity
 {
-    internal class TestHelper
+    public interface IEntityDisplayName
     {
-        public TestHelper()
-        {
-            var options = Options.Create(new LocalizationOptions());
-            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
-            Localizer = new StringLocalizer<Localization>(factory);
-            CuesheetController = new CuesheetController();
-        }
-
-        public StringLocalizer<Localization> Localizer { get; private set; }
-        public CuesheetController CuesheetController { get; private set; }
+        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer);
     }
 }

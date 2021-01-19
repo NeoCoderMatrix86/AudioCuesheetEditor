@@ -21,12 +21,15 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SchemeType
     {
+        Unknown,
         Header,
         Body,
         Footer
@@ -37,7 +40,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public static readonly String SchemeCuesheetArtist;
         public static readonly String SchemeCuesheetTitle;
-        public static readonly String SchemeCuesheeFile;
+        public static readonly String SchemeCuesheetAudiofile;
+        public static readonly String SchemeCuesheetCDTextfile;
+        public static readonly String SchemeCuesheetCatalogueNumber;
         public static readonly String SchemeTrackArtist;
         public static readonly String SchemeTrackTitle;
         public static readonly String SchemeTrackBegin;
@@ -49,19 +54,23 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
         private String scheme;
-        private readonly IStringLocalizer<Localization> localizer;
+        private SchemeType schemeType;
 
         static ExportScheme()
         {
             SchemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
             SchemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            SchemeCuesheeFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.AudioFile), SchemeCharacter);
+            SchemeCuesheetAudiofile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.AudioFile), SchemeCharacter);
+            SchemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
+            SchemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CatalogueNumber), SchemeCharacter);
 
             AvailableCuesheetSchemes = new Dictionary<string, string>
             {
                 { nameof(Cuesheet.Artist), SchemeCuesheetArtist },
                 { nameof(Cuesheet.Title), SchemeCuesheetTitle },
-                { nameof(Cuesheet.AudioFile), SchemeCuesheeFile }
+                { nameof(Cuesheet.AudioFile), SchemeCuesheetAudiofile },
+                { nameof(Cuesheet.CDTextfile), SchemeCuesheetCDTextfile },
+                { nameof(Cuesheet.CatalogueNumber), SchemeCuesheetCatalogueNumber }
             };
 
             SchemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
@@ -82,22 +91,18 @@ namespace AudioCuesheetEditor.Model.IO.Export
             };
         }
 
-        public ExportScheme(IStringLocalizer<Localization> localizer, SchemeType schemeType)
-        {
-            if (localizer == null)
-            {
-                throw new ArgumentNullException(nameof(localizer));
-            }
-            this.localizer = localizer;
-            SchemeType = schemeType;
-        }
+        public ExportScheme() { }
 
         public String Scheme 
         {
             get { return scheme; }
             set { scheme = value; OnValidateablePropertyChanged(); }
         }
-        public SchemeType SchemeType { get; private set; }
+        public SchemeType SchemeType 
+        {
+            get { return schemeType; }
+            set { schemeType = value; OnValidateablePropertyChanged(); }
+        }
         
         public String GetExportResult(ICuesheetEntity cuesheetEntity)
         {
@@ -109,7 +114,12 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     case SchemeType.Header:
                     case SchemeType.Footer:
                         var cuesheet = (Cuesheet)cuesheetEntity;
-                        result = Scheme.Replace(SchemeCuesheetArtist, cuesheet.Artist).Replace(SchemeCuesheetTitle, cuesheet.Title).Replace(SchemeCuesheeFile, cuesheet.AudioFile?.FileName);
+                        result = Scheme
+                            .Replace(SchemeCuesheetArtist, cuesheet.Artist)
+                            .Replace(SchemeCuesheetTitle, cuesheet.Title)
+                            .Replace(SchemeCuesheetAudiofile, cuesheet.AudioFile?.FileName)
+                            .Replace(SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
+                            .Replace(SchemeCuesheetCatalogueNumber, cuesheet.CatalogueNumber?.Value);
                         break;
                     case SchemeType.Body:
                         var track = (Track)cuesheetEntity;
@@ -120,6 +130,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty);
+                        break;
+                    default:
+                        //Nothing to do
                         break;
                 }
             }
@@ -145,7 +158,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         if (addValidationError == true)
                         {
-                            validationErrors.Add(new ValidationError(localizer["SchemeContainsPlaceholdersThatCanNotBeSolved"], FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning));
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
                         }
                         break;
                     case SchemeType.Body:
@@ -159,8 +172,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         if (addValidationError == true)
                         {
-                            validationErrors.Add(new ValidationError(localizer["SchemeContainsPlaceholdersThatCanNotBeSolved"], FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning));
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
                         }
+                        break;
+                    case SchemeType.Unknown:
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "HasInvalidValue", nameof(SchemeType)));
                         break;
                 }
             }

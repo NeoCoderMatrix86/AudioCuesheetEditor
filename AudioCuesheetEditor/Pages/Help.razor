@@ -20,8 +20,8 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Localization> localizer
 
 <Layout>
-    <LayoutHeader><Heading Size="HeadingSize.Is1">@localizer["Help"]</Heading></LayoutHeader>
     <LayoutContent Margin="Margin.Is2">
+        <Heading Size="HeadingSize.Is1">@localizer["Help"]</Heading>
         <Heading Size="HeadingSize.Is5">@localizer["QuickLinks"]</Heading>
         <Blazorise.Link To="#headingIntroduction">@localizer["Introduction"]</Blazorise.Link>
         <br />

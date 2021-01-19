@@ -38,17 +38,21 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         public void GenerateCuesheetFileTest()
         {
             var testHelper = new TestHelper();
-            Cuesheet cuesheet = testHelper.CuesheetController.Cuesheet;
-            cuesheet.Artist = "Demo Artist";
-            cuesheet.Title = "Demo Title";
-            cuesheet.AudioFile = new AudioFile("Testfile.mp3");
+            Cuesheet cuesheet = new Cuesheet
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                AudioFile = new AudioFile("Testfile.mp3")
+            };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
             {
-                var track = testHelper.CuesheetController.NewTrack();
-                track.Artist = String.Format("Demo Track Artist {0}", i);
-                track.Title = String.Format("Demo Track Title {0}", i);
-                track.Begin = begin;
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
                 cuesheet.AddTrack(track);
@@ -73,6 +77,20 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
             }
             File.Delete(fileName);
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+            cuesheet.CatalogueNumber.Value = "0123456789123";
+            generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNotNull(generatedFile);
+            fileName = Path.GetTempFileName();
+            File.WriteAllBytes(fileName, generatedFile);
+            fileContent = File.ReadAllLines(fileName);
+            Assert.AreEqual(fileContent[0], String.Format("{0} {1}", CuesheetFile.CuesheetCatalogueNumber, cuesheet.CatalogueNumber.Value));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
+            File.Delete(fileName);
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+            cuesheet.CatalogueNumber.Value = "Testvalue";
+            generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNull(generatedFile);
         }
 
         [TestMethod()]
@@ -83,6 +101,8 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("PERFORMER \"Sample CD Artist\"");
             builder.AppendLine("TITLE \"Sample CD Title\"");
             builder.AppendLine("FILE \"AC DC - TNT.mp3\" MP3");
+            builder.AppendLine("CDTEXTFILE \"Testfile.cdt\"");
+            builder.AppendLine("CATALOG 0123456789012");
             builder.AppendLine("TRACK 01 AUDIO");
             builder.AppendLine("	PERFORMER \"Sample Artist 1\"");
             builder.AppendLine("	TITLE \"Sample Title 1\"");
@@ -119,19 +139,19 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            var testHelper = new TestHelper();
-            var cuesheet = CuesheetFile.ImportCuesheet(testHelper.CuesheetController, new MemoryStream(File.ReadAllBytes(tempFile)));
+            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);
             Assert.AreEqual(cuesheet.Tracks.Count, 8);
+            Assert.IsNotNull(cuesheet.CDTextfile);
 
             File.Delete(tempFile);
 
-            testHelper = new TestHelper();
-            cuesheet = CuesheetFile.ImportCuesheet(testHelper.CuesheetController, new MemoryStream(Resources.Playlist_Bug_30));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30));
             Assert.IsNotNull(cuesheet);
-            Assert.IsTrue(cuesheet.IsValid);
+            var testHelper = new TestHelper();
+            Assert.IsNull(cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
         }
     }
 }

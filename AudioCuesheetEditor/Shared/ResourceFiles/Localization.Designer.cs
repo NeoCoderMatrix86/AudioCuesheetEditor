@@ -153,9 +153,9 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
-        public static string Audiofile {
+        public static string AudioFile {
             get {
-                return ResourceManager.GetString("Audiofile", resourceCulture);
+                return ResourceManager.GetString("AudioFile", resourceCulture);
             }
         }
         
@@ -178,11 +178,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Catalogue number ähnelt.
+        /// </summary>
+        public static string CatalogueNumber {
+            get {
+                return ResourceManager.GetString("CatalogueNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cataloguenumber contains non digits. ähnelt.
+        /// </summary>
+        public static string CataloguenumberContainsNonDigits {
+            get {
+                return ResourceManager.GetString("CataloguenumberContainsNonDigits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die CD artist ähnelt.
         /// </summary>
         public static string CDArtist {
             get {
                 return ResourceManager.GetString("CDArtist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die CD Textfile ähnelt.
+        /// </summary>
+        public static string CDTextfile {
+            get {
+                return ResourceManager.GetString("CDTextfile", resourceCulture);
             }
         }
         
@@ -268,6 +295,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost! ähnelt.
+        /// </summary>
+        public static string ConfirmResetOfApplication {
+            get {
+                return ResourceManager.GetString("ConfirmResetOfApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Please confirm, that you want to restart the whole application. All data will be lost if not saved before! ähnelt.
         /// </summary>
         public static string ConfirmRestartOfApplication {
@@ -309,6 +345,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string CuesheetfileImport {
             get {
                 return ResourceManager.GetString("CuesheetfileImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Cuesheet filename ähnelt.
+        /// </summary>
+        public static string CuesheetFileName {
+            get {
+                return ResourceManager.GetString("CuesheetFileName", resourceCulture);
             }
         }
         
@@ -446,6 +491,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Enteraudiofilehere {
             get {
                 return ResourceManager.GetString("Enteraudiofilehere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number. ähnelt.
+        /// </summary>
+        public static string EnterCatalogueNumberHere {
+            get {
+                return ResourceManager.GetString("EnterCatalogueNumberHere", resourceCulture);
             }
         }
         
@@ -738,6 +792,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Filename: ähnelt.
+        /// </summary>
+        public static string Filename {
+            get {
+                return ResourceManager.GetString("Filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Files (optional) ähnelt.
+        /// </summary>
+        public static string Files {
+            get {
+                return ResourceManager.GetString("Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidBegin {
@@ -747,11 +819,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} has invalid Count ({1})! ähnelt.
+        /// </summary>
+        public static string HasInvalidCount {
+            get {
+                return ResourceManager.GetString("HasInvalidCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die End is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidEnd {
             get {
                 return ResourceManager.GetString("HasInvalidEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} has invalid length({1})! ähnelt.
+        /// </summary>
+        public static string HasInvalidLength {
+            get {
+                return ResourceManager.GetString("HasInvalidLength", resourceCulture);
             }
         }
         
@@ -963,6 +1053,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Options ähnelt.
+        /// </summary>
+        public static string Options {
+            get {
+                return ResourceManager.GetString("Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Jump playback position to next track beginning ähnelt.
         /// </summary>
         public static string PlayNextTrackTooltip {
@@ -1017,11 +1116,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reload options ähnelt.
+        /// </summary>
+        public static string ReloadOptions {
+            get {
+                return ResourceManager.GetString("ReloadOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reset ähnelt.
         /// </summary>
         public static string Reset {
             get {
                 return ResourceManager.GetString("Reset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset complete application ähnelt.
+        /// </summary>
+        public static string ResetCompleteApplication {
+            get {
+                return ResourceManager.GetString("ResetCompleteApplication", resourceCulture);
             }
         }
         
@@ -1040,6 +1157,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string RestartCompleteApplication {
             get {
                 return ResourceManager.GetString("RestartCompleteApplication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
+        /// </summary>
+        public static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
             }
         }
         
@@ -1161,6 +1287,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tracks ähnelt.
+        /// </summary>
+        public static string Tracks {
+            get {
+                return ResourceManager.GetString("Tracks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Controls ähnelt.
         /// </summary>
         public static string TrackTableControls {
@@ -1179,7 +1314,16 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src=&quot;images/Validation1.png&quot;/&gt; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Here all validation messages will be displayed. Each message contains a reference to the corresponding field and can be clicked to enter the field. ähnelt.
+        /// </summary>
+        public static string ValidationDescription {
+            get {
+                return ResourceManager.GetString("ValidationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img src=&quot;images/Validation1.png&quot;/&gt;&lt;br/&gt;Each message can be clicked to jump to the corresponding fiel [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ValidationText {
             get {

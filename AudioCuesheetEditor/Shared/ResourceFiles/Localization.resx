@@ -147,7 +147,7 @@
   <data name="Artist" xml:space="preserve">
     <value>Artist</value>
   </data>
-  <data name="Audiofile" xml:space="preserve">
+  <data name="AudioFile" xml:space="preserve">
     <value>Audiofile</value>
   </data>
   <data name="AudioPlayer" xml:space="preserve">
@@ -486,7 +486,7 @@
     <value>Validation</value>
   </data>
   <data name="ValidationText" xml:space="preserve">
-    <value>AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don't block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src="images/Validation1.png"/&gt;</value>
+    <value>AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don't block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img src="images/Validation1.png"/&gt;&lt;br/&gt;Each message can be clicked to jump to the corresponding field and correct the field.&lt;br/&gt;&lt;img src="images/Validation2.png"/&gt;</value>
   </data>
   <data name="ImportOfCuesheetFiles" xml:space="preserve">
     <value>Import of cuesheet files</value>
@@ -517,5 +517,53 @@
   </data>
   <data name="TextfileImport" xml:space="preserve">
     <value>Textfile import</value>
+  </data>
+  <data name="CDTextfile" xml:space="preserve">
+    <value>CD Textfile</value>
+  </data>
+  <data name="CatalogueNumber" xml:space="preserve">
+    <value>Catalogue number</value>
+  </data>
+  <data name="CataloguenumberContainsNonDigits" xml:space="preserve">
+    <value>Cataloguenumber contains non digits.</value>
+  </data>
+  <data name="EnterCatalogueNumberHere" xml:space="preserve">
+    <value>Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number.</value>
+  </data>
+  <data name="HasInvalidLength" xml:space="preserve">
+    <value>{0} has invalid length({1})!</value>
+  </data>
+  <data name="Filename" xml:space="preserve">
+    <value>Filename:</value>
+  </data>
+  <data name="ConfirmResetOfApplication" xml:space="preserve">
+    <value>Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost!</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="ResetCompleteApplication" xml:space="preserve">
+    <value>Reset complete application</value>
+  </data>
+  <data name="CuesheetFileName" xml:space="preserve">
+    <value>Cuesheet filename</value>
+  </data>
+  <data name="ReloadOptions" xml:space="preserve">
+    <value>Reload options</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="HasInvalidCount" xml:space="preserve">
+    <value>{0} has invalid Count ({1})!</value>
+  </data>
+  <data name="Tracks" xml:space="preserve">
+    <value>Tracks</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Files (optional)</value>
+  </data>
+  <data name="ValidationDescription" xml:space="preserve">
+    <value>Here all validation messages will be displayed. Each message contains a reference to the corresponding field and can be clicked to enter the field.</value>
   </data>
 </root>

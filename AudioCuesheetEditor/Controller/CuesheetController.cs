@@ -31,48 +31,7 @@ namespace AudioCuesheetEditor.Controller
 {
     public class CuesheetController
     {
-        private readonly IStringLocalizer<Localization> _localizer;
-
-        private Cuesheet cuesheet;
         private readonly Dictionary<FieldReference, Guid> fieldIdentifier = new Dictionary<FieldReference, Guid>();
-
-        public CuesheetController(IStringLocalizer<Localization> localizer)
-        {
-            _localizer = localizer;
-        }
-
-        public LocalizedString GetLocalizedString(String key)
-        {
-            return _localizer[key];
-        }
-
-        public Cuesheet Cuesheet
-        {
-            get
-            {
-                if (cuesheet == null)
-                {
-                    cuesheet = new Cuesheet(this);
-                }
-                return cuesheet;
-            }
-        }
-
-        public Cuesheet NewCuesheet()
-        {
-            cuesheet = new Cuesheet(this);
-            return Cuesheet;
-        }
-
-        public Track NewTrack()
-        {
-            return new Track(this);
-        }
-
-        public uint GetNextFreePosition()
-        {
-            return Cuesheet.NextFreePosition;
-        }
 
         public String GetFieldIdentifier(IValidateable validateable, String property)
         {
@@ -102,12 +61,6 @@ namespace AudioCuesheetEditor.Controller
                 identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
             }
             return String.Format("{0}_{1}", identifier.Key.DisplayName, identifier.Value.ToString());
-        }
-
-        public Cuesheet Import(MemoryStream fileContent)
-        {
-            cuesheet = CuesheetFile.ImportCuesheet(this, fileContent);
-            return Cuesheet;
         }
 
         public static Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)

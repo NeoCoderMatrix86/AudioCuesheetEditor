@@ -13,9 +13,12 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Entity
@@ -23,12 +26,14 @@ namespace AudioCuesheetEditor.Model.Entity
     public abstract class Validateable : IValidateable
     {
         protected List<ValidationError> validationErrors = new List<ValidationError>();
-
+        
+        [JsonIgnore]
         public bool IsValid
         {
             get { return validationErrors.Count == 0; }
         }
 
+        [JsonIgnore]
         public IReadOnlyCollection<ValidationError> ValidationErrors
         {
             get { return validationErrors.AsReadOnly(); }
@@ -56,12 +61,12 @@ namespace AudioCuesheetEditor.Model.Entity
             return returnValue;
         }
 
-        public String GetValidationErrors(String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All,  String seperator = "<br />")
+        public String GetValidationErrors(IStringLocalizer<Localization> localizer, String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All, String seperator = "<br />")
         {
             var errorsFiltered = GetValidationErrorsFiltered(property, validationErrorFilterType);
             if (errorsFiltered.Any())
             {
-                return String.Join(seperator, errorsFiltered.OrderBy(y => y.Type).Select(x => x.Message));
+                return String.Join(seperator, errorsFiltered.OrderBy(y => y.Type).Select(x => x.Message.GetMessageLocalized(localizer)));
             }
             return null;
         }
