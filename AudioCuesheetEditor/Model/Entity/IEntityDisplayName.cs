@@ -13,21 +13,17 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.Entity
 {
-    public interface ITrack : ICuesheetEntity, IEntityDisplayName
+    public interface IEntityDisplayName
     {
-        public uint? Position { get; set; }
-        public String Artist { get; set; }
-        public String Title { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
-        public TimeSpan? Length { get; set; }
+        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer);
     }
 }

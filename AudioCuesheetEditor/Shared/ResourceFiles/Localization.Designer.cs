@@ -1314,7 +1314,16 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding fields.&lt;br/&gt;&lt;img src=&quot;images/Validation1.png&quot;/&gt; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Here all validation messages will be displayed. Each message contains a reference to the corresponding field and can be clicked to enter the field. ähnelt.
+        /// </summary>
+        public static string ValidationDescription {
+            get {
+                return ResourceManager.GetString("ValidationDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img src=&quot;images/Validation1.png&quot;/&gt;&lt;br/&gt;Each message can be clicked to jump to the corresponding fiel [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ValidationText {
             get {

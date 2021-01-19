@@ -16,6 +16,8 @@
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Shared.ResourceFiles;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,6 +115,31 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Begin = importTrack.Begin;
             End = importTrack.End;
             Length = importTrack.Length;
+        }
+
+        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        {
+            String identifierString = null;
+            if (Position != null)
+            {
+                identifierString += String.Format("{0}", Position);
+            }
+            if (identifierString == null)
+            {
+                if (String.IsNullOrEmpty(Artist) == false)
+                {
+                    identifierString += String.Format("{0}", Artist);
+                }
+                if (String.IsNullOrEmpty(Title) == false)
+                {
+                    if (identifierString != null)
+                    {
+                        identifierString += ",";
+                    }
+                    identifierString += String.Format("{0}", Title);
+                }
+            }
+            return String.Format("{0} ({1})", localizer[nameof(Track)], identifierString);
         }
 
         protected override void Validate()
