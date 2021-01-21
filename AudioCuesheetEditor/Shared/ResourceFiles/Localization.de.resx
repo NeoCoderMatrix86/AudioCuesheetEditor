@@ -566,4 +566,7 @@
   <data name="ValidationDescription" xml:space="preserve">
     <value>Hier werden alle Validierungsnachrichten angezeigt. Jede Nachricht enthält eine Referenz auf das ursprüngliche Feld und kann daher angeklickt werden, um zu dem entsprechenden Feld zu gelangen.</value>
   </data>
+  <data name="Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
 </root>

@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 @page "/ErrorReport"
 @inject IStringLocalizer<Localization> localizer
 @inject IJSRuntime JSRuntime
+@inject ILoggerProvider ILoggerProvider
 
 <h5>@localizer["ExceptionOccuredPleaseFillErrorReport"]</h5>
 
@@ -59,6 +60,18 @@ along with Foobar.  If not, see
         <textarea rows="3" class="form-control disabled" disabled aria-label="Options" aria-describedby="optionsLabel" name="options" @bind="Options"></textarea>
     </div>
 
+    @if (logEntries != null)
+    {
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="logLabel">@localizer["Log"]</span>
+        </div>
+        <textarea rows="10" class="form-control disabled" disabled aria-label="Log" aria-describedby="logLabel" name="log">
+            @logEntries
+        </textarea>
+    </div>
+    }
+
     <p>@localizer["OnceYouSubmitTheErrorReport"]</p>
 
     <button class="btn btn-primary" type="submit">@localizer["Send"]</button>
@@ -68,12 +81,20 @@ along with Foobar.  If not, see
     public static String Exception { get; set; }
     public String Options { get; private set; }
     private String filesAsBase64;
+    private String logEntries = null;
 
     protected override async Task OnInitializedAsync()
     {
         //Reset browser history
         await JSRuntime.InvokeVoidAsync("removeBrowserHistoryEntry", null);
         Options = await JSRuntime.InvokeAsync<String>("ApplicationOptions.get");
+        if (ILoggerProvider is LoggerProvider LoggerProvider)
+        {
+            foreach(var line in LoggerProvider.GetLogMessages())
+            {
+                logEntries += String.Format("{0}{1}", line, Environment.NewLine);
+            }
+        }
     }
 
     public MarkupString DescribeHowTheErrorOccured

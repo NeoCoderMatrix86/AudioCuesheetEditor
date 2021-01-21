@@ -566,4 +566,7 @@
   <data name="ValidationDescription" xml:space="preserve">
     <value>Here all validation messages will be displayed. Each message contains a reference to the corresponding field and can be clicked to enter the field.</value>
   </data>
+  <data name="Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
 </root>
