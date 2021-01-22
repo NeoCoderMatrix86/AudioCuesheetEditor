@@ -37,6 +37,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Validate();
         }
 
+        public Track(ImportTrack importTrack)
+        {
+            //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
+            position = importTrack.Position;
+            artist = importTrack.Artist;
+            title = importTrack.Title;
+            begin = importTrack.Begin;
+            end = importTrack.End;
+        }
+
         public uint? Position 
         {
             get { return position; }
@@ -105,16 +115,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 OnValidateablePropertyChanged();
             }
-        }
-
-        public void CopyValuesFromImportTrack(ImportTrack importTrack)
-        {
-            Position = importTrack.Position;
-            Artist = importTrack.Artist;
-            Title = importTrack.Title;
-            Begin = importTrack.Begin;
-            End = importTrack.End;
-            Length = importTrack.Length;
         }
 
         public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
