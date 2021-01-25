@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 namespace AudioCuesheetEditor
 {
@@ -45,6 +46,8 @@ namespace AudioCuesheetEditor
             builder.Services.AddSingleton<ILoggerProvider, LoggerProvider>();
             builder.Services.AddLogging();
             ConfigureLogging(builder);
+
+            builder.Services.AddHotKeys();
 
             var host = builder.Build();
             host.Services.UseBootstrapProviders();
