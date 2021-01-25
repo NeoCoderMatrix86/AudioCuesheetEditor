@@ -16,6 +16,9 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@using Toolbelt.Blazor.HotKeys
+@implements IDisposable
+
 @page "/"
 @inject IJSRuntime JSRuntime
 @inject IBlazorDownloadFileService BlazorDownloadFileService
@@ -24,6 +27,7 @@ along with Foobar.  If not, see
 @inject NavigationManager navigationManager
 @inject OptionsController optionsController
 @inject ILogger<Index> Logger
+@inject HotKeys HotKeys
 
 <Layout>
     <LayoutHeader Fixed="true">
@@ -734,6 +738,11 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+    public void Dispose()
+    {
+        hotKeysContext.Dispose();
+    }
+
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
@@ -771,6 +780,7 @@ along with Foobar.  If not, see
     private Boolean processingHintsErrorVisible = true;
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
+    private HotKeysContext hotKeysContext;
 
     private String invalidFileName;
 
@@ -799,6 +809,12 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         Logger.LogDebug("OnInitializedAsync");
+
+        hotKeysContext = HotKeys.CreateContext()
+            .Add(ModKeys.Ctrl, Keys.E, () => modalExportProfiles.Show())
+            .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
+            .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show());
+
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
 

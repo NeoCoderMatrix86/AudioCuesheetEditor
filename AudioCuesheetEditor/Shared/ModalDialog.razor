@@ -16,7 +16,11 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@using Toolbelt.Blazor.HotKeys
+@implements IDisposable
+
 @inject IStringLocalizer<Localization> localizer
+@inject HotKeys HotKeys
 
 <Modal @ref="modalRef">
     <ModalBackdrop />
@@ -62,6 +66,19 @@ along with Foobar.  If not, see
 
 @code {
 
+    public void Dispose()
+    {
+        hotKeysContext.Dispose();
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        hotKeysContext = HotKeys.CreateContext()
+            .Add(ModKeys.Alt, Keys.O, Confirm)
+            .Add(ModKeys.None, Keys.ESC, HideModal);
+        return base.OnInitializedAsync();
+    }
+
     public enum DialogMode
     {
         Confirm,
@@ -71,6 +88,7 @@ along with Foobar.  If not, see
     private Modal modalRef;
     private ModalSize modalSize = ModalSize.Default;
     private DialogMode mode = DialogMode.Confirm;
+    private HotKeysContext hotKeysContext;
 
     public String Title;
     public String Text;

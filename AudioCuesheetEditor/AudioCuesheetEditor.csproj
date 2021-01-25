@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>

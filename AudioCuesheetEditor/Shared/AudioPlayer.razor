@@ -15,10 +15,13 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
+@using Toolbelt.Blazor.HotKeys
+@implements IDisposable
 
 @inject IStringLocalizer<Localization> localizer
 @inject IHowl Howl
 @inject IHowlGlobal HowlGlobal
+@inject HotKeys HotKeys
 
 <Card>
     <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
@@ -76,6 +79,7 @@ along with Foobar.  If not, see
     private Timer audioUpdateTimer;
     private int? soundId;
     private Track currentlyPlayingTrack;
+    private HotKeysContext hotKeysContext;
 
     //TODO: Attach to set and load the playback directly to get total time
     [Parameter]
@@ -86,6 +90,11 @@ along with Foobar.  If not, see
     public TimeSpan? CurrentPlaybackPosition { get; private set; }
     public TimeSpan? TotalTime { get; private set; }
     public Boolean AudioIsPlaying { get; private set; }
+
+    public void Dispose()
+    {
+        hotKeysContext.Dispose();
+    }
 
     public Boolean PlaybackPossible
     {
@@ -155,6 +164,11 @@ along with Foobar.  If not, see
 
     protected override Task OnInitializedAsync()
     {
+        //Attach shortcuts
+        hotKeysContext = HotKeys.CreateContext()
+            .Add(ModKeys.Ctrl, Keys.P, OnPlayClicked)
+            .Add(ModKeys.Ctrl, Keys.Left, () => OnPlayNextPreviousTrackClicked(true))
+            .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked());
         //Setup audio timer
         audioUpdateTimer = new Timer(500);
         audioUpdateTimer.AutoReset = true;
