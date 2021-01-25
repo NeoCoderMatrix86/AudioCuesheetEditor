@@ -816,7 +816,7 @@ along with Foobar.  If not, see
             .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show());
 
         var dotNetReference = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
+        await JSRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
 
         if (exportProfileModels == null)
         {

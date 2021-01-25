@@ -1,9 +1,15 @@
 ﻿var GLOBAL = {};
 var audioFileObjectURL = null;
-GLOBAL.DotNetReference = null;
-GLOBAL.SetDotNetReference = function (dotNetReference) {
-    if (GLOBAL.DotNetReference === null) {
-        GLOBAL.DotNetReference = dotNetReference;
+GLOBAL.Index = null;
+GLOBAL.AudioPlayer = null;
+GLOBAL.SetIndexReference = function (dotNetReference) {
+    if (GLOBAL.Index === null) {
+        GLOBAL.Index = dotNetReference;
+    }
+};
+GLOBAL.SetAudioPlayerReference = function (dotNetReference) {
+    if (GLOBAL.AudioPlayer === null) {
+        GLOBAL.AudioPlayer = dotNetReference;
     }
 };
 
@@ -43,14 +49,29 @@ window.ApplicationOptions = {
     set: (value) => localStorage['ApplicationOptions'] = value
 }
 
+window.addEventListener("keydown", function (e) {
+    switch (e.key) {
+        case "MediaPlayPause":
+            GLOBAL.AudioPlayer.invokeMethodAsync("MediaPlayPausePressed");
+            break;
+        case "MediaNextTrack":
+            GLOBAL.AudioPlayer.invokeMethodAsync("MediaNextTrackPressed");
+            break;
+        case "MediaPrevTrack":
+            GLOBAL.AudioPlayer.invokeMethodAsync("MediaPreviousTrackPressed");
+            break;
+    }
+});
+
+
 //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
 function removeBrowserHistoryEntry() {
     window.history.replaceState({}, 'ErrorReport', '/');
 }
 
 function reportError(error) {
-    if (GLOBAL.DotNetReference !== null) {
-        GLOBAL.DotNetReference.invokeMethodAsync("NotifyError", error);
+    if (GLOBAL.Index !== null) {
+        GLOBAL.Index.invokeMethodAsync("NotifyError", error);
     }
 }
 

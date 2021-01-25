@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject IHowl Howl
 @inject IHowlGlobal HowlGlobal
 @inject HotKeys HotKeys
+@inject IJSRuntime JSRuntime
 
 <Card>
     <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
@@ -55,7 +56,7 @@ along with Foobar.  If not, see
             <Column ColumnSize="ColumnSize.Is1">
                 @if (AudioIsPlaying == true)
                 {
-                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="() => Howl.Pause(soundId)" Disabled="!PlaybackPossible" />
+                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
                 }
                 else
                 {
@@ -80,6 +81,7 @@ along with Foobar.  If not, see
     private int? soundId;
     private Track currentlyPlayingTrack;
     private HotKeysContext hotKeysContext;
+    private Boolean paused;
 
     //TODO: Attach to set and load the playback directly to get total time
     [Parameter]
@@ -162,13 +164,35 @@ along with Foobar.  If not, see
         }
     }
 
-    protected override Task OnInitializedAsync()
+    //TODO: Remove when https://github.com/jsakamoto/Toolbelt.Blazor.HotKeys/issues/9 is implemented
+    [JSInvokable]
+    public async Task MediaPlayPausePressed()
+    {
+        await OnPlayClicked();
+    }
+
+    [JSInvokable]
+    public async Task MediaNextTrackPressed()
+    {
+        await OnPlayNextPreviousTrackClicked();
+    }
+
+    [JSInvokable]
+    public async Task MediaPreviousTrackPressed()
+    {
+        await OnPlayNextPreviousTrackClicked(true);
+    }
+
+    protected override async Task OnInitializedAsync()
     {
         //Attach shortcuts
         hotKeysContext = HotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.P, OnPlayClicked)
             .Add(ModKeys.Ctrl, Keys.Left, () => OnPlayNextPreviousTrackClicked(true))
             .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked());
+        //Attach media keys
+        var dotNetReference = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("GLOBAL.SetAudioPlayerReference", dotNetReference);
         //Setup audio timer
         audioUpdateTimer = new Timer(500);
         audioUpdateTimer.AutoReset = true;
@@ -192,11 +216,18 @@ along with Foobar.  If not, see
 
         Howl.OnPlay += e =>
         {
+            paused = false;
             audioUpdateTimer.Start();
+        };
+
+        Howl.OnPause += e =>
+        {
+            paused = true;
         };
 
         Howl.OnStop += e =>
         {
+            paused = false;
             audioUpdateTimer.Stop();
             TotalTime = null;
             CurrentlyPlayingTrack = null;
@@ -205,14 +236,12 @@ along with Foobar.  If not, see
             soundId = null;
             StateHasChanged();
         };
-
-        return base.OnInitializedAsync();
     }
 
     private async Task OnSliderValueChanged(Double newvalue)
     {
         var newPosition = newvalue * TotalTime.Value / 100.0;
-        if (AudioIsPlaying == false)
+        if ((paused == true) || (AudioIsPlaying == false))
         {
             await OnPlayClicked();
         }
