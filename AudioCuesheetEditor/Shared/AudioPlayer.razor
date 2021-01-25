@@ -52,7 +52,7 @@ along with Foobar.  If not, see
             <Column ColumnSize="ColumnSize.Is1">
                 @if (AudioIsPlaying == true)
                 {
-                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="() => Howl.Pause(soundId)" Disabled="!PlaybackPossible"/>
+                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="() => Howl.Pause(soundId)" Disabled="!PlaybackPossible" />
                 }
                 else
                 {
@@ -63,9 +63,9 @@ along with Foobar.  If not, see
                 <Tooltip Placement="Placement.Top" Text="@localizer["PlayPreviousTrackTooltip"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
-                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop()"/>
+                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop()" />
                 <Tooltip Placement="Placement.Top" Text="@localizer["PlayNextTrackTooltip"]">
-                    <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)"/>
+                    <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
             </Column>
         </Row>
@@ -131,8 +131,12 @@ along with Foobar.  If not, see
         get { return currentlyPlayingTrack; }
         private set
         {
-            currentlyPlayingTrack = value;
-            CurrentlyPlayingTrackChanged.InvokeAsync(CurrentlyPlayingTrack);
+            //Only fire the update, if the value has changed
+            if (value != currentlyPlayingTrack)
+            {
+                currentlyPlayingTrack = value;
+                CurrentlyPlayingTrackChanged.InvokeAsync(CurrentlyPlayingTrack);
+            }
         }
     }
 
