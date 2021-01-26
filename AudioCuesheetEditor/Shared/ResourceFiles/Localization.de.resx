@@ -587,4 +587,7 @@
   <data name="ViewModeRecord" xml:space="preserve">
     <value>Aufnahmemodus</value>
   </data>
+  <data name="DefaultViewMode" xml:space="preserve">
+    <value>Standard Anzeigemodus</value>
+  </data>
 </root>

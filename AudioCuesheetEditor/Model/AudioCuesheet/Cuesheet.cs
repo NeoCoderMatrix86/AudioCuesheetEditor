@@ -39,6 +39,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String title;
         private AudioFile audioFile;
         private CDTextfile cDTextfile;
+        private DateTime? recordingStart;
 
         public Cuesheet()
         {
@@ -104,11 +105,35 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        public bool IsRecording
+        {
+            get { return RecordingTime.HasValue; }
+        }
+
+        public TimeSpan? RecordingTime
+        {
+            get 
+            { 
+                if (recordingStart.HasValue == true)
+                {
+                    return DateTime.UtcNow - recordingStart;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public void AddTrack(Track track)
         {
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
+            }
+            if (IsRecording)
+            {
+                track.End = DateTime.UtcNow - recordingStart.Value;
             }
             tracks.Add(track);
             track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
@@ -298,6 +323,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 //TODO: Get last end from audio file end
             }
+        }
+
+        public void StartRecording()
+        {
+            recordingStart = DateTime.UtcNow;
+        }
+
+        public void StopRecording()
+        {
+            recordingStart = null;
         }
     }
 }

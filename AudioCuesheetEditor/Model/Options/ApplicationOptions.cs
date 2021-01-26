@@ -104,5 +104,10 @@ namespace AudioCuesheetEditor.Model.Options
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
         public String TextImportScheme { get; set; }
         public ViewMode ViewMode { get; set; }
+        public String ViewModeName 
+        {
+            get { return Enum.GetName(typeof(ViewMode), ViewMode); }
+            set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
+        }
     }
 }

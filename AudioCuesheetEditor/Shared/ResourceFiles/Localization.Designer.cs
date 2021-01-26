@@ -403,6 +403,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Default view mode ähnelt.
+        /// </summary>
+        public static string DefaultViewMode {
+            get {
+                return ResourceManager.GetString("DefaultViewMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delete all tracks ähnelt.
         /// </summary>
         public static string DeleteAllTracks {

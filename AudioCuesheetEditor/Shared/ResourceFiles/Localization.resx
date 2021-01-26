@@ -587,4 +587,7 @@
   <data name="ViewModeRecord" xml:space="preserve">
     <value>Record mode</value>
   </data>
+  <data name="DefaultViewMode" xml:space="preserve">
+    <value>Default view mode</value>
+  </data>
 </root>

@@ -58,7 +58,7 @@ along with Foobar.  If not, see
                         @foreach (var name in Enum.GetNames(typeof(ViewMode)))
                         {
                             <BarDropdownItem>
-                                <Button Color="Color.Warning" Clicked="() => viewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
+                                <Button Color="Color.Warning" Clicked="() => CurrentViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
                             </BarDropdownItem>
                         }
                     </BarDropdownMenu>
@@ -105,7 +105,7 @@ along with Foobar.  If not, see
         <Row Margin="Margin.Is2">
             <Column>
                 <Accordion>
-                    @if (viewMode == ViewMode.ViewModeFull)
+                    @if (CurrentViewMode == ViewMode.ViewModeFull)
                     {
                         <Collapse Visible="dropFilesVisible">
                             <CollapseHeader>
@@ -157,7 +157,7 @@ along with Foobar.  If not, see
                             </CollapseBody>
                         </Collapse>
                     }
-                    @if (viewMode == ViewMode.ViewModeRecord)
+                    @if (CurrentViewMode == ViewMode.ViewModeRecord)
                     {
                         <Collapse Visible="recordControlVisible">
                             <CollapseHeader>
@@ -170,23 +170,36 @@ along with Foobar.  If not, see
                             </CollapseHeader>
                             <!--TODO: Background wenn Aufnahme läuft-->
                             <CollapseBody>
-                                <!--TODO: Clicked-->
-                                <Button Color="Color.Danger">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
-                                        <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
-                                        <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
-                                    </svg>
-                                    @localizer["StartRecording"]
-                                </Button>
-                                <!--TODO: Zeitanzeige-->
-                                <!--TODO: Clicked-->
-                                <Button Color="Color.Warning">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
-                                        <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
-                                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                                    </svg>
-                                    @localizer["StopRecording"]
-                                </Button>
+                                <Row>
+                                    <Column>
+                                        <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="cuesheet.IsRecording">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
+                                                <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
+                                                <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                                            </svg>
+                                            @localizer["StartRecording"]
+                                        </Button>
+                                    </Column>
+                                    <Column>
+                                        @if (cuesheet.RecordingTime.HasValue == true)
+                                        {
+                                            <Heading Size="HeadingSize.Is4">@cuesheet.RecordingTime.Value.ToString()</Heading>
+                                        }
+                                        else
+                                        {
+                                            <Heading Size="HeadingSize.Is4">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</Heading>
+                                        }
+                                    </Column>
+                                    <Column>
+                                        <Button Color="Color.Warning" Clicked="cuesheet.StopRecording" Disabled="!cuesheet.IsRecording">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
+                                                <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
+                                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                            </svg>
+                                            @localizer["StopRecording"]
+                                        </Button>
+                                    </Column>
+                                </Row>
                             </CollapseBody>
                         </Collapse>
                     }
@@ -216,7 +229,7 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            @if (viewMode == ViewMode.ViewModeFull)
+                            @if (CurrentViewMode == ViewMode.ViewModeFull)
                             {
                                 <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)), seperator: Environment.NewLine)">
                                     <Field Horizontal="true">
@@ -275,7 +288,7 @@ along with Foobar.  If not, see
                             </Tooltip>
                         </CollapseBody>
                     </Collapse>
-                    @switch (viewMode)
+                    @switch (CurrentViewMode)
                     {
                         case ViewMode.ViewModeFull:
                             <Collapse Visible="cuesheetTracksVisible">
@@ -398,7 +411,6 @@ along with Foobar.  If not, see
                             </Collapse>
                             break;
                         case ViewMode.ViewModeRecord:
-                            <!--TODO: Bind Fields, add Clicked, etc.-->
                             <Collapse Visible="true">
                                 <CollapseHeader>
                                     <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
@@ -409,7 +421,7 @@ along with Foobar.  If not, see
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Artist"]</FieldLabel>
                                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
-                                                    <TextEdit></TextEdit>
+                                                    <TextEdit @bind-Text="currentRecordingTrack.Artist" Disabled="!cuesheet.IsRecording"></TextEdit>
                                                 </FieldBody>
                                             </Field>
                                         </Column>
@@ -417,13 +429,50 @@ along with Foobar.  If not, see
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Title"]</FieldLabel>
                                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
-                                                    <TextEdit></TextEdit>
+                                                    <TextEdit @bind-Text="currentRecordingTrack.Title" Disabled="!cuesheet.IsRecording"></TextEdit>
                                                 </FieldBody>
                                             </Field>
                                         </Column>
-                                        <!--TODO:Clicked-->
-                                        <Button Color="Color.Primary">@localizer["Addnewtrack"]</Button>
+                                        <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!cuesheet.IsRecording">@localizer["Addnewtrack"]</Button>
                                     </Row>
+                                </CollapseBody>
+                            </Collapse>
+                            <Collapse Visible="cuesheetTracksVisible">
+                                <CollapseHeader>
+                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                        <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
+                                        <div>
+                                            @((MarkupString)chevronCuesheetTracks)
+                                        </div>
+                                    </Blazorise.Link>
+                                </CollapseHeader>
+                                <CollapseBody>
+                                    <Table Bordered="true" Responsive="true" Narrow="true">
+                                        <TableHeader ThemeContrast="ThemeContrast.Light">
+                                            <TableRow>
+                                                <TableHeaderCell>#</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            @foreach (var track in cuesheet.Tracks)
+                                            {
+                                            <TableRow>
+                                                <!--TODO: Editable and possibility to remove a track-->
+                                                <TableRowCell>@track.Position</TableRowCell>
+                                                <TableRowCell>@track.Artist</TableRowCell>
+                                                <TableRowCell>@track.Title</TableRowCell>
+                                                <TableRowCell>@track.Begin</TableRowCell>
+                                                <TableRowCell>@track.End</TableRowCell>
+                                                <TableRowCell>@track.Length</TableRowCell>
+                                            </TableRow>
+                                            }
+                                        </TableBody>
+                                    </Table>
                                 </CollapseBody>
                             </Collapse>
                             break;
@@ -431,13 +480,13 @@ along with Foobar.  If not, see
                 </Accordion>
 
                 <br />
-                @if (viewMode == ViewMode.ViewModeFull)
+                @if (CurrentViewMode == ViewMode.ViewModeFull)
                 {
                     <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
                 }
 
             </Column>
-            @if (viewMode == ViewMode.ViewModeFull)
+            @if (CurrentViewMode == ViewMode.ViewModeFull)
             {
                 <Column ColumnSize="ColumnSize.IsQuarter" Display="@DisplayProcessingHints">
                     <Card>
@@ -461,7 +510,7 @@ along with Foobar.  If not, see
                                         <CollapseBody>
                                             @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
                                             {
-                                var functionName = "focusElement";
+                                                var functionName = "focusElement";
                                                 <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
                                                     <Alert Color="Color.Warning" Visible="true">
                                                         @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
@@ -822,7 +871,17 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.TextImportScheme" />
                 </FieldBody>
             </Field>
-            <!--TODO: Viewmode einbauen-->
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["DefaultViewMode"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.ViewModeName">
+                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                        {
+                            <SelectItem Value="@name">@localizer[name]</SelectItem>
+                        }
+                    </Select>
+                </FieldBody>
+            </Field>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
@@ -870,6 +929,21 @@ along with Foobar.  If not, see
         }
     }
 
+    public ViewMode CurrentViewMode
+    {
+        get { return viewMode; }
+        private set
+        {
+            if (value == ViewMode.ViewModeRecord)
+            {
+                currentRecordingTrack = new Track();
+                cuesheetDataVisible = false;
+                SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
+            }
+            viewMode = value;
+        }
+    }
+
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetTracksVisible = true;
     private Boolean processingHintsWarningVisible = true;
@@ -879,6 +953,7 @@ along with Foobar.  If not, see
     private Boolean recordControlVisible = true;
     private HotKeysContext hotKeysContext;
     private ViewMode viewMode;
+    private Timer recordTimer;
 
     private String invalidFileName;
 
@@ -892,6 +967,7 @@ along with Foobar.  If not, see
 
     private Cuesheet cuesheet = new Cuesheet();
     private TextImportFile textImportFile;
+    private Track currentRecordingTrack;
 
     private IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
     private Guid selectedExportProfileId;
@@ -923,7 +999,13 @@ along with Foobar.  If not, see
             selectedExportProfileId = exportProfileModels.First().Id;
         }
 
-        viewMode = optionsController.Options.ViewMode;
+        CurrentViewMode = optionsController.Options.ViewMode;
+
+        recordTimer = new Timer(500);
+        recordTimer.AutoReset = true;
+        recordTimer.Elapsed += delegate {
+            StateHasChanged();
+        };
     }
 
     private void HeaderClicked(ref Boolean visible, ref String chevron)
@@ -1398,5 +1480,21 @@ along with Foobar.  If not, see
         await JSRuntime.InvokeVoidAsync("resetLocalStorage");
         await optionsController.LoadOptions();
         navigationManager.NavigateTo(navigationManager.Uri, true);
+    }
+
+    private void StartRecordingClicked()
+    {
+        //TODO: Check for empty cuesheet and warn!
+        cuesheet.StartRecording();
+        recordTimer.Start();
+    }
+
+    private void AddTrackRecordingClicked()
+    {
+        if (cuesheet.IsRecording == true)
+        {
+            cuesheet.AddTrack(currentRecordingTrack);
+            currentRecordingTrack = new Track();
+        }
     }
 }
