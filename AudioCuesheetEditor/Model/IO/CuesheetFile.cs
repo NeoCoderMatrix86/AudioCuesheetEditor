@@ -108,12 +108,12 @@ namespace AudioCuesheetEditor.Model.IO
                 if (regexTrackIndex.IsMatch(line) == true)
                 {
                     //TODO: Match frames also and import
-                    var regExValue = new Regex("[0-9]{2}:[0-9]{2}");
+                    var regExValue = new Regex("[0-9]{2,}:[0-9]{2,}");
                     var match = regExValue.Match(line);
                     if (match.Success == true) 
                     {
-                        var minutes = int.Parse(match.Value.Substring(0, 2));
-                        var seconds = int.Parse(match.Value.Substring(3, 2));
+                        var minutes = int.Parse(match.Value.Substring(0, match.Value.IndexOf(":")));
+                        var seconds = int.Parse(match.Value.Substring(match.Value.IndexOf(":") + 1));
                         var begin = new TimeSpan(0, minutes, seconds);
                         track.Begin = begin;
                     }
