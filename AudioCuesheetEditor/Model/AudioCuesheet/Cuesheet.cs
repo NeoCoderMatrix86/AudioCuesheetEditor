@@ -212,8 +212,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             foreach (var importTrack in textImportFile.Tracks)
             {
-                var track = new Track();
-                track.CopyValuesFromImportTrack(importTrack);
+                var track = new Track(importTrack);
                 AddTrack(track);
             }
         }

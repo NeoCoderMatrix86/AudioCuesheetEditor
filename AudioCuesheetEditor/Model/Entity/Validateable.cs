@@ -44,7 +44,14 @@ namespace AudioCuesheetEditor.Model.Entity
             IReadOnlyCollection<ValidationError> returnValue = ValidationErrors;
             if (String.IsNullOrEmpty(property) == false)
             {
-                returnValue = ValidationErrors.Where(x => x.FieldReference.DisplayName == property).ToList().AsReadOnly();
+                if (property.Contains(".") == true)
+                {
+                    returnValue = ValidationErrors.Where(x => x.FieldReference.CompleteName == property).ToList().AsReadOnly();
+                }
+                else
+                {
+                    returnValue = ValidationErrors.Where(x => x.FieldReference.Property == property).ToList().AsReadOnly();
+                }
             }
             switch (validationErrorFilterType)
             {

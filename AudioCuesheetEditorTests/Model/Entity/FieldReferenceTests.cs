@@ -35,9 +35,9 @@ namespace AudioCuesheetEditor.Model.Reflection.Tests
         {
             var testObject = new FieldReferenceTestClass();
             var fieldReference = FieldReference.Create(testObject, nameof(FieldReferenceTestClass.Property1));
-            Assert.AreEqual(fieldReference.DisplayName, "FieldReferenceTestClass.Property1");
+            Assert.AreEqual(fieldReference.CompleteName, "FieldReferenceTestClass.Property1");
             fieldReference = FieldReference.Create(testObject, nameof(FieldReferenceTestClass.Property2));
-            Assert.AreEqual(fieldReference.DisplayName, "FieldReferenceTestClass.Property2");
+            Assert.AreEqual(fieldReference.CompleteName, "FieldReferenceTestClass.Property2");
         }
     }
 }

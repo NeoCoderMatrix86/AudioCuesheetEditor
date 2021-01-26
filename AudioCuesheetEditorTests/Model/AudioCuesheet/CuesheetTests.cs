@@ -22,6 +22,7 @@ using AudioCuesheetEditorTests.Utility;
 using System.Linq;
 using System.IO;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditorTests.Properties;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -123,6 +124,23 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(cuesheet.ValidationErrors.Count, 5);
 
             File.Delete(tempFile);
+        }
+
+        [TestMethod()]
+        public void ImportTestCalculateEndCorrectly()
+        {
+            var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_Bug_54))
+            {
+                ImportScheme = "%Artist% - %Title%[\t]{1,}%End%"
+            };
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsTrue(textImportFile.Tracks.Count == 39);
+            Assert.IsTrue(textImportFile.IsValid);
+            var cuesheet = new Cuesheet();
+            cuesheet.Import(textImportFile);
+            Assert.IsTrue(cuesheet.Tracks.Count == 39);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(0).End == new TimeSpan(0, 5, 24));
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(38).Begin == new TimeSpan(3, 13, 13));
         }
     }
 }

@@ -16,6 +16,9 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@using Toolbelt.Blazor.HotKeys
+@implements IDisposable
+
 @page "/"
 @inject IJSRuntime JSRuntime
 @inject IBlazorDownloadFileService BlazorDownloadFileService
@@ -23,6 +26,8 @@ along with Foobar.  If not, see
 @inject CuesheetController cuesheetController
 @inject NavigationManager navigationManager
 @inject OptionsController optionsController
+@inject ILogger<Index> Logger
+@inject HotKeys HotKeys
 
 <Layout>
     <LayoutHeader Fixed="true">
@@ -415,7 +420,7 @@ along with Foobar.  If not, see
                 </Card>
             </Column>
         </Row>
-        
+
     </LayoutContent>
 </Layout>
 
@@ -461,7 +466,7 @@ along with Foobar.  If not, see
                         </Addons>
                     </FieldBody>
                 </Field>
-                @if(textImportFile.AnalyseException != null)
+                @if (textImportFile.AnalyseException != null)
                 {
                     <Alert Color="Color.Danger" Visible="true">
                         <AlertDescription>
@@ -487,14 +492,14 @@ along with Foobar.  If not, see
                     <TableBody>
                         @foreach (var track in textImportFile.Tracks)
                         {
-                        <TableRow>
-                            <TableRowCell>@track.Position</TableRowCell>
-                            <TableRowCell>@track.Artist</TableRowCell>
-                            <TableRowCell>@track.Title</TableRowCell>
-                            <TableRowCell>@track.Begin</TableRowCell>
-                            <TableRowCell>@track.End</TableRowCell>
-                            <TableRowCell>@track.Length</TableRowCell>
-                        </TableRow>
+                            <TableRow>
+                                <TableRowCell>@track.Position</TableRowCell>
+                                <TableRowCell>@track.Artist</TableRowCell>
+                                <TableRowCell>@track.Title</TableRowCell>
+                                <TableRowCell>@track.Begin</TableRowCell>
+                                <TableRowCell>@track.End</TableRowCell>
+                                <TableRowCell>@track.Length</TableRowCell>
+                            </TableRow>
                         }
                     </TableBody>
                 </Table>
@@ -516,7 +521,7 @@ along with Foobar.  If not, see
             <ModalTitle>
                 @localizer["ExportProfiles"]
             </ModalTitle>
-            <CloseButton @onclick="ModalExportProfilesCloseClicked"/>
+            <CloseButton @onclick="ModalExportProfilesCloseClicked" />
         </ModalHeader>
         <ModalBody>
             <Field Horizontal="true" JustifyContent="JustifyContent.End">
@@ -544,7 +549,7 @@ along with Foobar.  If not, see
                 </Field>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeHeadHereTooltip"]" >
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeHeadHereTooltip"]">
                             @localizer["ExportProfileSchemeHead"]
                         </Tooltip>
                     </FieldLabel>
@@ -552,7 +557,7 @@ along with Foobar.  If not, see
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]"/>
+                                <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -668,7 +673,7 @@ along with Foobar.  If not, see
 </Modal>
 
 <Modal @ref="modalDownloadCuesheet">
-    <ModalBackdrop/>
+    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>
@@ -733,6 +738,11 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+    public void Dispose()
+    {
+        hotKeysContext.Dispose();
+    }
+
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
@@ -770,6 +780,7 @@ along with Foobar.  If not, see
     private Boolean processingHintsErrorVisible = true;
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
+    private HotKeysContext hotKeysContext;
 
     private String invalidFileName;
 
@@ -797,8 +808,15 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
+        Logger.LogDebug("OnInitializedAsync");
+
+        hotKeysContext = HotKeys.CreateContext()
+            .Add(ModKeys.Ctrl, Keys.E, () => modalExportProfiles.Show())
+            .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
+            .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show());
+
         var dotNetReference = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("GLOBAL.SetDotNetReference", dotNetReference);
+        await JSRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
 
         if (exportProfileModels == null)
         {
@@ -827,12 +845,14 @@ along with Foobar.  If not, see
 
     private void OnDeleteAllTracksClicked()
     {
+        Logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
         modalDialog.ModalSize = ModalSize.Small;
         void deleteTracksDelegate(object sender, EventArgs args)
         {
+            Logger.LogInformation("deleteTracksDelegate");
             cuesheet.RemoveAllTracks();
             modalDialog.Confirmed -= deleteTracksDelegate;
             StateHasChanged();
@@ -843,12 +863,14 @@ along with Foobar.  If not, see
 
     private void RestartCuesheetClicked()
     {
+        Logger.LogInformation("RestartCuesheetClicked clicked");
         //Display a confirm warning
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmResetCuesheet"];
         modalDialog.ModalSize = ModalSize.Small;
         void newCuesheetDelegate(object sender, EventArgs args)
         {
+            Logger.LogInformation("newCuesheetDelegate");
             cuesheet = new Cuesheet();
             modalDialog.Confirmed -= newCuesheetDelegate;
             StateHasChanged();
@@ -901,6 +923,7 @@ along with Foobar.  If not, see
 
     private async Task OnInputFileTextImportChange(InputFileChangeEventArgs e)
     {
+        Logger.LogInformation("OnInputFileTextImportChange with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
@@ -926,12 +949,14 @@ along with Foobar.  If not, see
 
     private void TextImportAbortClicked()
     {
+        Logger.LogInformation("TextImportAbortClicked");
         modalTextImport.Hide();
         textImportFile = null;
     }
 
     private async Task TextImportStartClicked()
     {
+        Logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
             optionsController.Options.TextImportScheme = textImportFile.ImportScheme;
@@ -944,6 +969,7 @@ along with Foobar.  If not, see
 
     private async Task OnInputFileCuesheetChange(InputFileChangeEventArgs e)
     {
+        Logger.LogInformation("OnInputFileCuesheetChange with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
@@ -978,12 +1004,14 @@ along with Foobar.  If not, see
 
     private async Task ModalExportProfilesCloseClicked()
     {
+        Logger.LogInformation("ModalExportProfilesCloseClicked");
         await SaveExportProfiles();
         modalExportProfiles.Hide();
     }
 
     private void SelectedExportProfileChanged(Guid newValue)
     {
+        Logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
         selectedExportProfileId = newValue;
         StateHasChanged();
     }
@@ -1006,6 +1034,7 @@ along with Foobar.  If not, see
 
     private async Task OnDownloadExportProfileClicked()
     {
+        Logger.LogInformation("OnDownloadExportProfileClicked with SelectedExportProfile = {0}", SelectedExportProfile);
         if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
         {
             await SaveExportProfiles();
@@ -1015,6 +1044,7 @@ along with Foobar.  If not, see
 
     private void OnAddNewExportProfileClicked()
     {
+        Logger.LogInformation("OnAddNewExportProfileClicked");
         var list = exportProfileModels.ToList();
         list.Add(new SelectExportProfileModel(new ExportProfile()));
         exportProfileModels = list.AsReadOnly();
@@ -1023,6 +1053,7 @@ along with Foobar.  If not, see
 
     private void OnDeleteExportProfileClicked()
     {
+        Logger.LogInformation("OnDeleteExportProfileClicked");
         var list = exportProfileModels.ToList();
         list.RemoveAll(x => x.Id == selectedExportProfileId);
         exportProfileModels = list.AsReadOnly();
@@ -1042,10 +1073,12 @@ along with Foobar.  If not, see
 
     private async Task OnDropInputfilesChanged(InputFileChangeEventArgs e)
     {
+        Logger.LogInformation("OnDropInputfilesChanged with {0}", e);
         alertInvalidFile.Hide();
         Boolean importedAllFiles = true;
         foreach (var file in e.GetMultipleFiles())
         {
+            Logger.LogInformation("file = {0}", file);
             Boolean recognized = false;
             var files = new List<IBrowserFile>();
             files.Add(file);
@@ -1087,6 +1120,7 @@ along with Foobar.  If not, see
 
     private async Task OnChangeAudioFileClicked()
     {
+        Logger.LogInformation("OnChangeAudioFileClicked");
         cuesheet.AudioFile = null;
         StateHasChanged();
         await Task.Delay(1);
@@ -1095,12 +1129,14 @@ along with Foobar.  If not, see
 
     private void OnRestartCompleteApplicationClicked()
     {
+        Logger.LogInformation("OnRestartCompleteApplicationClicked");
         //Display a confirm warning
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmRestartOfApplication"];
         modalDialog.ModalSize = ModalSize.Small;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
+            Logger.LogInformation("restartApplicationDelegate");
             modalDialog.Confirmed -= restartApplicationDelegate;
             navigationManager.NavigateTo(navigationManager.Uri, true);
         };
@@ -1110,6 +1146,7 @@ along with Foobar.  If not, see
 
     private void OnResetCompleteApplicationClicked()
     {
+        Logger.LogInformation("OnResetCompleteApplicationClicked");
         //Display a confirm warning
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmResetOfApplication"];
@@ -1120,6 +1157,7 @@ along with Foobar.  If not, see
 
     private async void OnRestartApplicationConfirmed(object sender, EventArgs args)
     {
+        Logger.LogInformation("OnRestartApplicationConfirmed");
         await JSRuntime.InvokeVoidAsync("resetLocalStorage");
         modalDialog.Confirmed -= OnRestartApplicationConfirmed;
         navigationManager.NavigateTo(navigationManager.Uri, true);
@@ -1159,6 +1197,7 @@ along with Foobar.  If not, see
 
     private async Task OnAudioFileChanged(InputFileChangeEventArgs e)
     {
+        Logger.LogInformation("OnAudioFileChanged with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, AudioFile.MimeTypes) == true)
@@ -1178,6 +1217,7 @@ along with Foobar.  If not, see
 
     private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
     {
+        Logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
         if (browserFile != null)
         {
             var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
@@ -1191,6 +1231,7 @@ along with Foobar.  If not, see
 
     private void OnCDTextfileChanged(InputFileChangeEventArgs e)
     {
+        Logger.LogInformation("OnCDTextfileChanged with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
@@ -1210,6 +1251,7 @@ along with Foobar.  If not, see
 
     private async Task OnChangeCDTextfileClicked()
     {
+        Logger.LogInformation("OnChangeCDTextfileClicked");
         cuesheet.CDTextfile = null;
         StateHasChanged();
         await Task.Delay(1);
@@ -1218,6 +1260,7 @@ along with Foobar.  If not, see
 
     private async Task DownloadCuesheetFileClicked()
     {
+        Logger.LogInformation("DownloadCuesheetFileClicked");
         var cuesheetFile = new CuesheetFile(cuesheet);
         var fileData = cuesheetFile.GenerateCuesheetFile();
         await optionsController.SaveOptions();
@@ -1226,6 +1269,7 @@ along with Foobar.  If not, see
 
     private async Task SaveExportProfiles()
     {
+        Logger.LogInformation("SaveExportProfiles");
         if (exportProfileModels != null)
         {
             optionsController.Options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
@@ -1235,6 +1279,7 @@ along with Foobar.  If not, see
 
     private async Task OnSaveOptionsClicked()
     {
+        Logger.LogInformation("OnSaveOptionsClicked");
         await optionsController.SaveOptions();
         modalOptions.Hide();
         navigationManager.NavigateTo(navigationManager.Uri, true);
@@ -1242,11 +1287,13 @@ along with Foobar.  If not, see
 
     private async Task OnReloadOptionsClicked()
     {
+        Logger.LogInformation("OnReloadOptionsClicked");
         await optionsController.LoadOptions();
     }
 
     private async Task OnResetOptionsClicked()
     {
+        Logger.LogInformation("OnResetOptionsClicked");
         await JSRuntime.InvokeVoidAsync("resetLocalStorage");
         await optionsController.LoadOptions();
         navigationManager.NavigateTo(navigationManager.Uri, true);

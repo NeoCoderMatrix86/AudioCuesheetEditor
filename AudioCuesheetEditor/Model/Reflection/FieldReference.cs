@@ -51,7 +51,7 @@ namespace AudioCuesheetEditor.Model.Reflection
                 return false;
             }
 
-            return (Owner == other.Owner) && (Property == other.Property) && (DisplayName == other.DisplayName);
+            return (Owner == other.Owner) && (Property == other.Property) && (CompleteName == other.CompleteName);
         }
 
         public static bool operator ==(FieldReference lhs, FieldReference rhs)
@@ -75,7 +75,7 @@ namespace AudioCuesheetEditor.Model.Reflection
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Owner, Property, DisplayName);
+            return HashCode.Combine(Owner, Property, CompleteName);
         }
 
         #endregion
@@ -94,7 +94,7 @@ namespace AudioCuesheetEditor.Model.Reflection
             }
         }
 
-        public String DisplayName { get { return String.Format("{0}.{1}", Owner.GetType().Name, propertyInfo.Name); } }
+        public String CompleteName { get { return String.Format("{0}.{1}", Owner.GetType().Name, propertyInfo.Name); } }
         public object Owner { get; private set; }
         public String Property { get { return propertyInfo.Name; } }
     }
