@@ -152,6 +152,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsNotNull(cuesheet);
             var testHelper = new TestHelper();
             Assert.IsNull(cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
+
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57));
+            Assert.IsNotNull(cuesheet);
+            Assert.IsTrue(cuesheet.Tracks.Count == 39);
+            Assert.AreEqual(cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
         }
     }
 }
