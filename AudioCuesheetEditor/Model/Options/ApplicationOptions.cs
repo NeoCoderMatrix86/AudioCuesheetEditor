@@ -28,6 +28,15 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Options
 {
+    /// <summary>
+    /// Enum for setting desired GUI mode
+    /// </summary>
+    public enum ViewMode
+    {
+        ViewModeFull = 0,
+        ViewModeRecord = 1
+    }
+
     public class ApplicationOptions
     {
         public ApplicationOptions()
@@ -94,5 +103,6 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
         public String TextImportScheme { get; set; }
+        public ViewMode ViewMode { get; set; }
     }
 }

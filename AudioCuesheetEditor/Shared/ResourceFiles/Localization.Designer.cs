@@ -1125,6 +1125,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Control recording ähnelt.
+        /// </summary>
+        public static string RecordControl {
+            get {
+                return ResourceManager.GetString("RecordControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reload options ähnelt.
         /// </summary>
         public static string ReloadOptions {
@@ -1233,11 +1242,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start recording ähnelt.
+        /// </summary>
+        public static string StartRecording {
+            get {
+                return ResourceManager.GetString("StartRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Start import of tracks ähnelt.
         /// </summary>
         public static string StartTrackImport {
             get {
                 return ResourceManager.GetString("StartTrackImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Stop recording ähnelt.
+        /// </summary>
+        public static string StopRecording {
+            get {
+                return ResourceManager.GetString("StopRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Switch view mode ähnelt.
+        /// </summary>
+        public static string SwitchViewMode {
+            get {
+                return ResourceManager.GetString("SwitchViewMode", resourceCulture);
             }
         }
         
@@ -1346,6 +1382,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Full edition ähnelt.
+        /// </summary>
+        public static string ViewModeFull {
+            get {
+                return ResourceManager.GetString("ViewModeFull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Record mode ähnelt.
+        /// </summary>
+        public static string ViewModeRecord {
+            get {
+                return ResourceManager.GetString("ViewModeRecord", resourceCulture);
             }
         }
         

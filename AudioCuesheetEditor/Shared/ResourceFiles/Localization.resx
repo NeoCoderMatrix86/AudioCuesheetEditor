@@ -569,4 +569,22 @@
   <data name="Log" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="RecordControl" xml:space="preserve">
+    <value>Control recording</value>
+  </data>
+  <data name="StartRecording" xml:space="preserve">
+    <value>Start recording</value>
+  </data>
+  <data name="StopRecording" xml:space="preserve">
+    <value>Stop recording</value>
+  </data>
+  <data name="SwitchViewMode" xml:space="preserve">
+    <value>Switch view mode</value>
+  </data>
+  <data name="ViewModeFull" xml:space="preserve">
+    <value>Full edition</value>
+  </data>
+  <data name="ViewModeRecord" xml:space="preserve">
+    <value>Record mode</value>
+  </data>
 </root>

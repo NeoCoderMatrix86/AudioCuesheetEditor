@@ -50,6 +50,21 @@ along with Foobar.  If not, see
                 </BarDropdown>
             </BarItem>
             <BarItem>
+                <BarDropdown>
+                    <BarDropdownToggle Class="btn btn-danger" Style="color:white;">
+                        @localizer["SwitchViewMode"]
+                    </BarDropdownToggle>
+                    <BarDropdownMenu>
+                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                        {
+                            <BarDropdownItem>
+                                <Button Color="Color.Warning" Clicked="() => viewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
+                            </BarDropdownItem>
+                        }
+                    </BarDropdownMenu>
+                </BarDropdown>
+            </BarItem>
+            <BarItem>
                 <Button Color="Color.Info">
                     <BarLink To="Help" Style="color:white;">@localizer["Help"]</BarLink>
                 </Button>
@@ -90,56 +105,92 @@ along with Foobar.  If not, see
         <Row Margin="Margin.Is2">
             <Column>
                 <Accordion>
-                    <Collapse Visible="dropFilesVisible">
-                        <CollapseHeader>
-                            <Blazorise.Link Clicked="(() => HeaderClicked(ref dropFilesVisible, ref chevronDropFiles))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <h3>@localizer["DropFiles"]</h3>
-                                <div>
-                                    @((MarkupString)chevronDropFiles)
+                    @if (viewMode == ViewMode.ViewModeFull)
+                    {
+                        <Collapse Visible="dropFilesVisible">
+                            <CollapseHeader>
+                                <Blazorise.Link Clicked="(() => HeaderClicked(ref dropFilesVisible, ref chevronDropFiles))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                    <h3>@localizer["DropFiles"]</h3>
+                                    <div>
+                                        @((MarkupString)chevronDropFiles)
+                                    </div>
+                                </Blazorise.Link>
+                            </CollapseHeader>
+                            <CollapseBody>
+                                <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
+                                    <svg class="fileUploadDragNDropIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+                                    <InputFile id="dropInputfiles" class="inputfile" multiple OnChange="OnDropInputfilesChanged"></InputFile>
+                                    <label for="dropInputfiles">@((MarkupString)(localizer["ChooseFileOrDrag"].ToString()))</label>
                                 </div>
-                            </Blazorise.Link>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
-                                <svg class="fileUploadDragNDropIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
-                                <InputFile id="dropInputfiles" class="inputfile" multiple OnChange="OnDropInputfilesChanged"></InputFile>
-                                <label for="dropInputfiles">@((MarkupString)(localizer["ChooseFileOrDrag"].ToString()))</label>
-                            </div>
-                            <Alert @ref="alertInvalidFile" Color="Color.Danger">
-                                <AlertMessage>@localizer["InvalidFile"]</AlertMessage>
-                                <AlertDescription>@String.Format(localizer["YouDroppedAFileThatCanNotBeProcessed"], invalidFileName)</AlertDescription>
-                            </Alert>
-                        </CollapseBody>
-                    </Collapse>
-                    <Collapse Visible="importVisible">
-                        <CollapseHeader>
-                            <Blazorise.Link Clicked="(() => HeaderClicked(ref importVisible, ref chevronImport))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <h3>@localizer["ImportFiles"]</h3>
-                                <div>
-                                    @((MarkupString)chevronImport)
-                                </div>
-                            </Blazorise.Link>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <Tooltip Placement="Placement.Top" Text="@localizer["ImportTextfileTooltip"]">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@localizer["ImportCuesheetTooltip"]">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        <InputFile class="form-control" accept="@CuesheetFile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
-                        </CollapseBody>
-                    </Collapse>
-                    <Collapse Visible="@cuesheetDataVisible">
+                                <Alert @ref="alertInvalidFile" Color="Color.Danger">
+                                    <AlertMessage>@localizer["InvalidFile"]</AlertMessage>
+                                    <AlertDescription>@String.Format(localizer["YouDroppedAFileThatCanNotBeProcessed"], invalidFileName)</AlertDescription>
+                                </Alert>
+                            </CollapseBody>
+                        </Collapse>
+                        <Collapse Visible="importVisible">
+                            <CollapseHeader>
+                                <Blazorise.Link Clicked="(() => HeaderClicked(ref importVisible, ref chevronImport))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                    <h3>@localizer["ImportFiles"]</h3>
+                                    <div>
+                                        @((MarkupString)chevronImport)
+                                    </div>
+                                </Blazorise.Link>
+                            </CollapseHeader>
+                            <CollapseBody>
+                                <Tooltip Placement="Placement.Top" Text="@localizer["ImportTextfileTooltip"]">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                            <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
+                                        </FieldBody>
+                                    </Field>
+                                </Tooltip>
+                                <Tooltip Placement="Placement.Top" Text="@localizer["ImportCuesheetTooltip"]">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                            <InputFile class="form-control" accept="@CuesheetFile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
+                                        </FieldBody>
+                                    </Field>
+                                </Tooltip>
+                            </CollapseBody>
+                        </Collapse>
+                    }
+                    @if (viewMode == ViewMode.ViewModeRecord)
+                    {
+                        <Collapse Visible="recordControlVisible">
+                            <CollapseHeader>
+                                <Blazorise.Link Clicked="(() => HeaderClicked(ref recordControlVisible, ref chevronRecordControl))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                    <h3>@localizer["RecordControl"]</h3>
+                                    <div>
+                                        @((MarkupString)chevronRecordControl)
+                                    </div>
+                                </Blazorise.Link>
+                            </CollapseHeader>
+                            <!--TODO: Background wenn Aufnahme läuft-->
+                            <CollapseBody>
+                                <!--TODO: Clicked-->
+                                <Button Color="Color.Danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
+                                        <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
+                                        <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                                    </svg>
+                                    @localizer["StartRecording"]
+                                </Button>
+                                <!--TODO: Zeitanzeige-->
+                                <!--TODO: Clicked-->
+                                <Button Color="Color.Warning">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
+                                        <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
+                                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                    </svg>
+                                    @localizer["StopRecording"]
+                                </Button>
+                            </CollapseBody>
+                        </Collapse>
+                    }
+                    <Collapse Visible="cuesheetDataVisible">
                         <CollapseHeader>
                             <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
                                 <h3>@localizer["CuesheetData"]</h3>
@@ -165,52 +216,55 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)), seperator: Environment.NewLine)">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        @if (cuesheet.AudioFile == null)
-                                        {
-                                            var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                            <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged"></InputFile>
-                                        }
-                                        else
-                                        {
-                                            <Addons>
-                                                <Addon AddonType="AddonType.Body">
-                                                    <TextEdit Disabled="true" Text="@cuesheet.AudioFile.FileName" />
-                                                </Addon>
-                                                <Addon AddonType="AddonType.End">
-                                                    <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
-                                                </Addon>
-                                            </Addons>
-                                        }
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        @if (cuesheet.CDTextfile == null)
-                                        {
-                                            var cdTextFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile))));
-                                            <InputFile class="@cdTextFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" OnChange="OnCDTextfileChanged"></InputFile>
-                                        }
-                                        else
-                                        {
-                                            <Addons>
-                                                <Addon AddonType="AddonType.Body">
-                                                    <TextEdit Disabled="true" Text="@cuesheet.CDTextfile.FileName" />
-                                                </Addon>
-                                                <Addon AddonType="AddonType.End">
-                                                    <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeCDTextfileClicked">@localizer["Change"]</Button>
-                                                </Addon>
-                                            </Addons>
-                                        }
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
+                            @if (viewMode == ViewMode.ViewModeFull)
+                            {
+                                <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)), seperator: Environment.NewLine)">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                            @if (cuesheet.AudioFile == null)
+                                            {
+                                                var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
+                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged"></InputFile>
+                                            }
+                                            else
+                                            {
+                                                <Addons>
+                                                    <Addon AddonType="AddonType.Body">
+                                                        <TextEdit Disabled="true" Text="@cuesheet.AudioFile.FileName" />
+                                                    </Addon>
+                                                    <Addon AddonType="AddonType.End">
+                                                        <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
+                                                    </Addon>
+                                                </Addons>
+                                            }
+                                        </FieldBody>
+                                    </Field>
+                                </Tooltip>
+                                <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                            @if (cuesheet.CDTextfile == null)
+                                            {
+                                                var cdTextFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile))));
+                                                <InputFile class="@cdTextFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" OnChange="OnCDTextfileChanged"></InputFile>
+                                            }
+                                            else
+                                            {
+                                                <Addons>
+                                                    <Addon AddonType="AddonType.Body">
+                                                        <TextEdit Disabled="true" Text="@cuesheet.CDTextfile.FileName" />
+                                                    </Addon>
+                                                    <Addon AddonType="AddonType.End">
+                                                        <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeCDTextfileClicked">@localizer["Change"]</Button>
+                                                    </Addon>
+                                                </Addons>
+                                            }
+                                        </FieldBody>
+                                    </Field>
+                                </Tooltip>
+                            }
                             <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
@@ -221,206 +275,247 @@ along with Foobar.  If not, see
                             </Tooltip>
                         </CollapseBody>
                     </Collapse>
-                    <Collapse Visible="@cuesheetTracksVisible">
-                        <CollapseHeader>
-                            <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
-                                <div>
-                                    @((MarkupString)chevronCuesheetTracks)
-                                </div>
-                            </Blazorise.Link>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <Table Bordered="true" Responsive="true" Narrow="true">
-                                <TableHeader ThemeContrast="ThemeContrast.Light">
-                                    <TableRow>
-                                        <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
-                                        <TableHeaderCell>#</TableHeaderCell>
-                                        <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                                        <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                                        <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                                        <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                                        <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
-                                        <TableHeaderCell>@localizer["Notifications"]</TableHeaderCell>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    @foreach (var track in cuesheet.Tracks)
-                                    {
-                                        <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Buttons>
-                                                        <Tooltip Placement="Placement.Right" Text="@localizer["StartPlaybackThisTrack"]">
-                                                            <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                                                    <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
-                                                                    <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-                                                                </svg>
-                                                            </Button>
+                    @switch (viewMode)
+                    {
+                        case ViewMode.ViewModeFull:
+                            <Collapse Visible="cuesheetTracksVisible">
+                                <CollapseHeader>
+                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                        <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
+                                        <div>
+                                            @((MarkupString)chevronCuesheetTracks)
+                                        </div>
+                                    </Blazorise.Link>
+                                </CollapseHeader>
+                                <CollapseBody>
+                                    <Table Bordered="true" Responsive="true" Narrow="true">
+                                        <TableHeader ThemeContrast="ThemeContrast.Light">
+                                            <TableRow>
+                                                <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
+                                                <TableHeaderCell>#</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["Notifications"]</TableHeaderCell>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            @foreach (var track in cuesheet.Tracks)
+                                            {
+                                                <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            <Buttons>
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["StartPlaybackThisTrack"]">
+                                                                    <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
+                                                                            <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+                                                                        </svg>
+                                                                    </Button>
+                                                                </Tooltip>
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackUpTooltip"]">
+                                                                    <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+                                                                        </svg>
+                                                                    </Button>
+                                                                </Tooltip>
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["DeleteTrackTooltip"]">
+                                                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                                        </svg>
+                                                                    </Button>
+                                                                </Tooltip>
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackDownTooltip"]">
+                                                                    <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+                                                                        </svg>
+                                                                    </Button>
+                                                                </Tooltip>
+                                                            </Buttons>
                                                         </Tooltip>
-                                                        <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackUpTooltip"]">
-                                                            <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                    <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                </svg>
-                                                            </Button>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            @track.Position
                                                         </Tooltip>
-                                                        <Tooltip Placement="Placement.Right" Text="@localizer["DeleteTrackTooltip"]">
-                                                            <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                                    <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                                </svg>
-                                                            </Button>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
+                                                            </Tooltip>
                                                         </Tooltip>
-                                                        <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackDownTooltip"]">
-                                                            <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                    <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                </svg>
-                                                            </Button>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Title" />
+                                                            </Tooltip>
                                                         </Tooltip>
-                                                    </Buttons>
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    @track.Position
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
-                                                    </Tooltip>
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Title" />
-                                                    </Tooltip>
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                                                        <!--TODO: Use pattern-->
-                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
-                                                    </Tooltip>
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                                                        <!--TODO: Use pattern-->
-                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
-                                                    </Tooltip>
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                                                        <!--TODO: Use pattern-->
-                                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
-                                                    </Tooltip>
-                                                </Tooltip>
-                                            </TableRowCell>
-                                            <TableRowCell>
-                                                <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
-                                                    @((MarkupString)track.GetValidationErrors(localizer))
-                                                </Tooltip>
-                                            </TableRowCell>
-                                        </TableRow>
-                                    }
-                                </TableBody>
-                            </Table>
-                            <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track())">@localizer["Addnewtrack"]</Button>
-                            <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
-                        </CollapseBody>
-                    </Collapse>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                                                                <!--TODO: Use pattern-->
+                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
+                                                            </Tooltip>
+                                                        </Tooltip>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                                                                <!--TODO: Use pattern-->
+                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
+                                                            </Tooltip>
+                                                        </Tooltip>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                                                                <!--TODO: Use pattern-->
+                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
+                                                            </Tooltip>
+                                                        </Tooltip>
+                                                    </TableRowCell>
+                                                    <TableRowCell>
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                            @((MarkupString)track.GetValidationErrors(localizer))
+                                                        </Tooltip>
+                                                    </TableRowCell>
+                                                </TableRow>
+                                            }
+                                        </TableBody>
+                                    </Table>
+                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track())">@localizer["Addnewtrack"]</Button>
+                                    <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
+                                </CollapseBody>
+                            </Collapse>
+                            break;
+                        case ViewMode.ViewModeRecord:
+                            <!--TODO: Bind Fields, add Clicked, etc.-->
+                            <Collapse Visible="true">
+                                <CollapseHeader>
+                                    <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
+                                </CollapseHeader>
+                                <CollapseBody>
+                                    <Row>
+                                        <Column ColumnSize="ColumnSize.Is5">
+                                            <Field Horizontal="true">
+                                                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Artist"]</FieldLabel>
+                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
+                                                    <TextEdit></TextEdit>
+                                                </FieldBody>
+                                            </Field>
+                                        </Column>
+                                        <Column ColumnSize="ColumnSize.Is5">
+                                            <Field Horizontal="true">
+                                                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Title"]</FieldLabel>
+                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
+                                                    <TextEdit></TextEdit>
+                                                </FieldBody>
+                                            </Field>
+                                        </Column>
+                                        <!--TODO:Clicked-->
+                                        <Button Color="Color.Primary">@localizer["Addnewtrack"]</Button>
+                                    </Row>
+                                </CollapseBody>
+                            </Collapse>
+                            break;
+                    }
                 </Accordion>
 
                 <br />
+                @if (viewMode == ViewMode.ViewModeFull)
+                {
+                    <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
+                }
 
-                <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
             </Column>
-            <Column ColumnSize="ColumnSize.IsQuarter" Display="@DisplayProcessingHints">
-                <Card>
-                    <CardHeader>
-                        <CardTitle Size="3">@localizer["ProcessingHints"]</CardTitle>
-                    </CardHeader>
-                    <CardBody>
-                        <Paragraph>@localizer["ValidationDescription"]</Paragraph>
-                        <Accordion>
-                            @if (GetValidationErrors(ValidationErrorFilterType.WarningOnly).Count() > 0)
-                            {
-                                <Collapse Visible="processingHintsWarningVisible">
-                                    <CollapseHeader>
-                                        <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsWarningVisible, ref chevronProcessingHintsWarning))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                            <Heading Size="HeadingSize.Is3">@localizer["Warnings"]</Heading>
-                                            <div>
-                                                @((MarkupString)chevronProcessingHintsWarning)
-                                            </div>
-                                        </Blazorise.Link>
-                                    </CollapseHeader>
-                                    <CollapseBody>
-                                        @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
-                                        {
-                                            var functionName = "focusElement";
-                                            <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
-                                                <Alert Color="Color.Warning" Visible="true">
-                                                    @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
-                                                    {
-                                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                    }
-                                                    else
-                                                    {
-                                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                    }
-                                                </Alert>
+            @if (viewMode == ViewMode.ViewModeFull)
+            {
+                <Column ColumnSize="ColumnSize.IsQuarter" Display="@DisplayProcessingHints">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle Size="3">@localizer["ProcessingHints"]</CardTitle>
+                        </CardHeader>
+                        <CardBody>
+                            <Paragraph>@localizer["ValidationDescription"]</Paragraph>
+                            <Accordion>
+                                @if (GetValidationErrors(ValidationErrorFilterType.WarningOnly).Count() > 0)
+                                {
+                                    <Collapse Visible="processingHintsWarningVisible">
+                                        <CollapseHeader>
+                                            <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsWarningVisible, ref chevronProcessingHintsWarning))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                                <Heading Size="HeadingSize.Is3">@localizer["Warnings"]</Heading>
+                                                <div>
+                                                    @((MarkupString)chevronProcessingHintsWarning)
+                                                </div>
                                             </Blazorise.Link>
-                                        }
-                                    </CollapseBody>
-                                </Collapse>
-                            }
-                            @if (GetValidationErrors(ValidationErrorFilterType.ErrorOnly).Count() > 0)
-                            {
-                                <Collapse Visible="processingHintsErrorVisible">
-                                    <CollapseHeader>
-                                        <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsErrorVisible, ref chevronProcessingHintsError))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                            <Heading Size="HeadingSize.Is3">@localizer["Errors"]</Heading>
-                                            <div>
-                                                @((MarkupString)chevronProcessingHintsError)
-                                            </div>
-                                        </Blazorise.Link>
-                                    </CollapseHeader>
-                                    <CollapseBody>
-                                        @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.ErrorOnly))
-                                        {
-                                            var functionName = "focusElement";
-                                            <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
-                                                <Alert Color="Color.Danger" Visible="true">
-                                                    @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
-                                                    {
-                                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                    }
-                                                    else
-                                                    {
-                                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                    }
-                                                </Alert>
+                                        </CollapseHeader>
+                                        <CollapseBody>
+                                            @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
+                                            {
+                                var functionName = "focusElement";
+                                                <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                                                    <Alert Color="Color.Warning" Visible="true">
+                                                        @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
+                                                        {
+                                                            <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                        }
+                                                        else
+                                                        {
+                                                            <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                        }
+                                                    </Alert>
+                                                </Blazorise.Link>
+                                            }
+                                        </CollapseBody>
+                                    </Collapse>
+                                }
+                                @if (GetValidationErrors(ValidationErrorFilterType.ErrorOnly).Count() > 0)
+                                {
+                                    <Collapse Visible="processingHintsErrorVisible">
+                                        <CollapseHeader>
+                                            <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsErrorVisible, ref chevronProcessingHintsError))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                                <Heading Size="HeadingSize.Is3">@localizer["Errors"]</Heading>
+                                                <div>
+                                                    @((MarkupString)chevronProcessingHintsError)
+                                                </div>
                                             </Blazorise.Link>
-                                        }
-                                    </CollapseBody>
-                                </Collapse>
-                            }
-                        </Accordion>
-                    </CardBody>
-                </Card>
-            </Column>
+                                        </CollapseHeader>
+                                        <CollapseBody>
+                                            @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.ErrorOnly))
+                                            {
+                                                var functionName = "focusElement";
+                                                <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                                                    <Alert Color="Color.Danger" Visible="true">
+                                                        @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
+                                                        {
+                                                            <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                        }
+                                                        else
+                                                        {
+                                                            <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                                        }
+                                                    </Alert>
+                                                </Blazorise.Link>
+                                            }
+                                        </CollapseBody>
+                                    </Collapse>
+                                }
+                            </Accordion>
+                        </CardBody>
+                    </Card>
+                </Column>
+            }
+            
         </Row>
-
     </LayoutContent>
 </Layout>
 
@@ -727,6 +822,7 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.TextImportScheme" />
                 </FieldBody>
             </Field>
+            <!--TODO: Viewmode einbauen-->
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
@@ -780,7 +876,9 @@ along with Foobar.  If not, see
     private Boolean processingHintsErrorVisible = true;
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
+    private Boolean recordControlVisible = true;
     private HotKeysContext hotKeysContext;
+    private ViewMode viewMode;
 
     private String invalidFileName;
 
@@ -790,6 +888,7 @@ along with Foobar.  If not, see
     private String chevronProcessingHintsError = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    private String chevronRecordControl = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
 
     private Cuesheet cuesheet = new Cuesheet();
     private TextImportFile textImportFile;
@@ -823,6 +922,8 @@ along with Foobar.  If not, see
             exportProfileModels = optionsController.Options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
             selectedExportProfileId = exportProfileModels.First().Id;
         }
+
+        viewMode = optionsController.Options.ViewMode;
     }
 
     private void HeaderClicked(ref Boolean visible, ref String chevron)
