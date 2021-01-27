@@ -590,4 +590,7 @@
   <data name="DefaultViewMode" xml:space="preserve">
     <value>Default view mode</value>
   </data>
+  <data name="RecordRunning" xml:space="preserve">
+    <value>Record is running!</value>
+  </data>
 </root>

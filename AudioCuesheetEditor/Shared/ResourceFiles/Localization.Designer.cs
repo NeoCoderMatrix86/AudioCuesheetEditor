@@ -1143,6 +1143,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Record is running! ähnelt.
+        /// </summary>
+        public static string RecordRunning {
+            get {
+                return ResourceManager.GetString("RecordRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reload options ähnelt.
         /// </summary>
         public static string ReloadOptions {

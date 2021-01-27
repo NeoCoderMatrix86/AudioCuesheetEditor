@@ -159,6 +159,7 @@ along with Foobar.  If not, see
                     }
                     @if (CurrentViewMode == ViewMode.ViewModeRecord)
                     {
+                        var backgroundCSS = cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
                         <Collapse Visible="recordControlVisible">
                             <CollapseHeader>
                                 <Blazorise.Link Clicked="(() => HeaderClicked(ref recordControlVisible, ref chevronRecordControl))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
@@ -168,8 +169,17 @@ along with Foobar.  If not, see
                                     </div>
                                 </Blazorise.Link>
                             </CollapseHeader>
-                            <!--TODO: Background wenn Aufnahme läuft-->
                             <CollapseBody>
+                                @if (cuesheet.IsRecording == true)
+                                {
+                                <Row Class="@backgroundCSS" Margin="Margin.Is3">
+                                    <Column Size="ColumnSize.Is5"></Column>
+                                    <Column>
+                                        <Heading Size="HeadingSize.Is4">@localizer["RecordRunning"]</Heading>
+                                    </Column>
+                                    <Column Size="ColumnSize.Is5"></Column>
+                                </Row> 
+                                }
                                 <Row>
                                     <Column>
                                         <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="cuesheet.IsRecording">
@@ -413,6 +423,7 @@ along with Foobar.  If not, see
                         case ViewMode.ViewModeRecord:
                             <Collapse Visible="true">
                                 <CollapseHeader>
+                                    <!--TODO: Redesign-->
                                     <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
                                 </CollapseHeader>
                                 <CollapseBody>

@@ -590,4 +590,7 @@
   <data name="DefaultViewMode" xml:space="preserve">
     <value>Standard Anzeigemodus</value>
   </data>
+  <data name="RecordRunning" xml:space="preserve">
+    <value>Aufnahme aktiv!</value>
+  </data>
 </root>
