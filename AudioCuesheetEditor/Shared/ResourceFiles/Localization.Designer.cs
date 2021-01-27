@@ -603,6 +603,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter new Track ähnelt.
+        /// </summary>
+        public static string EnterNewTrack {
+            get {
+                return ResourceManager.GetString("EnterNewTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here ähnelt.
         /// </summary>
         public static string EnterTextImportSchemeHere {
