@@ -110,7 +110,7 @@ along with Foobar.  If not, see
                         <Collapse Visible="dropFilesVisible">
                             <CollapseHeader>
                                 <Blazorise.Link Clicked="(() => HeaderClicked(ref dropFilesVisible, ref chevronDropFiles))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                    <h3>@localizer["DropFiles"]</h3>
+                                    <Heading Size="HeadingSize.Is3">@localizer["DropFiles"]</Heading>
                                     <div>
                                         @((MarkupString)chevronDropFiles)
                                     </div>
@@ -131,7 +131,7 @@ along with Foobar.  If not, see
                         <Collapse Visible="importVisible">
                             <CollapseHeader>
                                 <Blazorise.Link Clicked="(() => HeaderClicked(ref importVisible, ref chevronImport))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                    <h3>@localizer["ImportFiles"]</h3>
+                                    <Heading Size="HeadingSize.Is3">@localizer["ImportFiles"]</Heading>
                                     <div>
                                         @((MarkupString)chevronImport)
                                     </div>
@@ -163,7 +163,7 @@ along with Foobar.  If not, see
                         <Collapse Visible="recordControlVisible">
                             <CollapseHeader>
                                 <Blazorise.Link Clicked="(() => HeaderClicked(ref recordControlVisible, ref chevronRecordControl))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                    <h3>@localizer["RecordControl"]</h3>
+                                    <Heading Size="HeadingSize.Is3">@localizer["RecordControl"]</Heading>
                                     <div>
                                         @((MarkupString)chevronRecordControl)
                                     </div>
@@ -193,7 +193,8 @@ along with Foobar.  If not, see
                                     <Column>
                                         @if (cuesheet.RecordingTime.HasValue == true)
                                         {
-                                            <Heading Size="HeadingSize.Is4">@cuesheet.RecordingTime.Value.ToString()</Heading>
+                                            <!--TODO: Format time-->
+                                            <Heading Size="HeadingSize.Is4">@cuesheet.RecordingTime</Heading>
                                         }
                                         else
                                         {
@@ -216,7 +217,7 @@ along with Foobar.  If not, see
                     <Collapse Visible="cuesheetDataVisible">
                         <CollapseHeader>
                             <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <h3>@localizer["CuesheetData"]</h3>
+                                <Heading Size="HeadingSize.Is3">@localizer["CuesheetData"]</Heading>
                                 <div>
                                     @((MarkupString)chevronCuesheetData)
                                 </div>
@@ -444,7 +445,9 @@ along with Foobar.  If not, see
                                                 </FieldBody>
                                             </Field>
                                         </Column>
-                                        <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!cuesheet.IsRecording">@localizer["Addnewtrack"]</Button>
+                                        <Column>
+                                            <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!cuesheet.IsRecording">@localizer["Addnewtrack"]</Button>
+                                        </Column>
                                     </Row>
                                 </CollapseBody>
                             </Collapse>
@@ -461,6 +464,7 @@ along with Foobar.  If not, see
                                     <Table Bordered="true" Responsive="true" Narrow="true">
                                         <TableHeader ThemeContrast="ThemeContrast.Light">
                                             <TableRow>
+                                                <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
                                                 <TableHeaderCell>#</TableHeaderCell>
                                                 <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
                                                 <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
@@ -473,10 +477,17 @@ along with Foobar.  If not, see
                                             @foreach (var track in cuesheet.Tracks)
                                             {
                                             <TableRow>
-                                                <!--TODO: Editable and possibility to remove a track-->
+                                                <TableRowCell>
+                                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                        </svg>
+                                                    </Button>
+                                                </TableRowCell>
                                                 <TableRowCell>@track.Position</TableRowCell>
-                                                <TableRowCell>@track.Artist</TableRowCell>
-                                                <TableRowCell>@track.Title</TableRowCell>
+                                                <TableRowCell><TextEdit @bind-Text="track.Artist" /></TableRowCell>
+                                                <TableRowCell><TextEdit @bind-Text="track.Title" /></TableRowCell>
+                                                <!--TODO: Format-->
                                                 <TableRowCell>@track.Begin</TableRowCell>
                                                 <TableRowCell>@track.End</TableRowCell>
                                                 <TableRowCell>@track.Length</TableRowCell>
@@ -904,10 +915,10 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    public void Dispose()
-    {
-        hotKeysContext.Dispose();
-    }
+        public void Dispose()
+        {
+            hotKeysContext.Dispose();
+        }
 
     public class SelectExportProfileModel
     {
@@ -945,11 +956,13 @@ along with Foobar.  If not, see
         get { return viewMode; }
         private set
         {
-            if (value == ViewMode.ViewModeRecord)
+            switch (value)
             {
-                currentRecordingTrack = new Track();
-                cuesheetDataVisible = false;
-                SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
+                case ViewMode.ViewModeRecord:
+                    currentRecordingTrack = new Track();
+                    cuesheetDataVisible = false;
+                    SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
+                    break;
             }
             viewMode = value;
         }

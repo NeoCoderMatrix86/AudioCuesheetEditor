@@ -309,6 +309,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         track.Position = position;
                     }
+                    if (track.Position == 1)
+                    {
+                        track.Begin = TimeSpan.Zero;
+                    }
                     if ((track.Begin == null) && (trackEnd != null))
                     {
                         track.Begin = trackEnd;
