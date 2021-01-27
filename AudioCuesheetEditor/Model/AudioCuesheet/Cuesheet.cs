@@ -133,7 +133,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (IsRecording)
             {
-                track.End = DateTime.UtcNow - recordingStart.Value;
+                track.Begin = DateTime.UtcNow - recordingStart.Value;
             }
             tracks.Add(track);
             track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
