@@ -593,4 +593,7 @@
   <data name="RecordRunning" xml:space="preserve">
     <value>Record is running!</value>
   </data>
+  <data name="RecordNotPossibleWithExistingTracks" xml:space="preserve">
+    <value>The cuesheet already contains tracks. Recording is not possible when there are tracks present in the cuesheet. Please save your work and start with a clean cuesheet.</value>
+  </data>
 </root>

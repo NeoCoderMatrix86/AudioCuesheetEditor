@@ -1143,6 +1143,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The cuesheet already contains tracks. Recording is not possible when there are tracks present in the cuesheet. Please save your work and start with a clean cuesheet. ähnelt.
+        /// </summary>
+        public static string RecordNotPossibleWithExistingTracks {
+            get {
+                return ResourceManager.GetString("RecordNotPossibleWithExistingTracks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Record is running! ähnelt.
         /// </summary>
         public static string RecordRunning {

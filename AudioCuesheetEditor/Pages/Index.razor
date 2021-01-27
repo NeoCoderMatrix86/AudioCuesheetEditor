@@ -914,10 +914,10 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-        public void Dispose()
-        {
-            hotKeysContext.Dispose();
-        }
+    public void Dispose()
+    {
+        hotKeysContext.Dispose();
+    }
 
     public class SelectExportProfileModel
     {
@@ -1056,6 +1056,7 @@ along with Foobar.  If not, see
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
         modalDialog.ModalSize = ModalSize.Small;
+        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
         void deleteTracksDelegate(object sender, EventArgs args)
         {
             Logger.LogInformation("deleteTracksDelegate");
@@ -1074,6 +1075,7 @@ along with Foobar.  If not, see
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmResetCuesheet"];
         modalDialog.ModalSize = ModalSize.Small;
+        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
         void newCuesheetDelegate(object sender, EventArgs args)
         {
             Logger.LogInformation("newCuesheetDelegate");
@@ -1188,6 +1190,7 @@ along with Foobar.  If not, see
                 modalDialog.Title = localizer["ConfirmRequired"];
                 modalDialog.Text = localizer["ConfirmImportCuesheet"];
                 modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Confirm;
                 void importCuesheetDelegate(object sender, EventArgs args)
                 {
                     cuesheet = CuesheetFile.ImportCuesheet(memoryStream);
@@ -1340,6 +1343,7 @@ along with Foobar.  If not, see
         modalDialog.Title = localizer["ConfirmRequired"];
         modalDialog.Text = localizer["ConfirmRestartOfApplication"];
         modalDialog.ModalSize = ModalSize.Small;
+        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
         void restartApplicationDelegate(object sender, EventArgs args)
         {
             Logger.LogInformation("restartApplicationDelegate");
@@ -1514,9 +1518,20 @@ along with Foobar.  If not, see
 
     private void StartRecordingClicked()
     {
-        //TODO: Check for empty cuesheet and warn!
-        cuesheet.StartRecording();
-        recordTimer.Start();
+        //Check for empty cuesheet and warn!
+        if (cuesheet.Tracks.Count > 0)
+        {
+            modalDialog.Title = localizer["Error"];
+            modalDialog.Text = localizer["RecordNotPossibleWithExistingTracks"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Alert;
+            modalDialog.ShowModal();
+        }
+        else
+        {
+            cuesheet.StartRecording();
+            recordTimer.Start();
+        }
     }
 
     private void AddTrackRecordingClicked()
