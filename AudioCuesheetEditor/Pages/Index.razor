@@ -1013,6 +1013,7 @@ along with Foobar.  If not, see
     {
         Logger.LogDebug("OnInitializedAsync");
 
+        //TODO: Add Hotkey "enter" and check current active window/input
         hotKeysContext = HotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.E, () => modalExportProfiles.Show())
             .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
