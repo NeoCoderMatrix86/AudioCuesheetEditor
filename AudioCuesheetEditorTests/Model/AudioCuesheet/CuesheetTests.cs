@@ -142,5 +142,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(cuesheet.Tracks.ElementAt(0).End == new TimeSpan(0, 5, 24));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(38).Begin == new TimeSpan(3, 13, 13));
         }
+
+        [TestMethod()]
+        public void RecordTest()
+        {
+            var cuesheet = new Cuesheet();
+            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsNull(cuesheet.RecordingTime);
+            cuesheet.StartRecording();
+            Assert.IsTrue(cuesheet.IsRecording);
+            Assert.IsNotNull(cuesheet.RecordingTime);
+        }
     }
 }
