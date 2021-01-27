@@ -193,8 +193,7 @@ along with Foobar.  If not, see
                                     <Column>
                                         @if (cuesheet.RecordingTime.HasValue == true)
                                         {
-                                            <!--TODO: Format time-->
-                                            <Heading Size="HeadingSize.Is4">@cuesheet.RecordingTime</Heading>
+                                            <Heading Size="HeadingSize.Is4">@GetTimespanAsString(cuesheet.RecordingTime, true)</Heading>
                                         }
                                         else
                                         {
@@ -1382,12 +1381,19 @@ along with Foobar.  If not, see
         }
     }
 
-    private String GetTimespanAsString(TimeSpan? timeSpan)
+    private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
     {
         String resultString = null;
         if ((timeSpan != null) && (timeSpan.HasValue))
         {
-            resultString = timeSpan.Value.ToString();
+            if (removeMilliseconds == true)
+            {
+                resultString = timeSpan.Value.Subtract(new TimeSpan(0, 0, 0, 0, timeSpan.Value.Milliseconds)).ToString();
+            }
+            else
+            {
+                resultString = timeSpan.Value.ToString();
+            }
         }
         return resultString;
     }
