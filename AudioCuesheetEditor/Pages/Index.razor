@@ -436,7 +436,7 @@ along with Foobar.  If not, see
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Artist"]</FieldLabel>
                                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
-                                                    <TextEdit @bind-Text="currentRecordingTrack.Artist" Disabled="!cuesheet.IsRecording"></TextEdit>
+                                                    <TextEdit @ref="enterCurrentTrackArtist" @bind-Text="currentRecordingTrack.Artist" Disabled="!cuesheet.IsRecording" KeyDown="OnKeyDownRecordArtist"></TextEdit>
                                                 </FieldBody>
                                             </Field>
                                         </Column>
@@ -444,7 +444,7 @@ along with Foobar.  If not, see
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Title"]</FieldLabel>
                                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
-                                                    <TextEdit @bind-Text="currentRecordingTrack.Title" Disabled="!cuesheet.IsRecording"></TextEdit>
+                                                    <TextEdit @ref="enterCurrentTrackTitle" @bind-Text="currentRecordingTrack.Title" Disabled="!cuesheet.IsRecording" KeyDown="OnKeyDownRecordTitle"></TextEdit>
                                                 </FieldBody>
                                             </Field>
                                         </Column>
@@ -1008,16 +1008,18 @@ along with Foobar.  If not, see
     private Modal modalDownloadCuesheet;
     private Modal modalOptions;
     private AudioPlayer audioPlayer;
+    private TextEdit enterCurrentTrackTitle;
+    private TextEdit enterCurrentTrackArtist;
 
     protected override async Task OnInitializedAsync()
     {
         Logger.LogDebug("OnInitializedAsync");
 
-        //TODO: Add Hotkey "enter" and check current active window/input
         hotKeysContext = HotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.E, () => modalExportProfiles.Show())
             .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
-            .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show());
+            .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show())
+            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
 
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
@@ -1178,6 +1180,7 @@ along with Foobar.  If not, see
             cuesheet.Import(textImportFile);
             modalTextImport.Hide();
             textImportFile = null;
+            StateHasChanged();
         }
     }
 
@@ -1537,6 +1540,7 @@ along with Foobar.  If not, see
         {
             cuesheet.StartRecording();
             recordTimer.Start();
+            enterCurrentTrackArtist.Focus();
         }
     }
 
@@ -1544,8 +1548,52 @@ along with Foobar.  If not, see
     {
         if (cuesheet.IsRecording == true)
         {
+            enterCurrentTrackArtist.Focus();
             cuesheet.AddTrack(currentRecordingTrack);
             currentRecordingTrack = new Track();
+        }
+    }
+
+    private async Task OnEnterKeyDown()
+    {
+        if (modalTextImport.Visible)
+        {
+            await TextImportStartClicked();
+        }
+        if (modalExportProfiles.Visible)
+        {
+            await OnDownloadExportProfileClicked();
+        }
+        if (modalDownloadCuesheet.Visible)
+        {
+            await DownloadCuesheetFileClicked();
+        }
+        if (modalOptions.Visible)
+        {
+            await OnSaveOptionsClicked();
+        }
+        if (modalDialog.Visible)
+        {
+            modalDialog.Confirm();
+        }
+    }
+
+    private void OnKeyDownRecordArtist(KeyboardEventArgs args)
+    {
+        Logger.LogDebug("args = {0}", args);
+        if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
+        {
+            enterCurrentTrackTitle.Focus();
+        }
+    }
+
+    private void OnKeyDownRecordTitle(KeyboardEventArgs args)
+    {
+        Logger.LogDebug("args = {0}", args);
+        if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
+        {
+            enterCurrentTrackArtist.Focus();
+            AddTrackRecordingClicked();
         }
     }
 }
