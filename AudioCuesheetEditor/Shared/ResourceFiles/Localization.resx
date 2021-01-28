@@ -599,4 +599,7 @@
   <data name="RecordNotPossibleWithExistingTracks" xml:space="preserve">
     <value>The cuesheet already contains tracks. Recording is not possible when there are tracks present in the cuesheet. Please save your work and start with a clean cuesheet.</value>
   </data>
+  <data name="DownloadRecordedAudio" xml:space="preserve">
+    <value>Download recorded audio file</value>
+  </data>
 </root>

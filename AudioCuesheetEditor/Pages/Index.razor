@@ -172,13 +172,13 @@ along with Foobar.  If not, see
                             <CollapseBody>
                                 @if (cuesheet.IsRecording == true)
                                 {
-                                <Row Class="@backgroundCSS" Margin="Margin.Is3">
-                                    <Column Size="ColumnSize.Is5"></Column>
-                                    <Column>
-                                        <Heading Size="HeadingSize.Is4">@localizer["RecordRunning"]</Heading>
-                                    </Column>
-                                    <Column Size="ColumnSize.Is5"></Column>
-                                </Row> 
+                                    <Row Class="@backgroundCSS" Margin="Margin.Is3">
+                                        <Column ColumnSize="ColumnSize.Is5"></Column>
+                                        <Column>
+                                            <Heading Size="HeadingSize.Is4">@localizer["RecordRunning"]</Heading>
+                                        </Column>
+                                        <Column ColumnSize="ColumnSize.Is5"></Column>
+                                    </Row>
                                 }
                                 <Row>
                                     <Column>
@@ -201,7 +201,7 @@ along with Foobar.  If not, see
                                         }
                                     </Column>
                                     <Column>
-                                        <Button Color="Color.Warning" Clicked="cuesheet.StopRecording" Disabled="!cuesheet.IsRecording">
+                                        <Button Color="Color.Warning" Clicked="StopRecordingClicked" Disabled="!cuesheet.IsRecording">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
                                                 <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
                                                 <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
@@ -239,31 +239,64 @@ along with Foobar.  If not, see
                                     </FieldBody>
                                 </Field>
                             </Tooltip>
-                            @if (CurrentViewMode == ViewMode.ViewModeFull)
+                            @switch (CurrentViewMode)
                             {
-                                <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)), seperator: Environment.NewLine)">
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                            @if (cuesheet.AudioFile == null)
-                                            {
-                                                var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged"></InputFile>
-                                            }
-                                            else
-                                            {
+                                case ViewMode.ViewModeFull:
+                                    <!--TODO: Bug, when switching viewmodes with audiofile set-->
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)), seperator: Environment.NewLine)">
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                                @if (cuesheet.AudioFile == null)
+                                                {
+                                                    var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
+                                                    <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged"></InputFile>
+                                                }
+                                                else
+                                                {
+                                                    <Addons>
+                                                        @if (String.IsNullOrEmpty(recordObjectURL) == false)
+                                                        {
+                                                        <Addon AddonType="AddonType.Start">
+                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@recordObjectURL" Target="Target.Blank" Download="@cuesheet.AudioFile.FileName">@localizer["DownloadRecordedAudio"]</Button>
+                                                        </Addon>
+                                                        }
+                                                        <Addon AddonType="AddonType.Body">
+                                                            <TextEdit Disabled="true" Text="@cuesheet.AudioFile.FileName" />
+                                                        </Addon>
+                                                        <Addon AddonType="AddonType.End">
+                                                            <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
+                                                        </Addon>
+                                                    </Addons>
+                                                }
+                                            </FieldBody>
+                                        </Field>
+                                    </Tooltip>
+                                    break;
+                                case ViewMode.ViewModeRecord:
+                                    @if (cuesheet.AudioFile != null)
+                                    {
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
                                                 <Addons>
+                                                    @if (String.IsNullOrEmpty(recordObjectURL) == false)
+                                                    {
+                                                        <Addon AddonType="AddonType.Start">
+                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@recordObjectURL" Target="Target.Blank" Download="@cuesheet.AudioFile.FileName">@localizer["DownloadRecordedAudio"]</Button>
+                                                        </Addon>
+                                                    }
                                                     <Addon AddonType="AddonType.Body">
                                                         <TextEdit Disabled="true" Text="@cuesheet.AudioFile.FileName" />
                                                     </Addon>
-                                                    <Addon AddonType="AddonType.End">
-                                                        <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
-                                                    </Addon>
                                                 </Addons>
-                                            }
-                                        </FieldBody>
-                                    </Field>
-                                </Tooltip>
+                                            </FieldBody>
+                                        </Field>
+                                    }
+                                    break;
+                            }
+                            @if (CurrentViewMode == ViewMode.ViewModeFull)
+                            {
                                 <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
@@ -287,15 +320,15 @@ along with Foobar.  If not, see
                                         </FieldBody>
                                     </Field>
                                 </Tooltip>
+                                <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                            <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["EnterCatalogueNumberHere"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
+                                        </FieldBody>
+                                    </Field>
+                                </Tooltip>
                             }
-                            <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
-                                        <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["EnterCatalogueNumberHere"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
                         </CollapseBody>
                     </Collapse>
                     @switch (CurrentViewMode)
@@ -479,21 +512,21 @@ along with Foobar.  If not, see
                                         <TableBody>
                                             @foreach (var track in cuesheet.Tracks)
                                             {
-                                            <TableRow>
-                                                <TableRowCell>
-                                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                        </svg>
-                                                    </Button>
-                                                </TableRowCell>
-                                                <TableRowCell>@track.Position</TableRowCell>
-                                                <TableRowCell><TextEdit @bind-Text="track.Artist" /></TableRowCell>
-                                                <TableRowCell><TextEdit @bind-Text="track.Title" /></TableRowCell>
-                                                <TableRowCell>@track.Begin</TableRowCell>
-                                                <TableRowCell>@track.End</TableRowCell>
-                                                <TableRowCell>@track.Length</TableRowCell>
-                                            </TableRow>
+                                                <TableRow>
+                                                    <TableRowCell>
+                                                        <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </TableRowCell>
+                                                    <TableRowCell>@track.Position</TableRowCell>
+                                                    <TableRowCell><TextEdit @bind-Text="track.Artist" /></TableRowCell>
+                                                    <TableRowCell><TextEdit @bind-Text="track.Title" /></TableRowCell>
+                                                    <TableRowCell>@track.Begin</TableRowCell>
+                                                    <TableRowCell>@track.End</TableRowCell>
+                                                    <TableRowCell>@track.Length</TableRowCell>
+                                                </TableRow>
                                             }
                                         </TableBody>
                                     </Table>
@@ -504,11 +537,19 @@ along with Foobar.  If not, see
                 </Accordion>
 
                 <br />
-                @if (CurrentViewMode == ViewMode.ViewModeFull)
-                {
-                    <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
-                }
 
+                @switch (CurrentViewMode)
+                {
+                    case ViewMode.ViewModeFull:
+                        <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
+                        break;
+                    case ViewMode.ViewModeRecord:
+                        @if (String.IsNullOrEmpty(recordObjectURL) == false)
+                        {
+                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@recordObjectURL" Target="Target.Blank" Disabled="!String.IsNullOrEmpty(recordObjectURL)" Download="@cuesheet.AudioFile.FileName">@localizer["DownloadRecordedAudio"]</Button>
+                        }
+                        break;
+                }
             </Column>
             @if (CurrentViewMode == ViewMode.ViewModeFull)
             {
@@ -534,7 +575,7 @@ along with Foobar.  If not, see
                                         <CollapseBody>
                                             @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
                                             {
-                                                var functionName = "focusElement";
+                            var functionName = "focusElement";
                                                 <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
                                                     <Alert Color="Color.Warning" Visible="true">
                                                         @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
@@ -964,10 +1005,30 @@ along with Foobar.  If not, see
                     currentRecordingTrack = new Track();
                     cuesheetDataVisible = false;
                     SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
+                    new Task(async () =>
+                    {
+                        await JSRuntime.InvokeVoidAsync("setupAudioRecording");
+                    }).Start();
                     break;
             }
             viewMode = value;
         }
+    }
+
+    [JSInvokable()]
+    public void NotifyError(string error)
+    {
+        //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
+        ErrorReport.Exception = error;
+        navigationManager.NavigateTo("ErrorReport");
+    }
+
+    [JSInvokable()]
+    public void AudioRecordingFinished(String url)
+    {
+        //TODO: Customizable via options
+        cuesheet.AudioFile = new AudioFile("Recording.ogg", url, "audio/ogg");
+        recordObjectURL = url;
     }
 
     private Boolean cuesheetDataVisible = true;
@@ -981,6 +1042,7 @@ along with Foobar.  If not, see
     private HotKeysContext hotKeysContext;
     private ViewMode viewMode;
     private Timer recordTimer;
+    private String recordObjectURL;
 
     private String invalidFileName;
 
@@ -1036,6 +1098,10 @@ along with Foobar.  If not, see
         recordTimer.AutoReset = true;
         recordTimer.Elapsed += delegate {
             StateHasChanged();
+            if (cuesheet.IsRecording == false)
+            {
+                recordTimer.Stop();
+            }
         };
     }
 
@@ -1281,14 +1347,6 @@ along with Foobar.  If not, see
         }
     }
 
-    [JSInvokable()]
-    public void NotifyError(string error)
-    {
-        //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
-        ErrorReport.Exception = error;
-        navigationManager.NavigateTo("ErrorReport");
-    }
-
     private async Task OnDropInputfilesChanged(InputFileChangeEventArgs e)
     {
         Logger.LogInformation("OnDropInputfilesChanged with {0}", e);
@@ -1444,6 +1502,10 @@ along with Foobar.  If not, see
     private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
     {
         Logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
+        if (String.IsNullOrEmpty(recordObjectURL) == false)
+        {
+            await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", recordObjectURL);
+        }
         if (browserFile != null)
         {
             var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
@@ -1525,7 +1587,7 @@ along with Foobar.  If not, see
         navigationManager.NavigateTo(navigationManager.Uri, true);
     }
 
-    private void StartRecordingClicked()
+    private async Task StartRecordingClicked()
     {
         //Check for empty cuesheet and warn!
         if (cuesheet.Tracks.Count > 0)
@@ -1541,7 +1603,20 @@ along with Foobar.  If not, see
             cuesheet.StartRecording();
             recordTimer.Start();
             enterCurrentTrackArtist.Focus();
+            await JSRuntime.InvokeVoidAsync("startAudioRecording");
+            if (String.IsNullOrEmpty(recordObjectURL) == false)
+            {
+                await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", recordObjectURL);
+            }
+            cuesheet.AudioFile = null;
+            recordObjectURL = null;
         }
+    }
+
+    private async Task StopRecordingClicked()
+    {
+        await JSRuntime.InvokeVoidAsync("stopAudioRecording");
+        cuesheet.StopRecording();
     }
 
     private void AddTrackRecordingClicked()

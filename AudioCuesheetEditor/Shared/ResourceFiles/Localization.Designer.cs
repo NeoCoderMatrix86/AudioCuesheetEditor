@@ -477,6 +477,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download recorded audio file ähnelt.
+        /// </summary>
+        public static string DownloadRecordedAudio {
+            get {
+                return ResourceManager.GetString("DownloadRecordedAudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Drop input files here ähnelt.
         /// </summary>
         public static string DropFiles {

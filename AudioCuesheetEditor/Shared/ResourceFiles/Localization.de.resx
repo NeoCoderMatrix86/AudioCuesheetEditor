@@ -599,4 +599,7 @@
   <data name="RecordNotPossibleWithExistingTracks" xml:space="preserve">
     <value>Das cuesheet enthält bereits Tracks. Die Aufnahme ist nicht möglich, wenn bereits Tracks vorhanden sind. Bitte speichern Sie ihre Arbeit und starten Sie anschließend mit einem leeren Cuesheet.</value>
   </data>
+  <data name="DownloadRecordedAudio" xml:space="preserve">
+    <value>Aufnahme herunterladen</value>
+  </data>
 </root>
