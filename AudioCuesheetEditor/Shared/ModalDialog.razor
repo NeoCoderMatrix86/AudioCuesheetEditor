@@ -117,18 +117,23 @@ along with Foobar.  If not, see
         set { mode = value; }
     }
 
+    public Boolean Visible
+    {
+        get { return modalRef.Visible; }
+    }
+
+    public void Confirm()
+    {
+        OnConfirmed(new EventArgs());
+        HideModal();
+    }
+
     protected virtual void OnConfirmed(EventArgs args)
     {
         if (Confirmed != null)
         {
             Confirmed(this, args);
         }
-    }
-
-    private void Confirm()
-    {
-        OnConfirmed(new EventArgs());
-        HideModal();
     }
 
     private String ModalHeaderStyle

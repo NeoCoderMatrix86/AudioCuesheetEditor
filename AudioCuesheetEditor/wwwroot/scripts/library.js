@@ -1,5 +1,6 @@
 ﻿var GLOBAL = {};
 var audioFileObjectURL = null;
+var handleAudioRecordingData = true;
 GLOBAL.Index = null;
 GLOBAL.AudioPlayer = null;
 GLOBAL.SetIndexReference = function (dotNetReference) {
@@ -106,4 +107,35 @@ function dropFiles(e, domElement, domID) {
     element.files = dropedFiles;
     var event = new Event('change');
     element.dispatchEvent(event);
+}
+
+function setupAudioRecording() {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { handleAudioRecording(stream) }).catch(function (err) { handleAudioRecordingData = false; });
+}
+
+function handleAudioRecording(stream) {
+    rec = new MediaRecorder(stream);
+    rec.ondataavailable = e => {
+        audioChunks.push(e.data);
+    }
+    rec.onstop = () => {
+        let blob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
+        var url = URL.createObjectURL(blob);
+        if (GLOBAL.Index !== null) {
+            GLOBAL.Index.invokeMethodAsync("AudioRecordingFinished", url);
+        }
+    }
+}
+
+function startAudioRecording() {
+    if (handleAudioRecordingData == true) {
+        audioChunks = [];
+        rec.start();
+    }
+}
+
+function stopAudioRecording() {
+    if (handleAudioRecordingData == true) {
+        rec.stop();
+    }
 }

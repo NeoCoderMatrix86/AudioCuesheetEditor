@@ -403,6 +403,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Default view mode ähnelt.
+        /// </summary>
+        public static string DefaultViewMode {
+            get {
+                return ResourceManager.GetString("DefaultViewMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delete all tracks ähnelt.
         /// </summary>
         public static string DeleteAllTracks {
@@ -464,6 +473,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string DownloadExport {
             get {
                 return ResourceManager.GetString("DownloadExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download recorded audio file ähnelt.
+        /// </summary>
+        public static string DownloadRecordedAudio {
+            get {
+                return ResourceManager.GetString("DownloadRecordedAudio", resourceCulture);
             }
         }
         
@@ -590,6 +608,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string EnterExportSchemeTrackHereTooltip {
             get {
                 return ResourceManager.GetString("EnterExportSchemeTrackHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter new Track ähnelt.
+        /// </summary>
+        public static string EnterNewTrack {
+            get {
+                return ResourceManager.GetString("EnterNewTrack", resourceCulture);
             }
         }
         
@@ -1125,6 +1152,33 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Control recording ähnelt.
+        /// </summary>
+        public static string RecordControl {
+            get {
+                return ResourceManager.GetString("RecordControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The cuesheet already contains tracks. Recording is not possible when there are tracks present in the cuesheet. Please save your work and start with a clean cuesheet. ähnelt.
+        /// </summary>
+        public static string RecordNotPossibleWithExistingTracks {
+            get {
+                return ResourceManager.GetString("RecordNotPossibleWithExistingTracks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Record is running! ähnelt.
+        /// </summary>
+        public static string RecordRunning {
+            get {
+                return ResourceManager.GetString("RecordRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Reload options ähnelt.
         /// </summary>
         public static string ReloadOptions {
@@ -1233,11 +1287,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start recording ähnelt.
+        /// </summary>
+        public static string StartRecording {
+            get {
+                return ResourceManager.GetString("StartRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Start import of tracks ähnelt.
         /// </summary>
         public static string StartTrackImport {
             get {
                 return ResourceManager.GetString("StartTrackImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Stop recording ähnelt.
+        /// </summary>
+        public static string StopRecording {
+            get {
+                return ResourceManager.GetString("StopRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Switch view mode ähnelt.
+        /// </summary>
+        public static string SwitchViewMode {
+            get {
+                return ResourceManager.GetString("SwitchViewMode", resourceCulture);
             }
         }
         
@@ -1346,6 +1427,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Full edition ähnelt.
+        /// </summary>
+        public static string ViewModeFull {
+            get {
+                return ResourceManager.GetString("ViewModeFull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Record mode ähnelt.
+        /// </summary>
+        public static string ViewModeRecord {
+            get {
+                return ResourceManager.GetString("ViewModeRecord", resourceCulture);
             }
         }
         

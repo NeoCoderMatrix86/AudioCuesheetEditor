@@ -569,4 +569,37 @@
   <data name="Log" xml:space="preserve">
     <value>Log</value>
   </data>
+  <data name="RecordControl" xml:space="preserve">
+    <value>Aufnahmesteuerung</value>
+  </data>
+  <data name="StartRecording" xml:space="preserve">
+    <value>Aufnahme starten</value>
+  </data>
+  <data name="StopRecording" xml:space="preserve">
+    <value>Aufnahme beenden</value>
+  </data>
+  <data name="SwitchViewMode" xml:space="preserve">
+    <value>Anzeigemodus auswählen</value>
+  </data>
+  <data name="ViewModeFull" xml:space="preserve">
+    <value>Komplette Bearbeitung</value>
+  </data>
+  <data name="ViewModeRecord" xml:space="preserve">
+    <value>Aufnahmemodus</value>
+  </data>
+  <data name="DefaultViewMode" xml:space="preserve">
+    <value>Standard Anzeigemodus</value>
+  </data>
+  <data name="RecordRunning" xml:space="preserve">
+    <value>Aufnahme aktiv!</value>
+  </data>
+  <data name="EnterNewTrack" xml:space="preserve">
+    <value>Neuen Track eingeben</value>
+  </data>
+  <data name="RecordNotPossibleWithExistingTracks" xml:space="preserve">
+    <value>Das cuesheet enthält bereits Tracks. Die Aufnahme ist nicht möglich, wenn bereits Tracks vorhanden sind. Bitte speichern Sie ihre Arbeit und starten Sie anschließend mit einem leeren Cuesheet.</value>
+  </data>
+  <data name="DownloadRecordedAudio" xml:space="preserve">
+    <value>Aufnahme herunterladen</value>
+  </data>
 </root>
