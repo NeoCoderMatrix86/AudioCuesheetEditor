@@ -1095,7 +1095,6 @@ along with Foobar.  If not, see
         recordTimer = new Timer(500);
         recordTimer.AutoReset = true;
         recordTimer.Elapsed += delegate {
-            StateHasChanged();
             if (cuesheet.IsRecording == false)
             {
                 recordTimer.Stop();
@@ -1616,6 +1615,7 @@ along with Foobar.  If not, see
     {
         await JSRuntime.InvokeVoidAsync("stopAudioRecording");
         cuesheet.StopRecording();
+        StateHasChanged();
     }
 
     private void AddTrackRecordingClicked()
