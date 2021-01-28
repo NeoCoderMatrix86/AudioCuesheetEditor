@@ -480,7 +480,7 @@
     <value>Funktionen</value>
   </data>
   <data name="FeaturesText" xml:space="preserve">
-    <value>&lt;ul&gt;&lt;li&gt;Validierung aller Daten&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Verschiedene Export Möglichkeiten (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio Wiedergabe&lt;/li&gt;&lt;/ul&gt;</value>
+    <value>&lt;ul&gt;&lt;li&gt;Validierung aller Daten&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Verschiedene Export Möglichkeiten (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio Wiedergabe&lt;/li&gt;&lt;li&gt;Aufnahmemodus&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
   <data name="Validation" xml:space="preserve">
     <value>Validierung</value>
@@ -601,5 +601,11 @@
   </data>
   <data name="DownloadRecordedAudio" xml:space="preserve">
     <value>Aufnahme herunterladen</value>
+  </data>
+  <data name="RecordMode" xml:space="preserve">
+    <value>Aufnahmemodus</value>
+  </data>
+  <data name="RecordModeHelpText" xml:space="preserve">
+    <value>AudioCuesheetEditor hat verschiedene Ansichten für verschiedene Zielgruppen. Der Aufnahmemodus richtet sich an Leute, die in Echtzeit ein Cuesheet aufnehmen möchten und dabei Tracks mitschreiben, sowie anschließend eventuell die Audio Datei herunterladen möchten. Um den Aufnahmemodus zu verwenden, wechseln Sie den Ansichtsmodus auf Aufnahmemodus.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;Sie werden gefragt, ob Sie der Applikation Zugriff auf ihre Audio Eingabegeräte erlauben wollen. Wenn Sie eine Aufnahme erzeugen möchten, die Sie später herunterladen möchten, wählen Sie hier bitte "Zulassen". Dies ist nicht zwingend erforderlich, jedoch kann kein Audiosignal mitgeschnitten werden, wenn Sie dies nicht erlauben. Sie können anschließend die Aufnahme mit "Aufnahme starten" beginnen. Dies sorgt dafür, dass die Aufnahme beginnt und ihnen ein roter Balken mitteilt, dass die Aufnahme aktiv ist.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Beginnen Sie mit der Wiedergabe ihrer Audiostücke und sobald ein Track beendet ist, geben Sie die Daten Künstler und Titel ein und klicken Sie auf "Neuen Track hinzufügen". Dies fügt den neuen Track hinzu und setzt das Ende des aktuellen Tracks, sowie den Anfang des neuen Tracks. Sie können auch die "Enter" Taste auf dem Keyboard benutzen, um die Eingabefelder automatisch zu wechseln, bzw. den Track hinzuzufügen.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Sobald ein neuer Track hinzugefügt wurde, wird er unter Tracks angezeigt und Sie können dort nachträglich Künstler und Artist verändern, sowie ihn wieder löschen. &lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Wenn Sie mit der Aufnahme fertig sind, beenden Sie diese mit einem Klick auf "Aufnahme beenden". Das stoppt die Aufnahme und macht die Aufnahme zum Download verfügbar, sofern der Zugriff auf Audiogeräte erlaubt wurde.&lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;Sie können nun zur vollen Bearbeitung wechseln und alle Änderungen am Cuesheet durchführen, die noch offen sind. Außerdem können Sie die Datei unter den Cuesheet Daten herunterladen.</value>
   </data>
 </root>
