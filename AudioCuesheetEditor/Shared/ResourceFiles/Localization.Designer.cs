@@ -801,7 +801,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;/ul&gt; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die &lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;li&gt;Live record mode&lt;/li&gt;&lt;/ul&gt; ähnelt.
         /// </summary>
         public static string FeaturesText {
             get {
@@ -1157,6 +1157,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string RecordControl {
             get {
                 return ResourceManager.GetString("RecordControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Live record mode ähnelt.
+        /// </summary>
+        public static string RecordMode {
+            get {
+                return ResourceManager.GetString("RecordMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src=&quot;images/RecordMode1.png&quot;/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select &quot;Allow&quot;. This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string RecordModeHelpText {
+            get {
+                return ResourceManager.GetString("RecordModeHelpText", resourceCulture);
             }
         }
         

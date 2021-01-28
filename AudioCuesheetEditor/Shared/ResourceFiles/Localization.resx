@@ -480,7 +480,7 @@
     <value>Features</value>
   </data>
   <data name="FeaturesText" xml:space="preserve">
-    <value>&lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;/ul&gt;</value>
+    <value>&lt;ul&gt;&lt;li&gt;Validation for all data&lt;/li&gt;&lt;li&gt;Textimport&lt;/li&gt;&lt;li&gt;Cuesheet import&lt;/li&gt;&lt;li&gt;Different export profiles (XML/CSV,Text, etc)&lt;/li&gt;&lt;li&gt;Audio playback&lt;/li&gt;&lt;li&gt;Live record mode&lt;/li&gt;&lt;/ul&gt;</value>
   </data>
   <data name="Validation" xml:space="preserve">
     <value>Validation</value>
@@ -601,5 +601,11 @@
   </data>
   <data name="DownloadRecordedAudio" xml:space="preserve">
     <value>Download recorded audio file</value>
+  </data>
+  <data name="RecordMode" xml:space="preserve">
+    <value>Live record mode</value>
+  </data>
+  <data name="RecordModeHelpText" xml:space="preserve">
+    <value>AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select "Allow". This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by AudioCuesheetEditor. You can afterwards start your recording by pressing the "Start recording" Button. This causes the record to start and a display will tell you, that you are currently recording.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Play audio and once the end of the track has been reached, please enter the track artist and title and click the button "Add new track". This will set the end of the track to the current time. You can use "Enter" on the input fields to fast switch the focus inputs and enter the new track.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Once you have entered a track, it will display in the tracks and you can edit artist and title again and also delete the track afterwards.&lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Once you have finished your recording, click the button "Stop recording" which will stop the recording and make the recording (if audio is not blocked) downloadable to you. &lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;You can now switch back to full edit mode in order to do more editing on the cuesheet. All tracks are present and also the recording is available as download in the cuesheet data part.</value>
   </data>
 </root>
