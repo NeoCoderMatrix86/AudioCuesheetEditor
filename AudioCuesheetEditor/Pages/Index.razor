@@ -341,11 +341,11 @@ along with Foobar.  If not, see
                                             <TableRow>
                                                 <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
                                                 <TableHeaderCell>#</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Artist"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Title"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Begin"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["End"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Length"]</TableHeaderCell>
                                                 <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Notifications"]</TableHeaderCell>
                                             </TableRow>
                                         </TableHeader>
@@ -393,21 +393,21 @@ along with Foobar.  If not, see
                                                             @track.Position
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Title" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                                                 <!--TODO: Use pattern-->
@@ -415,7 +415,7 @@ along with Foobar.  If not, see
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                                                 <!--TODO: Use pattern-->
@@ -423,7 +423,7 @@ along with Foobar.  If not, see
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                                                 <!--TODO: Use pattern-->
@@ -513,8 +513,8 @@ along with Foobar.  If not, see
                                                         </Button>
                                                     </TableRowCell>
                                                     <TableRowCell>@track.Position</TableRowCell>
-                                                    <TableRowCell><TextEdit @bind-Text="track.Artist" /></TableRowCell>
-                                                    <TableRowCell><TextEdit @bind-Text="track.Title" /></TableRowCell>
+                                                    <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Artist" /></TableRowCell>
+                                                    <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Title" /></TableRowCell>
                                                     <TableRowCell>@track.Begin</TableRowCell>
                                                     <TableRowCell>@track.End</TableRowCell>
                                                     <TableRowCell>@track.Length</TableRowCell>
