@@ -170,13 +170,9 @@ along with Foobar.  If not, see
                             <CollapseBody>
                                 @if (cuesheet.IsRecording == true)
                                 {
-                                    <Row Class="@backgroundCSS" Margin="Margin.Is3">
-                                        <Column ColumnSize="ColumnSize.Is5"></Column>
-                                        <Column>
-                                            <Heading Size="HeadingSize.Is4">@localizer["RecordRunning"]</Heading>
-                                        </Column>
-                                        <Column ColumnSize="ColumnSize.Is5"></Column>
-                                    </Row>
+                                <div class="@backgroundCSS">
+                                    <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["RecordRunning"]</Heading>
+                                </div>
                                 }
                                 <Row>
                                     <Column>
@@ -343,7 +339,7 @@ along with Foobar.  If not, see
                                     <Table Bordered="true" Responsive="true" Narrow="true">
                                         <TableHeader ThemeContrast="ThemeContrast.Light">
                                             <TableRow>
-                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["TrackTableControls"]</TableHeaderCell>
+                                                <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
                                                 <TableHeaderCell>#</TableHeaderCell>
                                                 <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
                                                 <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
@@ -357,7 +353,7 @@ along with Foobar.  If not, see
                                             @foreach (var track in cuesheet.Tracks)
                                             {
                                                 <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
-                                                    <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
+                                                    <TableRowCell>
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Buttons>
                                                                 <Tooltip Placement="Placement.Right" Text="@localizer["StartPlaybackThisTrack"]">
@@ -461,18 +457,18 @@ along with Foobar.  If not, see
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Row>
-                                        <Column ColumnSize="ColumnSize.Is5">
+                                        <Column ColumnSize="ColumnSize.Is5.OnDesktop.Is12.OnTablet.Is12.OnMobile">
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Artist"]</FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
+                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
                                                     <TextEdit @ref="enterCurrentTrackArtist" @bind-Text="currentRecordingTrack.Artist" Disabled="!cuesheet.IsRecording" KeyDown="OnKeyDownRecordArtist"></TextEdit>
                                                 </FieldBody>
                                             </Field>
                                         </Column>
-                                        <Column ColumnSize="ColumnSize.Is5">
+                                        <Column ColumnSize="ColumnSize.Is5.OnDesktop.Is12.OnTablet.Is12.OnMobile">
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Title"]</FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
+                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
                                                     <TextEdit @ref="enterCurrentTrackTitle" @bind-Text="currentRecordingTrack.Title" Disabled="!cuesheet.IsRecording" KeyDown="OnKeyDownRecordTitle"></TextEdit>
                                                 </FieldBody>
                                             </Field>
