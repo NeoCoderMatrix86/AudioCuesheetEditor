@@ -65,9 +65,7 @@ along with Foobar.  If not, see
                 </BarDropdown>
             </BarItem>
             <BarItem>
-                <Button Color="Color.Info">
-                    <BarLink To="Help" Style="color:white;">@localizer["Help"]</BarLink>
-                </Button>
+                <Button Color="Color.Info" To="Help" Type="ButtonType.Link">@localizer["Help"]</Button>
             </BarItem>
             <BarItem>
                 <BarDropdown>
@@ -141,7 +139,7 @@ along with Foobar.  If not, see
                                 <Tooltip Placement="Placement.Top" Text="@localizer["ImportTextfileTooltip"]">
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
                                         </FieldBody>
                                     </Field>
@@ -149,7 +147,7 @@ along with Foobar.  If not, see
                                 <Tooltip Placement="Placement.Top" Text="@localizer["ImportCuesheetTooltip"]">
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             <InputFile class="form-control" accept="@CuesheetFile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
                                         </FieldBody>
                                     </Field>
@@ -172,13 +170,9 @@ along with Foobar.  If not, see
                             <CollapseBody>
                                 @if (cuesheet.IsRecording == true)
                                 {
-                                    <Row Class="@backgroundCSS" Margin="Margin.Is3">
-                                        <Column ColumnSize="ColumnSize.Is5"></Column>
-                                        <Column>
-                                            <Heading Size="HeadingSize.Is4">@localizer["RecordRunning"]</Heading>
-                                        </Column>
-                                        <Column ColumnSize="ColumnSize.Is5"></Column>
-                                    </Row>
+                                <div class="@backgroundCSS">
+                                    <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["RecordRunning"]</Heading>
+                                </div>
                                 }
                                 <Row>
                                     <Column>
@@ -226,7 +220,7 @@ along with Foobar.  If not, see
                             <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDArtist"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@localizer["EnterCDartisthere"]" @bind-Text="cuesheet.Artist" ChangeTextOnKeyPress="false" />
                                     </FieldBody>
                                 </Field>
@@ -234,7 +228,7 @@ along with Foobar.  If not, see
                             <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTitle"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                         <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@localizer["EnterCDtitlehere"]" @bind-Text="cuesheet.Title" ChangeTextOnKeyPress="false" />
                                     </FieldBody>
                                 </Field>
@@ -244,7 +238,7 @@ along with Foobar.  If not, see
                                 case ViewMode.ViewModeFull:
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             @if (cuesheet.AudioFile == null)
                                             {
                                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
@@ -276,7 +270,7 @@ along with Foobar.  If not, see
                                     {
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                                 <Addons>
                                                     @if (String.IsNullOrEmpty(recordObjectURL) == false)
                                                     {
@@ -298,7 +292,7 @@ along with Foobar.  If not, see
                                 <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             @if (cuesheet.CDTextfile == null)
                                             {
                                                 var cdTextFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile))));
@@ -321,7 +315,7 @@ along with Foobar.  If not, see
                                 <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is7.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["EnterCatalogueNumberHere"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
                                         </FieldBody>
                                     </Field>
@@ -347,12 +341,12 @@ along with Foobar.  If not, see
                                             <TableRow>
                                                 <TableHeaderCell>@localizer["TrackTableControls"]</TableHeaderCell>
                                                 <TableHeaderCell>#</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
-                                                <TableHeaderCell>@localizer["Notifications"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Artist"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Title"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Begin"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["End"]</TableHeaderCell>
+                                                <TableHeaderCell Class="minWidth">@localizer["Length"]</TableHeaderCell>
+                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Notifications"]</TableHeaderCell>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -399,21 +393,21 @@ along with Foobar.  If not, see
                                                             @track.Position
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Title" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                                                 <!--TODO: Use pattern-->
@@ -421,7 +415,7 @@ along with Foobar.  If not, see
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                                                 <!--TODO: Use pattern-->
@@ -429,7 +423,7 @@ along with Foobar.  If not, see
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                                                 <!--TODO: Use pattern-->
@@ -437,7 +431,7 @@ along with Foobar.  If not, see
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
-                                                    <TableRowCell>
+                                                    <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             @((MarkupString)track.GetValidationErrors(localizer))
                                                         </Tooltip>
@@ -463,18 +457,18 @@ along with Foobar.  If not, see
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Row>
-                                        <Column ColumnSize="ColumnSize.Is5">
+                                        <Column ColumnSize="ColumnSize.Is5.OnDesktop.Is12.OnTablet.Is12.OnMobile">
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Artist"]</FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
+                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
                                                     <TextEdit @ref="enterCurrentTrackArtist" @bind-Text="currentRecordingTrack.Artist" Disabled="!cuesheet.IsRecording" KeyDown="OnKeyDownRecordArtist"></TextEdit>
                                                 </FieldBody>
                                             </Field>
                                         </Column>
-                                        <Column ColumnSize="ColumnSize.Is5">
+                                        <Column ColumnSize="ColumnSize.Is5.OnDesktop.Is12.OnTablet.Is12.OnMobile">
                                             <Field Horizontal="true">
                                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Title"]</FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is6.OnMobile">
+                                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
                                                     <TextEdit @ref="enterCurrentTrackTitle" @bind-Text="currentRecordingTrack.Title" Disabled="!cuesheet.IsRecording" KeyDown="OnKeyDownRecordTitle"></TextEdit>
                                                 </FieldBody>
                                             </Field>
@@ -519,8 +513,8 @@ along with Foobar.  If not, see
                                                         </Button>
                                                     </TableRowCell>
                                                     <TableRowCell>@track.Position</TableRowCell>
-                                                    <TableRowCell><TextEdit @bind-Text="track.Artist" /></TableRowCell>
-                                                    <TableRowCell><TextEdit @bind-Text="track.Title" /></TableRowCell>
+                                                    <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Artist" /></TableRowCell>
+                                                    <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Title" /></TableRowCell>
                                                     <TableRowCell>@track.Begin</TableRowCell>
                                                     <TableRowCell>@track.End</TableRowCell>
                                                     <TableRowCell>@track.Length</TableRowCell>
@@ -540,6 +534,7 @@ along with Foobar.  If not, see
                 {
                     case ViewMode.ViewModeFull:
                         <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
+                        <br />
                         break;
                     case ViewMode.ViewModeRecord:
                         @if (String.IsNullOrEmpty(recordObjectURL) == false)
@@ -551,7 +546,7 @@ along with Foobar.  If not, see
             </Column>
             @if (CurrentViewMode == ViewMode.ViewModeFull)
             {
-                <Column ColumnSize="ColumnSize.IsQuarter" Display="@DisplayProcessingHints">
+                <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
                     <Card>
                         <CardHeader>
                             <CardTitle Size="3">@localizer["ProcessingHints"]</CardTitle>

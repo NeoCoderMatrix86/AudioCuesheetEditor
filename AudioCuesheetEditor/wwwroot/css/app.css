@@ -240,3 +240,7 @@ app {
         background-color: palevioletred;
     }
 }
+
+.minWidth {
+    min-width: 100px;
+}
