@@ -1114,6 +1114,7 @@ along with Foobar.  If not, see
         {
             await SaveExportProfiles();
             await BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
+            modalExportProfiles.Hide();
         }
     }
 
@@ -1344,6 +1345,7 @@ along with Foobar.  If not, see
         var fileData = cuesheetFile.GenerateCuesheetFile();
         await optionsController.SaveOptions();
         await BlazorDownloadFileService.DownloadFile(optionsController.Options.CuesheetFileName, fileData, "text/plain");
+        modalDownloadCuesheet.Hide();
     }
 
     private async Task SaveExportProfiles()
