@@ -60,6 +60,24 @@ namespace AudioCuesheetEditor.Model.Options
                 var list = new List<ExportProfile>();
                 var exportProfile = new ExportProfile()
                 {
+                    FileName = "YouTube.txt",
+                    Name = "YouTube"
+                };
+                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%";
+                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
+                exportProfile.SchemeFooter.Scheme = String.Empty;
+                list.Add(exportProfile);
+                exportProfile = new ExportProfile()
+                {
+                    FileName = "Mixcloud.txt",
+                    Name = "Mixcloud"
+                };
+                exportProfile.SchemeHead.Scheme = String.Empty;
+                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
+                exportProfile.SchemeFooter.Scheme = String.Empty;
+                list.Add(exportProfile);
+                exportProfile = new ExportProfile()
+                {
                     FileName = "Export.csv",
                     Name = "CSV Export"
                 };
