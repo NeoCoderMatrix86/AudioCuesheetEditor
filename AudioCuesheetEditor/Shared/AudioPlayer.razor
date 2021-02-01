@@ -28,7 +28,7 @@ along with Foobar.  If not, see
     <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
     <CardBody>
         <Row>
-            <Column ColumnSize="ColumnSize.Is1">
+            <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
                 @if (CurrentPlaybackPosition != null)
                 {
                     @CurrentPlaybackPosition
@@ -38,10 +38,10 @@ along with Foobar.  If not, see
                     @String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)
                 }
             </Column>
-            <Column ColumnSize="ColumnSize.Is10">
+            <Column ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnWidescreen.Is6.OnTablet.Is4.OnMobile">
                 <Slider TValue="double" Min="0.0" Max="100.0" ValueChanged="OnSliderValueChanged" Value="CurrentSliderValue"></Slider>
             </Column>
-            <Column ColumnSize="ColumnSize.Is1">
+            <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
                 @if (TotalTime != null)
                 {
                     @TotalTime
@@ -53,7 +53,7 @@ along with Foobar.  If not, see
             </Column>
         </Row>
         <Row>
-            <Column ColumnSize="ColumnSize.Is1">
+            <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
                 @if (AudioIsPlaying == true)
                 {
                     <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />

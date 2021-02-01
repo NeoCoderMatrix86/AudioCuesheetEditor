@@ -28,6 +28,15 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Options
 {
+    /// <summary>
+    /// Enum for setting desired GUI mode
+    /// </summary>
+    public enum ViewMode
+    {
+        ViewModeFull = 0,
+        ViewModeRecord = 1
+    }
+
     public class ApplicationOptions
     {
         public ApplicationOptions()
@@ -50,6 +59,24 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 var list = new List<ExportProfile>();
                 var exportProfile = new ExportProfile()
+                {
+                    FileName = "YouTube.txt",
+                    Name = "YouTube"
+                };
+                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%";
+                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
+                exportProfile.SchemeFooter.Scheme = String.Empty;
+                list.Add(exportProfile);
+                exportProfile = new ExportProfile()
+                {
+                    FileName = "Mixcloud.txt",
+                    Name = "Mixcloud"
+                };
+                exportProfile.SchemeHead.Scheme = String.Empty;
+                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
+                exportProfile.SchemeFooter.Scheme = String.Empty;
+                list.Add(exportProfile);
+                exportProfile = new ExportProfile()
                 {
                     FileName = "Export.csv",
                     Name = "CSV Export"
@@ -94,5 +121,11 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
         public String TextImportScheme { get; set; }
+        public ViewMode ViewMode { get; set; }
+        public String ViewModeName 
+        {
+            get { return Enum.GetName(typeof(ViewMode), ViewMode); }
+            set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
+        }
     }
 }

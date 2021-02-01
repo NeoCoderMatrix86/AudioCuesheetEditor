@@ -28,5 +28,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public AudioFile AudioFile { get; set; }
         public CDTextfile CDTextfile { get; set; }
         public CatalogueNumber CatalogueNumber { get; }
+        public void StartRecording();
+        public void StopRecording();
+        public Boolean IsRecording { get; }
+        public TimeSpan? RecordingTime { get; }
     }
 }

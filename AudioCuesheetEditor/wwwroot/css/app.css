@@ -224,3 +224,23 @@ app {
     display: block;
     margin-bottom: 40px;
 }
+
+.BackgroundBlink {
+    -webkit-animation: BackgroundBlinkAnimation 2s infinite;
+    -moz-animation: BackgroundBlinkAnimation 2s infinite;
+    animation: BackgroundBlinkAnimation 2s infinite;
+}
+
+@keyframes BackgroundBlinkAnimation {
+    0% {
+        background-color: red;
+    }
+
+    100% {
+        background-color: palevioletred;
+    }
+}
+
+.minWidth {
+    min-width: 100px;
+}

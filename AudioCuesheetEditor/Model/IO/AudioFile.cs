@@ -34,16 +34,17 @@ namespace AudioCuesheetEditor.Model.IO
             {".flac", "audio/flac"}
         };
 
-        public AudioFile(String fileName)
+        public AudioFile(String fileName, Boolean isRecorded = false)
         {
             if (String.IsNullOrEmpty(fileName))
             {
                 throw new ArgumentNullException(nameof(fileName));
             }
             FileName = fileName;
+            IsRecorded = isRecorded;
         }
 
-        public AudioFile(String fileName, String objectURL, String contentType) : this(fileName)
+        public AudioFile(String fileName, String objectURL, String contentType, Boolean isRecorded = false) : this(fileName, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
@@ -76,5 +77,6 @@ namespace AudioCuesheetEditor.Model.IO
                 return playbackPossible;
             }
         }
+        public Boolean IsRecorded { get; private set; }
     }
 }

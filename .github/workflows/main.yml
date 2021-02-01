@@ -1,9 +1,9 @@
 name: Deploy to GitHub Pages
 
-# Run workflow on every push to the master branch
+# Run workflow on every push to the production branch
 on:
   push:
-    branches: [ master ]
+    branches: [ production ]
 
 jobs:    
   deploy-to-github-pages:
@@ -30,6 +30,10 @@ jobs:
     # changes the base-tag in index.html from '/' to 'AudioCuesheetEditor' to match GitHub Pages repository subdirectory
     - name: Change base-tag in index.html from / to AudioCuesheetEditor
       run: sed -i 's/<base href="\/" \/>/<base href="\/AudioCuesheetEditor\/" \/>/g' release/wwwroot/index.html
+      
+    # changes the favicon in index.html from '/' to 'AudioCuesheetEditor' to match GitHub Pages repository subdirectory
+    - name: Change favicon in index.html from / to AudioCuesheetEditor
+      run: sed -i 's/<link rel="shortcut icon" type="image\/x-icon" href="favicon.ico">/<link rel="shortcut icon" type="image\/x-icon" href="\/AudioCuesheetEditor\/favicon.ico">/g' release/wwwroot/index.html
       
     # copy index.html to 404.html to serve the same file when a file is not found
     - name: copy index.html to 404.html
