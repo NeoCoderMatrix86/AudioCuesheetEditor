@@ -3,6 +3,7 @@ var audioFileObjectURL = null;
 var handleAudioRecordingData = true;
 GLOBAL.Index = null;
 GLOBAL.AudioPlayer = null;
+GLOBAL.ViewModeRecord = null;
 GLOBAL.SetIndexReference = function (dotNetReference) {
     if (GLOBAL.Index === null) {
         GLOBAL.Index = dotNetReference;
@@ -11,6 +12,12 @@ GLOBAL.SetIndexReference = function (dotNetReference) {
 GLOBAL.SetAudioPlayerReference = function (dotNetReference) {
     if (GLOBAL.AudioPlayer === null) {
         GLOBAL.AudioPlayer = dotNetReference;
+    }
+};
+
+GLOBAL.SetViewModeRecordReference = function (dotNetReference) {
+    if (GLOBAL.ViewModeRecord === null) {
+        GLOBAL.ViewModeRecord = dotNetReference;
     }
 };
 
@@ -121,8 +128,8 @@ function handleAudioRecording(stream) {
     rec.onstop = () => {
         let blob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
         var url = URL.createObjectURL(blob);
-        if (GLOBAL.Index !== null) {
-            GLOBAL.Index.invokeMethodAsync("AudioRecordingFinished", url);
+        if (GLOBAL.ViewModeRecord !== null) {
+            GLOBAL.ViewModeRecord.invokeMethodAsync("AudioRecordingFinished", url);
         }
     }
 }
