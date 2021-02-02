@@ -13,7 +13,7 @@ jobs:
     # uses GitHub's checkout action to checkout code form the production branch
     - uses: actions/checkout@v2
       with:
-      ref: production
+        ref: production
     
     # sets up .NET
     - name: Setup .NET
