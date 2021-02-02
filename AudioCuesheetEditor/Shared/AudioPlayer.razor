@@ -54,14 +54,7 @@ along with Foobar.  If not, see
         </Row>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
-                @if (AudioIsPlaying == true)
-                {
-                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
-                }
-                else
-                {
-                    <Button Color="Color.Primary" Class="oi oi-media-play" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
-                }
+                <Button Color="Color.Primary" Class="oi oi-media-play" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
             </Column>
             <Column>
                 <Tooltip Placement="Placement.Top" Text="@localizer["PlayPreviousTrackTooltip"]">
