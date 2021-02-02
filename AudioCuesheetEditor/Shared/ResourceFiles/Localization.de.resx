@@ -202,7 +202,7 @@
     <value>Cuesheet Tracks</value>
   </data>
   <data name="CultureSetting" xml:space="preserve">
-    <value>Kultureinstellung:</value>
+    <value>Sprache:</value>
   </data>
   <data name="CurrentTrackIsPlayed" xml:space="preserve">
     <value>Dieser Track wird aktuell wiedergegeben</value>

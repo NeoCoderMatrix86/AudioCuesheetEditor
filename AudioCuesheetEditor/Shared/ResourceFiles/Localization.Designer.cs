@@ -376,7 +376,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Culture set: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Language: ähnelt.
         /// </summary>
         public static string CultureSetting {
             get {
