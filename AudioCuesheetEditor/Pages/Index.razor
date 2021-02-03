@@ -31,64 +31,69 @@ along with Foobar.  If not, see
 
 <Layout>
     <LayoutHeader Fixed="true">
-        <Bar Background="Background.Dark">
-            <BarItem>
-                <BarDropdown>
-                    <BarDropdownToggle Class="btn btn-success" Style="color:white;">
-                        @localizer["ExportResult"]
-                    </BarDropdownToggle>
-                    <BarDropdownMenu>
-                        <BarDropdownItem>
-                            <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false, "PleaseCheckProcessingHints")">
-                                <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
-                            </Tooltip>
-                        </BarDropdownItem>
-                        <BarDropdownItem>
-                            <Button Color="Color.Secondary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</Button>
-                        </BarDropdownItem>
-                    </BarDropdownMenu>
-                </BarDropdown>
-            </BarItem>
-            <BarItem>
-                <BarDropdown>
-                    <BarDropdownToggle Class="btn btn-danger" Style="color:white;">
-                        @localizer["SwitchViewMode"]
-                    </BarDropdownToggle>
-                    <BarDropdownMenu>
-                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
-                        {
-                            <BarDropdownItem>
-                                <Button Color="Color.Warning" Clicked="() => CurrentViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
-                            </BarDropdownItem>
-                        }
-                    </BarDropdownMenu>
-                </BarDropdown>
-            </BarItem>
-            <BarItem>
-                <Button Color="Color.Info" To="Help" Type="ButtonType.Link">@localizer["Help"]</Button>
-            </BarItem>
-            <BarItem>
-                <BarDropdown>
-                    <BarDropdownToggle Class="btn btn-danger" Style="color:white;">
-                        @localizer["Reset"]
-                    </BarDropdownToggle>
-                    <BarDropdownMenu Class="dropdown-menu-right">
-                        <BarDropdownItem>
-                            <Button Color="Color.Danger" @onclick="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
-                        </BarDropdownItem>
-                        <BarDropdownItem>
-                            <Button Color="Color.Danger" @onclick="RestartCuesheetClicked">@localizer["ResetCuesheet"]</Button>
-                        </BarDropdownItem>
-                        <Divider />
-                        <BarDropdownItem>
-                            <Button Color="Color.Danger" @onclick="OnRestartCompleteApplicationClicked">@localizer["RestartCompleteApplication"]</Button>
-                        </BarDropdownItem>
-                        <BarDropdownItem>
-                            <Button Color="Color.Danger" @onclick="OnResetCompleteApplicationClicked">@localizer["ResetCompleteApplication"]</Button>
-                        </BarDropdownItem>
-                    </BarDropdownMenu>
-                </BarDropdown>
-            </BarItem>
+        <Bar Breakpoint="Breakpoint.Desktop" Background="Background.Dark" ThemeContrast="ThemeContrast.Dark">
+            <BarToggler />
+            <BarMenu>
+                <BarStart>
+                    <BarItem Padding="Padding.Is1.OnX">
+                        <BarDropdown>
+                            <BarDropdownToggle Class="btn btn-success">
+                                @localizer["ExportResult"]
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                <BarDropdownItem>
+                                    <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false, "PleaseCheckProcessingHints")">
+                                        <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
+                                    </Tooltip>
+                                </BarDropdownItem>
+                                <BarDropdownItem>
+                                    <Button Color="Color.Secondary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</Button>
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                    <BarItem Padding="Padding.Is1.OnX">
+                        <BarDropdown>
+                            <BarDropdownToggle Class="btn btn-danger">
+                                @localizer["SwitchViewMode"]
+                            </BarDropdownToggle>
+                            <BarDropdownMenu>
+                                @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                                {
+                                    <BarDropdownItem>
+                                        <Button Color="Color.Warning" Clicked="() => CurrentViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
+                                    </BarDropdownItem>
+                                }
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                    <BarItem Padding="Padding.Is1.OnX">
+                        <Button Color="Color.Info" To="Help" Type="ButtonType.Link" Class="nav-link">@localizer["Help"]</Button>
+                    </BarItem>
+                    <BarItem Padding="Padding.Is1.OnX">
+                        <BarDropdown>
+                            <BarDropdownToggle Class="btn btn-danger">
+                                @localizer["Reset"]
+                            </BarDropdownToggle>
+                            <BarDropdownMenu Class="dropdown-menu-right">
+                                <BarDropdownItem>
+                                    <Button Color="Color.Danger" @onclick="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
+                                </BarDropdownItem>
+                                <BarDropdownItem>
+                                    <Button Color="Color.Danger" @onclick="RestartCuesheetClicked">@localizer["ResetCuesheet"]</Button>
+                                </BarDropdownItem>
+                                <Divider />
+                                <BarDropdownItem>
+                                    <Button Color="Color.Danger" @onclick="OnRestartCompleteApplicationClicked">@localizer["RestartCompleteApplication"]</Button>
+                                </BarDropdownItem>
+                                <BarDropdownItem>
+                                    <Button Color="Color.Danger" @onclick="OnResetCompleteApplicationClicked">@localizer["ResetCompleteApplication"]</Button>
+                                </BarDropdownItem>
+                            </BarDropdownMenu>
+                        </BarDropdown>
+                    </BarItem>
+                </BarStart>
+            </BarMenu>
             <BarItem>
                 <Button Color="Color.Light" Clicked="() => modalOptions.Show()">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
