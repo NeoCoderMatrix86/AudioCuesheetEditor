@@ -1,6 +1,7 @@
 ﻿var GLOBAL = {};
 var audioFileObjectURL = null;
 var handleAudioRecordingData = true;
+var startTime;
 GLOBAL.Index = null;
 GLOBAL.AudioPlayer = null;
 GLOBAL.ViewModeRecord = null;
@@ -126,16 +127,20 @@ function handleAudioRecording(stream) {
         audioChunks.push(e.data);
     }
     rec.onstop = () => {
-        let blob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
-        var url = URL.createObjectURL(blob);
-        if (GLOBAL.ViewModeRecord !== null) {
-            GLOBAL.ViewModeRecord.invokeMethodAsync("AudioRecordingFinished", url);
-        }
+        var duration = Date.now() - startTime;
+        let buggyBlob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
+        ysFixWebmDuration(buggyBlob, duration, function (fixedBlob) {
+            var url = URL.createObjectURL(fixedBlob);
+            if (GLOBAL.ViewModeRecord !== null) {
+                GLOBAL.ViewModeRecord.invokeMethodAsync("AudioRecordingFinished", url);
+            } 
+        });
     }
 }
 
 function startAudioRecording() {
     if (handleAudioRecordingData == true) {
+        startTime = Date.now();
         audioChunks = [];
         rec.start();
     }
