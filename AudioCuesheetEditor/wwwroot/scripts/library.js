@@ -57,21 +57,6 @@ window.ApplicationOptions = {
     set: (value) => localStorage['ApplicationOptions'] = value
 }
 
-window.addEventListener("keydown", function (e) {
-    switch (e.key) {
-        case "MediaPlayPause":
-            GLOBAL.AudioPlayer.invokeMethodAsync("MediaPlayPausePressed");
-            break;
-        case "MediaNextTrack":
-            GLOBAL.AudioPlayer.invokeMethodAsync("MediaNextTrackPressed");
-            break;
-        case "MediaPrevTrack":
-            GLOBAL.AudioPlayer.invokeMethodAsync("MediaPreviousTrackPressed");
-            break;
-    }
-});
-
-
 //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
 function removeBrowserHistoryEntry() {
     window.history.replaceState({}, 'ErrorReport', '/');
