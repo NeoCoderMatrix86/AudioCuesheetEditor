@@ -816,26 +816,7 @@ along with Foobar.  If not, see
         }
     }
 
-    public ViewMode CurrentViewMode
-    {
-        get { return viewMode; }
-        private set
-        {
-            switch (value)
-            {
-                case ViewMode.ViewModeRecord:
-                    currentRecordingTrack = new Track();
-                    cuesheetDataVisible = false;
-                    SwitchChevron(cuesheetDataVisible, ref chevronCuesheetData);
-                    new Task(async () =>
-                    {
-                        await JSRuntime.InvokeVoidAsync("setupAudioRecording");
-                    }).Start();
-                    break;
-            }
-            viewMode = value;
-        }
-    }
+    public ViewMode CurrentViewMode { get; private set; }
 
     [JSInvokable()]
     public void NotifyError(string error)
@@ -865,7 +846,6 @@ along with Foobar.  If not, see
 
     private Cuesheet cuesheet = new Cuesheet();
     private TextImportFile textImportFile;
-    private Track currentRecordingTrack;
 
     private IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
     private Guid selectedExportProfileId;

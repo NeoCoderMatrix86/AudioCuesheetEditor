@@ -240,6 +240,7 @@ along with Foobar.  If not, see
     {
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
+        await JSRuntime.InvokeVoidAsync("setupAudioRecording");
 
         recordTimer = new Timer(500);
         recordTimer.AutoReset = true;
