@@ -94,6 +94,57 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         }
 
         [TestMethod()]
+        public void TestExportFlags()
+        {
+            Cuesheet cuesheet = new Cuesheet
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                AudioFile = new AudioFile("Testfile.mp3")
+            };
+            var begin = TimeSpan.Zero;
+            for (int i = 1; i < 25; i++)
+            {
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
+                begin = begin.Add(new TimeSpan(0, i, i));
+                track.End = begin;
+                var rand = new Random();
+                var flagsToAdd = rand.Next(1, 3);
+                for (int x = 0; x < flagsToAdd; x++)
+                {
+                    track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
+                }
+                cuesheet.AddTrack(track);
+            }
+            var cuesheetFile = new CuesheetFile(cuesheet);
+            var generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNotNull(generatedFile);
+            var fileName = Path.GetTempFileName();
+            File.WriteAllBytes(fileName, generatedFile);
+            var fileContent = File.ReadAllLines(fileName);
+            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetTitle, cuesheet.Title));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetArtist, cuesheet.Artist));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetFile.CuesheetFileName, cuesheet.AudioFile.FileName, cuesheet.AudioFile.AudioFileType));
+            var position = 1;
+            for (int i = 3; i < fileContent.Length; i += 5)
+            {
+                var track = cuesheet.Tracks.Single(x => x.Position == position);
+                position++;
+                Assert.AreEqual(fileContent[i], String.Format("{0}{1} {2:00} {3}", CuesheetFile.Tab, CuesheetFile.CuesheetTrack, track.Position, CuesheetFile.CuesheetTrackAudio));
+                Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackTitle, track.Title));
+                Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackArtist, track.Artist));
+                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
+                Assert.AreEqual(fileContent[i + 4], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+            }
+            File.Delete(fileName);
+        }
+
+        [TestMethod()]
         public void ImportCuesheetTest()
         {
             //Prepare text input file
@@ -157,6 +208,63 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.AreEqual(cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
+
+            builder = new StringBuilder();
+            builder.AppendLine("PERFORMER \"Sample CD Artist\"");
+            builder.AppendLine("TITLE \"Sample CD Title\"");
+            builder.AppendLine("FILE \"AC DC - TNT.mp3\" MP3");
+            builder.AppendLine("CDTEXTFILE \"Testfile.cdt\"");
+            builder.AppendLine("CATALOG 0123456789012");
+            builder.AppendLine("TRACK 01 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 1\"");
+            builder.AppendLine("	TITLE \"Sample Title 1\"");
+            builder.AppendLine("    FLAGS 4CH DCP PRE SCMS");
+            builder.AppendLine("	INDEX 01 00:00:00");
+            builder.AppendLine("TRACK 02 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 2\"");
+            builder.AppendLine("	TITLE \"Sample Title 2\"");
+            builder.AppendLine("    FLAGS DCP PRE");
+            builder.AppendLine("	INDEX 01 05:00:00");
+            builder.AppendLine("TRACK 03 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 3\"");
+            builder.AppendLine("	TITLE \"Sample Title 3\"");
+            builder.AppendLine("	INDEX 01 09:23:00");
+            builder.AppendLine("TRACK 04 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 4\"");
+            builder.AppendLine("	TITLE \"Sample Title 4\"");
+            builder.AppendLine("	INDEX 01 15:54:00");
+            builder.AppendLine("TRACK 05 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 5\"");
+            builder.AppendLine("	TITLE \"Sample Title 5\"");
+            builder.AppendLine("	INDEX 01 20:13:00");
+            builder.AppendLine("TRACK 06 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 6\"");
+            builder.AppendLine("	TITLE \"Sample Title 6\"");
+            builder.AppendLine("	INDEX 01 24:54:00");
+            builder.AppendLine("TRACK 07 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 7\"");
+            builder.AppendLine("	TITLE \"Sample Title 7\"");
+            builder.AppendLine("	INDEX 01 31:54:00");
+            builder.AppendLine("TRACK 08 AUDIO");
+            builder.AppendLine("	PERFORMER \"Sample Artist 8\"");
+            builder.AppendLine("	TITLE \"Sample Title 8\"");
+            builder.AppendLine("	INDEX 01 45:51:00");
+
+            tempFile = Path.GetTempFileName();
+            File.WriteAllText(tempFile, builder.ToString());
+
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
+
+            Assert.IsNotNull(cuesheet);
+            Assert.IsTrue(cuesheet.IsValid);
+            Assert.AreEqual(cuesheet.Tracks.Count, 8);
+            Assert.IsNotNull(cuesheet.CDTextfile);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(0).Flags.Count == 4);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(1).Flags.Count == 2);
+            Assert.IsNotNull(cuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "DCP"));
+            Assert.IsNotNull(cuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
+
+            File.Delete(tempFile);
         }
     }
 }

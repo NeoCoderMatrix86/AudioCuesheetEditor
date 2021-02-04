@@ -241,6 +241,10 @@ app {
     }
 }
 
+.minWidth50 {
+    min-width: 50px;
+}
+
 .minWidth {
     min-width: 100px;
 }

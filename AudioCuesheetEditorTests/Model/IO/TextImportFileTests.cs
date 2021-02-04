@@ -165,7 +165,45 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.AreEqual(textImportFile.Tracks.ToArray()[7].End, new TimeSpan(1, 15, 54));
 
             File.Delete(tempFile);
+        }
 
+        [TestMethod()]
+        public void TextImportFileTestFlags()
+        {
+            //Prepare text input file
+            StringBuilder builder = new StringBuilder();
+            builder.AppendLine("Sample Artist 1 - Sample Title 1				00:05:00	DCP");
+            builder.AppendLine("Sample Artist 2 - Sample Title 2				00:09:23");
+            builder.AppendLine("Sample Artist 3 - Sample Title 3				00:15:54	PRE, DCP");
+            builder.AppendLine("Sample Artist 4 - Sample Title 4				00:20:13	4CH");
+            builder.AppendLine("Sample Artist 5 - Sample Title 5				00:24:54");
+            builder.AppendLine("Sample Artist 6 - Sample Title 6				00:31:54	PRE DCP 4CH");
+            builder.AppendLine("Sample Artist 7 - Sample Title 7				00:45:54");
+            builder.AppendLine("Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS");
+
+            var tempFile = Path.GetTempFileName();
+            File.WriteAllText(tempFile, builder.ToString());
+
+            //Test TextImportFile
+            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)))
+            {
+                ImportScheme = "%Artist% - %Title%[\t]{1,}%End%[\t]{1,}%Flags%"
+            };
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsTrue(textImportFile.Tracks.Count == 8);
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(0).Flags.Contains(AudioCuesheet.Flag.DCP));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(2).Flags.Contains(AudioCuesheet.Flag.DCP));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(2).Flags.Contains(AudioCuesheet.Flag.PRE));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(3).Flags.Contains(AudioCuesheet.Flag.FourCH));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(5).Flags.Contains(AudioCuesheet.Flag.FourCH));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(5).Flags.Contains(AudioCuesheet.Flag.PRE));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(5).Flags.Contains(AudioCuesheet.Flag.DCP));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(7).Flags.Contains(AudioCuesheet.Flag.DCP));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(7).Flags.Contains(AudioCuesheet.Flag.PRE));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(7).Flags.Contains(AudioCuesheet.Flag.FourCH));
+            Assert.IsTrue(textImportFile.Tracks.ElementAt(7).Flags.Contains(AudioCuesheet.Flag.SCMS));
+
+            File.Delete(tempFile);
         }
     }
 }

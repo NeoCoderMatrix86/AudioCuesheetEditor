@@ -608,4 +608,25 @@
   <data name="RecordModeHelpText" xml:space="preserve">
     <value>AudioCuesheetEditor hat verschiedene Ansichten für verschiedene Zielgruppen. Der Aufnahmemodus richtet sich an Leute, die in Echtzeit ein Cuesheet aufnehmen möchten und dabei Tracks mitschreiben, sowie anschließend eventuell die Audio Datei herunterladen möchten. Um den Aufnahmemodus zu verwenden, wechseln Sie den Ansichtsmodus auf Aufnahmemodus.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;Sie werden gefragt, ob Sie der Applikation Zugriff auf ihre Audio Eingabegeräte erlauben wollen. Wenn Sie eine Aufnahme erzeugen möchten, die Sie später herunterladen möchten, wählen Sie hier bitte "Zulassen". Dies ist nicht zwingend erforderlich, jedoch kann kein Audiosignal mitgeschnitten werden, wenn Sie dies nicht erlauben. Sie können anschließend die Aufnahme mit "Aufnahme starten" beginnen. Dies sorgt dafür, dass die Aufnahme beginnt und ihnen ein roter Balken mitteilt, dass die Aufnahme aktiv ist.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Beginnen Sie mit der Wiedergabe ihrer Audiostücke und sobald ein Track beendet ist, geben Sie die Daten Künstler und Titel ein und klicken Sie auf "Neuen Track hinzufügen". Dies fügt den neuen Track hinzu und setzt das Ende des aktuellen Tracks, sowie den Anfang des neuen Tracks. Sie können auch die "Enter" Taste auf dem Keyboard benutzen, um die Eingabefelder automatisch zu wechseln, bzw. den Track hinzuzufügen.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Sobald ein neuer Track hinzugefügt wurde, wird er unter Tracks angezeigt und Sie können dort nachträglich Künstler und Artist verändern, sowie ihn wieder löschen. &lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Wenn Sie mit der Aufnahme fertig sind, beenden Sie diese mit einem Klick auf "Aufnahme beenden". Das stoppt die Aufnahme und macht die Aufnahme zum Download verfügbar, sofern der Zugriff auf Audiogeräte erlaubt wurde.&lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;Sie können nun zur vollen Bearbeitung wechseln und alle Änderungen am Cuesheet durchführen, die noch offen sind. Außerdem können Sie die Datei unter den Cuesheet Daten herunterladen.</value>
   </data>
+  <data name="EditTrack" xml:space="preserve">
+    <value>Trackdetails bearbeiten</value>
+  </data>
+  <data name="EditTrackTooltip" xml:space="preserve">
+    <value>Trackdetails in einem Dialog bearbeiten</value>
+  </data>
+  <data name="Flag4CHTooltip" xml:space="preserve">
+    <value>Setzen Sie diese Markierung, wenn der Track 4 Kanal Audio enthält</value>
+  </data>
+  <data name="FlagDCPTooltip" xml:space="preserve">
+    <value>Setzen Sie diese Markierung, wenn digitale Kopien verboten sind</value>
+  </data>
+  <data name="FlagPRETooltip" xml:space="preserve">
+    <value>Setzen Sie diese Markierung, wenn der Track Höhenanhebung hat</value>
+  </data>
+  <data name="Flags" xml:space="preserve">
+    <value>Markierungen</value>
+  </data>
+  <data name="FlagSCMSTooltip" xml:space="preserve">
+    <value>Setzen Sie diese Markierung, wenn der Track "Serial Copy Management System" hat</value>
+  </data>
 </root>
