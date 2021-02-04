@@ -112,10 +112,7 @@ namespace AudioCuesheetEditor.Model.IO
                     var match = regexTrackFlags.Match(line);
                     var flags = line.Substring(match.Index + match.Length + 1);
                     var flagList = Flag.AvailableFlags.Where(x => flags.Contains(x.CuesheetLabel));
-                    foreach(var flag in flagList)
-                    {
-                        track.SetFlag(flag, SetFlagMode.Add);
-                    }
+                    track.SetFlags(flagList);
                 }
                 if (regexTrackIndex.IsMatch(line) == true)
                 {

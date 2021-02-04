@@ -220,6 +220,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        ///<inheritdoc/>
         public void SetFlag(Flag flag, SetFlagMode flagMode)
         {
             if (flag == null)
@@ -234,6 +235,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 flags.Remove(flag);
             }
+        }
+
+        ///<inheritdoc/>
+        public void SetFlags(IEnumerable<Flag> flags)
+        {
+            this.flags.Clear();
+            this.flags.AddRange(flags);
         }
     }
 }

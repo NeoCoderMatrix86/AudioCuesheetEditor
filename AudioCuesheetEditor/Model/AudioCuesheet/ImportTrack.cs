@@ -54,7 +54,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             return String.Format("{0} ({1})", localizer[nameof(Track)], identifierString);
         }
-
+        /// <inheritdoc/>
         public void SetFlag(Flag flag, SetFlagMode flagMode)
         {
             if (flag == null)
@@ -69,6 +69,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 flags.Remove(flag);
             }
+        }
+        /// <inheritdoc/>
+        public void SetFlags(IEnumerable<Flag> flags)
+        {
+            this.flags.Clear();
+            this.flags.AddRange(flags);
         }
     }
 }

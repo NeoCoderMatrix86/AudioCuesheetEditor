@@ -526,19 +526,21 @@ along with Foobar.  If not, see
                             <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
                             <TableHeaderCell>@localizer["End"]</TableHeaderCell>
                             <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                            <TableHeaderCell>@localizer["Flags"]</TableHeaderCell>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         @foreach (var track in textImportFile.Tracks)
                         {
-                            <TableRow>
-                                <TableRowCell>@track.Position</TableRowCell>
-                                <TableRowCell>@track.Artist</TableRowCell>
-                                <TableRowCell>@track.Title</TableRowCell>
-                                <TableRowCell>@track.Begin</TableRowCell>
-                                <TableRowCell>@track.End</TableRowCell>
-                                <TableRowCell>@track.Length</TableRowCell>
-                            </TableRow>
+                        <TableRow>
+                            <TableRowCell>@track.Position</TableRowCell>
+                            <TableRowCell>@track.Artist</TableRowCell>
+                            <TableRowCell>@track.Title</TableRowCell>
+                            <TableRowCell>@track.Begin</TableRowCell>
+                            <TableRowCell>@track.End</TableRowCell>
+                            <TableRowCell>@track.Length</TableRowCell>
+                            <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
+                        </TableRow>
                         }
                     </TableBody>
                 </Table>

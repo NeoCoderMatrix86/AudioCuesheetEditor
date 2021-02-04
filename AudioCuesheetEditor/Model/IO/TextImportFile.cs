@@ -39,6 +39,7 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String SchemeEnd;
         public static readonly String SchemeLength;
         public static readonly String SchemePosition;
+        public static readonly String SchemeFlags;
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemes;
 
@@ -52,6 +53,7 @@ namespace AudioCuesheetEditor.Model.IO
             SchemeEnd = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.End), SchemeCharacter);
             SchemeLength = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Length), SchemeCharacter);
             SchemePosition = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Position), SchemeCharacter);
+            SchemeFlags = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Flags), SchemeCharacter);
 
             Dictionary<String, String> availableSchemes = new Dictionary<string, string>
             {
@@ -60,7 +62,8 @@ namespace AudioCuesheetEditor.Model.IO
                 { nameof(Track.Title), SchemeTitle },
                 { nameof(Track.Begin), SchemeBegin },
                 { nameof(Track.End), SchemeEnd },
-                { nameof(Track.Length), SchemeLength }
+                { nameof(Track.Length), SchemeLength },
+                { nameof(Track.Flags), SchemeFlags }
             };
 
             AvailableSchemes = availableSchemes;
@@ -117,12 +120,12 @@ namespace AudioCuesheetEditor.Model.IO
                         var index = 0;
                         foreach (var regexRelation in regices)
                         {
-                            var match = regexRelation.Value.Match(line);
+                            var match = regexRelation.Value.Match(line.Substring(index));
                             if (match.Success == true)
                             {
-                                var propertyValueBefore = line.Substring(index, match.Index - index);
+                                var propertyValueBefore = line.Substring(index, match.Index);
                                 var propertyBefore = track.GetType().GetProperty(regexRelation.Key.Item1, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                                var propertyValueAfter = line.Substring(match.Index + match.Length);
+                                var propertyValueAfter = line.Substring(index + match.Index + match.Length);
                                 var propertyAfter = track.GetType().GetProperty(regexRelation.Key.Item2, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                                 //Check if other regices might match the value after
                                 Boolean otherMatchRegEx = false;
@@ -150,6 +153,11 @@ namespace AudioCuesheetEditor.Model.IO
                                 {
                                     propertyBefore.SetValue(track, propertyValueBefore);
                                 }
+                                if (propertyBefore.PropertyType == typeof(IReadOnlyCollection<Flag>))
+                                {
+                                    var list = Flag.AvailableFlags.Where(x => propertyValueBefore.Contains(x.CuesheetLabel));
+                                    track.SetFlags(list);
+                                }
                                 if (otherMatchRegEx == false)
                                 {
                                     if (propertyAfter.PropertyType == typeof(TimeSpan?))
@@ -165,8 +173,13 @@ namespace AudioCuesheetEditor.Model.IO
                                     {
                                         propertyAfter.SetValue(track, propertyValueAfter);
                                     }
+                                    if (propertyAfter.PropertyType == typeof(IReadOnlyCollection<Flag>))
+                                    {
+                                        var list = Flag.AvailableFlags.Where(x => propertyValueAfter.Contains(x.CuesheetLabel));
+                                        track.SetFlags(list);
+                                    }
                                 }
-                                index = match.Index + match.Length;
+                                index = index + match.Index + match.Length;
                             }
                         }
                         tracks.Add(track);
