@@ -495,6 +495,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Edit track details ähnelt.
+        /// </summary>
+        public static string EditTrack {
+            get {
+                return ResourceManager.GetString("EditTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Edit track details in a dialog ähnelt.
+        /// </summary>
+        public static string EditTrackTooltip {
+            get {
+                return ResourceManager.GetString("EditTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die End ähnelt.
         /// </summary>
         public static string End {
@@ -833,6 +851,51 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Files {
             get {
                 return ResourceManager.GetString("Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track contains four channel audio ähnelt.
+        /// </summary>
+        public static string Flag4CHTooltip {
+            get {
+                return ResourceManager.GetString("Flag4CHTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track is digital copy permitted ähnelt.
+        /// </summary>
+        public static string FlagDCPTooltip {
+            get {
+                return ResourceManager.GetString("FlagDCPTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track has Pre-emphasis enabled ähnelt.
+        /// </summary>
+        public static string FlagPRETooltip {
+            get {
+                return ResourceManager.GetString("FlagPRETooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Flags ähnelt.
+        /// </summary>
+        public static string Flags {
+            get {
+                return ResourceManager.GetString("Flags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track has &quot;Serial Copy Management System&quot; ähnelt.
+        /// </summary>
+        public static string FlagSCMSTooltip {
+            get {
+                return ResourceManager.GetString("FlagSCMSTooltip", resourceCulture);
             }
         }
         

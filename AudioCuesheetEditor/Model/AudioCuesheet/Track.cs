@@ -32,19 +32,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String title;
         private TimeSpan? begin;
         private TimeSpan? end;
+        private readonly List<Flag> flags = new List<Flag>();
+        
+        /// <summary>
+        /// Create object with copied values from input
+        /// </summary>
+        /// <param name="track">Object to copy values from</param>
+        public Track(ITrack track)
+        {
+            CopyValues(track);
+        }
+
         public Track()
         {
             Validate();
-        }
-
-        public Track(ImportTrack importTrack)
-        {
-            //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
-            position = importTrack.Position;
-            artist = importTrack.Artist;
-            title = importTrack.Title;
-            begin = importTrack.Begin;
-            end = importTrack.End;
         }
 
         public uint? Position 
@@ -116,6 +117,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnValidateablePropertyChanged();
             }
         }
+        public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
 
         public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
         {
@@ -140,6 +142,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
             return String.Format("{0} ({1})", localizer[nameof(Track)], identifierString);
+        }
+
+        /// <summary>
+        /// Performs a deep clone of the current object
+        /// </summary>
+        /// <returns>A deep clone of the current object</returns>
+        public Track Clone()
+        {
+            return new Track(this);
+        }
+
+        /// <summary>
+        /// Copies values from input object to this object
+        /// </summary>
+        /// <param name="track">Object to copy values from</param>
+        public void CopyValues(ITrack track)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
+            position = track.Position;
+            artist = track.Artist;
+            title = track.Title;
+            begin = track.Begin;
+            end = track.End;
+            flags.Clear();
+            flags.AddRange(track.Flags);
+            OnValidateablePropertyChanged();
         }
 
         protected override void Validate()
@@ -185,6 +217,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if (Length == null)
             {
                 validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "LengthHasNoValue"));
+            }
+        }
+
+        public void SetFlag(Flag flag, SetFlagMode flagMode)
+        {
+            if (flag == null)
+            {
+                throw new ArgumentNullException(nameof(flag));
+            }
+            if ((flagMode == SetFlagMode.Add) && (Flags.Contains(flag) == false))
+            {
+                flags.Add(flag);
+            }
+            if ((flagMode == SetFlagMode.Remove) && (Flags.Contains(flag)))
+            {
+                flags.Remove(flag);
             }
         }
     }
