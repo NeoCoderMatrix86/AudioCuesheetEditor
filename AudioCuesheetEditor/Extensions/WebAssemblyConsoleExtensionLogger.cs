@@ -43,7 +43,9 @@ namespace AudioCuesheetEditor.Extensions
             return logLevel != LogLevel.None;
         }
 
+#pragma warning disable CS8632 // Die Anmerkung für Nullable-Verweistypen darf nur in Code innerhalb eines #nullable-Anmerkungskontexts verwendet werden.
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+#pragma warning restore CS8632 // Die Anmerkung für Nullable-Verweistypen darf nur in Code innerhalb eines #nullable-Anmerkungskontexts verwendet werden.
         {
             if (!IsEnabled(logLevel))
             {
@@ -63,7 +65,9 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
+#pragma warning disable CS8632 // Die Anmerkung für Nullable-Verweistypen darf nur in Code innerhalb eines #nullable-Anmerkungskontexts verwendet werden.
         private void WriteMessage(LogLevel logLevel, string logName, int eventId, string message, Exception? exception)
+#pragma warning restore CS8632 // Die Anmerkung für Nullable-Verweistypen darf nur in Code innerhalb eines #nullable-Anmerkungskontexts verwendet werden.
         {
             lock (_logBuilder)
             {
@@ -81,14 +85,22 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
+#pragma warning disable CS8632 // Die Anmerkung für Nullable-Verweistypen darf nur in Code innerhalb eines #nullable-Anmerkungskontexts verwendet werden.
+#pragma warning disable CA1822 // Member als statisch markieren
         private void CreateDefaultLogMessage(StringBuilder logBuilder, LogLevel logLevel, string logName, int eventId, string message, Exception? exception)
+#pragma warning restore CA1822 // Member als statisch markieren
+#pragma warning restore CS8632 // Die Anmerkung für Nullable-Verweistypen darf nur in Code innerhalb eines #nullable-Anmerkungskontexts verwendet werden.
         {
             logBuilder.Append(GetLogLevelString(logLevel));
             logBuilder.Append(_loglevelPadding);
             logBuilder.Append(logName);
+#pragma warning disable CA1834 // Verwendung von "StringBuilder.Append(char)" erwägen
             logBuilder.Append("[");
+#pragma warning restore CA1834 // Verwendung von "StringBuilder.Append(char)" erwägen
             logBuilder.Append(eventId);
+#pragma warning disable CA1834 // Verwendung von "StringBuilder.Append(char)" erwägen
             logBuilder.Append("]");
+#pragma warning restore CA1834 // Verwendung von "StringBuilder.Append(char)" erwägen
 
             if (!string.IsNullOrEmpty(message))
             {
