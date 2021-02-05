@@ -1,0 +1,24 @@
+name: Run unit tests
+
+# Run workflow on every push to the master branch
+on:
+  push:
+    branches: [ master ]
+
+jobs:    
+  deploy-to-github-pages:
+    # use ubuntu-latest image to run steps on
+    runs-on: ubuntu-latest
+    steps:
+    # uses GitHub's checkout action to checkout code form the production branch
+    - uses: actions/checkout@v2
+    
+    # sets up .NET
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.102'
+      
+    # Only publish when unit tests are ok
+    - name: Run Unit Tests
+      run: dotnet test
