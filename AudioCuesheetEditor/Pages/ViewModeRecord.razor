@@ -16,6 +16,8 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@implements IDisposable
+
 @inject IJSRuntime JSRuntime
 @inject IStringLocalizer<Localization> localizer
 @inject ILogger<ViewModeRecord> Logger
@@ -207,6 +209,11 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    public void Dispose()
+    {
+        JSRuntime.InvokeVoidAsync("closeAudioRecording");
+    }
+
     [Parameter]
     public Cuesheet Cuesheet { get; set; }
 
@@ -215,6 +222,7 @@ along with Foobar.  If not, see
     {
         //TODO: Customizable via options
         Cuesheet.AudioFile = new AudioFile("Recording.ogg", url, "audio/ogg", true);
+        StateHasChanged();
     }
 
     private Timer recordTimer;

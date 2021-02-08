@@ -1,7 +1,7 @@
 ﻿var GLOBAL = {};
 var audioFileObjectURL = null;
-var handleAudioRecordingData = true;
 var startTime;
+var mediaStream = null;
 GLOBAL.Index = null;
 GLOBAL.AudioPlayer = null;
 GLOBAL.ViewModeRecord = null;
@@ -103,16 +103,24 @@ function dropFiles(e, domElement, domID) {
 }
 
 function setupAudioRecording() {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { handleAudioRecording(stream) }).catch(function (err) { handleAudioRecordingData = false; });
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { handleAudioRecording(stream) }).catch(function () {  });
+}
+
+function closeAudioRecording() {
+    mediaStream.getTracks().forEach(function (track) {
+        track.stop();
+    });
 }
 
 function handleAudioRecording(stream) {
+    mediaStream = stream;
     rec = new MediaRecorder(stream);
     rec.ondataavailable = e => {
         audioChunks.push(e.data);
     }
     rec.onstop = () => {
         var duration = Date.now() - startTime;
+        closeAudioRecording();
         let buggyBlob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
         ysFixWebmDuration(buggyBlob, duration, function (fixedBlob) {
             var url = URL.createObjectURL(fixedBlob);
@@ -120,11 +128,13 @@ function handleAudioRecording(stream) {
                 GLOBAL.ViewModeRecord.invokeMethodAsync("AudioRecordingFinished", url);
             } 
         });
+        //ReSetup audio recording
+        setupAudioRecording();
     }
 }
 
 function startAudioRecording() {
-    if (handleAudioRecordingData == true) {
+    if (mediaStream !== null) {
         startTime = Date.now();
         audioChunks = [];
         rec.start();
@@ -132,7 +142,7 @@ function startAudioRecording() {
 }
 
 function stopAudioRecording() {
-    if (handleAudioRecordingData == true) {
+    if (mediaStream !== null) {
         rec.stop();
     }
 }
