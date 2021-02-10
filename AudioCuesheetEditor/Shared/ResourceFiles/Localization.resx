@@ -629,4 +629,7 @@
   <data name="FlagSCMSTooltip" xml:space="preserve">
     <value>Set this if track has "Serial Copy Management System"</value>
   </data>
+  <data name="CopyTrackTooltip" xml:space="preserve">
+    <value>Copy this track with all values and attach it to the cuesheet.</value>
+  </data>
 </root>

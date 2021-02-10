@@ -313,6 +313,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy this track with all values and attach it to the cuesheet. ähnelt.
+        /// </summary>
+        public static string CopyTrackTooltip {
+            get {
+                return ResourceManager.GetString("CopyTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Create a Cuesheet ähnelt.
         /// </summary>
         public static string CreateCuesheet {
