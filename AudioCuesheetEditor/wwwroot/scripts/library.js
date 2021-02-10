@@ -118,6 +118,9 @@ function handleAudioRecording(stream) {
     rec.ondataavailable = e => {
         audioChunks.push(e.data);
     }
+    rec.onstart = () => {
+        startTime = Date.now();
+    }
     rec.onstop = () => {
         var duration = Date.now() - startTime;
         closeAudioRecording();
@@ -135,7 +138,6 @@ function handleAudioRecording(stream) {
 
 function startAudioRecording() {
     if (mediaStream !== null) {
-        startTime = Date.now();
         audioChunks = [];
         rec.start();
     }
