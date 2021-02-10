@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private AudioFile audioFile;
         private CDTextfile cDTextfile;
         private DateTime? recordingStart;
-
+        private Boolean currentlyHandlingRankPropertyValueChanged;
         public Cuesheet()
         {
             tracks = new List<Track>();
@@ -137,8 +137,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.Add(track);
             track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             ReCalculateTrackProperties();
             OnValidateablePropertyChanged();
+        }
+
+        private void Track_RankPropertyValueChanged(object sender, string e)
+        {
+            if (currentlyHandlingRankPropertyValueChanged == false)
+            {
+                currentlyHandlingRankPropertyValueChanged = true;
+                Track trackRaisedEvent = (Track)sender;
+                switch (e)
+                {
+                    case nameof(Track.Begin):
+                        var previousTrack = Tracks.SingleOrDefault(x => x.Position == trackRaisedEvent.Position - 1);
+                        if ((previousTrack != null) && (previousTrack.End.HasValue == false))
+                        {
+                            previousTrack.End = trackRaisedEvent.Begin;
+                        }
+                        break;
+                    case nameof(Track.End):
+                        var nextTrack = Tracks.SingleOrDefault(x => x.Position == trackRaisedEvent.Position + 1);
+                        if ((nextTrack != null) && (nextTrack.Begin.HasValue == false))
+                        {
+                            nextTrack.Begin = trackRaisedEvent.End;
+                        }
+                        break;
+                }
+                currentlyHandlingRankPropertyValueChanged = false;
+            }
         }
 
         private void Track_ValidateablePropertyChanged(object sender, EventArgs e)
@@ -154,6 +182,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.Remove(track);
             track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             ReCalculateTrackProperties();
         }

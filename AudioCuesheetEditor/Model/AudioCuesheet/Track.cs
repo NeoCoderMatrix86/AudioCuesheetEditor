@@ -33,6 +33,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? begin;
         private TimeSpan? end;
         private readonly List<Flag> flags = new List<Flag>();
+
+        /// <summary>
+        /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
+        /// </summary>
+        public event EventHandler<String> RankPropertyValueChanged;
         
         /// <summary>
         /// Create object with copied values from input
@@ -51,7 +56,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public uint? Position 
         {
             get { return position; }
-            set { position = value; OnValidateablePropertyChanged(); }
+            set { position = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Position)); }
         }
         public String Artist 
         {
@@ -66,12 +71,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public TimeSpan? Begin 
         {
             get { return begin; }
-            set { begin = value; OnValidateablePropertyChanged(); }
+            set { begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); }
         }
         public TimeSpan? End 
         {
             get { return end; }
-            set { end = value; OnValidateablePropertyChanged(); }
+            set { end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); }
         }
         public TimeSpan? Length 
         {
