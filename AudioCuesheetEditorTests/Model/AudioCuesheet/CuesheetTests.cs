@@ -153,5 +153,35 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(cuesheet.IsRecording);
             Assert.IsNotNull(cuesheet.RecordingTime);
         }
+
+        [TestMethod()]
+        public void TrackRecalculationTest()
+        {
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            var track3 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            Assert.AreEqual(track1.Position.Value, (uint)1);
+            Assert.AreEqual(track2.Position.Value, (uint)2);
+            Assert.AreEqual(track3.Position.Value, (uint)3);
+            Assert.AreEqual(track1.Begin, TimeSpan.Zero);
+            Assert.IsNull(track1.End);
+            Assert.IsNull(track2.Begin);
+            Assert.IsNull(track2.End);
+            Assert.IsNull(track3.Begin);
+            Assert.IsNull(track3.End);
+            track1.Begin = TimeSpan.Zero;
+            track2.Begin = new TimeSpan(0, 2, 43);
+            Assert.AreEqual(track1.End, new TimeSpan(0, 2, 43));
+            Assert.IsNull(track2.End);
+            track3.End = new TimeSpan(0, 12, 14);
+            Assert.IsNull(track2.End);
+            Assert.IsNull(track3.Begin);
+            track3.Begin = new TimeSpan(0, 7, 56);
+            Assert.AreEqual(track2.End, new TimeSpan(0, 7, 56));
+        }
     }
 }
