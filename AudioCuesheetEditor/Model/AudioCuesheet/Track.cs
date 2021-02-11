@@ -103,10 +103,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     if ((Begin.HasValue == true) && (End.HasValue == true))
                     {
-                        if (Begin.Value > End.Value)
-                        {
-                            End = Begin.Value + value;
-                        }
+                        End = Begin.Value + value;
                     }
                     else
                     {

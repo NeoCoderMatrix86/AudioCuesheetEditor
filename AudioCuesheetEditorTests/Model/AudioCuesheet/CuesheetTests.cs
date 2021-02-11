@@ -82,13 +82,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(track3.Position.Value == 3);
             Assert.IsTrue(track2.Position.Value == 2);
             cuesheet.MoveTrack(track2, MoveDirection.Up);
-            Assert.IsTrue(track2.Position.Value == 1);
-            Assert.IsTrue(track1.Position.Value == 2);
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
             cuesheet.MoveTrack(track2, MoveDirection.Down);
             cuesheet.MoveTrack(track2, MoveDirection.Down);
-            Assert.IsTrue(track2.Position.Value == 3);
-            Assert.IsTrue(track1.Position.Value == 1);
-            Assert.IsTrue(track3.Position.Value == 2);
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(2));
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(1));
         }
 
         [TestMethod()]
