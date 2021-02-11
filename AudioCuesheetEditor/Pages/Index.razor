@@ -330,7 +330,7 @@ along with Foobar.  If not, see
                                                     </TableRowCell>
                                                     <TableRowCell Class="trackPositionTableRowCell">
                                                         <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
-                                                            <NumericEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" />
+                                                            <NumericEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" ChangeTextOnKeyPress="false" />
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
@@ -913,7 +913,7 @@ along with Foobar.  If not, see
         public void Dispose()
         {
             Clone = null;
-            Track = null;;
+            Track = null;
         }
     }
 

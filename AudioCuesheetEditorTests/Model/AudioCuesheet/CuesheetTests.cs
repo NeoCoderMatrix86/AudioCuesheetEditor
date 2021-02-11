@@ -183,5 +183,52 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track3.Begin = new TimeSpan(0, 7, 56);
             Assert.AreEqual(track2.End, new TimeSpan(0, 7, 56));
         }
+        [TestMethod()]
+        public void TrackOverlappingTest()
+        {
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            var track3 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            Assert.AreEqual(track1.Position.Value, (uint)1);
+            Assert.AreEqual(track2.Position.Value, (uint)2);
+            Assert.AreEqual(track3.Position.Value, (uint)3);
+            track1.Position = 1;
+            track2.Position = 1;
+            track3.Position = 1;
+            track1.End = new TimeSpan(0, 2, 30);
+            track2.Begin = new TimeSpan(0, 2, 0);
+            track2.End = new TimeSpan(0, 5, 30);
+            track3.Begin = new TimeSpan(0, 4, 54);
+            track3.End = new TimeSpan(0, 8, 12);
+            var validationErrors = track1.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Count >= 1);
+            validationErrors = track2.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Count >= 1);
+            validationErrors = track3.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Count >= 1);
+            validationErrors = track2.GetValidationErrorsFiltered(nameof(Track.Begin));
+            Assert.IsTrue(validationErrors.Count >= 1);
+            validationErrors = track3.GetValidationErrorsFiltered(nameof(Track.Begin));
+            Assert.IsTrue(validationErrors.Count >= 1);
+            track2.End = new TimeSpan(0, 5, 15);
+            validationErrors = track2.GetValidationErrorsFiltered(nameof(Track.End));
+            Assert.IsTrue(validationErrors.Count >= 1);
+            track1.Position = 1;
+            track2.Position = 2;
+            track3.Position = 3;
+            var clone = track1.Clone();
+            validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Count == 0);
+            clone.Position = 2;
+            validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Count == 1);
+            clone.Position = 4;
+            validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Count == 0);
+        }
     }
 }
