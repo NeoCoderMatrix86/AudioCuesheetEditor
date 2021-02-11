@@ -137,17 +137,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 switch (e)
                 {
                     case nameof(Track.Begin):
-                        var previousTrack = Tracks.SingleOrDefault(x => x.Position == trackRaisedEvent.Position - 1);
-                        if ((previousTrack != null) && (previousTrack.End.HasValue == false))
+                        var previousTracks = Tracks.Where(x => x.Position == trackRaisedEvent.Position - 1);
+                        if ((previousTracks != null) && (previousTracks.Count() == 1) && (previousTracks.First().End.HasValue == false))
                         {
-                            previousTrack.End = trackRaisedEvent.Begin;
+                            previousTracks.First().End = trackRaisedEvent.Begin;
                         }
                         break;
                     case nameof(Track.End):
-                        var nextTrack = Tracks.SingleOrDefault(x => x.Position == trackRaisedEvent.Position + 1);
-                        if ((nextTrack != null) && (nextTrack.Begin.HasValue == false))
+                        var nextTracks = Tracks.Where(x => x.Position == trackRaisedEvent.Position + 1);
+                        if ((nextTracks != null) && (nextTracks.Count() == 1) && (nextTracks.First().Begin.HasValue == false))
                         {
-                            nextTrack.Begin = trackRaisedEvent.End;
+                            nextTracks.First().Begin = trackRaisedEvent.End;
                         }
                         break;
                 }
