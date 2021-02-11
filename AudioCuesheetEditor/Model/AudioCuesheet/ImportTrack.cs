@@ -22,7 +22,8 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class ImportTrack : ITrack
+    //TODO: Declare seperate ImportCuesheet and derive from it
+    public class ImportTrack : ITrack<Cuesheet>
     {
         private readonly List<Flag> flags = new List<Flag>();
         public uint? Position { get; set; }
@@ -33,6 +34,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public TimeSpan? Length { get; set; }
 
         public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
+
+        public Cuesheet Cuesheet { get; set; }
 
         public string GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
         {

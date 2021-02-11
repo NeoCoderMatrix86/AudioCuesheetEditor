@@ -1206,6 +1206,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Position {0} of this track is already in use by track(s) {1}! ähnelt.
+        /// </summary>
+        public static string PositionAlreadyInUse {
+            get {
+                return ResourceManager.GetString("PositionAlreadyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Processing hints ähnelt.
         /// </summary>
         public static string ProcessingHints {
@@ -1445,6 +1454,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string TextImportScheme {
             get {
                 return ResourceManager.GetString("TextImportScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} is overlapping with other tracks ({1})! ähnelt.
+        /// </summary>
+        public static string TimeIsOverlapping {
+            get {
+                return ResourceManager.GetString("TimeIsOverlapping", resourceCulture);
             }
         }
         

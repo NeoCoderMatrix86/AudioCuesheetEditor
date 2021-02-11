@@ -632,4 +632,10 @@
   <data name="CopyTrackTooltip" xml:space="preserve">
     <value>Kopiere diesen Track mit allen Werten und füge ihn anschließend zum Cuesheet hinzu.</value>
   </data>
+  <data name="PositionAlreadyInUse" xml:space="preserve">
+    <value>Position {0} von diesem Track ist bereits in Benutzung durch Track(s) {1}!</value>
+  </data>
+  <data name="TimeIsOverlapping" xml:space="preserve">
+    <value>{0} überschneidet sich mit anderen Tracks ({1})!</value>
+  </data>
 </root>

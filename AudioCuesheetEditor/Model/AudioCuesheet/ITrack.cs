@@ -27,8 +27,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Remove
     }
 
-    public interface ITrack : ICuesheetEntity, IEntityDisplayName
+    public interface ITrack<ICuesheet> : ICuesheetEntity, IEntityDisplayName
     {
+        public ICuesheet Cuesheet { get; set; }
         public uint? Position { get; set; }
         public String Artist { get; set; }
         public String Title { get; set; }

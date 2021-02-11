@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class Cuesheet : Validateable, ICuesheet
+    public class Cuesheet : Validateable, ICuesheet<Track>
     {
         private readonly object syncLock = new object();
 
@@ -53,25 +53,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get { return tracks.OrderBy(x => x.Position.HasValue == false).ThenBy(x => x.Position).ToList().AsReadOnly(); }
         }
-        public uint NextFreePosition
-        {
-            get 
-            {
-                uint nextFreePosition = 1;
-                if (Tracks.Count > 0)
-                {
-                    lock (syncLock)
-                    {
-                        var track = Tracks.Where(x => x.Position != null && x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
-                        if (track != null)
-                        {
-                            nextFreePosition = track.Position.Value + 1;
-                        }
-                    }
-                }
-                return nextFreePosition;
-            }
-        }
+        
         public String Artist 
         {
             get { return artist; }
@@ -131,10 +113,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(track));
             }
+            if (track.IsCloned)
+            {
+                throw new ArgumentException("Cloned tracks may not be added!");
+            }
             if (IsRecording)
             {
                 track.Begin = DateTime.UtcNow - recordingStart.Value;
             }
+            track.Cuesheet = this;
             tracks.Add(track);
             track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
@@ -181,6 +168,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Remove(track);
+            track.Cuesheet = null;
             track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
@@ -301,22 +289,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 _ = CatalogueNumber.IsValid;
                 validationErrors.AddRange(CatalogueNumber.ValidationErrors);
-            }
-            //Check track overlapping
-            lock (syncLock)
-            {
-                TimeSpan begin = TimeSpan.Zero;
-                foreach (var track in Tracks)
-                {
-                    if ((track.Begin == null) || (track.Begin != begin))
-                    {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning, "TrackHasInvalidValue", track.Position, nameof(Track.Begin), track.Begin));
-                    }
-                    if (track.End != null)
-                    {
-                        begin = track.End.Value;
-                    }
-                }
             }
         }
 

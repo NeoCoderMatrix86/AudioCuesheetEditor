@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITrack
+    public class Track : Validateable, ITrack<Cuesheet>
     {
         private uint? position;
         private String artist;
@@ -33,6 +33,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? begin;
         private TimeSpan? end;
         private readonly List<Flag> flags = new List<Flag>();
+        private Track clonedFrom = null;
 
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
@@ -43,7 +44,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public Track(ITrack track)
+        public Track(ITrack<Cuesheet> track)
         {
             CopyValues(track);
         }
@@ -124,6 +125,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
 
+        public Cuesheet Cuesheet { get; set; }
+
+        /// <summary>
+        /// Indicates that this track has been cloned from another track and is a transparent proxy
+        /// </summary>
+        public Boolean IsCloned { get { return clonedFrom != null; } }
+        /// <summary>
+        /// Get the original track that this track has been cloned from. Can be null on original objects
+        /// </summary>
+        public Track ClonedFrom
+        {
+            get { return clonedFrom; }
+            private set { clonedFrom = value; OnValidateablePropertyChanged(); }
+        }
+
         public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
         {
             String identifierString = null;
@@ -155,19 +171,23 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <returns>A deep clone of the current object</returns>
         public Track Clone()
         {
-            return new Track(this);
+            return new Track(this)
+            {
+                ClonedFrom = this
+            };
         }
 
         /// <summary>
         /// Copies values from input object to this object
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public void CopyValues(ITrack track)
+        public void CopyValues(ITrack<Cuesheet> track)
         {
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
             }
+            Cuesheet = track.Cuesheet;
             //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
             position = track.Position;
             artist = track.Artist;
@@ -223,6 +243,78 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "LengthHasNoValue"));
             }
+            //Check track overlapping
+            if (Cuesheet != null)
+            {
+                //TODO: itterate through complete cuesheet?
+                if (Position.HasValue)
+                {
+                    IEnumerable<Track> tracksWithSamePosition;
+                    if (ClonedFrom != null)
+                    {
+                        tracksWithSamePosition = Cuesheet.Tracks.Where(x => x.Position == Position && x.Equals(this) == false && (x.Equals(ClonedFrom) == false));
+                    }
+                    else
+                    {
+                        tracksWithSamePosition = Cuesheet.Tracks.Where(x => x.Position == Position && x.Equals(this) == false);
+                    }
+                    if ((tracksWithSamePosition != null) && (tracksWithSamePosition.Any()))
+                    {
+                        foreach(var track in tracksWithSamePosition)
+                        {
+                            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
+                        }
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "PositionAlreadyInUse", Position, String.Join(", ", tracksWithSamePosition)));
+                    }
+                }
+                if (Begin.HasValue)
+                {
+                    IEnumerable<Track> tracksOverlapping;
+                    if (ClonedFrom != null)
+                    {
+                        tracksOverlapping = Cuesheet.Tracks.Where(x => Begin >= x.Begin && Begin < x.End && (x.Equals(this) == false) && (x.Equals(ClonedFrom) == false));
+                    }
+                    else
+                    {
+                        tracksOverlapping = Cuesheet.Tracks.Where(x => Begin >= x.Begin && Begin < x.End && (x.Equals(this) == false));
+                    }
+                    if ((tracksOverlapping != null) && tracksOverlapping.Any())
+                    {
+                        foreach (var track in tracksOverlapping)
+                        {
+                            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
+                        }
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Warning, "TimeIsOverlapping", nameof(Begin), String.Join(", ", tracksOverlapping)));
+                    }
+                }
+                if (End.HasValue)
+                {
+                    IEnumerable<Track> tracksOverlapping;
+                    if (ClonedFrom != null)
+                    {
+                        tracksOverlapping = Cuesheet.Tracks.Where(x => x.Begin < End && End <= x.End && (x.Equals(this) == false) && (x.Equals(ClonedFrom) == false));
+                    }
+                    else
+                    {
+                        tracksOverlapping = Cuesheet.Tracks.Where(x => x.Begin < End && End <= x.End && (x.Equals(this) == false));
+                    }
+                    if ((tracksOverlapping != null) && tracksOverlapping.Any())
+                    {
+                        foreach (var track in tracksOverlapping)
+                        {
+                            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
+                        }
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Warning, "TimeIsOverlapping", nameof(End), String.Join(", ", tracksOverlapping)));
+                    }
+                }
+            }
+        }
+
+        private void Track_RankPropertyValueChanged(object sender, string e)
+        {
+            Track track = (Track)sender;
+            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
+            OnValidateablePropertyChanged();
         }
 
         ///<inheritdoc/>
@@ -247,6 +339,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             this.flags.Clear();
             this.flags.AddRange(flags);
+        }
+
+        public override string ToString()
+        {
+            return String.Format("({0} {1},{2} {3},{4} {5},{6} {7},{8} {9},{10} {11})", nameof(Position), Position, nameof(Artist), Artist, nameof(Title), Title, nameof(Begin), Begin, nameof(End), End, nameof(Length), Length);
         }
     }
 }
