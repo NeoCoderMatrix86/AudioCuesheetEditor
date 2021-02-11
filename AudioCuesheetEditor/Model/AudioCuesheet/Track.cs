@@ -188,8 +188,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             Cuesheet = track.Cuesheet;
+            //Use public setter since we need to fire all events with positioning
+            Position = track.Position;
             //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
-            position = track.Position;
             artist = track.Artist;
             title = track.Title;
             begin = track.Begin;
