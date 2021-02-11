@@ -246,7 +246,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Check track overlapping
             if (Cuesheet != null)
             {
-                //TODO: itterate through complete cuesheet?
                 if (Position.HasValue)
                 {
                     IEnumerable<Track> tracksWithSamePosition;
