@@ -50,6 +50,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly String SchemeTrackLength;
         public static readonly String SchemeTrackPosition;
         public static readonly String SchemeTrackFlags;
+        //TODO: Postgap, PreGap
 
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;

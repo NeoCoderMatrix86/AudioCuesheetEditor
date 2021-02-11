@@ -204,6 +204,8 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsTrue(textImportFile.Tracks.ElementAt(7).Flags.Contains(AudioCuesheet.Flag.SCMS));
 
             File.Delete(tempFile);
+
+            //TODO: Test import with Pregap/Postgap
         }
     }
 }

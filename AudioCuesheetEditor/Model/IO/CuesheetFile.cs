@@ -41,6 +41,7 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String TrackTitle = "TITLE";
         public static readonly String TrackIndex01 = "INDEX 01";
         public static readonly String TrackFlags = "FLAGS";
+        //TODO: Postgap, PreGap
         public static readonly String Tab = "\t";
         public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
         public static readonly String CuesheetCatalogueNumber = "CATALOG";

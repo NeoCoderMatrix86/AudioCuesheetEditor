@@ -136,6 +136,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return clonedFrom; }
             private set { clonedFrom = value; OnValidateablePropertyChanged(); }
         }
+        /// <inheritdoc/>
+        public TimeSpan? PreGap { get; set; }
+        /// <inheritdoc/>
+        public TimeSpan? PostGap { get; set; }
 
         public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
         {
@@ -194,6 +198,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             end = track.End;
             flags.Clear();
             flags.AddRange(track.Flags);
+            PreGap = track.PreGap;
+            PostGap = track.PostGap;
             OnValidateablePropertyChanged();
         }
 

@@ -40,6 +40,7 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String SchemeLength;
         public static readonly String SchemePosition;
         public static readonly String SchemeFlags;
+        //TODO: Postgap, PreGap
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemes;
 

@@ -91,6 +91,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             cuesheet.CatalogueNumber.Value = "Testvalue";
             generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNull(generatedFile);
+            //TODO: Test export with Pregap/Postgap
         }
 
         [TestMethod()]
@@ -265,6 +266,8 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsNotNull(cuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
 
             File.Delete(tempFile);
+
+            //TODO: Test import with Pregap/Postgap
         }
     }
 }

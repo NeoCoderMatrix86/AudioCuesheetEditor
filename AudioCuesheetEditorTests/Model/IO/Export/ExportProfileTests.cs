@@ -152,5 +152,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
 
             File.Delete(tempFile);
         }
+
+        //TODO: Test export with Pregap/Postgap
     }
 }
