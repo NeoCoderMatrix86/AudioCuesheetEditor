@@ -309,13 +309,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void Track_RankPropertyValueChanged(object sender, string e)
-        {
-            Track track = (Track)sender;
-            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
-            OnValidateablePropertyChanged();
-        }
-
         ///<inheritdoc/>
         public void SetFlag(Flag flag, SetFlagMode flagMode)
         {
@@ -343,6 +336,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public override string ToString()
         {
             return String.Format("({0} {1},{2} {3},{4} {5},{6} {7},{8} {9},{10} {11})", nameof(Position), Position, nameof(Artist), Artist, nameof(Title), Title, nameof(Begin), Begin, nameof(End), End, nameof(Length), Length);
+        }
+
+        private void Track_RankPropertyValueChanged(object sender, string e)
+        {
+            Track track = (Track)sender;
+            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
+            OnValidateablePropertyChanged();
         }
     }
 }

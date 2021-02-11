@@ -123,7 +123,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             track.Cuesheet = this;
             tracks.Add(track);
-            track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             ReCalculateTrackProperties();
             OnValidateablePropertyChanged();
@@ -156,11 +155,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void Track_ValidateablePropertyChanged(object sender, EventArgs e)
-        {
-            OnValidateablePropertyChanged();
-        }
-
         public void RemoveTrack(Track track)
         {
             if (track == null)
@@ -169,7 +163,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.Remove(track);
             track.Cuesheet = null;
-            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             ReCalculateTrackProperties();
