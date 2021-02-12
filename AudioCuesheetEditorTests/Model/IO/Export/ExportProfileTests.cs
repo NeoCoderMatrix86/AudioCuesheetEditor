@@ -153,6 +153,66 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.Delete(tempFile);
         }
 
-        //TODO: Test export with Pregap/Postgap
+        [TestMethod()]
+        public void TestExportWithPregapAndPostgap()
+        {
+            //Prepare cuesheet
+            Cuesheet cuesheet = new Cuesheet
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                AudioFile = new AudioFile("Testfile.mp3")
+            };
+            var begin = TimeSpan.Zero;
+            for (int i = 1; i < 25; i++)
+            {
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin,
+                    PostGap = new TimeSpan(0, 0, 1),
+                    PreGap = new TimeSpan(0, 0, 3)
+                };
+                begin = begin.Add(new TimeSpan(0, i, i));
+                track.End = begin;
+                cuesheet.AddTrack(track);
+                var rand = new Random();
+                var flagsToAdd = rand.Next(0, 3);
+                if (flagsToAdd > 0)
+                {
+                    for (int x = 0; x < flagsToAdd; x++)
+                    {
+                        track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
+                    }
+                }
+            }
+
+            cuesheet.CatalogueNumber.Value = "Testcatalognumber";
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+
+            var exportProfile = new ExportProfile();
+            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
+            Assert.IsTrue(exportProfile.SchemeHead.IsValid);
+            exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
+            Assert.IsTrue(exportProfile.SchemeTracks.IsValid);
+            exportProfile.SchemeFooter.Scheme = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor";
+            Assert.IsTrue(exportProfile.SchemeFooter.IsValid);
+            Assert.IsTrue(exportProfile.IsExportable);
+            var fileContent = exportProfile.GenerateExport(cuesheet);
+            Assert.IsNotNull(fileContent);
+            var tempFile = Path.GetTempFileName();
+            File.WriteAllBytes(tempFile, fileContent);
+            var content = File.ReadAllLines(tempFile);
+            Assert.AreEqual(content[0], "Demo Artist;Demo Title;Testcatalognumber;Testfile.cdt");
+            for (int i = 1; i < content.Length - 1; i++)
+            {
+                Assert.IsFalse(String.IsNullOrEmpty(content[i]));
+                Assert.AreNotEqual(content[i], ";;;;;");
+                Assert.IsTrue(content[i].StartsWith(cuesheet.Tracks.ToList()[i - 1].Position + ";"));
+            }
+            Assert.AreEqual(content[^1], "Exported Demo Title from Demo Artist using AudioCuesheetEditor");
+            File.Delete(tempFile);
+        }
     }
 }

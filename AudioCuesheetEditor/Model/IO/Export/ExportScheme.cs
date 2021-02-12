@@ -50,7 +50,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly String SchemeTrackLength;
         public static readonly String SchemeTrackPosition;
         public static readonly String SchemeTrackFlags;
-        //TODO: Postgap, PreGap
+        public static readonly String SchemeTrackPreGap;
+        public static readonly String SchemeTrackPostGap;
 
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
@@ -82,6 +83,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
             SchemeTrackLength = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
             SchemeTrackPosition = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
             SchemeTrackFlags = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
+            SchemeTrackPreGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
+            SchemeTrackPostGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
 
             AvailableTrackSchemes = new Dictionary<string, string>() 
             {
@@ -91,7 +94,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 { nameof(Track.Begin), SchemeTrackBegin },
                 { nameof(Track.End), SchemeTrackEnd },
                 { nameof(Track.Length), SchemeTrackLength },
-                { nameof(Track.Flags), SchemeTrackFlags }
+                { nameof(Track.Flags), SchemeTrackFlags },
+                { nameof(Track.PreGap), SchemeTrackPreGap },
+                { nameof(Track.PostGap), SchemeTrackPostGap }
             };
         }
 
@@ -134,7 +139,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)));
+                            .Replace(SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
+                            .Replace(SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
+                            .Replace(SchemeTrackPostGap, track.PreGap != null ? track.PostGap.Value.ToString() : String.Empty);
                         break;
                     default:
                         //Nothing to do
