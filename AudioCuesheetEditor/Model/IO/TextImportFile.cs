@@ -40,7 +40,8 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String SchemeLength;
         public static readonly String SchemePosition;
         public static readonly String SchemeFlags;
-        //TODO: Postgap, PreGap
+        public static readonly String SchemePreGap;
+        public static readonly String SchemePostGap;
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemes;
 
@@ -55,6 +56,8 @@ namespace AudioCuesheetEditor.Model.IO
             SchemeLength = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Length), SchemeCharacter);
             SchemePosition = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Position), SchemeCharacter);
             SchemeFlags = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Flags), SchemeCharacter);
+            SchemePreGap = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.PreGap), SchemeCharacter);
+            SchemePostGap = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.PostGap), SchemeCharacter);
 
             Dictionary<String, String> availableSchemes = new Dictionary<string, string>
             {
@@ -64,7 +67,9 @@ namespace AudioCuesheetEditor.Model.IO
                 { nameof(Track.Begin), SchemeBegin },
                 { nameof(Track.End), SchemeEnd },
                 { nameof(Track.Length), SchemeLength },
-                { nameof(Track.Flags), SchemeFlags }
+                { nameof(Track.Flags), SchemeFlags },
+                { nameof(Track.PreGap), SchemePreGap },
+                { nameof(Track.PostGap), SchemePostGap }
             };
 
             AvailableSchemes = availableSchemes;
