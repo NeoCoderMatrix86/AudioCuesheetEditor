@@ -82,6 +82,7 @@ along with Foobar.  If not, see
     private Track currentlyPlayingTrack;
     private HotKeysContext hotKeysContext;
     private Boolean paused;
+    private AudioFile audioFile;
 
     //TODO: Attach to set and load the playback directly to get total time
     [Parameter]
@@ -245,6 +246,10 @@ along with Foobar.  If not, see
 
     private async Task OnPlayClicked()
     {
+        if (Cuesheet.AudioFile != audioFile)
+        {
+            soundId = null;
+        }
         if (soundId != null)
         {
             await Howl.Pause(soundId);
@@ -262,6 +267,7 @@ along with Foobar.  If not, see
                 Formats = new[] { Cuesheet.AudioFile.AudioFileType.ToLower() },
                 Html5 = true
             };
+            audioFile = Cuesheet.AudioFile;
             soundId = await Howl.Play(options);
         }
     }
