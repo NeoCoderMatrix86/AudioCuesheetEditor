@@ -36,6 +36,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
 
         public Cuesheet Cuesheet { get; set; }
+        /// <inheritdoc/>
+        public TimeSpan? PreGap { get; set; }
+        /// <inheritdoc/>
+        public TimeSpan? PostGap { get; set; }
 
         public string GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
         {

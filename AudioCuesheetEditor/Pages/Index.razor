@@ -859,11 +859,26 @@ along with Foobar.  If not, see
                         {
                             <Tooltip Placement="Placement.Bottom" Text="@localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
                                 <Check TValue="bool" Checked="editTrack.Clone.Flags.Contains(flag)" CheckedChanged="(value) => editTrack.Clone.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Check>
-                            </Tooltip>                            
+                            </Tooltip>
                         }
                     </FieldBody>
                 </Field>
-                
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PreGap"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
+                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editTrack.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PreGap = x, value)" ChangeTextOnKeyPress="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PostGap"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
+                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editTrack.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PostGap = x, value)" ChangeTextOnKeyPress="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
             }
         </ModalBody>
         <ModalFooter>

@@ -1215,6 +1215,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Postgap ähnelt.
+        /// </summary>
+        public static string PostGap {
+            get {
+                return ResourceManager.GetString("PostGap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Pregap ähnelt.
+        /// </summary>
+        public static string PreGap {
+            get {
+                return ResourceManager.GetString("PreGap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Processing hints ähnelt.
         /// </summary>
         public static string ProcessingHints {

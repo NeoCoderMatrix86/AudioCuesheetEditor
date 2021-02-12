@@ -638,4 +638,10 @@
   <data name="TimeIsOverlapping" xml:space="preserve">
     <value>{0} is overlapping with other tracks ({1})!</value>
   </data>
+  <data name="PostGap" xml:space="preserve">
+    <value>Postgap</value>
+  </data>
+  <data name="PreGap" xml:space="preserve">
+    <value>Pregap</value>
+  </data>
 </root>

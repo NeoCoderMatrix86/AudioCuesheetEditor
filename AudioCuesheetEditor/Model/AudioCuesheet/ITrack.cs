@@ -41,6 +41,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         public IReadOnlyCollection<Flag> Flags { get; }
         /// <summary>
+        /// Amount of pre-track silence to add
+        /// </summary>
+        public TimeSpan? PreGap { get; set; }
+        /// <summary>
+        /// Amount of post-track silence to add
+        /// </summary>
+        public TimeSpan? PostGap { get; set; }
+        /// <summary>
         /// Add or remove a flag
         /// </summary>
         /// <param name="flag">Flag to add/remove</param>

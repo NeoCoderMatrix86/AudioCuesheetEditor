@@ -94,6 +94,61 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         }
 
         [TestMethod()]
+        public void TestExportWithPreGapAndPostGap()
+        {
+            Cuesheet cuesheet = new Cuesheet
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                AudioFile = new AudioFile("Testfile.mp3")
+            };
+            var begin = TimeSpan.Zero;
+            for (int i = 1; i < 25; i++)
+            {
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
+                begin = begin.Add(new TimeSpan(0, i, i));
+                track.End = begin;
+                var rand = new Random();
+                var flagsToAdd = rand.Next(1, 3);
+                for (int x = 0; x < flagsToAdd; x++)
+                {
+                    track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
+                }
+                track.PostGap = new TimeSpan(0, 0, 2);
+                track.PreGap = new TimeSpan(0, 0, 3);
+                cuesheet.AddTrack(track);
+            }
+            var cuesheetFile = new CuesheetFile(cuesheet);
+            var generatedFile = cuesheetFile.GenerateCuesheetFile();
+            Assert.IsNotNull(generatedFile);
+            var fileName = Path.GetTempFileName();
+            File.WriteAllBytes(fileName, generatedFile);
+            var fileContent = File.ReadAllLines(fileName);
+            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetTitle, cuesheet.Title));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetArtist, cuesheet.Artist));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetFile.CuesheetFileName, cuesheet.AudioFile.FileName, cuesheet.AudioFile.AudioFileType));
+            var position = 1;
+            for (int i = 3; i < fileContent.Length; i += 7)
+            {
+                var track = cuesheet.Tracks.Single(x => x.Position == position);
+                position++;
+                Assert.AreEqual(String.Format("{0}{1} {2:00} {3}", CuesheetFile.Tab, CuesheetFile.CuesheetTrack, track.Position, CuesheetFile.CuesheetTrackAudio), fileContent[i]);
+                Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackTitle, track.Title), fileContent[i + 1]);
+                Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackArtist, track.Artist), fileContent[i + 2]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))), fileContent[i + 3]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds / 75), fileContent[i + 4]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75), fileContent[i + 5]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds / 75), fileContent[i + 6]);
+            }
+            File.Delete(fileName);
+        }
+
+        [TestMethod()]
         public void TestExportFlags()
         {
             Cuesheet cuesheet = new Cuesheet
@@ -237,6 +292,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("	PERFORMER \"Sample Artist 5\"");
             builder.AppendLine("	TITLE \"Sample Title 5\"");
             builder.AppendLine("	INDEX 01 20:13:00");
+            builder.AppendLine("    POSTGAP 00:02:00");
             builder.AppendLine("TRACK 06 AUDIO");
             builder.AppendLine("	PERFORMER \"Sample Artist 6\"");
             builder.AppendLine("	TITLE \"Sample Title 6\"");
@@ -244,6 +300,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("TRACK 07 AUDIO");
             builder.AppendLine("	PERFORMER \"Sample Artist 7\"");
             builder.AppendLine("	TITLE \"Sample Title 7\"");
+            builder.AppendLine("	PREGAP 00:04:00");
             builder.AppendLine("	INDEX 01 31:54:00");
             builder.AppendLine("TRACK 08 AUDIO");
             builder.AppendLine("	PERFORMER \"Sample Artist 8\"");
@@ -263,6 +320,8 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsTrue(cuesheet.Tracks.ElementAt(1).Flags.Count == 2);
             Assert.IsNotNull(cuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "DCP"));
             Assert.IsNotNull(cuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
+            Assert.AreEqual(new TimeSpan(0, 0, 2), cuesheet.Tracks.ElementAt(4).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 4), cuesheet.Tracks.ElementAt(6).PreGap);
 
             File.Delete(tempFile);
         }
