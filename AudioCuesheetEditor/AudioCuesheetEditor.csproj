@@ -5,7 +5,7 @@
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
     <RazorLangVersion>3.0</RazorLangVersion>
     <Version>2.1.0</Version>
-	<PublishTrimmed>true</PublishTrimmed>
+	  <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
