@@ -21,13 +21,43 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public interface ITrack : ICuesheetEntity, IEntityDisplayName
+    public enum SetFlagMode
     {
+        Add,
+        Remove
+    }
+
+    public interface ITrack<ICuesheet> : ICuesheetEntity, IEntityDisplayName
+    {
+        public ICuesheet Cuesheet { get; set; }
         public uint? Position { get; set; }
         public String Artist { get; set; }
         public String Title { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }
+        /// <summary>
+        /// Flags for this Track
+        /// </summary>
+        public IReadOnlyCollection<Flag> Flags { get; }
+        /// <summary>
+        /// Amount of pre-track silence to add
+        /// </summary>
+        public TimeSpan? PreGap { get; set; }
+        /// <summary>
+        /// Amount of post-track silence to add
+        /// </summary>
+        public TimeSpan? PostGap { get; set; }
+        /// <summary>
+        /// Add or remove a flag
+        /// </summary>
+        /// <param name="flag">Flag to add/remove</param>
+        /// <param name="flagMode">Add or remove</param>
+        public void SetFlag(Flag flag, SetFlagMode flagMode);
+        /// <summary>
+        /// Set all flags contained in collection (all are added)
+        /// </summary>
+        /// <param name="flags"></param>
+        public void SetFlags(IEnumerable<Flag> flags);
     }
 }

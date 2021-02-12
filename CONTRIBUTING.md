@@ -37,9 +37,8 @@ Include details about your configuration and environment:
 Unsure where to begin contributing to AudioCuesheetEditor? You can start by looking through these `beginner` and `help-wanted` issues.
 
 ### Setting up a branch
-1. Check the milestone for the issue. Every milestone has a branch except the current active version (this is the master).
-2. If you found the branch for this issue, check it out an create a new branch with the feature name and number (e.g. "#5-Implement-CD-textfile-and-cataloguenumber") for issue number 5 (https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/5)
-3. Afterwards commit your code changes to this branch.
+1. Please create a new branch with the feature name and number (e.g. "#5-Implement-CD-textfile-and-cataloguenumber") for issue number 5 (https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/5)
+2. Afterwards commit your code changes to this branch.
 
 ### Code guidelines
 
@@ -48,4 +47,4 @@ If you found something you want to contribute, please follow some basic principl
 2. Check if the issue you want to do should be integrated into GUI.
 
 ### Pull Requests
-Following this guide you have created a branch for the new issue. You can then easily create a pullrequest to the target version branch.
+Following this guide you have created a branch for the new issue. You can then easily create a pullrequest to the master branch. Hotfixes are done by setting up pullrequests against the "production" branch. This should only be done in case of emergency!

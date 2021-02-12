@@ -2,8 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: 'bug'
-project: 'development'
+labels: 'unreviewed bug'
 
 ---
 

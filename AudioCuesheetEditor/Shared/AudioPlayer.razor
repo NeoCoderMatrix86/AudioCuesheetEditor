@@ -164,32 +164,16 @@ along with Foobar.  If not, see
         }
     }
 
-    //TODO: Remove when https://github.com/jsakamoto/Toolbelt.Blazor.HotKeys/issues/9 is implemented
-    [JSInvokable]
-    public async Task MediaPlayPausePressed()
-    {
-        await OnPlayClicked();
-    }
-
-    [JSInvokable]
-    public async Task MediaNextTrackPressed()
-    {
-        await OnPlayNextPreviousTrackClicked();
-    }
-
-    [JSInvokable]
-    public async Task MediaPreviousTrackPressed()
-    {
-        await OnPlayNextPreviousTrackClicked(true);
-    }
-
     protected override async Task OnInitializedAsync()
     {
         //Attach shortcuts
         hotKeysContext = HotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.P, OnPlayClicked)
             .Add(ModKeys.Ctrl, Keys.Left, () => OnPlayNextPreviousTrackClicked(true))
-            .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked());
+            .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked())
+            .Add(ModKeys.None, Keys.MediaPlayPause, OnPlayClicked)
+            .Add(ModKeys.None, Keys.MediaTrackNext, () => OnPlayNextPreviousTrackClicked())
+            .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true));
         //Attach media keys
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetAudioPlayerReference", dotNetReference);
@@ -225,6 +209,17 @@ along with Foobar.  If not, see
             paused = true;
         };
 
+        Howl.OnEnd += e =>
+        {
+            paused = false;
+            audioUpdateTimer.Stop();
+            TotalTime = null;
+            CurrentlyPlayingTrack = null;
+            CurrentPlaybackPosition = null;
+            AudioIsPlaying = false;
+            StateHasChanged();
+        };
+
         Howl.OnStop += e =>
         {
             paused = false;
@@ -253,6 +248,7 @@ along with Foobar.  If not, see
         if (soundId != null)
         {
             await Howl.Pause(soundId);
+            StateHasChanged();
         }
         else
         {

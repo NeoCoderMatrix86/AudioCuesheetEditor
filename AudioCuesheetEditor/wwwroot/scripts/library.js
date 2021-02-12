@@ -1,7 +1,7 @@
 ﻿var GLOBAL = {};
 var audioFileObjectURL = null;
-var handleAudioRecordingData = true;
 var startTime;
+var mediaStream = null;
 GLOBAL.Index = null;
 GLOBAL.AudioPlayer = null;
 GLOBAL.ViewModeRecord = null;
@@ -58,21 +58,6 @@ window.ApplicationOptions = {
     set: (value) => localStorage['ApplicationOptions'] = value
 }
 
-window.addEventListener("keydown", function (e) {
-    switch (e.key) {
-        case "MediaPlayPause":
-            GLOBAL.AudioPlayer.invokeMethodAsync("MediaPlayPausePressed");
-            break;
-        case "MediaNextTrack":
-            GLOBAL.AudioPlayer.invokeMethodAsync("MediaNextTrackPressed");
-            break;
-        case "MediaPrevTrack":
-            GLOBAL.AudioPlayer.invokeMethodAsync("MediaPreviousTrackPressed");
-            break;
-    }
-});
-
-
 //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
 function removeBrowserHistoryEntry() {
     window.history.replaceState({}, 'ErrorReport', '/');
@@ -118,16 +103,27 @@ function dropFiles(e, domElement, domID) {
 }
 
 function setupAudioRecording() {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { handleAudioRecording(stream) }).catch(function (err) { handleAudioRecordingData = false; });
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { handleAudioRecording(stream) }).catch(function () {  });
+}
+
+function closeAudioRecording() {
+    mediaStream.getTracks().forEach(function (track) {
+        track.stop();
+    });
 }
 
 function handleAudioRecording(stream) {
+    mediaStream = stream;
     rec = new MediaRecorder(stream);
     rec.ondataavailable = e => {
         audioChunks.push(e.data);
     }
+    rec.onstart = () => {
+        startTime = Date.now();
+    }
     rec.onstop = () => {
         var duration = Date.now() - startTime;
+        closeAudioRecording();
         let buggyBlob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
         ysFixWebmDuration(buggyBlob, duration, function (fixedBlob) {
             var url = URL.createObjectURL(fixedBlob);
@@ -135,19 +131,20 @@ function handleAudioRecording(stream) {
                 GLOBAL.ViewModeRecord.invokeMethodAsync("AudioRecordingFinished", url);
             } 
         });
+        //ReSetup audio recording
+        setupAudioRecording();
     }
 }
 
 function startAudioRecording() {
-    if (handleAudioRecordingData == true) {
-        startTime = Date.now();
+    if (mediaStream !== null) {
         audioChunks = [];
         rec.start();
     }
 }
 
 function stopAudioRecording() {
-    if (handleAudioRecordingData == true) {
+    if (mediaStream !== null) {
         rec.stop();
     }
 }

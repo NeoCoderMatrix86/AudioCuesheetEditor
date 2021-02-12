@@ -21,8 +21,9 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public interface ICuesheet : ICuesheetEntity
+    public interface ICuesheet<ITrack> : ICuesheetEntity
     {
+        public IReadOnlyCollection<ITrack> Tracks { get; }
         public String Artist { get; set; }
         public String Title { get; set; }
         public AudioFile AudioFile { get; set; }

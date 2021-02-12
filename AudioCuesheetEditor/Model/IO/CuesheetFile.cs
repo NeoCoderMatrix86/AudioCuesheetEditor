@@ -40,6 +40,9 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String TrackArtist = "PERFORMER";
         public static readonly String TrackTitle = "TITLE";
         public static readonly String TrackIndex01 = "INDEX 01";
+        public static readonly String TrackFlags = "FLAGS";
+        public static readonly String TrackPreGap = "PREGAP";
+        public static readonly String TrackPostGap = "POSTGAP";
         public static readonly String Tab = "\t";
         public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
         public static readonly String CuesheetCatalogueNumber = "CATALOG";
@@ -60,8 +63,13 @@ namespace AudioCuesheetEditor.Model.IO
             var regexTrackArtist = new Regex("(?<!^)" + TrackArtist);
             var regexTrackTitle = new Regex("(?<!^)" + TrackTitle);
             var regexTrackIndex = new Regex("(?<!^)" + TrackIndex01);
+            var regexTrackFlags = new Regex("(?<!^)" + TrackFlags);
+            var regexTrackPreGap = new Regex("(?<!^)" + TrackPreGap);
+            var regexTrackPostGap = new Regex("(?<!^)" + TrackPostGap);
             var regexCDTextfile = new Regex(String.Format("^{0}", CuesheetCDTextfile));
             var regexCatalogueNumber = new Regex(String.Format("^{0} ", CuesheetCatalogueNumber));
+            //TODO: Match frames also and import
+            var regExTimespanValue = new Regex("[0-9]{2,}:[0-9]{2,}");
             Track track = null;
             while (reader.EndOfStream == false)
             {
@@ -105,20 +113,43 @@ namespace AudioCuesheetEditor.Model.IO
                     var title = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
                     track.Title = title;
                 }
+                if (regexTrackFlags.IsMatch(line) == true)
+                {
+                    var match = regexTrackFlags.Match(line);
+                    var flags = line.Substring(match.Index + match.Length + 1);
+                    var flagList = Flag.AvailableFlags.Where(x => flags.Contains(x.CuesheetLabel));
+                    track.SetFlags(flagList);
+                }
+                if (regexTrackPreGap.IsMatch(line) == true)
+                {
+                    var match = regExTimespanValue.Match(line);
+                    if (match.Success == true)
+                    {
+                        var minutes = int.Parse(match.Value.Substring(0, match.Value.IndexOf(":")));
+                        var seconds = int.Parse(match.Value.Substring(match.Value.IndexOf(":") + 1));
+                        track.PreGap = new TimeSpan(0, minutes, seconds);
+                    }
+                }
                 if (regexTrackIndex.IsMatch(line) == true)
                 {
-                    //TODO: Match frames also and import
-                    var regExValue = new Regex("[0-9]{2,}:[0-9]{2,}");
-                    var match = regExValue.Match(line);
+                    var match = regExTimespanValue.Match(line);
                     if (match.Success == true) 
                     {
                         var minutes = int.Parse(match.Value.Substring(0, match.Value.IndexOf(":")));
                         var seconds = int.Parse(match.Value.Substring(match.Value.IndexOf(":") + 1));
-                        var begin = new TimeSpan(0, minutes, seconds);
-                        track.Begin = begin;
+                        track.Begin = new TimeSpan(0, minutes, seconds);
                     }
                     cuesheet.AddTrack(track);
-                    track = null;
+                }
+                if (regexTrackPostGap.IsMatch(line) == true)
+                {
+                    var match = regExTimespanValue.Match(line);
+                    if (match.Success == true)
+                    {
+                        var minutes = int.Parse(match.Value.Substring(0, match.Value.IndexOf(":")));
+                        var seconds = int.Parse(match.Value.Substring(match.Value.IndexOf(":") + 1));
+                        track.PostGap = new TimeSpan(0, minutes, seconds);
+                    }
                 }
             }
             return cuesheet;
@@ -156,7 +187,19 @@ namespace AudioCuesheetEditor.Model.IO
                     builder.AppendLine(String.Format("{0}{1} {2:00} {3}", Tab, CuesheetTrack, track.Position, CuesheetTrackAudio));
                     builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", Tab, Tab, TrackTitle, track.Title));
                     builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", Tab, Tab, TrackArtist, track.Artist));
+                    if (track.Flags.Count > 0)
+                    {
+                        builder.AppendLine(String.Format("{0}{1}{2} {3}", Tab, Tab, TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
+                    }
+                    if (track.PreGap.HasValue)
+                    {
+                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Tab, Tab, TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds / 75));
+                    }
                     builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Tab, Tab, TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+                    if (track.PostGap.HasValue)
+                    {
+                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Tab, Tab, TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds / 75));
+                    }
                 }
                 return Encoding.UTF8.GetBytes(builder.ToString());
             }

@@ -202,7 +202,7 @@
     <value>Cuesheet tracks</value>
   </data>
   <data name="CultureSetting" xml:space="preserve">
-    <value>Culture set:</value>
+    <value>Language:</value>
   </data>
   <data name="CurrentTrackIsPlayed" xml:space="preserve">
     <value>This track is played</value>
@@ -607,5 +607,41 @@
   </data>
   <data name="RecordModeHelpText" xml:space="preserve">
     <value>AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select "Allow". This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by AudioCuesheetEditor. You can afterwards start your recording by pressing the "Start recording" Button. This causes the record to start and a display will tell you, that you are currently recording.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Play audio and once the end of the track has been reached, please enter the track artist and title and click the button "Add new track". This will set the end of the track to the current time. You can use "Enter" on the input fields to fast switch the focus inputs and enter the new track.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Once you have entered a track, it will display in the tracks and you can edit artist and title again and also delete the track afterwards.&lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Once you have finished your recording, click the button "Stop recording" which will stop the recording and make the recording (if audio is not blocked) downloadable to you. &lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;You can now switch back to full edit mode in order to do more editing on the cuesheet. All tracks are present and also the recording is available as download in the cuesheet data part.</value>
+  </data>
+  <data name="EditTrack" xml:space="preserve">
+    <value>Edit track details</value>
+  </data>
+  <data name="EditTrackTooltip" xml:space="preserve">
+    <value>Edit track details in a dialog</value>
+  </data>
+  <data name="Flag4CHTooltip" xml:space="preserve">
+    <value>Set this if track contains four channel audio</value>
+  </data>
+  <data name="FlagDCPTooltip" xml:space="preserve">
+    <value>Set this if track is digital copy permitted</value>
+  </data>
+  <data name="FlagPRETooltip" xml:space="preserve">
+    <value>Set this if track has Pre-emphasis enabled</value>
+  </data>
+  <data name="Flags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="FlagSCMSTooltip" xml:space="preserve">
+    <value>Set this if track has "Serial Copy Management System"</value>
+  </data>
+  <data name="CopyTrackTooltip" xml:space="preserve">
+    <value>Copy this track with all values and attach it to the cuesheet.</value>
+  </data>
+  <data name="PositionAlreadyInUse" xml:space="preserve">
+    <value>Position {0} of this track is already in use by track(s) {1}!</value>
+  </data>
+  <data name="TimeIsOverlapping" xml:space="preserve">
+    <value>{0} is overlapping with other tracks ({1})!</value>
+  </data>
+  <data name="PostGap" xml:space="preserve">
+    <value>Postgap</value>
+  </data>
+  <data name="PreGap" xml:space="preserve">
+    <value>Pregap</value>
   </data>
 </root>

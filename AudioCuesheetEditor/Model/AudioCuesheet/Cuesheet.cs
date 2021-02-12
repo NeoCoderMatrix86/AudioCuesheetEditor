@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class Cuesheet : Validateable, ICuesheet
+    public class Cuesheet : Validateable, ICuesheet<Track>
     {
         private readonly object syncLock = new object();
 
@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private AudioFile audioFile;
         private CDTextfile cDTextfile;
         private DateTime? recordingStart;
-
+        private Boolean currentlyHandlingRankPropertyValueChanged;
         public Cuesheet()
         {
             tracks = new List<Track>();
@@ -49,29 +49,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Validate();
         }
 
-        public IReadOnlyCollection<Track> Tracks
-        {
-            get { return tracks.OrderBy(x => x.Position.HasValue == false).ThenBy(x => x.Position).ToList().AsReadOnly(); }
-        }
-        public uint NextFreePosition
-        {
-            get 
-            {
-                uint nextFreePosition = 1;
-                if (Tracks.Count > 0)
-                {
-                    lock (syncLock)
-                    {
-                        var track = Tracks.Where(x => x.Position != null && x.Position > 0).OrderBy(x => x.Position).LastOrDefault();
-                        if (track != null)
-                        {
-                            nextFreePosition = track.Position.Value + 1;
-                        }
-                    }
-                }
-                return nextFreePosition;
-            }
-        }
+        public IReadOnlyCollection<Track> Tracks => tracks.AsReadOnly();
+        
         public String Artist 
         {
             get { return artist; }
@@ -131,19 +110,53 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(track));
             }
+            if (track.IsCloned)
+            {
+                throw new ArgumentException("Cloned tracks may not be added!");
+            }
             if (IsRecording)
             {
                 track.Begin = DateTime.UtcNow - recordingStart.Value;
             }
+            track.Cuesheet = this;
             tracks.Add(track);
-            track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
-            ReCalculateTrackProperties();
+            ReCalculateTrackProperties(track);
+            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
         }
 
-        private void Track_ValidateablePropertyChanged(object sender, EventArgs e)
+        private void Track_RankPropertyValueChanged(object sender, string e)
         {
-            OnValidateablePropertyChanged();
+            if (currentlyHandlingRankPropertyValueChanged == false)
+            {
+                currentlyHandlingRankPropertyValueChanged = true;
+                Track trackRaisedEvent = (Track)sender;
+                var index = tracks.IndexOf(trackRaisedEvent);
+                switch (e)
+                {
+                    case nameof(Track.Begin):
+                        if (index > 0)
+                        {
+                            var previousTrack = tracks.ElementAt(index - 1);
+                            if ((previousTrack != trackRaisedEvent) && (previousTrack.End.HasValue == false))
+                            {
+                                previousTrack.End = trackRaisedEvent.Begin;
+                            }
+                        }
+                        break;
+                    case nameof(Track.End):
+                        if ((index + 1) < Tracks.Count)
+                        {
+                            var nextTrack = tracks.ElementAt(index + 1);
+                            if ((nextTrack != trackRaisedEvent) && (nextTrack.Begin.HasValue == false))
+                            {
+                                nextTrack.Begin = trackRaisedEvent.End;
+                            }
+                        }
+                        break;
+                }
+                currentlyHandlingRankPropertyValueChanged = false;
+            }
         }
 
         public void RemoveTrack(Track track)
@@ -153,9 +166,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             tracks.Remove(track);
-            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+            track.Cuesheet = null;
+            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
-            ReCalculateTrackProperties();
         }
 
         public void RemoveAllTracks()
@@ -198,31 +211,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(track));
             }
-            lock (syncLock)
+            var index = tracks.IndexOf(track);
+            if (moveDirection == MoveDirection.Up)
             {
-                var index = Tracks.ToList().IndexOf(track);
-                if (moveDirection == MoveDirection.Up)
+                if (index > 0)
                 {
-                    if (index > 0)
-                    {
-                        var previousTrack = Tracks.ElementAt(index - 1);
-                        var position = previousTrack.Position;
-                        previousTrack.Position = track.Position;
-                        track.Position = position;
-                    }
-                }
-                if (moveDirection == MoveDirection.Down)
-                {
-                    if ((index + 1) < Tracks.Count)
-                    {
-                        var nextTrack = Tracks.ElementAt(index + 1);
-                        var position = nextTrack.Position;
-                        nextTrack.Position = track.Position;
-                        track.Position = position;
-                    }
+                    var currentTrack = tracks.ElementAt(index - 1);
+                    tracks[index - 1] = track;
+                    tracks[index] = currentTrack;
                 }
             }
-            ReCalculateTrackProperties();
+            if (moveDirection == MoveDirection.Down)
+            {
+                if ((index + 1) < Tracks.Count)
+                {
+                    var currentTrack = tracks.ElementAt(index + 1);
+                    tracks[index + 1] = track;
+                    tracks[index] = currentTrack;
+                }
+            }
         }
 
         public void Import(TextImportFile textImportFile)
@@ -273,22 +280,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 _ = CatalogueNumber.IsValid;
                 validationErrors.AddRange(CatalogueNumber.ValidationErrors);
             }
-            //Check track overlapping
-            lock (syncLock)
-            {
-                TimeSpan begin = TimeSpan.Zero;
-                foreach (var track in Tracks)
-                {
-                    if ((track.Begin == null) || (track.Begin != begin))
-                    {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(track, nameof(Track.Begin)), ValidationErrorType.Warning, "TrackHasInvalidValue", track.Position, nameof(Track.Begin), track.Begin));
-                    }
-                    if (track.End != null)
-                    {
-                        begin = track.End.Value;
-                    }
-                }
-            }
         }
 
         private void CatalogueNumber_ValidateablePropertyChanged(object sender, EventArgs e)
@@ -296,36 +287,34 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             OnValidateablePropertyChanged();
         }
 
-        private void ReCalculateTrackProperties()
+        private void ReCalculateTrackProperties(Track trackToCalculate)
         {
-            uint position = 1;
-            TimeSpan? trackEnd = TimeSpan.Zero;
-            Track previousTrack = null;
-            lock (syncLock)
+            //TODO: Get last end from audio file end
+            if (Tracks.Count > 1)
             {
-                foreach (var track in Tracks)
+                var lastTrack = tracks.ElementAt(tracks.IndexOf(trackToCalculate) - 1);
+                if (lastTrack != trackToCalculate)
                 {
-                    if (track.Position != position)
+                    if (trackToCalculate.Position.HasValue == false)
                     {
-                        track.Position = position;
+                        trackToCalculate.Position = lastTrack.Position + 1;
                     }
-                    if (track.Position == 1)
+                    if (trackToCalculate.Begin.HasValue == false)
                     {
-                        track.Begin = TimeSpan.Zero;
+                        trackToCalculate.Begin = lastTrack.End;
                     }
-                    if ((track.Begin == null) && (trackEnd != null))
-                    {
-                        track.Begin = trackEnd;
-                    }
-                    if ((track.Begin != null) && (previousTrack != null) && (previousTrack.End == null))
-                    {
-                        previousTrack.End = track.Begin;
-                    }
-                    previousTrack = track;
-                    trackEnd = track.End;
-                    position++;
                 }
-                //TODO: Get last end from audio file end
+            }
+            else
+            {
+                if (trackToCalculate.Position.HasValue == false)
+                {
+                    trackToCalculate.Position = 1;
+                }
+                if (trackToCalculate.Begin.HasValue == false)
+                {
+                    trackToCalculate.Begin = TimeSpan.Zero;
+                }
             }
         }
 

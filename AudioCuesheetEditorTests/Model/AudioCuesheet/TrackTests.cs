@@ -35,21 +35,35 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNotNull(track.Length);
             Assert.IsNotNull(track.Begin);
             Assert.IsNotNull(track.End);
-            Assert.AreEqual(track.Begin, TimeSpan.Zero);
-            Assert.AreEqual(track.End, new TimeSpan(0, 2, 30));
-            Assert.AreEqual(track.Length, new TimeSpan(0, 2, 30));
+            Assert.AreEqual(TimeSpan.Zero, track.Begin);
+            Assert.AreEqual(new TimeSpan(0, 2, 30), track.End);
+            Assert.AreEqual(new TimeSpan(0, 2, 30), track.Length);
             track.Begin = new TimeSpan(0, 25, 0);
             Assert.IsNull(track.Length);
             track.Length = new TimeSpan(0, 3, 30);
             Assert.IsNotNull(track.Length);
-            Assert.AreEqual(track.Length, new TimeSpan(0, 3, 30));
-            Assert.AreEqual(track.End, new TimeSpan(0, 28, 30));
+            Assert.AreEqual(new TimeSpan(0, 3, 30), track.Length);
+            Assert.AreEqual(new TimeSpan(0, 28, 30), track.End);
             track.Begin = null;
             Assert.IsNull(track.Length);
             track.Length = new TimeSpan(0, 5, 15);
-            Assert.AreEqual(track.End, new TimeSpan(0, 28, 30));
-            Assert.AreEqual(track.Length, new TimeSpan(0, 5, 15));
-            Assert.AreEqual(track.Begin, new TimeSpan(0, 23, 15));
+            Assert.AreEqual(new TimeSpan(0, 28, 30), track.End);
+            Assert.AreEqual(new TimeSpan(0, 5, 15), track.Length);
+            Assert.AreEqual(new TimeSpan(0, 23, 15), track.Begin);
+        }
+
+        [TestMethod()]
+        public void SetLengthTest()
+        {
+            var track = new Track();
+            Assert.IsNull(track.Length);
+            Assert.IsNull(track.Begin);
+            Assert.IsNull(track.End);
+            track.Begin = new TimeSpan(0, 2, 43);
+            track.End = new TimeSpan(0, 5, 23);
+            Assert.IsNotNull(track.Length);
+            track.Length = new TimeSpan(0, 2, 0);
+            Assert.AreEqual(new TimeSpan(0, 4, 43), track.End);
         }
     }
 }

@@ -313,6 +313,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Copy this track with all values and attach it to the cuesheet. ähnelt.
+        /// </summary>
+        public static string CopyTrackTooltip {
+            get {
+                return ResourceManager.GetString("CopyTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Create a Cuesheet ähnelt.
         /// </summary>
         public static string CreateCuesheet {
@@ -376,7 +385,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Culture set: ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Language: ähnelt.
         /// </summary>
         public static string CultureSetting {
             get {
@@ -491,6 +500,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string DropFiles {
             get {
                 return ResourceManager.GetString("DropFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Edit track details ähnelt.
+        /// </summary>
+        public static string EditTrack {
+            get {
+                return ResourceManager.GetString("EditTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Edit track details in a dialog ähnelt.
+        /// </summary>
+        public static string EditTrackTooltip {
+            get {
+                return ResourceManager.GetString("EditTrackTooltip", resourceCulture);
             }
         }
         
@@ -837,6 +864,51 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track contains four channel audio ähnelt.
+        /// </summary>
+        public static string Flag4CHTooltip {
+            get {
+                return ResourceManager.GetString("Flag4CHTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track is digital copy permitted ähnelt.
+        /// </summary>
+        public static string FlagDCPTooltip {
+            get {
+                return ResourceManager.GetString("FlagDCPTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track has Pre-emphasis enabled ähnelt.
+        /// </summary>
+        public static string FlagPRETooltip {
+            get {
+                return ResourceManager.GetString("FlagPRETooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Flags ähnelt.
+        /// </summary>
+        public static string Flags {
+            get {
+                return ResourceManager.GetString("Flags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Set this if track has &quot;Serial Copy Management System&quot; ähnelt.
+        /// </summary>
+        public static string FlagSCMSTooltip {
+            get {
+                return ResourceManager.GetString("FlagSCMSTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time. ähnelt.
         /// </summary>
         public static string HasInvalidBegin {
@@ -1134,6 +1206,33 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Position {0} of this track is already in use by track(s) {1}! ähnelt.
+        /// </summary>
+        public static string PositionAlreadyInUse {
+            get {
+                return ResourceManager.GetString("PositionAlreadyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Postgap ähnelt.
+        /// </summary>
+        public static string PostGap {
+            get {
+                return ResourceManager.GetString("PostGap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Pregap ähnelt.
+        /// </summary>
+        public static string PreGap {
+            get {
+                return ResourceManager.GetString("PreGap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Processing hints ähnelt.
         /// </summary>
         public static string ProcessingHints {
@@ -1373,6 +1472,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string TextImportScheme {
             get {
                 return ResourceManager.GetString("TextImportScheme", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die {0} is overlapping with other tracks ({1})! ähnelt.
+        /// </summary>
+        public static string TimeIsOverlapping {
+            get {
+                return ResourceManager.GetString("TimeIsOverlapping", resourceCulture);
             }
         }
         

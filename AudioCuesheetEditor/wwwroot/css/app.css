@@ -241,6 +241,11 @@ app {
     }
 }
 
+.trackPositionTableRowCell {
+    min-width: 50px;
+    max-width: 85px;
+}
+
 .minWidth {
     min-width: 100px;
 }
