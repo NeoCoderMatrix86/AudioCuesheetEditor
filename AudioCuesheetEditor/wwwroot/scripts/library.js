@@ -144,7 +144,7 @@ function startAudioRecording() {
 }
 
 function stopAudioRecording() {
-    if (mediaStream !== null) {
+    if ((mediaStream !== null) && (rec.state !== 'inactive') && (rec.state !== 'stopped')) {
         rec.stop();
     }
 }
