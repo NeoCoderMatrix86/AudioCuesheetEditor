@@ -303,6 +303,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         trackToCalculate.Begin = lastTrack.End;
                     }
+                    if (IsRecording)
+                    {
+                        lastTrack.End = trackToCalculate.Begin;
+                    }
                 }
             }
             else
@@ -311,7 +315,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     trackToCalculate.Position = 1;
                 }
-                if (trackToCalculate.Begin.HasValue == false)
+                if ((trackToCalculate.Begin.HasValue == false) || (IsRecording))
                 {
                     trackToCalculate.Begin = TimeSpan.Zero;
                 }
@@ -325,6 +329,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void StopRecording()
         {
+            //Set end of last track
+            var lastTrack = Tracks.LastOrDefault();
+            if (lastTrack != null)
+            {
+                lastTrack.End = DateTime.UtcNow - recordingStart.Value;
+            }
             recordingStart = null;
         }
     }
