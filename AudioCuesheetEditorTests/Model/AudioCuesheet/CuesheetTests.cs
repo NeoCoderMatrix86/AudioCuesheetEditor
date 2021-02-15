@@ -152,6 +152,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.StartRecording();
             Assert.IsTrue(cuesheet.IsRecording);
             Assert.IsNotNull(cuesheet.RecordingTime);
+            var track = new Track();
+            Assert.IsNull(track.Begin);
+            Assert.IsNull(track.End);
+            cuesheet.AddTrack(track);
+            Assert.AreEqual(TimeSpan.Zero, track.Begin);
+            Assert.IsNull(track.End);
+            var track2 = new Track();
+            cuesheet.AddTrack(track2);
+            Assert.IsNotNull(track.End);
+            Assert.AreNotEqual(TimeSpan.Zero, track.End);
         }
 
         [TestMethod()]
