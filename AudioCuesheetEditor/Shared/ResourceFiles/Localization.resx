@@ -644,4 +644,19 @@
   <data name="PreGap" xml:space="preserve">
     <value>Pregap</value>
   </data>
+  <data name="AudioCodec" xml:space="preserve">
+    <value>Audio codec</value>
+  </data>
+  <data name="CurrentlyProcessingAudioFilePleaseWait" xml:space="preserve">
+    <value>Currently processing recorded audio file, please wait ...</value>
+  </data>
+  <data name="EnableAudioRecoding" xml:space="preserve">
+    <value>Enable audio recoding after record</value>
+  </data>
+  <data name="RecodeAudioAfterRecording" xml:space="preserve">
+    <value>Recode audio data to the selected codec after recording</value>
+  </data>
+  <data name="Recording" xml:space="preserve">
+    <value>Recording</value>
+  </data>
 </root>

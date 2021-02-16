@@ -151,6 +151,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio codec ähnelt.
+        /// </summary>
+        public static string AudioCodec {
+            get {
+                return ResourceManager.GetString("AudioCodec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
         public static string AudioFile {
@@ -394,6 +403,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Currently processing recorded audio file, please wait ... ähnelt.
+        /// </summary>
+        public static string CurrentlyProcessingAudioFilePleaseWait {
+            get {
+                return ResourceManager.GetString("CurrentlyProcessingAudioFilePleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die This track is played ähnelt.
         /// </summary>
         public static string CurrentTrackIsPlayed {
@@ -518,6 +536,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string EditTrackTooltip {
             get {
                 return ResourceManager.GetString("EditTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enable audio recoding after record ähnelt.
+        /// </summary>
+        public static string EnableAudioRecoding {
+            get {
+                return ResourceManager.GetString("EnableAudioRecoding", resourceCulture);
             }
         }
         
@@ -1251,11 +1278,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recode audio data to the selected codec after recording ähnelt.
+        /// </summary>
+        public static string RecodeAudioAfterRecording {
+            get {
+                return ResourceManager.GetString("RecodeAudioAfterRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Control recording ähnelt.
         /// </summary>
         public static string RecordControl {
             get {
                 return ResourceManager.GetString("RecordControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recording ähnelt.
+        /// </summary>
+        public static string Recording {
+            get {
+                return ResourceManager.GetString("Recording", resourceCulture);
             }
         }
         

@@ -19,21 +19,23 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Model.IO
+namespace AudioCuesheetEditor.Model.IO.Audio
 {
     public class AudioFile
     {
-        public static readonly Dictionary<String, String> MimeTypes = new Dictionary<String, String>(StringComparer.OrdinalIgnoreCase)
-        {
-            { ".mp3", "audio/mpeg"},
-            {".oga", "audio/ogg"},
-            {".ogg", "audio/ogg"},
-            {".opus", "audio/ogg"},
-            {".wav", "audio/wav"},
-            {".wave", "audio/wav"},
-            {".flac", "audio/flac"}
-        };
+        public static readonly String RecordingFileName = "Recording";
 
+        public static readonly List<AudioCodec> AudioCodecs = new List<AudioCodec>()
+        {
+            new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"),
+            new AudioCodec("audio/ogg", ".oga", "AudioCodec OGA"),
+            new AudioCodec("audio/ogg", ".ogg", "AudioCodec OGG"),
+            new AudioCodec("audio/ogg; codecs=opus", ".opus", "AudioCodec OPUS"),
+            new AudioCodec("audio/wav", ".wav", "AudioCodec WAV"),
+            new AudioCodec("audio/wav", ".wave", "AudioCodec WAVE"),
+            new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
+        };
+        
         public AudioFile(String fileName, Boolean isRecorded = false)
         {
             if (String.IsNullOrEmpty(fileName))

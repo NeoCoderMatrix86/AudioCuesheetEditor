@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Reflection;
 using System;
 using System.Collections.Generic;
