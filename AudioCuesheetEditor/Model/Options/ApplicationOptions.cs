@@ -101,11 +101,16 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 TextImportScheme = TextImportFile.DefaultImportScheme;
             }
+            if (AudioCodec == null)
+            {
+                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == "AudioCodec MP3");
+                RecodeAudioRecording = true;
+            }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
                 if (AudioCodec != null)
                 {
-                    AudioFileNameRecording = String.Format("{0}.{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
+                    AudioFileNameRecording = String.Format("{0}{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
                 }
                 else
                 {

@@ -1278,6 +1278,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src=&quot;images/Options1.png&quot;/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string OptionsHelpText {
+            get {
+                return ResourceManager.GetString("OptionsHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Jump playback position to next track beginning ähnelt.
         /// </summary>
         public static string PlayNextTrackTooltip {
@@ -1683,7 +1692,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Full edition ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Full edit mode ähnelt.
         /// </summary>
         public static string ViewModeFull {
             get {
