@@ -241,8 +241,9 @@ along with Foobar.  If not, see
     [JSInvokable()]
     public async Task AudioRecordingFinished(String url)
     {
-        //TODO: Customizable via options
-        Cuesheet.AudioFile = new AudioFile("Recording.ogg", url, "audio/ogg", true);
+        //TODO: Switch codec edge/chrome/firefox since default implementation
+        var codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".ogg");
+        Cuesheet.AudioFile = new AudioFile(optionsController.Options.AudioFileNameRecording, url, codec, true);
         await ProcessAudioRecording();
         StateHasChanged();
     }
@@ -435,8 +436,7 @@ along with Foobar.  If not, see
 
             ffmpeg.WriteFile(Cuesheet.AudioFile.FileName, audioFileContent);
 
-            //TODO:Config
-            await ffmpeg.Run("-i", Cuesheet.AudioFile.FileName, String.Format("{0}.mp3", Cuesheet.AudioFile.FileName));
+            await ffmpeg.Run("-i", Cuesheet.AudioFile.FileName, String.Format("{0}{1}", Cuesheet.AudioFile.FileName, optionsController.Options.AudioCodec.FileExtension));
             StateHasChanged();
         }
     }
@@ -451,14 +451,13 @@ along with Foobar.  If not, see
         processOfProcessingAudioFile = Convert.ToInt32(progress.Ratio * 100.0);
         if (progress.Ratio == 1)
         {
-            //TODO:Config
             processOfProcessingAudioFile = null;
-            var audioFileContent = await ffmpeg.ReadFile(String.Format("{0}.mp3", Cuesheet.AudioFile.FileName));
-            var objectURL = FFmpegFactory.CreateURLFromBuffer(audioFileContent, String.Format("{0}.mp3", Cuesheet.AudioFile.FileName), "audio/mp3");
+            var audioFileContent = await ffmpeg.ReadFile(String.Format("{0}{1}", Cuesheet.AudioFile.FileName, optionsController.Options.AudioCodec.FileExtension));
+            var objectURL = FFmpegFactory.CreateURLFromBuffer(audioFileContent, String.Format("{0}{1}", Cuesheet.AudioFile.FileName, optionsController.Options.AudioCodec.FileExtension), optionsController.Options.AudioCodec.MimeType);
 
             await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.AudioFile.ObjectURL);
 
-            Cuesheet.AudioFile = new AudioFile(String.Format("{0}.mp3", Cuesheet.AudioFile.FileName), objectURL, "audio/mp3", true);
+            Cuesheet.AudioFile = new AudioFile(String.Format("{0}{1}", optionsController.Options.AudioFileNameRecording, optionsController.Options.AudioCodec.FileExtension), objectURL, optionsController.Options.AudioCodec, true);
         }
         StateHasChanged();
     }

@@ -786,6 +786,12 @@ along with Foobar.  If not, see
             </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioFileNameRecording"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" />
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["EnableAudioRecoding"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <Check TValue="Boolean" @bind-Checked="optionsController.Options.RecodeAudioRecording">@localizer["RecodeAudioAfterRecording"]</Check>
@@ -1437,7 +1443,8 @@ along with Foobar.  If not, see
         if (browserFile != null)
         {
             var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
-            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, browserFile.ContentType);
+            var codec = AudioFile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
+            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, codec);
         }
         else
         {

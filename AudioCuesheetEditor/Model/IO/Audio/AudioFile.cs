@@ -35,6 +35,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             new AudioCodec("audio/wav", ".wave", "AudioCodec WAVE"),
             new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
         };
+
+        private AudioCodec audioCodec;
         
         public AudioFile(String fileName, Boolean isRecorded = false)
         {
@@ -46,33 +48,58 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             IsRecorded = isRecorded;
         }
 
-        public AudioFile(String fileName, String objectURL, String contentType, Boolean isRecorded = false) : this(fileName, isRecorded)
+        public AudioFile(String fileName, String objectURL, AudioCodec audioCodec, Boolean isRecorded = false) : this(fileName, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
                 throw new ArgumentNullException(nameof(objectURL));
             }
-            if (String.IsNullOrEmpty(contentType))
+            if (audioCodec == null)
             {
-                throw new ArgumentNullException(nameof(contentType));
+                throw new ArgumentNullException(nameof(audioCodec));
             }
             ObjectURL = objectURL;
-            ContentType = contentType;
+            AudioCodec = audioCodec;
         }
 
         public String FileName { get; private set; }
         public String ObjectURL { get; private set; }
-        public String ContentType { get; private set; }
+        public AudioCodec AudioCodec 
+        {
+            get { return audioCodec; }
+            private set
+            {
+                audioCodec = value;
+                if ((audioCodec != null) && (FileName.EndsWith(audioCodec.FileExtension) ==false))
+                {
+                    //Replace file ending
+                    FileName = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(FileName), AudioCodec.FileExtension);
+                }
+            }
+        }
         public String AudioFileType
         {
-            get { return Path.GetExtension(FileName).Replace(".", "").ToUpper(); }
+            get 
+            {
+                String audioFileType = null;
+                if (AudioCodec != null)
+                {
+                    audioFileType = AudioCodec.FileExtension.Replace(".", "").ToUpper();
+                }
+                if (audioFileType == null)
+                {
+                    //Try to find by file name
+                    audioFileType = Path.GetExtension(FileName).Replace(".", "").ToUpper();
+                }
+                return audioFileType;
+            }
         }
         public Boolean PlaybackPossible
         {
             get
             {
                 Boolean playbackPossible = false;
-                if ((String.IsNullOrEmpty(FileName) == false) && (String.IsNullOrEmpty(ObjectURL) == false) && (String.IsNullOrEmpty(AudioFileType) == false) && ((String.IsNullOrEmpty(ContentType) == true) || (ContentType.StartsWith("audio/"))))
+                if ((String.IsNullOrEmpty(FileName) == false) && (String.IsNullOrEmpty(ObjectURL) == false) && (String.IsNullOrEmpty(AudioFileType) == false) && (AudioCodec != null))
                 {
                     playbackPossible = true;
                 }

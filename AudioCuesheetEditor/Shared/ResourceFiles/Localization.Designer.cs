@@ -160,11 +160,83 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FLAC in native encapsulation format (Fileextension .flac) ähnelt.
+        /// </summary>
+        public static string AudioCodec_FLAC {
+            get {
+                return ResourceManager.GetString("AudioCodec FLAC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MPEG Audio Layer III (Fileextension .mp3) ähnelt.
+        /// </summary>
+        public static string AudioCodec_MP3 {
+            get {
+                return ResourceManager.GetString("AudioCodec MP3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Audio Profile  (Fileextension .oga) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OGA {
+            get {
+                return ResourceManager.GetString("AudioCodec OGA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Vorbis I Profile (Fileextension .ogg) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OGG {
+            get {
+                return ResourceManager.GetString("AudioCodec OGG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Opus profile (Fileextension .opus) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OPUS {
+            get {
+                return ResourceManager.GetString("AudioCodec OPUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Waveform Audio File Format (Fileextension .wav) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WAV {
+            get {
+                return ResourceManager.GetString("AudioCodec WAV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Waveform Audio File Format (Fileextension .wave) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WAVE {
+            get {
+                return ResourceManager.GetString("AudioCodec WAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
         public static string AudioFile {
             get {
                 return ResourceManager.GetString("AudioFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio file name of recording ähnelt.
+        /// </summary>
+        public static string AudioFileNameRecording {
+            get {
+                return ResourceManager.GetString("AudioFileNameRecording", resourceCulture);
             }
         }
         

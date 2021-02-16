@@ -103,8 +103,14 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
-                //TODO
-                //AudioFileNameRecording = AudioFile.RecordingFileName + Audio
+                if (AudioCodec != null)
+                {
+                    AudioFileNameRecording = String.Format("{0}.{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
+                }
+                else
+                {
+                    AudioFileNameRecording = AudioFile.RecordingFileName;
+                }
             }
         }
 

@@ -647,6 +647,30 @@
   <data name="AudioCodec" xml:space="preserve">
     <value>Audio Codec</value>
   </data>
+  <data name="AudioCodec FLAC" xml:space="preserve">
+    <value>FLAC in native encapsulation format (Dateierweiterung .flac)</value>
+  </data>
+  <data name="AudioCodec MP3" xml:space="preserve">
+    <value>MPEG Audio Layer III (Dateierweiterung .mp3)</value>
+  </data>
+  <data name="AudioCodec OGA" xml:space="preserve">
+    <value>Ogg Audio Profile  (Dateierweiterung .oga)</value>
+  </data>
+  <data name="AudioCodec OGG" xml:space="preserve">
+    <value>Ogg Vorbis I Profile (Dateierweiterung .ogg)</value>
+  </data>
+  <data name="AudioCodec OPUS" xml:space="preserve">
+    <value>Ogg Opus profile (Dateierweiterung .opus)</value>
+  </data>
+  <data name="AudioCodec WAV" xml:space="preserve">
+    <value>Waveform Audio File Format (Dateierweiterung .wav)</value>
+  </data>
+  <data name="AudioCodec WAVE" xml:space="preserve">
+    <value>Waveform Audio File Format (Dateierweiterung .wave)</value>
+  </data>
+  <data name="AudioFileNameRecording" xml:space="preserve">
+    <value>Dateiname für aufgenommene Audiodaten</value>
+  </data>
   <data name="CurrentlyProcessingAudioFilePleaseWait" xml:space="preserve">
     <value>Verarbeite aufgenommene Audio Daten, bitte warten ...</value>
   </data>
