@@ -223,6 +223,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die WebM Container (Fileextension .webm) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WEBM {
+            get {
+                return ResourceManager.GetString("AudioCodec WEBM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
         public static string AudioFile {

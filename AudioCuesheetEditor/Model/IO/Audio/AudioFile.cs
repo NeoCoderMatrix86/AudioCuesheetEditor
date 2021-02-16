@@ -27,6 +27,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 
         public static readonly List<AudioCodec> AudioCodecs = new List<AudioCodec>()
         {
+            new AudioCodec("audio/webm", ".webm", "AudioCodec WEBM"),
             new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"),
             new AudioCodec("audio/ogg", ".oga", "AudioCodec OGA"),
             new AudioCodec("audio/ogg", ".ogg", "AudioCodec OGG"),

@@ -668,6 +668,9 @@
   <data name="AudioCodec WAVE" xml:space="preserve">
     <value>Waveform Audio File Format (Fileextension .wave)</value>
   </data>
+  <data name="AudioCodec WEBM" xml:space="preserve">
+    <value>WebM Container (Fileextension .webm)</value>
+  </data>
   <data name="AudioFileNameRecording" xml:space="preserve">
     <value>Audio file name of recording</value>
   </data>

@@ -241,8 +241,7 @@ along with Foobar.  If not, see
     [JSInvokable()]
     public async Task AudioRecordingFinished(String url)
     {
-        //TODO: Switch codec edge/chrome/firefox since default implementation
-        var codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".ogg");
+        var codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".webm");
         Cuesheet.AudioFile = new AudioFile(optionsController.Options.AudioFileNameRecording, url, codec, true);
         await ProcessAudioRecording();
         StateHasChanged();
