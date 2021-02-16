@@ -151,11 +151,101 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio codec ähnelt.
+        /// </summary>
+        public static string AudioCodec {
+            get {
+                return ResourceManager.GetString("AudioCodec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FLAC in native encapsulation format (Fileextension .flac) ähnelt.
+        /// </summary>
+        public static string AudioCodec_FLAC {
+            get {
+                return ResourceManager.GetString("AudioCodec FLAC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MPEG Audio Layer III (Fileextension .mp3) ähnelt.
+        /// </summary>
+        public static string AudioCodec_MP3 {
+            get {
+                return ResourceManager.GetString("AudioCodec MP3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Audio Profile  (Fileextension .oga) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OGA {
+            get {
+                return ResourceManager.GetString("AudioCodec OGA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Vorbis I Profile (Fileextension .ogg) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OGG {
+            get {
+                return ResourceManager.GetString("AudioCodec OGG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Opus profile (Fileextension .opus) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OPUS {
+            get {
+                return ResourceManager.GetString("AudioCodec OPUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Waveform Audio File Format (Fileextension .wav) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WAV {
+            get {
+                return ResourceManager.GetString("AudioCodec WAV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Waveform Audio File Format (Fileextension .wave) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WAVE {
+            get {
+                return ResourceManager.GetString("AudioCodec WAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die WebM Container (Fileextension .webm) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WEBM {
+            get {
+                return ResourceManager.GetString("AudioCodec WEBM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
         public static string AudioFile {
             get {
                 return ResourceManager.GetString("AudioFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio file name of recording ähnelt.
+        /// </summary>
+        public static string AudioFileNameRecording {
+            get {
+                return ResourceManager.GetString("AudioFileNameRecording", resourceCulture);
             }
         }
         
@@ -394,6 +484,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Currently processing recorded audio file, please wait ... ähnelt.
+        /// </summary>
+        public static string CurrentlyProcessingAudioFilePleaseWait {
+            get {
+                return ResourceManager.GetString("CurrentlyProcessingAudioFilePleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die This track is played ähnelt.
         /// </summary>
         public static string CurrentTrackIsPlayed {
@@ -518,6 +617,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string EditTrackTooltip {
             get {
                 return ResourceManager.GetString("EditTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enable audio recoding after record ähnelt.
+        /// </summary>
+        public static string EnableAudioRecoding {
+            get {
+                return ResourceManager.GetString("EnableAudioRecoding", resourceCulture);
             }
         }
         
@@ -1170,6 +1278,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src=&quot;images/Options1.png&quot;/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string OptionsHelpText {
+            get {
+                return ResourceManager.GetString("OptionsHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Jump playback position to next track beginning ähnelt.
         /// </summary>
         public static string PlayNextTrackTooltip {
@@ -1251,11 +1368,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recode audio data to the selected codec after recording ähnelt.
+        /// </summary>
+        public static string RecodeAudioAfterRecording {
+            get {
+                return ResourceManager.GetString("RecodeAudioAfterRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Control recording ähnelt.
         /// </summary>
         public static string RecordControl {
             get {
                 return ResourceManager.GetString("RecordControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recording ähnelt.
+        /// </summary>
+        public static string Recording {
+            get {
+                return ResourceManager.GetString("Recording", resourceCulture);
             }
         }
         
@@ -1557,7 +1692,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Full edition ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Full edit mode ähnelt.
         /// </summary>
         public static string ViewModeFull {
             get {

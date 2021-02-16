@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Shared;
 using AudioCuesheetEditor.Shared.ResourceFiles;
@@ -100,6 +101,22 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 TextImportScheme = TextImportFile.DefaultImportScheme;
             }
+            if (AudioCodec == null)
+            {
+                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == "AudioCodec MP3");
+                RecodeAudioRecording = true;
+            }
+            if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
+            {
+                if (AudioCodec != null)
+                {
+                    AudioFileNameRecording = String.Format("{0}{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
+                }
+                else
+                {
+                    AudioFileNameRecording = AudioFile.RecordingFileName;
+                }
+            }
         }
 
         public String CuesheetFileName { get; set; }
@@ -121,11 +138,34 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
         public String TextImportScheme { get; set; }
+        [JsonIgnore]
         public ViewMode ViewMode { get; set; }
         public String ViewModeName 
         {
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
             set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
         }
+        [JsonIgnore]
+        public AudioCodec AudioCodec { get; set; }
+        public String AudioCodecName
+        {
+            get 
+            { 
+                if (AudioCodec != null)
+                {
+                    return AudioCodec.Name;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set 
+            {
+                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == value);
+            }
+        }
+        public Boolean RecodeAudioRecording { get; set; }
+        public String AudioFileNameRecording { get; set; }
     }
 }

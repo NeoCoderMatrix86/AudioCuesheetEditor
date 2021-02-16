@@ -196,7 +196,7 @@ along with Foobar.  If not, see
                                             {
                                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                                 var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
+                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
                                             }
                                             else
                                             {
@@ -784,6 +784,30 @@ along with Foobar.  If not, see
                     </Select>
                 </FieldBody>
             </Field>
+            <Divider DividerType="DividerType.Solid" />
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioFileNameRecording"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" />
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["EnableAudioRecoding"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Check TValue="Boolean" @bind-Checked="optionsController.Options.RecodeAudioRecording">@localizer["RecodeAudioAfterRecording"]</Check>
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioCodec"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Select TValue="String" @bind-SelectedValue="optionsController.Options.AudioCodecName">
+                        @foreach (var audioCodec in AudioFile.AudioCodecs)
+                        {
+                            <SelectItem Value="audioCodec.Name">@localizer[audioCodec.Name]</SelectItem>
+                        }
+                    </Select>
+                </FieldBody>
+            </Field>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
@@ -1278,7 +1302,7 @@ along with Foobar.  If not, see
                 recognized = true;
                 await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
-            if (CuesheetController.CheckFileMimeType(file, AudioFile.MimeTypes) == true)
+            if (CuesheetController.CheckFileMimeType(file, AudioFile.AudioCodecs) == true)
             {
                 recognized = true;
                 await SetAudioFile(file, "dropInputfiles");
@@ -1394,7 +1418,7 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnAudioFileChanged with {0}", e);
         if (e.File != null)
         {
-            if (CuesheetController.CheckFileMimeType(e.File, AudioFile.MimeTypes) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, AudioFile.AudioCodecs) == true)
             {
                 await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
             }
@@ -1419,7 +1443,8 @@ along with Foobar.  If not, see
         if (browserFile != null)
         {
             var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
-            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, browserFile.ContentType);
+            var codec = AudioFile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
+            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, codec);
         }
         else
         {
@@ -1535,7 +1560,7 @@ along with Foobar.  If not, see
         modalTrackEdit.Hide();
     }
 
-    private void CopyTrackClicked(Track trackToCopy) 
+    private void CopyTrackClicked(Track trackToCopy)
     {
         var copy = new Track(trackToCopy);
         cuesheet.AddTrack(copy);

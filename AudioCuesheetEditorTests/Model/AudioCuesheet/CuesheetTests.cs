@@ -23,6 +23,7 @@ using System.Linq;
 using System.IO;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditor.Model.IO.Audio;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -46,7 +47,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNull(cuesheet.AudioFile);
             var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
-            cuesheet.AudioFile = new IO.AudioFile("AudioFile01.ogg");
+            cuesheet.AudioFile = new AudioFile("AudioFile01.ogg");
             validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
             Assert.IsNull(validationErrorAudioFile);
         }

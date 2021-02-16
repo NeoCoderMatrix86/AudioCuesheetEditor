@@ -582,7 +582,7 @@
     <value>Switch view mode</value>
   </data>
   <data name="ViewModeFull" xml:space="preserve">
-    <value>Full edition</value>
+    <value>Full edit mode</value>
   </data>
   <data name="ViewModeRecord" xml:space="preserve">
     <value>Record mode</value>
@@ -606,7 +606,7 @@
     <value>Live record mode</value>
   </data>
   <data name="RecordModeHelpText" xml:space="preserve">
-    <value>AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select "Allow". This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by AudioCuesheetEditor. You can afterwards start your recording by pressing the "Start recording" Button. This causes the record to start and a display will tell you, that you are currently recording.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Play audio and once the end of the track has been reached, please enter the track artist and title and click the button "Add new track". This will set the end of the track to the current time. You can use "Enter" on the input fields to fast switch the focus inputs and enter the new track.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Once you have entered a track, it will display in the tracks and you can edit artist and title again and also delete the track afterwards.&lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Once you have finished your recording, click the button "Stop recording" which will stop the recording and make the recording (if audio is not blocked) downloadable to you. &lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;You can now switch back to full edit mode in order to do more editing on the cuesheet. All tracks are present and also the recording is available as download in the cuesheet data part.</value>
+    <value>AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select "Allow". This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by AudioCuesheetEditor. AudioCuesheetEditor records audio data default in WebM format. If you want to switch the audio format after recording, please check the options. You can afterwards start your recording by pressing the "Start recording" Button. This causes the record to start and a display will tell you, that you are currently recording.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Play audio and once the end of the track has been reached, please enter the track artist and title and click the button "Add new track". This will set the end of the track to the current time. You can use "Enter" on the input fields to fast switch the focus inputs and enter the new track.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Once you have entered a track, it will display in the tracks and you can edit artist and title again and also delete the track afterwards.&lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Once you have finished your recording, click the button "Stop recording" which will stop the recording and make the recording (if audio is not blocked) downloadable to you. &lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;You can now switch back to full edit mode in order to do more editing on the cuesheet. All tracks are present and also the recording is available as download in the cuesheet data part.</value>
   </data>
   <data name="EditTrack" xml:space="preserve">
     <value>Edit track details</value>
@@ -643,5 +643,50 @@
   </data>
   <data name="PreGap" xml:space="preserve">
     <value>Pregap</value>
+  </data>
+  <data name="AudioCodec" xml:space="preserve">
+    <value>Audio codec</value>
+  </data>
+  <data name="AudioCodec FLAC" xml:space="preserve">
+    <value>FLAC in native encapsulation format (Fileextension .flac)</value>
+  </data>
+  <data name="AudioCodec MP3" xml:space="preserve">
+    <value>MPEG Audio Layer III (Fileextension .mp3)</value>
+  </data>
+  <data name="AudioCodec OGA" xml:space="preserve">
+    <value>Ogg Audio Profile  (Fileextension .oga)</value>
+  </data>
+  <data name="AudioCodec OGG" xml:space="preserve">
+    <value>Ogg Vorbis I Profile (Fileextension .ogg)</value>
+  </data>
+  <data name="AudioCodec OPUS" xml:space="preserve">
+    <value>Ogg Opus profile (Fileextension .opus)</value>
+  </data>
+  <data name="AudioCodec WAV" xml:space="preserve">
+    <value>Waveform Audio File Format (Fileextension .wav)</value>
+  </data>
+  <data name="AudioCodec WAVE" xml:space="preserve">
+    <value>Waveform Audio File Format (Fileextension .wave)</value>
+  </data>
+  <data name="AudioCodec WEBM" xml:space="preserve">
+    <value>WebM Container (Fileextension .webm)</value>
+  </data>
+  <data name="AudioFileNameRecording" xml:space="preserve">
+    <value>Audio file name of recording</value>
+  </data>
+  <data name="CurrentlyProcessingAudioFilePleaseWait" xml:space="preserve">
+    <value>Currently processing recorded audio file, please wait ...</value>
+  </data>
+  <data name="EnableAudioRecoding" xml:space="preserve">
+    <value>Enable audio recoding after record</value>
+  </data>
+  <data name="RecodeAudioAfterRecording" xml:space="preserve">
+    <value>Recode audio data to the selected codec after recording</value>
+  </data>
+  <data name="Recording" xml:space="preserve">
+    <value>Recording</value>
+  </data>
+  <data name="OptionsHelpText" xml:space="preserve">
+    <value>AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src="images/Options1.png"/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br/&gt;&lt;h3&gt;Audio filename of recording&lt;/h3&gt;Sets the default filename used for recording if audio capture is activated.&lt;/br&gt;&lt;h3&gt;Enable audio recoding after record&lt;/h3&gt;Enables recoding audio captured data when using record mode. Please select the appropriate codec you wish for your audio file because the file is automatically recoded after a record.&lt;br/&gt;&lt;h3&gt;Audio codec&lt;/h3&gt;Select the audio codec you want to use for recoding a recorded audio capture when using record mode. You need to activate the "Enable audio recoding after record" option in order to automatically recorde the file after recording.</value>
   </data>
 </root>

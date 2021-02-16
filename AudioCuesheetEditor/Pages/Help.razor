@@ -21,7 +21,6 @@ along with Foobar.  If not, see
 
 <Layout>
     <LayoutContent Margin="Margin.Is2">
-        <!--TODO: Record mode-->
         <Heading Size="HeadingSize.Is1">@localizer["Help"]</Heading>
         <Heading Size="HeadingSize.Is5">@localizer["QuickLinks"]</Heading>
         <Blazorise.Link To="#headingIntroduction">@localizer["Introduction"]</Blazorise.Link>
@@ -41,6 +40,8 @@ along with Foobar.  If not, see
         <Blazorise.Link To="#importOfCuesheetFiles">@localizer["ImportOfCuesheetFiles"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#headingRecordMode">@localizer["RecordMode"]</Blazorise.Link>
+        <br />
+        <Blazorise.Link To="#headingOptions">@localizer["Options"]</Blazorise.Link>
         <br />
 
         <Heading id="headingIntroduction" Size="HeadingSize.Is2">
@@ -86,6 +87,11 @@ along with Foobar.  If not, see
             <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
         </Heading>
         @((MarkupString)localizer["RecordModeHelpText"].Value)
+        <Heading id="headingOptions" Size="HeadingSize.Is2">
+            @localizer["Options"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["OptionsHelpText"].Value)
     </LayoutContent>
 </Layout>
 

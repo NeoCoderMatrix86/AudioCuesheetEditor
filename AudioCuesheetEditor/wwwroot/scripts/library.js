@@ -124,7 +124,7 @@ function handleAudioRecording(stream) {
     rec.onstop = () => {
         var duration = Date.now() - startTime;
         closeAudioRecording();
-        let buggyBlob = new Blob(audioChunks, { 'type': 'audio/ogg; codecs=opus' });
+        let buggyBlob = new Blob(audioChunks);
         ysFixWebmDuration(buggyBlob, duration, function (fixedBlob) {
             var url = URL.createObjectURL(fixedBlob);
             if (GLOBAL.ViewModeRecord !== null) {
