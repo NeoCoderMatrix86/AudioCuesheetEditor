@@ -86,6 +86,10 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// </summary>
         public Stream ContentStream { get; private set; }
         public Boolean IsRecorded { get; private set; }
+        /// <summary>
+        /// Duration of the audio file
+        /// </summary>
+        public TimeSpan? Duration { get; private set; }
 
         public AudioCodec AudioCodec 
         {
@@ -93,7 +97,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             private set
             {
                 audioCodec = value;
-                if ((audioCodec != null) && (FileName.EndsWith(audioCodec.FileExtension) ==false))
+                if ((audioCodec != null) && (FileName.EndsWith(audioCodec.FileExtension) == false))
                 {
                     //Replace file ending
                     FileName = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(FileName), AudioCodec.FileExtension);
@@ -136,6 +140,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             {
                 ContentStream = await httpClient.GetStreamAsync(ObjectURL);
                 ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
+                var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
+                Duration = new TimeSpan(0, 0, track.Duration);
             }
         }
 

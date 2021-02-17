@@ -349,14 +349,9 @@ along with Foobar.  If not, see
 
     private void AnalyseAudioFile()
     {
-        if ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.PlaybackPossible) && (Cuesheet.AudioFile.IsContentStreamLoaded))
+        if ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.Duration.HasValue) && (TotalTime.HasValue == false))
         {
-            var track = new ATL.Track(Cuesheet.AudioFile.ContentStream, Cuesheet.AudioFile.AudioCodec.MimeType);
-            if (TotalTime.HasValue == false)
-            {
-                TotalTime = new TimeSpan(0, 0, 0, track.Duration);
-                StateHasChanged();
-            }
+            TotalTime = Cuesheet.AudioFile.Duration.Value;
         }
     }
 }
