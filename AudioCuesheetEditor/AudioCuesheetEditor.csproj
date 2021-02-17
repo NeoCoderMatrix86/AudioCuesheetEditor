@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="10.0.0" />
+    <PackageReference Include="z440.atl.core" Version="3.18.0" />
   </ItemGroup>
 
   <ItemGroup>

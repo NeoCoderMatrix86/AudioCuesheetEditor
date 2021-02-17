@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject IHowlGlobal HowlGlobal
 @inject HotKeys HotKeys
 @inject IJSRuntime JSRuntime
+@inject HttpClient httpent
 
 <Card>
     <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
@@ -83,10 +84,41 @@ along with Foobar.  If not, see
     private HotKeysContext hotKeysContext;
     private Boolean paused;
     private AudioFile audioFile;
+    private Cuesheet cuesheet;
 
-    //TODO: Attach to set and load the playback directly to get total time
     [Parameter]
-    public Cuesheet Cuesheet { get; set; }
+    public Cuesheet Cuesheet
+    {
+        get { return cuesheet; }
+        set
+        {
+            if (cuesheet != null)
+            {
+                cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
+                if (cuesheet.AudioFile != null)
+                {
+                    cuesheet.AudioFile.ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
+                }
+            }
+            cuesheet = value;
+            if (cuesheet != null)
+            {
+                cuesheet.AudioFileChanged += Cuesheet_AudioFileChanged;
+                if (cuesheet.AudioFile != null)
+                {
+                    if (cuesheet.AudioFile.IsContentStreamLoaded == false)
+                    {
+                        cuesheet.AudioFile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+                    }
+                    else
+                    {
+                        AnalyseAudioFile();
+                    }
+                }
+            }
+        }
+    }
+
     [Parameter]
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
 
@@ -187,7 +219,7 @@ along with Foobar.  If not, see
             if (AudioIsPlaying == true)
             {
                 CurrentPlaybackPosition = await Howl.GetCurrentTime();
-                if (TotalTime == null)
+                if (TotalTime.HasValue == false)
                 {
                     TotalTime = Howl.TotalTime;
                 }
@@ -214,7 +246,6 @@ along with Foobar.  If not, see
         {
             paused = false;
             audioUpdateTimer.Stop();
-            TotalTime = null;
             CurrentlyPlayingTrack = null;
             CurrentPlaybackPosition = null;
             AudioIsPlaying = false;
@@ -225,7 +256,6 @@ along with Foobar.  If not, see
         {
             paused = false;
             audioUpdateTimer.Stop();
-            TotalTime = null;
             CurrentlyPlayingTrack = null;
             CurrentPlaybackPosition = null;
             AudioIsPlaying = false;
@@ -300,6 +330,33 @@ along with Foobar.  If not, see
                 trackToPlay = Cuesheet.Tracks.ElementAtOrDefault(index - 1);
             }
             await OnPlayTrackClicked(trackToPlay);
+        }
+    }
+
+    private void Cuesheet_AudioFileChanged(object sender, EventArgs args)
+    {
+        if (Cuesheet.AudioFile != null)
+        {
+            Cuesheet.AudioFile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+        }
+        TotalTime = null;
+    }
+
+    private void AudioFile_ContentStreamLoaded(object sender, EventArgs args)
+    {
+        AnalyseAudioFile();
+    }
+
+    private void AnalyseAudioFile()
+    {
+        if ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.PlaybackPossible) && (Cuesheet.AudioFile.IsContentStreamLoaded))
+        {
+            var track = new ATL.Track(Cuesheet.AudioFile.ContentStream, Cuesheet.AudioFile.AudioCodec.MimeType);
+            if (TotalTime.HasValue == false)
+            {
+                TotalTime = new TimeSpan(0, 0, 0, track.Duration);
+                StateHasChanged();
+            }
         }
     }
 }

@@ -242,7 +242,7 @@ along with Foobar.  If not, see
     public async Task AudioRecordingFinished(String url)
     {
         var codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".webm");
-        Cuesheet.AudioFile = new AudioFile(optionsController.Options.AudioFileNameRecording, url, codec, true);
+        Cuesheet.AudioFile = new AudioFile(optionsController.Options.AudioFileNameRecording, url, codec, httpClient, true);
         await ProcessAudioRecording();
         StateHasChanged();
     }
@@ -456,7 +456,7 @@ along with Foobar.  If not, see
 
             await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.AudioFile.ObjectURL);
 
-            Cuesheet.AudioFile = new AudioFile(String.Format("{0}{1}", optionsController.Options.AudioFileNameRecording, optionsController.Options.AudioCodec.FileExtension), objectURL, optionsController.Options.AudioCodec, true);
+            Cuesheet.AudioFile = new AudioFile(String.Format("{0}{1}", optionsController.Options.AudioFileNameRecording, optionsController.Options.AudioCodec.FileExtension), objectURL, optionsController.Options.AudioCodec, httpClient, true);
         }
         StateHasChanged();
     }

@@ -42,6 +42,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private CDTextfile cDTextfile;
         private DateTime? recordingStart;
         private Boolean currentlyHandlingRankPropertyValueChanged;
+
+        public event EventHandler AudioFileChanged;
         public Cuesheet()
         {
             tracks = new List<Track>();
@@ -65,7 +67,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public AudioFile AudioFile 
         {
             get { return audioFile; }
-            set { audioFile = value; OnValidateablePropertyChanged(); }
+            set { audioFile = value; OnValidateablePropertyChanged(); AudioFileChanged?.Invoke(this, EventArgs.Empty); }
         }
 
         public CDTextfile CDTextfile 

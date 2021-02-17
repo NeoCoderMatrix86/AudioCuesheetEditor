@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
-    public class AudioFile
+    public class AudioFile : IDisposable
     {
         public static readonly String RecordingFileName = "Recording";
 
@@ -38,7 +38,10 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         };
 
         private AudioCodec audioCodec;
-        
+        private bool disposedValue;
+
+        public event EventHandler ContentStreamLoaded;
+
         public AudioFile(String fileName, Boolean isRecorded = false)
         {
             if (String.IsNullOrEmpty(fileName))
@@ -49,7 +52,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             IsRecorded = isRecorded;
         }
 
-        public AudioFile(String fileName, String objectURL, AudioCodec audioCodec, Boolean isRecorded = false) : this(fileName, isRecorded)
+        public AudioFile(String fileName, String objectURL, AudioCodec audioCodec, System.Net.Http.HttpClient httpClient, Boolean isRecorded = false) : this(fileName, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
@@ -59,12 +62,31 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             {
                 throw new ArgumentNullException(nameof(audioCodec));
             }
+            if (httpClient == null)
+            {
+                throw new ArgumentNullException(nameof(httpClient));
+            }
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
+            //Read stream asynchronously in order to be prepared (using large files)
+            _ = LoadContentStream(httpClient);
         }
 
         public String FileName { get; private set; }
         public String ObjectURL { get; private set; }
+        /// <summary>
+        /// Boolean indicating if the stream has fully been loaded
+        /// </summary>
+        public Boolean IsContentStreamLoaded 
+        {
+            get { return ContentStream != null; }
+        }
+        /// <summary>
+        /// File content stream. Be carefull, this stream is loaded asynchronously. Connect to the StreamLoaded for checking if loading has already been done!
+        /// </summary>
+        public Stream ContentStream { get; private set; }
+        public Boolean IsRecorded { get; private set; }
+
         public AudioCodec AudioCodec 
         {
             get { return audioCodec; }
@@ -107,6 +129,36 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 return playbackPossible;
             }
         }
-        public Boolean IsRecorded { get; private set; }
+
+        private async Task LoadContentStream(System.Net.Http.HttpClient httpClient)
+        {
+            if (String.IsNullOrEmpty(ObjectURL) == false)
+            {
+                ContentStream = await httpClient.GetStreamAsync(ObjectURL);
+                ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    ContentStream.Close();
+                    ContentStream.Dispose();
+                    ContentStream = null;
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
