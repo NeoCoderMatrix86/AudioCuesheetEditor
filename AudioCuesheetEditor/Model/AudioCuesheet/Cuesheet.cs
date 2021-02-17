@@ -42,6 +42,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private CDTextfile cDTextfile;
         private DateTime? recordingStart;
         private Boolean currentlyHandlingRankPropertyValueChanged;
+
+        public event EventHandler AudioFileChanged;
         public Cuesheet()
         {
             tracks = new List<Track>();
@@ -65,7 +67,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public AudioFile AudioFile 
         {
             get { return audioFile; }
-            set { audioFile = value; OnValidateablePropertyChanged(); }
+            set { audioFile = value; OnValidateablePropertyChanged(); AudioFileChanged?.Invoke(this, EventArgs.Empty); }
         }
 
         public CDTextfile CDTextfile 
@@ -290,12 +292,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void ReCalculateTrackProperties(Track trackToCalculate)
         {
-            //TODO: Get last end from audio file end
+            if ((AudioFile != null) && (AudioFile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
+            {
+                trackToCalculate.End = AudioFile.Duration;
+            }
             if (Tracks.Count > 1)
             {
                 var lastTrack = tracks.ElementAt(tracks.IndexOf(trackToCalculate) - 1);
                 if (lastTrack != trackToCalculate)
                 {
+                    if ((AudioFile != null) && (AudioFile.Duration.HasValue) && (lastTrack.End.HasValue) && (lastTrack.End.Value == AudioFile.Duration.Value))
+                    {
+                        lastTrack.End = null;
+                    }
                     if (trackToCalculate.Position.HasValue == false)
                     {
                         trackToCalculate.Position = lastTrack.Position + 1;
@@ -303,6 +312,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (trackToCalculate.Begin.HasValue == false)
                     {
                         trackToCalculate.Begin = lastTrack.End;
+                    }
+                    else
+                    {
+                        if (lastTrack.End.HasValue == false)
+                        {
+                            lastTrack.End = trackToCalculate.Begin;
+                        }
                     }
                     if (IsRecording)
                     {
