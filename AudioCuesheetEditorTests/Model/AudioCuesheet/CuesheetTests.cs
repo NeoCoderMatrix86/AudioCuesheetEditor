@@ -33,9 +33,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void AddTrackTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            cuesheet.AddTrack(new Track());
+            cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
         }
 
@@ -55,11 +56,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void EmptyCuesheetTracksValidationTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
             var validationErrorTracks = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Tracks))).FirstOrDefault();
             Assert.IsNotNull(validationErrorTracks);
-            cuesheet.AddTrack(new Track());
+            cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
             validationErrorTracks = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.Tracks)).FirstOrDefault();
             Assert.IsNull(validationErrorTracks);
         }
@@ -67,13 +69,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void MoveTrackTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
-            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
             var track2 = new Track();
-            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
             var track3 = new Track();
-            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(cuesheet.Tracks.Count, 3);
             Assert.IsTrue(track1.Position.Value == 1);
             cuesheet.MoveTrack(track1, MoveDirection.Up);
@@ -118,8 +121,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(textImportFile.Tracks.Count == 8);
             Assert.IsTrue(textImportFile.IsValid);
 
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
-            cuesheet.Import(textImportFile);
+            cuesheet.Import(textImportFile, testHelper.ApplicationOptions);
 
             Assert.IsNull(cuesheet.CDTextfile);
             Assert.AreEqual(cuesheet.ValidationErrors.Count, 5);
@@ -130,6 +134,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void ImportTestCalculateEndCorrectly()
         {
+            var testHelper = new TestHelper();
             var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_Bug_54))
             {
                 ImportScheme = "%Artist% - %Title%[\t]{1,}%End%"
@@ -138,7 +143,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(textImportFile.Tracks.Count == 39);
             Assert.IsTrue(textImportFile.IsValid);
             var cuesheet = new Cuesheet();
-            cuesheet.Import(textImportFile);
+            cuesheet.Import(textImportFile, testHelper.ApplicationOptions);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.IsTrue(cuesheet.Tracks.ElementAt(0).End == new TimeSpan(0, 5, 24));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(38).Begin == new TimeSpan(3, 13, 13));
@@ -147,6 +152,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void RecordTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.IsFalse(cuesheet.IsRecording);
             Assert.IsNull(cuesheet.RecordingTime);
@@ -156,11 +162,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var track = new Track();
             Assert.IsNull(track.Begin);
             Assert.IsNull(track.End);
-            cuesheet.AddTrack(track);
+            cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             Assert.AreEqual(TimeSpan.Zero, track.Begin);
             Assert.IsNull(track.End);
             var track2 = new Track();
-            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
             Assert.IsNotNull(track.End);
             Assert.AreNotEqual(TimeSpan.Zero, track.End);
         }
@@ -168,13 +174,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void TrackRecalculationTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
-            cuesheet.AddTrack(track1);
-            cuesheet.AddTrack(track2);
-            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(track1.Position.Value, (uint)1);
             Assert.AreEqual(track2.Position.Value, (uint)2);
             Assert.AreEqual(track3.Position.Value, (uint)3);
@@ -197,13 +204,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void TrackOverlappingTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
-            cuesheet.AddTrack(track1);
-            cuesheet.AddTrack(track2);
-            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(track1.Position.Value, (uint)1);
             Assert.AreEqual(track2.Position.Value, (uint)2);
             Assert.AreEqual(track3.Position.Value, (uint)3);

@@ -404,7 +404,7 @@ along with Foobar.  If not, see
                                             }
                                         </TableBody>
                                     </Table>
-                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options.LinkTracksWithPreviousOne)">@localizer["Addnewtrack"]</Button>
+                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)">@localizer["Addnewtrack"]</Button>
                                     <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                                 </CollapseBody>
                             </Collapse>
@@ -1210,7 +1210,7 @@ along with Foobar.  If not, see
         {
             optionsController.Options.TextImportScheme = textImportFile.ImportScheme;
             await optionsController.SaveOptions();
-            cuesheet.Import(textImportFile);
+            cuesheet.Import(textImportFile, optionsController.Options);
             modalTextImport.Hide();
             textImportFile = null;
             StateHasChanged();
@@ -1597,7 +1597,7 @@ along with Foobar.  If not, see
     private void CopyTrackClicked(Track trackToCopy)
     {
         var copy = new Track(trackToCopy);
-        cuesheet.AddTrack(copy, optionsController.Options.LinkTracksWithPreviousOne);
+        cuesheet.AddTrack(copy, optionsController.Options);
         EditTrackModal(copy);
     }
 }

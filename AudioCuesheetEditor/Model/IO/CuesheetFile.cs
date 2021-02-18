@@ -145,7 +145,7 @@ namespace AudioCuesheetEditor.Model.IO
                         var seconds = int.Parse(match.Value.Substring(match.Value.IndexOf(":") + 1));
                         track.Begin = new TimeSpan(0, minutes, seconds);
                     }
-                    cuesheet.AddTrack(track, applicationOptions.LinkTracksWithPreviousOne);
+                    cuesheet.AddTrack(track, applicationOptions);
                 }
                 if (regexTrackPostGap.IsMatch(line) == true)
                 {

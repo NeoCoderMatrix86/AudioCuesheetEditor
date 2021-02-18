@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Reflection;
 using System;
 using System.Collections.Generic;
@@ -107,11 +108,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void AddTrack(Track track, Boolean? linkTracksWithPreviousOne = null)
+        public void AddTrack(Track track, ApplicationOptions applicationOptions)
         {
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
+            }
+            if (applicationOptions == null)
+            {
+                throw new ArgumentNullException(nameof(applicationOptions));
             }
             if (track.IsCloned)
             {
@@ -124,7 +129,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = this;
             tracks.Add(track);
             ReCalculateTrackProperties(track);
-            if ((linkTracksWithPreviousOne.HasValue) && (linkTracksWithPreviousOne.Value == true))
+            if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
             {
                 if (tracks.Count > 1)
                 {
@@ -209,11 +214,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(TextImportFile textImportFile, Boolean? linkTracksWithPreviousOne = null)
+        public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
             if (textImportFile == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
+            }
+            if (applicationOptions == null)
+            {
+                throw new ArgumentNullException(nameof(applicationOptions));
             }
             if (textImportFile.IsValid == false)
             {
@@ -222,7 +231,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             foreach (var importTrack in textImportFile.Tracks)
             {
                 var track = new Track(importTrack);
-                AddTrack(track, linkTracksWithPreviousOne);
+                AddTrack(track, applicationOptions);
             }
         }
 

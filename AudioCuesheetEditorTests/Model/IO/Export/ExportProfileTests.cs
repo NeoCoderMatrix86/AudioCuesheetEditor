@@ -32,6 +32,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
         [TestMethod()]
         public void ExportProfileTest()
         {
+            var testHelper = new TestHelper();
             //Prepare cuesheet
             Cuesheet cuesheet = new Cuesheet
             {
@@ -50,7 +51,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
                 var rand = new Random();
                 var flagsToAdd = rand.Next(0, 3);
                 if (flagsToAdd > 0)
@@ -156,6 +157,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
         [TestMethod()]
         public void TestExportWithPregapAndPostgap()
         {
+            var testHelper = new TestHelper();
             //Prepare cuesheet
             Cuesheet cuesheet = new Cuesheet
             {
@@ -176,7 +178,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
                 var rand = new Random();
                 var flagsToAdd = rand.Next(0, 3);
                 if (flagsToAdd > 0)

@@ -55,7 +55,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
@@ -96,6 +96,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void TestExportWithPreGapAndPostGap()
         {
+            var testHelper = new TestHelper();
             Cuesheet cuesheet = new Cuesheet
             {
                 Artist = "Demo Artist",
@@ -121,7 +122,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 }
                 track.PostGap = new TimeSpan(0, 0, 2);
                 track.PreGap = new TimeSpan(0, 0, 3);
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
@@ -151,6 +152,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void TestExportFlags()
         {
+            var testHelper = new TestHelper();
             Cuesheet cuesheet = new Cuesheet
             {
                 Artist = "Demo Artist",
@@ -174,7 +176,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 {
                     track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
                 }
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();

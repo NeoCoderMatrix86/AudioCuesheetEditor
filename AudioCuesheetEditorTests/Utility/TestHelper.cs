@@ -34,6 +34,7 @@ namespace AudioCuesheetEditorTests.Utility
             Localizer = new StringLocalizer<Localization>(factory);
             CuesheetController = new CuesheetController();
             ApplicationOptions = new ApplicationOptions();
+            ApplicationOptions.LinkTracksWithPreviousOne = false;
         }
 
         public StringLocalizer<Localization> Localizer { get; private set; }
