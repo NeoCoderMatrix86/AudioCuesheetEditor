@@ -242,10 +242,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("	TITLE \"Sample Title 8\"");
             builder.AppendLine("	INDEX 01 45:51:00");
 
+            var testHelper = new TestHelper();
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);
@@ -254,12 +255,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
 
             File.Delete(tempFile);
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30), testHelper.ApplicationOptions);
             Assert.IsNotNull(cuesheet);
-            var testHelper = new TestHelper();
             Assert.IsNull(cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57), testHelper.ApplicationOptions);
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.AreEqual(cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
@@ -310,7 +310,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);

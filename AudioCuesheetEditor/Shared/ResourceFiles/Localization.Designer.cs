@@ -259,6 +259,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Automatically link tracks ähnelt.
+        /// </summary>
+        public static string AutomaticallyLinkTracks {
+            get {
+                return ResourceManager.GetString("AutomaticallyLinkTracks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Automatically link tracks with previous track ähnelt.
+        /// </summary>
+        public static string AutomaticallyLinkTracksWithPrevious {
+            get {
+                return ResourceManager.GetString("AutomaticallyLinkTracksWithPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Begin ähnelt.
         /// </summary>
         public static string Begin {
@@ -1206,6 +1224,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Link this track with previous track ähnelt.
+        /// </summary>
+        public static string LinkThisTrackWithPreviousTrack {
+            get {
+                return ResourceManager.GetString("LinkThisTrackWithPreviousTrack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Log ähnelt.
         /// </summary>
         public static string Log {
@@ -1638,6 +1665,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Track linking ähnelt.
+        /// </summary>
+        public static string TrackLinking {
+            get {
+                return ResourceManager.GetString("TrackLinking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die It is possible to link a track with the previous track. This makes shure, that changes to Begin,End and Position are automatically transfered to the next following track. &lt;img src=&quot;images/TrackLinking1.png&quot;/&gt; If a track is linked to the previous track, you can change for example the End and the Begin of the following linked track is automatically replaced with the End you entered. If you wish to disable linking, just click on the orange &quot;Unlink&quot; Button. If you afterwards want to link the tracks again, just  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string TrackLinkingText {
+            get {
+                return ResourceManager.GetString("TrackLinkingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Tracks ähnelt.
         /// </summary>
         public static string Tracks {
@@ -1652,6 +1697,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string TrackTableControls {
             get {
                 return ResourceManager.GetString("TrackTableControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unlink this track from previous track ähnelt.
+        /// </summary>
+        public static string UnlinkThisTrackFromPreviousTrack {
+            get {
+                return ResourceManager.GetString("UnlinkThisTrackFromPreviousTrack", resourceCulture);
             }
         }
         

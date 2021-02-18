@@ -31,6 +31,8 @@ along with Foobar.  If not, see
         <br />
         <Blazorise.Link To="#validation">@localizer["Validation"]</Blazorise.Link>
         <br />
+        <Blazorise.Link To="#trackLinking">@localizer["TrackLinking"]</Blazorise.Link>
+        <br />
         <Blazorise.Link To="#headingCreateCuesheet">@localizer["CreateCuesheet"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#headingImportOfFiles">@localizer["ImportOfFiles"]</Blazorise.Link>
@@ -63,6 +65,11 @@ along with Foobar.  If not, see
             <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
         </Heading>
         @((MarkupString)localizer["ValidationText"].Value)
+        <Heading id="trackLinking" Size="HeadingSize.Is3">
+            @localizer["TrackLinking"]
+            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["TrackLinkingText"].Value)
         <Heading id="headingCreateCuesheet" Size="HeadingSize.Is2">
             @localizer["CreateCuesheet"]
             <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>

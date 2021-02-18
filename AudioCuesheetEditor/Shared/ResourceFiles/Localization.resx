@@ -687,6 +687,24 @@
     <value>Recording</value>
   </data>
   <data name="OptionsHelpText" xml:space="preserve">
-    <value>AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src="images/Options1.png"/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br/&gt;&lt;h3&gt;Audio filename of recording&lt;/h3&gt;Sets the default filename used for recording if audio capture is activated.&lt;/br&gt;&lt;h3&gt;Enable audio recoding after record&lt;/h3&gt;Enables recoding audio captured data when using record mode. Please select the appropriate codec you wish for your audio file because the file is automatically recoded after a record.&lt;br/&gt;&lt;h3&gt;Audio codec&lt;/h3&gt;Select the audio codec you want to use for recoding a recorded audio capture when using record mode. You need to activate the "Enable audio recoding after record" option in order to automatically recorde the file after recording.</value>
+    <value>AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src="images/Options1.png"/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br/&gt;&lt;h3&gt;Audio filename of recording&lt;/h3&gt;Sets the default filename used for recording if audio capture is activated.&lt;/br&gt;&lt;h3&gt;Enable audio recoding after record&lt;/h3&gt;Enables recoding audio captured data when using record mode. Please select the appropriate codec you wish for your audio file because the file is automatically recoded after a record.&lt;br/&gt;&lt;h3&gt;Audio codec&lt;/h3&gt;Select the audio codec you want to use for recoding a recorded audio capture when using record mode. You need to activate the "Enable audio recoding after record" option in order to automatically recorde the file after recording.&lt;br/&gt;&lt;h3&gt;Automatically link tracks&lt;/h3&gt;Sets the default value, if tracks should be automatically linked or not.</value>
+  </data>
+  <data name="AutomaticallyLinkTracks" xml:space="preserve">
+    <value>Automatically link tracks</value>
+  </data>
+  <data name="AutomaticallyLinkTracksWithPrevious" xml:space="preserve">
+    <value>Automatically link tracks with previous track</value>
+  </data>
+  <data name="LinkThisTrackWithPreviousTrack" xml:space="preserve">
+    <value>Link this track with previous track</value>
+  </data>
+  <data name="TrackLinking" xml:space="preserve">
+    <value>Track linking</value>
+  </data>
+  <data name="TrackLinkingText" xml:space="preserve">
+    <value>It is possible to link a track with the previous track. This makes shure, that changes to Begin,End and Position are automatically transfered to the next following track. &lt;img src="images/TrackLinking1.png"/&gt; If a track is linked to the previous track, you can change for example the End and the Begin of the following linked track is automatically replaced with the End you entered. If you wish to disable linking, just click on the orange "Unlink" Button. If you afterwards want to link the tracks again, just hit the green "Link" Button.</value>
+  </data>
+  <data name="UnlinkThisTrackFromPreviousTrack" xml:space="preserve">
+    <value>Unlink this track from previous track</value>
   </data>
 </root>

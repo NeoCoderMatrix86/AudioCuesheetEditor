@@ -117,6 +117,10 @@ namespace AudioCuesheetEditor.Model.Options
                     AudioFileNameRecording = AudioFile.RecordingFileName;
                 }
             }
+            if (LinkTracksWithPreviousOne.HasValue == false)
+            {
+                LinkTracksWithPreviousOne = true;
+            }
         }
 
         public String CuesheetFileName { get; set; }
@@ -167,5 +171,6 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public Boolean RecodeAudioRecording { get; set; }
         public String AudioFileNameRecording { get; set; }
+        public Boolean? LinkTracksWithPreviousOne { get; set; }
     }
 }

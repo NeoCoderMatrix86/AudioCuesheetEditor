@@ -687,6 +687,24 @@
     <value>Aufnahme</value>
   </data>
   <data name="OptionsHelpText" xml:space="preserve">
-    <value>AudioCuesheetEditor stellt viele Optionen bereit, um sich ihren Bedürfnissen anzupassen.&lt;br/&gt;&lt;img src="images/Options1.png"/&gt;&lt;br/&gt;&lt;h3&gt;Sprache&lt;/h3&gt;Sie können ihre Sprache auswählen.&lt;br/&gt;&lt;h3&gt;Cuesheet Dateiname&lt;/h3&gt;Stellt den standardmäßigen Dateinamen für eine Cuesheet ein, der beim Download genutzt wird.&lt;br/&gt;&lt;h3&gt;Import Textschema&lt;/h3&gt;Setzt das standardmäßig genutzte Schema für den Textimport, welches für die Analyse von Tracks genutzt wird.&lt;br/&gt;&lt;h3&gt;Standard Anzeigemodus&lt;/h3&gt;Setzt den standardmäßig genutzten Anzeigemodus, mit dem die Applikation startet.&lt;br/&gt;&lt;h3&gt;Dateiname für aufgenommene Audiodaten&lt;/h3&gt;Gibt den standardmäßig genutzten Dateinamen für die Audiodatei bei Benutzung des Aufnahmemodus an.&lt;/br&gt;&lt;h3&gt;Neukodierung der Audiodaten nach der Aufnahme aktivieren&lt;/h3&gt;Aktiviert das umkodieren der Audiodaten in den eingestellten Codec bei Benutzung des Aufnahmemodus mit aktivierter Audioaufnahme. Bitte wählen Sie zugleich den gewünschten Codec, da die Umkodierung direkt nach der Aufnahme startet.&lt;br/&gt;&lt;h3&gt;Audio Codec&lt;/h3&gt;Wählen Sie hier den gewünschten Audio Codec für eine Aufnahme aus. Diese Option wird im Aufnahmemodus genutzt, um die aufgenommenen Audiodaten automatisch in den gewünschten Codec bereit zu stellen. Sie müssen zuvor die Option "Neukodierung der Audiodaten nach der Aufnahme aktivieren" einschalten.</value>
+    <value>AudioCuesheetEditor stellt viele Optionen bereit, um sich ihren Bedürfnissen anzupassen.&lt;br/&gt;&lt;img src="images/Options1.png"/&gt;&lt;br/&gt;&lt;h3&gt;Sprache&lt;/h3&gt;Sie können ihre Sprache auswählen.&lt;br/&gt;&lt;h3&gt;Cuesheet Dateiname&lt;/h3&gt;Stellt den standardmäßigen Dateinamen für eine Cuesheet ein, der beim Download genutzt wird.&lt;br/&gt;&lt;h3&gt;Import Textschema&lt;/h3&gt;Setzt das standardmäßig genutzte Schema für den Textimport, welches für die Analyse von Tracks genutzt wird.&lt;br/&gt;&lt;h3&gt;Standard Anzeigemodus&lt;/h3&gt;Setzt den standardmäßig genutzten Anzeigemodus, mit dem die Applikation startet.&lt;br/&gt;&lt;h3&gt;Dateiname für aufgenommene Audiodaten&lt;/h3&gt;Gibt den standardmäßig genutzten Dateinamen für die Audiodatei bei Benutzung des Aufnahmemodus an.&lt;/br&gt;&lt;h3&gt;Neukodierung der Audiodaten nach der Aufnahme aktivieren&lt;/h3&gt;Aktiviert das umkodieren der Audiodaten in den eingestellten Codec bei Benutzung des Aufnahmemodus mit aktivierter Audioaufnahme. Bitte wählen Sie zugleich den gewünschten Codec, da die Umkodierung direkt nach der Aufnahme startet.&lt;br/&gt;&lt;h3&gt;Audio Codec&lt;/h3&gt;Wählen Sie hier den gewünschten Audio Codec für eine Aufnahme aus. Diese Option wird im Aufnahmemodus genutzt, um die aufgenommenen Audiodaten automatisch in den gewünschten Codec bereit zu stellen. Sie müssen zuvor die Option "Neukodierung der Audiodaten nach der Aufnahme aktivieren" einschalten.&lt;br/&gt;&lt;h3&gt;Tracks standardmäßig koppeln&lt;/h3&gt;Setzt den Standardwert, ob Tracks automatisch gekoppelt werden oder nicht.</value>
+  </data>
+  <data name="AutomaticallyLinkTracks" xml:space="preserve">
+    <value>Tracks standardmäßig koppeln</value>
+  </data>
+  <data name="AutomaticallyLinkTracksWithPrevious" xml:space="preserve">
+    <value>Tracks standardmäßig an den vorherigen Track koppeln</value>
+  </data>
+  <data name="LinkThisTrackWithPreviousTrack" xml:space="preserve">
+    <value>Diesen Track an den vorherigen Track koppeln</value>
+  </data>
+  <data name="TrackLinking" xml:space="preserve">
+    <value>Track Kopplung</value>
+  </data>
+  <data name="TrackLinkingText" xml:space="preserve">
+    <value>Es ist möglich einen Track mit dem vorherigen Track zu koppeln. Dies stellt sicher, dass Änderungen an Beginn, Ende und Position automatisch in den anschließenden Track übertragen werden.&lt;img src="images/TrackLinking1.png"/&gt;Wenn ein Track mit dem vorherigen Track gekoppelt ist, können Sie beispielsweise das Ende verändern und ihre Änderung wird automatisch in den nachfolgenden Track bei Beginn eingetragen. Wenn Sie die Kopplung aufheben möchten, klicken sie einfach auf den orangfarbenenen "Abkoppeln" Button. Wenn Sie anschließend die Kopplung wiederherstellen möchten, klicken Sie einfach auf den grünen "Koppeln" Button.</value>
+  </data>
+  <data name="UnlinkThisTrackFromPreviousTrack" xml:space="preserve">
+    <value>Diesen Track vom vorherigen Track abkoppeln</value>
   </data>
 </root>
