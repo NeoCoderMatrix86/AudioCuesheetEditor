@@ -421,7 +421,7 @@ along with Foobar.  If not, see
         {
             enterCurrentTrackArtist.Focus();
             await Task.Delay(50);
-            Cuesheet.AddTrack(currentRecordingTrack);
+            Cuesheet.AddTrack(currentRecordingTrack, optionsController.Options.LinkTracksWithPreviousOne);
             currentRecordingTrack = new Track();
         }
     }

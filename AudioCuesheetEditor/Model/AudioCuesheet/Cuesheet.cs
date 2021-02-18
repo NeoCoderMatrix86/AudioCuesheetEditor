@@ -107,7 +107,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void AddTrack(Track track)
+        public void AddTrack(Track track, Boolean? linkTracksWithPreviousOne = null)
         {
             if (track == null)
             {
@@ -124,42 +124,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = this;
             tracks.Add(track);
             ReCalculateTrackProperties(track);
+            if ((linkTracksWithPreviousOne.HasValue) && (linkTracksWithPreviousOne.Value == true))
+            {
+                if (tracks.Count > 1)
+                {
+                    var previousTrack = tracks.ElementAt(tracks.IndexOf(track) - 1);
+                    track.LinkedPreviousTrack = previousTrack;
+                }
+            }
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
-        }
-
-        private void Track_RankPropertyValueChanged(object sender, string e)
-        {
-            if (currentlyHandlingRankPropertyValueChanged == false)
-            {
-                currentlyHandlingRankPropertyValueChanged = true;
-                Track trackRaisedEvent = (Track)sender;
-                var index = tracks.IndexOf(trackRaisedEvent);
-                switch (e)
-                {
-                    case nameof(Track.Begin):
-                        if (index > 0)
-                        {
-                            var previousTrack = tracks.ElementAt(index - 1);
-                            if ((previousTrack != trackRaisedEvent) && (previousTrack.End.HasValue == false))
-                            {
-                                previousTrack.End = trackRaisedEvent.Begin;
-                            }
-                        }
-                        break;
-                    case nameof(Track.End):
-                        if ((index + 1) < Tracks.Count)
-                        {
-                            var nextTrack = tracks.ElementAt(index + 1);
-                            if ((nextTrack != trackRaisedEvent) && (nextTrack.Begin.HasValue == false))
-                            {
-                                nextTrack.Begin = trackRaisedEvent.End;
-                            }
-                        }
-                        break;
-                }
-                currentlyHandlingRankPropertyValueChanged = false;
-            }
         }
 
         public void RemoveTrack(Track track)
@@ -235,7 +209,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(TextImportFile textImportFile)
+        public void Import(TextImportFile textImportFile, Boolean? linkTracksWithPreviousOne = null)
         {
             if (textImportFile == null)
             {
@@ -248,8 +222,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             foreach (var importTrack in textImportFile.Tracks)
             {
                 var track = new Track(importTrack);
-                AddTrack(track);
+                AddTrack(track, linkTracksWithPreviousOne);
             }
+        }
+
+        public void StartRecording()
+        {
+            recordingStart = DateTime.UtcNow;
+        }
+
+        public void StopRecording()
+        {
+            //Set end of last track
+            var lastTrack = Tracks.LastOrDefault();
+            if (lastTrack != null)
+            {
+                lastTrack.End = DateTime.UtcNow - recordingStart.Value;
+            }
+            recordingStart = null;
         }
 
         protected override void Validate()
@@ -282,6 +272,40 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 _ = CatalogueNumber.IsValid;
                 validationErrors.AddRange(CatalogueNumber.ValidationErrors);
+            }
+        }
+
+        private void Track_RankPropertyValueChanged(object sender, string e)
+        {
+            if (currentlyHandlingRankPropertyValueChanged == false)
+            {
+                currentlyHandlingRankPropertyValueChanged = true;
+                Track trackRaisedEvent = (Track)sender;
+                var index = tracks.IndexOf(trackRaisedEvent);
+                switch (e)
+                {
+                    case nameof(Track.Begin):
+                        if (index > 0)
+                        {
+                            var previousTrack = tracks.ElementAt(index - 1);
+                            if ((previousTrack != trackRaisedEvent) && (previousTrack.End.HasValue == false))
+                            {
+                                previousTrack.End = trackRaisedEvent.Begin;
+                            }
+                        }
+                        break;
+                    case nameof(Track.End):
+                        if ((index + 1) < Tracks.Count)
+                        {
+                            var nextTrack = tracks.ElementAt(index + 1);
+                            if ((nextTrack != trackRaisedEvent) && (nextTrack.Begin.HasValue == false))
+                            {
+                                nextTrack.Begin = trackRaisedEvent.End;
+                            }
+                        }
+                        break;
+                }
+                currentlyHandlingRankPropertyValueChanged = false;
             }
         }
 
@@ -337,22 +361,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     trackToCalculate.Begin = TimeSpan.Zero;
                 }
             }
-        }
-
-        public void StartRecording()
-        {
-            recordingStart = DateTime.UtcNow;
-        }
-
-        public void StopRecording()
-        {
-            //Set end of last track
-            var lastTrack = Tracks.LastOrDefault();
-            if (lastTrack != null)
-            {
-                lastTrack.End = DateTime.UtcNow - recordingStart.Value;
-            }
-            recordingStart = null;
         }
     }
 }
