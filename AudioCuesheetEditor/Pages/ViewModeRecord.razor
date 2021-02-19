@@ -1,16 +1,14 @@
-﻿<!--
+﻿
+<!--
 This file is part of AudioCuesheetEditor.
-
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
 AudioCuesheetEditor is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
@@ -41,6 +39,13 @@ along with Foobar.  If not, see
                     var backgroundCSS = Cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
                     <div class="@backgroundCSS">
                         <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["RecordRunning"]</Heading>
+                    </div>
+                }
+                @if (timerStarted == true)
+                {
+                    var backgroundCSS = "BackgroundBlink rounded";
+                    <div class="@backgroundCSS">
+                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Recording will start in " + counter]</Heading>
                     </div>
                 }
                 <Row>
@@ -237,6 +242,7 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Cuesheet Cuesheet { get; set; }
+    public int counter { get; set; } = 5;
 
     [JSInvokable()]
     public async Task AudioRecordingFinished(String url)
@@ -260,6 +266,8 @@ along with Foobar.  If not, see
     private Boolean recordControlVisible = true;
     private Boolean enterNewTrackVisible = true;
     private Boolean cuesheetTracksVisible = true;
+
+    private bool timerStarted = false;
 
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronRecordControl = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
@@ -347,6 +355,9 @@ along with Foobar.  If not, see
         }
         else
         {
+            await StartTimerAsync();
+            timerStarted = false;
+            counter = 5;
             Cuesheet.StartRecording();
             recordTimer.Start();
             enterCurrentTrackArtist.Focus();
@@ -460,4 +471,16 @@ along with Foobar.  If not, see
         }
         StateHasChanged();
     }
+
+    private async Task StartTimerAsync()
+    {
+        timerStarted = true;
+        while (counter > 0)
+        {
+            StateHasChanged();
+            await Task.Delay(1000);
+            counter--;
+        }
+    }
 }
+
