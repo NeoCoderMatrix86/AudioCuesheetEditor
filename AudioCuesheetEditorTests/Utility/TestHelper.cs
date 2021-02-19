@@ -33,8 +33,10 @@ namespace AudioCuesheetEditorTests.Utility
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
             Localizer = new StringLocalizer<Localization>(factory);
             CuesheetController = new CuesheetController();
-            ApplicationOptions = new ApplicationOptions();
-            ApplicationOptions.LinkTracksWithPreviousOne = false;
+            ApplicationOptions = new ApplicationOptions
+            {
+                LinkTracksWithPreviousOne = false
+            };
         }
 
         public StringLocalizer<Localization> Localizer { get; private set; }

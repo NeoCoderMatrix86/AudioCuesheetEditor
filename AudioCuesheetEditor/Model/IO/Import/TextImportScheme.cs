@@ -13,21 +13,38 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.IO.Audio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public interface ICuesheet<ITrack> : ICuesheetEntity
+    public class TextImportScheme
     {
-        public IReadOnlyCollection<ITrack> Tracks { get; }
-        public String Artist { get; set; }
-        public String Title { get; set; }
-        public AudioFile AudioFile { get; set; }
-        public CDTextfile CDTextfile { get; set; }
-        public CatalogueNumber CatalogueNumber { get; }
+        private string schemeTracks;
+        private string schemeCuesheet;
+
+        public event EventHandler<String> SchemeChanged;
+
+        public String SchemeTracks
+        {
+            get { return schemeTracks; }
+            set
+            {
+                schemeTracks = value;
+                SchemeChanged?.Invoke(this, nameof(SchemeTracks));
+            }
+        }
+
+        public String SchemeCuesheet
+        {
+            get { return schemeCuesheet; }
+            set
+            {
+                schemeCuesheet = value;
+                SchemeChanged?.Invoke(this, nameof(SchemeCuesheet));
+            }
+        }
     }
 }

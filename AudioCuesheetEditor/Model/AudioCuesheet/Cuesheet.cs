@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Reflection;
 using System;
@@ -216,6 +217,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
+            //TODO
             if (textImportFile == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
@@ -228,11 +230,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
             }
-            foreach (var importTrack in textImportFile.Tracks)
-            {
-                var track = new Track(importTrack);
-                AddTrack(track, applicationOptions);
-            }
+            //foreach (var importTrack in textImportFile.Tracks)
+            //{
+            //    var track = new Track(importTrack);
+            //    AddTrack(track, applicationOptions);
+            //}
         }
 
         public void StartRecording()

@@ -21,13 +21,24 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public interface ICuesheet<ITrack> : ICuesheetEntity
+    public class ImportCuesheet : ICuesheet<ImportTrack>
     {
-        public IReadOnlyCollection<ITrack> Tracks { get; }
-        public String Artist { get; set; }
-        public String Title { get; set; }
+        private readonly List<ImportTrack> tracks = new List<ImportTrack>();
+
+        public IReadOnlyCollection<ImportTrack> Tracks => tracks.AsReadOnly();
+        public string Artist { get; set; }
+        public string Title { get; set; }
         public AudioFile AudioFile { get; set; }
         public CDTextfile CDTextfile { get; set; }
-        public CatalogueNumber CatalogueNumber { get; }
+        public CatalogueNumber CatalogueNumber { get; set; }
+        public void AddTrack(ImportTrack track)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            track.Cuesheet = this;
+            tracks.Add(track);
+        }
     }
 }

@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Shared;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
@@ -97,9 +98,10 @@ namespace AudioCuesheetEditor.Model.Options
                 list.Add(exportProfile);
                 ExportProfiles = list.AsReadOnly();
             }
-            if (String.IsNullOrEmpty(TextImportScheme) == true)
+            if (TextImportScheme == null)
             {
-                TextImportScheme = TextImportFile.DefaultImportScheme;
+                //TODO
+                //TextImportScheme = TextImportFile.TextImportScheme;
             }
             if (AudioCodec == null)
             {
@@ -141,7 +143,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
-        public String TextImportScheme { get; set; }
+        public TextImportScheme TextImportScheme { get; set; }
         [JsonIgnore]
         public ViewMode ViewMode { get; set; }
         public String ViewModeName 

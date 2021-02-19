@@ -509,7 +509,8 @@ along with Foobar.  If not, see
         <ModalBody>
             @if (textImportFile != null)
             {
-                <Field Horizontal="true">
+                <!--TODO: Make file lines visible and the matches-->
+                <!--<Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
                         <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeTooltip"]">
                             @localizer["TextImportScheme"]
@@ -517,9 +518,9 @@ along with Foobar.  If not, see
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
-                            <Addon AddonType="AddonType.Body">
+                            <Addon AddonType="AddonType.Body">-->
                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["EnterTextImportSchemeHere"]" @bind-Text="textImportFile.ImportScheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterTextImportSchemeTooltip"]" />
+                                <!--<TextEdit Placeholder="@localizer["EnterTextImportSchemeHere"]" @bind-Text="textImportFile.ImportSchemeTracks" data-toggle="tooltip" data-placement="top" title="@localizer["EnterTextImportSchemeTooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -527,9 +528,9 @@ along with Foobar.  If not, see
                                         @localizer["SelectPlaceholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        @foreach (var availableScheme in TextImportFile.AvailableSchemes)
+                                        @foreach (var availableSchemeTrack in TextImportFile.AvailableSchemesTrack)
                                         {
-                                            <DropdownItem Clicked="() => textImportFile.ImportScheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => textImportFile.ImportSchemeTracks += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -575,7 +576,7 @@ along with Foobar.  If not, see
                             </TableRow>
                         }
                     </TableBody>
-                </Table>
+                </Table>-->
             }
         </ModalBody>
         <ModalFooter>
@@ -794,12 +795,13 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
                 </FieldBody>
             </Field>
-            <Field Horizontal="true">
+            <!--TODO-->
+            @*<Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportScheme"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <TextEdit @bind-Text="optionsController.Options.TextImportScheme" />
                 </FieldBody>
-            </Field>
+            </Field>*@
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["DefaultViewMode"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
@@ -1182,7 +1184,8 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
-                textImportFile.ImportScheme = optionsController.Options.TextImportScheme;
+                //TODO
+                //textImportFile.ImportSchemeTracks = optionsController.Options.TextImportScheme;
                 modalTextImport.Show();
             }
             else
@@ -1208,12 +1211,13 @@ along with Foobar.  If not, see
         Logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
-            optionsController.Options.TextImportScheme = textImportFile.ImportScheme;
-            await optionsController.SaveOptions();
-            cuesheet.Import(textImportFile, optionsController.Options);
-            modalTextImport.Hide();
-            textImportFile = null;
-            StateHasChanged();
+            //TODO
+            //optionsController.Options.TextImportScheme = textImportFile.ImportSchemeTracks;
+            //await optionsController.SaveOptions();
+            //cuesheet.Import(textImportFile, optionsController.Options);
+            //modalTextImport.Hide();
+            //textImportFile = null;
+            //StateHasChanged();
         }
     }
 
