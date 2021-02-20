@@ -795,13 +795,21 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
                 </FieldBody>
             </Field>
+            <Divider DividerType="DividerType.Solid" />
             <!--TODO-->
-            @*<Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportScheme"]</FieldLabel>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeCuesheet"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme" />
+                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeCuesheet" />
                 </FieldBody>
-            </Field>*@
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeTrack"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeTracks" />
+                </FieldBody>
+            </Field>
+            <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["DefaultViewMode"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">

@@ -1629,11 +1629,20 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Import Textscheme ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textimport regular expression for Cuesheet properties ähnelt.
         /// </summary>
-        public static string TextImportScheme {
+        public static string TextImportSchemeCuesheet {
             get {
-                return ResourceManager.GetString("TextImportScheme", resourceCulture);
+                return ResourceManager.GetString("TextImportSchemeCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textimport regular expression for Track properties ähnelt.
+        /// </summary>
+        public static string TextImportSchemeTrack {
+            get {
+                return ResourceManager.GetString("TextImportSchemeTrack", resourceCulture);
             }
         }
         

@@ -24,7 +24,7 @@ using System.IO;
 using AudioCuesheetEditorTests.Utility;
 using AudioCuesheetEditor.Model.IO.Import;
 
-namespace AudioCuesheetEditor.Model.IO.Tests
+namespace AudioCuesheetEditor.Model.IO.Import.Tests
 {
     [TestClass()]
     public class TextImportFileTests

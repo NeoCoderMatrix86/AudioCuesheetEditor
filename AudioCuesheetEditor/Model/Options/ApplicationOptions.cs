@@ -100,8 +100,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (TextImportScheme == null)
             {
-                //TODO
-                //TextImportScheme = TextImportFile.TextImportScheme;
+                TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             }
             if (AudioCodec == null)
             {
@@ -124,7 +123,6 @@ namespace AudioCuesheetEditor.Model.Options
                 LinkTracksWithPreviousOne = true;
             }
         }
-
         public String CuesheetFileName { get; set; }
         public String CultureName { get; set; }
         [JsonIgnore]

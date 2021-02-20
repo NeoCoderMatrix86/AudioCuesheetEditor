@@ -22,6 +22,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class TextImportScheme
     {
+        public static readonly String DefaultSchemeCuesheet = "\\A.*%Artist% - %Title%[\\t]{1,}%AudioFile%";
+        public static readonly String DefaultSchemeTracks = "%Artist% - %Title%[\\t]{1,}%End%";
+
+        public static readonly TextImportScheme DefaultTextImportScheme = new TextImportScheme 
+        { 
+            SchemeCuesheet = DefaultSchemeCuesheet,
+            SchemeTracks = DefaultSchemeTracks
+        };
+
         private string schemeTracks;
         private string schemeCuesheet;
 

@@ -45,8 +45,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
 
-        public static readonly String DefaultImportSchemeTracks = "%Artist% - %Title%[\\t]{1,}%End%";
-
         static TextImportFile()
         {
             SchemeArtist = String.Format("{0}{1}{2}",SchemeCharacter, nameof(Track.Artist), SchemeCharacter);
@@ -89,7 +87,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 lines.Add(reader.ReadLine());
             }
             fileLines = lines.AsReadOnly();
-            TextImportScheme = new TextImportScheme();
+            TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             TextImportScheme.SchemeChanged += TextImportScheme_SchemeChanged;
         }
 
