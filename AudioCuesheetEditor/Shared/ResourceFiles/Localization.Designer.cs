@@ -774,20 +774,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for cuesheet properties import here ähnelt.
         /// </summary>
-        public static string EnterTextImportSchemeHere {
+        public static string EnterTextImportSchemeCuesheetHere {
             get {
-                return ResourceManager.GetString("EnterTextImportSchemeHere", resourceCulture);
+                return ResourceManager.GetString("EnterTextImportSchemeCuesheetHere", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here. Identification will be done using regular expressions. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions. ähnelt.
         /// </summary>
-        public static string EnterTextImportSchemeTooltip {
+        public static string EnterTextImportSchemeCuesheetHereTooltip {
             get {
-                return ResourceManager.GetString("EnterTextImportSchemeTooltip", resourceCulture);
+                return ResourceManager.GetString("EnterTextImportSchemeCuesheetHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for track properties import here ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTracksHere {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTracksHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for track properties import here. Identification will be done using regular expressions. ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTracksTooltip {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTracksTooltip", resourceCulture);
             }
         }
         
@@ -1103,6 +1121,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string ImportCuesheetTooltip {
             get {
                 return ResourceManager.GetString("ImportCuesheetTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import cuesheet values ähnelt.
+        /// </summary>
+        public static string ImportCuesheetValues {
+            get {
+                return ResourceManager.GetString("ImportCuesheetValues", resourceCulture);
             }
         }
         
@@ -1575,11 +1602,11 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Start import of tracks ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start textimport ähnelt.
         /// </summary>
-        public static string StartTrackImport {
+        public static string StartTextImport {
             get {
-                return ResourceManager.GetString("StartTrackImport", resourceCulture);
+                return ResourceManager.GetString("StartTextImport", resourceCulture);
             }
         }
         

@@ -510,17 +510,17 @@ along with Foobar.  If not, see
             @if (textImportFile != null)
             {
                 <!--TODO: Make file lines visible and the matches-->
-                <!--<Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeTooltip"]">
-                            @localizer["TextImportScheme"]
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is4">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeCuesheetTooltip"]">
+                            @localizer["TextImportSchemeCuesheet"]
                         </Tooltip>
                     </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
+                    <FieldBody ColumnSize="ColumnSize.Is8">
                         <Addons>
-                            <Addon AddonType="AddonType.Body">-->
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <!--<TextEdit Placeholder="@localizer["EnterTextImportSchemeHere"]" @bind-Text="textImportFile.ImportSchemeTracks" data-toggle="tooltip" data-placement="top" title="@localizer["EnterTextImportSchemeTooltip"]" />
+                            <Addon AddonType="AddonType.Body">
+                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["EnterTextImportSchemeCuesheetHere"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeCuesheet))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -528,9 +528,37 @@ along with Foobar.  If not, see
                                         @localizer["SelectPlaceholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        @foreach (var availableSchemeTrack in TextImportFile.AvailableSchemesTrack)
+                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
                                         {
-                                            <DropdownItem Clicked="() => textImportFile.ImportSchemeTracks += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is4">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeTracksTooltip"]">
+                            @localizer["TextImportSchemeTrack"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is8">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["EnterTextImportSchemeTracksHere"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeTracks))" />
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @localizer["SelectPlaceholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
+                                        {
+                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -550,38 +578,80 @@ along with Foobar.  If not, see
                         <AlertMessage>@localizer["ErrorDuringTextImport"] : @textImportFile.AnalyseException.Message</AlertMessage>
                     </Alert>
                 }
-                <Table Bordered="true" Responsive="true" Narrow="true">
-                    <TableHeader ThemeContrast="ThemeContrast.Light">
-                        <TableRow>
-                            <TableHeaderCell>#</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Flags"]</TableHeaderCell>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        @foreach (var track in textImportFile.Tracks)
-                        {
+                <Divider DividerType="DividerType.Solid" />
+                @if (textImportFile.ImportCuesheet != null)
+                {
+                    <Heading Size="HeadingSize.Is4">@localizer["ImportCuesheetValues"]</Heading>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDArtist"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is8">
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Artist" ReadOnly="true" />
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDTitle"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is8">
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
+                        </FieldBody>
+                    </Field>
+                    @if (textImportFile.ImportCuesheet.AudioFile != null)
+                    {
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["AudioFile"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is8">
+                                <TextEdit Text="@textImportFile.ImportCuesheet.AudioFile.FileName" ReadOnly="true" />
+                            </FieldBody>
+                        </Field>
+                    }
+                    @if (textImportFile.ImportCuesheet.CDTextfile != null)
+                    {
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDTextfile"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is8">
+                                <TextEdit Text="@textImportFile.ImportCuesheet.CDTextfile.FileName" ReadOnly="true" />
+                            </FieldBody>
+                        </Field>
+                    }
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CatalogueNumber"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is8">
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.CatalogueNumber.Value" ReadOnly="true" />
+                        </FieldBody>
+                    </Field>
+                    <Heading Size="HeadingSize.Is5">@localizer["Tracks"]</Heading>
+                    <Table Bordered="true" Responsive="true" Narrow="true">
+                        <TableHeader ThemeContrast="ThemeContrast.Light">
                             <TableRow>
-                                <TableRowCell>@track.Position</TableRowCell>
-                                <TableRowCell>@track.Artist</TableRowCell>
-                                <TableRowCell>@track.Title</TableRowCell>
-                                <TableRowCell>@track.Begin</TableRowCell>
-                                <TableRowCell>@track.End</TableRowCell>
-                                <TableRowCell>@track.Length</TableRowCell>
-                                <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
+                                <TableHeaderCell>#</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Flags"]</TableHeaderCell>
                             </TableRow>
-                        }
-                    </TableBody>
-                </Table>-->
+                        </TableHeader>
+                        <TableBody>
+                            @foreach (var track in textImportFile.ImportCuesheet.Tracks)
+                            {
+                                <TableRow>
+                                    <TableRowCell>@track.Position</TableRowCell>
+                                    <TableRowCell>@track.Artist</TableRowCell>
+                                    <TableRowCell>@track.Title</TableRowCell>
+                                    <TableRowCell>@track.Begin</TableRowCell>
+                                    <TableRowCell>@track.End</TableRowCell>
+                                    <TableRowCell>@track.Length</TableRowCell>
+                                    <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
+                                </TableRow>
+                            }
+                        </TableBody>
+                    </Table>
+                }
             }
         </ModalBody>
         <ModalFooter>
             <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "ImportNotPossible")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["StartTrackImport"]</Button>
+                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["StartTextImport"]</Button>
             </Tooltip>
             <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@localizer["Abort"]</Button>
         </ModalFooter>
@@ -796,7 +866,6 @@ along with Foobar.  If not, see
                 </FieldBody>
             </Field>
             <Divider DividerType="DividerType.Solid" />
-            <!--TODO-->
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeCuesheet"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">

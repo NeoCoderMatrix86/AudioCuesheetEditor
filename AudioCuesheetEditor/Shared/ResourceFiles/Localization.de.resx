@@ -272,11 +272,11 @@
   <data name="EnterExportSchemeTrackHereTooltip" xml:space="preserve">
     <value>Bitte geben Sie hier das Track Schema für den Export an. Jeder Platzhalter wird durch seinen zugehörigen Wert ersetzt. Platzhalter beginnen und enden mit %.</value>
   </data>
-  <data name="EnterTextImportSchemeHere" xml:space="preserve">
-    <value>Textschema für den Import hier eingeben</value>
+  <data name="EnterTextImportSchemeTracksHere" xml:space="preserve">
+    <value>Textschema für den Import von Trackeigenschaften hier eingeben</value>
   </data>
-  <data name="EnterTextImportSchemeTooltip" xml:space="preserve">
-    <value>Textschema für den Import hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
+  <data name="EnterTextImportSchemeTracksTooltip" xml:space="preserve">
+    <value>Textschema für den Import von Trackeigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
   </data>
   <data name="ErrorDuringTextImport" xml:space="preserve">
     <value>Ein Fehler ist während des Textimport aufgetreten</value>
@@ -430,9 +430,6 @@
   </data>
   <data name="StartPlaybackThisTrack" xml:space="preserve">
     <value>Diesen Track wiedergeben</value>
-  </data>
-  <data name="StartTrackImport" xml:space="preserve">
-    <value>Tracks importieren</value>
   </data>
   <data name="Textfile" xml:space="preserve">
     <value>Textdatei</value>
@@ -709,5 +706,17 @@
   </data>
   <data name="TextImportSchemeTrack" xml:space="preserve">
     <value>Textimport regulärer Ausdruck für Track Eigenschaften</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHere" xml:space="preserve">
+    <value>Textschema für den Import von Cuesheeteigenschaften hier eingeben</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHereTooltip" xml:space="preserve">
+    <value>Textschema für den Import von Cuesheeteigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
+  </data>
+  <data name="ImportCuesheetValues" xml:space="preserve">
+    <value>Importdaten Cuesheet</value>
+  </data>
+  <data name="StartTextImport" xml:space="preserve">
+    <value>Textimport starten</value>
   </data>
 </root>

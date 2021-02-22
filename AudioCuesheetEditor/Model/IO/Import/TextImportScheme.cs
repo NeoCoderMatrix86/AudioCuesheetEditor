@@ -91,6 +91,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             set
             {
                 schemeTracks = value;
+                OnValidateablePropertyChanged();
                 SchemeChanged?.Invoke(this, nameof(SchemeTracks));
             }
         }
@@ -101,6 +102,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             set
             {
                 schemeCuesheet = value;
+                OnValidateablePropertyChanged();
                 SchemeChanged?.Invoke(this, nameof(SchemeCuesheet));
             }
         }
@@ -113,38 +115,44 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
             else
             {
-                Boolean addValidationError = false;
-                foreach (var availableScheme in AvailableSchemesTrack)
+                if (AvailableSchemesTrack != null)
                 {
-                    if (SchemeCuesheet.Contains(availableScheme.Value) == true)
+                    Boolean addValidationError = false;
+                    foreach (var availableScheme in AvailableSchemesTrack)
                     {
-                        addValidationError = true;
-                        break;
+                        if (SchemeCuesheet.Contains(availableScheme.Value) == true)
+                        {
+                            addValidationError = true;
+                            break;
+                        }
                     }
-                }
-                if (addValidationError == true)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                    if (addValidationError == true)
+                    {
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                    }
                 }
             }
             if (String.IsNullOrEmpty(SchemeTracks))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "HasNoValue", nameof(SchemeTracks)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "HasNoValue", nameof(SchemeTracks)));
             }
             else
             {
-                Boolean addValidationError = false;
-                foreach (var availableScheme in AvailableSchemeCuesheet)
+                if (AvailableSchemeCuesheet != null)
                 {
-                    if (SchemeTracks.Contains(availableScheme.Value) == true)
+                    Boolean addValidationError = false;
+                    foreach (var availableScheme in AvailableSchemeCuesheet)
                     {
-                        addValidationError = true;
-                        break;
+                        if (SchemeTracks.Contains(availableScheme.Value) == true)
+                        {
+                            addValidationError = true;
+                            break;
+                        }
                     }
-                }
-                if (addValidationError == true)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                    if (addValidationError == true)
+                    {
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                    }
                 }
             }
         }
