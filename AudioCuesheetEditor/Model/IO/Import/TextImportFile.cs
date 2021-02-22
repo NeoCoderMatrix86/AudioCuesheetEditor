@@ -28,50 +28,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class TextImportFile
     {
-        public const String SchemeCharacter = "%";
-
         public const String MimeType = "text/plain";
         public const String FileExtension = ".txt";
 
-        public static readonly String SchemeArtist;
-        public static readonly String SchemeTitle;
-        public static readonly String SchemeBegin;
-        public static readonly String SchemeEnd;
-        public static readonly String SchemeLength;
-        public static readonly String SchemePosition;
-        public static readonly String SchemeFlags;
-        public static readonly String SchemePreGap;
-        public static readonly String SchemePostGap;
-
-        public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
-
-        static TextImportFile()
-        {
-            SchemeArtist = String.Format("{0}{1}{2}",SchemeCharacter, nameof(Track.Artist), SchemeCharacter);
-            SchemeTitle = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Title), SchemeCharacter);
-            SchemeBegin = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Begin), SchemeCharacter);
-            SchemeEnd = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.End), SchemeCharacter);
-            SchemeLength = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Length), SchemeCharacter);
-            SchemePosition = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Position), SchemeCharacter);
-            SchemeFlags = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Flags), SchemeCharacter);
-            SchemePreGap = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.PreGap), SchemeCharacter);
-            SchemePostGap = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.PostGap), SchemeCharacter);
-
-            AvailableSchemesTrack = new Dictionary<string, string>
-            {
-                { nameof(Track.Position), SchemePosition },
-                { nameof(Track.Artist), SchemeArtist },
-                { nameof(Track.Title), SchemeTitle },
-                { nameof(Track.Begin), SchemeBegin },
-                { nameof(Track.End), SchemeEnd },
-                { nameof(Track.Length), SchemeLength },
-                { nameof(Track.Flags), SchemeFlags },
-                { nameof(Track.PreGap), SchemePreGap },
-                { nameof(Track.PostGap), SchemePostGap }
-            };
-        }
-
         private readonly IReadOnlyCollection<String> fileLines;
+        private TextImportScheme textImportScheme;
 
         public TextImportFile(MemoryStream fileContent)
         {
@@ -88,10 +49,25 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
             fileLines = lines.AsReadOnly();
             TextImportScheme = TextImportScheme.DefaultTextImportScheme;
-            TextImportScheme.SchemeChanged += TextImportScheme_SchemeChanged;
         }
 
-        public TextImportScheme TextImportScheme { get; private set; }
+        public TextImportScheme TextImportScheme 
+        {
+            get { return textImportScheme; }
+            set 
+            { 
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(TextImportScheme));
+                }
+                if (textImportScheme != null)
+                {
+                    textImportScheme.SchemeChanged -= TextImportScheme_SchemeChanged;
+                }
+                textImportScheme = value;
+                textImportScheme.SchemeChanged += TextImportScheme_SchemeChanged;
+            }
+        }
         
         public Exception AnalyseException { get; private set; }
 
@@ -165,17 +141,20 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 {
                     for (int i = 0; i <= scheme.Length; i++)
                     {
-                        if (scheme.Substring(i).StartsWith(SchemeCharacter) == true)
+                        if (scheme.Substring(i).StartsWith(TextImportScheme.SchemeCharacter) == true)
                         {
-                            var endIndex = scheme.IndexOf(SchemeCharacter, i + 1);
+                            var endIndex = scheme.IndexOf(TextImportScheme.SchemeCharacter, i + 1);
                             //Only search if there is somethine behind the Scheme identifier
                             if ((endIndex > 0) && ((endIndex + 1) < scheme.Length))
                             {
-                                var propertyBefore = scheme.Substring(i + SchemeCharacter.Length, endIndex - (i + SchemeCharacter.Length));
-                                var nextPropertyStartIndex = scheme.IndexOf(SchemeCharacter, endIndex + 1);
-                                var nextPropertyEndIndex = scheme.IndexOf(SchemeCharacter, nextPropertyStartIndex + 1);
+                                var propertyBefore = scheme.Substring(i + TextImportScheme.SchemeCharacter.Length, endIndex - (i + TextImportScheme.SchemeCharacter.Length));
+                                var nextPropertyStartIndex = scheme.IndexOf(TextImportScheme.SchemeCharacter, endIndex + 1);
+                                var nextPropertyEndIndex = scheme.IndexOf(TextImportScheme.SchemeCharacter, nextPropertyStartIndex + 1);
                                 var propertyAfter = scheme.Substring(nextPropertyStartIndex + 1, nextPropertyEndIndex - (nextPropertyStartIndex + 1));
                                 var regExString = scheme.Substring(endIndex + 1, nextPropertyStartIndex - (endIndex + 1));
+                                //Remove entity names
+                                propertyBefore = propertyBefore.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty).Replace(String.Format("{0}.", nameof(ImportCuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(ImportTrack)), String.Empty);
+                                propertyAfter = propertyAfter.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty).Replace(String.Format("{0}.", nameof(ImportCuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(ImportTrack)), String.Empty);
                                 regices.Add(new Tuple<string, string>(propertyBefore, propertyAfter), new Regex(regExString));
                                 //Recalculate next index
                                 i = nextPropertyStartIndex - 1;
@@ -244,6 +223,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         {
                             propertyBefore.SetValue(entity, new AudioFile(propertyValueBefore));
                         }
+                        //TODO: More cuesheeet types
                         if (otherMatchRegEx == false)
                         {
                             if (propertyAfter.PropertyType == typeof(TimeSpan?))
@@ -267,6 +247,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 propertyAfter.SetValue(entity, new AudioFile(propertyValueAfter));
                             }
+                            //TODO: More cuesheeet types
                         }
                         index = index + match.Index + match.Length;
                     }

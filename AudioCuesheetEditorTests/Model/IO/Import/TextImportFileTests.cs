@@ -50,8 +50,8 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             //Test TextImportFile
             var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
-            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Artist% - %Title%[\t]{1,}%AudioFile%";
+            textImportFile.TextImportScheme.SchemeTracks = "%Track.Artist% - %Track.Title%[\t]{1,}%Track.End%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%";
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsNotNull(textImportFile.ImportCuesheet);
             Assert.AreEqual("CuesheetArtist", textImportFile.ImportCuesheet.Artist);

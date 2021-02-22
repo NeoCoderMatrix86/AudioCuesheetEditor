@@ -1192,8 +1192,7 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
-                //TODO
-                //textImportFile.ImportSchemeTracks = optionsController.Options.TextImportScheme;
+                textImportFile.TextImportScheme = optionsController.Options.TextImportScheme;
                 modalTextImport.Show();
             }
             else
