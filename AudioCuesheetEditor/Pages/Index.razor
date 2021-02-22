@@ -510,6 +510,21 @@ along with Foobar.  If not, see
             @if (textImportFile != null)
             {
                 <!--TODO: Make file lines visible and the matches-->
+                <Accordion Style="margin-bottom: 1rem;">
+                    <Collapse Visible="textImportFileContentVisible">
+                        <CollapseHeader>
+                            <Blazorise.Link Clicked="(() => HeaderClicked(ref textImportFileContentVisible, ref chevronTextImportFileContent))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                <Heading Size="HeadingSize.Is3">@localizer["FileContent"]</Heading>
+                                <div>
+                                    @((MarkupString)chevronTextImportFileContent)
+                                </div>
+                            </Blazorise.Link>
+                        </CollapseHeader>
+                        <CollapseBody>
+                            <MemoEdit Text="@String.Join(Environment.NewLine, textImportFile.FileContent)" ReadOnly="true" Rows="@textImportFile.FileContent.Count" />
+                        </CollapseBody>
+                    </Collapse>
+                </Accordion>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is4">
                         <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeCuesheetTooltip"]">
@@ -1100,6 +1115,8 @@ along with Foobar.  If not, see
     private Boolean processingHintsErrorVisible = true;
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
+    private Boolean textImportFileContentVisible = true;
+
     private HotKeysContext hotKeysContext;
 
     private String invalidFileName;
@@ -1110,6 +1127,7 @@ along with Foobar.  If not, see
     private String chevronProcessingHintsError = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    private String chevronTextImportFileContent = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
 
     private Cuesheet cuesheet = new Cuesheet();
     private TextImportFile textImportFile;

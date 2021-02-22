@@ -31,7 +31,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public const String MimeType = "text/plain";
         public const String FileExtension = ".txt";
 
-        private readonly IReadOnlyCollection<String> fileLines;
         private TextImportScheme textImportScheme;
 
         public TextImportFile(MemoryStream fileContent)
@@ -47,10 +46,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 lines.Add(reader.ReadLine());
             }
-            fileLines = lines.AsReadOnly();
+            FileContent = lines.AsReadOnly();
             TextImportScheme = TextImportScheme.DefaultTextImportScheme;
-            Analyse();
         }
+
+        /// <summary>
+        /// File content (each element is a file line)
+        /// </summary>
+        public IReadOnlyCollection<String> FileContent { get; private set; }
 
         public TextImportScheme TextImportScheme 
         {
@@ -67,6 +70,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 }
                 textImportScheme = value;
                 textImportScheme.SchemeChanged += TextImportScheme_SchemeChanged;
+                Analyse();
             }
         }
         
@@ -91,7 +95,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var regicesCuesheet = AnalyseScheme(TextImportScheme.SchemeCuesheet);
                 var regicesTracks = AnalyseScheme(TextImportScheme.SchemeTracks);
                 Boolean cuesheetRecognized = false;
-                foreach (var line in fileLines)
+                foreach (var line in FileContent)
                 {
                     if (String.IsNullOrEmpty(line) == false)
                     {
@@ -203,70 +207,61 @@ namespace AudioCuesheetEditor.Model.IO.Import
                                 i = regices.Count;
                             }
                         }
-                        if (propertyBefore.PropertyType == typeof(TimeSpan?))
-                        {
-                            propertyBefore.SetValue(entity, TimeSpan.Parse(propertyValueBefore));
-                        }
-                        if (propertyBefore.PropertyType == typeof(uint?))
-                        {
-                            propertyBefore.SetValue(entity, Convert.ToUInt32(propertyValueBefore));
-                        }
-                        if (propertyBefore.PropertyType == typeof(String))
-                        {
-                            propertyBefore.SetValue(entity, propertyValueBefore);
-                        }
-                        if (propertyBefore.PropertyType == typeof(IReadOnlyCollection<Flag>))
-                        {
-                            var list = Flag.AvailableFlags.Where(x => propertyValueBefore.Contains(x.CuesheetLabel));
-                            ((ImportTrack)entity).SetFlags(list);
-                        }
-                        if (propertyBefore.PropertyType == typeof(AudioFile))
-                        {
-                            propertyBefore.SetValue(entity, new AudioFile(propertyValueBefore));
-                        }
-                        if (propertyBefore.PropertyType == typeof(CatalogueNumber))
-                        {
-                            ((ImportCuesheet)entity).CatalogueNumber.Value = propertyValueBefore;
-                        }
-                        if (propertyBefore.PropertyType == typeof(CDTextfile))
-                        {
-                            propertyBefore.SetValue(entity, new CDTextfile(propertyValueBefore));
-                        }
+                        SetValue(entity, propertyBefore, propertyValueBefore);
                         if (otherMatchRegEx == false)
                         {
-                            if (propertyAfter.PropertyType == typeof(TimeSpan?))
-                            {
-                                propertyAfter.SetValue(entity, TimeSpan.Parse(propertyValueAfter));
-                            }
-                            if (propertyAfter.PropertyType == typeof(uint?))
-                            {
-                                propertyAfter.SetValue(entity, Convert.ToUInt32(propertyValueAfter));
-                            }
-                            if (propertyAfter.PropertyType == typeof(String))
-                            {
-                                propertyAfter.SetValue(entity, propertyValueAfter);
-                            }
-                            if (propertyAfter.PropertyType == typeof(IReadOnlyCollection<Flag>))
-                            {
-                                var list = Flag.AvailableFlags.Where(x => propertyValueAfter.Contains(x.CuesheetLabel));
-                                ((ImportTrack)entity).SetFlags(list);
-                            }
-                            if (propertyAfter.PropertyType == typeof(AudioFile))
-                            {
-                                propertyAfter.SetValue(entity, new AudioFile(propertyValueAfter));
-                            }
-                            if (propertyAfter.PropertyType == typeof(CatalogueNumber))
-                            {
-                                ((ImportCuesheet)entity).CatalogueNumber.Value = propertyValueAfter;
-                            }
-                            if (propertyAfter.PropertyType == typeof(CDTextfile))
-                            {
-                                propertyAfter.SetValue(entity, new CDTextfile(propertyValueAfter));
-                            }
+                            SetValue(entity, propertyAfter, propertyValueAfter);
                         }
                         index = index + match.Index + match.Length;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Set the value on the entity
+        /// </summary>
+        /// <param name="entity">Entity object to set the value on</param>
+        /// <param name="property">Property to set</param>
+        /// <param name="value">Value to set</param>
+        private static void SetValue(ICuesheetEntity entity, PropertyInfo property, string value)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
+            if (property.PropertyType == typeof(TimeSpan?))
+            {
+                property.SetValue(entity, TimeSpan.Parse(value));
+            }
+            if (property.PropertyType == typeof(uint?))
+            {
+                property.SetValue(entity, Convert.ToUInt32(value));
+            }
+            if (property.PropertyType == typeof(String))
+            {
+                property.SetValue(entity, value);
+            }
+            if (property.PropertyType == typeof(IReadOnlyCollection<Flag>))
+            {
+                var list = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
+                ((ImportTrack)entity).SetFlags(list);
+            }
+            if (property.PropertyType == typeof(AudioFile))
+            {
+                property.SetValue(entity, new AudioFile(value));
+            }
+            if (property.PropertyType == typeof(CatalogueNumber))
+            {
+                ((ImportCuesheet)entity).CatalogueNumber.Value = value;
+            }
+            if (property.PropertyType == typeof(CDTextfile))
+            {
+                property.SetValue(entity, new CDTextfile(value));
             }
         }
     }

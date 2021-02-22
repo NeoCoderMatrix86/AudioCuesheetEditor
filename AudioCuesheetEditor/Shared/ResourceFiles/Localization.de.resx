@@ -713,6 +713,9 @@
   <data name="EnterTextImportSchemeCuesheetHereTooltip" xml:space="preserve">
     <value>Textschema für den Import von Cuesheeteigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
   </data>
+  <data name="FileContent" xml:space="preserve">
+    <value>Dateiinhalt</value>
+  </data>
   <data name="ImportCuesheetValues" xml:space="preserve">
     <value>Importdaten Cuesheet</value>
   </data>

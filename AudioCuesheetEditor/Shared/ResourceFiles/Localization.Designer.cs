@@ -981,6 +981,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File content ähnelt.
+        /// </summary>
+        public static string FileContent {
+            get {
+                return ResourceManager.GetString("FileContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The file &quot;{0}&quot; you supplied does not match the requested operation: &quot;{1}&quot;. Please provide a valid file! ähnelt.
         /// </summary>
         public static string FileHasInvalidMimeType {
