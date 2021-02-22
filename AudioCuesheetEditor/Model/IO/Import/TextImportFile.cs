@@ -49,6 +49,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
             fileLines = lines.AsReadOnly();
             TextImportScheme = TextImportScheme.DefaultTextImportScheme;
+            Analyse();
         }
 
         public TextImportScheme TextImportScheme 

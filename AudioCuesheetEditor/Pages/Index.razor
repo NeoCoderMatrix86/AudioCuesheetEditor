@@ -1287,13 +1287,12 @@ along with Foobar.  If not, see
         Logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
-            //TODO
-            //optionsController.Options.TextImportScheme = textImportFile.ImportSchemeTracks;
-            //await optionsController.SaveOptions();
-            //cuesheet.Import(textImportFile, optionsController.Options);
-            //modalTextImport.Hide();
-            //textImportFile = null;
-            //StateHasChanged();
+            optionsController.Options.TextImportScheme = textImportFile.TextImportScheme;
+            await optionsController.SaveOptions();
+            cuesheet.Import(textImportFile, optionsController.Options);
+            modalTextImport.Hide();
+            textImportFile = null;
+            StateHasChanged();
         }
     }
 
