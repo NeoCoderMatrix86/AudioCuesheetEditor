@@ -107,7 +107,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         }
                         if ((recognized == false) && (regicesTracks.Count > 0))
                         {
-                            var firstRegiceTrack = regicesCuesheet.First();
+                            var firstRegiceTrack = regicesTracks.First();
                             if (firstRegiceTrack.Value.IsMatch(line))
                             {
                                 recognized = true;
@@ -223,7 +223,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         {
                             propertyBefore.SetValue(entity, new AudioFile(propertyValueBefore));
                         }
-                        //TODO: More cuesheeet types
+                        if (propertyBefore.PropertyType == typeof(CatalogueNumber))
+                        {
+                            ((ImportCuesheet)entity).CatalogueNumber.Value = propertyValueBefore;
+                        }
+                        if (propertyBefore.PropertyType == typeof(CDTextfile))
+                        {
+                            propertyBefore.SetValue(entity, new CDTextfile(propertyValueBefore));
+                        }
                         if (otherMatchRegEx == false)
                         {
                             if (propertyAfter.PropertyType == typeof(TimeSpan?))
@@ -247,7 +254,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 propertyAfter.SetValue(entity, new AudioFile(propertyValueAfter));
                             }
-                            //TODO: More cuesheeet types
+                            if (propertyAfter.PropertyType == typeof(CatalogueNumber))
+                            {
+                                ((ImportCuesheet)entity).CatalogueNumber.Value = propertyValueAfter;
+                            }
+                            if (propertyAfter.PropertyType == typeof(CDTextfile))
+                            {
+                                propertyAfter.SetValue(entity, new CDTextfile(propertyValueAfter));
+                            }
                         }
                         index = index + match.Index + match.Length;
                     }
