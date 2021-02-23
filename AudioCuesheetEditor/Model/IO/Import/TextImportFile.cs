@@ -85,15 +85,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public ImportCuesheet ImportCuesheet { get; private set; }
 
-        public IReadOnlyCollection<String> GetFileContentRecognized(String line)
-        {
-            //TODO
-            List<String> recognized = new List<string>();
-            recognized.Add("Artist");
-            recognized.Add("Title");
-            return recognized.AsReadOnly();
-        }
-
         private void TextImportScheme_SchemeChanged(object sender, string e)
         {
             Analyse();
