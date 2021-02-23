@@ -55,6 +55,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// </summary>
         public IReadOnlyCollection<String> FileContent { get; private set; }
 
+        /// <summary>
+        /// File content with marking which passages has been reconized by scheme
+        /// </summary>
+        public IReadOnlyCollection<String> FileContentRecognized { get; private set; }
+
         public TextImportScheme TextImportScheme 
         {
             get { return textImportScheme; }
@@ -80,6 +85,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public ImportCuesheet ImportCuesheet { get; private set; }
 
+        public IReadOnlyCollection<String> GetFileContentRecognized(String line)
+        {
+            //TODO
+            List<String> recognized = new List<string>();
+            recognized.Add("Artist");
+            recognized.Add("Title");
+            return recognized.AsReadOnly();
+        }
+
         private void TextImportScheme_SchemeChanged(object sender, string e)
         {
             Analyse();
@@ -95,6 +109,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var regicesCuesheet = AnalyseScheme(TextImportScheme.SchemeCuesheet);
                 var regicesTracks = AnalyseScheme(TextImportScheme.SchemeTracks);
                 Boolean cuesheetRecognized = false;
+                List<String> recognizedFileContent = new List<string>();
                 foreach (var line in FileContent)
                 {
                     if (String.IsNullOrEmpty(line) == false)
@@ -107,7 +122,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 recognized = true;
                                 cuesheetRecognized = true;
-                                AnalyseLine(line, ImportCuesheet, regicesCuesheet);
+                                recognizedFileContent.Add(AnalyseLine(line, ImportCuesheet, regicesCuesheet));
                             }
                         }
                         if ((recognized == false) && (regicesTracks.Count > 0))
@@ -117,11 +132,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 recognized = true;
                                 var track = new ImportTrack();
-                                AnalyseLine(line, track, regicesTracks);
+                                recognizedFileContent.Add(AnalyseLine(line, track, regicesTracks));
                                 ImportCuesheet.AddTrack(track);
                             }
                         }
                     }
+                }
+                if (recognizedFileContent.Count > 0)
+                {
+                    FileContentRecognized = recognizedFileContent.AsReadOnly();
                 }
             }
             catch (Exception ex)
@@ -181,8 +200,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <param name="line">Line to analyse</param>
         /// <param name="entity">Entity to set properties on</param>
         /// <param name="regices">Regular expressions for analysing</param>
-        private static void AnalyseLine(String line, ICuesheetEntity entity, IReadOnlyDictionary<Tuple<String, String>, Regex> regices)
+        /// <returns>Analysed line with marking what has been matched</returns>
+        private static String AnalyseLine(String line, ICuesheetEntity entity, IReadOnlyDictionary<Tuple<String, String>, Regex> regices)
         {
+            String recognized = null;
             if ((String.IsNullOrEmpty(line) == false) && (entity != null) && (regices != null))
             {
                 var index = 0;
@@ -208,14 +229,18 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             }
                         }
                         SetValue(entity, propertyBefore, propertyValueBefore);
+                        //Set recognized
+                        recognized += String.Format("<Mark>{0}</Mark>{1}", line.Substring(index, match.Index), match.Value);
                         if (otherMatchRegEx == false)
                         {
                             SetValue(entity, propertyAfter, propertyValueAfter);
+                            recognized += String.Format("<Mark>{0}</Mark>", line.Substring(index + match.Index + match.Length));
                         }
                         index = index + match.Index + match.Length;
                     }
                 }
             }
+            return recognized;
         }
 
         /// <summary>
