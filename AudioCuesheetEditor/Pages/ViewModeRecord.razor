@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                     </div>
                 </Blazorise.Link>
             </CollapseHeader>
-            <CollapseBody>
+            <CollapseBody Style="height: 200px">
                 @if (Cuesheet.IsRecording == true)
                 {
                     var backgroundCSS = Cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
@@ -45,18 +45,31 @@ along with Foobar.  If not, see
                 {
                     var backgroundCSS = "BackgroundBlink rounded";
                     <div class="@backgroundCSS">
-                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Recording will start in " + counter]</Heading>
+                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Recording will start in " + counter ]</Heading>
                     </div>
                 }
                 <Row>
                     <Column>
-                        <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="Cuesheet.IsRecording">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
-                                <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
-                                <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
-                            </svg>
-                            @localizer["StartRecording"]
-                        </Button>
+                            <Dropdown>
+                                <DropdownToggle Class="btn btn-danger">
+                                    @localizer["SwitchRecordingMode"]
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    @foreach (var name in Enum.GetNames(typeof(RecordingMode)))
+                                    {
+                                        <DropdownItem>
+                                            <Button Color="Color.Danger" Clicked="() =>StartRecordingClicked(CurrentRecordingMode = (RecordingMode)Enum.Parse(typeof(RecordingMode), name))"
+                                                    Disabled="Cuesheet.IsRecording">
+                                                @localizer[name]
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
+                                                    <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
+                                                    <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                                                </svg>
+                                            </Button>
+                                        </DropdownItem>
+                                    }
+                                </DropdownMenu>
+                            </Dropdown>
                     </Column>
                     <Column>
                         @if (Cuesheet.RecordingTime.HasValue == true)
@@ -240,9 +253,14 @@ along with Foobar.  If not, see
         JSRuntime.InvokeVoidAsync("closeAudioRecording");
     }
 
+    public enum RecordingMode
+    {
+        RecordingModeWithoutCountdown = 0,
+        RecordingModeWithCountdonw = 1
+    }
+
     [Parameter]
     public Cuesheet Cuesheet { get; set; }
-    public int counter { get; set; } = 5;
 
     [JSInvokable()]
     public async Task AudioRecordingFinished(String url)
@@ -269,6 +287,8 @@ along with Foobar.  If not, see
 
     private bool timerStarted = false;
 
+    private RecordingMode CurrentRecordingMode;
+
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronRecordControl = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronEnterNewTrack = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
@@ -276,9 +296,11 @@ along with Foobar.  If not, see
 
     private FFMPEG ffmpeg;
     private int? processOfProcessingAudioFile;
+    private int counter;
 
     protected override async Task OnInitializedAsync()
     {
+        int.TryParse(optionsController.Options.CounterCoundtdownTimer, out counter);
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
         await JSRuntime.InvokeVoidAsync("setupAudioRecording");
@@ -342,32 +364,61 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    private async Task StartRecordingClicked()
+    private async Task StartRecordingClicked(RecordingMode CurentMode)
     {
-        //Check for empty cuesheet and warn!
-        if (Cuesheet.Tracks.Count > 0)
+
+        if (CurentMode == RecordingMode.RecordingModeWithoutCountdown)
         {
-            modalDialog.Title = localizer["Error"];
-            modalDialog.Text = localizer["RecordNotPossibleWithExistingTracks"];
-            modalDialog.ModalSize = ModalSize.Small;
-            modalDialog.Mode = ModalDialog.DialogMode.Alert;
-            modalDialog.ShowModal();
-        }
-        else
-        {
-            await StartTimerAsync();
-            timerStarted = false;
-            counter = 5;
-            Cuesheet.StartRecording();
-            recordTimer.Start();
-            enterCurrentTrackArtist.Focus();
-            await JSRuntime.InvokeVoidAsync("startAudioRecording");
-            if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded))
+            //Check for empty cuesheet and warn!
+            if (Cuesheet.Tracks.Count > 0)
             {
-                await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.AudioFile.ObjectURL);
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = localizer["RecordNotPossibleWithExistingTracks"];
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
             }
-            Cuesheet.AudioFile = null;
+            else
+            {
+                Cuesheet.StartRecording();
+                recordTimer.Start();
+                enterCurrentTrackArtist.Focus();
+                await JSRuntime.InvokeVoidAsync("startAudioRecording");
+                if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded))
+                {
+                    await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.AudioFile.ObjectURL);
+                }
+                Cuesheet.AudioFile = null;
+            }
         }
+        else if (CurentMode == RecordingMode.RecordingModeWithCountdonw)
+        {
+            //Check for empty cuesheet and warn!
+            if (Cuesheet.Tracks.Count > 0)
+            {
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = localizer["RecordNotPossibleWithExistingTracks"];
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
+            else
+            {
+                await StartTimerAsync();
+                timerStarted = false;
+                int.TryParse(optionsController.Options.CounterCoundtdownTimer, out counter);
+                Cuesheet.StartRecording();
+                recordTimer.Start();
+                enterCurrentTrackArtist.Focus();
+                await JSRuntime.InvokeVoidAsync("startAudioRecording");
+                if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded))
+                {
+                    await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.AudioFile.ObjectURL);
+                }
+                Cuesheet.AudioFile = null;
+            }
+        }
+
     }
 
     private async Task StopRecordingClicked()
@@ -483,4 +534,3 @@ along with Foobar.  If not, see
         }
     }
 }
-

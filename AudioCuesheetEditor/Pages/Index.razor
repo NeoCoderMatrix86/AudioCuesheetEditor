@@ -835,6 +835,12 @@ along with Foobar.  If not, see
                     </Select>
                 </FieldBody>
             </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Сountdown Timer Time"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.CounterCoundtdownTimer" />
+                </FieldBody>
+            </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AutomaticallyLinkTracks"]</FieldLabel>

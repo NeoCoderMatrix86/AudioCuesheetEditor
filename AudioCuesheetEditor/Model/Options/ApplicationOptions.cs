@@ -37,7 +37,6 @@ namespace AudioCuesheetEditor.Model.Options
         ViewModeFull = 0,
         ViewModeRecord = 1
     }
-
     public class ApplicationOptions
     {
         public ApplicationOptions()
@@ -121,6 +120,10 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 LinkTracksWithPreviousOne = true;
             }
+            if (String.IsNullOrEmpty(CounterCoundtdownTimer) == true || int.TryParse(CounterCoundtdownTimer, out _) != true)
+            {
+                CounterCoundtdownTimer = "5";
+            }
         }
 
         public String CuesheetFileName { get; set; }
@@ -172,5 +175,6 @@ namespace AudioCuesheetEditor.Model.Options
         public Boolean RecodeAudioRecording { get; set; }
         public String AudioFileNameRecording { get; set; }
         public Boolean? LinkTracksWithPreviousOne { get; set; }
+        public String CounterCoundtdownTimer { get; set; }
     }
 }
