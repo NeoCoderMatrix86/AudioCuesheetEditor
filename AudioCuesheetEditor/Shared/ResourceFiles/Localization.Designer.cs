@@ -1197,7 +1197,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you can see information about the track end time. So i [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you ca [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ImportOfTextFilesText {
             get {
