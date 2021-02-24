@@ -47,8 +47,16 @@ namespace AudioCuesheetEditor.Controller
             String optionsJson = await jsRuntime.InvokeAsync<String>("ApplicationOptions.get");
             if (String.IsNullOrEmpty(optionsJson) == false)
             {
-                Options = JsonSerializer.Deserialize<ApplicationOptions>(optionsJson);
-                Options.SetDefaultValues();
+                try
+                {
+                    Options = JsonSerializer.Deserialize<ApplicationOptions>(optionsJson);
+                    Options.SetDefaultValues();
+                }
+                catch(JsonException)
+                {
+                    //Nothing to do, we can not deserialize
+                    Options = new ApplicationOptions();
+                }
             }
         }
 
@@ -57,7 +65,11 @@ namespace AudioCuesheetEditor.Controller
             String optionsJson = null;
             if (Options != null)
             {
-                optionsJson = JsonSerializer.Serialize(Options);
+                var serializerOptions = new JsonSerializerOptions
+                { 
+                    DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+                };
+                optionsJson = JsonSerializer.Serialize(Options, serializerOptions);
             }
             await jsRuntime.InvokeVoidAsync("ApplicationOptions.set", optionsJson);
         }
