@@ -30,9 +30,9 @@ along with Foobar.  If not, see
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
-                @if (CurrentPlaybackPosition != null)
+                @if (CurrentPlaybackPosition.HasValue)
                 {
-                    @CurrentPlaybackPosition
+                    @CurrentPlaybackPosition.Value.ToString("hh\\:mm\\:ss")
                 }
                 else
                 {
@@ -43,9 +43,9 @@ along with Foobar.  If not, see
                 <Slider TValue="double" Min="0.0" Max="100.0" ValueChanged="OnSliderValueChanged" Value="CurrentSliderValue"></Slider>
             </Column>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
-                @if (TotalTime != null)
+                @if (TotalTime.HasValue)
                 {
-                    @TotalTime
+                    @TotalTime.Value.ToString("hh\\:mm\\:ss")
                 }
                 else
                 {
