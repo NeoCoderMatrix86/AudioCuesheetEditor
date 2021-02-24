@@ -20,63 +20,65 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Localization> localizer
 @inject IJSRuntime JSRuntime
 @inject ILoggerProvider ILoggerProvider
+<Layout>
+    <LayoutContent Margin="Margin.Is2">
+        <h5>@localizer["ExceptionOccuredPleaseFillErrorReport"]</h5>
 
-<h5>@localizer["ExceptionOccuredPleaseFillErrorReport"]</h5>
+        <form action="https://formspree.io/f/mwkwwokw" method="POST">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="yourEmailAddressLabel">@localizer["YourEmailAddress"]</span>
+                </div>
+                <input type="text" class="form-control" name="_replyto" aria-label="YourEmailAddress" aria-describedby="yourEmailAddressLabel">
+            </div>
 
-<form action="https://formspree.io/f/mwkwwokw" method="POST">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="yourEmailAddressLabel">@localizer["YourEmailAddress"]</span>
-        </div>
-        <input type="text" class="form-control" name="_replyto" aria-label="YourEmailAddress" aria-describedby="yourEmailAddressLabel">
-    </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="errorReportLabel">@localizer["ErrorReport"]</span>
+                </div>
+                <textarea rows="10" class="form-control" name="errorReport" aria-label="ErrorReport" aria-describedby="errorReportLabel">@DescribeHowTheErrorOccured</textarea>
+            </div>
 
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="errorReportLabel">@localizer["ErrorReport"]</span>
-        </div>
-        <textarea rows="10" class="form-control" name="errorReport" aria-label="ErrorReport" aria-describedby="errorReportLabel">@DescribeHowTheErrorOccured</textarea>
-    </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="filesReportLabel">@localizer["Files"]</span>
+                </div>
+                <InputFile Class="form-control" multiple OnChange="OnFilesChanged"></InputFile>
+                <textarea class="form-control disabled" hidden disabled aria-label="FilesBase64" aria-describedby="filesReportLabel" name="FilesBase64" @bind="filesAsBase64"></textarea>
+            </div>
 
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="filesReportLabel">@localizer["Files"]</span>
-        </div>
-        <InputFile Class="form-control" multiple OnChange="OnFilesChanged"></InputFile>
-        <textarea class="form-control disabled" hidden disabled aria-label="FilesBase64" aria-describedby="filesReportLabel" name="FilesBase64" @bind="filesAsBase64"></textarea>
-    </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="exceptionLabel">@localizer["Exception"]</span>
+                </div>
+                <textarea rows="10" class="form-control disabled" disabled aria-label="Exception" aria-describedby="exceptionLabel" name="exception" @bind="Exception"></textarea>
+            </div>
 
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="exceptionLabel">@localizer["Exception"]</span>
-        </div>
-        <textarea rows="10" class="form-control disabled" disabled aria-label="Exception" aria-describedby="exceptionLabel" name="exception" @bind="Exception"></textarea>
-    </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="optionsLabel">@localizer["Options"]</span>
+                </div>
+                <textarea rows="3" class="form-control disabled" disabled aria-label="Options" aria-describedby="optionsLabel" name="options" @bind="Options"></textarea>
+            </div>
 
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="optionsLabel">@localizer["Options"]</span>
-        </div>
-        <textarea rows="3" class="form-control disabled" disabled aria-label="Options" aria-describedby="optionsLabel" name="options" @bind="Options"></textarea>
-    </div>
+            @if (logEntries != null)
+            {
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="logLabel">@localizer["Log"]</span>
+                    </div>
+                    <textarea rows="10" class="form-control disabled" disabled aria-label="Log" aria-describedby="logLabel" name="log">
+                        @logEntries
+                    </textarea>
+                </div>
+            }
 
-    @if (logEntries != null)
-    {
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="logLabel">@localizer["Log"]</span>
-        </div>
-        <textarea rows="10" class="form-control disabled" disabled aria-label="Log" aria-describedby="logLabel" name="log">
-            @logEntries
-        </textarea>
-    </div>
-    }
+            <p>@localizer["OnceYouSubmitTheErrorReport"]</p>
 
-    <p>@localizer["OnceYouSubmitTheErrorReport"]</p>
-
-    <button class="btn btn-primary" type="submit">@localizer["Send"]</button>
-</form>
-
+            <button class="btn btn-primary" type="submit">@localizer["Send"]</button>
+        </form>
+    </LayoutContent>
+</Layout>
 @code {
     public static String Exception { get; set; }
     public String Options { get; private set; }
@@ -90,7 +92,7 @@ along with Foobar.  If not, see
         Options = await JSRuntime.InvokeAsync<String>("ApplicationOptions.get");
         if (ILoggerProvider is LoggerProvider LoggerProvider)
         {
-            foreach(var line in LoggerProvider.GetLogMessages())
+            foreach (var line in LoggerProvider.GetLogMessages())
             {
                 logEntries += String.Format("{0}{1}", line, Environment.NewLine);
             }
