@@ -272,11 +272,11 @@
   <data name="EnterExportSchemeTrackHereTooltip" xml:space="preserve">
     <value>Bitte geben Sie hier das Track Schema für den Export an. Jeder Platzhalter wird durch seinen zugehörigen Wert ersetzt. Platzhalter beginnen und enden mit %.</value>
   </data>
-  <data name="EnterTextImportSchemeHere" xml:space="preserve">
-    <value>Textschema für den Import hier eingeben</value>
+  <data name="EnterTextImportSchemeTracksHere" xml:space="preserve">
+    <value>Textschema für den Import von Trackeigenschaften hier eingeben</value>
   </data>
-  <data name="EnterTextImportSchemeTooltip" xml:space="preserve">
-    <value>Textschema für den Import hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
+  <data name="EnterTextImportSchemeTracksTooltip" xml:space="preserve">
+    <value>Textschema für den Import von Trackeigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
   </data>
   <data name="ErrorDuringTextImport" xml:space="preserve">
     <value>Ein Fehler ist während des Textimport aufgetreten</value>
@@ -431,17 +431,11 @@
   <data name="StartPlaybackThisTrack" xml:space="preserve">
     <value>Diesen Track wiedergeben</value>
   </data>
-  <data name="StartTrackImport" xml:space="preserve">
-    <value>Tracks importieren</value>
-  </data>
   <data name="Textfile" xml:space="preserve">
     <value>Textdatei</value>
   </data>
   <data name="TextImportAssistance" xml:space="preserve">
     <value>Importassistent für Textdateien</value>
-  </data>
-  <data name="TextImportScheme" xml:space="preserve">
-    <value>Import Textschema</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Titel</value>
@@ -495,7 +489,7 @@
     <value>Import von Textdateien</value>
   </data>
   <data name="ImportOfTextFilesText" xml:space="preserve">
-    <value>Sie können Textdatein importieren und den Inhalt zeilenweise mit regulären Ausdrücken auswerten. Eine einfache Beispiel Textdatei kann &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;hier&lt;/a&gt; gefunden werden.&lt;br/&gt;&lt;img src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Jede Zeile repräsentiert einen Track und jedes Detail kann aus dieser Zeile ausgelesen werden. Die erste Information ist der Track Künstler gefolgt von " - " und dem Track Titel. Dann kommen ein paar Tabs und Informationen über das Track Ende. So benötigen wir in diesem Beispiel den Regulären Ausdruck "%Artist% - %Title%[\t]{1,}%End%". Jedes Feld eines Tracks kann mit "%Feldname%" erreicht werden. Sie können den Textimport einfach starten, indem man eine Datei aus dem Dateisystem auf die Ablagefläche zieht oder sie manuell über den Dateiauswahldialog wählt.&lt;br/&gt;&lt;img src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;Ein neuer Dialog erscheint und zeigt das mögliche Ergebnis des Textimports. Außerdem können Sie den regulären Ausdruck für den Textimport verändern und so anpassen, dass er zu ihrer Textdatei passt und alle Informationen erfasst werden.&lt;br/&gt;&lt;img src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Änderungen am Import Textschema verändern die Vorschau und spiegeln das Ergebnis wieder.&lt;br/&gt;&lt;img src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;Sie können alle gültigen Platzhalter eines Tracks erreichen, indem Sie "Platzhalter auswählen" anklicken und dann den Platzhalter den Sie benötigen:&lt;br/&gt;&lt;img src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;Wenn Sie ein ungültiges Import Textschema angeben, dass nicht zur Textdatei passt, wird ihnen ein Fehler angezeigt:&lt;br/&gt;&lt;img src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Fehler blockieren immer den Import und müssen korrigiert werden. Im Anschluss kann das Ergebnis importiert werden und die Tracks sind vorhanden.&lt;br/&gt;&lt;img src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;&lt;img src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;</value>
+    <value>Sie können Textdatein importieren und den Inhalt zeilenweise mit regulären Ausdrücken auswerten. Eine einfache Beispiel Textdatei kann &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;hier&lt;/a&gt; gefunden werden.&lt;br/&gt;&lt;img src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Jede Zeile repräsentiert einen Track, die erste Zeile jedoch Cuesheet Details und jedes Detail kann aus einer Zeile ausgelesen werden. Die erste Information ist der Track Künstler gefolgt von " - " und dem Track Titel. Dann kommen ein paar Tabs und Informationen über das Track Ende. So benötigen wir in diesem Beispiel den Regulären Ausdruck "%Artist% - %Title%[\t]{1,}%End%" für Tracks und "\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%" für Cuesheet Details. Jedes Feld kann mit "%Feldname%" erreicht werden. Sie können den Textimport einfach starten, indem man eine Datei aus dem Dateisystem auf die Ablagefläche zieht oder sie manuell über den Dateiauswahldialog wählt.&lt;br/&gt;&lt;img src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;Ein neuer Dialog erscheint und zeigt das mögliche Ergebnis des Textimports. Außerdem können Sie den regulären Ausdruck für den Textimport verändern und so anpassen, dass er zu ihrer Textdatei passt und alle Informationen erfasst werden.&lt;br/&gt;&lt;img src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Änderungen am Import Textschema verändern die Vorschau und spiegeln das Ergebnis wieder.&lt;br/&gt;&lt;img src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;Sie können alle gültigen Platzhalter eines Tracks erreichen, indem Sie "Platzhalter auswählen" anklicken und dann den Platzhalter den Sie benötigen:&lt;br/&gt;&lt;img src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;Wenn Sie ein ungültiges Import Textschema angeben, wird ihnen ein Validierungsfehler angezeigt. &lt;br /&gt;&lt;img src="images/ImportTextfile8.png"/&gt;&lt;br /&gt;Geben Sie ein Schema an, dass nicht zur Textdatei passt, wird ihnen ein Fehler angezeigt:&lt;br/&gt;&lt;img src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Fehler blockieren immer den Import und müssen korrigiert werden. &lt;br/&gt;&lt;img src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;Im Anschluss kann das Ergebnis importiert werden.&lt;br/&gt;&lt;img src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;Wenn Sie nur Tracks importieren möchten, lassen Sie das Schema für Cuesheet leer und geben Sie eine Textdatei an, die nur Trackdetails enthält. Ein Beispiel kann &lt;a href="/samples/Sample_Inputfile2.txt" target="_blank"&gt;hier&lt;/a&gt; gefunden werden.&lt;img src="images/SampleInputfile2.png"/&gt;&lt;br/&gt;Der Import kann nach dem gleichem Muster stattfinden.&lt;br/&gt;&lt;img src="images/ImportTextfile9.png"/&gt;&lt;br/&gt;</value>
   </data>
   <data name="ImportOfCuesheetFilesText" xml:space="preserve">
     <value>Sie können bereits fertige Cuesheets importieren und bearbeiten. Dabei ist es nicht wichtig, woher die Datei stammt (von diesem oder einem anderen Programm), sondern nur das Format. Um ein Cuesheet zu importieren, ziehen Sie es aus ihrem Dateisystem auf die Ablagefläche oder wählen Sie es manuell über den Dateiauswahldialog:&lt;br/&gt;&lt;img src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;Eine Bestätigung wird abgefragt, da alle vorhandenen Daten ersetzt werden.&lt;br/&gt;&lt;img src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Das Bestätigen des Dialogs importiert das Cuesheet und im Anschluss ist das Ergebnis sichtbar.&lt;br/&gt;&lt;img src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;Ein Beispielcuesheet kann &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;hier&lt;/a&gt; gefunden werden.</value>
@@ -706,5 +700,26 @@
   </data>
   <data name="UnlinkThisTrackFromPreviousTrack" xml:space="preserve">
     <value>Diesen Track vom vorherigen Track abkoppeln</value>
+  </data>
+  <data name="TextImportSchemeCuesheet" xml:space="preserve">
+    <value>Textimport regulärer Ausdruck für Cuesheet Eigenschaften</value>
+  </data>
+  <data name="TextImportSchemeTrack" xml:space="preserve">
+    <value>Textimport regulärer Ausdruck für Track Eigenschaften</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHere" xml:space="preserve">
+    <value>Textschema für den Import von Cuesheeteigenschaften hier eingeben</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHereTooltip" xml:space="preserve">
+    <value>Textschema für den Import von Cuesheeteigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.</value>
+  </data>
+  <data name="FileContent" xml:space="preserve">
+    <value>Dateiinhalt</value>
+  </data>
+  <data name="ImportCuesheetValues" xml:space="preserve">
+    <value>Importdaten Cuesheet</value>
+  </data>
+  <data name="StartTextImport" xml:space="preserve">
+    <value>Textimport starten</value>
   </data>
 </root>

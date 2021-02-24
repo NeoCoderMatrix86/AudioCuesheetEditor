@@ -22,8 +22,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    //TODO: Declare seperate ImportCuesheet and derive from it
-    public class ImportTrack : ITrack<Cuesheet>
+    public class ImportTrack : ITrack<ImportCuesheet>
     {
         private readonly List<Flag> flags = new List<Flag>();
         public uint? Position { get; set; }
@@ -35,7 +34,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
 
-        public Cuesheet Cuesheet { get; set; }
+        public ImportCuesheet Cuesheet { get; set; }
         /// <inheritdoc/>
         public TimeSpan? PreGap { get; set; }
         /// <inheritdoc/>

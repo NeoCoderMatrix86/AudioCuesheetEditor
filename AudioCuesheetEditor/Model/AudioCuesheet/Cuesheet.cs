@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Reflection;
 using System;
@@ -228,11 +229,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
             }
-            foreach (var importTrack in textImportFile.Tracks)
-            {
-                var track = new Track(importTrack);
-                AddTrack(track, applicationOptions);
-            }
+            CopyValues(textImportFile.ImportCuesheet, applicationOptions);
         }
 
         public void StartRecording()
@@ -369,6 +366,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     trackToCalculate.Begin = TimeSpan.Zero;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Copy values from import cuesheet to this cuesheet
+        /// </summary>
+        /// <param name="cuesheet">Reference to import cuesheet</param>
+        /// <param name="applicationOptions">Reference to application options</param>
+        private void CopyValues(ICuesheet<ImportTrack> cuesheet, ApplicationOptions applicationOptions)
+        {
+            Artist = cuesheet.Artist;
+            Title = cuesheet.Title;
+            AudioFile = cuesheet.AudioFile;
+            CDTextfile = cuesheet.CDTextfile;
+            CatalogueNumber = cuesheet.CatalogueNumber;
+            foreach (var importTrack in cuesheet.Tracks)
+            {
+                var track = new Track(importTrack);
+                AddTrack(track, applicationOptions);
             }
         }
     }

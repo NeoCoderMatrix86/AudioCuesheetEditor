@@ -272,11 +272,11 @@
   <data name="EnterExportSchemeTrackHereTooltip" xml:space="preserve">
     <value>Enter scheme for export of tracks here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %.</value>
   </data>
-  <data name="EnterTextImportSchemeHere" xml:space="preserve">
-    <value>Enter textscheme for import here</value>
+  <data name="EnterTextImportSchemeTracksHere" xml:space="preserve">
+    <value>Enter textscheme for track properties import here</value>
   </data>
-  <data name="EnterTextImportSchemeTooltip" xml:space="preserve">
-    <value>Enter textscheme for import here. Identification will be done using regular expressions.</value>
+  <data name="EnterTextImportSchemeTracksTooltip" xml:space="preserve">
+    <value>Enter textscheme for track properties import here. Identification will be done using regular expressions.</value>
   </data>
   <data name="ErrorDuringTextImport" xml:space="preserve">
     <value>An error occured during text import</value>
@@ -431,17 +431,11 @@
   <data name="StartPlaybackThisTrack" xml:space="preserve">
     <value>Start playing this track</value>
   </data>
-  <data name="StartTrackImport" xml:space="preserve">
-    <value>Start import of tracks</value>
-  </data>
   <data name="Textfile" xml:space="preserve">
     <value>Textfile</value>
   </data>
   <data name="TextImportAssistance" xml:space="preserve">
     <value>Import textfile assistant</value>
-  </data>
-  <data name="TextImportScheme" xml:space="preserve">
-    <value>Import Textscheme</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Title</value>
@@ -495,7 +489,7 @@
     <value>Import of text files</value>
   </data>
   <data name="ImportOfTextFilesText" xml:space="preserve">
-    <value>You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by " - " and then track title. Afterwards some tabs come and you can see information about the track end time. So in this example we can work with the regular expression "%Artist% - %Title%[\t]{1,}%End%". Each field of track can be accessed via "%Fieldname%". You can start importing a textfile by dragging it from the file system to the dropzone or by manually selecting it from file chooser dialog.&lt;br/&gt;&lt;img src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;A new dialog will appear where you can see the result of import and can edit the regular expression for import to your favor to match all the details you have in the textfile.&lt;br/&gt;&lt;img src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Changing the import textscheme will result in changes of the import result and the data to import will be shown to you.&lt;br/&gt;&lt;img src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;You can select the valid track fields by pressing the button "Select placeholder" and afterwards selecting the placeholder you want to add:&lt;br/&gt;&lt;img src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;If you enter an invalid text import scheme, that doesn't match the text file, an error will be displayed to you:&lt;br/&gt;&lt;img src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Errors will always block import of text, so you have to correct them at first before import can take place. Afterwards you can import the textfile and see the result.&lt;br/&gt;&lt;img src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;&lt;img src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;</value>
+    <value>You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by " - " and then track title. Afterwards some tabs come and you can see information about the track end time. So in this example we can work with the regular expression for tracks "%Artist% - %Title%[\t]{1,}%End%" and with "\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%" for cuesheet data. Each field can be accessed via "%Fieldname%". You can start importing a textfile by dragging it from the file system to the dropzone or by manually selecting it from file chooser dialog.&lt;br/&gt;&lt;img src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;A new dialog will appear where you can see the result of import and can edit the regular expression for import to your favor to match all the details you have in the textfile.&lt;br/&gt;&lt;img src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Changing the import textscheme will result in changes of the import result and the data to import will be shown to you.&lt;br/&gt;&lt;img src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;You can select the valid  fields by pressing the button "Select placeholder" and afterwards selecting the placeholder you want to add:&lt;br/&gt;&lt;img src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;If you enter an invalid text import scheme, a validation error will be displayed.&lt;br /&gt;&lt;img src="images/ImportTextfile8.png"/&gt;&lt;br /&gt;If the import scheme doesn't match the text file, an error will be displayed to you:&lt;br/&gt;&lt;img src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Errors will always block import of text, so you have to correct them at first before import can take place.&lt;br/&gt;&lt;img src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;Afterwards you can import the textfile and see the result.&lt;br/&gt;&lt;img src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;If you want to import a tracks only textfile, just leave the cuesheet scheme empty and add a textfile with track properties only. A sample can be found &lt;a href="/samples/Sample_Inputfile2.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src="images/SampleInputfile2.png"/&gt;&lt;br/&gt;Import can be done the same way.&lt;br/&gt;&lt;img src="images/ImportTextfile9.png"/&gt;&lt;br/&gt;</value>
   </data>
   <data name="ImportOfCuesheetFilesText" xml:space="preserve">
     <value>You can import already finished cuesheets and edit them. It doesn't matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Confirming this dialog will import the cuesheet and afterwards display the result.&lt;br/&gt;&lt;img src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;A sample cuesheet file can be found &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;here&lt;/a&gt;.</value>
@@ -706,5 +700,26 @@
   </data>
   <data name="UnlinkThisTrackFromPreviousTrack" xml:space="preserve">
     <value>Unlink this track from previous track</value>
+  </data>
+  <data name="TextImportSchemeCuesheet" xml:space="preserve">
+    <value>Textimport regular expression for Cuesheet properties</value>
+  </data>
+  <data name="TextImportSchemeTrack" xml:space="preserve">
+    <value>Textimport regular expression for Track properties</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHere" xml:space="preserve">
+    <value>Enter textscheme for cuesheet properties import here</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHereTooltip" xml:space="preserve">
+    <value>Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions.</value>
+  </data>
+  <data name="FileContent" xml:space="preserve">
+    <value>File content</value>
+  </data>
+  <data name="ImportCuesheetValues" xml:space="preserve">
+    <value>Import cuesheet values</value>
+  </data>
+  <data name="StartTextImport" xml:space="preserve">
+    <value>Start textimport</value>
   </data>
 </root>

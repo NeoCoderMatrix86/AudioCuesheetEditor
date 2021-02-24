@@ -774,20 +774,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for cuesheet properties import here ähnelt.
         /// </summary>
-        public static string EnterTextImportSchemeHere {
+        public static string EnterTextImportSchemeCuesheetHere {
             get {
-                return ResourceManager.GetString("EnterTextImportSchemeHere", resourceCulture);
+                return ResourceManager.GetString("EnterTextImportSchemeCuesheetHere", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here. Identification will be done using regular expressions. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions. ähnelt.
         /// </summary>
-        public static string EnterTextImportSchemeTooltip {
+        public static string EnterTextImportSchemeCuesheetHereTooltip {
             get {
-                return ResourceManager.GetString("EnterTextImportSchemeTooltip", resourceCulture);
+                return ResourceManager.GetString("EnterTextImportSchemeCuesheetHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for track properties import here ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTracksHere {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTracksHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for track properties import here. Identification will be done using regular expressions. ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTracksTooltip {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTracksTooltip", resourceCulture);
             }
         }
         
@@ -963,6 +981,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File content ähnelt.
+        /// </summary>
+        public static string FileContent {
+            get {
+                return ResourceManager.GetString("FileContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The file &quot;{0}&quot; you supplied does not match the requested operation: &quot;{1}&quot;. Please provide a valid file! ähnelt.
         /// </summary>
         public static string FileHasInvalidMimeType {
@@ -1107,6 +1134,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import cuesheet values ähnelt.
+        /// </summary>
+        public static string ImportCuesheetValues {
+            get {
+                return ResourceManager.GetString("ImportCuesheetValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import files ähnelt.
         /// </summary>
         public static string ImportFiles {
@@ -1161,7 +1197,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you can see information about the track end time. So i [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you ca [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ImportOfTextFilesText {
             get {
@@ -1575,11 +1611,11 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Start import of tracks ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start textimport ähnelt.
         /// </summary>
-        public static string StartTrackImport {
+        public static string StartTextImport {
             get {
-                return ResourceManager.GetString("StartTrackImport", resourceCulture);
+                return ResourceManager.GetString("StartTextImport", resourceCulture);
             }
         }
         
@@ -1629,11 +1665,20 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Import Textscheme ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textimport regular expression for Cuesheet properties ähnelt.
         /// </summary>
-        public static string TextImportScheme {
+        public static string TextImportSchemeCuesheet {
             get {
-                return ResourceManager.GetString("TextImportScheme", resourceCulture);
+                return ResourceManager.GetString("TextImportSchemeCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textimport regular expression for Track properties ähnelt.
+        /// </summary>
+        public static string TextImportSchemeTrack {
+            get {
+                return ResourceManager.GetString("TextImportSchemeTrack", resourceCulture);
             }
         }
         
