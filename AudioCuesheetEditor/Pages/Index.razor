@@ -1221,6 +1221,8 @@ along with Foobar.  If not, see
             Logger.LogInformation("newCuesheetDelegate");
             cuesheet = new Cuesheet();
             modalDialog.Confirmed -= newCuesheetDelegate;
+            dropFilesVisible = true;
+            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             StateHasChanged();
         };
         modalDialog.Confirmed += newCuesheetDelegate;
@@ -1455,7 +1457,8 @@ along with Foobar.  If not, see
         if (importedAllFiles == true)
         {
             //Hide the import
-            HeaderClicked(ref dropFilesVisible, ref chevronDropFiles);
+            dropFilesVisible = false;
+            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             importVisible = false;
             SwitchChevron(importVisible, ref chevronImport);
         }
