@@ -14,14 +14,13 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using AudioCuesheetEditorTests.Utility;
 using System.Linq;
+using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Import;
 using System.IO;
-using AudioCuesheetEditor.Model.IO;
+using System.Text;
 using AudioCuesheetEditorTests.Properties;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
@@ -32,9 +31,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void AddTrackTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            cuesheet.AddTrack(new Track());
+            cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
         }
 
@@ -46,7 +46,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNull(cuesheet.AudioFile);
             var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
-            cuesheet.AudioFile = new IO.AudioFile("AudioFile01.ogg");
+            cuesheet.AudioFile = new AudioFile("AudioFile01.ogg");
             validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
             Assert.IsNull(validationErrorAudioFile);
         }
@@ -54,11 +54,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void EmptyCuesheetTracksValidationTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
             var validationErrorTracks = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Tracks))).FirstOrDefault();
             Assert.IsNotNull(validationErrorTracks);
-            cuesheet.AddTrack(new Track());
+            cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
             validationErrorTracks = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.Tracks)).FirstOrDefault();
             Assert.IsNull(validationErrorTracks);
         }
@@ -66,13 +67,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void MoveTrackTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
-            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
             var track2 = new Track();
-            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
             var track3 = new Track();
-            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(cuesheet.Tracks.Count, 3);
             Assert.IsTrue(track1.Position.Value == 1);
             cuesheet.MoveTrack(track1, MoveDirection.Up);
@@ -96,6 +98,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         {
             //Prepare text input file
             StringBuilder builder = new StringBuilder();
+            builder.AppendLine("CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3");
             builder.AppendLine("Sample Artist 1 - Sample Title 1				00:05:00");
             builder.AppendLine("Sample Artist 2 - Sample Title 2				00:09:23");
             builder.AppendLine("Sample Artist 3 - Sample Title 3				00:15:54");
@@ -109,19 +112,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)))
-            {
-                ImportScheme = "%Artist% - %Title%[\t]{1,}%End%"
-            };
+            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%";
             Assert.IsNull(textImportFile.AnalyseException);
-            Assert.IsTrue(textImportFile.Tracks.Count == 8);
+            Assert.IsTrue(textImportFile.ImportCuesheet.Tracks.Count == 8);
             Assert.IsTrue(textImportFile.IsValid);
 
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
-            cuesheet.Import(textImportFile);
+            cuesheet.Import(textImportFile, testHelper.ApplicationOptions);
 
             Assert.IsNull(cuesheet.CDTextfile);
-            Assert.AreEqual(cuesheet.ValidationErrors.Count, 5);
+            Assert.AreEqual(2, cuesheet.ValidationErrors.Count);
 
             File.Delete(tempFile);
         }
@@ -129,15 +132,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void ImportTestCalculateEndCorrectly()
         {
-            var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_Bug_54))
-            {
-                ImportScheme = "%Artist% - %Title%[\t]{1,}%End%"
-            };
+            var testHelper = new TestHelper();
+            var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_Bug_54));
+            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
+            textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             Assert.IsNull(textImportFile.AnalyseException);
-            Assert.IsTrue(textImportFile.Tracks.Count == 39);
+            Assert.IsTrue(textImportFile.ImportCuesheet.Tracks.Count == 39);
             Assert.IsTrue(textImportFile.IsValid);
             var cuesheet = new Cuesheet();
-            cuesheet.Import(textImportFile);
+            cuesheet.Import(textImportFile, testHelper.ApplicationOptions);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.IsTrue(cuesheet.Tracks.ElementAt(0).End == new TimeSpan(0, 5, 24));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(38).Begin == new TimeSpan(3, 13, 13));
@@ -146,24 +149,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void RecordTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.IsFalse(cuesheet.IsRecording);
             Assert.IsNull(cuesheet.RecordingTime);
             cuesheet.StartRecording();
             Assert.IsTrue(cuesheet.IsRecording);
             Assert.IsNotNull(cuesheet.RecordingTime);
+            var track = new Track();
+            Assert.IsNull(track.Begin);
+            Assert.IsNull(track.End);
+            cuesheet.AddTrack(track, testHelper.ApplicationOptions);
+            Assert.AreEqual(TimeSpan.Zero, track.Begin);
+            Assert.IsNull(track.End);
+            var track2 = new Track();
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            Assert.IsNotNull(track.End);
+            Assert.AreNotEqual(TimeSpan.Zero, track.End);
         }
 
         [TestMethod()]
         public void TrackRecalculationTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
-            cuesheet.AddTrack(track1);
-            cuesheet.AddTrack(track2);
-            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(track1.Position.Value, (uint)1);
             Assert.AreEqual(track2.Position.Value, (uint)2);
             Assert.AreEqual(track3.Position.Value, (uint)3);
@@ -186,13 +201,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void TrackOverlappingTest()
         {
+            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
-            cuesheet.AddTrack(track1);
-            cuesheet.AddTrack(track2);
-            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(track1.Position.Value, (uint)1);
             Assert.AreEqual(track2.Position.Value, (uint)2);
             Assert.AreEqual(track3.Position.Value, (uint)3);

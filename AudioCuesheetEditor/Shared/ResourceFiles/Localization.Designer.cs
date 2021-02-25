@@ -151,6 +151,87 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio codec ähnelt.
+        /// </summary>
+        public static string AudioCodec {
+            get {
+                return ResourceManager.GetString("AudioCodec", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die FLAC in native encapsulation format (Fileextension .flac) ähnelt.
+        /// </summary>
+        public static string AudioCodec_FLAC {
+            get {
+                return ResourceManager.GetString("AudioCodec FLAC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die MPEG Audio Layer III (Fileextension .mp3) ähnelt.
+        /// </summary>
+        public static string AudioCodec_MP3 {
+            get {
+                return ResourceManager.GetString("AudioCodec MP3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Audio Profile  (Fileextension .oga) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OGA {
+            get {
+                return ResourceManager.GetString("AudioCodec OGA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Vorbis I Profile (Fileextension .ogg) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OGG {
+            get {
+                return ResourceManager.GetString("AudioCodec OGG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ogg Opus profile (Fileextension .opus) ähnelt.
+        /// </summary>
+        public static string AudioCodec_OPUS {
+            get {
+                return ResourceManager.GetString("AudioCodec OPUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Waveform Audio File Format (Fileextension .wav) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WAV {
+            get {
+                return ResourceManager.GetString("AudioCodec WAV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Waveform Audio File Format (Fileextension .wave) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WAVE {
+            get {
+                return ResourceManager.GetString("AudioCodec WAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die WebM Container (Fileextension .webm) ähnelt.
+        /// </summary>
+        public static string AudioCodec_WEBM {
+            get {
+                return ResourceManager.GetString("AudioCodec WEBM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audiofile ähnelt.
         /// </summary>
         public static string AudioFile {
@@ -160,11 +241,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Audio file name of recording ähnelt.
+        /// </summary>
+        public static string AudioFileNameRecording {
+            get {
+                return ResourceManager.GetString("AudioFileNameRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Audio player ähnelt.
         /// </summary>
         public static string AudioPlayer {
             get {
                 return ResourceManager.GetString("AudioPlayer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Automatically link tracks ähnelt.
+        /// </summary>
+        public static string AutomaticallyLinkTracks {
+            get {
+                return ResourceManager.GetString("AutomaticallyLinkTracks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Automatically link tracks with previous track ähnelt.
+        /// </summary>
+        public static string AutomaticallyLinkTracksWithPrevious {
+            get {
+                return ResourceManager.GetString("AutomaticallyLinkTracksWithPrevious", resourceCulture);
             }
         }
         
@@ -394,6 +502,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Currently processing recorded audio file, please wait ... ähnelt.
+        /// </summary>
+        public static string CurrentlyProcessingAudioFilePleaseWait {
+            get {
+                return ResourceManager.GetString("CurrentlyProcessingAudioFilePleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die This track is played ähnelt.
         /// </summary>
         public static string CurrentTrackIsPlayed {
@@ -518,6 +635,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string EditTrackTooltip {
             get {
                 return ResourceManager.GetString("EditTrackTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enable audio recoding after record ähnelt.
+        /// </summary>
+        public static string EnableAudioRecoding {
+            get {
+                return ResourceManager.GetString("EnableAudioRecoding", resourceCulture);
             }
         }
         
@@ -648,20 +774,38 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for cuesheet properties import here ähnelt.
         /// </summary>
-        public static string EnterTextImportSchemeHere {
+        public static string EnterTextImportSchemeCuesheetHere {
             get {
-                return ResourceManager.GetString("EnterTextImportSchemeHere", resourceCulture);
+                return ResourceManager.GetString("EnterTextImportSchemeCuesheetHere", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for import here. Identification will be done using regular expressions. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions. ähnelt.
         /// </summary>
-        public static string EnterTextImportSchemeTooltip {
+        public static string EnterTextImportSchemeCuesheetHereTooltip {
             get {
-                return ResourceManager.GetString("EnterTextImportSchemeTooltip", resourceCulture);
+                return ResourceManager.GetString("EnterTextImportSchemeCuesheetHereTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for track properties import here ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTracksHere {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTracksHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Enter textscheme for track properties import here. Identification will be done using regular expressions. ähnelt.
+        /// </summary>
+        public static string EnterTextImportSchemeTracksTooltip {
+            get {
+                return ResourceManager.GetString("EnterTextImportSchemeTracksTooltip", resourceCulture);
             }
         }
         
@@ -837,6 +981,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File content ähnelt.
+        /// </summary>
+        public static string FileContent {
+            get {
+                return ResourceManager.GetString("FileContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The file &quot;{0}&quot; you supplied does not match the requested operation: &quot;{1}&quot;. Please provide a valid file! ähnelt.
         /// </summary>
         public static string FileHasInvalidMimeType {
@@ -981,6 +1134,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import cuesheet values ähnelt.
+        /// </summary>
+        public static string ImportCuesheetValues {
+            get {
+                return ResourceManager.GetString("ImportCuesheetValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Import files ähnelt.
         /// </summary>
         public static string ImportFiles {
@@ -1035,7 +1197,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you can see information about the track end time. So i [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you ca [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ImportOfTextFilesText {
             get {
@@ -1094,6 +1256,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Licence {
             get {
                 return ResourceManager.GetString("Licence", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Link this track with previous track ähnelt.
+        /// </summary>
+        public static string LinkThisTrackWithPreviousTrack {
+            get {
+                return ResourceManager.GetString("LinkThisTrackWithPreviousTrack", resourceCulture);
             }
         }
         
@@ -1166,6 +1337,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Options {
             get {
                 return ResourceManager.GetString("Options", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src=&quot;images/Options1.png&quot;/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string OptionsHelpText {
+            get {
+                return ResourceManager.GetString("OptionsHelpText", resourceCulture);
             }
         }
         
@@ -1251,11 +1431,29 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recode audio data to the selected codec after recording ähnelt.
+        /// </summary>
+        public static string RecodeAudioAfterRecording {
+            get {
+                return ResourceManager.GetString("RecodeAudioAfterRecording", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Control recording ähnelt.
         /// </summary>
         public static string RecordControl {
             get {
                 return ResourceManager.GetString("RecordControl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recording ähnelt.
+        /// </summary>
+        public static string Recording {
+            get {
+                return ResourceManager.GetString("Recording", resourceCulture);
             }
         }
         
@@ -1413,11 +1611,11 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Start import of tracks ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start textimport ähnelt.
         /// </summary>
-        public static string StartTrackImport {
+        public static string StartTextImport {
             get {
-                return ResourceManager.GetString("StartTrackImport", resourceCulture);
+                return ResourceManager.GetString("StartTextImport", resourceCulture);
             }
         }
         
@@ -1467,11 +1665,20 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Import Textscheme ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textimport regular expression for Cuesheet properties ähnelt.
         /// </summary>
-        public static string TextImportScheme {
+        public static string TextImportSchemeCuesheet {
             get {
-                return ResourceManager.GetString("TextImportScheme", resourceCulture);
+                return ResourceManager.GetString("TextImportSchemeCuesheet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Textimport regular expression for Track properties ähnelt.
+        /// </summary>
+        public static string TextImportSchemeTrack {
+            get {
+                return ResourceManager.GetString("TextImportSchemeTrack", resourceCulture);
             }
         }
         
@@ -1503,6 +1710,24 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Track linking ähnelt.
+        /// </summary>
+        public static string TrackLinking {
+            get {
+                return ResourceManager.GetString("TrackLinking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die It is possible to link a track with the previous track. This makes shure, that changes to Begin,End and Position are automatically transfered to the next following track. &lt;img src=&quot;images/TrackLinking1.png&quot;/&gt; If a track is linked to the previous track, you can change for example the End and the Begin of the following linked track is automatically replaced with the End you entered. If you wish to disable linking, just click on the orange &quot;Unlink&quot; Button. If you afterwards want to link the tracks again, just  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        /// </summary>
+        public static string TrackLinkingText {
+            get {
+                return ResourceManager.GetString("TrackLinkingText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Tracks ähnelt.
         /// </summary>
         public static string Tracks {
@@ -1517,6 +1742,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string TrackTableControls {
             get {
                 return ResourceManager.GetString("TrackTableControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unlink this track from previous track ähnelt.
+        /// </summary>
+        public static string UnlinkThisTrackFromPreviousTrack {
+            get {
+                return ResourceManager.GetString("UnlinkThisTrackFromPreviousTrack", resourceCulture);
             }
         }
         
@@ -1557,7 +1791,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Full edition ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Full edit mode ähnelt.
         /// </summary>
         public static string ViewModeFull {
             get {

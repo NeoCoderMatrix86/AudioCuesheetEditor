@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Shared.ResourceFiles;
@@ -82,18 +83,14 @@ namespace AudioCuesheetEditor.Controller
             return fileMimeTypeMatches;
         }
 
-        public static Boolean CheckFileMimeType(IBrowserFile file, Dictionary<String, String> mimeTypes)
+        public static Boolean CheckFileMimeType(IBrowserFile file, IReadOnlyCollection<AudioCodec> audioCodecs)
         {
             Boolean fileMimeTypeMatches = false;
-            if ((file != null) && (mimeTypes != null))
+            if ((file != null) && (audioCodecs != null))
             {
-                fileMimeTypeMatches = mimeTypes.ContainsValue(file.ContentType);
-                if (fileMimeTypeMatches == false)
-                {
-                    //Try to find by file extension
-                    var extension = Path.GetExtension(file.Name).ToLower();
-                    fileMimeTypeMatches = mimeTypes.ContainsKey(extension);
-                }
+                var extension = Path.GetExtension(file.Name).ToLower();
+                var audioCodecsFound = audioCodecs.Where(x => x.MimeType.Equals(file.ContentType, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
+                fileMimeTypeMatches = (audioCodecsFound != null) && (audioCodecsFound.Any());
             }
             return fileMimeTypeMatches;
         }

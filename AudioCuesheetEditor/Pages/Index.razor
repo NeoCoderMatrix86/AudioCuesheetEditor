@@ -28,6 +28,7 @@ along with Foobar.  If not, see
 @inject OptionsController optionsController
 @inject ILogger<Index> Logger
 @inject HotKeys HotKeys
+@inject HttpClient httpClient
 
 <Layout>
     <LayoutHeader Fixed="true">
@@ -196,7 +197,7 @@ along with Foobar.  If not, see
                                             {
                                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                                 var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.MimeTypes.Select(x => x.Value))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
+                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
                                             }
                                             else
                                             {
@@ -274,8 +275,34 @@ along with Foobar.  If not, see
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
-                                            @foreach (var track in cuesheet.Tracks)
+                                            @for (int i = 0; i < cuesheet.Tracks.Count; i++)
                                             {
+                                                var track = cuesheet.Tracks.ElementAt(i);
+                                                @if (i != 0)
+                                                {
+                                                    <TableRow>
+                                                        <TableRowCell ColumnSpan="8">
+                                                            @if (track.LinkedPreviousTrack != null)
+                                                            {
+                                                                <Button Color="Color.Warning" Block="true" Size="Size.ExtraSmall" Clicked="() => track.LinkedPreviousTrack = null">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand" viewBox="0 0 16 16">
+                                                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z" />
+                                                                    </svg>
+                                                                    @localizer["UnlinkThisTrackFromPreviousTrack"]
+                                                                </Button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <Button Color="Color.Success" Block="true" Size="Size.ExtraSmall" Clicked="() => track.LinkedPreviousTrack = cuesheet.Tracks.ElementAt(i -1)">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
+                                                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707l-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z" />
+                                                                    </svg>
+                                                                    @localizer["LinkThisTrackWithPreviousTrack"]
+                                                                </Button>
+                                                            }
+                                                        </TableRowCell>
+                                                    </TableRow>
+                                                }
                                                 <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
                                                     <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
@@ -350,21 +377,21 @@ along with Foobar.  If not, see
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                                                                <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
+                                                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                                                                <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
+                                                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                                                                <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
+                                                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
@@ -377,7 +404,7 @@ along with Foobar.  If not, see
                                             }
                                         </TableBody>
                                     </Table>
-                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track())">@localizer["Addnewtrack"]</Button>
+                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)">@localizer["Addnewtrack"]</Button>
                                     <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
                                 </CollapseBody>
                             </Collapse>
@@ -482,17 +509,37 @@ along with Foobar.  If not, see
         <ModalBody>
             @if (textImportFile != null)
             {
+                <Accordion Style="margin-bottom: 1rem;">
+                    <Collapse Visible="textImportFileContentVisible">
+                        <CollapseHeader>
+                            <Blazorise.Link Clicked="(() => HeaderClicked(ref textImportFileContentVisible, ref chevronTextImportFileContent))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                                <Heading Size="HeadingSize.Is3">@localizer["FileContent"]</Heading>
+                                <div>
+                                    @((MarkupString)chevronTextImportFileContent)
+                                </div>
+                            </Blazorise.Link>
+                        </CollapseHeader>
+                        <CollapseBody Style="background: lightgray;">
+                            <Text>
+                                @if (textImportFile.FileContentRecognized != null)
+                                {
+                                    @((MarkupString)String.Join("<br />", textImportFile.FileContentRecognized))
+                                }
+                            </Text>
+                        </CollapseBody>
+                    </Collapse>
+                </Accordion>
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeTooltip"]">
-                            @localizer["TextImportScheme"]
+                    <FieldLabel ColumnSize="ColumnSize.Is4">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeCuesheetTooltip"]">
+                            @localizer["TextImportSchemeCuesheet"]
                         </Tooltip>
                     </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
+                    <FieldBody ColumnSize="ColumnSize.Is8">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["EnterTextImportSchemeHere"]" @bind-Text="textImportFile.ImportScheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterTextImportSchemeTooltip"]" />
+                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["EnterTextImportSchemeCuesheetHere"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeCuesheet))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -500,9 +547,37 @@ along with Foobar.  If not, see
                                         @localizer["SelectPlaceholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        @foreach (var availableScheme in TextImportFile.AvailableSchemes)
+                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
                                         {
-                                            <DropdownItem Clicked="() => textImportFile.ImportScheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is4">
+                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeTracksTooltip"]">
+                            @localizer["TextImportSchemeTrack"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is8">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["EnterTextImportSchemeTracksHere"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeTracks))" />
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @localizer["SelectPlaceholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
+                                        {
+                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -522,38 +597,80 @@ along with Foobar.  If not, see
                         <AlertMessage>@localizer["ErrorDuringTextImport"] : @textImportFile.AnalyseException.Message</AlertMessage>
                     </Alert>
                 }
-                <Table Bordered="true" Responsive="true" Narrow="true">
-                    <TableHeader ThemeContrast="ThemeContrast.Light">
-                        <TableRow>
-                            <TableHeaderCell>#</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Flags"]</TableHeaderCell>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        @foreach (var track in textImportFile.Tracks)
-                        {
-                        <TableRow>
-                            <TableRowCell>@track.Position</TableRowCell>
-                            <TableRowCell>@track.Artist</TableRowCell>
-                            <TableRowCell>@track.Title</TableRowCell>
-                            <TableRowCell>@track.Begin</TableRowCell>
-                            <TableRowCell>@track.End</TableRowCell>
-                            <TableRowCell>@track.Length</TableRowCell>
-                            <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
-                        </TableRow>
-                        }
-                    </TableBody>
-                </Table>
+                <Divider DividerType="DividerType.Solid" />
+                @if (textImportFile.ImportCuesheet != null)
+                {
+                    <Heading Size="HeadingSize.Is4">@localizer["ImportCuesheetValues"]</Heading>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDArtist"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is8">
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Artist" ReadOnly="true" />
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDTitle"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is8">
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
+                        </FieldBody>
+                    </Field>
+                    @if (textImportFile.ImportCuesheet.AudioFile != null)
+                    {
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["AudioFile"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is8">
+                                <TextEdit Text="@textImportFile.ImportCuesheet.AudioFile.FileName" ReadOnly="true" />
+                            </FieldBody>
+                        </Field>
+                    }
+                    @if (textImportFile.ImportCuesheet.CDTextfile != null)
+                    {
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDTextfile"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is8">
+                                <TextEdit Text="@textImportFile.ImportCuesheet.CDTextfile.FileName" ReadOnly="true" />
+                            </FieldBody>
+                        </Field>
+                    }
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CatalogueNumber"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is8">
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.CatalogueNumber.Value" ReadOnly="true" />
+                        </FieldBody>
+                    </Field>
+                    <Heading Size="HeadingSize.Is5">@localizer["Tracks"]</Heading>
+                    <Table Bordered="true" Responsive="true" Narrow="true">
+                        <TableHeader ThemeContrast="ThemeContrast.Light">
+                            <TableRow>
+                                <TableHeaderCell>#</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
+                                <TableHeaderCell>@localizer["Flags"]</TableHeaderCell>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            @foreach (var track in textImportFile.ImportCuesheet.Tracks)
+                            {
+                                <TableRow>
+                                    <TableRowCell>@track.Position</TableRowCell>
+                                    <TableRowCell>@track.Artist</TableRowCell>
+                                    <TableRowCell>@track.Title</TableRowCell>
+                                    <TableRowCell>@track.Begin</TableRowCell>
+                                    <TableRowCell>@track.End</TableRowCell>
+                                    <TableRowCell>@track.Length</TableRowCell>
+                                    <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
+                                </TableRow>
+                            }
+                        </TableBody>
+                    </Table>
+                }
             }
         </ModalBody>
         <ModalFooter>
             <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "ImportNotPossible")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["StartTrackImport"]</Button>
+                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["StartTextImport"]</Button>
             </Tooltip>
             <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@localizer["Abort"]</Button>
         </ModalFooter>
@@ -750,6 +867,7 @@ along with Foobar.  If not, see
             <CloseButton Clicked="() => modalOptions.Hide()" />
         </ModalHeader>
         <ModalBody>
+            <!--TODO: Make Tabs -->
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CultureSetting"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
@@ -767,12 +885,20 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
                 </FieldBody>
             </Field>
+            <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportScheme"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeCuesheet"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme" />
+                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeCuesheet" />
                 </FieldBody>
             </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeTrack"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeTracks" />
+                </FieldBody>
+            </Field>
+            <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["DefaultViewMode"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
@@ -782,6 +908,37 @@ along with Foobar.  If not, see
                             <SelectItem Value="@name">@localizer[name]</SelectItem>
                         }
                     </Select>
+                </FieldBody>
+            </Field>
+            <Divider DividerType="DividerType.Solid" />
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioFileNameRecording"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" />
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["EnableAudioRecoding"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Check TValue="Boolean" @bind-Checked="optionsController.Options.RecodeAudioRecording">@localizer["RecodeAudioAfterRecording"]</Check>
+                </FieldBody>
+            </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioCodec"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Select TValue="String" @bind-SelectedValue="optionsController.Options.AudioCodecName">
+                        @foreach (var audioCodec in AudioFile.AudioCodecs)
+                        {
+                            <SelectItem Value="audioCodec.Name">@localizer[audioCodec.Name]</SelectItem>
+                        }
+                    </Select>
+                </FieldBody>
+            </Field>
+            <Divider DividerType="DividerType.Solid" />
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AutomaticallyLinkTracks"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <Check TValue="Boolean?" @bind-Checked="optionsController.Options.LinkTracksWithPreviousOne">@localizer["AutomaticallyLinkTracksWithPrevious"]</Check>
                 </FieldBody>
             </Field>
         </ModalBody>
@@ -832,7 +989,7 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Begin"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editTrack.Clone.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Begin = x, value)" ChangeTextOnKeyPress="false" />
+                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editTrack.Clone.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Begin = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -840,7 +997,7 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["End"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editTrack.Clone.End)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.End = x, value)" ChangeTextOnKeyPress="false" />
+                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editTrack.Clone.End)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.End = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -848,7 +1005,7 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Length"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editTrack.Clone.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Length = x, value)" ChangeTextOnKeyPress="false" />
+                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editTrack.Clone.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Length = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -867,7 +1024,7 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PreGap"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
-                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editTrack.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PreGap = x, value)" ChangeTextOnKeyPress="false" />
+                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editTrack.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PreGap = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -875,7 +1032,7 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PostGap"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
-                            <TextEdit Pattern="@CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editTrack.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PostGap = x, value)" ChangeTextOnKeyPress="false" />
+                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editTrack.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PostGap = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -963,6 +1120,8 @@ along with Foobar.  If not, see
     private Boolean processingHintsErrorVisible = true;
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
+    private Boolean textImportFileContentVisible = true;
+
     private HotKeysContext hotKeysContext;
 
     private String invalidFileName;
@@ -973,6 +1132,7 @@ along with Foobar.  If not, see
     private String chevronProcessingHintsError = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    private String chevronTextImportFileContent = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
 
     private Cuesheet cuesheet = new Cuesheet();
     private TextImportFile textImportFile;
@@ -1064,6 +1224,8 @@ along with Foobar.  If not, see
             Logger.LogInformation("newCuesheetDelegate");
             cuesheet = new Cuesheet();
             modalDialog.Confirmed -= newCuesheetDelegate;
+            dropFilesVisible = true;
+            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             StateHasChanged();
         };
         modalDialog.Confirmed += newCuesheetDelegate;
@@ -1124,7 +1286,7 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
-                textImportFile.ImportScheme = optionsController.Options.TextImportScheme;
+                textImportFile.TextImportScheme = optionsController.Options.TextImportScheme;
                 modalTextImport.Show();
             }
             else
@@ -1150,9 +1312,9 @@ along with Foobar.  If not, see
         Logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
-            optionsController.Options.TextImportScheme = textImportFile.ImportScheme;
+            optionsController.Options.TextImportScheme = textImportFile.TextImportScheme;
             await optionsController.SaveOptions();
-            cuesheet.Import(textImportFile);
+            cuesheet.Import(textImportFile, optionsController.Options);
             modalTextImport.Hide();
             textImportFile = null;
             StateHasChanged();
@@ -1177,7 +1339,7 @@ along with Foobar.  If not, see
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
                 void importCuesheetDelegate(object sender, EventArgs args)
                 {
-                    cuesheet = CuesheetFile.ImportCuesheet(memoryStream);
+                    cuesheet = CuesheetFile.ImportCuesheet(memoryStream, optionsController.Options);
                     modalDialog.Confirmed -= importCuesheetDelegate;
                     StateHasChanged();
                 };
@@ -1278,7 +1440,7 @@ along with Foobar.  If not, see
                 recognized = true;
                 await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
-            if (CuesheetController.CheckFileMimeType(file, AudioFile.MimeTypes) == true)
+            if (CuesheetController.CheckFileMimeType(file, AudioFile.AudioCodecs) == true)
             {
                 recognized = true;
                 await SetAudioFile(file, "dropInputfiles");
@@ -1298,7 +1460,8 @@ along with Foobar.  If not, see
         if (importedAllFiles == true)
         {
             //Hide the import
-            HeaderClicked(ref dropFilesVisible, ref chevronDropFiles);
+            dropFilesVisible = false;
+            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             importVisible = false;
             SwitchChevron(importVisible, ref chevronImport);
         }
@@ -1394,7 +1557,7 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnAudioFileChanged with {0}", e);
         if (e.File != null)
         {
-            if (CuesheetController.CheckFileMimeType(e.File, AudioFile.MimeTypes) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, AudioFile.AudioCodecs) == true)
             {
                 await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
             }
@@ -1419,7 +1582,8 @@ along with Foobar.  If not, see
         if (browserFile != null)
         {
             var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
-            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, browserFile.ContentType);
+            var codec = AudioFile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
+            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, codec, httpClient);
         }
         else
         {
@@ -1535,10 +1699,10 @@ along with Foobar.  If not, see
         modalTrackEdit.Hide();
     }
 
-    private void CopyTrackClicked(Track trackToCopy) 
+    private void CopyTrackClicked(Track trackToCopy)
     {
         var copy = new Track(trackToCopy);
-        cuesheet.AddTrack(copy);
+        cuesheet.AddTrack(copy, optionsController.Options);
         EditTrackModal(copy);
     }
 }

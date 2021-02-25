@@ -15,7 +15,9 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Shared;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
@@ -96,12 +98,31 @@ namespace AudioCuesheetEditor.Model.Options
                 list.Add(exportProfile);
                 ExportProfiles = list.AsReadOnly();
             }
-            if (String.IsNullOrEmpty(TextImportScheme) == true)
+            if (TextImportScheme == null)
             {
-                TextImportScheme = TextImportFile.DefaultImportScheme;
+                TextImportScheme = TextImportScheme.DefaultTextImportScheme;
+            }
+            if (AudioCodec == null)
+            {
+                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == "AudioCodec MP3");
+                RecodeAudioRecording = true;
+            }
+            if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
+            {
+                if (AudioCodec != null)
+                {
+                    AudioFileNameRecording = String.Format("{0}{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
+                }
+                else
+                {
+                    AudioFileNameRecording = AudioFile.RecordingFileName;
+                }
+            }
+            if (LinkTracksWithPreviousOne.HasValue == false)
+            {
+                LinkTracksWithPreviousOne = true;
             }
         }
-
         public String CuesheetFileName { get; set; }
         public String CultureName { get; set; }
         [JsonIgnore]
@@ -120,12 +141,36 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
-        public String TextImportScheme { get; set; }
+        public TextImportScheme TextImportScheme { get; set; }
+        [JsonIgnore]
         public ViewMode ViewMode { get; set; }
         public String ViewModeName 
         {
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
             set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
         }
+        [JsonIgnore]
+        public AudioCodec AudioCodec { get; set; }
+        public String AudioCodecName
+        {
+            get 
+            { 
+                if (AudioCodec != null)
+                {
+                    return AudioCodec.Name;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set 
+            {
+                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == value);
+            }
+        }
+        public Boolean RecodeAudioRecording { get; set; }
+        public String AudioFileNameRecording { get; set; }
+        public Boolean? LinkTracksWithPreviousOne { get; set; }
     }
 }

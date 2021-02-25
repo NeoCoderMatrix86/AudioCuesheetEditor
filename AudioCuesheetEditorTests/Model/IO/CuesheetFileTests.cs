@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.IO;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,6 +27,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using AudioCuesheetEditorTests.Utility;
 using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditor.Model.IO.Audio;
 
 namespace AudioCuesheetEditor.Model.IO.Tests
 {
@@ -55,7 +55,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
@@ -96,6 +96,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void TestExportWithPreGapAndPostGap()
         {
+            var testHelper = new TestHelper();
             Cuesheet cuesheet = new Cuesheet
             {
                 Artist = "Demo Artist",
@@ -121,7 +122,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 }
                 track.PostGap = new TimeSpan(0, 0, 2);
                 track.PreGap = new TimeSpan(0, 0, 3);
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
@@ -151,6 +152,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void TestExportFlags()
         {
+            var testHelper = new TestHelper();
             Cuesheet cuesheet = new Cuesheet
             {
                 Artist = "Demo Artist",
@@ -174,7 +176,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 {
                     track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
                 }
-                cuesheet.AddTrack(track);
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new CuesheetFile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
@@ -242,10 +244,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             builder.AppendLine("	TITLE \"Sample Title 8\"");
             builder.AppendLine("	INDEX 01 45:51:00");
 
+            var testHelper = new TestHelper();
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);
@@ -254,12 +257,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
 
             File.Delete(tempFile);
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30), testHelper.ApplicationOptions);
             Assert.IsNotNull(cuesheet);
-            var testHelper = new TestHelper();
             Assert.IsNull(cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57), testHelper.ApplicationOptions);
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.AreEqual(cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
@@ -310,7 +312,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)));
+            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);

@@ -15,6 +15,8 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,11 +49,15 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
         public static readonly String CuesheetCatalogueNumber = "CATALOG";
 
-        public static Cuesheet ImportCuesheet(MemoryStream fileContent)
+        public static Cuesheet ImportCuesheet(MemoryStream fileContent, ApplicationOptions applicationOptions)
         {
             if (fileContent == null)
             {
                 throw new ArgumentNullException(nameof(fileContent));
+            }
+            if (applicationOptions == null)
+            {
+                throw new ArgumentNullException(nameof(applicationOptions));
             }
             var cuesheet = new Cuesheet();
             fileContent.Position = 0;
@@ -139,7 +145,7 @@ namespace AudioCuesheetEditor.Model.IO
                         var seconds = int.Parse(match.Value.Substring(match.Value.IndexOf(":") + 1));
                         track.Begin = new TimeSpan(0, minutes, seconds);
                     }
-                    cuesheet.AddTrack(track);
+                    cuesheet.AddTrack(track, applicationOptions);
                 }
                 if (regexTrackPostGap.IsMatch(line) == true)
                 {

@@ -65,5 +65,42 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track.Length = new TimeSpan(0, 2, 0);
             Assert.AreEqual(new TimeSpan(0, 4, 43), track.End);
         }
+
+        [TestMethod()]
+        public void LinkTrackTest()
+        {
+            //Test LinkedPreviousTrack
+            var track = new Track
+            {
+                Begin = TimeSpan.Zero,
+                Position = 1,
+                End = new TimeSpan(0, 3, 23)
+            };
+            Assert.IsNull(track.LinkedPreviousTrack);
+            var track2 = new Track
+            {
+                Begin = track.End,
+                End = new TimeSpan(0, 5, 45),
+                Position = 2
+            };
+            Assert.IsNull(track2.LinkedPreviousTrack);
+            track2.LinkedPreviousTrack = track;
+            Assert.AreEqual(track.End, track2.Begin);
+            track.End = new TimeSpan(0, 3, 45);
+            Assert.AreEqual(track.End, track2.Begin);
+            var track3 = new Track
+            {
+                Begin = track2.End,
+                Position = 7,
+                End = new TimeSpan(0, 10, 12)
+            };
+            track3.LinkedPreviousTrack = track2;
+            track3.End = new TimeSpan(0, 15, 2);
+            track3.Position = 3;
+            Assert.AreEqual(track2.End, track3.Begin);
+            Assert.AreEqual((uint)1, track.Position);
+            Assert.AreEqual((uint)2, track2.Position);
+            Assert.AreEqual((uint)3, track3.Position);
+        }
     }
 }

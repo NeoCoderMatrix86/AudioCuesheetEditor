@@ -272,11 +272,11 @@
   <data name="EnterExportSchemeTrackHereTooltip" xml:space="preserve">
     <value>Enter scheme for export of tracks here. Each placeholder will be replaced by the placeholder value. Placeholder start and end with %.</value>
   </data>
-  <data name="EnterTextImportSchemeHere" xml:space="preserve">
-    <value>Enter textscheme for import here</value>
+  <data name="EnterTextImportSchemeTracksHere" xml:space="preserve">
+    <value>Enter textscheme for track properties import here</value>
   </data>
-  <data name="EnterTextImportSchemeTooltip" xml:space="preserve">
-    <value>Enter textscheme for import here. Identification will be done using regular expressions.</value>
+  <data name="EnterTextImportSchemeTracksTooltip" xml:space="preserve">
+    <value>Enter textscheme for track properties import here. Identification will be done using regular expressions.</value>
   </data>
   <data name="ErrorDuringTextImport" xml:space="preserve">
     <value>An error occured during text import</value>
@@ -431,17 +431,11 @@
   <data name="StartPlaybackThisTrack" xml:space="preserve">
     <value>Start playing this track</value>
   </data>
-  <data name="StartTrackImport" xml:space="preserve">
-    <value>Start import of tracks</value>
-  </data>
   <data name="Textfile" xml:space="preserve">
     <value>Textfile</value>
   </data>
   <data name="TextImportAssistance" xml:space="preserve">
     <value>Import textfile assistant</value>
-  </data>
-  <data name="TextImportScheme" xml:space="preserve">
-    <value>Import Textscheme</value>
   </data>
   <data name="Title" xml:space="preserve">
     <value>Title</value>
@@ -474,7 +468,7 @@
     <value>Your emailaddress (optional)</value>
   </data>
   <data name="CreateCuesheetText" xml:space="preserve">
-    <value>Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src="images/CreateCuesheet1.png"/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the "Add new track" button. A new track is added and you can edit its properties like Artist, Title or Begin, End or Length. Please keep in mind, that every tracks begin gets calculated from the end of the previous track. Therefore its adviced to edit one track and fill its data before adding a new one.&lt;br /&gt;&lt;img src="images/CreateCuesheet2.png"/&gt;&lt;br/&gt;When you have added all tracks from the audio file and filled all necessary fields, you can export the cuesheet in the top by clickin "Export result" and then "Download cuesheet file". You can also export the result in other formats like XML, CSV or text by clicking "Export result" and then "Display Export Profilfes".&lt;br/&gt;&lt;img src="images/CreateCuesheet3.png"/&gt;</value>
+    <value>Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img style="width:100%" src="images/CreateCuesheet1.png"/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the "Add new track" button. A new track is added and you can edit its properties like Artist, Title or Begin, End or Length. Please keep in mind, that every tracks begin gets calculated from the end of the previous track. Therefore its adviced to edit one track and fill its data before adding a new one.&lt;br /&gt;&lt;img style="width:100%" src="images/CreateCuesheet2.png"/&gt;&lt;br/&gt;When you have added all tracks from the audio file and filled all necessary fields, you can export the cuesheet in the top by clickin "Export result" and then "Download cuesheet file". You can also export the result in other formats like XML, CSV or text by clicking "Export result" and then "Display Export Profilfes".&lt;br/&gt;&lt;img style="width:100%" src="images/CreateCuesheet3.png"/&gt;</value>
   </data>
   <data name="Features" xml:space="preserve">
     <value>Features</value>
@@ -486,7 +480,7 @@
     <value>Validation</value>
   </data>
   <data name="ValidationText" xml:space="preserve">
-    <value>AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don't block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img src="images/Validation1.png"/&gt;&lt;br/&gt;Each message can be clicked to jump to the corresponding field and correct the field.&lt;br/&gt;&lt;img src="images/Validation2.png"/&gt;</value>
+    <value>AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don't block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img style="width:100%" src="images/Validation1.png"/&gt;&lt;br/&gt;Each message can be clicked to jump to the corresponding field and correct the field.&lt;br/&gt;&lt;img style="width:100%" src="images/Validation2.png"/&gt;</value>
   </data>
   <data name="ImportOfCuesheetFiles" xml:space="preserve">
     <value>Import of cuesheet files</value>
@@ -495,10 +489,10 @@
     <value>Import of text files</value>
   </data>
   <data name="ImportOfTextFilesText" xml:space="preserve">
-    <value>You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Each line represents a track and every detail can be extracted from the line. First information that can be found is the track artist, followed by " - " and then track title. Afterwards some tabs come and you can see information about the track end time. So in this example we can work with the regular expression "%Artist% - %Title%[\t]{1,}%End%". Each field of track can be accessed via "%Fieldname%". You can start importing a textfile by dragging it from the file system to the dropzone or by manually selecting it from file chooser dialog.&lt;br/&gt;&lt;img src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;A new dialog will appear where you can see the result of import and can edit the regular expression for import to your favor to match all the details you have in the textfile.&lt;br/&gt;&lt;img src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Changing the import textscheme will result in changes of the import result and the data to import will be shown to you.&lt;br/&gt;&lt;img src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;You can select the valid track fields by pressing the button "Select placeholder" and afterwards selecting the placeholder you want to add:&lt;br/&gt;&lt;img src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;If you enter an invalid text import scheme, that doesn't match the text file, an error will be displayed to you:&lt;br/&gt;&lt;img src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Errors will always block import of text, so you have to correct them at first before import can take place. Afterwards you can import the textfile and see the result.&lt;br/&gt;&lt;img src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;&lt;img src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;</value>
+    <value>You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href="/samples/Sample_Inputfile.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img style="width:100%" src="images/SampleInputfile1.png"/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by " - " and then track title. Afterwards some tabs come and you can see information about the track end time. So in this example we can work with the regular expression for tracks "%Artist% - %Title%[\t]{1,}%End%" and with "\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%" for cuesheet data. Each field can be accessed via "%Fieldname%". You can start importing a textfile by dragging it from the file system to the dropzone or by manually selecting it from file chooser dialog.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile1.png"/&gt;&lt;br/&gt;A new dialog will appear where you can see the result of import and can edit the regular expression for import to your favor to match all the details you have in the textfile.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile2.png"/&gt;&lt;br/&gt;Changing the import textscheme will result in changes of the import result and the data to import will be shown to you.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile3.png"/&gt;&lt;br/&gt;You can select the valid  fields by pressing the button "Select placeholder" and afterwards selecting the placeholder you want to add:&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile4.png"/&gt;&lt;br/&gt;If you enter an invalid text import scheme, a validation error will be displayed.&lt;br /&gt;&lt;img style="width:100%" src="images/ImportTextfile8.png"/&gt;&lt;br /&gt;If the import scheme doesn't match the text file, an error will be displayed to you:&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile5.png"/&gt;&lt;br/&gt;Errors will always block import of text, so you have to correct them at first before import can take place.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile6.png"/&gt;&lt;br/&gt;Afterwards you can import the textfile and see the result.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile7.png"/&gt;&lt;br/&gt;If you want to import a tracks only textfile, just leave the cuesheet scheme empty and add a textfile with track properties only. A sample can be found &lt;a href="/samples/Sample_Inputfile2.txt" target="_blank"&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img style="width:100%" src="images/SampleInputfile2.png"/&gt;&lt;br/&gt;Import can be done the same way.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportTextfile9.png"/&gt;&lt;br/&gt;</value>
   </data>
   <data name="ImportOfCuesheetFilesText" xml:space="preserve">
-    <value>You can import already finished cuesheets and edit them. It doesn't matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Confirming this dialog will import the cuesheet and afterwards display the result.&lt;br/&gt;&lt;img src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;A sample cuesheet file can be found &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;here&lt;/a&gt;.</value>
+    <value>You can import already finished cuesheets and edit them. It doesn't matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img style="width:100%" src="images/ImportCuesheet1.png"/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportCuesheet2.png"/&gt;&lt;br/&gt;Confirming this dialog will import the cuesheet and afterwards display the result.&lt;br/&gt;&lt;img style="width:100%" src="images/ImportCuesheet3.png"/&gt;&lt;br/&gt;A sample cuesheet file can be found &lt;a href="samples/Sample_Cuesheet.cue" target="_blank"&gt;here&lt;/a&gt;.</value>
   </data>
   <data name="ScrollToTop" xml:space="preserve">
     <value>Scroll to top</value>
@@ -582,7 +576,7 @@
     <value>Switch view mode</value>
   </data>
   <data name="ViewModeFull" xml:space="preserve">
-    <value>Full edition</value>
+    <value>Full edit mode</value>
   </data>
   <data name="ViewModeRecord" xml:space="preserve">
     <value>Record mode</value>
@@ -606,7 +600,7 @@
     <value>Live record mode</value>
   </data>
   <data name="RecordModeHelpText" xml:space="preserve">
-    <value>AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src="images/RecordMode1.png"/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select "Allow". This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by AudioCuesheetEditor. You can afterwards start your recording by pressing the "Start recording" Button. This causes the record to start and a display will tell you, that you are currently recording.&lt;br/&gt;&lt;img src="images/RecordMode2.png"/&gt;&lt;br/&gt;Play audio and once the end of the track has been reached, please enter the track artist and title and click the button "Add new track". This will set the end of the track to the current time. You can use "Enter" on the input fields to fast switch the focus inputs and enter the new track.&lt;br/&gt;&lt;img src="images/RecordMode3.png"/&gt;&lt;br/&gt;Once you have entered a track, it will display in the tracks and you can edit artist and title again and also delete the track afterwards.&lt;br/&gt;&lt;img src="images/RecordMode4.png"/&gt;&lt;br/&gt;Once you have finished your recording, click the button "Stop recording" which will stop the recording and make the recording (if audio is not blocked) downloadable to you. &lt;br/&gt;&lt;img src="images/RecordMode5.png"/&gt;&lt;br/&gt;You can now switch back to full edit mode in order to do more editing on the cuesheet. All tracks are present and also the recording is available as download in the cuesheet data part.</value>
+    <value>AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img style="width:100%" src="images/RecordMode1.png"/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select "Allow". This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by AudioCuesheetEditor. AudioCuesheetEditor records audio data default in WebM format. If you want to switch the audio format after recording, please check the options. You can afterwards start your recording by pressing the "Start recording" Button. This causes the record to start and a display will tell you, that you are currently recording.&lt;br/&gt;&lt;img style="width:100%" src="images/RecordMode2.png"/&gt;&lt;br/&gt;Play audio and once the end of the track has been reached, please enter the track artist and title and click the button "Add new track". This will set the end of the track to the current time. You can use "Enter" on the input fields to fast switch the focus inputs and enter the new track.&lt;br/&gt;&lt;img style="width:100%" src="images/RecordMode3.png"/&gt;&lt;br/&gt;Once you have entered a track, it will display in the tracks and you can edit artist and title again and also delete the track afterwards.&lt;br/&gt;&lt;img style="width:100%" src="images/RecordMode4.png"/&gt;&lt;br/&gt;Once you have finished your recording, click the button "Stop recording" which will stop the recording and make the recording (if audio is not blocked) downloadable to you. &lt;br/&gt;&lt;img style="width:100%" src="images/RecordMode5.png"/&gt;&lt;br/&gt;You can now switch back to full edit mode in order to do more editing on the cuesheet. All tracks are present and also the recording is available as download in the cuesheet data part.</value>
   </data>
   <data name="EditTrack" xml:space="preserve">
     <value>Edit track details</value>
@@ -643,5 +637,89 @@
   </data>
   <data name="PreGap" xml:space="preserve">
     <value>Pregap</value>
+  </data>
+  <data name="AudioCodec" xml:space="preserve">
+    <value>Audio codec</value>
+  </data>
+  <data name="AudioCodec FLAC" xml:space="preserve">
+    <value>FLAC in native encapsulation format (Fileextension .flac)</value>
+  </data>
+  <data name="AudioCodec MP3" xml:space="preserve">
+    <value>MPEG Audio Layer III (Fileextension .mp3)</value>
+  </data>
+  <data name="AudioCodec OGA" xml:space="preserve">
+    <value>Ogg Audio Profile  (Fileextension .oga)</value>
+  </data>
+  <data name="AudioCodec OGG" xml:space="preserve">
+    <value>Ogg Vorbis I Profile (Fileextension .ogg)</value>
+  </data>
+  <data name="AudioCodec OPUS" xml:space="preserve">
+    <value>Ogg Opus profile (Fileextension .opus)</value>
+  </data>
+  <data name="AudioCodec WAV" xml:space="preserve">
+    <value>Waveform Audio File Format (Fileextension .wav)</value>
+  </data>
+  <data name="AudioCodec WAVE" xml:space="preserve">
+    <value>Waveform Audio File Format (Fileextension .wave)</value>
+  </data>
+  <data name="AudioCodec WEBM" xml:space="preserve">
+    <value>WebM Container (Fileextension .webm)</value>
+  </data>
+  <data name="AudioFileNameRecording" xml:space="preserve">
+    <value>Audio file name of recording</value>
+  </data>
+  <data name="CurrentlyProcessingAudioFilePleaseWait" xml:space="preserve">
+    <value>Currently processing recorded audio file, please wait ...</value>
+  </data>
+  <data name="EnableAudioRecoding" xml:space="preserve">
+    <value>Enable audio recoding after record</value>
+  </data>
+  <data name="RecodeAudioAfterRecording" xml:space="preserve">
+    <value>Recode audio data to the selected codec after recording</value>
+  </data>
+  <data name="Recording" xml:space="preserve">
+    <value>Recording</value>
+  </data>
+  <data name="OptionsHelpText" xml:space="preserve">
+    <value>AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img style="width:100%" src="images/Options1.png"/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br/&gt;&lt;h3&gt;Audio filename of recording&lt;/h3&gt;Sets the default filename used for recording if audio capture is activated.&lt;/br&gt;&lt;h3&gt;Enable audio recoding after record&lt;/h3&gt;Enables recoding audio captured data when using record mode. Please select the appropriate codec you wish for your audio file because the file is automatically recoded after a record.&lt;br/&gt;&lt;h3&gt;Audio codec&lt;/h3&gt;Select the audio codec you want to use for recoding a recorded audio capture when using record mode. You need to activate the "Enable audio recoding after record" option in order to automatically recorde the file after recording.&lt;br/&gt;&lt;h3&gt;Automatically link tracks&lt;/h3&gt;Sets the default value, if tracks should be automatically linked or not.</value>
+  </data>
+  <data name="AutomaticallyLinkTracks" xml:space="preserve">
+    <value>Automatically link tracks</value>
+  </data>
+  <data name="AutomaticallyLinkTracksWithPrevious" xml:space="preserve">
+    <value>Automatically link tracks with previous track</value>
+  </data>
+  <data name="LinkThisTrackWithPreviousTrack" xml:space="preserve">
+    <value>Link this track with previous track</value>
+  </data>
+  <data name="TrackLinking" xml:space="preserve">
+    <value>Track linking</value>
+  </data>
+  <data name="TrackLinkingText" xml:space="preserve">
+    <value>It is possible to link a track with the previous track. This makes shure, that changes to Begin,End and Position are automatically transfered to the next following track. &lt;img style="width:100%" src="images/TrackLinking1.png"/&gt; If a track is linked to the previous track, you can change for example the End and the Begin of the following linked track is automatically replaced with the End you entered. If you wish to disable linking, just click on the orange "Unlink" Button. If you afterwards want to link the tracks again, just hit the green "Link" Button.</value>
+  </data>
+  <data name="UnlinkThisTrackFromPreviousTrack" xml:space="preserve">
+    <value>Unlink this track from previous track</value>
+  </data>
+  <data name="TextImportSchemeCuesheet" xml:space="preserve">
+    <value>Textimport regular expression for Cuesheet properties</value>
+  </data>
+  <data name="TextImportSchemeTrack" xml:space="preserve">
+    <value>Textimport regular expression for Track properties</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHere" xml:space="preserve">
+    <value>Enter textscheme for cuesheet properties import here</value>
+  </data>
+  <data name="EnterTextImportSchemeCuesheetHereTooltip" xml:space="preserve">
+    <value>Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions.</value>
+  </data>
+  <data name="FileContent" xml:space="preserve">
+    <value>File content</value>
+  </data>
+  <data name="ImportCuesheetValues" xml:space="preserve">
+    <value>Import cuesheet values</value>
+  </data>
+  <data name="StartTextImport" xml:space="preserve">
+    <value>Start textimport</value>
   </data>
 </root>

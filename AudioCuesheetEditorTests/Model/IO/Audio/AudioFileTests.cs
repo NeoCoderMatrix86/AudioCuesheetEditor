@@ -14,12 +14,13 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.IO;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AudioCuesheetEditor.Model.IO.Audio;
+using System.Linq;
 
-namespace AudioCuesheetEditor.Model.IO.Tests
+namespace AudioCuesheetEditor.Model.IO.Audio.Tests
 {
     [TestClass()]
     public class AudioFileTests
@@ -28,16 +29,24 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         public void AudioFileTest()
         {
             var audioFile = new AudioFile("test.mp3");
+            Assert.IsNull(audioFile.ContentStream);
+            Assert.IsFalse(audioFile.IsContentStreamLoaded);
             Assert.IsNotNull(audioFile.FileName);
             Assert.AreEqual(audioFile.AudioFileType, "MP3");
             audioFile = new AudioFile("Test");
             Assert.AreEqual(audioFile.AudioFileType, String.Empty);
             Assert.IsNotNull(audioFile.FileName);
-            audioFile = new AudioFile("test.ogg", "TestobjectURL", "contentType");
+            var codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".ogg");
+            var httpClient = new System.Net.Http.HttpClient();
+            audioFile = new AudioFile("test", "TestobjectURL", codec, httpClient);
             Assert.IsNotNull(audioFile.FileName);
+            Assert.AreEqual("test.ogg", audioFile.FileName);
             Assert.AreEqual(audioFile.AudioFileType, "OGG");
             Assert.IsNotNull(audioFile.ObjectURL);
-            Assert.IsFalse(audioFile.PlaybackPossible);
+            Assert.IsTrue(audioFile.PlaybackPossible);
+            codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".mp3");
+            var audioFile2 = new AudioFile(audioFile.FileName, "TestObjectURL2", codec, httpClient);
+            Assert.AreEqual("test.mp3", audioFile2.FileName);
         }
     }
 }

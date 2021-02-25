@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -32,9 +33,14 @@ namespace AudioCuesheetEditorTests.Utility
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
             Localizer = new StringLocalizer<Localization>(factory);
             CuesheetController = new CuesheetController();
+            ApplicationOptions = new ApplicationOptions
+            {
+                LinkTracksWithPreviousOne = false
+            };
         }
 
         public StringLocalizer<Localization> Localizer { get; private set; }
         public CuesheetController CuesheetController { get; private set; }
+        public ApplicationOptions ApplicationOptions { get; private set; }
     }
 }
