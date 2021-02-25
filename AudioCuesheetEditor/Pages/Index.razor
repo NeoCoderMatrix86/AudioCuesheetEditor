@@ -521,7 +521,10 @@ along with Foobar.  If not, see
                         </CollapseHeader>
                         <CollapseBody Style="background: lightgray;">
                             <Text>
-                                @((MarkupString)String.Join("<br />", textImportFile.FileContentRecognized))
+                                @if (textImportFile.FileContentRecognized != null)
+                                {
+                                    @((MarkupString)String.Join("<br />", textImportFile.FileContentRecognized))
+                                }
                             </Text>
                         </CollapseBody>
                     </Collapse>

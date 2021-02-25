@@ -376,11 +376,26 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="applicationOptions">Reference to application options</param>
         private void CopyValues(ICuesheet<ImportTrack> cuesheet, ApplicationOptions applicationOptions)
         {
-            Artist = cuesheet.Artist;
-            Title = cuesheet.Title;
-            AudioFile = cuesheet.AudioFile;
-            CDTextfile = cuesheet.CDTextfile;
-            CatalogueNumber = cuesheet.CatalogueNumber;
+            if (String.IsNullOrEmpty(cuesheet.Artist) == false)
+            {
+                Artist = cuesheet.Artist;
+            }
+            if (String.IsNullOrEmpty(cuesheet.Title) == false)
+            {
+                Title = cuesheet.Title;
+            }
+            if (cuesheet.AudioFile != null)
+            {
+                AudioFile = cuesheet.AudioFile;
+            }
+            if (cuesheet.CDTextfile != null)
+            {
+                CDTextfile = cuesheet.CDTextfile;
+            }
+            if (cuesheet.CatalogueNumber != null)
+            {
+                CatalogueNumber = cuesheet.CatalogueNumber;
+            }
             foreach (var importTrack in cuesheet.Tracks)
             {
                 var track = new Track(importTrack);
