@@ -1,0 +1,27 @@
+name: Generate Changelog
+
+on:
+  # Triggers the workflow on push events but only for the master branch
+  push:
+    branches: [ ]
+
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "📥 Check-out"
+        uses: actions/checkout@v2
+      - name: "✏️ Generate changelog"
+        uses: heinrichreimer/action-github-changelog-generator@v2.2
+        with:
+          token: ${{ secrets.GENERATECHANGELOGTOKEN }}
+      - name: "➕ Add changelog to working tree"
+        run: cp ${{ github.workspace}}/CHANGELOG.md AudioCuesheetEditor/wwwroot/CHANGELOG.md
+      - name: "📤 Commit changelog"
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: "AudioCuesheetEditor/wwwroot/CHANGELOG.md"
+          message: "Updated Changelog"
+          author_name: github-actions
+          author_email: 41898282+github-actions[bot]@users.noreply.github.com
