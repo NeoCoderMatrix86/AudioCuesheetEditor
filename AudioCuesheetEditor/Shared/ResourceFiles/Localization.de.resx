@@ -323,9 +323,6 @@
   <data name="ExportProfileSchemeTrackValidationErrors" xml:space="preserve">
     <value>ExportProfil Track Schema Validierungsfehler</value>
   </data>
-  <data name="ExportResult" xml:space="preserve">
-    <value>Ergebnis exportieren</value>
-  </data>
   <data name="HasInvalidBegin" xml:space="preserve">
     <value>Beginn ist nicht gültig (muss größer oder gleich 00:00:00 sein). Bitte geben Sie eine gültige Zeit an.</value>
   </data>
@@ -721,5 +718,26 @@
   </data>
   <data name="StartTextImport" xml:space="preserve">
     <value>Textimport starten</value>
+  </data>
+  <data name="ConfirmImportProject" xml:space="preserve">
+    <value>Möchten Sie wirklich diese Datei importieren? Dies kann nicht rückgängig gemacht werden und ungespeicherte Änderungen gehen verloren!</value>
+  </data>
+  <data name="DownloadProjectfile" xml:space="preserve">
+    <value>Projektdatei herunterladen</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="ImportProjectTooltip" xml:space="preserve">
+    <value>Ein gespeichertes Projekt importieren</value>
+  </data>
+  <data name="ProjectFileName" xml:space="preserve">
+    <value>Projektdateiname</value>
+  </data>
+  <data name="SaveProject" xml:space="preserve">
+    <value>Projekt speichern</value>
   </data>
 </root>

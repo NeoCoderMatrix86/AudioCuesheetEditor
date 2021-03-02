@@ -122,6 +122,10 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 LinkTracksWithPreviousOne = true;
             }
+            if (String.IsNullOrEmpty(ProjectFileName))
+            {
+                ProjectFileName = ProjectFile.DefaultFileName;
+            }
         }
         public String CuesheetFileName { get; set; }
         public String CultureName { get; set; }
@@ -172,5 +176,6 @@ namespace AudioCuesheetEditor.Model.Options
         public Boolean RecodeAudioRecording { get; set; }
         public String AudioFileNameRecording { get; set; }
         public Boolean? LinkTracksWithPreviousOne { get; set; }
+        public String ProjectFileName { get; set; }
     }
 }

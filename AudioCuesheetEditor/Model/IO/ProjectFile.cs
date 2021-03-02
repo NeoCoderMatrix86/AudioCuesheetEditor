@@ -26,9 +26,15 @@ namespace AudioCuesheetEditor.Model.IO
 {
     public class ProjectFile
     {
+        public const String MimeType = "text/*";
+        public const String FileExtension = ".ace";
+
+        public static readonly String DefaultFileName = "Project.ace";
+
         public static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
         {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented = true
         };
 
         public static Cuesheet ImportFile(byte[] fileContent)
@@ -55,6 +61,7 @@ namespace AudioCuesheetEditor.Model.IO
         public byte[] GenerateFile()
         {
             var json = JsonSerializer.Serialize<Cuesheet>(Cuesheet, Options);    
+            //TODO: Exception when using record mode to save project because of stream in audiofile
             return Encoding.UTF8.GetBytes(json);        
         }
     }

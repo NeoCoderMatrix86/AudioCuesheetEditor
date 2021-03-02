@@ -39,7 +39,7 @@ along with Foobar.  If not, see
                     <BarItem Padding="Padding.Is1.OnX">
                         <BarDropdown>
                             <BarDropdownToggle Class="btn btn-success">
-                                @localizer["ExportResult"]
+                                @localizer["Export"]
                             </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem>
@@ -48,7 +48,10 @@ along with Foobar.  If not, see
                                     </Tooltip>
                                 </BarDropdownItem>
                                 <BarDropdownItem>
-                                    <Button Color="Color.Secondary" @onclick="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</Button>
+                                    <Button Color="Color.Primary" Clicked="() => modalDownloadProjectfile.Show()">@localizer["SaveProject"]</Button>
+                                </BarDropdownItem>
+                                <BarDropdownItem>
+                                    <Button Color="Color.Secondary" Clicked="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</Button>
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
@@ -159,6 +162,14 @@ along with Foobar.  If not, see
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                                 <InputFile class="form-control" accept="@CuesheetFile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
+                                            </FieldBody>
+                                        </Field>
+                                    </Tooltip>
+                                    <Tooltip Placement="Placement.Top" Text="@localizer["ImportProjectTooltip"]">
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ProjectFileName"]</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                                <InputFile class="form-control" accept="@ProjectFile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
@@ -885,6 +896,12 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
                 </FieldBody>
             </Field>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["ProjectFileName"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7">
+                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" />
+                </FieldBody>
+            </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeCuesheet"]</FieldLabel>
@@ -1045,6 +1062,30 @@ along with Foobar.  If not, see
     </ModalContent>
 </Modal>
 
+<Modal @ref="modalDownloadProjectfile">
+    <ModalBackdrop />
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>
+                @localizer["SaveProject"]
+            </ModalTitle>
+            <CloseButton Clicked="() => modalDownloadProjectfile.Hide()" />
+        </ModalHeader>
+        <ModalBody>
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Filename"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is9">
+                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" />
+                </FieldBody>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@localizer["DownloadProjectfile"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => modalDownloadProjectfile.Hide()">@localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
 @code {
     public void Dispose()
     {
@@ -1149,6 +1190,7 @@ along with Foobar.  If not, see
     private Modal modalDownloadCuesheet;
     private Modal modalOptions;
     private Modal modalTrackEdit;
+    private Modal modalDownloadProjectfile;
     private AudioPlayer audioPlayer;
 
     protected override async Task OnInitializedAsync()
@@ -1160,7 +1202,8 @@ along with Foobar.  If not, see
             .Add(ModKeys.Ctrl, Keys.E, () => modalExportProfiles.Show())
             .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
             .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show())
-            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
+            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
+            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show());
 
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
@@ -1450,6 +1493,11 @@ along with Foobar.  If not, see
                 recognized = true;
                 OnCDTextfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
+            if (CuesheetController.CheckFileMimeType(file, ProjectFile.MimeType, ProjectFile.FileExtension))
+            {
+                recognized = true;
+                await OnProjectfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
+            }
             if (recognized == false)
             {
                 invalidFileName = e.File.Name;
@@ -1704,5 +1752,50 @@ along with Foobar.  If not, see
         var copy = new Track(trackToCopy);
         cuesheet.AddTrack(copy, optionsController.Options);
         EditTrackModal(copy);
+    }
+
+    private async Task DownloadProjectfileClicked()
+    {
+        var projectFile = new ProjectFile(cuesheet);
+        var fileData = projectFile.GenerateFile();
+        await optionsController.SaveOptions();
+        await BlazorDownloadFileService.DownloadFile(optionsController.Options.ProjectFileName, fileData, "text/plain");
+        modalDownloadProjectfile.Hide();
+    }
+
+    private async Task OnProjectfileChanged(InputFileChangeEventArgs e)
+    {
+        Logger.LogInformation("OnProjectfileChanged with {0}", e);
+        if (e.File != null)
+        {
+            if (CuesheetController.CheckFileMimeType(e.File, ProjectFile.MimeType, ProjectFile.FileExtension) == true)
+            {
+                var stream = e.File.OpenReadStream();
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                stream.Close();
+                //Display a confirm warning
+                modalDialog.Title = localizer["ConfirmRequired"];
+                modalDialog.Text = localizer["ConfirmImportProject"];
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+                void importCuesheetDelegate(object sender, EventArgs args)
+                {
+                    modalDialog.Confirmed -= importCuesheetDelegate;
+                    cuesheet = ProjectFile.ImportFile(memoryStream.ToArray());
+                    StateHasChanged();
+                };
+                modalDialog.Confirmed += importCuesheetDelegate;
+                modalDialog.ShowModal();
+            }
+            else
+            {
+                modalDialog.Title = localizer["Error"];
+                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["TextfileImport"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
+        }
     }
 }

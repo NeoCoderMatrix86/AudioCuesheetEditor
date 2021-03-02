@@ -385,6 +385,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you really want to import this file? This can not be reversed and unsaved changes are lost! ähnelt.
+        /// </summary>
+        public static string ConfirmImportProject {
+            get {
+                return ResourceManager.GetString("ConfirmImportProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Confirmation required ähnelt.
         /// </summary>
         public static string ConfirmRequired {
@@ -439,7 +448,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img src=&quot;images/CreateCuesheet1.png&quot;/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the &quot;Add new track&quot; button. A new track is added and you can edit its properties like Artist, [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Creation of Cuesheet can be done very easily and fast using the standard GUI without import of files. To do so, enter the CD artist and CD title in the appropriate fields. Also select an audio file on your computer by draging the file from file explorer to the drop zone or manually selecting the file via file chooser. &lt;br /&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/CreateCuesheet1.png&quot;/&gt;&lt;br/&gt;Afterwards you need to insert a track by clickin the &quot;Add new track&quot; button. A new track is added and you can edit its prop [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string CreateCuesheetText {
             get {
@@ -599,6 +608,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string DownloadExport {
             get {
                 return ResourceManager.GetString("DownloadExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download projectfile ähnelt.
+        /// </summary>
+        public static string DownloadProjectfile {
+            get {
+                return ResourceManager.GetString("DownloadProjectfile", resourceCulture);
             }
         }
         
@@ -864,6 +882,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Export ähnelt.
+        /// </summary>
+        public static string Export {
+            get {
+                return ResourceManager.GetString("Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Filename ähnelt.
         /// </summary>
         public static string ExportProfileFilename {
@@ -954,15 +981,6 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Export result ähnelt.
-        /// </summary>
-        public static string ExportResult {
-            get {
-                return ResourceManager.GetString("ExportResult", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Features ähnelt.
         /// </summary>
         public static string Features {
@@ -977,6 +995,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string FeaturesText {
             get {
                 return ResourceManager.GetString("FeaturesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
+        /// </summary>
+        public static string File {
+            get {
+                return ResourceManager.GetString("File", resourceCulture);
             }
         }
         
@@ -1170,7 +1197,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die You can import already finished cuesheets and edit them. It doesn&apos;t matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img src=&quot;images/ImportCuesheet1.png&quot;/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img src=&quot;images/ImportCuesheet2.png&quot;/&gt;&lt;br/&gt;Confirming this dialog will import the cuesh [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import already finished cuesheets and edit them. It doesn&apos;t matter if the cuesheet is written by this program or another one. Only the format of file matters. To import a cuesheet, simply drag it from your file system to the dropzone or manually select it via file system chooser:&lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/ImportCuesheet1.png&quot;/&gt;&lt;br/&gt;A confirmation will be required, since all of the exisiting data will be replaced.&lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/ImportCuesheet2.png&quot;/&gt;&lt;br/&gt;Confir [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ImportOfCuesheetFilesText {
             get {
@@ -1197,11 +1224,20 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some tabs come and you ca [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die You can import plain text files and analyse the content of each line by simple regular expressions. A simple sample textfile can be found &lt;a href=&quot;/samples/Sample_Inputfile.txt&quot; target=&quot;_blank&quot;&gt;here&lt;/a&gt;.&lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/SampleInputfile1.png&quot;/&gt;&lt;br/&gt;Each line represents a track, but the first line represents cuesheet details and every detail can be extracted from the line. First information that can be found is the track artist, followed by &quot; - &quot; and then track title. Afterwards some t [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ImportOfTextFilesText {
             get {
                 return ResourceManager.GetString("ImportOfTextFilesText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Import a saved project ähnelt.
+        /// </summary>
+        public static string ImportProjectTooltip {
+            get {
+                return ResourceManager.GetString("ImportProjectTooltip", resourceCulture);
             }
         }
         
@@ -1341,7 +1377,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img src=&quot;images/Options1.png&quot;/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the application starts with.&lt;br [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor provides several options you can use to customize the application to your fits. &lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/Options1.png&quot;/&gt;&lt;br/&gt;&lt;h3&gt;Language&lt;/h3&gt;You can select your language.&lt;br/&gt;&lt;h3&gt;Cuesheet filename&lt;/h3&gt;Sets the default cuesheet filename that is used, when you download the cuesheet.&lt;br/&gt;&lt;h3&gt;Import Textscheme&lt;/h3&gt;Set the default import scheme that is used for importing a textfile for analysing the tracks.&lt;br/&gt;&lt;h3&gt;Default view mode&lt;/h3&gt;Sets the default view mode the applicat [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string OptionsHelpText {
             get {
@@ -1422,6 +1458,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Project filename ähnelt.
+        /// </summary>
+        public static string ProjectFileName {
+            get {
+                return ResourceManager.GetString("ProjectFileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Quick links ähnelt.
         /// </summary>
         public static string QuickLinks {
@@ -1467,7 +1512,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img src=&quot;images/RecordMode1.png&quot;/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select &quot;Allow&quot;. This is optional, but keep in mind, that if you block access to audio, no audio will be recorded by [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor has different view modes you can use for different scopes. Record mode has the focus on live recording a cuesheet and tracks with a soundfile you can download afterwards. To use the record mode switch the view mode to record mode.&lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/RecordMode1.png&quot;/&gt;&lt;br/&gt;You will be asked if you want to allow using audio input. In case you want to have the audio recorded select &quot;Allow&quot;. This is optional, but keep in mind, that if you block access to audio, no audio  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string RecordModeHelpText {
             get {
@@ -1544,6 +1589,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         public static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Save project ähnelt.
+        /// </summary>
+        public static string SaveProject {
+            get {
+                return ResourceManager.GetString("SaveProject", resourceCulture);
             }
         }
         
@@ -1719,7 +1773,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die It is possible to link a track with the previous track. This makes shure, that changes to Begin,End and Position are automatically transfered to the next following track. &lt;img src=&quot;images/TrackLinking1.png&quot;/&gt; If a track is linked to the previous track, you can change for example the End and the Begin of the following linked track is automatically replaced with the End you entered. If you wish to disable linking, just click on the orange &quot;Unlink&quot; Button. If you afterwards want to link the tracks again, just  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die It is possible to link a track with the previous track. This makes shure, that changes to Begin,End and Position are automatically transfered to the next following track. &lt;img style=&quot;width:100%&quot; src=&quot;images/TrackLinking1.png&quot;/&gt; If a track is linked to the previous track, you can change for example the End and the Begin of the following linked track is automatically replaced with the End you entered. If you wish to disable linking, just click on the orange &quot;Unlink&quot; Button. If you afterwards want to link the  [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string TrackLinkingText {
             get {
@@ -1773,7 +1827,7 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img src=&quot;images/Validation1.png&quot;/&gt;&lt;br/&gt;Each message can be clicked to jump to the corresponding fiel [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/Validation1.png&quot;/&gt;&lt;br/&gt;Each message can be clicked to jump to the [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ValidationText {
             get {
