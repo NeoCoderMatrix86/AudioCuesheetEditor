@@ -18,13 +18,14 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class ImportTrack : ITrack<ImportCuesheet>
     {
-        private readonly List<Flag> flags = new List<Flag>();
+        private List<Flag> flags = new List<Flag>();
         public uint? Position { get; set; }
         public string Artist { get; set; }
         public string Title { get; set; }
@@ -32,7 +33,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }
 
-        public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
+        [JsonInclude]
+        public IReadOnlyCollection<Flag> Flags
+        {
+            get { return flags.AsReadOnly(); }
+            private set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(Flags));
+                }
+                flags = value.ToList();
+            }
+        }
 
         public ImportCuesheet Cuesheet { get; set; }
         /// <inheritdoc/>
@@ -76,6 +89,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 flags.Remove(flag);
             }
         }
+
         /// <inheritdoc/>
         public void SetFlags(IEnumerable<Flag> flags)
         {

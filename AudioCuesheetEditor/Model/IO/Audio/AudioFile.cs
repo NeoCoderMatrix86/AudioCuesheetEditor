@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
@@ -41,7 +42,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         private bool disposedValue;
 
         public event EventHandler ContentStreamLoaded;
-
+        
+        [JsonConstructor]
         public AudioFile(String fileName, Boolean isRecorded = false)
         {
             if (String.IsNullOrEmpty(fileName))
@@ -77,6 +79,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// <summary>
         /// Boolean indicating if the stream has fully been loaded
         /// </summary>
+        [JsonIgnore]
         public Boolean IsContentStreamLoaded 
         {
             get { return ContentStream != null; }
@@ -104,6 +107,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 }
             }
         }
+
+        [JsonIgnore]
         public String AudioFileType
         {
             get 
@@ -121,6 +126,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 return audioFileType;
             }
         }
+
+        [JsonIgnore]
         public Boolean PlaybackPossible
         {
             get

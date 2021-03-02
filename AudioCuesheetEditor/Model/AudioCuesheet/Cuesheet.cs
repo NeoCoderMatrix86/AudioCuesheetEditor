@@ -23,6 +23,7 @@ using AudioCuesheetEditor.Model.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -37,24 +38,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     {
         private readonly object syncLock = new object();
 
-        private readonly List<Track> tracks;
+        private List<Track> tracks;
         private String artist;
         private String title;
         private AudioFile audioFile;
         private CDTextfile cDTextfile;
+        private CatalogueNumber catalogueNumber;
         private DateTime? recordingStart;
         private Boolean currentlyHandlingRankPropertyValueChanged;
 
         public event EventHandler AudioFileChanged;
         public Cuesheet()
         {
-            tracks = new List<Track>();
+            Tracks = new List<Track>();
             CatalogueNumber = new CatalogueNumber();
-            CatalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
             Validate();
         }
 
-        public IReadOnlyCollection<Track> Tracks => tracks.AsReadOnly();
+        [JsonInclude]
+        public IReadOnlyCollection<Track> Tracks
+        {
+            get { return tracks.AsReadOnly(); }
+            private set 
+            { 
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                tracks = value.ToList(); 
+            }
+        }
         
         public String Artist 
         {
@@ -78,8 +91,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             set { cDTextfile = value; OnValidateablePropertyChanged(); }
         }
 
-        public CatalogueNumber CatalogueNumber { get; private set; }
+        public CatalogueNumber CatalogueNumber 
+        {
+            get { return catalogueNumber; }
+            set
+            {
+                if (catalogueNumber != null)
+                {
+                    catalogueNumber.ValidateablePropertyChanged -= CatalogueNumber_ValidateablePropertyChanged;
+                }
+                catalogueNumber = value;
+                if (catalogueNumber != null)
+                {
+                    catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
+                }
+                OnValidateablePropertyChanged();
+            }
+        }
 
+        [JsonIgnore]
         public Boolean CanWriteCuesheetFile
         {
             get
@@ -89,6 +119,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        [JsonIgnore]
         public bool IsRecording
         {
             get { return RecordingTime.HasValue; }

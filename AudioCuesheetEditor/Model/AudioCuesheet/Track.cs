@@ -21,6 +21,7 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -32,7 +33,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String title;
         private TimeSpan? begin;
         private TimeSpan? end;
-        private readonly List<Flag> flags = new List<Flag>();
+        private List<Flag> flags = new List<Flag>();
         private Track clonedFrom = null;
         private Track previousTrackLink;
         private Boolean currentlyHandlingRankPropertyChange;
@@ -95,16 +96,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return title; }
             set { title = value; OnValidateablePropertyChanged(); }
         }
+        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? Begin 
         {
             get { return begin; }
             set { begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); }
         }
+        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? End 
         {
             get { return end; }
             set { end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); }
         }
+        [JsonIgnore]
         public TimeSpan? Length 
         {
             get
@@ -146,13 +150,26 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnValidateablePropertyChanged();
             }
         }
-        public IReadOnlyCollection<Flag> Flags => flags.AsReadOnly();
-
+        [JsonInclude]
+        public IReadOnlyCollection<Flag> Flags
+        {
+            get { return flags.AsReadOnly(); }
+            private set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(Flags));
+                }
+                flags = value.ToList();
+            }
+        }
+        [JsonIgnore]
         public Cuesheet Cuesheet { get; set; }
 
         /// <summary>
         /// Indicates that this track has been cloned from another track and is a transparent proxy
         /// </summary>
+        [JsonIgnore]
         public Boolean IsCloned { get { return clonedFrom != null; } }
         /// <summary>
         /// Get the original track that this track has been cloned from. Can be null on original objects
@@ -163,8 +180,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             private set { clonedFrom = value; OnValidateablePropertyChanged(); }
         }
         /// <inheritdoc/>
+        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? PreGap { get; set; }
         /// <inheritdoc/>
+        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? PostGap { get; set; }
         /// <summary>
         /// Set a reference to the previous track (in Cuesheet) in order to update values when the RankPropertyValueChanged of the previous track has been fired.
@@ -383,6 +402,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             this.flags.Clear();
             this.flags.AddRange(flags);
         }
+
 
         public override string ToString()
         {
