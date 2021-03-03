@@ -33,8 +33,7 @@ namespace AudioCuesheetEditor.Model.IO
 
         public static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
         {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented = true
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
         public static Cuesheet ImportFile(byte[] fileContent)
@@ -61,7 +60,6 @@ namespace AudioCuesheetEditor.Model.IO
         public byte[] GenerateFile()
         {
             var json = JsonSerializer.Serialize<Cuesheet>(Cuesheet, Options);    
-            //TODO: Exception when using record mode to save project because of stream in audiofile
             return Encoding.UTF8.GetBytes(json);        
         }
     }

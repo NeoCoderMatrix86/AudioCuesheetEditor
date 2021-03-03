@@ -75,6 +75,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         }
 
         public String FileName { get; private set; }
+        //TODO: Get rid of objecturl and save data inside the contentstream (Memorystream)
+        [JsonIgnore]
         public String ObjectURL { get; private set; }
         /// <summary>
         /// Boolean indicating if the stream has fully been loaded
@@ -87,7 +89,9 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// <summary>
         /// File content stream. Be carefull, this stream is loaded asynchronously. Connect to the StreamLoaded for checking if loading has already been done!
         /// </summary>
+        [JsonIgnore]
         public Stream ContentStream { get; private set; }
+        [JsonIgnore]
         public Boolean IsRecorded { get; private set; }
         /// <summary>
         /// Duration of the audio file
