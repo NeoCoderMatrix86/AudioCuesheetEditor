@@ -323,9 +323,6 @@
   <data name="ExportProfileSchemeTrackValidationErrors" xml:space="preserve">
     <value>Export profile track scheme validation errors</value>
   </data>
-  <data name="ExportResult" xml:space="preserve">
-    <value>Export result</value>
-  </data>
   <data name="HasInvalidBegin" xml:space="preserve">
     <value>Begin is not valid (must be equal or greater than 00:00:00). Please enter a valid time.</value>
   </data>
@@ -721,5 +718,26 @@
   </data>
   <data name="StartTextImport" xml:space="preserve">
     <value>Start textimport</value>
+  </data>
+  <data name="ConfirmImportProject" xml:space="preserve">
+    <value>Do you really want to import this file? This can not be reversed and unsaved changes are lost!</value>
+  </data>
+  <data name="DownloadProjectfile" xml:space="preserve">
+    <value>Download projectfile</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="ImportProjectTooltip" xml:space="preserve">
+    <value>Import a saved project</value>
+  </data>
+  <data name="ProjectFileName" xml:space="preserve">
+    <value>Project filename</value>
+  </data>
+  <data name="SaveProject" xml:space="preserve">
+    <value>Save project</value>
   </data>
 </root>
