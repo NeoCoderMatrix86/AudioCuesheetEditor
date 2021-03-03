@@ -1,7 +1,5 @@
 # Changelog
 
-## [v2.2](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.2) (2021-02-25)
-
 ## [v2.2.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.2.0) (2021-02-25)
 
 **Implemented enhancements:**
