@@ -44,8 +44,10 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
-        licence = (await Http.GetStringAsync("Licence.txt")).Replace(Environment.NewLine, "<br />");
-        changelog = (await Http.GetStringAsync("CHANGELOG.md")).Replace(Environment.NewLine, "<br />");
+        var licenceContent = await Http.GetStringAsync("Licence.txt");
+        licence = Markdown.ToHtml(licenceContent);
+        var changelogContent = await Http.GetStringAsync("CHANGELOG.md");
+        changelog = Markdown.ToHtml(changelogContent);
     }
 
     public String VersionString
