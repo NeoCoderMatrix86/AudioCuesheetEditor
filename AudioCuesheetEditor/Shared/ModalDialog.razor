@@ -103,6 +103,8 @@ along with Foobar.  If not, see
     public void HideModal()
     {
         modalRef.Hide();
+        //Reset all confirmed handlers
+        Confirmed = null;
     }
 
     public ModalSize ModalSize
