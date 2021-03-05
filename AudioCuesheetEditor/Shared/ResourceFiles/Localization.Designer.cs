@@ -1827,6 +1827,15 @@ namespace AudioCuesheetEditor.Shared.ResourceFiles {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Here all validation messages will be displayed. For details switch to full edit mode. ähnelt.
+        /// </summary>
+        public static string ValidationDescriptionRecordMode {
+            get {
+                return ResourceManager.GetString("ValidationDescriptionRecordMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die AudioCuesheetEditor works with a validation model and evaluates every input. Currently there are 2 types of validation: Warning and Error. Warnings are validationmessages, that might be important for you, but don&apos;t block functions. Errors are validationmessages that need to be corrected (like tracks with invalid times). Validation messages are displayed on the right with link to the corresponding field.&lt;br/&gt;&lt;img style=&quot;width:100%&quot; src=&quot;images/Validation1.png&quot;/&gt;&lt;br/&gt;Each message can be clicked to jump to the [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         public static string ValidationText {

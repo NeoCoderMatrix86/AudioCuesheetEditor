@@ -200,6 +200,19 @@ along with Foobar.  If not, see
                 </Table>
             </CollapseBody>
         </Collapse>
+        <Collapse Visible="processingHintsVisible">
+            <CollapseHeader>
+                <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsVisible, ref chevronProcessingHints))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
+                    <Heading Size="HeadingSize.Is3">@localizer["ProcessingHints"]</Heading>
+                    <div>
+                        @((MarkupString)chevronProcessingHints)
+                    </div>
+                </Blazorise.Link>
+            </CollapseHeader>
+            <CollapseBody>
+                <ProcessingHints Cuesheet="Cuesheet" Header="ValidationDescriptionRecordMode" ActivateLinksToFields="false" />
+            </CollapseBody>
+        </Collapse>
     </Accordion>
     <br />
 
@@ -260,11 +273,13 @@ along with Foobar.  If not, see
     private Boolean recordControlVisible = true;
     private Boolean enterNewTrackVisible = true;
     private Boolean cuesheetTracksVisible = true;
+    private Boolean processingHintsVisible = false;
 
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronRecordControl = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronEnterNewTrack = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    private String chevronProcessingHints = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
 
     private FFMPEG ffmpeg;
     private int? processOfProcessingAudioFile;
@@ -363,6 +378,9 @@ along with Foobar.  If not, see
     {
         await JSRuntime.InvokeVoidAsync("stopAudioRecording");
         Cuesheet.StopRecording();
+        //Open processing hints
+        processingHintsVisible = true;
+        SwitchChevron(processingHintsVisible, ref chevronProcessingHints);
     }
 
     private String GetCSSClassAlert(Validateable validateable, String property)
