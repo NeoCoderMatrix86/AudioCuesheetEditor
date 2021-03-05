@@ -43,6 +43,7 @@ namespace AudioCuesheetEditor
             builder.Services.AddScoped<CuesheetController>();
             builder.Services.AddScoped<OptionsController>();
 
+            builder.Services.AddSingleton<SessionStateContainer>();
             builder.Services.AddSingleton<ILoggerProvider, LoggerProvider>();
             builder.Services.AddLogging();
             ConfigureLogging(builder);
