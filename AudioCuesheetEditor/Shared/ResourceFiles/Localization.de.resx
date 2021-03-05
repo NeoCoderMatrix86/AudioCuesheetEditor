@@ -740,4 +740,7 @@
   <data name="SaveProject" xml:space="preserve">
     <value>Projekt speichern</value>
   </data>
+  <data name="ValidationDescriptionRecordMode" xml:space="preserve">
+    <value>Hier werden alle Validierungsnachrichten angezeigt. Für Details wechseln Sie bitte in den Bearbeitungsmodus "Komplette Bearbeitung".</value>
+  </data>
 </root>

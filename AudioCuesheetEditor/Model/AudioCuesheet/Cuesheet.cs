@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             Tracks = new List<Track>();
             CatalogueNumber = new CatalogueNumber();
-            Validate();
+            OnValidateablePropertyChanged();
         }
 
         [JsonInclude]

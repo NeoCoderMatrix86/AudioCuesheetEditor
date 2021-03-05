@@ -431,71 +431,7 @@ along with Foobar.  If not, see
                                 <CardTitle Size="3">@localizer["ProcessingHints"]</CardTitle>
                             </CardHeader>
                             <CardBody>
-                                <Paragraph>@localizer["ValidationDescription"]</Paragraph>
-                                <Accordion>
-                                    @if (GetValidationErrors(ValidationErrorFilterType.WarningOnly).Count() > 0)
-                                    {
-                                        <Collapse Visible="processingHintsWarningVisible">
-                                            <CollapseHeader>
-                                                <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsWarningVisible, ref chevronProcessingHintsWarning))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                                    <Heading Size="HeadingSize.Is3">@localizer["Warnings"]</Heading>
-                                                    <div>
-                                                        @((MarkupString)chevronProcessingHintsWarning)
-                                                    </div>
-                                                </Blazorise.Link>
-                                            </CollapseHeader>
-                                            <CollapseBody>
-                                                @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
-                                                {
-                                                    var functionName = "focusElement";
-                                                    <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
-                                                        <Alert Color="Color.Warning" Visible="true">
-                                                            @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
-                                                            {
-                                                                <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                            }
-                                                            else
-                                                            {
-                                                                <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                            }
-                                                        </Alert>
-                                                    </Blazorise.Link>
-                                                }
-                                            </CollapseBody>
-                                        </Collapse>
-                                    }
-                                    @if (GetValidationErrors(ValidationErrorFilterType.ErrorOnly).Count() > 0)
-                                    {
-                                        <Collapse Visible="processingHintsErrorVisible">
-                                            <CollapseHeader>
-                                                <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsErrorVisible, ref chevronProcessingHintsError))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                                    <Heading Size="HeadingSize.Is3">@localizer["Errors"]</Heading>
-                                                    <div>
-                                                        @((MarkupString)chevronProcessingHintsError)
-                                                    </div>
-                                                </Blazorise.Link>
-                                            </CollapseHeader>
-                                            <CollapseBody>
-                                                @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.ErrorOnly))
-                                                {
-                                                    var functionName = "focusElement";
-                                                    <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
-                                                        <Alert Color="Color.Danger" Visible="true">
-                                                            @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
-                                                            {
-                                                                <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                            }
-                                                            else
-                                                            {
-                                                                <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
-                                                            }
-                                                        </Alert>
-                                                    </Blazorise.Link>
-                                                }
-                                            </CollapseBody>
-                                        </Collapse>
-                                    }
-                                </Accordion>
+                                <ProcessingHints Cuesheet="cuesheet" Header="ValidationDescription" ActivateLinksToFields="true" />
                             </CardBody>
                         </Card>
                     </Column>
@@ -1134,7 +1070,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            if (GetValidationErrors(ValidationErrorFilterType.All).Count > 0)
+            if (cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.All).Count > 0)
             {
                 return Display.Always;
             }
@@ -1157,8 +1093,7 @@ along with Foobar.  If not, see
 
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetTracksVisible = true;
-    private Boolean processingHintsWarningVisible = true;
-    private Boolean processingHintsErrorVisible = true;
+
     private Boolean importVisible = false;
     private Boolean dropFilesVisible = true;
     private Boolean textImportFileContentVisible = true;
@@ -1169,8 +1104,6 @@ along with Foobar.  If not, see
 
     private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronProcessingHintsWarning = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronProcessingHintsError = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
     private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronTextImportFileContent = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
@@ -1305,16 +1238,6 @@ along with Foobar.  If not, see
             }
         }
         return cssClass;
-    }
-
-    private IReadOnlyCollection<AudioCuesheetEditor.Model.Entity.ValidationError> GetValidationErrors(ValidationErrorFilterType validationErrorFilterType)
-    {
-        List<AudioCuesheetEditor.Model.Entity.ValidationError> validationErrors = cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType).ToList();
-        foreach (var track in cuesheet.Tracks)
-        {
-            validationErrors.AddRange(track.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType));
-        }
-        return validationErrors.AsReadOnly();
     }
 
     private async Task OnInputFileTextImportChange(InputFileChangeEventArgs e)
