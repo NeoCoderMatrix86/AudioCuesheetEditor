@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Model.Entity
             this.args = args;
         }
         public String Message { get; private set; }
+        //TODO: Check all references and input a new TextLocalizer<T> in order to get custom validation messages
         public String GetMessageLocalized(ITextLocalizer localizer)
         {
             var arguments = args;

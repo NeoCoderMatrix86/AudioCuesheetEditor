@@ -17,6 +17,7 @@
     <Content Remove="Resources\Localization\FileEdit\en.json" />
     <Content Remove="Resources\Localization\Help\de.json" />
     <Content Remove="Resources\Localization\Help\en.json" />
+    <Content Remove="Resources\Localization\Index\de.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,7 @@
     <EmbeddedResource Include="Resources\Localization\FileEdit\en.json" />
     <EmbeddedResource Include="Resources\Localization\Help\de.json" />
     <EmbeddedResource Include="Resources\Localization\Help\en.json" />
+    <EmbeddedResource Include="Resources\Localization\Index\de.json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -45,15 +45,15 @@ along with Foobar.  If not, see
                             </BarDropdownToggle>
                             <BarDropdownMenu>
                                 <BarDropdownItem>
-                                    <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false, "PleaseCheckProcessingHints")">
-                                        <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
+                                    <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false, "Please check processinghints for errors, otherwise the file is not exportable")">
+                                        <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Download cuesheet"]</Button>
                                     </Tooltip>
                                 </BarDropdownItem>
                                 <BarDropdownItem>
-                                    <Button Color="Color.Primary" Clicked="() => modalDownloadProjectfile.Show()">@localizer["SaveProject"]</Button>
+                                    <Button Color="Color.Primary" Clicked="() => modalDownloadProjectfile.Show()">@localizer["Save project"]</Button>
                                 </BarDropdownItem>
                                 <BarDropdownItem>
-                                    <Button Color="Color.Secondary" Clicked="() => modalExportProfiles.Show()">@localizer["OpenExportProfilesDialog"]</Button>
+                                    <Button Color="Color.Secondary" Clicked="() => modalExportProfiles.Show()">@localizer["Open exportprofiles"]</Button>
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
@@ -61,7 +61,7 @@ along with Foobar.  If not, see
                     <BarItem Padding="Padding.Is1.OnX">
                         <BarDropdown>
                             <BarDropdownToggle Class="btn btn-danger">
-                                @localizer["SwitchViewMode"]
+                                @localizer["Select ViewMode"]
                             </BarDropdownToggle>
                             <BarDropdownMenu>
                                 @foreach (var name in Enum.GetNames(typeof(ViewMode)))
@@ -83,17 +83,17 @@ along with Foobar.  If not, see
                             </BarDropdownToggle>
                             <BarDropdownMenu Class="dropdown-menu-right">
                                 <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
+                                    <Button Color="Color.Danger" @onclick="OnDeleteAllTracksClicked">@localizer["Delete all tracks"]</Button>
                                 </BarDropdownItem>
                                 <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="RestartCuesheetClicked">@localizer["ResetCuesheet"]</Button>
+                                    <Button Color="Color.Danger" @onclick="RestartCuesheetClicked">@localizer["Reset cuesheet"]</Button>
                                 </BarDropdownItem>
                                 <Divider />
                                 <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="OnRestartCompleteApplicationClicked">@localizer["RestartCompleteApplication"]</Button>
+                                    <Button Color="Color.Danger" @onclick="OnRestartCompleteApplicationClicked">@localizer["Restart complete application"]</Button>
                                 </BarDropdownItem>
                                 <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="OnResetCompleteApplicationClicked">@localizer["ResetCompleteApplication"]</Button>
+                                    <Button Color="Color.Danger" @onclick="OnResetCompleteApplicationClicked">@localizer["Reset complete application"]</Button>
                                 </BarDropdownItem>
                             </BarDropdownMenu>
                         </BarDropdown>
@@ -123,7 +123,7 @@ along with Foobar.  If not, see
                             <Collapse Visible="dropFilesVisible">
                                 <CollapseHeader>
                                     <Blazorise.Link Clicked="(() => HeaderClicked(ref dropFilesVisible, ref chevronDropFiles))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["DropFiles"]</Heading>
+                                        <Heading Size="HeadingSize.Is3">@localizer["Drop files"]</Heading>
                                         <div>
                                             @((MarkupString)chevronDropFiles)
                                         </div>
@@ -133,25 +133,25 @@ along with Foobar.  If not, see
                                     <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
                                         <svg class="fileUploadDragNDropIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
                                         <InputFile id="dropInputfiles" class="inputfile" multiple OnChange="OnDropInputfilesChanged"></InputFile>
-                                        <label for="dropInputfiles">@((MarkupString)(localizer["ChooseFileOrDrag"].ToString()))</label>
+                                        <label for="dropInputfiles">@((MarkupString)(localizer["Choose file or drag it here"].ToString()))</label>
                                     </div>
                                     <Alert @ref="alertInvalidFile" Color="Color.Danger">
-                                        <AlertMessage>@localizer["InvalidFile"]</AlertMessage>
-                                        <AlertDescription>@String.Format(localizer["YouDroppedAFileThatCanNotBeProcessed"], invalidFileName)</AlertDescription>
+                                        <AlertMessage>@localizer["Invalid file"]</AlertMessage>
+                                        <AlertDescription>@String.Format(localizer["You dropped an invalid file that can not be processed"], invalidFileName)</AlertDescription>
                                     </Alert>
                                 </CollapseBody>
                             </Collapse>
                             <Collapse Visible="importVisible">
                                 <CollapseHeader>
                                     <Blazorise.Link Clicked="(() => HeaderClicked(ref importVisible, ref chevronImport))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["ImportFiles"]</Heading>
+                                        <Heading Size="HeadingSize.Is3">@localizer["Import from existing files"]</Heading>
                                         <div>
                                             @((MarkupString)chevronImport)
                                         </div>
                                     </Blazorise.Link>
                                 </CollapseHeader>
                                 <CollapseBody>
-                                    <Tooltip Placement="Placement.Top" Text="@localizer["ImportTextfileTooltip"]">
+                                    <Tooltip Placement="Placement.Top" Text="@localizer["Import textfile tooltip"]">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -159,7 +159,7 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@localizer["ImportCuesheetTooltip"]">
+                                    <Tooltip Placement="Placement.Top" Text="@localizer["Import cuesheet tooltip"]">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -167,9 +167,9 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@localizer["ImportProjectTooltip"]">
+                                    <Tooltip Placement="Placement.Top" Text="@localizer["Import project tooltip"]">
                                         <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["ProjectFileName"]</FieldLabel>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Project filename"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                                 <InputFile class="form-control" accept="@ProjectFile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
                                             </FieldBody>
@@ -180,7 +180,7 @@ along with Foobar.  If not, see
                             <Collapse Visible="cuesheetDataVisible">
                                 <CollapseHeader>
                                     <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["CuesheetData"]</Heading>
+                                        <Heading Size="HeadingSize.Is3">@localizer["Cuesheet data"]</Heading>
                                         <div>
                                             @((MarkupString)chevronCuesheetData)
                                         </div>
@@ -189,22 +189,22 @@ along with Foobar.  If not, see
                                 <CollapseBody>
                                     <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDArtist"]</FieldLabel>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD artist"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@localizer["EnterCDartisthere"]" @bind-Text="cuesheet.Artist" ChangeTextOnKeyPress="false" />
+                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@localizer["Enter cd artist here"]" @bind-Text="cuesheet.Artist" ChangeTextOnKeyPress="false" />
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
                                     <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTitle"]</FieldLabel>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD title"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@localizer["EnterCDtitlehere"]" @bind-Text="cuesheet.Title" ChangeTextOnKeyPress="false" />
+                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@localizer["Enter cd title here"]" @bind-Text="cuesheet.Title" ChangeTextOnKeyPress="false" />
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
                                     <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["AudioFile"]</FieldLabel>
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Audiofile"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             @if (cuesheet.AudioFile == null)
                                             {
@@ -218,7 +218,7 @@ along with Foobar.  If not, see
                                                     @if (cuesheet.AudioFile.IsRecorded)
                                                     {
                                                         <Addon AddonType="AddonType.Start">
-                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@cuesheet.AudioFile.ObjectURL" Target="Target.Blank" Download="@cuesheet.AudioFile.FileName">@localizer["DownloadRecordedAudio"]</Button>
+                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@cuesheet.AudioFile.ObjectURL" Target="Target.Blank" Download="@cuesheet.AudioFile.FileName">@localizer["Download recordedaudio"]</Button>
                                                         </Addon>
                                                     }
                                                     <Addon AddonType="AddonType.Body">
@@ -233,7 +233,7 @@ along with Foobar.  If not, see
                                     </Field>
                                     <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CDTextfile"]</FieldLabel>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD textfile"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                                 @if (cuesheet.CDTextfile == null)
                                                 {
@@ -256,9 +256,9 @@ along with Foobar.  If not, see
                                     </Tooltip>
                                     <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CatalogueNumber"]</FieldLabel>
+                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cataloguenumber"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["EnterCatalogueNumberHere"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
+                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["Enter cataloguenumber here"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
@@ -267,7 +267,7 @@ along with Foobar.  If not, see
                             <Collapse Visible="cuesheetTracksVisible">
                                 <CollapseHeader>
                                     <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["CuesheetTracks"]</Heading>
+                                        <Heading Size="HeadingSize.Is3">@localizer["Cuesheet tracks"]</Heading>
                                         <div>
                                             @((MarkupString)chevronCuesheetTracks)
                                         </div>
@@ -277,14 +277,14 @@ along with Foobar.  If not, see
                                     <Table Bordered="true" Responsive="true" Narrow="true">
                                         <TableHeader ThemeContrast="ThemeContrast.Light">
                                             <TableRow>
-                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["TrackTableControls"]</TableHeaderCell>
+                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Controls"]</TableHeaderCell>
                                                 <TableHeaderCell>#</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["Artist"]</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["Title"]</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["Begin"]</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["End"]</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["Length"]</TableHeaderCell>
-                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Notifications"]</TableHeaderCell>
+                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Hints"]</TableHeaderCell>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -301,7 +301,7 @@ along with Foobar.  If not, see
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand" viewBox="0 0 16 16">
                                                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z" />
                                                                     </svg>
-                                                                    @localizer["UnlinkThisTrackFromPreviousTrack"]
+                                                                    @localizer["Unlink this track from previous track"]
                                                                 </Button>
                                                             }
                                                             else
@@ -310,7 +310,7 @@ along with Foobar.  If not, see
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
                                                                         <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707l-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z" />
                                                                     </svg>
-                                                                    @localizer["LinkThisTrackWithPreviousTrack"]
+                                                                    @localizer["Link this track with previous track"]
                                                                 </Button>
                                                             }
                                                         </TableRowCell>
@@ -318,9 +318,9 @@ along with Foobar.  If not, see
                                                 }
                                                 <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
                                                     <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Buttons>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["EditTrackTooltip"]">
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Edit track tooltip"]">
                                                                     <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
@@ -328,7 +328,7 @@ along with Foobar.  If not, see
                                                                         </svg>
                                                                     </Button>
                                                                 </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["CopyTrackTooltip"]">
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Copy track tooltip"]">
                                                                     <Button Size="Size.Small" Color="Color.Success" Clicked="() => CopyTrackClicked(track)">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
                                                                             <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
@@ -336,7 +336,7 @@ along with Foobar.  If not, see
                                                                         </svg>
                                                                     </Button>
                                                                 </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["StartPlaybackThisTrack"]">
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Start playback this track"]">
                                                                     <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
@@ -344,21 +344,21 @@ along with Foobar.  If not, see
                                                                         </svg>
                                                                     </Button>
                                                                 </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackUpTooltip"]">
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Move track up tooltip"]">
                                                                     <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
                                                                         </svg>
                                                                     </Button>
                                                                 </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["DeleteTrackTooltip"]">
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Delete track tooltip"]">
                                                                     <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                                                         </svg>
                                                                     </Button>
                                                                 </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["MoveTrackDownTooltip"]">
+                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Move track down tooltip"]">
                                                                     <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
                                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
                                                                             <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
@@ -374,42 +374,42 @@ along with Foobar.  If not, see
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="track.Title" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                                                 <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                                                 <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                                                 <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"CurrentTrackIsPlayed")">
+                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             @((MarkupString)track.GetValidationErrors(localizer))
                                                         </Tooltip>
                                                     </TableRowCell>
@@ -417,8 +417,8 @@ along with Foobar.  If not, see
                                             }
                                         </TableBody>
                                     </Table>
-                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)">@localizer["Addnewtrack"]</Button>
-                                    <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["DeleteAllTracks"]</Button>
+                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)">@localizer["Add new track"]</Button>
+                                    <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["Delete all tracks"]</Button>
                                 </CollapseBody>
                             </Collapse>
                         </Accordion>
@@ -430,7 +430,7 @@ along with Foobar.  If not, see
                     <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
                         <Card>
                             <CardHeader>
-                                <CardTitle Size="3">@localizer["ProcessingHints"]</CardTitle>
+                                <CardTitle Size="3">@localizer["Processinghints"]</CardTitle>
                             </CardHeader>
                             <CardBody>
                                 <ProcessingHints Cuesheet="cuesheet" Header="ValidationDescription" ActivateLinksToFields="true" />
@@ -450,7 +450,7 @@ along with Foobar.  If not, see
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
-                @localizer["TextImportAssistance"]
+                @localizer["Textimport assistant"]
             </ModalTitle>
             <CloseButton Clicked="TextImportAbortClicked" />
         </ModalHeader>
@@ -461,7 +461,7 @@ along with Foobar.  If not, see
                     <Collapse Visible="textImportFileContentVisible">
                         <CollapseHeader>
                             <Blazorise.Link Clicked="(() => HeaderClicked(ref textImportFileContentVisible, ref chevronTextImportFileContent))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <Heading Size="HeadingSize.Is3">@localizer["FileContent"]</Heading>
+                                <Heading Size="HeadingSize.Is3">@localizer["Filecontent"]</Heading>
                                 <div>
                                     @((MarkupString)chevronTextImportFileContent)
                                 </div>
@@ -479,20 +479,20 @@ along with Foobar.  If not, see
                 </Accordion>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeCuesheetTooltip"]">
-                            @localizer["TextImportSchemeCuesheet"]
+                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter textimportscheme cuesheet tooltip"]">
+                            @localizer["Textimportscheme cuesheet"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is8">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["EnterTextImportSchemeCuesheetHere"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeCuesheet))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeCuesheet))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["SelectPlaceholder"]
+                                        @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
@@ -507,20 +507,20 @@ along with Foobar.  If not, see
                 </Field>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterTextImportSchemeTracksTooltip"]">
-                            @localizer["TextImportSchemeTrack"]
+                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter textimportscheme track tooltip"]">
+                            @localizer["Textimportscheme track"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is8">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["EnterTextImportSchemeTracksHere"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeTracks))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeTracks))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["SelectPlaceholder"]
+                                        @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
@@ -542,7 +542,7 @@ along with Foobar.  If not, see
                                 <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
                             </svg>
                         </AlertDescription>
-                        <AlertMessage>@localizer["ErrorDuringTextImport"] : @textImportFile.AnalyseException.Message</AlertMessage>
+                        <AlertMessage>@localizer["Error during textimport"] : @textImportFile.AnalyseException.Message</AlertMessage>
                     </Alert>
                 }
                 <Divider DividerType="DividerType.Solid" />
@@ -550,13 +550,13 @@ along with Foobar.  If not, see
                 {
                     <Heading Size="HeadingSize.Is4">@localizer["ImportCuesheetValues"]</Heading>
                     <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDArtist"]</FieldLabel>
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CD artist"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.Artist" ReadOnly="true" />
                         </FieldBody>
                     </Field>
                     <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDTitle"]</FieldLabel>
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CD title"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
                         </FieldBody>
@@ -564,7 +564,7 @@ along with Foobar.  If not, see
                     @if (textImportFile.ImportCuesheet.AudioFile != null)
                     {
                         <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["AudioFile"]</FieldLabel>
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["Audiofile"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is8">
                                 <TextEdit Text="@textImportFile.ImportCuesheet.AudioFile.FileName" ReadOnly="true" />
                             </FieldBody>
@@ -573,19 +573,19 @@ along with Foobar.  If not, see
                     @if (textImportFile.ImportCuesheet.CDTextfile != null)
                     {
                         <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CDTextfile"]</FieldLabel>
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CD textfile"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is8">
                                 <TextEdit Text="@textImportFile.ImportCuesheet.CDTextfile.FileName" ReadOnly="true" />
                             </FieldBody>
                         </Field>
                     }
                     <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CatalogueNumber"]</FieldLabel>
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["Cataloguenumber"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.CatalogueNumber.Value" ReadOnly="true" />
                         </FieldBody>
                     </Field>
-                    <Heading Size="HeadingSize.Is5">@localizer["Tracks"]</Heading>
+                    <Heading Size="HeadingSize.Is5">@localizer["Cuesheet tracks"]</Heading>
                     <Table Bordered="true" Responsive="true" Narrow="true">
                         <TableHeader ThemeContrast="ThemeContrast.Light">
                             <TableRow>
@@ -617,8 +617,8 @@ along with Foobar.  If not, see
             }
         </ModalBody>
         <ModalFooter>
-            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "ImportNotPossible")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["StartTextImport"]</Button>
+            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "Import not possible due to textimport errors. Please check errors!")">
+                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["Start textimport"]</Button>
             </Tooltip>
             <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@localizer["Abort"]</Button>
         </ModalFooter>
@@ -629,50 +629,50 @@ along with Foobar.  If not, see
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
-                @localizer["ExportProfiles"]
+                @localizer["Exportprofiles"]
             </ModalTitle>
             <CloseButton @onclick="ModalExportProfilesCloseClicked" />
         </ModalHeader>
         <ModalBody>
             <Field Horizontal="true" JustifyContent="JustifyContent.End">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["SelectExportProfile"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Select exportprofile"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is9">
                     <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
                 </FieldBody>
             </Field>
-            <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@localizer["AddNewExportProfile"]</Button>
-            <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@localizer["DeleteExportProfile"]</Button>
+            <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@localizer["Add new exportprofile"]</Button>
+            <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@localizer["Delete selected exportprofile"]</Button>
             <Divider />
             @if (SelectedExportProfile != null)
             {
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["ExportProfileName"]</FieldLabel>
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Name"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@localizer["EnterExportProfileNameHere"]" @bind-Text="SelectedExportProfile.Name" />
+                        <TextEdit Placeholder="@localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name" />
                     </FieldBody>
                 </Field>
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["ExportProfileFilename"]</FieldLabel>
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@localizer["EnterExportProfileFilenameHere"]" @bind-Text="SelectedExportProfile.FileName" />
+                        <TextEdit Placeholder="@localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.FileName" />
                     </FieldBody>
                 </Field>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeHeadHereTooltip"]">
-                            @localizer["ExportProfileSchemeHead"]
+                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter exportschemehead here tooltip"]">
+                            @localizer["Exportprofilescheme head"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["EnterExportSchemeHeadHere"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeHeadHereTooltip"]" />
+                                <TextEdit Placeholder="@localizer["Enter exportscheme head here"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportschemehead here tooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["SelectPlaceholder"]
+                                        @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
@@ -687,7 +687,7 @@ along with Foobar.  If not, see
                 </Field>
                 @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeHead.IsValid == false))
                 {
-                    <Heading Size="HeadingSize.Is6">@localizer["ExportProfileSchemeHeadValidationErrors"]</Heading>
+                    <Heading Size="HeadingSize.Is6">@localizer["Exportprofilescheme head validationerrors"]</Heading>
                     @foreach (var validationError in SelectedExportProfile.SchemeHead.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
@@ -697,20 +697,20 @@ along with Foobar.  If not, see
                 }
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeTrackHereTooltip"]">
-                            @localizer["ExportProfileSchemeTrack"]
+                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter exportscheme track here tooltip"]">
+                            @localizer["Exportprofilescheme track"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["EnterExportSchemeTrackHere"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeTrackHereTooltip"]" />
+                                <TextEdit Placeholder="@localizer["Enter exportscheme track here"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportscheme track here tooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["SelectPlaceholder"]
+                                        @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableScheme in ExportScheme.AvailableTrackSchemes)
@@ -725,7 +725,7 @@ along with Foobar.  If not, see
                 </Field>
                 @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeTracks.IsValid == false))
                 {
-                    <Heading Size="HeadingSize.Is6">@localizer["ExportProfileSchemeTrackValidationErrors"]</Heading>
+                    <Heading Size="HeadingSize.Is6">@localizer["Exportprofilescheme track validationerrors"]</Heading>
                     @foreach (var validationError in SelectedExportProfile.SchemeTracks.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
@@ -735,20 +735,20 @@ along with Foobar.  If not, see
                 }
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["EnterExportSchemeFooterHereTooltip"]">
-                            @localizer["ExportProfileSchemeFooter"]
+                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter exportscheme footer here tooltip"]">
+                            @localizer["Exportprofilescheme footer"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["EnterExportSchemeFooterHere"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["EnterExportSchemeFooterHereTooltip"]" />
+                                <TextEdit Placeholder="@localizer["Enter exportscheme footer here"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportscheme footer here tooltip"]" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["SelectPlaceholder"]
+                                        @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
@@ -763,7 +763,7 @@ along with Foobar.  If not, see
                 </Field>
                 @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeFooter.IsValid == false))
                 {
-                    <Heading Size="HeadingSize.Is6">@localizer["ExportProfileSchemeFooterValidationErrors"]</Heading>
+                    <Heading Size="HeadingSize.Is6">@localizer["Exportprofilescheme footer validationerrors"]</Heading>
                     @foreach (var validationError in SelectedExportProfile.SchemeFooter.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
@@ -774,8 +774,8 @@ along with Foobar.  If not, see
             }
         </ModalBody>
         <ModalFooter>
-            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "ExportProfileIsNotExportable")">
-                <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@localizer["DownloadExport"]</Button>
+            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "Exportprofile is not exportable. Please check validationerrors and solve errors in order to download export.")">
+                <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@localizer["Download export"]</Button>
             </Tooltip>
             <Button Color="Color.Secondary" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</Button>
         </ModalFooter>
@@ -786,7 +786,7 @@ along with Foobar.  If not, see
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>
-                @localizer["Downloadcuesheet"]
+                @localizer["Download cuesheet"]
             </ModalTitle>
             <CloseButton Clicked="() => modalDownloadCuesheet.Hide()" />
         </ModalHeader>
@@ -799,7 +799,7 @@ along with Foobar.  If not, see
             </Field>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Downloadcuesheet"]</Button>
+            <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Download cuesheet"]</Button>
             <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
@@ -814,7 +814,7 @@ along with Foobar.  If not, see
         <ModalBody>
             <!--TODO: Make Tabs -->
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CultureSetting"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Culture setting"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <Select TValue="String" @bind-SelectedValue="@optionsController.Options.CultureName">
                         @foreach (var culture in LocalizationService.AvailableCultures)
@@ -825,33 +825,33 @@ along with Foobar.  If not, see
                 </FieldBody>
             </Field>
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CuesheetFileName"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Cuesheet filename"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
                 </FieldBody>
             </Field>
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["ProjectFileName"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Project filename"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <TextEdit @bind-Text="optionsController.Options.ProjectFileName" />
                 </FieldBody>
             </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeCuesheet"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme cuesheet"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeCuesheet" />
                 </FieldBody>
             </Field>
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["TextImportSchemeTrack"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme track"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeTracks" />
                 </FieldBody>
             </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["DefaultViewMode"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Default viewmode"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <Select TValue="String" @bind-SelectedValue="@optionsController.Options.ViewModeName">
                         @foreach (var name in Enum.GetNames(typeof(ViewMode)))
@@ -863,19 +863,19 @@ along with Foobar.  If not, see
             </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioFileNameRecording"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Filename for recorded audio"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" />
                 </FieldBody>
             </Field>
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["EnableAudioRecoding"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Enable audio recoding after record"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Check TValue="Boolean" @bind-Checked="optionsController.Options.RecodeAudioRecording">@localizer["RecodeAudioAfterRecording"]</Check>
+                    <Check TValue="Boolean" @bind-Checked="optionsController.Options.RecodeAudioRecording">@localizer["Recode audio after recording into selected audiocodec"]</Check>
                 </FieldBody>
             </Field>
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioCodec"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Audio codec"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <Select TValue="String" @bind-SelectedValue="optionsController.Options.AudioCodecName">
                         @foreach (var audioCodec in AudioFile.AudioCodecs)
@@ -887,15 +887,15 @@ along with Foobar.  If not, see
             </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AutomaticallyLinkTracks"]</FieldLabel>
+                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Automatically link tracks"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Check TValue="Boolean?" @bind-Checked="optionsController.Options.LinkTracksWithPreviousOne">@localizer["AutomaticallyLinkTracksWithPrevious"]</Check>
+                    <Check TValue="Boolean?" @bind-Checked="optionsController.Options.LinkTracksWithPreviousOne">@localizer["Automatically link tracks with previous"]</Check>
                 </FieldBody>
             </Field>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
-            <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@localizer["ReloadOptions"]</Button>
+            <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@localizer["Reload options"]</Button>
             <Button Color="Color.Danger" Clicked="OnResetOptionsClicked">@localizer["Reset"]</Button>
             <Button Color="Color.Secondary" Clicked="() => modalOptions.Hide()">@localizer["Close"]</Button>
         </ModalFooter>
@@ -905,7 +905,7 @@ along with Foobar.  If not, see
 <Modal @ref="modalTrackEdit">
     <ModalContent Centered="true">
         <ModalHeader>
-            <ModalTitle>@localizer["EditTrack"]</ModalTitle>
+            <ModalTitle>@localizer["Edit track details"]</ModalTitle>
             <CloseButton Clicked="() => modalTrackEdit.Hide()" />
         </ModalHeader>
         <ModalBody>
@@ -999,7 +999,7 @@ along with Foobar.  If not, see
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>
-                @localizer["SaveProject"]
+                @localizer["Save project"]
             </ModalTitle>
             <CloseButton Clicked="() => modalDownloadProjectfile.Hide()" />
         </ModalHeader>
@@ -1012,7 +1012,7 @@ along with Foobar.  If not, see
             </Field>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@localizer["DownloadProjectfile"]</Button>
+            <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@localizer["Download projectfile"]</Button>
             <Button Color="Color.Secondary" Clicked="() => modalDownloadProjectfile.Hide()">@localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
@@ -1127,6 +1127,11 @@ along with Foobar.  If not, see
         Logger.LogDebug("OnInitializedAsync");
         Logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
 
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+
         SetCuesheetObject();
 
         hotKeysContext = HotKeys.CreateContext()
@@ -1170,7 +1175,7 @@ along with Foobar.  If not, see
     {
         Logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
-        modalDialog.Title = localizer["ConfirmRequired"];
+        modalDialog.Title = localizer["Confirmation required"];
         modalDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
@@ -1189,7 +1194,7 @@ along with Foobar.  If not, see
     {
         Logger.LogInformation("RestartCuesheetClicked clicked");
         //Display a confirm warning
-        modalDialog.Title = localizer["ConfirmRequired"];
+        modalDialog.Title = localizer["Confirmation required"];
         modalDialog.Text = localizer["ConfirmResetCuesheet"];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
@@ -1256,7 +1261,7 @@ along with Foobar.  If not, see
             else
             {
                 modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["TextfileImport"]);
+                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Import textfile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1297,8 +1302,8 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 //Display a confirm warning
-                modalDialog.Title = localizer["ConfirmRequired"];
-                modalDialog.Text = localizer["ConfirmImportCuesheet"];
+                modalDialog.Title = localizer["Confirmation required"];
+                modalDialog.Text = localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
                 void importCuesheetDelegate(object sender, EventArgs args)
@@ -1313,7 +1318,7 @@ along with Foobar.  If not, see
             else
             {
                 modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["CuesheetfileImport"]);
+                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Import cuesheet"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1449,8 +1454,8 @@ along with Foobar.  If not, see
     {
         Logger.LogInformation("OnRestartCompleteApplicationClicked");
         //Display a confirm warning
-        modalDialog.Title = localizer["ConfirmRequired"];
-        modalDialog.Text = localizer["ConfirmRestartOfApplication"];
+        modalDialog.Title = localizer["Confirmation required"];
+        modalDialog.Text = localizer["Confirm restart of application. All unsaved changes are lost!"];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
         void restartApplicationDelegate(object sender, EventArgs args)
@@ -1467,8 +1472,8 @@ along with Foobar.  If not, see
     {
         Logger.LogInformation("OnResetCompleteApplicationClicked");
         //Display a confirm warning
-        modalDialog.Title = localizer["ConfirmRequired"];
-        modalDialog.Text = localizer["ConfirmResetOfApplication"];
+        modalDialog.Title = localizer["Confirmation required"];
+        modalDialog.Text = localizer["Confirm reset of application. All unsaved changes are lost and the application is reloaded!"];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Confirmed += OnRestartApplicationConfirmed;
         modalDialog.ShowModal();
@@ -1533,7 +1538,7 @@ along with Foobar.  If not, see
             else
             {
                 modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["AudioFile"]);
+                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Audiofile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1572,7 +1577,7 @@ along with Foobar.  If not, see
             else
             {
                 modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["CDTextfile"]);
+                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["CD textfile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1696,8 +1701,8 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 //Display a confirm warning
-                modalDialog.Title = localizer["ConfirmRequired"];
-                modalDialog.Text = localizer["ConfirmImportProject"];
+                modalDialog.Title = localizer["Confirmation required"];
+                modalDialog.Text = localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
                 void importCuesheetDelegate(object sender, EventArgs args)
@@ -1712,7 +1717,7 @@ along with Foobar.  If not, see
             else
             {
                 modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["FileHasInvalidMimeType"], e.File.Name, localizer["TextfileImport"]);
+                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Import textfile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
