@@ -25,7 +25,6 @@ namespace AudioCuesheetEditor
             builder.RootComponents.Add<App>("app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddLocalization();
 
             builder.Services.AddBlazorise(options =>
             {
@@ -51,7 +50,6 @@ namespace AudioCuesheetEditor
             builder.Services.AddHotKeys();
 
             var host = builder.Build();
-            host.Services.UseBootstrapProviders();
 
             await host.SetDefaultCulture();
 

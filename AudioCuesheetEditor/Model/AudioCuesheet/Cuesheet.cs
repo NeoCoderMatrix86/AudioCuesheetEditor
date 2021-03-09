@@ -63,7 +63,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             { 
                 if (value == null)
                 {
-                    throw new ArgumentNullException();
+                    throw new ArgumentNullException(nameof(Tracks));
                 }
                 tracks = value.ToList(); 
             }

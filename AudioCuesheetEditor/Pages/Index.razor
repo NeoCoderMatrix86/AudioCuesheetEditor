@@ -22,7 +22,7 @@ along with Foobar.  If not, see
 @page "/"
 @inject IJSRuntime JSRuntime
 @inject IBlazorDownloadFileService BlazorDownloadFileService
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<Index> localizer
 @inject CuesheetController cuesheetController
 @inject NavigationManager navigationManager
 @inject OptionsController optionsController
@@ -30,6 +30,7 @@ along with Foobar.  If not, see
 @inject HotKeys HotKeys
 @inject HttpClient httpClient
 @inject SessionStateContainer sessionStateContainer
+@inject ITextLocalizerService LocalizationService
 
 <Layout>
     <LayoutHeader Fixed="true">
@@ -446,7 +447,6 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 <Modal @ref="modalTextImport">
-    <ModalBackdrop />
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
@@ -626,7 +626,6 @@ along with Foobar.  If not, see
 </Modal>
 
 <Modal @ref="modalExportProfiles">
-    <ModalBackdrop />
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
@@ -784,7 +783,6 @@ along with Foobar.  If not, see
 </Modal>
 
 <Modal @ref="modalDownloadCuesheet">
-    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>
@@ -808,7 +806,6 @@ along with Foobar.  If not, see
 </Modal>
 
 <Modal @ref="modalOptions">
-    <ModalBackdrop />
     <ModalContent Centered="true" Size="ModalSize.Large">
         <ModalHeader>
             <ModalTitle>@localizer["Options"]</ModalTitle>
@@ -820,7 +817,7 @@ along with Foobar.  If not, see
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CultureSetting"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
                     <Select TValue="String" @bind-SelectedValue="@optionsController.Options.CultureName">
-                        @foreach (var culture in OptionsController.AvailableCultures)
+                        @foreach (var culture in LocalizationService.AvailableCultures)
                         {
                             <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
                         }
@@ -906,7 +903,6 @@ along with Foobar.  If not, see
 </Modal>
 
 <Modal @ref="modalTrackEdit">
-    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@localizer["EditTrack"]</ModalTitle>
@@ -1000,7 +996,6 @@ along with Foobar.  If not, see
 </Modal>
 
 <Modal @ref="modalDownloadProjectfile">
-    <ModalBackdrop />
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>

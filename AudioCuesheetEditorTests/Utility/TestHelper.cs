@@ -14,8 +14,10 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
+using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Shared.ResourceFiles;
+using Blazorise.Localization;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -29,9 +31,8 @@ namespace AudioCuesheetEditorTests.Utility
     {
         public TestHelper()
         {
-            var options = Options.Create(new LocalizationOptions());
-            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
-            Localizer = new StringLocalizer<Localization>(factory);
+            var localizerService = new TextLocalizerService();
+            Localizer = new TextLocalizer<ValidationMessage>(localizerService);
             CuesheetController = new CuesheetController();
             ApplicationOptions = new ApplicationOptions
             {
@@ -39,7 +40,7 @@ namespace AudioCuesheetEditorTests.Utility
             };
         }
 
-        public StringLocalizer<Localization> Localizer { get; private set; }
+        public ITextLocalizer Localizer { get; private set; }
         public CuesheetController CuesheetController { get; private set; }
         public ApplicationOptions ApplicationOptions { get; private set; }
     }

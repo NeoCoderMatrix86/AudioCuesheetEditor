@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Shared.ResourceFiles;
+using Blazorise.Localization;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -57,7 +58,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        public String GetDisplayNameLocalized(ITextLocalizer localizer)
         {
             return localizer[nameof(Cuesheet)];
         }

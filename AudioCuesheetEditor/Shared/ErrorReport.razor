@@ -17,7 +17,7 @@ along with Foobar.  If not, see
 -->
 
 @page "/ErrorReport"
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<ErrorReport> localizer
 @inject IJSRuntime JSRuntime
 @inject ILoggerProvider ILoggerProvider
 <Layout>
@@ -103,8 +103,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            MarkupString describeHowTheErrorOccured = (MarkupString)(localizer["DescribeHowTheErrorOccured"].Value.Replace(Environment.NewLine, "<br/>"));
-            return describeHowTheErrorOccured;
+            return (MarkupString)Markdown.ToHtml(localizer["DescribeHowTheErrorOccured"]);
         }
     }
 

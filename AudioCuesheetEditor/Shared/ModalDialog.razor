@@ -19,11 +19,10 @@ along with Foobar.  If not, see
 @using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<ModalDialog> localizer
 @inject HotKeys HotKeys
 
 <Modal @ref="modalRef">
-    <ModalBackdrop />
     <ModalContent Centered="true" Size="@modalSize">
         <ModalHeader Class="@ModalHeaderStyle">
             <ModalTitle>

@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Shared.ResourceFiles;
+using Blazorise.Localization;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,6 @@ namespace AudioCuesheetEditor.Model.Entity
 {
     public interface IEntityDisplayName
     {
-        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer);
+        public String GetDisplayNameLocalized(ITextLocalizer localizer);
     }
 }

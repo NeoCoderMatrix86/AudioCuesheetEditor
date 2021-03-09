@@ -9,14 +9,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Resources\Localization\About\de.json" />
+    <Content Remove="Resources\Localization\About\en.json" />
+    <Content Remove="Resources\Localization\CultureSelector\de.json" />
+    <Content Remove="Resources\Localization\CultureSelector\en.json" />
+    <Content Remove="Resources\Localization\FileEdit\de.json" />
+    <Content Remove="Resources\Localization\FileEdit\en.json" />
+    <Content Remove="Resources\Localization\Help\de.json" />
+    <Content Remove="Resources\Localization\Help\en.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Localization\About\de.json" />
+    <EmbeddedResource Include="Resources\Localization\About\en.json" />
+    <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
+    <EmbeddedResource Include="Resources\Localization\CultureSelector\en.json" />
+    <EmbeddedResource Include="Resources\Localization\FileEdit\de.json" />
+    <EmbeddedResource Include="Resources\Localization\FileEdit\en.json" />
+    <EmbeddedResource Include="Resources\Localization\Help\de.json" />
+    <EmbeddedResource Include="Resources\Localization\Help\en.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\Licence.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.2.5" />
-    <PackageReference Include="Blazorise.Components" Version="0.9.2.5" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3" />
+    <PackageReference Include="Blazorise.Components" Version="0.9.3" />
     <PackageReference Include="FFmpegBlazor" Version="1.0.0.2" />
     <PackageReference Include="Howler.Blazor" Version="0.9.5" />
     <PackageReference Include="Macross.Json.Extensions" Version="1.5.0" />
@@ -54,5 +76,7 @@
       <LastGenOutput>Localization.de.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

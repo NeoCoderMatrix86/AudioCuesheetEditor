@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Shared.ResourceFiles;
+using Blazorise.Localization;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             Name = name;
         }
 
-        public string GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        public string GetDisplayNameLocalized(ITextLocalizer localizer)
         {
             return localizer[Name];
         }
