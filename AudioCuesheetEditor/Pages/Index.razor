@@ -830,13 +830,13 @@ along with Foobar.  If not, see
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["CuesheetFileName"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
+                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" ChangeTextOnKeyPress="false"/>
                 </FieldBody>
             </Field>
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["ProjectFileName"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" />
+                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" ChangeTextOnKeyPress="false" />
                 </FieldBody>
             </Field>
             <Divider DividerType="DividerType.Solid" />
@@ -868,7 +868,7 @@ along with Foobar.  If not, see
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioFileNameRecording"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" />
+                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
                 </FieldBody>
             </Field>
             <Field Horizontal="true">

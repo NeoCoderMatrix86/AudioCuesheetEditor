@@ -24,6 +24,7 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ namespace AudioCuesheetEditor.Model.Options
 
     public class ApplicationOptions
     {
+        private String audioFileNameRecording;
+        private String projectFilename;
         public ApplicationOptions()
         {
             SetDefaultValues();
@@ -171,11 +174,60 @@ namespace AudioCuesheetEditor.Model.Options
             set 
             {
                 AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == value);
+                //Fire update for audio file name recording
+                AudioFileNameRecording = audioFileNameRecording;
             }
         }
         public Boolean RecodeAudioRecording { get; set; }
-        public String AudioFileNameRecording { get; set; }
+        public String AudioFileNameRecording 
+        {
+            get { return audioFileNameRecording; }
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    if (AudioCodec != null)
+                    {
+                        var extension = Path.GetExtension(value);
+                        if ((String.IsNullOrEmpty(extension)) || (extension.Equals(AudioCodec.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
+                        {
+                            audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), AudioCodec.FileExtension);
+                        }
+                        else
+                        {
+                            audioFileNameRecording = value;
+                        }
+                    }
+                }
+                else
+                {
+                    audioFileNameRecording = null;
+                }
+            }
+        }
         public Boolean? LinkTracksWithPreviousOne { get; set; }
-        public String ProjectFileName { get; set; }
+        public String ProjectFileName 
+        {
+            get { return projectFilename; }
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    var extension = Path.GetExtension(value);
+                    if (extension.Equals(ProjectFile.FileExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        projectFilename = value;
+                    }
+                    else
+                    {
+                        projectFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), ProjectFile.FileExtension);
+                    }
+                }
+                else
+                {
+                    projectFilename = null;
+                }
+            }
+        }
     }
 }
