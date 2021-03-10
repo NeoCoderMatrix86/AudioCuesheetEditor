@@ -871,23 +871,6 @@ along with Foobar.  If not, see
                     <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
                 </FieldBody>
             </Field>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["EnableAudioRecoding"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Check TValue="Boolean" @bind-Checked="optionsController.Options.RecodeAudioRecording">@localizer["RecodeAudioAfterRecording"]</Check>
-                </FieldBody>
-            </Field>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AudioCodec"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Select TValue="String" @bind-SelectedValue="optionsController.Options.AudioCodecName">
-                        @foreach (var audioCodec in AudioFile.AudioCodecs)
-                        {
-                            <SelectItem Value="audioCodec.Name">@localizer[audioCodec.Name]</SelectItem>
-                        }
-                    </Select>
-                </FieldBody>
-            </Field>
             <Divider DividerType="DividerType.Solid" />
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["AutomaticallyLinkTracks"]</FieldLabel>
