@@ -179,10 +179,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(track));
             }
+            var nextTrack = tracks.FirstOrDefault(x => x.LinkedPreviousTrack == track);
             tracks.Remove(track);
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
+            //If Tracks are linked, we need to set the linked track again
+            if (nextTrack != null)
+            {
+                var index = tracks.IndexOf(nextTrack);
+                if (index > 0)
+                {
+                    var previousTrack = tracks.ElementAt(index - 1);
+                    nextTrack.LinkedPreviousTrack = previousTrack;
+                }
+            }
         }
 
         public void RemoveAllTracks()
