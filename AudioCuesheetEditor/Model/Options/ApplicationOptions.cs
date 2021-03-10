@@ -105,21 +105,9 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             }
-            if (AudioCodec == null)
-            {
-                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == "AudioCodec MP3");
-                RecodeAudioRecording = true;
-            }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
-                if (AudioCodec != null)
-                {
-                    AudioFileNameRecording = String.Format("{0}{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
-                }
-                else
-                {
-                    AudioFileNameRecording = AudioFile.RecordingFileName;
-                }
+                AudioFileNameRecording = AudioFile.RecordingFileName;
             }
             if (LinkTracksWithPreviousOne.HasValue == false)
             {
@@ -156,29 +144,6 @@ namespace AudioCuesheetEditor.Model.Options
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
             set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
         }
-        [JsonIgnore]
-        public AudioCodec AudioCodec { get; set; }
-        public String AudioCodecName
-        {
-            get 
-            { 
-                if (AudioCodec != null)
-                {
-                    return AudioCodec.Name;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            set 
-            {
-                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == value);
-                //Fire update for audio file name recording
-                AudioFileNameRecording = audioFileNameRecording;
-            }
-        }
-        public Boolean RecodeAudioRecording { get; set; }
         public String AudioFileNameRecording 
         {
             get { return audioFileNameRecording; }
@@ -186,17 +151,14 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 if (String.IsNullOrEmpty(value) == false)
                 {
-                    if (AudioCodec != null)
+                    var extension = Path.GetExtension(value);
+                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(AudioFile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
                     {
-                        var extension = Path.GetExtension(value);
-                        if ((String.IsNullOrEmpty(extension)) || (extension.Equals(AudioCodec.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
-                        {
-                            audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), AudioCodec.FileExtension);
-                        }
-                        else
-                        {
-                            audioFileNameRecording = value;
-                        }
+                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), AudioFile.AudioCodecWEBM.FileExtension);
+                    }
+                    else
+                    {
+                        audioFileNameRecording = value;
                     }
                 }
                 else
