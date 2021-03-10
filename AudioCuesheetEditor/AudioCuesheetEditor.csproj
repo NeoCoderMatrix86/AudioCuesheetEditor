@@ -19,6 +19,8 @@
     <Content Remove="Resources\Localization\Help\en.json" />
     <Content Remove="Resources\Localization\Index\de.json" />
     <Content Remove="Resources\Localization\Index\en.json" />
+    <Content Remove="Resources\Localization\ViewModeRecord\de.json" />
+    <Content Remove="Resources\Localization\ViewModeRecord\en.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +34,8 @@
     <EmbeddedResource Include="Resources\Localization\Help\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ViewModeRecord\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ViewModeRecord\en.json" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,30 @@
+{
+  "culture": "de",
+  "translations": {
+    "Recordcontrol": "Aufnahmesteuerung",
+    "Record running!": "Aufnahme aktiv!",
+    "Start recording": "Aufnahme starten",
+    "Stop recording": "Aufnahme beenden",
+    "Cuesheet data": "Cuesheet Daten",
+    "CD artist": "CD Künstler",
+    "CD title": "CD Titel",
+    "Enter cd artist here": "CD Künstler hier eingeben",
+    "Enter cd title here": "CD Titel hier eingeben",
+    "Audiofile": "Audiodatei",
+    "Artist": "Künstler",
+    "Title": "Titel",
+    "Begin": "Beginn",
+    "End": "Ende",
+    "Length": "Länge",
+    "Add new track": "Neuen Track hinzufügen",
+    "Enter new track": "Neuen Track eingeben",
+    "Cuesheet tracks": "Cuesheet Tracks",
+    "Controls": "Steuerung",
+    "Hints": "Hinweise",
+    "Recording": "Aufnahme",
+    "Currently processing audiofile please wait ...": "Verarbeite aufgenommene Audio Daten, bitte warten ...",
+    "Download recorded audio": "Aufnahme herunterladen",
+    "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.": "Das Cuesheet enthält bereits Tracks. Die Aufnahme ist nicht möglich, wenn bereits Tracks vorhanden sind. Bitte speichern Sie ihre Arbeit und starten Sie anschließend mit einem leeren Cuesheet.",
+    "Error": "Fehler"
+  }
+}
