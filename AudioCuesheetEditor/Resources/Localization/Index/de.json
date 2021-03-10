@@ -129,6 +129,6 @@
     "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Bitte Bestätigen Sie, dass die komplette Anwendung auf Werkseinstellungen zurückgesetzt werden soll. Alle Daten werden gelöscht und die Anwedung neu geladen. Alle nicht gespeicherten Daten sind gelöscht!",
     "Enter cd artist here": "CD Künstler hier eingeben",
     "Enter cd title here": "CD Titel hier eingeben",
-    "Enter cataloguenumber here": "Katalognummer hier eingeben"
+    "Enter cataloguenumber here": "Geben Sie hier die Katalognummer des Cuesheets an. Die Katalognummer ist eine 13 stellige Zahl."
   }
 }
