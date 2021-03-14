@@ -77,20 +77,73 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
             Assert.AreEqual(cuesheet.Tracks.Count, 3);
             Assert.IsTrue(track1.Position.Value == 1);
-            cuesheet.MoveTrack(track1, MoveDirection.Up);
+            cuesheet.MoveTrack(track1, MoveDirection.Up, testHelper.ApplicationOptions);
             Assert.IsTrue(track1.Position.Value == 1);
             Assert.IsTrue(track3.Position.Value == 3);
-            cuesheet.MoveTrack(track3, MoveDirection.Down);
+            cuesheet.MoveTrack(track3, MoveDirection.Down, testHelper.ApplicationOptions);
             Assert.IsTrue(track3.Position.Value == 3);
             Assert.IsTrue(track2.Position.Value == 2);
-            cuesheet.MoveTrack(track2, MoveDirection.Up);
+            cuesheet.MoveTrack(track2, MoveDirection.Up, testHelper.ApplicationOptions);
             Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(0));
             Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
-            cuesheet.MoveTrack(track2, MoveDirection.Down);
-            cuesheet.MoveTrack(track2, MoveDirection.Down);
+            cuesheet.MoveTrack(track2, MoveDirection.Down, testHelper.ApplicationOptions);
+            cuesheet.MoveTrack(track2, MoveDirection.Down, testHelper.ApplicationOptions);
             Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(2));
             Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
             Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(1));
+        }
+
+        [TestMethod()]
+        public void MoveAndDeleteTrackTest()
+        {
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet();
+            var track1 = new Track
+            {
+                Artist = "Track 1",
+                Title = "Track 1"
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            var track2 = new Track
+            {
+                Title = "Track 2",
+                Artist = "Track 2",
+                Begin = new TimeSpan(0, 5, 0)
+            };
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            var track3 = new Track
+            {
+                Artist = "Track 3",
+                Title = "Track 3",
+                Begin = new TimeSpan(0, 10, 0)
+            };
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            var track4 = new Track
+            {
+                Artist = "Track 4",
+                Title = "Track 4",
+                Begin = new TimeSpan(0, 15, 0)
+            };
+            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
+            var track5 = new Track
+            {
+                Artist = "Track 5",
+                Title = "Track 5",
+                Begin = new TimeSpan(0, 20, 0)
+            };
+            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
+            cuesheet.RemoveTrack(track2);
+            cuesheet.RemoveTrack(track4);
+            Assert.AreEqual(3, cuesheet.Tracks.Count);
+            track3.LinkedPreviousTrack = track1;
+            track5.LinkedPreviousTrack = track3;
+            cuesheet.MoveTrack(track3, MoveDirection.Up, testHelper.ApplicationOptions);
+            Assert.AreEqual((uint)1, track3.Position);
+            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(0));
+            cuesheet.MoveTrack(track5, MoveDirection.Up, testHelper.ApplicationOptions);
+            Assert.AreEqual((uint)2, track5.Position);
+            Assert.AreEqual(track5, cuesheet.Tracks.ElementAt(1));
+            //TODO: MoveDown and more scenarios
         }
 
         [TestMethod()]
