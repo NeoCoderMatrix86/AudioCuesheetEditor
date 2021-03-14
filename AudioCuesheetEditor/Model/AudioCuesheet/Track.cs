@@ -203,9 +203,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     previousTrackLink.RankPropertyValueChanged += PreviousTrackLink_RankPropertyValueChanged;
                     RankPropertyValueChanged += This_RankPropertyValueChanged;
-                    //Fire events internally in order to set the values directly on linking
-                    PreviousTrackLink_RankPropertyValueChanged(previousTrackLink, nameof(Position));
-                    PreviousTrackLink_RankPropertyValueChanged(previousTrackLink, nameof(End));
                 }
             }
         }
