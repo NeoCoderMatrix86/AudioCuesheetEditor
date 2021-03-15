@@ -272,6 +272,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         currentTrack.LinkedPreviousTrack = null;
                     }
+                    //TODO: Next linked track needs to point to the new previous track
                     track.Position = (uint)index;
                     currentTrack.Position = (uint)index + 1;
                 }
@@ -286,6 +287,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     //Set values corresponding to new position
                     if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
                     {
+                        track.LinkedPreviousTrack = currentTrack;   
+                    }
+                    else
+                    {
+                        track.LinkedPreviousTrack = null;
+                    }
+                    if (currentTrack.LinkedPreviousTrack != null)
+                    {
                         if (index > 0)
                         {
                             currentTrack.LinkedPreviousTrack = tracks.ElementAt(index - 1);
@@ -295,14 +304,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                             currentTrack.LinkedPreviousTrack = null;
                         }
                     }
-                    else
-                    {
-                        currentTrack.LinkedPreviousTrack = null;
-                    }
-                    if (track.LinkedPreviousTrack != null)
-                    {
-                        track.LinkedPreviousTrack = currentTrack;
-                    }
+                    //TODO: Next linked track needs to point to the new previous track
                     track.Position = (uint)index + 2;
                     currentTrack.Position = (uint)index + 1;
                 }
