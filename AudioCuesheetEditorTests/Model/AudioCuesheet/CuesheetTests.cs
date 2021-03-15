@@ -1,4 +1,5 @@
-﻿//This file is part of AudioCuesheetEditor.
+﻿using AudioCuesheetEditor.Model.AudioCuesheet;
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -245,6 +246,34 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             clone.Position = 4;
             validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
             Assert.IsTrue(validationErrors.Count == 0);
+        }
+
+        [TestMethod()]
+        public void RemoveTrackTest()
+        {
+            var testHelper = new TestHelper();
+            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
+            var cuesheet = new Cuesheet();
+            var track1 = new Track() { Artist="1", Title="1"};
+            var track2 = new Track() { Artist = "2", Title = "2" };
+            var track3 = new Track() { Artist = "3", Title = "3" };
+            var track4 = new Track() { Artist = "4", Title = "4" };
+            var track5 = new Track() { Artist = "5", Title = "5" };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
+            track1.End = new TimeSpan(0, 5, 0);
+            track2.End = new TimeSpan(0, 10, 0);
+            track3.End = new TimeSpan(0, 15, 0);
+            track4.End = new TimeSpan(0, 20, 0);
+            track5.End = new TimeSpan(0, 25, 0);
+            Assert.AreEqual(5, cuesheet.Tracks.Count);
+            cuesheet.RemoveTrack(track2);
+            Assert.AreEqual((uint)2, track3.Position.Value);
+            Assert.AreEqual((uint)3, track4.Position.Value);
+            Assert.AreEqual((uint)4, track5.Position.Value);
         }
     }
 }
