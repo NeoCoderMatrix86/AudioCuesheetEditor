@@ -238,7 +238,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return movePossible;
         }
 
-        public void MoveTrack(Track track, MoveDirection moveDirection)
+        public void MoveTrack(Track track, MoveDirection moveDirection, ApplicationOptions applicationOptions)
         {
             if (track == null)
             {
@@ -252,6 +252,37 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     var currentTrack = tracks.ElementAt(index - 1);
                     tracks[index - 1] = track;
                     tracks[index] = currentTrack;
+                    //Set values corresponding to new position
+                    if (track.LinkedPreviousTrack != null)
+                    {
+                        if (index > 1)
+                        {
+                            track.LinkedPreviousTrack = tracks.ElementAt(index - 2);
+                        }
+                        else
+                        {
+                            track.LinkedPreviousTrack = null;
+                        }
+                    }
+                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+                    {
+                        currentTrack.LinkedPreviousTrack = track;
+                    }
+                    else
+                    {
+                        currentTrack.LinkedPreviousTrack = null;
+                    }
+                    //Set next linked track needs to point to the new previous track
+                    if ((index + 1) < Tracks.Count)
+                    {
+                        var nextTrack = Tracks.ElementAt(index + 1);
+                        if (nextTrack.LinkedPreviousTrack != null)
+                        {
+                            nextTrack.LinkedPreviousTrack = currentTrack;
+                        }
+                    }
+                    track.Position = (uint)index;
+                    currentTrack.Position = (uint)index + 1;
                 }
             }
             if (moveDirection == MoveDirection.Down)
@@ -261,6 +292,37 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     var currentTrack = tracks.ElementAt(index + 1);
                     tracks[index + 1] = track;
                     tracks[index] = currentTrack;
+                    //Set values corresponding to new position
+                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+                    {
+                        track.LinkedPreviousTrack = currentTrack;
+                    }
+                    else
+                    {
+                        track.LinkedPreviousTrack = null;
+                    }
+                    if (currentTrack.LinkedPreviousTrack != null)
+                    {
+                        if (index > 0)
+                        {
+                            currentTrack.LinkedPreviousTrack = tracks.ElementAt(index - 1);
+                        }
+                        else
+                        {
+                            currentTrack.LinkedPreviousTrack = null;
+                        }
+                    }
+                    //Sret next linked track needs to point to the new previous track
+                    if ((index + 2) < Tracks.Count)
+                    {
+                        var nextTrack = Tracks.ElementAt(index + 2);
+                        if (nextTrack.LinkedPreviousTrack != null)
+                        {
+                            nextTrack.LinkedPreviousTrack = track;
+                        }
+                    }
+                    track.Position = (uint)index + 2;
+                    currentTrack.Position = (uint)index + 1;
                 }
             }
         }
