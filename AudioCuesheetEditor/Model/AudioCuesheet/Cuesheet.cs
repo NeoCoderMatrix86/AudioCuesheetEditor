@@ -191,7 +191,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 if (index > 0)
                 {
                     var previousTrack = tracks.ElementAt(index - 1);
-                    nextTrack.LinkedPreviousTrack = null;
+                    nextTrack.LinkedPreviousTrack = previousTrack;
                     if (previousTrack.Position.HasValue)
                     {
                         nextTrack.Position = previousTrack.Position.Value + 1;
@@ -200,7 +200,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         nextTrack.Begin = previousTrack.End.Value;
                     }
-                    nextTrack.LinkedPreviousTrack = previousTrack;
                 }
             }
         }
