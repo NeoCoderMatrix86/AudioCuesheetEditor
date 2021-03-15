@@ -284,7 +284,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     tracks[index + 1] = track;
                     tracks[index] = currentTrack;
                     //Set values corresponding to new position
-                    //TODO: Linked track(s)
+                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+                    {
+                        if (index > 0)
+                        {
+                            currentTrack.LinkedPreviousTrack = tracks.ElementAt(index - 1);
+                        }
+                        else
+                        {
+                            currentTrack.LinkedPreviousTrack = null;
+                        }
+                    }
+                    else
+                    {
+                        currentTrack.LinkedPreviousTrack = null;
+                    }
+                    if (track.LinkedPreviousTrack != null)
+                    {
+                        track.LinkedPreviousTrack = currentTrack;
+                    }
                     track.Position = (uint)index + 2;
                     currentTrack.Position = (uint)index + 1;
                 }
