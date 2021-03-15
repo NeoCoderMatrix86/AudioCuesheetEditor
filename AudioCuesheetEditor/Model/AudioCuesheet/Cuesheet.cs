@@ -283,7 +283,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     track.Position = (uint)index;
                     currentTrack.Position = (uint)index + 1;
-                    //TODO: When using linked tracks default, set also begin
                 }
             }
             if (moveDirection == MoveDirection.Down)
@@ -324,7 +323,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     track.Position = (uint)index + 2;
                     currentTrack.Position = (uint)index + 1;
-                    //TODO: When using linked tracks default, set also begin
                 }
             }
         }
