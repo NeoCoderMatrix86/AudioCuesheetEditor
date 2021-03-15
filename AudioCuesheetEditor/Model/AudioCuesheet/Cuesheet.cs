@@ -272,9 +272,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         currentTrack.LinkedPreviousTrack = null;
                     }
-                    //TODO: Next linked track needs to point to the new previous track
+                    //Set next linked track needs to point to the new previous track
+                    if ((index + 1) < Tracks.Count)
+                    {
+                        var nextTrack = Tracks.ElementAt(index + 1);
+                        if (nextTrack.LinkedPreviousTrack != null)
+                        {
+                            nextTrack.LinkedPreviousTrack = currentTrack;
+                        }
+                    }
                     track.Position = (uint)index;
                     currentTrack.Position = (uint)index + 1;
+                    //TODO: When using linked tracks default, set also begin
                 }
             }
             if (moveDirection == MoveDirection.Down)
@@ -287,7 +296,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     //Set values corresponding to new position
                     if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
                     {
-                        track.LinkedPreviousTrack = currentTrack;   
+                        track.LinkedPreviousTrack = currentTrack;
                     }
                     else
                     {
@@ -304,9 +313,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                             currentTrack.LinkedPreviousTrack = null;
                         }
                     }
-                    //TODO: Next linked track needs to point to the new previous track
+                    //Sret next linked track needs to point to the new previous track
+                    if ((index + 2) < Tracks.Count)
+                    {
+                        var nextTrack = Tracks.ElementAt(index + 2);
+                        if (nextTrack.LinkedPreviousTrack != null)
+                        {
+                            nextTrack.LinkedPreviousTrack = track;
+                        }
+                    }
                     track.Position = (uint)index + 2;
                     currentTrack.Position = (uint)index + 1;
+                    //TODO: When using linked tracks default, set also begin
                 }
             }
         }
