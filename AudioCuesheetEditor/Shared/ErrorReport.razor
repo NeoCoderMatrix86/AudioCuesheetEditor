@@ -20,21 +20,23 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ErrorReport> localizer
 @inject IJSRuntime JSRuntime
 @inject ILoggerProvider ILoggerProvider
+@inject ITextLocalizerService LocalizationService
+
 <Layout>
     <LayoutContent Margin="Margin.Is2">
-        <h5>@localizer["ExceptionOccuredPleaseFillErrorReport"]</h5>
+        <h5>@localizer["An internal error occured and application has stopped. Please fill the error report below and send it to the developer for research of the error and solving the problem."]</h5>
 
         <form action="https://formspree.io/f/mwkwwokw" method="POST">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="yourEmailAddressLabel">@localizer["YourEmailAddress"]</span>
+                    <span class="input-group-text" id="yourEmailAddressLabel">@localizer["Your email address (optional)"]</span>
                 </div>
                 <input type="text" class="form-control" name="_replyto" aria-label="YourEmailAddress" aria-describedby="yourEmailAddressLabel">
             </div>
 
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <span class="input-group-text" id="errorReportLabel">@localizer["ErrorReport"]</span>
+                    <span class="input-group-text" id="errorReportLabel">@localizer["Errorreport"]</span>
                 </div>
                 <textarea rows="10" class="form-control" name="errorReport" aria-label="ErrorReport" aria-describedby="errorReportLabel">@DescribeHowTheErrorOccured</textarea>
             </div>
@@ -73,7 +75,7 @@ along with Foobar.  If not, see
                 </div>
             }
 
-            <p>@localizer["OnceYouSubmitTheErrorReport"]</p>
+            <p>@localizer["Once you have submitted the report, you will be redirected to the page formspree.io. This is correct, because the report is send through this service. You can use browser back to restart the application.Thanks for your support."]</p>
 
             <button class="btn btn-primary" type="submit">@localizer["Send"]</button>
         </form>
@@ -87,6 +89,10 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
         //Reset browser history
         await JSRuntime.InvokeVoidAsync("removeBrowserHistoryEntry", null);
         Options = await JSRuntime.InvokeAsync<String>("ApplicationOptions.get");
@@ -103,7 +109,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            return (MarkupString)Markdown.ToHtml(localizer["DescribeHowTheErrorOccured"]);
+            return (MarkupString)Markdown.ToHtml(localizer["Please describe how the error occured: 1.What did you do before the error? 2.Does the error occur again, if you try that again?"]);
         }
     }
 

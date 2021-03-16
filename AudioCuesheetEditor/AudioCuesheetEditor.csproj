@@ -12,8 +12,11 @@
     <Content Remove="Resources\Localization\About\de.json" />
     <Content Remove="Resources\Localization\About\en.json" />
     <Content Remove="Resources\Localization\Audioplayer\de.json" />
+    <Content Remove="Resources\Localization\Audioplayer\en.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\de.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
+    <Content Remove="Resources\Localization\ErrorReport\de.json" />
+    <Content Remove="Resources\Localization\ErrorReport\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
@@ -31,9 +34,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Localization\About\de.json" />
     <EmbeddedResource Include="Resources\Localization\About\en.json" />
+    <EmbeddedResource Include="Resources\Localization\Audioplayer\en.json" />
     <EmbeddedResource Include="Resources\Localization\Audioplayer\de.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\en.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ErrorReport\en.json" />
+    <EmbeddedResource Include="Resources\Localization\ErrorReport\de.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
