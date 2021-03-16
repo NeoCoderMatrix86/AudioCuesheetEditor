@@ -39,7 +39,14 @@ namespace AudioCuesheetEditor.Model.IO
         public static Cuesheet ImportFile(byte[] fileContent)
         {
             var json = Encoding.UTF8.GetString(fileContent);
-            return JsonSerializer.Deserialize<Cuesheet>(json, Options);
+            var cuesheet = JsonSerializer.Deserialize<Cuesheet>(json, Options);
+            //Repair linked track references
+            //TODO: Remove when .NET has Json reference handling (https://github.com/dotnet/runtime/issues/42163)
+            foreach(var track in cuesheet.Tracks.Where(x => x.LinkedPreviousTrack != null))
+            {
+                track.LinkedPreviousTrack = cuesheet.Tracks.Single(x => x.Equals(track.LinkedPreviousTrack));
+            }
+            return cuesheet;
         }
 
         public ProjectFile(Cuesheet cuesheet)
