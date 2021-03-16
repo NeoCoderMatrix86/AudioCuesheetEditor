@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using AudioCuesheetEditorTests.Utility;
+using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -101,6 +102,23 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual((uint)1, track.Position);
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual((uint)3, track3.Position);
+        }
+
+        [TestMethod()]
+        public void EqualsTest()
+        {
+            var track = new Track();
+            var track1 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", LinkedPreviousTrack = track };
+            track1.SetFlag(Flag.DCP, SetFlagMode.Add);
+            track1.SetFlag(Flag.FourCH, SetFlagMode.Add);
+            var track2 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", LinkedPreviousTrack = track };
+            track2.SetFlag(Flag.DCP, SetFlagMode.Add);
+            track2.SetFlag(Flag.FourCH, SetFlagMode.Add);
+            Assert.AreEqual(track1, track2);
+            track2.LinkedPreviousTrack = track1;
+            var list = new List<Track> { track1, track2 };
+            var linked = list.Single(x => x.LinkedPreviousTrack == track1);
+            Assert.AreEqual(track2, linked);
         }
     }
 }

@@ -218,20 +218,11 @@ along with Foobar.  If not, see
     <br />
 
 
-    @if (((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded)) || (processOfProcessingAudioFile != null))
+    @if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded))
     {
         <Card>
             <CardHeader>@localizer["Recording"]</CardHeader>
-            @if (processOfProcessingAudioFile != null)
-            {
-                <CardBody>@localizer["Currently processing audiofile please wait ..."]</CardBody>
-                <CardBody>
-                    <Progress Margin="Margin.Is3.FromBottom">
-                        <ProgressBar Background="Background.Success" Striped="true" Value="processOfProcessingAudioFile" Animated="true" />
-                    </Progress>
-                </CardBody>
-            }
-            @if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded) && (processOfProcessingAudioFile == null))
+            @if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded))
             {
                 <CardBody>
                     <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.AudioFile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.AudioFile.FileName">@localizer["Download recorded audio"]</Button>
@@ -253,11 +244,9 @@ along with Foobar.  If not, see
     public Cuesheet Cuesheet { get; set; }
 
     [JSInvokable()]
-    public async Task AudioRecordingFinished(String url)
+    public void AudioRecordingFinished(String url)
     {
-        var codec = AudioFile.AudioCodecs.Single(x => x.FileExtension == ".webm");
-        Cuesheet.AudioFile = new AudioFile(optionsController.Options.AudioFileNameRecording, url, codec, httpClient, true);
-        await ProcessAudioRecording();
+        Cuesheet.AudioFile = new AudioFile(optionsController.Options.AudioFileNameRecording, url, AudioFile.AudioCodecWEBM, httpClient, true);
         StateHasChanged();
     }
 
@@ -282,9 +271,6 @@ along with Foobar.  If not, see
     private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
     private String chevronProcessingHints = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
 
-    private FFMPEG ffmpeg;
-    private int? processOfProcessingAudioFile;
-
     protected override async Task OnInitializedAsync()
     {
         var dotNetReference = DotNetObjectReference.Create(this);
@@ -306,18 +292,6 @@ along with Foobar.  If not, see
                 recordTimer.Stop();
             }
         };
-
-        if (FFmpegFactory.Runtime == null)
-        {
-            FFmpegFactory.Logger += WriteLogs;
-            FFmpegFactory.Progress += ProgressChange;
-        }
-
-        //initialize Library
-        await FFmpegFactory.Init(JSRuntime);
-
-        ffmpeg = FFmpegFactory.CreateFFmpeg(new FFmpegConfig() { Log = true });
-        await ffmpeg.Load();
     }
 
     private void HeaderClicked(ref Boolean visible, ref String chevron)
@@ -448,40 +422,5 @@ along with Foobar.  If not, see
             Cuesheet.AddTrack(currentRecordingTrack, optionsController.Options);
             currentRecordingTrack = new Track();
         }
-    }
-
-    private async Task ProcessAudioRecording()
-    {
-        if ((Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.IsRecorded == true) && (optionsController.Options.RecodeAudioRecording == true))
-        {
-            processOfProcessingAudioFile = 0;
-            var audioFileContent = await httpClient.GetByteArrayAsync(Cuesheet.AudioFile.ObjectURL);
-
-            ffmpeg.WriteFile(Cuesheet.AudioFile.FileName, audioFileContent);
-
-            await ffmpeg.Run("-i", Cuesheet.AudioFile.FileName, String.Format("{0}{1}", Cuesheet.AudioFile.FileName, optionsController.Options.AudioCodec.FileExtension));
-            StateHasChanged();
-        }
-    }
-
-    private void WriteLogs(Logs m)
-    {
-        Logger.LogDebug(String.Format("{0} {1}", m.Type, m.Message));
-    }
-
-    private async void ProgressChange(FFmpegBlazor.Progress progress)
-    {
-        processOfProcessingAudioFile = Convert.ToInt32(progress.Ratio * 100.0);
-        if (progress.Ratio == 1)
-        {
-            processOfProcessingAudioFile = null;
-            var audioFileContent = await ffmpeg.ReadFile(String.Format("{0}{1}", Cuesheet.AudioFile.FileName, optionsController.Options.AudioCodec.FileExtension));
-            var objectURL = FFmpegFactory.CreateURLFromBuffer(audioFileContent, String.Format("{0}{1}", Cuesheet.AudioFile.FileName, optionsController.Options.AudioCodec.FileExtension), optionsController.Options.AudioCodec.MimeType);
-
-            await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.AudioFile.ObjectURL);
-
-            Cuesheet.AudioFile = new AudioFile(String.Format("{0}{1}", optionsController.Options.AudioFileNameRecording, optionsController.Options.AudioCodec.FileExtension), objectURL, optionsController.Options.AudioCodec, httpClient, true);
-        }
-        StateHasChanged();
     }
 }

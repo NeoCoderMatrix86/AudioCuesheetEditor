@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>2.3.0</Version>
+    <Version>2.4.0</Version>
 	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
@@ -55,7 +55,6 @@
     <PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3" />
     <PackageReference Include="Blazorise.Components" Version="0.9.3" />
-    <PackageReference Include="FFmpegBlazor" Version="1.0.0.2" />
     <PackageReference Include="Howler.Blazor" Version="0.9.5" />
     <PackageReference Include="Macross.Json.Extensions" Version="1.5.0" />
     <PackageReference Include="Markdig" Version="0.23.0" />

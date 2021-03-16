@@ -24,6 +24,7 @@ using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -41,6 +42,8 @@ namespace AudioCuesheetEditor.Model.Options
 
     public class ApplicationOptions
     {
+        private String audioFileNameRecording;
+        private String projectFilename;
         public ApplicationOptions()
         {
             SetDefaultValues();
@@ -102,21 +105,9 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             }
-            if (AudioCodec == null)
-            {
-                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == "AudioCodec MP3");
-                RecodeAudioRecording = true;
-            }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
-                if (AudioCodec != null)
-                {
-                    AudioFileNameRecording = String.Format("{0}{1}", AudioFile.RecordingFileName, AudioCodec.FileExtension);
-                }
-                else
-                {
-                    AudioFileNameRecording = AudioFile.RecordingFileName;
-                }
+                AudioFileNameRecording = AudioFile.RecordingFileName;
             }
             if (LinkTracksWithPreviousOne.HasValue == false)
             {
@@ -153,29 +144,52 @@ namespace AudioCuesheetEditor.Model.Options
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
             set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
         }
-        [JsonIgnore]
-        public AudioCodec AudioCodec { get; set; }
-        public String AudioCodecName
+        public String AudioFileNameRecording 
         {
-            get 
-            { 
-                if (AudioCodec != null)
+            get { return audioFileNameRecording; }
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
                 {
-                    return AudioCodec.Name;
+                    var extension = Path.GetExtension(value);
+                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(AudioFile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
+                    {
+                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), AudioFile.AudioCodecWEBM.FileExtension);
+                    }
+                    else
+                    {
+                        audioFileNameRecording = value;
+                    }
                 }
                 else
                 {
-                    return null;
+                    audioFileNameRecording = null;
                 }
             }
-            set 
+        }
+        public Boolean? LinkTracksWithPreviousOne { get; set; }
+        public String ProjectFileName 
+        {
+            get { return projectFilename; }
+            set
             {
-                AudioCodec = AudioFile.AudioCodecs.Single(x => x.Name == value);
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    var extension = Path.GetExtension(value);
+                    if (extension.Equals(ProjectFile.FileExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        projectFilename = value;
+                    }
+                    else
+                    {
+                        projectFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), ProjectFile.FileExtension);
+                    }
+                }
+                else
+                {
+                    projectFilename = null;
+                }
             }
         }
-        public Boolean RecodeAudioRecording { get; set; }
-        public String AudioFileNameRecording { get; set; }
-        public Boolean? LinkTracksWithPreviousOne { get; set; }
-        public String ProjectFileName { get; set; }
     }
 }

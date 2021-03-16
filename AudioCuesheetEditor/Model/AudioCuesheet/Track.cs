@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITrack<Cuesheet>
+    public class Track : Validateable, ITrack<Cuesheet>, IEquatable<Track>
     {
         private uint? position;
         private String artist;
@@ -465,5 +465,55 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 currentlyHandlingRankPropertyChange = false;
             }
         }
+
+        #region Equality
+
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as Track);
+        }
+
+        public bool Equals(Track other)
+        {
+            if (other is null)
+            {
+                return false;
+            }
+            if (Object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            if (this.GetType() != other.GetType())
+            {
+                return false;
+            }
+            return Position == other.Position && Artist == other.Artist && Title == other.Title && Begin == other.Begin && End == other.End 
+                && Flags.SequenceEqual(other.Flags) && LinkedPreviousTrack == other.LinkedPreviousTrack && PreGap == other.PreGap && PostGap == other.PostGap;
+        }
+
+        public static bool operator ==(Track lhs, Track rhs)
+        {
+            if (lhs is null)
+            {
+                if (rhs is null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return lhs.Equals(rhs);
+        }
+
+        public static bool operator !=(Track lhs, Track rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Position, Artist, Title, Begin, End, PostGap, PreGap, Flags);
+        }
+
+        #endregion
     }
 }
