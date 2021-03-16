@@ -16,14 +16,7 @@
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Shared.ResourceFiles;
 using Blazorise.Localization;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AudioCuesheetEditorTests.Utility
 {

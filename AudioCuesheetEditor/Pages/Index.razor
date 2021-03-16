@@ -254,11 +254,11 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cataloguenumber"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(CatalogueNumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)))" Placeholder="@localizer["Enter cataloguenumber here"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
+                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@localizer["Enter cataloguenumber here"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>

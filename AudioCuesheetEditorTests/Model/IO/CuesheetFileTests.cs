@@ -13,21 +13,15 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditorTests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using System.IO;
 using System.Linq;
-using AudioCuesheetEditor.Controller;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging.Abstractions;
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using AudioCuesheetEditorTests.Utility;
-using AudioCuesheetEditorTests.Properties;
-using AudioCuesheetEditor.Model.IO.Audio;
+using System.Text;
 
 namespace AudioCuesheetEditor.Model.IO.Tests
 {

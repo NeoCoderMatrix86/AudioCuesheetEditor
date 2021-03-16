@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String title;
         private AudioFile audioFile;
         private CDTextfile cDTextfile;
-        private CatalogueNumber catalogueNumber;
+        private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private Boolean currentlyHandlingRankPropertyValueChanged;
 
@@ -51,7 +51,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Cuesheet()
         {
             Tracks = new List<Track>();
-            CatalogueNumber = new CatalogueNumber();
+            CatalogueNumber = new Cataloguenumber();
             OnValidateablePropertyChanged();
         }
 
@@ -91,7 +91,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             set { cDTextfile = value; OnValidateablePropertyChanged(); }
         }
 
-        public CatalogueNumber CatalogueNumber 
+        public Cataloguenumber CatalogueNumber 
         {
             get { return catalogueNumber; }
             set

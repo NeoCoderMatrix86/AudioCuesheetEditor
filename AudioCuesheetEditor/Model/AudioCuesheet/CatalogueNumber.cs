@@ -21,10 +21,9 @@ using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    //TODO: Rename to Cataloguenumber
-    public class CatalogueNumber : Validateable, IEntityDisplayName
+    public class Cataloguenumber : Validateable, IEntityDisplayName
     {
-        public CatalogueNumber()
+        public Cataloguenumber()
         {
             Validate();
         }
@@ -39,17 +38,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Value))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "{0} has no value!", nameof(CatalogueNumber)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
             }
             else
             {
                 if (Value.All(Char.IsDigit) == false)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} does not only contain numbers.", nameof(CatalogueNumber)));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} does not only contain numbers.", nameof(Cataloguenumber)));
                 }
                 if (Value.Length != 13)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} has invalid length ({1})!", nameof(CatalogueNumber), 13));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} has invalid length ({1})!", nameof(Cataloguenumber), 13));
                 }
             }
         }

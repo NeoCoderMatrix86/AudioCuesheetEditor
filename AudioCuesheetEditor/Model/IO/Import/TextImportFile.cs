@@ -271,7 +271,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 property.SetValue(entity, new AudioFile(value));
             }
-            if (property.PropertyType == typeof(CatalogueNumber))
+            if (property.PropertyType == typeof(Cataloguenumber))
             {
                 ((ImportCuesheet)entity).CatalogueNumber.Value = value;
             }

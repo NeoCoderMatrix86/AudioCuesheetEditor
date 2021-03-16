@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public ImportCuesheet()
         {
-            CatalogueNumber = new CatalogueNumber();
+            CatalogueNumber = new Cataloguenumber();
         }
 
         public IReadOnlyCollection<ImportTrack> Tracks => tracks.AsReadOnly();
@@ -35,7 +35,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public string Title { get; set; }
         public AudioFile AudioFile { get; set; }
         public CDTextfile CDTextfile { get; set; }
-        public CatalogueNumber CatalogueNumber { get; private set; }
+        public Cataloguenumber CatalogueNumber { get; private set; }
         public void AddTrack(ImportTrack track)
         {
             if (track == null)
