@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
+    //TODO: Rename to Cataloguenumber
     public class CatalogueNumber : Validateable, IEntityDisplayName
     {
         public CatalogueNumber()

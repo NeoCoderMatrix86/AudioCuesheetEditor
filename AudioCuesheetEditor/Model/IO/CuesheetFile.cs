@@ -27,6 +27,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
 {
+    //TODO: Rename to Cuesheetfile
     public class CuesheetFile
     {
         public const String MimeType = "text/*";

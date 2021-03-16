@@ -1,0 +1,13 @@
+{
+  "culture": "en",
+  "translations": {
+    "{0} has no value!": "{0} has no value!",
+    "{0} has invalid Count ({1})!": "{0} has invalid Count ({1})!",
+    "Artist": "Artist",
+    "Title": "Title",
+    "Audiofile": "Audiofile",
+    "Tracks": "Tracks",
+    "CDTextfile": "CD Textfile",
+    "Cataloguenumber": "Cataloguenumber"
+  }
+}

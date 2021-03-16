@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
+    //TODO: Rename to Audiofile
     public class AudioFile : IDisposable
     {
         public static readonly String RecordingFileName = "Recording";
