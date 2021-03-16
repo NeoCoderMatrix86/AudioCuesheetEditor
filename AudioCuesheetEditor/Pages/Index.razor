@@ -115,7 +115,7 @@ along with Foobar.  If not, see
             @switch (CurrentViewMode)
             {
                 case ViewMode.ViewModeRecord:
-                    <ViewModeRecord Cuesheet="cuesheet" />
+                    <ViewModeRecord Cuesheet="cuesheet" ValidationMessageLocalizer="ValidationMessageLocalizer" />
                     break;
                 case ViewMode.ViewModeFull:
                     <Column>
@@ -433,7 +433,7 @@ along with Foobar.  If not, see
                                 <CardTitle Size="3">@localizer["Processinghints"]</CardTitle>
                             </CardHeader>
                             <CardBody>
-                                <ProcessingHints Cuesheet="cuesheet" Header="ValidationDescription" ActivateLinksToFields="true" />
+                                <ProcessingHints Cuesheet="cuesheet" Header="@localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" ValidationMessageLocalizer="ValidationMessageLocalizer" />
                             </CardBody>
                         </Card>
                     </Column>
@@ -816,8 +816,8 @@ along with Foobar.  If not, see
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Culture setting"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.CultureName">
-                        @foreach (var culture in LocalizationService.AvailableCultures)
+                    <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName">
+                        @foreach (var culture in OptionsController.AvailableCultures)
                         {
                             <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
                         }
@@ -1138,6 +1138,13 @@ along with Foobar.  If not, see
         }
 
         CurrentViewMode = optionsController.Options.ViewMode;
+    }
+
+    private async Task OnCultureSelectionChanged(String value)
+    {
+        optionsController.Options.CultureName = value;
+        await optionsController.SaveOptions();
+        LocalizationService.ChangeLanguage(optionsController.Options.CultureName);
     }
 
     private void HeaderClicked(ref Boolean visible, ref String chevron)
@@ -1606,7 +1613,6 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnSaveOptionsClicked");
         await optionsController.SaveOptions();
         modalOptions.Hide();
-        navigationManager.NavigateTo(navigationManager.Uri, true);
     }
 
     private async Task OnReloadOptionsClicked()

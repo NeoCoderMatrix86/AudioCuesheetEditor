@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 
 @inject ITextLocalizer<ModalDialog> localizer
 @inject HotKeys HotKeys
+@inject ITextLocalizerService LocalizationService
 
 <Modal @ref="modalRef">
     <ModalContent Centered="true" Size="@modalSize">
@@ -75,6 +76,12 @@ along with Foobar.  If not, see
         hotKeysContext = HotKeys.CreateContext()
             .Add(ModKeys.Alt, Keys.O, Confirm)
             .Add(ModKeys.None, Keys.ESC, HideModal);
+
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+
         return base.OnInitializedAsync();
     }
 

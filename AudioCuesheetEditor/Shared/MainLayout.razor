@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 @inherits LayoutComponentBase
 @inject NavigationManager navigationManager
 @inject ITextLocalizer<MainLayout> localizer
+@inject ITextLocalizerService LocalizationService
 
 <Layout>
     <LayoutHeader>
@@ -52,3 +53,15 @@ along with Foobar.  If not, see
         @Body
     </LayoutContent>
 </Layout>
+
+@code { 
+    protected override Task OnInitializedAsync()
+    {
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+
+        return base.OnInitializedAsync();
+    }
+}

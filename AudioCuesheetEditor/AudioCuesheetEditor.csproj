@@ -17,6 +17,12 @@
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
     <Content Remove="Resources\Localization\ErrorReport\de.json" />
     <Content Remove="Resources\Localization\ErrorReport\en.json" />
+    <Content Remove="Resources\Localization\MainLayout\de.json" />
+    <Content Remove="Resources\Localization\MainLayout\en.json" />
+    <Content Remove="Resources\Localization\ModalDialog\de.json" />
+    <Content Remove="Resources\Localization\ModalDialog\en.json" />
+    <Content Remove="Resources\Localization\ProcessingHints\de.json" />
+    <Content Remove="Resources\Localization\ProcessingHints\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
@@ -40,6 +46,12 @@
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
     <EmbeddedResource Include="Resources\Localization\ErrorReport\en.json" />
     <EmbeddedResource Include="Resources\Localization\ErrorReport\de.json" />
+    <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
+    <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
+    <EmbeddedResource Include="Resources\Localization\ModalDialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ProcessingHints\en.json" />
+    <EmbeddedResource Include="Resources\Localization\ProcessingHints\de.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
@@ -74,30 +86,6 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="10.0.0" />
     <PackageReference Include="z440.atl.core" Version="3.18.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Shared\ResourceFiles\Localization.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Localization.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Shared\ResourceFiles\Localization.de.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Localization.de.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Shared\ResourceFiles\Localization.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Localization.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Shared\ResourceFiles\Localization.de.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Localization.de.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>

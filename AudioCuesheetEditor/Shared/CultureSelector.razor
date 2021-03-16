@@ -31,7 +31,16 @@ along with Foobar.  If not, see
     }
 </Select>
 
-@code{
+@code{ 
+    protected override Task OnInitializedAsync()
+    {
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+        return base.OnInitializedAsync();
+    }
+
     private async Task OnCultureSelectionChanged(String value)
     {
         optionsController.Options.CultureName = value;

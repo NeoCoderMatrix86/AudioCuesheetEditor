@@ -211,7 +211,7 @@ along with Foobar.  If not, see
                 </Blazorise.Link>
             </CollapseHeader>
             <CollapseBody>
-                <ProcessingHints Cuesheet="Cuesheet" Header="ValidationDescriptionRecordMode" ActivateLinksToFields="false" />
+                <ProcessingHints Cuesheet="Cuesheet" Header="@localizer["Here all validation messages will be displayed. For details switch to full edit mode."]" ActivateLinksToFields="false" ValidationMessageLocalizer="ValidationMessageLocalizer" />
             </CollapseBody>
         </Collapse>
     </Accordion>
@@ -242,6 +242,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Cuesheet Cuesheet { get; set; }
+
+    [Parameter]
+    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
 
     [JSInvokable()]
     public void AudioRecordingFinished(String url)

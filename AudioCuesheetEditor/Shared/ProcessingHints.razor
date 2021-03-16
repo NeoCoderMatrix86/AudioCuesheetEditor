@@ -19,9 +19,10 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ProcessingHints> localizer
 @inject IJSRuntime JSRuntime
 @inject CuesheetController cuesheetController
+@inject ITextLocalizerService LocalizationService
 
 <CardBody>
-    <Paragraph>@localizer[Header]</Paragraph>
+    <Paragraph>@Header</Paragraph>
     <Accordion>
         @if (GetValidationErrors(ValidationErrorFilterType.WarningOnly).Count() > 0)
         {
@@ -44,11 +45,11 @@ along with Foobar.  If not, see
                                 <Alert Color="Color.Warning" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
-                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                     else
                                     {
-                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                 </Alert>
                             </Blazorise.Link>
@@ -58,11 +59,11 @@ along with Foobar.  If not, see
                             <Alert Color="Color.Warning" Visible="true">
                                 @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                 {
-                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                                 else
                                 {
-                                    <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                    <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                             </Alert>
                         }
@@ -91,11 +92,11 @@ along with Foobar.  If not, see
                                 <Alert Color="Color.Danger" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
-                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                     else
                                     {
-                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                 </Alert>
                             </Blazorise.Link>
@@ -105,11 +106,11 @@ along with Foobar.  If not, see
                             <Alert Color="Color.Danger" Visible="true">
                                 @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                 {
-                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                                 else
                                 {
-                                    <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(localizer)</Paragraph>
+                                    <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                             </Alert>
                         }
@@ -129,6 +130,18 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Boolean ActivateLinksToFields { get; set; }
+
+    [Parameter]
+    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+        return base.OnInitializedAsync();
+    }
 
     private Boolean processingHintsWarningVisible = true;
     private Boolean processingHintsErrorVisible = true;
