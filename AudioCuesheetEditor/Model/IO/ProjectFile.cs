@@ -24,8 +24,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
 {
-    //TODO: Rename to Projectfile
-    public class ProjectFile
+    public class Projectfile
     {
         public const String MimeType = "text/*";
         public const String FileExtension = ".ace";
@@ -50,7 +49,7 @@ namespace AudioCuesheetEditor.Model.IO
             return cuesheet;
         }
 
-        public ProjectFile(Cuesheet cuesheet)
+        public Projectfile(Cuesheet cuesheet)
         {
             if (cuesheet == null)
             {

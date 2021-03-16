@@ -44,11 +44,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         {
             var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
-            Assert.IsNull(cuesheet.AudioFile);
-            var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))).FirstOrDefault();
+            Assert.IsNull(cuesheet.Audiofile);
+            var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
-            cuesheet.AudioFile = new AudioFile("AudioFile01.ogg");
-            validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.AudioFile)).FirstOrDefault();
+            cuesheet.Audiofile = new Audiofile("AudioFile01.ogg");
+            validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.Audiofile)).FirstOrDefault();
             Assert.IsNull(validationErrorAudioFile);
         }
 

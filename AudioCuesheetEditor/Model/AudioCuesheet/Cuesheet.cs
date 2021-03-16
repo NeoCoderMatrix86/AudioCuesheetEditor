@@ -41,7 +41,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Track> tracks;
         private String artist;
         private String title;
-        private AudioFile audioFile;
+        private Audiofile audiofile;
         private CDTextfile cDTextfile;
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
@@ -51,7 +51,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Cuesheet()
         {
             Tracks = new List<Track>();
-            CatalogueNumber = new Cataloguenumber();
+            Cataloguenumber = new Cataloguenumber();
             OnValidateablePropertyChanged();
         }
 
@@ -79,10 +79,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return title; }
             set { title = value; OnValidateablePropertyChanged(); }
         }
-        public AudioFile AudioFile 
+        public Audiofile Audiofile
         {
-            get { return audioFile; }
-            set { audioFile = value; OnValidateablePropertyChanged(); AudioFileChanged?.Invoke(this, EventArgs.Empty); }
+            get { return audiofile; }
+            set { audiofile = value; OnValidateablePropertyChanged(); AudioFileChanged?.Invoke(this, EventArgs.Empty); }
         }
 
         public CDTextfile CDTextfile 
@@ -91,7 +91,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             set { cDTextfile = value; OnValidateablePropertyChanged(); }
         }
 
-        public Cataloguenumber CatalogueNumber 
+        public Cataloguenumber Cataloguenumber 
         {
             get { return catalogueNumber; }
             set
@@ -114,7 +114,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get
             {
-                var cuesheetFile = new CuesheetFile(this);
+                var cuesheetFile = new Cuesheetfile(this);
                 return cuesheetFile.IsExportable;
             }
         }
@@ -372,9 +372,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
             }
-            if (AudioFile == null)
+            if (Audiofile == null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(AudioFile)), ValidationErrorType.Error, "{0} has no value!", nameof(AudioFile)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Audiofile)), ValidationErrorType.Error, "{0} has no value!", nameof(Audiofile)));
             }
             if (tracks.Count < 1)
             {
@@ -384,14 +384,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "{0} has no value!", nameof(CDTextfile)));
             }
-            if (CatalogueNumber == null)
+            if (Cataloguenumber == null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CatalogueNumber)), ValidationErrorType.Warning, "{0} has no value!", nameof(CatalogueNumber)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Cataloguenumber)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
             }
             else
             {
-                _ = CatalogueNumber.IsValid;
-                validationErrors.AddRange(CatalogueNumber.ValidationErrors);
+                _ = Cataloguenumber.IsValid;
+                validationErrors.AddRange(Cataloguenumber.ValidationErrors);
             }
         }
 
@@ -436,16 +436,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void ReCalculateTrackProperties(Track trackToCalculate)
         {
-            if ((AudioFile != null) && (AudioFile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
+            if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
             {
-                trackToCalculate.End = AudioFile.Duration;
+                trackToCalculate.End = Audiofile.Duration;
             }
             if (Tracks.Count > 1)
             {
                 var lastTrack = tracks.ElementAt(tracks.IndexOf(trackToCalculate) - 1);
                 if (lastTrack != trackToCalculate)
                 {
-                    if ((AudioFile != null) && (AudioFile.Duration.HasValue) && (lastTrack.End.HasValue) && (lastTrack.End.Value == AudioFile.Duration.Value))
+                    if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (lastTrack.End.HasValue) && (lastTrack.End.Value == Audiofile.Duration.Value))
                     {
                         lastTrack.End = null;
                     }
@@ -498,17 +498,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 Title = cuesheet.Title;
             }
-            if (cuesheet.AudioFile != null)
+            if (cuesheet.Audiofile != null)
             {
-                AudioFile = cuesheet.AudioFile;
+                Audiofile = cuesheet.Audiofile;
             }
             if (cuesheet.CDTextfile != null)
             {
                 CDTextfile = cuesheet.CDTextfile;
             }
-            if (cuesheet.CatalogueNumber != null)
+            if (cuesheet.Cataloguenumber != null)
             {
-                CatalogueNumber = cuesheet.CatalogueNumber;
+                Cataloguenumber = cuesheet.Cataloguenumber;
             }
             foreach (var importTrack in cuesheet.Tracks)
             {

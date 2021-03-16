@@ -26,7 +26,7 @@ using System.Text;
 namespace AudioCuesheetEditor.Model.IO.Tests
 {
     [TestClass()]
-    public class CuesheetFileTests
+    public class CuesheetfileTests
     {
         [TestMethod()]
         public void GenerateCuesheetFileTest()
@@ -36,7 +36,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                AudioFile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
@@ -51,38 +51,38 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new CuesheetFile(cuesheet);
+            var cuesheetFile = new Cuesheetfile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNotNull(generatedFile);
             var fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
             var fileContent = File.ReadAllLines(fileName);
-            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetTitle, cuesheet.Title));
-            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetFile.CuesheetFileName, cuesheet.AudioFile.FileName, cuesheet.AudioFile.AudioFileType));
+            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetTitle, cuesheet.Title));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetArtist, cuesheet.Artist));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", Cuesheetfile.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 4)
             {
                 var track = cuesheet.Tracks.Single(x => x.Position == position);
                 position++;
-                Assert.AreEqual(fileContent[i], String.Format("{0}{1} {2:00} {3}", CuesheetFile.Tab, CuesheetFile.CuesheetTrack, track.Position, CuesheetFile.CuesheetTrackAudio));
-                Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackTitle, track.Title));
-                Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackArtist, track.Artist));
-                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+                Assert.AreEqual(fileContent[i], String.Format("{0}{1} {2:00} {3}", Cuesheetfile.Tab, Cuesheetfile.CuesheetTrack, track.Position, Cuesheetfile.CuesheetTrackAudio));
+                Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackTitle, track.Title));
+                Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackArtist, track.Artist));
+                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
             }
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
-            cuesheet.CatalogueNumber.Value = "0123456789123";
+            cuesheet.Cataloguenumber.Value = "0123456789123";
             generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNotNull(generatedFile);
             fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
             fileContent = File.ReadAllLines(fileName);
-            Assert.AreEqual(fileContent[0], String.Format("{0} {1}", CuesheetFile.CuesheetCatalogueNumber, cuesheet.CatalogueNumber.Value));
-            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
+            Assert.AreEqual(fileContent[0], String.Format("{0} {1}", Cuesheetfile.CuesheetCatalogueNumber, cuesheet.Cataloguenumber.Value));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
-            cuesheet.CatalogueNumber.Value = "Testvalue";
+            cuesheet.Cataloguenumber.Value = "Testvalue";
             generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNull(generatedFile);
         }
@@ -95,7 +95,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                AudioFile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
@@ -118,27 +118,27 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.PreGap = new TimeSpan(0, 0, 3);
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new CuesheetFile(cuesheet);
+            var cuesheetFile = new Cuesheetfile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNotNull(generatedFile);
             var fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
             var fileContent = File.ReadAllLines(fileName);
-            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetTitle, cuesheet.Title));
-            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetFile.CuesheetFileName, cuesheet.AudioFile.FileName, cuesheet.AudioFile.AudioFileType));
+            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetTitle, cuesheet.Title));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetArtist, cuesheet.Artist));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", Cuesheetfile.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 7)
             {
                 var track = cuesheet.Tracks.Single(x => x.Position == position);
                 position++;
-                Assert.AreEqual(String.Format("{0}{1} {2:00} {3}", CuesheetFile.Tab, CuesheetFile.CuesheetTrack, track.Position, CuesheetFile.CuesheetTrackAudio), fileContent[i]);
-                Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackTitle, track.Title), fileContent[i + 1]);
-                Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackArtist, track.Artist), fileContent[i + 2]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))), fileContent[i + 3]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds / 75), fileContent[i + 4]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75), fileContent[i + 5]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds / 75), fileContent[i + 6]);
+                Assert.AreEqual(String.Format("{0}{1} {2:00} {3}", Cuesheetfile.Tab, Cuesheetfile.CuesheetTrack, track.Position, Cuesheetfile.CuesheetTrackAudio), fileContent[i]);
+                Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackTitle, track.Title), fileContent[i + 1]);
+                Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackArtist, track.Artist), fileContent[i + 2]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))), fileContent[i + 3]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds / 75), fileContent[i + 4]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75), fileContent[i + 5]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds / 75), fileContent[i + 6]);
             }
             File.Delete(fileName);
         }
@@ -151,7 +151,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                AudioFile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
@@ -172,25 +172,25 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 }
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new CuesheetFile(cuesheet);
+            var cuesheetFile = new Cuesheetfile(cuesheet);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNotNull(generatedFile);
             var fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
             var fileContent = File.ReadAllLines(fileName);
-            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetTitle, cuesheet.Title));
-            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetFile.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetFile.CuesheetFileName, cuesheet.AudioFile.FileName, cuesheet.AudioFile.AudioFileType));
+            Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetTitle, cuesheet.Title));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", Cuesheetfile.CuesheetArtist, cuesheet.Artist));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", Cuesheetfile.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 5)
             {
                 var track = cuesheet.Tracks.Single(x => x.Position == position);
                 position++;
-                Assert.AreEqual(fileContent[i], String.Format("{0}{1} {2:00} {3}", CuesheetFile.Tab, CuesheetFile.CuesheetTrack, track.Position, CuesheetFile.CuesheetTrackAudio));
-                Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackTitle, track.Title));
-                Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackArtist, track.Artist));
-                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
-                Assert.AreEqual(fileContent[i + 4], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetFile.Tab, CuesheetFile.Tab, CuesheetFile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+                Assert.AreEqual(fileContent[i], String.Format("{0}{1} {2:00} {3}", Cuesheetfile.Tab, Cuesheetfile.CuesheetTrack, track.Position, Cuesheetfile.CuesheetTrackAudio));
+                Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackTitle, track.Title));
+                Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackArtist, track.Artist));
+                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
+                Assert.AreEqual(fileContent[i + 4], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", Cuesheetfile.Tab, Cuesheetfile.Tab, Cuesheetfile.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
             }
             File.Delete(fileName);
         }
@@ -242,7 +242,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            var cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
+            var cuesheet = Cuesheetfile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);
@@ -251,11 +251,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
 
             File.Delete(tempFile);
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30), testHelper.ApplicationOptions);
+            cuesheet = Cuesheetfile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_30), testHelper.ApplicationOptions);
             Assert.IsNotNull(cuesheet);
             Assert.IsNull(cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57), testHelper.ApplicationOptions);
+            cuesheet = Cuesheetfile.ImportCuesheet(new MemoryStream(Resources.Playlist_Bug_57), testHelper.ApplicationOptions);
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.AreEqual(cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
@@ -306,7 +306,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            cuesheet = CuesheetFile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
+            cuesheet = Cuesheetfile.ImportCuesheet(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.IsValid);

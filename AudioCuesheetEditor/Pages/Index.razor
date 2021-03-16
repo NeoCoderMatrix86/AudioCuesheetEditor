@@ -163,7 +163,7 @@ along with Foobar.  If not, see
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <InputFile class="form-control" accept="@CuesheetFile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
+                                                <InputFile class="form-control" accept="@Cuesheetfile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
@@ -171,7 +171,7 @@ along with Foobar.  If not, see
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Project filename"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <InputFile class="form-control" accept="@ProjectFile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
+                                                <InputFile class="form-control" accept="@Projectfile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
@@ -206,23 +206,23 @@ along with Foobar.  If not, see
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Audiofile"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                            @if (cuesheet.AudioFile == null)
+                                            @if (cuesheet.Audiofile == null)
                                             {
                                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                                var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
+                                                var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))));
+                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Audiofile))" accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))"></InputFile>
                                             }
                                             else
                                             {
                                                 <Addons>
-                                                    @if (cuesheet.AudioFile.IsRecorded)
+                                                    @if (cuesheet.Audiofile.IsRecorded)
                                                     {
                                                         <Addon AddonType="AddonType.Start">
-                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@cuesheet.AudioFile.ObjectURL" Target="Target.Blank" Download="@cuesheet.AudioFile.FileName">@localizer["Download recordedaudio"]</Button>
+                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@cuesheet.Audiofile.FileName">@localizer["Download recordedaudio"]</Button>
                                                         </Addon>
                                                     }
                                                     <Addon AddonType="AddonType.Body">
-                                                        <TextEdit Disabled="true" Text="@cuesheet.AudioFile.FileName" />
+                                                        <TextEdit Disabled="true" Text="@cuesheet.Audiofile.FileName" />
                                                     </Addon>
                                                     <Addon AddonType="AddonType.End">
                                                         <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
@@ -254,11 +254,11 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.Cataloguenumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cataloguenumber"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.CatalogueNumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(cuesheet.CatalogueNumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@localizer["Enter cataloguenumber here"]" @bind-Text="cuesheet.CatalogueNumber.Value" ChangeTextOnKeyPress="false" />
+                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@localizer["Enter cataloguenumber here"]" @bind-Text="cuesheet.Cataloguenumber.Value" ChangeTextOnKeyPress="false" />
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
@@ -561,12 +561,12 @@ along with Foobar.  If not, see
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
                         </FieldBody>
                     </Field>
-                    @if (textImportFile.ImportCuesheet.AudioFile != null)
+                    @if (textImportFile.ImportCuesheet.Audiofile != null)
                     {
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["Audiofile"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is8">
-                                <TextEdit Text="@textImportFile.ImportCuesheet.AudioFile.FileName" ReadOnly="true" />
+                                <TextEdit Text="@textImportFile.ImportCuesheet.Audiofile.FileName" ReadOnly="true" />
                             </FieldBody>
                         </Field>
                     }
@@ -582,7 +582,7 @@ along with Foobar.  If not, see
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["Cataloguenumber"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.CatalogueNumber.Value" ReadOnly="true" />
+                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Cataloguenumber.Value" ReadOnly="true" />
                         </FieldBody>
                     </Field>
                     <Heading Size="HeadingSize.Is5">@localizer["Cuesheet tracks"]</Heading>
@@ -675,7 +675,7 @@ along with Foobar.  If not, see
                                         @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
+                                        @foreach (var availableScheme in Exportscheme.AvailableCuesheetSchemes)
                                         {
                                             <DropdownItem Clicked="() => SelectedExportProfile.SchemeHead.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
                                         }
@@ -713,7 +713,7 @@ along with Foobar.  If not, see
                                         @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        @foreach (var availableScheme in ExportScheme.AvailableTrackSchemes)
+                                        @foreach (var availableScheme in Exportscheme.AvailableTrackSchemes)
                                         {
                                             <DropdownItem Clicked="() => SelectedExportProfile.SchemeTracks.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
                                         }
@@ -751,7 +751,7 @@ along with Foobar.  If not, see
                                         @localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
-                                        @foreach (var availableScheme in ExportScheme.AvailableCuesheetSchemes)
+                                        @foreach (var availableScheme in Exportscheme.AvailableCuesheetSchemes)
                                         {
                                             <DropdownItem Clicked="() => SelectedExportProfile.SchemeFooter.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
                                         }
@@ -1012,9 +1012,9 @@ along with Foobar.  If not, see
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
-        public ExportProfile ExportProfile { get; set; }
+        public Exportprofile ExportProfile { get; set; }
 
-        public SelectExportProfileModel(ExportProfile exportProfile)
+        public SelectExportProfileModel(Exportprofile exportProfile)
         {
             if (exportProfile == null)
             {
@@ -1289,7 +1289,7 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnInputFileCuesheetChange with {0}", e);
         if (e.File != null)
         {
-            if (CuesheetController.CheckFileMimeType(e.File, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
             {
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
@@ -1302,7 +1302,7 @@ along with Foobar.  If not, see
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
                 void importCuesheetDelegate(object sender, EventArgs args)
                 {
-                    SetCuesheetObject(CuesheetFile.ImportCuesheet(memoryStream, optionsController.Options));
+                    SetCuesheetObject(Cuesheetfile.ImportCuesheet(memoryStream, optionsController.Options));
                     modalDialog.Confirmed -= importCuesheetDelegate;
                     StateHasChanged();
                 };
@@ -1334,7 +1334,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private ExportProfile SelectedExportProfile
+    private Exportprofile SelectedExportProfile
     {
         get
         {
@@ -1365,7 +1365,7 @@ along with Foobar.  If not, see
     {
         Logger.LogInformation("OnAddNewExportProfileClicked");
         var list = exportProfileModels.ToList();
-        list.Add(new SelectExportProfileModel(new ExportProfile()));
+        list.Add(new SelectExportProfileModel(new Exportprofile()));
         exportProfileModels = list.AsReadOnly();
         selectedExportProfileId = list.Last().Id;
     }
@@ -1398,12 +1398,12 @@ along with Foobar.  If not, see
                 recognized = true;
                 await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
-            if (CuesheetController.CheckFileMimeType(file, CuesheetFile.MimeType, CuesheetFile.FileExtension) == true)
+            if (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
             {
                 recognized = true;
                 await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
-            if (CuesheetController.CheckFileMimeType(file, AudioFile.AudioCodecs) == true)
+            if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
             {
                 recognized = true;
                 await SetAudioFile(file, "dropInputfiles");
@@ -1413,7 +1413,7 @@ along with Foobar.  If not, see
                 recognized = true;
                 OnCDTextfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
             }
-            if (CuesheetController.CheckFileMimeType(file, ProjectFile.MimeType, ProjectFile.FileExtension))
+            if (CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
             {
                 recognized = true;
                 await OnProjectfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
@@ -1438,10 +1438,10 @@ along with Foobar.  If not, see
     private async Task OnChangeAudioFileClicked()
     {
         Logger.LogInformation("OnChangeAudioFileClicked");
-        cuesheet.AudioFile = null;
+        cuesheet.Audiofile = null;
         StateHasChanged();
         await Task.Delay(1);
-        await JSRuntime.InvokeVoidAsync("triggerClick", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
+        await JSRuntime.InvokeVoidAsync("triggerClick", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Audiofile)));
     }
 
     private void OnRestartCompleteApplicationClicked()
@@ -1525,9 +1525,9 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnAudioFileChanged with {0}", e);
         if (e.File != null)
         {
-            if (CuesheetController.CheckFileMimeType(e.File, AudioFile.AudioCodecs) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, Audiofile.AudioCodecs) == true)
             {
-                await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile)));
+                await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Audiofile)));
             }
             else
             {
@@ -1543,19 +1543,19 @@ along with Foobar.  If not, see
     private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
     {
         Logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
-        if ((cuesheet.AudioFile != null) && (cuesheet.AudioFile.IsRecorded))
+        if ((cuesheet.Audiofile != null) && (cuesheet.Audiofile.IsRecorded))
         {
-            await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", cuesheet.AudioFile.ObjectURL);
+            await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", cuesheet.Audiofile.ObjectURL);
         }
         if (browserFile != null)
         {
             var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
-            var codec = AudioFile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
-            cuesheet.AudioFile = new AudioFile(browserFile.Name, audioFileObjectURL, codec, httpClient);
+            var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
+            cuesheet.Audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec, httpClient);
         }
         else
         {
-            cuesheet.AudioFile = null;
+            cuesheet.Audiofile = null;
         }
     }
 
@@ -1591,7 +1591,7 @@ along with Foobar.  If not, see
     private async Task DownloadCuesheetFileClicked()
     {
         Logger.LogInformation("DownloadCuesheetFileClicked");
-        var cuesheetFile = new CuesheetFile(cuesheet);
+        var cuesheetFile = new Cuesheetfile(cuesheet);
         var fileData = cuesheetFile.GenerateCuesheetFile();
         await optionsController.SaveOptions();
         await BlazorDownloadFileService.DownloadFile(optionsController.Options.CuesheetFileName, fileData, "text/plain");
@@ -1675,7 +1675,7 @@ along with Foobar.  If not, see
 
     private async Task DownloadProjectfileClicked()
     {
-        var projectFile = new ProjectFile(cuesheet);
+        var projectFile = new Projectfile(cuesheet);
         var fileData = projectFile.GenerateFile();
         await optionsController.SaveOptions();
         await BlazorDownloadFileService.DownloadFile(optionsController.Options.ProjectFileName, fileData, "text/plain");
@@ -1687,7 +1687,7 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnProjectfileChanged with {0}", e);
         if (e.File != null)
         {
-            if (CuesheetController.CheckFileMimeType(e.File, ProjectFile.MimeType, ProjectFile.FileExtension) == true)
+            if (CuesheetController.CheckFileMimeType(e.File, Projectfile.MimeType, Projectfile.FileExtension) == true)
             {
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
@@ -1701,7 +1701,7 @@ along with Foobar.  If not, see
                 void importCuesheetDelegate(object sender, EventArgs args)
                 {
                     modalDialog.Confirmed -= importCuesheetDelegate;
-                    SetCuesheetObject(ProjectFile.ImportFile(memoryStream.ToArray()));
+                    SetCuesheetObject(Projectfile.ImportFile(memoryStream.ToArray()));
                     StateHasChanged();
                 };
                 modalDialog.Confirmed += importCuesheetDelegate;

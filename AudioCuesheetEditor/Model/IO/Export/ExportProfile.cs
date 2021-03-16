@@ -20,32 +20,32 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    public class ExportProfile
+    public class Exportprofile
     {
         public static readonly String DefaultFileName = "Export.txt";
 
-        public ExportProfile()
+        public Exportprofile()
         {
-            SchemeHead = new ExportScheme
+            SchemeHead = new Exportscheme
             {
-                SchemeType = SchemeType.Header
+                SchemeType = Schemetype.Header
             };
-            SchemeTracks = new ExportScheme
+            SchemeTracks = new Exportscheme
             {
-                SchemeType = SchemeType.Body
+                SchemeType = Schemetype.Body
             };
-            SchemeFooter = new ExportScheme
+            SchemeFooter = new Exportscheme
             {
-                SchemeType = SchemeType.Footer
+                SchemeType = Schemetype.Footer
             };
             FileName = DefaultFileName;
             var random = new Random();
-            Name = String.Format("{0}_{1}", nameof(ExportProfile), random.Next(1, 100));
+            Name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
         public String Name { get; set; }
-        public ExportScheme SchemeHead { get; set; }
-        public ExportScheme SchemeTracks { get; set; }
-        public ExportScheme SchemeFooter { get; set; }
+        public Exportscheme SchemeHead { get; set; }
+        public Exportscheme SchemeTracks { get; set; }
+        public Exportscheme SchemeFooter { get; set; }
         public String FileName { get; set; }
         [JsonIgnore]
         public Boolean IsExportable

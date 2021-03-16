@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
     public class ExportProfileTests
     {
         [TestMethod()]
-        public void ExportProfileTest()
+        public void ExportprofileTest()
         {
             var testHelper = new TestHelper();
             //Prepare cuesheet
@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                AudioFile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };            
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
@@ -63,11 +63,11 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 }
             }
 
-            cuesheet.CatalogueNumber.Value = "Testcatalognumber";
+            cuesheet.Cataloguenumber.Value = "Testcatalognumber";
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
 
             //Test class
-            var exportProfile = new ExportProfile();
+            var exportProfile = new Exportprofile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
@@ -97,7 +97,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
 
             //Check multiline export
 
-            exportProfile = new ExportProfile();
+            exportProfile = new Exportprofile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = String.Format("%Track.Position%{0}%Track.Artist%{1}%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%", Environment.NewLine, Environment.NewLine);
@@ -124,7 +124,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.Delete(tempFile);
 
             //Test flags
-            exportProfile = new ExportProfile();
+            exportProfile = new Exportprofile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Flags%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
@@ -163,7 +163,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                AudioFile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
@@ -190,10 +190,10 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 }
             }
 
-            cuesheet.CatalogueNumber.Value = "Testcatalognumber";
+            cuesheet.Cataloguenumber.Value = "Testcatalognumber";
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
 
-            var exportProfile = new ExportProfile();
+            var exportProfile = new Exportprofile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";

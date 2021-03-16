@@ -34,16 +34,16 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             var schemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
             var schemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            var schemeCuesheetAudioFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.AudioFile), SchemeCharacter);
+            var schemeCuesheetAudioFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
             var schemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-            var schemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CatalogueNumber), SchemeCharacter);
+            var schemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
                 {nameof(ImportCuesheet.Artist), schemeCuesheetArtist },
                 {nameof(ImportCuesheet.Title), schemeCuesheetTitle },
-                {nameof(ImportCuesheet.AudioFile), schemeCuesheetAudioFile },
-                {nameof(ImportCuesheet.CatalogueNumber), schemeCuesheetCatalogueNumber },
+                {nameof(ImportCuesheet.Audiofile), schemeCuesheetAudioFile },
+                {nameof(ImportCuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
                 {nameof(ImportCuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 

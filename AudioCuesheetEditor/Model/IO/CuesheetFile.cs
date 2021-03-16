@@ -27,8 +27,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
 {
-    //TODO: Rename to Cuesheetfile
-    public class CuesheetFile
+    public class Cuesheetfile
     {
         public const String MimeType = "text/*";
         public const String FileExtension = ".cue";
@@ -94,7 +93,7 @@ namespace AudioCuesheetEditor.Model.IO
                 if (regexCuesheetFile.IsMatch(line) == true)
                 {
                     var audioFile = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - (line.IndexOf("\"") + 1));
-                    cuesheet.AudioFile = new AudioFile(audioFile);
+                    cuesheet.Audiofile = new Audiofile(audioFile);
                 }
                 if (regexCDTextfile.IsMatch(line) == true)
                 {
@@ -104,7 +103,7 @@ namespace AudioCuesheetEditor.Model.IO
                 if (regexCatalogueNumber.IsMatch(line) == true)
                 {
                     var catalogueNumber = line.Substring(regexCatalogueNumber.Match(line).Length);
-                    cuesheet.CatalogueNumber.Value = catalogueNumber;
+                    cuesheet.Cataloguenumber.Value = catalogueNumber;
                 }
                 if (regexTrackBegin.IsMatch(line) == true)
                 {
@@ -162,7 +161,7 @@ namespace AudioCuesheetEditor.Model.IO
             return cuesheet;
         }
 
-        public CuesheetFile(Cuesheet cuesheet)
+        public Cuesheetfile(Cuesheet cuesheet)
         {
             if (cuesheet == null)
             {
@@ -178,9 +177,9 @@ namespace AudioCuesheetEditor.Model.IO
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();
-                if ((Cuesheet.CatalogueNumber != null) && (Cuesheet.CatalogueNumber.IsValid == true))
+                if ((Cuesheet.Cataloguenumber != null) && (Cuesheet.Cataloguenumber.IsValid == true))
                 {
-                    builder.AppendLine(String.Format("{0} {1}", CuesheetCatalogueNumber, Cuesheet.CatalogueNumber.Value));
+                    builder.AppendLine(String.Format("{0} {1}", CuesheetCatalogueNumber, Cuesheet.Cataloguenumber.Value));
                 }
                 if (Cuesheet.CDTextfile != null)
                 {
@@ -188,7 +187,7 @@ namespace AudioCuesheetEditor.Model.IO
                 }
                 builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
                 builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
-                builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.AudioFile.FileName, Cuesheet.AudioFile.AudioFileType));
+                builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.Audiofile.FileName, Cuesheet.Audiofile.AudioFileType));
                 foreach (var track in Cuesheet.Tracks)
                 {
                     builder.AppendLine(String.Format("{0}{1} {2:00} {3}", Tab, CuesheetTrack, track.Position, CuesheetTrackAudio));
