@@ -13,20 +13,14 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Reflection;
-using AudioCuesheetEditor.Shared.ResourceFiles;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Controller
 {

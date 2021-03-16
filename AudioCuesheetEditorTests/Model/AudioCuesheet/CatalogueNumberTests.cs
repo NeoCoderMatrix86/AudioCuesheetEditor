@@ -25,12 +25,12 @@ using AudioCuesheetEditorTests.Utility;
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
     [TestClass()]
-    public class CatalogueNumberTests
+    public class CataloguenumberTests
     {
         [TestMethod()]
         public void CatalogueNumberTest()
         {
-            var catalogueNumber = new CatalogueNumber();
+            var catalogueNumber = new Cataloguenumber();
             Assert.IsFalse(catalogueNumber.IsValid);
             Assert.IsTrue(catalogueNumber.ValidationErrors.Count == 1);
             catalogueNumber.Value = "Testvalue";

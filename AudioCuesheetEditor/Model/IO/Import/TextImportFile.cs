@@ -267,13 +267,13 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var list = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
                 ((ImportTrack)entity).SetFlags(list);
             }
-            if (property.PropertyType == typeof(AudioFile))
+            if (property.PropertyType == typeof(Audiofile))
             {
-                property.SetValue(entity, new AudioFile(value));
+                property.SetValue(entity, new Audiofile(value));
             }
-            if (property.PropertyType == typeof(CatalogueNumber))
+            if (property.PropertyType == typeof(Cataloguenumber))
             {
-                ((ImportCuesheet)entity).CatalogueNumber.Value = value;
+                ((ImportCuesheet)entity).Cataloguenumber.Value = value;
             }
             if (property.PropertyType == typeof(CDTextfile))
             {

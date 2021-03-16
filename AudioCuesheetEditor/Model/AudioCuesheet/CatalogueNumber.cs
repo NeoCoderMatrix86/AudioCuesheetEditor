@@ -13,21 +13,17 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
+using Blazorise.Localization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class CatalogueNumber : Validateable, IEntityDisplayName
+    public class Cataloguenumber : Validateable, IEntityDisplayName
     {
-        public CatalogueNumber()
+        public Cataloguenumber()
         {
             Validate();
         }
@@ -42,22 +38,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Value))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "HasNoValue", "CatalogueNumber"));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
             }
             else
             {
                 if (Value.All(Char.IsDigit) == false)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "CataloguenumberContainsNonDigits"));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} does not only contain numbers.", nameof(Cataloguenumber)));
                 }
                 if (Value.Length != 13)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "HasInvalidLength", "CatalogueNumber", 13));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} has invalid length ({1})!", nameof(Cataloguenumber), 13));
                 }
             }
         }
 
-        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        public String GetDisplayNameLocalized(ITextLocalizer localizer)
         {
             return localizer[nameof(Cuesheet)];
         }

@@ -1,0 +1,28 @@
+{
+  "culture": "en",
+  "translations": {
+    "{0} has no value!": "{0} has no value!",
+    "{0} has invalid Count ({1})!": "{0} has invalid Count ({1})!",
+    "{0} has invalid value!": "{0} has invalid value!",
+    "{0} has invalid length ({1})!": "{0} has invalid length ({1})!",
+    "{0} has invalid timespan!": "{0} is not valid (must be equal or greater than 00:00:00). Please enter a valid time.",
+    "{0} has no value! Please check {1} and {2}.": "{0} has no value! Please check {1} and {2}.",
+    "{0} {1} of this track is already in use by track(s) {2}!": "{0} {1} of this track is already in use by track(s) {2}!",
+    "{0} is overlapping with other track(s) ({1})!": "{0} is overlapping with other track(s) ({1})!",
+    "{0} does not only contain numbers.": "{0} does not only contain numbers.",
+    "Artist": "Artist",
+    "Title": "Title",
+    "Audiofile": "Audiofile",
+    "Tracks": "Tracks",
+    "CDTextfile": "CD Textfile",
+    "Cataloguenumber": "Cataloguenumber",
+    "Position": "Position",
+    "Begin": "Begin",
+    "End": "End",
+    "Length": "Length",
+    "Schemetype": "Schemetype",
+    "Scheme contains placeholders that can not be solved!": "Scheme contains placeholders that can not be solved!",
+    "SchemeCuesheet": "Scheme Cuesheet",
+    "SchemeTracks": "Scheme Tracks"
+  }
+}

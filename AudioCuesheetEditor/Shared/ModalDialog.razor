@@ -19,11 +19,11 @@ along with Foobar.  If not, see
 @using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<ModalDialog> localizer
 @inject HotKeys HotKeys
+@inject ITextLocalizerService LocalizationService
 
 <Modal @ref="modalRef">
-    <ModalBackdrop />
     <ModalContent Centered="true" Size="@modalSize">
         <ModalHeader Class="@ModalHeaderStyle">
             <ModalTitle>
@@ -76,6 +76,12 @@ along with Foobar.  If not, see
         hotKeysContext = HotKeys.CreateContext()
             .Add(ModKeys.Alt, Keys.O, Confirm)
             .Add(ModKeys.None, Keys.ESC, HideModal);
+
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+
         return base.OnInitializedAsync();
     }
 

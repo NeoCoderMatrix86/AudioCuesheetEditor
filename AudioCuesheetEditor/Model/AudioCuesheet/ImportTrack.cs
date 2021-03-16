@@ -13,13 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
+using Blazorise.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
@@ -53,7 +51,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <inheritdoc/>
         public TimeSpan? PostGap { get; set; }
 
-        public string GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        public string GetDisplayNameLocalized(ITextLocalizer localizer)
         {
             String identifierString = null;
             if (Position != null)

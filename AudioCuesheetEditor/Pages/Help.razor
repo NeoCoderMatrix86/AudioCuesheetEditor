@@ -17,88 +17,99 @@ along with Foobar.  If not, see
 -->
 
 @page "/Help"
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<Help> localizer
+@inject ITextLocalizerService LocalizationService
 
 <Layout>
     <LayoutContent Margin="Margin.Is2">
         <Heading Size="HeadingSize.Is1">@localizer["Help"]</Heading>
-        <Heading Size="HeadingSize.Is5">@localizer["QuickLinks"]</Heading>
+        <Heading Size="HeadingSize.Is5">@localizer["Quick links"]</Heading>
         <Blazorise.Link To="#headingIntroduction">@localizer["Introduction"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#whatIsAudioCuesheetEditor">@localizer["WhatIsAudioCuesheetEditor"]</Blazorise.Link>
+        <Blazorise.Link To="#whatIsAudioCuesheetEditor">@localizer["What is AudioCuesheetEditor"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#features">@localizer["Features"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#validation">@localizer["Validation"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#trackLinking">@localizer["TrackLinking"]</Blazorise.Link>
+        <Blazorise.Link To="#trackLinking">@localizer["Track linking"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#headingCreateCuesheet">@localizer["CreateCuesheet"]</Blazorise.Link>
+        <Blazorise.Link To="#headingCreateCuesheet">@localizer["Create cuesheet"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#headingImportOfFiles">@localizer["ImportOfFiles"]</Blazorise.Link>
+        <Blazorise.Link To="#headingImportOfFiles">@localizer["Import of files"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#importOfTextFiles">@localizer["ImportOfTextFiles"]</Blazorise.Link>
+        <Blazorise.Link To="#importOfTextFiles">@localizer["Import of textfiles"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#importOfCuesheetFiles">@localizer["ImportOfCuesheetFiles"]</Blazorise.Link>
+        <Blazorise.Link To="#importOfCuesheetFiles">@localizer["Import of cuesheetfiles"]</Blazorise.Link>
         <br />
-        <Blazorise.Link To="#headingRecordMode">@localizer["RecordMode"]</Blazorise.Link>
+        <Blazorise.Link To="#headingRecordMode">@localizer["Recordmode"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#headingOptions">@localizer["Options"]</Blazorise.Link>
         <br />
 
         <Heading id="headingIntroduction" Size="HeadingSize.Is2">
             @localizer["Introduction"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
         <Heading id="whatIsAudioCuesheetEditor" Size="HeadingSize.Is3">
-            @localizer["WhatIsAudioCuesheetEditor"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["What is AudioCuesheetEditor"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["WhatIsAudioCuesheetEditorText"].Value)
+        @((MarkupString)localizer["What is AudioCuesheetEditor helptext"])
         <Heading id="features" Size="HeadingSize.Is3">
             @localizer["Features"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["FeaturesText"].Value)
+        @((MarkupString)localizer["Features helptext"])
         <Heading id="validation" Size="HeadingSize.Is3">
             @localizer["Validation"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["ValidationText"].Value)
+        @((MarkupString)localizer["Validation helptext"])
         <Heading id="trackLinking" Size="HeadingSize.Is3">
-            @localizer["TrackLinking"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["Track linking"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["TrackLinkingText"].Value)
+        @((MarkupString)localizer["Track linking helptext"])
         <Heading id="headingCreateCuesheet" Size="HeadingSize.Is2">
-            @localizer["CreateCuesheet"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["Create cuesheet"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["CreateCuesheetText"].Value)
+        @((MarkupString)localizer["Create cuesheet helptext"])
         <Heading id="headingImportOfFiles" Size="HeadingSize.Is2">
-            @localizer["ImportOfFiles"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["Import of files"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
         <Heading id="importOfTextFiles" Size="HeadingSize.Is3">
-            @localizer["ImportOfTextFiles"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["Import of textfiles"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["ImportOfTextFilesText"].Value)
+        @((MarkupString)localizer["Import of textfiles helptext"])
         <Heading id="importOfCuesheetFiles" Size="HeadingSize.Is3">
-            @localizer["ImportOfCuesheetFiles"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["Import of cuesheetfiles"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["ImportOfCuesheetFilesText"].Value)
+        @((MarkupString)localizer["Import of cuesheetfiles helptext"])
         <Heading id="headingRecordMode" Size="HeadingSize.Is2">
-            @localizer["RecordMode"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            @localizer["Recordmode"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["RecordModeHelpText"].Value)
+        @((MarkupString)localizer["Recordmode helptext"])
         <Heading id="headingOptions" Size="HeadingSize.Is2">
             @localizer["Options"]
-            <Blazorise.Link To="/Help">@localizer["ScrollToTop"]</Blazorise.Link>
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
-        @((MarkupString)localizer["OptionsHelpText"].Value)
+        @((MarkupString)localizer["Options helptext"])
     </LayoutContent>
 </Layout>
 
+@code { 
+    protected override Task OnInitializedAsync()
+    {
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+        return base.OnInitializedAsync();
+    }
+}

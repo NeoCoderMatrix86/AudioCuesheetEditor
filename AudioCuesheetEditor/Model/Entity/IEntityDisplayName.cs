@@ -13,17 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
+using Blazorise.Localization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
     public interface IEntityDisplayName
     {
-        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer);
+        public String GetDisplayNameLocalized(ITextLocalizer localizer);
     }
 }

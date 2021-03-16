@@ -13,13 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
+using Blazorise.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
@@ -68,7 +66,7 @@ namespace AudioCuesheetEditor.Model.Entity
             return returnValue;
         }
 
-        public String GetValidationErrors(IStringLocalizer<Localization> localizer, String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All, String seperator = "<br />")
+        public String GetValidationErrors(ITextLocalizer localizer, String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All, String seperator = "<br />")
         {
             var errorsFiltered = GetValidationErrorsFiltered(property, validationErrorFilterType);
             if (errorsFiltered.Any())

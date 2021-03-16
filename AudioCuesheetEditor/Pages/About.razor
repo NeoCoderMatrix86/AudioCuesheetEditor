@@ -18,14 +18,14 @@ along with Foobar.  If not, see
 
 @page "/about"
 @inject HttpClient Http
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<About> localizer
 
 <Layout>
     <LayoutContent Margin="Margin.Is2">
-        <Heading Size="HeadingSize.Is1">@localizer["AboutAudioCuesheetEditor"]</Heading>
+        <Heading Size="HeadingSize.Is1">@localizer["About AudioCuesheetEditor"]</Heading>
         <Heading Size="HeadingSize.Is3">@localizer["Version"] : @VersionString</Heading>
         <Paragraph>@((MarkupString)changelog)</Paragraph>
-        <Paragraph>@((MarkupString)localizer["WrittenBy"].Value)</Paragraph>
+        <Paragraph>@((MarkupString)localizer["WrittenBy"])</Paragraph>
         <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@localizer["DonateForThisProject"]</Blazorise.Link>
         <br />
         <br />

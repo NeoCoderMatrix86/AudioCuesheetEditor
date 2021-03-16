@@ -18,16 +18,11 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Shared;
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Options
 {
@@ -54,7 +49,7 @@ namespace AudioCuesheetEditor.Model.Options
             //Declare defaults
             if (String.IsNullOrEmpty(CuesheetFileName) == true)
             {
-                CuesheetFileName = CuesheetFile.DefaultFileName;
+                CuesheetFileName = Cuesheetfile.DefaultFileName;
             }
             if (String.IsNullOrEmpty(CultureName) == true)
             {
@@ -62,8 +57,8 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (ExportProfiles == null)
             {
-                var list = new List<ExportProfile>();
-                var exportProfile = new ExportProfile()
+                var list = new List<Exportprofile>();
+                var exportProfile = new Exportprofile()
                 {
                     FileName = "YouTube.txt",
                     Name = "YouTube"
@@ -72,7 +67,7 @@ namespace AudioCuesheetEditor.Model.Options
                 exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
                 exportProfile.SchemeFooter.Scheme = String.Empty;
                 list.Add(exportProfile);
-                exportProfile = new ExportProfile()
+                exportProfile = new Exportprofile()
                 {
                     FileName = "Mixcloud.txt",
                     Name = "Mixcloud"
@@ -81,7 +76,7 @@ namespace AudioCuesheetEditor.Model.Options
                 exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
                 exportProfile.SchemeFooter.Scheme = String.Empty;
                 list.Add(exportProfile);
-                exportProfile = new ExportProfile()
+                exportProfile = new Exportprofile()
                 {
                     FileName = "Export.csv",
                     Name = "CSV Export"
@@ -90,7 +85,7 @@ namespace AudioCuesheetEditor.Model.Options
                 exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
                 exportProfile.SchemeFooter.Scheme = String.Empty;
                 list.Add(exportProfile);
-                exportProfile = new ExportProfile()
+                exportProfile = new Exportprofile()
                 {
                     FileName = "Tracks.txt",
                     Name = "Tracks only"
@@ -107,7 +102,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
-                AudioFileNameRecording = AudioFile.RecordingFileName;
+                AudioFileNameRecording = Audiofile.RecordingFileName;
             }
             if (LinkTracksWithPreviousOne.HasValue == false)
             {
@@ -115,7 +110,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(ProjectFileName))
             {
-                ProjectFileName = ProjectFile.DefaultFileName;
+                ProjectFileName = Projectfile.DefaultFileName;
             }
         }
         public String CuesheetFileName { get; set; }
@@ -135,7 +130,7 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public IReadOnlyCollection<ExportProfile> ExportProfiles { get; set; }
+        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; }
         public TextImportScheme TextImportScheme { get; set; }
         [JsonIgnore]
         public ViewMode ViewMode { get; set; }
@@ -152,9 +147,9 @@ namespace AudioCuesheetEditor.Model.Options
                 if (String.IsNullOrEmpty(value) == false)
                 {
                     var extension = Path.GetExtension(value);
-                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(AudioFile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
+                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
                     {
-                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), AudioFile.AudioCodecWEBM.FileExtension);
+                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Audiofile.AudioCodecWEBM.FileExtension);
                     }
                     else
                     {
@@ -176,13 +171,13 @@ namespace AudioCuesheetEditor.Model.Options
                 if (String.IsNullOrEmpty(value) == false)
                 {
                     var extension = Path.GetExtension(value);
-                    if (extension.Equals(ProjectFile.FileExtension, StringComparison.OrdinalIgnoreCase))
+                    if (extension.Equals(Projectfile.FileExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         projectFilename = value;
                     }
                     else
                     {
-                        projectFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), ProjectFile.FileExtension);
+                        projectFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Projectfile.FileExtension);
                     }
                 }
                 else

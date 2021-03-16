@@ -18,15 +18,15 @@ along with Foobar.  If not, see
 @using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizer<Audioplayer> localizer
 @inject IHowl Howl
 @inject IHowlGlobal HowlGlobal
 @inject HotKeys HotKeys
 @inject IJSRuntime JSRuntime
-@inject HttpClient httpent
+@inject ITextLocalizerService LocalizationService
 
 <Card>
-    <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
+    <CardHeader><h3>@localizer["Audioplayer"]</h3></CardHeader>
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
@@ -65,11 +65,11 @@ along with Foobar.  If not, see
                 }
             </Column>
             <Column>
-                <Tooltip Placement="Placement.Top" Text="@localizer["PlayPreviousTrackTooltip"]">
+                <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of previous track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
                 <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop()" />
-                <Tooltip Placement="Placement.Top" Text="@localizer["PlayNextTrackTooltip"]">
+                <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of next track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
             </Column>
@@ -83,7 +83,7 @@ along with Foobar.  If not, see
     private Track currentlyPlayingTrack;
     private HotKeysContext hotKeysContext;
     private Boolean paused;
-    private AudioFile audioFile;
+    private Audiofile audioFile;
     private Cuesheet cuesheet;
 
     [Parameter]
@@ -95,20 +95,20 @@ along with Foobar.  If not, see
             if (cuesheet != null)
             {
                 cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
-                if (cuesheet.AudioFile != null)
+                if (cuesheet.Audiofile != null)
                 {
-                    cuesheet.AudioFile.ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
+                    cuesheet.Audiofile.ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
                 }
             }
             cuesheet = value;
             if (cuesheet != null)
             {
                 cuesheet.AudioFileChanged += Cuesheet_AudioFileChanged;
-                if (cuesheet.AudioFile != null)
+                if (cuesheet.Audiofile != null)
                 {
-                    if (cuesheet.AudioFile.IsContentStreamLoaded == false)
+                    if (cuesheet.Audiofile.IsContentStreamLoaded == false)
                     {
-                        cuesheet.AudioFile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+                        cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
                     }
                     else
                     {
@@ -133,7 +133,7 @@ along with Foobar.  If not, see
 
     public Boolean PlaybackPossible
     {
-        get { return ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.PlaybackPossible == true)); }
+        get { return ((Cuesheet != null) && (Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.PlaybackPossible == true)); }
     }
 
     public Boolean PreviousButtonEnabled
@@ -207,9 +207,12 @@ along with Foobar.  If not, see
             .Add(ModKeys.None, Keys.MediaPlayPause, OnPlayClicked)
             .Add(ModKeys.None, Keys.MediaTrackNext, () => OnPlayNextPreviousTrackClicked())
             .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true));
-        //Attach media keys
-        var dotNetReference = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("GLOBAL.SetAudioPlayerReference", dotNetReference);
+
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+
         //Setup audio timer
         audioUpdateTimer = new Timer(500);
         audioUpdateTimer.AutoReset = true;
@@ -262,6 +265,8 @@ along with Foobar.  If not, see
             soundId = null;
             StateHasChanged();
         };
+
+        await base.OnInitializedAsync();
     }
 
     private async Task OnSliderValueChanged(Double newvalue)
@@ -276,7 +281,7 @@ along with Foobar.  If not, see
 
     private async Task OnPlayClicked()
     {
-        if (Cuesheet.AudioFile != audioFile)
+        if (Cuesheet.Audiofile != audioFile)
         {
             soundId = null;
         }
@@ -287,17 +292,17 @@ along with Foobar.  If not, see
         }
         else
         {
-            if ((Cuesheet == null) || (Cuesheet.AudioFile == null) || (Cuesheet.AudioFile.PlaybackPossible == false))
+            if ((Cuesheet == null) || (Cuesheet.Audiofile == null) || (Cuesheet.Audiofile.PlaybackPossible == false))
             {
-                throw new ArgumentNullException(nameof(Cuesheet.AudioFile));
+                throw new ArgumentNullException(nameof(Cuesheet.Audiofile));
             }
             var options = new HowlOptions
             {
-                Sources = new[] { Cuesheet.AudioFile.ObjectURL },
-                Formats = new[] { Cuesheet.AudioFile.AudioFileType.ToLower() },
+                Sources = new[] { Cuesheet.Audiofile.ObjectURL },
+                Formats = new[] { Cuesheet.Audiofile.AudioFileType.ToLower() },
                 Html5 = true
             };
-            audioFile = Cuesheet.AudioFile;
+            audioFile = Cuesheet.Audiofile;
             soundId = await Howl.Play(options);
         }
     }
@@ -335,9 +340,9 @@ along with Foobar.  If not, see
 
     private void Cuesheet_AudioFileChanged(object sender, EventArgs args)
     {
-        if (Cuesheet.AudioFile != null)
+        if (Cuesheet.Audiofile != null)
         {
-            Cuesheet.AudioFile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+            Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
         }
         TotalTime = null;
     }
@@ -349,9 +354,9 @@ along with Foobar.  If not, see
 
     private void AnalyseAudioFile()
     {
-        if ((Cuesheet != null) && (Cuesheet.AudioFile != null) && (Cuesheet.AudioFile.Duration.HasValue) && (TotalTime.HasValue == false))
+        if ((Cuesheet != null) && (Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.Duration.HasValue) && (TotalTime.HasValue == false))
         {
-            TotalTime = Cuesheet.AudioFile.Duration.Value;
+            TotalTime = Cuesheet.Audiofile.Duration.Value;
         }
     }
 }

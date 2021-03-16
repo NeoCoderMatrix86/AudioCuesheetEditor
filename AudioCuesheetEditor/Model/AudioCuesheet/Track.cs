@@ -13,16 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
+using Blazorise.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
@@ -207,7 +204,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public String GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        public String GetDisplayNameLocalized(ITextLocalizer localizer)
         {
             String identifierString = null;
             if (Position != null)
@@ -273,45 +270,45 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (Position == null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "HasNoValue", nameof(Position)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} has no value!", nameof(Position)));
             }
             if ((Position != null) && (Position == 0))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "HasInvalidValue", nameof(Position)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} has invalid value!", nameof(Position)));
             }
             if (String.IsNullOrEmpty(Artist) == true)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "HasNoValue", nameof(Artist)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "{0} has no value!", nameof(Artist)));
             }
             if (String.IsNullOrEmpty(Title) == true)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "HasNoValue", nameof(Title)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
             }
             if (Begin == null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "HasNoValue", nameof(Begin)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "{0} has no value!", nameof(Begin)));
             }
             else
             {
                 if (Begin < TimeSpan.Zero)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "HasInvalidBegin"));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "{0} has invalid timespan!", nameof(Begin)));
                 }
             }
             if (End == null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "HasNoValue", nameof(End)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "{0} has no value!", nameof(End)));
             }
             else
             {
                 if (End < TimeSpan.Zero)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "HasInvalidEnd"));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "{0} has invalid timespan!", nameof(End)));
                 }
             }
             if (Length == null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "LengthHasNoValue"));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "{0} has no value! Please check {1} and {2}.", nameof(Length), nameof(Begin), nameof(End)));
             }
             //Check track overlapping
             if (Cuesheet != null)
@@ -333,7 +330,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         {
                             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                         }
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "PositionAlreadyInUse", Position, String.Join(", ", tracksWithSamePosition)));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track is already in use by track(s) {2}!", nameof(Position), Position, String.Join(", ", tracksWithSamePosition)));
                     }
                 }
                 if (Begin.HasValue)
@@ -353,7 +350,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         {
                             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                         }
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Warning, "TimeIsOverlapping", nameof(Begin), String.Join(", ", tracksOverlapping)));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(Begin), String.Join(", ", tracksOverlapping)));
                     }
                 }
                 if (End.HasValue)
@@ -373,7 +370,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         {
                             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                         }
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Warning, "TimeIsOverlapping", nameof(End), String.Join(", ", tracksOverlapping)));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(End), String.Join(", ", tracksOverlapping)));
                     }
                 }
             }

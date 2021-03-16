@@ -18,10 +18,11 @@ along with Foobar.  If not, see
 
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
-@inject IStringLocalizer<Localization> localizer
+@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizer<CultureSelector> localizer
 @inject OptionsController optionsController
 
-@localizer["CultureSetting"]
+@localizer["Culture setting"]
 
 <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName" Style="width: 150px; display: inherit;">
     @foreach (var culture in OptionsController.AvailableCultures)
@@ -30,12 +31,20 @@ along with Foobar.  If not, see
     }
 </Select>
 
-@code{
+@code{ 
+    protected override Task OnInitializedAsync()
+    {
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+        return base.OnInitializedAsync();
+    }
 
     private async Task OnCultureSelectionChanged(String value)
     {
         optionsController.Options.CultureName = value;
         await optionsController.SaveOptions();
-        NavManager.NavigateTo(NavManager.Uri, forceLoad: true);
+        LocalizationService.ChangeLanguage(optionsController.Options.CultureName);
     }
 }

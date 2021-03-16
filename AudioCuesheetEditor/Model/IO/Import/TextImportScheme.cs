@@ -34,16 +34,16 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             var schemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
             var schemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            var schemeCuesheetAudioFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.AudioFile), SchemeCharacter);
+            var schemeCuesheetAudioFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
             var schemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-            var schemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CatalogueNumber), SchemeCharacter);
+            var schemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
                 {nameof(ImportCuesheet.Artist), schemeCuesheetArtist },
                 {nameof(ImportCuesheet.Title), schemeCuesheetTitle },
-                {nameof(ImportCuesheet.AudioFile), schemeCuesheetAudioFile },
-                {nameof(ImportCuesheet.CatalogueNumber), schemeCuesheetCatalogueNumber },
+                {nameof(ImportCuesheet.Audiofile), schemeCuesheetAudioFile },
+                {nameof(ImportCuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
                 {nameof(ImportCuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 
@@ -111,7 +111,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             if (String.IsNullOrEmpty(SchemeCuesheet))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "HasNoValue", nameof(SchemeCuesheet)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "{0} has no value!", nameof(SchemeCuesheet)));
             }
             else
             {
@@ -128,13 +128,13 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     if (addValidationError == true)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
                     }
                 }
             }
             if (String.IsNullOrEmpty(SchemeTracks))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "HasNoValue", nameof(SchemeTracks)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "{0} has no value!", nameof(SchemeTracks)));
             }
             else
             {
@@ -151,7 +151,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     if (addValidationError == true)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
                     }
                 }
             }

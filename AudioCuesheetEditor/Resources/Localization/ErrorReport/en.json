@@ -1,0 +1,15 @@
+{
+  "culture": "en",
+  "translations": {
+    "An internal error occured and application has stopped. Please fill the error report below and send it to the developer for research of the error and solving the problem.": "An internal error occured and application has stopped. Please fill the error report below and send it to the developer for research of the error and solving the problem.",
+    "Your email address (optional)": "Your email address (optional)",
+    "Errorreport": "Errorreport",
+    "Files": "Files",
+    "Exception": "Exception",
+    "Options": "Options",
+    "Log": "Log",
+    "Once you have submitted the report, you will be redirected to the page formspree.io. This is correct, because the report is send through this service. You can use browser back to restart the application.Thanks for your support.": "Once you have submitted the report, you will be redirected to the page formspree.io. This is correct, because the report is send through this service. You can use browser back to restart the application. Thanks for your support!",
+    "Send": "Send",
+    "Please describe how the error occured: 1.What did you do before the error? 2.Does the error occur again, if you try that again?": "Please describe how the error occured:\\n1.What did you do before the error?\\n2.Does the error occur again, if you try that again?"
+  }
+}

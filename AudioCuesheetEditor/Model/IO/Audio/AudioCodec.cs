@@ -14,12 +14,8 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Shared.ResourceFiles;
-using Microsoft.Extensions.Localization;
+using Blazorise.Localization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
@@ -48,7 +44,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             Name = name;
         }
 
-        public string GetDisplayNameLocalized(IStringLocalizer<Localization> localizer)
+        public string GetDisplayNameLocalized(ITextLocalizer localizer)
         {
             return localizer[Name];
         }
