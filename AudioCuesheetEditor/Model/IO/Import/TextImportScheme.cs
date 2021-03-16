@@ -111,7 +111,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             if (String.IsNullOrEmpty(SchemeCuesheet))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "HasNoValue", nameof(SchemeCuesheet)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "{0} has no value!", nameof(SchemeCuesheet)));
             }
             else
             {
@@ -128,13 +128,13 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     if (addValidationError == true)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
                     }
                 }
             }
             if (String.IsNullOrEmpty(SchemeTracks))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "HasNoValue", nameof(SchemeTracks)));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "{0} has no value!", nameof(SchemeTracks)));
             }
             else
             {
@@ -151,7 +151,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     if (addValidationError == true)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
                     }
                 }
             }

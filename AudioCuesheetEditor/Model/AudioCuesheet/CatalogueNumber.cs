@@ -44,17 +44,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (String.IsNullOrEmpty(Value))
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "HasNoValue", "CatalogueNumber"));
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "{0} has no value!", nameof(CatalogueNumber)));
             }
             else
             {
                 if (Value.All(Char.IsDigit) == false)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "CataloguenumberContainsNonDigits"));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} does not only contain numbers.", nameof(CatalogueNumber)));
                 }
                 if (Value.Length != 13)
                 {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "HasInvalidLength", "CatalogueNumber", 13));
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} has invalid length ({1})!", nameof(CatalogueNumber), 13));
                 }
             }
         }

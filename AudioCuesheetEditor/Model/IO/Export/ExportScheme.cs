@@ -26,6 +26,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
+    //TODO: Rename to Schemetype
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SchemeType
     {
@@ -34,6 +35,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         Body,
         Footer
     }
+    //TODO: Rename to Exportscheme
     public class ExportScheme : Validateable
     {
         public const String SchemeCharacter = "%";
@@ -170,7 +172,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         if (addValidationError == true)
                         {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
                         }
                         break;
                     case SchemeType.Body:
@@ -184,11 +186,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         if (addValidationError == true)
                         {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "SchemeContainsPlaceholdersThatCanNotBeSolved"));
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
                         }
                         break;
                     case SchemeType.Unknown:
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "HasInvalidValue", nameof(SchemeType)));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "{0} has invalid value!", nameof(SchemeType)));
                         break;
                 }
             }

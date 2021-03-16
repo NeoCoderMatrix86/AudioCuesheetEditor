@@ -187,7 +187,7 @@ along with Foobar.  If not, see
                                     </Blazorise.Link>
                                 </CollapseHeader>
                                 <CollapseBody>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(new TextLocalizer<ValidationMessage>(LocalizationService), String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD artist"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -195,7 +195,7 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(new TextLocalizer<ValidationMessage>(LocalizationService), String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD title"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -210,7 +210,7 @@ along with Foobar.  If not, see
                                             {
                                                 <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                                                 var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile))));
-                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(new TextLocalizer<ValidationMessage>(LocalizationService), String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
+                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.AudioFile))" accept="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.AudioFile)))"></InputFile>
                                             }
                                             else
                                             {
@@ -231,7 +231,7 @@ along with Foobar.  If not, see
                                             }
                                         </FieldBody>
                                     </Field>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(new TextLocalizer<ValidationMessage>(LocalizationService), String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD textfile"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -254,7 +254,7 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
+                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.CatalogueNumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(CatalogueNumber), nameof(CatalogueNumber.Value)), seperator: Environment.NewLine)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cataloguenumber"]</FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -369,48 +369,48 @@ along with Foobar.  If not, see
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="trackPositionTableRowCell">
-                                                        <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
+                                                        <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
                                                             <NumericEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" ChangeTextOnKeyPress="false" />
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                                                                 <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="track.Title" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                                                 <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                                                 <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="minWidth">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                                                 <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
                                                             </Tooltip>
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            @((MarkupString)track.GetValidationErrors(localizer))
+                                                            @((MarkupString)track.GetValidationErrors(ValidationMessageLocalizer))
                                                         </Tooltip>
                                                     </TableRowCell>
                                                 </TableRow>
@@ -487,7 +487,7 @@ along with Foobar.  If not, see
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeCuesheet))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(ValidationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -515,7 +515,7 @@ along with Foobar.  If not, see
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(localizer, nameof(TextImportScheme.SchemeTracks))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(ValidationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -691,7 +691,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeHead.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(localizer)</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -729,7 +729,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeTracks.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(localizer)</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -767,7 +767,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeFooter.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(localizer)</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -897,7 +897,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Position"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
                             <NumericEdit TValue="uint?" Max="99" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="editTrack.Clone.Position" />
                         </Tooltip>
                     </FieldBody>
@@ -905,7 +905,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Artist"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                             <TextEdit Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="editTrack.Clone.Artist" />
                         </Tooltip>
                     </FieldBody>
@@ -913,7 +913,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Title"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                             <TextEdit Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="editTrack.Clone.Title" />
                         </Tooltip>
                     </FieldBody>
@@ -921,7 +921,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Begin"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                             <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editTrack.Clone.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Begin = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
@@ -929,7 +929,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["End"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                             <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editTrack.Clone.End)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.End = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
@@ -937,7 +937,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Length"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                             <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editTrack.Clone.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Length = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
@@ -956,7 +956,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PreGap"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
                             <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editTrack.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PreGap = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
@@ -964,7 +964,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PostGap"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
+                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
                             <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editTrack.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PostGap = x, value)" ChangeTextOnKeyPress="false" />
                         </Tooltip>
                     </FieldBody>
@@ -1002,6 +1002,8 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; private set; }
+
     public void Dispose()
     {
         hotKeysContext.Dispose();
@@ -1114,6 +1116,8 @@ along with Foobar.  If not, see
         {
             StateHasChanged();
         };
+
+        ValidationMessageLocalizer = new TextLocalizer<ValidationMessage>(LocalizationService);
 
         SetCuesheetObject();
 

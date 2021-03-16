@@ -3,11 +3,26 @@
   "translations": {
     "{0} has no value!": "{0} hat keinen Wert!",
     "{0} has invalid Count ({1})!": "{0} hat eine ungültige Menge ({1})!",
+    "{0} has invalid value!": "{0} hat einen ungültigen Wert!",
+    "{0} has invalid length ({1})!": "{0} hat eine ungültige Länge ({1})!",
+    "{0} has invalid timespan!": "{0} ist nicht gültig (muss größer oder gleich 00:00:00 sein). Bitte geben Sie eine gültige Zeit an.",
+    "{0} has no value! Please check {1} and {2}.": "{0} hat keinen Wert! Bitte prüfen Sie {1} und {2}.",
+    "{0} {1} of this track is already in use by track(s) {2}!": "{0} {1} von diesem Track ist bereits in Benutzung durch Track(s) {2}!",
+    "{0} is overlapping with other track(s) ({1})!": "{0} überschneidet sich mit anderen Tracks ({1})!",
+    "{0} does not only contain numbers.": "{0} enthält nicht nur Zahlen.",
     "Artist": "Künstler",
     "Title": "Titel",
     "Audiofile": "Audiodatei",
     "Tracks": "Tracks",
     "CDTextfile": "CD Textdatei",
-    "Cataloguenumber": "Katalognummer"
+    "Cataloguenumber": "Katalognummer",
+    "Position": "Position",
+    "Begin": "Beginn",
+    "End": "Ende",
+    "Length": "Länge",
+    "Schemetype": "Schematyp",
+    "Scheme contains placeholders that can not be solved!": "Schema enthält Platzhalter, die nicht aufgelöst werden können!",
+    "SchemeCuesheet": "Schema Cuesheet",
+    "SchemeTracks": "Schema Tracks"
   }
 }
