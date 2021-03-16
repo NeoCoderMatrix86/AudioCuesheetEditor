@@ -1,5 +1,24 @@
 # Changelog
 
+## [v2.3.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.3.0) (2021-03-16)
+
+**Implemented enhancements:**
+
+- Save changes in session [\#146](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/146)
+- Add processing hints to record mode [\#140](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/140)
+- Native file format [\#133](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/133)
+- Add changelog [\#128](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/128)
+- Warning on reload [\#123](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/123)
+
+**Fixed bugs:**
+
+- Loaded projectfile does not work with linked tracks [\#156](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/156)
+- Position not calculated correctly if using Up/Down [\#152](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/152)
+- Delete all track also resets cuesheet [\#142](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/142)
+- Linked track doesn't set Begin on delete [\#141](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/141)
+- Record view not usable on firefox [\#138](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/138)
+- Audio file name gets saved in options with file extension [\#137](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/137)
+
 ## [v2.2.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.2.0) (2021-02-25)
 
 **Implemented enhancements:**
