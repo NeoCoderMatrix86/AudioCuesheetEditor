@@ -424,7 +424,7 @@ along with Foobar.  If not, see
                         </Accordion>
 
                         <br />
-                        <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
+                        <Audioplayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
                         <br />
                     </Column>
                     <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
@@ -1105,7 +1105,7 @@ along with Foobar.  If not, see
     private Modal modalOptions;
     private Modal modalTrackEdit;
     private Modal modalDownloadProjectfile;
-    private AudioPlayer audioPlayer;
+    private Audioplayer audioPlayer;
 
     protected override async Task OnInitializedAsync()
     {

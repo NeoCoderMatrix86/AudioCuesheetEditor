@@ -18,15 +18,15 @@ along with Foobar.  If not, see
 @using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
-@inject ITextLocalizer<AudioPlayer> localizer
+@inject ITextLocalizer<Audioplayer> localizer
 @inject IHowl Howl
 @inject IHowlGlobal HowlGlobal
 @inject HotKeys HotKeys
 @inject IJSRuntime JSRuntime
-@inject HttpClient httpent
+@inject ITextLocalizerService LocalizationService
 
 <Card>
-    <CardHeader><h3>@localizer["AudioPlayer"]</h3></CardHeader>
+    <CardHeader><h3>@localizer["Audioplayer"]</h3></CardHeader>
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
@@ -65,11 +65,11 @@ along with Foobar.  If not, see
                 }
             </Column>
             <Column>
-                <Tooltip Placement="Placement.Top" Text="@localizer["PlayPreviousTrackTooltip"]">
+                <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of previous track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
                 <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop()" />
-                <Tooltip Placement="Placement.Top" Text="@localizer["PlayNextTrackTooltip"]">
+                <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of next track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
             </Column>
@@ -207,9 +207,12 @@ along with Foobar.  If not, see
             .Add(ModKeys.None, Keys.MediaPlayPause, OnPlayClicked)
             .Add(ModKeys.None, Keys.MediaTrackNext, () => OnPlayNextPreviousTrackClicked())
             .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true));
-        //Attach media keys
-        var dotNetReference = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("GLOBAL.SetAudioPlayerReference", dotNetReference);
+
+        LocalizationService.LocalizationChanged += delegate
+        {
+            StateHasChanged();
+        };
+
         //Setup audio timer
         audioUpdateTimer = new Timer(500);
         audioUpdateTimer.AutoReset = true;
@@ -262,6 +265,8 @@ along with Foobar.  If not, see
             soundId = null;
             StateHasChanged();
         };
+        
+        await base.OnInitializedAsync();
     }
 
     private async Task OnSliderValueChanged(Double newvalue)
