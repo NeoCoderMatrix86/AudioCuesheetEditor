@@ -68,7 +68,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
 
             //Test class
             var exportProfile = new Exportprofile();
-            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
+            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
             Assert.IsTrue(exportProfile.SchemeTracks.IsValid);
@@ -125,7 +125,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
 
             //Test flags
             exportProfile = new Exportprofile();
-            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
+            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Flags%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
             Assert.IsTrue(exportProfile.SchemeTracks.IsValid);
@@ -194,7 +194,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
 
             var exportProfile = new Exportprofile();
-            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.CatalogueNumber%;%Cuesheet.CDTextfile%";
+            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
             Assert.IsTrue(exportProfile.SchemeTracks.IsValid);

@@ -50,7 +50,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             //Test TextImportFile
             var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = "%Track.Artist% - %Track.Title%[\t]{1,}%Track.End%";
-            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.Audiofile%";
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsNotNull(textImportFile.ImportCuesheet);
             Assert.AreEqual("CuesheetArtist", textImportFile.ImportCuesheet.Artist);
@@ -123,7 +123,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist%[|]%Cuesheet.Title%[\\t]{1,}%Cuesheet.CDTextfile%[\\t]{1,}%Cuesheet.CatalogueNumber%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist%[|]%Cuesheet.Title%[\\t]{1,}%Cuesheet.CDTextfile%[\\t]{1,}%Cuesheet.Cataloguenumber%";
             textImportFile.TextImportScheme.SchemeTracks = "%Position%|%Artist% - %Title%[\t]{1,}%End%";
 
             Assert.IsNotNull(textImportFile.AnalyseException);
@@ -279,7 +279,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             //Test TextImportFile
             var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = "%Track.Artist% - %Track.Title%[\t]{1,}%Track.End%";
-            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.AudioFile%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.Audiofile%";
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsNotNull(textImportFile.ImportCuesheet);
             Assert.IsNotNull(textImportFile.FileContentRecognized);

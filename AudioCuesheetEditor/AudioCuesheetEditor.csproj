@@ -11,8 +11,8 @@
   <ItemGroup>
     <Content Remove="Resources\Localization\About\de.json" />
     <Content Remove="Resources\Localization\About\en.json" />
-    <Content Remove="Resources\Localization\Audioplayer\de.json" />
-    <Content Remove="Resources\Localization\Audioplayer\en.json" />
+    <Content Remove="Resources\Localization\AudioPlayer\de.json" />
+    <Content Remove="Resources\Localization\AudioPlayer\en.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\de.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
     <Content Remove="Resources\Localization\ErrorReport\de.json" />
@@ -40,8 +40,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Localization\About\de.json" />
     <EmbeddedResource Include="Resources\Localization\About\en.json" />
-    <EmbeddedResource Include="Resources\Localization\Audioplayer\en.json" />
-    <EmbeddedResource Include="Resources\Localization\Audioplayer\de.json" />
+    <EmbeddedResource Include="Resources\Localization\AudioPlayer\en.json" />
+    <EmbeddedResource Include="Resources\Localization\AudioPlayer\de.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\en.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
     <EmbeddedResource Include="Resources\Localization\ErrorReport\en.json" />
