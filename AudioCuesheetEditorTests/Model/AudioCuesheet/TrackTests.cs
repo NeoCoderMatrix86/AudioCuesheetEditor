@@ -102,6 +102,30 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual((uint)1, track.Position);
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual((uint)3, track3.Position);
+            track = new Track
+            {
+                Begin = TimeSpan.Zero,
+                Position = 1,
+                End = new TimeSpan(0, 3, 23)
+            };
+            track2 = new Track
+            {
+                Begin = new TimeSpan(0, 5, 23),
+                End = new TimeSpan(0, 5, 45),
+                Position = 3
+            };
+            track3 = new Track
+            {
+                Begin = new TimeSpan(0, 7, 12),
+                Position = 5,
+                End = new TimeSpan(0, 10, 12)
+            };
+            track2.LinkedPreviousTrack = track;
+            track3.LinkedPreviousTrack = track2;
+            Assert.AreEqual((uint)2, track2.Position.Value);
+            Assert.AreEqual((uint)3, track3.Position.Value);
+            Assert.AreEqual(track.End, track2.Begin);
+            Assert.AreEqual(track2.End, track3.Begin);
         }
 
         [TestMethod()]

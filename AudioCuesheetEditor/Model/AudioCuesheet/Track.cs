@@ -198,6 +198,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 previousTrackLink = value;
                 if (previousTrackLink != null)
                 {
+                    if ((previousTrackLink.Position.HasValue) && (Position != previousTrackLink.Position.Value + 1))
+                    {
+                        Position = previousTrackLink.Position.Value + 1;
+                    }
+                    if ((previousTrackLink.End.HasValue) && (Begin != previousTrackLink.End.Value))
+                    {
+                        Begin = previousTrackLink.End.Value;
+                    }
                     previousTrackLink.RankPropertyValueChanged += PreviousTrackLink_RankPropertyValueChanged;
                     RankPropertyValueChanged += This_RankPropertyValueChanged;
                 }
