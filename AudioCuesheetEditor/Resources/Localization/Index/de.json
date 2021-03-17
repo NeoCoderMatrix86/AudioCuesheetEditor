@@ -119,6 +119,9 @@
     "Enter cd artist here": "CD Künstler hier eingeben",
     "Enter cd title here": "CD Titel hier eingeben",
     "Enter cataloguenumber here": "Geben Sie hier die Katalognummer des Cuesheets an. Die Katalognummer ist eine 13 stellige Zahl.",
-    "Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field.": "Hier werden alle Validierungsnachrichten angezeigt. Jede Nachricht enthält eine Referenz auf das ursprüngliche Feld und kann daher angeklickt werden, um zu dem entsprechenden Feld zu gelangen."
+    "Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field.": "Hier werden alle Validierungsnachrichten angezeigt. Jede Nachricht enthält eine Referenz auf das ursprüngliche Feld und kann daher angeklickt werden, um zu dem entsprechenden Feld zu gelangen.",
+    "Common settings": "Allgemeine Einstellungen",
+    "Textimport settings": "Textimport Einstellungen",
+    "Record settings": "Aufnahme Einstellungen"
   }
 }

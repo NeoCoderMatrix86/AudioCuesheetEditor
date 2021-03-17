@@ -119,6 +119,9 @@
     "Enter cd artist here": "Enter CD artist here",
     "Enter cd title here": "Enter CD title here",
     "Enter cataloguenumber here": "Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number.",
-    "Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field.": "Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."
+    "Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field.": "Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field.",
+    "Common settings": "Common settings",
+    "Textimport settings": "Textimport settings",
+    "Record settings": "Record settings"
   }
 }

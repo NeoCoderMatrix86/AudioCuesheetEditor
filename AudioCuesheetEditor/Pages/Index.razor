@@ -812,69 +812,85 @@ along with Foobar.  If not, see
             <CloseButton Clicked="() => modalOptions.Hide()" />
         </ModalHeader>
         <ModalBody>
-            <!--TODO: Make Tabs -->
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Culture setting"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName">
-                        @foreach (var culture in OptionsController.AvailableCultures)
-                        {
-                            <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
-                        }
-                    </Select>
-                </FieldBody>
-            </Field>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Cuesheet filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" ChangeTextOnKeyPress="false"/>
-                </FieldBody>
-            </Field>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Project filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" ChangeTextOnKeyPress="false" />
-                </FieldBody>
-            </Field>
-            <Divider DividerType="DividerType.Solid" />
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme cuesheet"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeCuesheet" />
-                </FieldBody>
-            </Field>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme track"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeTracks" />
-                </FieldBody>
-            </Field>
-            <Divider DividerType="DividerType.Solid" />
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Default viewmode"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.ViewModeName">
-                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
-                        {
-                            <SelectItem Value="@name">@localizer[name]</SelectItem>
-                        }
-                    </Select>
-                </FieldBody>
-            </Field>
-            <Divider DividerType="DividerType.Solid" />
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Filename for recorded audio"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
-                </FieldBody>
-            </Field>
-            <Divider DividerType="DividerType.Solid" />
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Automatically link tracks"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is7">
-                    <Check TValue="Boolean?" @bind-Checked="optionsController.Options.LinkTracksWithPreviousOne">@localizer["Automatically link tracks with previous"]</Check>
-                </FieldBody>
-            </Field>
+            <Card>
+                <CardHeader>
+                    <Tabs @bind-SelectedTab="@selectedOptionsTab">
+                        <Items>
+                            <Tab Name="common">@localizer["Common settings"]</Tab>
+                            <Tab Name="textImport">@localizer["Textimport settings"]</Tab>
+                            <Tab Name="recording">@localizer["Record settings"]</Tab>
+                        </Items>
+                    </Tabs>
+                </CardHeader>
+                <CardBody>
+                    <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
+                        <TabPanel Name="common" Padding="Padding.Is3.OnY">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Culture setting"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName">
+                                        @foreach (var culture in OptionsController.AvailableCultures)
+                                        {
+                                            <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Default viewmode"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.ViewModeName">
+                                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                                        {
+                                            <SelectItem Value="@name">@localizer[name]</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Cuesheet filename"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" ChangeTextOnKeyPress="false" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Project filename"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" ChangeTextOnKeyPress="false" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Automatically link tracks"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Check TValue="Boolean?" @bind-Checked="optionsController.Options.LinkTracksWithPreviousOne">@localizer["Automatically link tracks with previous"]</Check>
+                                </FieldBody>
+                            </Field>
+                        </TabPanel>
+                        <TabPanel Name="textImport" Padding="Padding.Is3.OnY">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme cuesheet"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeCuesheet" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme track"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeTracks" />
+                                </FieldBody>
+                            </Field>
+                        </TabPanel>
+                        <TabPanel Name="recording" Padding="Padding.Is3.OnY">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Filename for recorded audio"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
+                                </FieldBody>
+                            </Field>
+                        </TabPanel>
+                    </TabsContent>
+                </CardBody>
+            </Card>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
@@ -1106,6 +1122,8 @@ along with Foobar.  If not, see
     private Modal modalTrackEdit;
     private Modal modalDownloadProjectfile;
     private AudioPlayer audioPlayer;
+
+    private String selectedOptionsTab = "common";
 
     protected override async Task OnInitializedAsync()
     {
