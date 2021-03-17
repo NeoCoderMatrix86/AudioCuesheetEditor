@@ -283,7 +283,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     track.Position = (uint)index;
                     currentTrack.Position = (uint)index + 1;
-                    //TODO: Also set Begin/End if using linked tracks
+                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+                    {
+                        //Set also begin and end, if using linked tracks
+                        if (currentTrack.Begin.HasValue)
+                        {
+                            track.Begin = currentTrack.Begin.Value;
+                        }
+                        if (currentTrack.End.HasValue)
+                        {
+                            var newEnd = track.End;
+                            track.End = currentTrack.End.Value;
+                            currentTrack.End = newEnd;
+                        }
+                    }
                 }
             }
             if (moveDirection == MoveDirection.Down)
@@ -324,7 +337,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     track.Position = (uint)index + 2;
                     currentTrack.Position = (uint)index + 1;
-                    //TODO: Also set Begin/End if using linked tracks
+                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+                    {
+                        //Set also begin and end, if using linked tracks
+                        if (track.Begin.HasValue)
+                        {
+                            currentTrack.Begin = track.Begin.Value;
+                        }
+                        if (track.End.HasValue)
+                        {
+                            var newEnd = currentTrack.End;
+                            currentTrack.End = track.End.Value;
+                            track.End = newEnd;
+                        }
+                    }
                 }
             }
         }
