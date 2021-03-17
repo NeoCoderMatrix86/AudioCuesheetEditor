@@ -202,7 +202,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         Position = previousTrackLink.Position.Value + 1;
                     }
-                    if ((previousTrackLink.End.HasValue) && (Begin != previousTrackLink.End.Value))
+                    if ((previousTrackLink.End.HasValue) && (Begin != previousTrackLink.End.Value) && ((previousTrackLink.End.Value <= End) || (End.HasValue == false)))
                     {
                         Begin = previousTrackLink.End.Value;
                     }
