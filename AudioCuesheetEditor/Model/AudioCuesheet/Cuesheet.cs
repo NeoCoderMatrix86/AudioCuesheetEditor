@@ -45,7 +45,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private CDTextfile cDTextfile;
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
-        private Boolean currentlyHandlingRankPropertyValueChanged;
 
         public event EventHandler AudioFileChanged;
         public Cuesheet()
@@ -169,7 +168,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.LinkedPreviousTrack = previousTrack;
                 }
             }
-            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
         }
 
@@ -182,7 +180,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             var nextTrack = tracks.FirstOrDefault(x => x.LinkedPreviousTrack == track);
             tracks.Remove(track);
             track.Cuesheet = null;
-            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             //If Tracks are linked, we need to set the linked track again
             if (nextTrack != null)
@@ -418,40 +415,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 _ = Cataloguenumber.IsValid;
                 validationErrors.AddRange(Cataloguenumber.ValidationErrors);
-            }
-        }
-
-        private void Track_RankPropertyValueChanged(object sender, string e)
-        {
-            if (currentlyHandlingRankPropertyValueChanged == false)
-            {
-                currentlyHandlingRankPropertyValueChanged = true;
-                Track trackRaisedEvent = (Track)sender;
-                var index = tracks.IndexOf(trackRaisedEvent);
-                switch (e)
-                {
-                    case nameof(Track.Begin):
-                        if (index > 0)
-                        {
-                            var previousTrack = tracks.ElementAt(index - 1);
-                            if ((previousTrack != trackRaisedEvent) && (previousTrack.End.HasValue == false))
-                            {
-                                previousTrack.End = trackRaisedEvent.Begin;
-                            }
-                        }
-                        break;
-                    case nameof(Track.End):
-                        if ((index + 1) < Tracks.Count)
-                        {
-                            var nextTrack = tracks.ElementAt(index + 1);
-                            if ((nextTrack != trackRaisedEvent) && (nextTrack.Begin.HasValue == false))
-                            {
-                                nextTrack.Begin = trackRaisedEvent.End;
-                            }
-                        }
-                        break;
-                }
-                currentlyHandlingRankPropertyValueChanged = false;
             }
         }
 

@@ -301,13 +301,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNull(track3.End);
             track1.Begin = TimeSpan.Zero;
             track2.Begin = new TimeSpan(0, 2, 43);
-            Assert.AreEqual(track1.End, new TimeSpan(0, 2, 43));
+            Assert.IsNull(track1.End);
             Assert.IsNull(track2.End);
             track3.End = new TimeSpan(0, 12, 14);
             Assert.IsNull(track2.End);
             Assert.IsNull(track3.Begin);
             track3.Begin = new TimeSpan(0, 7, 56);
-            Assert.AreEqual(track2.End, new TimeSpan(0, 7, 56));
+            Assert.IsNull(track2.End);
         }
         [TestMethod()]
         public void TrackOverlappingTest()
@@ -384,6 +384,34 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual((uint)2, track3.Position.Value);
             Assert.AreEqual((uint)3, track4.Position.Value);
             Assert.AreEqual((uint)4, track5.Position.Value);
+        }
+
+        [TestMethod()]
+        public void UnlickedTrackTest()
+        {
+            var cuesheet = new Cuesheet();
+            var testHelper = new TestHelper();
+            var track1 = new Track
+            {
+                Position = 1,
+                End = new TimeSpan(0, 3, 23)
+            };
+            var track2 = new Track 
+            { 
+                Position = 2
+            };
+            var track3 = new Track
+            {
+                Position = 3
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            Assert.AreEqual(track1.End, track2.Begin);
+            Assert.IsNull(track2.End);
+            Assert.IsNull(track3.Begin);
+            track3.Begin = new TimeSpan(0, 7, 32);
+            Assert.IsNull(track2.End);
         }
     }
 }
