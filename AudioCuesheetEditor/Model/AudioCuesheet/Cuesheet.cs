@@ -168,6 +168,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.LinkedPreviousTrack = previousTrack;
                 }
             }
+            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
         }
 
@@ -180,6 +181,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             var nextTrack = tracks.FirstOrDefault(x => x.LinkedPreviousTrack == track);
             tracks.Remove(track);
             track.Cuesheet = null;
+            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             //If Tracks are linked, we need to set the linked track again
             if (nextTrack != null)
@@ -242,113 +244,27 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             var index = tracks.IndexOf(track);
-            if (moveDirection == MoveDirection.Up)
+            Track currentTrack = null;
+            switch (moveDirection)
             {
-                if (index > 0)
-                {
-                    var currentTrack = tracks.ElementAt(index - 1);
-                    tracks[index - 1] = track;
-                    tracks[index] = currentTrack;
-                    //Set values corresponding to new position
-                    if (track.LinkedPreviousTrack != null)
+                case MoveDirection.Up:
+                    if (index > 0)
                     {
-                        if (index > 1)
-                        {
-                            track.LinkedPreviousTrack = tracks.ElementAt(index - 2);
-                        }
-                        else
-                        {
-                            track.LinkedPreviousTrack = null;
-                        }
+                        currentTrack = tracks.ElementAt(index - 1);
                     }
-                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
-                    {
-                        currentTrack.LinkedPreviousTrack = track;
-                    }
-                    else
-                    {
-                        currentTrack.LinkedPreviousTrack = null;
-                    }
-                    //Set next linked track needs to point to the new previous track
+                    break;
+                case MoveDirection.Down:
                     if ((index + 1) < Tracks.Count)
                     {
-                        var nextTrack = Tracks.ElementAt(index + 1);
-                        if (nextTrack.LinkedPreviousTrack != null)
-                        {
-                            nextTrack.LinkedPreviousTrack = currentTrack;
-                        }
+                        currentTrack = tracks.ElementAt(index + 1);
                     }
-                    track.Position = (uint)index;
-                    currentTrack.Position = (uint)index + 1;
-                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
-                    {
-                        //Set also begin and end, if using linked tracks
-                        if (currentTrack.Begin.HasValue)
-                        {
-                            track.Begin = currentTrack.Begin.Value;
-                        }
-                        if (currentTrack.End.HasValue)
-                        {
-                            var newEnd = track.End;
-                            track.End = currentTrack.End.Value;
-                            currentTrack.End = newEnd;
-                        }
-                    }
-                }
+                    break;
+                default:
+                    throw new ArgumentException("Invalid enum value for MoveDirection!", nameof(moveDirection));
             }
-            if (moveDirection == MoveDirection.Down)
+            if (currentTrack != null)
             {
-                if ((index + 1) < Tracks.Count)
-                {
-                    var currentTrack = tracks.ElementAt(index + 1);
-                    tracks[index + 1] = track;
-                    tracks[index] = currentTrack;
-                    //Set values corresponding to new position
-                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
-                    {
-                        track.LinkedPreviousTrack = currentTrack;
-                    }
-                    else
-                    {
-                        track.LinkedPreviousTrack = null;
-                    }
-                    if (currentTrack.LinkedPreviousTrack != null)
-                    {
-                        if (index > 0)
-                        {
-                            currentTrack.LinkedPreviousTrack = tracks.ElementAt(index - 1);
-                        }
-                        else
-                        {
-                            currentTrack.LinkedPreviousTrack = null;
-                        }
-                    }
-                    //Sret next linked track needs to point to the new previous track
-                    if ((index + 2) < Tracks.Count)
-                    {
-                        var nextTrack = Tracks.ElementAt(index + 2);
-                        if (nextTrack.LinkedPreviousTrack != null)
-                        {
-                            nextTrack.LinkedPreviousTrack = track;
-                        }
-                    }
-                    track.Position = (uint)index + 2;
-                    currentTrack.Position = (uint)index + 1;
-                    if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
-                    {
-                        //Set also begin and end, if using linked tracks
-                        if (track.Begin.HasValue)
-                        {
-                            currentTrack.Begin = track.Begin.Value;
-                        }
-                        if (track.End.HasValue)
-                        {
-                            var newEnd = currentTrack.End;
-                            currentTrack.End = track.End.Value;
-                            track.End = newEnd;
-                        }
-                    }
-                }
+                SwitchTracks(track, currentTrack, applicationOptions);
             }
         }
 
@@ -504,6 +420,99 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var track = new Track(importTrack);
                 AddTrack(track, applicationOptions);
             }
+        }
+
+        private void Track_RankPropertyValueChanged(object sender, string e)
+        {
+            //TODO: Check position and call switchtracks
+        }
+
+        private void SwitchTracks(Track track1, Track track2, ApplicationOptions applicationOptions)
+        {
+            if (track1 == null)
+            {
+                throw new ArgumentNullException(nameof(track1));
+            }
+            if (track2 == null)
+            {
+                throw new ArgumentNullException(nameof(track2));
+            }
+            if (applicationOptions == null)
+            {
+                throw new ArgumentNullException(nameof(applicationOptions));
+            }
+            var indexTrack1 = tracks.IndexOf(track1);
+            var indexTrack2 = tracks.IndexOf(track2);
+            Boolean restoreTrack1LinkedPreviousTrack = (track1.LinkedPreviousTrack != null) || ((indexTrack1 == 0) && (applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value));
+            Boolean restoreTrack2LinkedPreviousTrack = (track2.LinkedPreviousTrack != null) || ((indexTrack2 == 0) && (applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value));
+            //Switch track positions
+            tracks[indexTrack2] = track1;
+            tracks[indexTrack1] = track2;
+            //Set linked tracks correct again
+            indexTrack1 = tracks.IndexOf(track1);
+            indexTrack2 = tracks.IndexOf(track2);
+            if (restoreTrack1LinkedPreviousTrack)
+            {
+                if (indexTrack1 > 0)
+                {
+                    track1.LinkedPreviousTrack = tracks.ElementAt(indexTrack1 - 1);
+                }
+                else
+                {
+                    track1.LinkedPreviousTrack = null;
+                }
+            }
+            else
+            {
+                track1.LinkedPreviousTrack = null;
+            }
+            var currentLinkedTrack1 = tracks.SingleOrDefault(x => x.LinkedPreviousTrack == track1);
+            if (currentLinkedTrack1 != null)
+            {
+                //Set next linked track needs to point to the new previous track
+                var indexCurrentLinkedTrack1 = tracks.IndexOf(currentLinkedTrack1);
+                if (indexCurrentLinkedTrack1 > 0)
+                {
+                    currentLinkedTrack1.LinkedPreviousTrack = tracks.ElementAt(indexCurrentLinkedTrack1 - 1);
+                }
+                else
+                {
+                    currentLinkedTrack1.LinkedPreviousTrack = null;
+                }
+            }
+            if (restoreTrack2LinkedPreviousTrack)
+            {
+                if (indexTrack2 > 0)
+                {
+                    track2.LinkedPreviousTrack = tracks.ElementAt(indexTrack2 - 1);
+                }
+                else
+                {
+                    track2.LinkedPreviousTrack = null;
+                }
+            }
+            else
+            {
+                track2.LinkedPreviousTrack = null;
+            }
+            var currentLinkedTrack2 = tracks.SingleOrDefault(x => x.LinkedPreviousTrack == track2);
+            if (currentLinkedTrack2 != null)
+            {
+                //Set next linked track needs to point to the new previous track
+                var indexCurrentLinkedTrack2 = tracks.IndexOf(currentLinkedTrack2);
+                if (indexCurrentLinkedTrack2 > 0)
+                {
+                    currentLinkedTrack2.LinkedPreviousTrack = tracks.ElementAt(indexCurrentLinkedTrack2 - 1);
+                }
+                else
+                {
+                    currentLinkedTrack2.LinkedPreviousTrack = null;
+                }
+            }
+            //Set values corresponding to their new positions
+            track1.Position = (uint)indexTrack1 + 1;
+            track2.Position = (uint)indexTrack2 + 1;
+            //TODO: Set begin/end
         }
     }
 }
