@@ -188,6 +188,7 @@ namespace AudioCuesheetEditor.Model.IO
                 builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetTitle, Cuesheet.Title));
                 builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetArtist, Cuesheet.Artist));
                 builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetFileName, Cuesheet.Audiofile.FileName, Cuesheet.Audiofile.AudioFileType));
+                //TODO: Maybe need to order the tracks list?!
                 foreach (var track in Cuesheet.Tracks)
                 {
                     builder.AppendLine(String.Format("{0}{1} {2:00} {3}", Tab, CuesheetTrack, track.Position, CuesheetTrackAudio));

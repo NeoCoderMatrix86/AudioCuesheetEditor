@@ -319,6 +319,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error, "{0} has invalid Count ({1})!", nameof(Tracks), 0));
             }
+            else
+            {
+                //TODO: Check for track correct positions
+            }
             if (CDTextfile == null)
             {
                 validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "{0} has no value!", nameof(CDTextfile)));
