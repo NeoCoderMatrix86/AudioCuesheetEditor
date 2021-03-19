@@ -495,7 +495,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 track2.LinkedPreviousTrack = null;
             }
-            var currentLinkedTrack2 = tracks.SingleOrDefault(x => x.LinkedPreviousTrack == track2);
+            var currentLinkedTrack2 = tracks.SingleOrDefault(x => x.LinkedPreviousTrack == track2 && x != track1);
             if (currentLinkedTrack2 != null)
             {
                 //Set next linked track needs to point to the new previous track
@@ -512,7 +512,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Set values corresponding to their new positions
             track1.Position = (uint)indexTrack1 + 1;
             track2.Position = (uint)indexTrack2 + 1;
-            //TODO: Set begin/end
+            if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+            {
+                //Set also begin and end, if using linked tracks
+                if (indexTrack1 < indexTrack2)
+                {
+                    track1.Begin = track2.Begin;
+                    var newEnd = track1.End;
+                    track1.End = track2.End;
+                    track2.End = newEnd;
+                }
+                else
+                {
+                    track2.Begin = track1.Begin;
+                    var newEnd = track2.End;
+                    track2.End = track1.End;
+                    track1.End = newEnd;
+                }
+            }
         }
     }
 }
