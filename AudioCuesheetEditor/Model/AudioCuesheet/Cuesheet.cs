@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private CDTextfile cDTextfile;
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
-        private List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
+        private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
 
         public event EventHandler AudioFileChanged;
         public Cuesheet()
@@ -266,7 +266,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return movePossible;
         }
 
-        public void MoveTrack(Track track, MoveDirection moveDirection, ApplicationOptions applicationOptions)
+        public void MoveTrack(Track track, MoveDirection moveDirection)
         {
             if (track == null)
             {
@@ -293,7 +293,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (currentTrack != null)
             {
-                SwitchTracks(track, currentTrack, applicationOptions);
+                SwitchTracks(track, currentTrack);
             }
         }
 
@@ -529,7 +529,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void SwitchTracks(Track track1, Track track2, ApplicationOptions applicationOptions)
+        private void SwitchTracks(Track track1, Track track2)
         {
             if (track1 == null)
             {
@@ -539,100 +539,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(track2));
             }
-            if (applicationOptions == null)
-            {
-                throw new ArgumentNullException(nameof(applicationOptions));
-            }
             var indexTrack1 = tracks.IndexOf(track1);
             var indexTrack2 = tracks.IndexOf(track2);
-            //TODO
-            //Boolean restoreTrack1LinkedPreviousTrack = (track1.IsLinkedToPreviousTrack) || ((indexTrack1 == 0) && (applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value));
-            //Boolean restoreTrack2LinkedPreviousTrack = (track2.IsLinkedToPreviousTrack) || ((indexTrack2 == 0) && (applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value));
             //Switch track positions
             tracks[indexTrack2] = track1;
             tracks[indexTrack1] = track2;
             //Set linked tracks correct again
             indexTrack1 = tracks.IndexOf(track1);
             indexTrack2 = tracks.IndexOf(track2);
-            //TODO
-            //if (restoreTrack1LinkedPreviousTrack)
-            //{
-            //    if (indexTrack1 > 0)
-            //    {
-            //        track1.LinkedPreviousTrack = tracks.ElementAt(indexTrack1 - 1);
-            //    }
-            //    else
-            //    {
-            //        track1.LinkedPreviousTrack = null;
-            //    }
-            //}
-            //else
-            //{
-            //    track1.LinkedPreviousTrack = null;
-            //}
-            //var currentLinkedTrack1 = tracks.SingleOrDefault(x => x.LinkedPreviousTrack == track1);
-            //if (currentLinkedTrack1 != null)
-            //{
-            //    //Set next linked track needs to point to the new previous track
-            //    var indexCurrentLinkedTrack1 = tracks.IndexOf(currentLinkedTrack1);
-            //    if (indexCurrentLinkedTrack1 > 0)
-            //    {
-            //        currentLinkedTrack1.LinkedPreviousTrack = tracks.ElementAt(indexCurrentLinkedTrack1 - 1);
-            //    }
-            //    else
-            //    {
-            //        currentLinkedTrack1.LinkedPreviousTrack = null;
-            //    }
-            //}
-            //if (restoreTrack2LinkedPreviousTrack)
-            //{
-            //    if (indexTrack2 > 0)
-            //    {
-            //        track2.LinkedPreviousTrack = tracks.ElementAt(indexTrack2 - 1);
-            //    }
-            //    else
-            //    {
-            //        track2.LinkedPreviousTrack = null;
-            //    }
-            //}
-            //else
-            //{
-            //    track2.LinkedPreviousTrack = null;
-            //}
-            //var currentLinkedTrack2 = tracks.SingleOrDefault(x => x.LinkedPreviousTrack == track2 && x != track1);
-            //if (currentLinkedTrack2 != null)
-            //{
-            //    //Set next linked track needs to point to the new previous track
-            //    var indexCurrentLinkedTrack2 = tracks.IndexOf(currentLinkedTrack2);
-            //    if (indexCurrentLinkedTrack2 > 0)
-            //    {
-            //        currentLinkedTrack2.LinkedPreviousTrack = tracks.ElementAt(indexCurrentLinkedTrack2 - 1);
-            //    }
-            //    else
-            //    {
-            //        currentLinkedTrack2.LinkedPreviousTrack = null;
-            //    }
-            //}
             //Set values corresponding to their new positions
             track1.Position = (uint)indexTrack1 + 1;
             track2.Position = (uint)indexTrack2 + 1;
-            if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
+            //Set also begin and end, if using linked tracks
+            if (indexTrack1 < indexTrack2)
             {
-                //Set also begin and end, if using linked tracks
-                if (indexTrack1 < indexTrack2)
-                {
-                    track1.Begin = track2.Begin;
-                    var newEnd = track1.End;
-                    track1.End = track2.End;
-                    track2.End = newEnd;
-                }
-                else
-                {
-                    track2.Begin = track1.Begin;
-                    var newEnd = track2.End;
-                    track2.End = track1.End;
-                    track1.End = newEnd;
-                }
+                //TODO
+            }
+            else
+            {
+                //TODO
             }
         }
     }

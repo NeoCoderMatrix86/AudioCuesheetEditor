@@ -85,54 +85,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 2
             };
             Assert.IsFalse(track2.IsLinkedToPreviousTrack);
-            track2.IsLinkedToPreviousTrack = true;
-            Assert.AreEqual(track.End, track2.Begin);
-            track.End = new TimeSpan(0, 3, 45);
-            Assert.AreEqual(track.End, track2.Begin);
-            var track3 = new Track
+            Boolean eventFired = false;
+            track2.IsLinkedToPreviousTrackChanged += delegate
             {
-                Begin = track2.End,
-                Position = 7,
-                End = new TimeSpan(0, 10, 12)
-            };
-            track3.IsLinkedToPreviousTrack = true;
-            track3.End = new TimeSpan(0, 15, 2);
-            track3.Position = 3;
-            Assert.AreEqual(track2.End, track3.Begin);
-            Assert.AreEqual((uint)1, track.Position);
-            Assert.AreEqual((uint)2, track2.Position);
-            Assert.AreEqual((uint)3, track3.Position);
-            track = new Track
-            {
-                Begin = TimeSpan.Zero,
-                Position = 1,
-                End = new TimeSpan(0, 3, 23)
-            };
-            track2 = new Track
-            {
-                Begin = new TimeSpan(0, 5, 23),
-                End = new TimeSpan(0, 5, 45),
-                Position = 3
-            };
-            track3 = new Track
-            {
-                Begin = new TimeSpan(0, 7, 12),
-                Position = 5,
-                End = new TimeSpan(0, 10, 12)
+                eventFired = true;
             };
             track2.IsLinkedToPreviousTrack = true;
-            track3.IsLinkedToPreviousTrack = true;
-            Assert.AreEqual((uint)2, track2.Position.Value);
-            Assert.AreEqual((uint)3, track3.Position.Value);
-            Assert.AreEqual(track.End, track2.Begin);
-            Assert.AreEqual(track2.End, track3.Begin);
-            var track4 = new Track
-            {
-                Begin = new TimeSpan(0, 11, 23),
-                Position = 4,
-                IsLinkedToPreviousTrack = true
-            };
-            Assert.AreEqual(track3.End, track4.Begin);
+            Assert.IsTrue(eventFired);
         }
 
         [TestMethod()]
