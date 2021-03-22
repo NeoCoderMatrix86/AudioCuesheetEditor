@@ -137,19 +137,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.RemoveTrack(track4);
             Assert.AreEqual(3, cuesheet.Tracks.Count);
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            track3.LinkedPreviousTrack = track1;
-            track5.LinkedPreviousTrack = track3;
+            track3.IsLinkedToPreviousTrack = true;
+            track5.IsLinkedToPreviousTrack = true;
             var track1End = track1.End;
             cuesheet.MoveTrack(track3, MoveDirection.Up, testHelper.ApplicationOptions);
             Assert.AreEqual((uint)1, track3.Position);
             Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(0));
-            Assert.AreEqual(track1, track5.LinkedPreviousTrack);
+            Assert.AreEqual(track1, cuesheet.GetPreviousLinkedTrack(track5));
             Assert.AreEqual(TimeSpan.Zero, track3.Begin.Value);
             Assert.AreEqual(track1End, track1.Begin);
             cuesheet.MoveTrack(track5, MoveDirection.Up, testHelper.ApplicationOptions);
             Assert.AreEqual((uint)2, track5.Position);
             Assert.AreEqual(track5, cuesheet.Tracks.ElementAt(1));
-            Assert.AreEqual(track5, track1.LinkedPreviousTrack);
+            Assert.AreEqual(track5, cuesheet.GetPreviousLinkedTrack(track1));
             Assert.IsNull(cuesheet.Tracks.Last().End);
             //Reset for move down
             cuesheet.RemoveAllTracks();
@@ -192,15 +192,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.RemoveTrack(track4);
             Assert.AreEqual(3, cuesheet.Tracks.Count);
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            track3.LinkedPreviousTrack = track1;
-            track5.LinkedPreviousTrack = track3;
+            track3.IsLinkedToPreviousTrack = true;
+            track5.IsLinkedToPreviousTrack = true;
             track1End = track1.End;
             cuesheet.MoveTrack(track1, MoveDirection.Down, testHelper.ApplicationOptions);
             Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
-            Assert.AreEqual(track3, track1.LinkedPreviousTrack);
+            Assert.AreEqual(track3, cuesheet.GetPreviousLinkedTrack(track1));
             Assert.AreEqual((uint)2, track1.Position.Value);
             Assert.AreEqual((uint)3, track5.Position.Value);
-            Assert.AreEqual(track1, track5.LinkedPreviousTrack);
+            Assert.AreEqual(track1, cuesheet.GetPreviousLinkedTrack(track5));
             Assert.AreEqual(track1End, track3.End);
         }
 

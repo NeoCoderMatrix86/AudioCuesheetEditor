@@ -89,8 +89,8 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsTrue(cuesheet.Tracks.ElementAt(2).Flags.Contains(Flag.FourCH));
             Assert.AreEqual("Artist 10", cuesheet.Tracks.Last().Artist);
             Assert.AreEqual(new TimeSpan(0, 55, 55), cuesheet.Tracks.Last().End);
-            Assert.IsTrue(Object.ReferenceEquals(cuesheet.Tracks.First(), cuesheet.Tracks.ElementAt(1).LinkedPreviousTrack));
-            Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.Tracks.ElementAt(1).LinkedPreviousTrack);
+            Assert.IsTrue(Object.ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
+            Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
         }
     }
 }

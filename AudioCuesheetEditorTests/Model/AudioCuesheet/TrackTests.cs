@@ -77,15 +77,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 1,
                 End = new TimeSpan(0, 3, 23)
             };
-            Assert.IsNull(track.LinkedPreviousTrack);
+            Assert.IsFalse(track.IsLinkedToPreviousTrack);
             var track2 = new Track
             {
                 Begin = track.End,
                 End = new TimeSpan(0, 5, 45),
                 Position = 2
             };
-            Assert.IsNull(track2.LinkedPreviousTrack);
-            track2.LinkedPreviousTrack = track;
+            Assert.IsFalse(track2.IsLinkedToPreviousTrack);
+            track2.IsLinkedToPreviousTrack = true;
             Assert.AreEqual(track.End, track2.Begin);
             track.End = new TimeSpan(0, 3, 45);
             Assert.AreEqual(track.End, track2.Begin);
@@ -95,7 +95,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 7,
                 End = new TimeSpan(0, 10, 12)
             };
-            track3.LinkedPreviousTrack = track2;
+            track3.IsLinkedToPreviousTrack = true;
             track3.End = new TimeSpan(0, 15, 2);
             track3.Position = 3;
             Assert.AreEqual(track2.End, track3.Begin);
@@ -120,8 +120,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 5,
                 End = new TimeSpan(0, 10, 12)
             };
-            track2.LinkedPreviousTrack = track;
-            track3.LinkedPreviousTrack = track2;
+            track2.IsLinkedToPreviousTrack = true;
+            track3.IsLinkedToPreviousTrack = true;
             Assert.AreEqual((uint)2, track2.Position.Value);
             Assert.AreEqual((uint)3, track3.Position.Value);
             Assert.AreEqual(track.End, track2.Begin);
@@ -130,7 +130,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             {
                 Begin = new TimeSpan(0, 11, 23),
                 Position = 4,
-                LinkedPreviousTrack = track3
+                IsLinkedToPreviousTrack = true
             };
             Assert.AreEqual(track3.End, track4.Begin);
         }
@@ -138,18 +138,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         [TestMethod()]
         public void EqualsTest()
         {
-            var track = new Track();
-            var track1 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", LinkedPreviousTrack = track };
+            var track1 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", IsLinkedToPreviousTrack = true };
             track1.SetFlag(Flag.DCP, SetFlagMode.Add);
             track1.SetFlag(Flag.FourCH, SetFlagMode.Add);
-            var track2 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", LinkedPreviousTrack = track };
+            var track2 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", IsLinkedToPreviousTrack = true };
             track2.SetFlag(Flag.DCP, SetFlagMode.Add);
             track2.SetFlag(Flag.FourCH, SetFlagMode.Add);
             Assert.AreEqual(track1, track2);
-            track2.LinkedPreviousTrack = track1;
             var list = new List<Track> { track1, track2 };
-            var linked = list.Single(x => x.LinkedPreviousTrack == track1);
-            Assert.AreEqual(track2, linked);
+            var linked = list.Where(x => x.IsLinkedToPreviousTrack == true);
+            Assert.AreEqual(2, linked.Count());
         }
     }
 }

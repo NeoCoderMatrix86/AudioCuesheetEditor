@@ -32,8 +32,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? end;
         private List<Flag> flags = new List<Flag>();
         private Track clonedFrom = null;
-        private Track previousTrackLink;
-        private Boolean currentlyHandlingRankPropertyChange;
 
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
@@ -183,34 +181,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? PostGap { get; set; }
         /// <summary>
-        /// Set a reference to the previous track (in Cuesheet) in order to update values when the RankPropertyValueChanged of the previous track has been fired.
+        /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
-        public Track LinkedPreviousTrack 
-        {
-            get { return previousTrackLink; }
-            set 
-            { 
-                if (previousTrackLink != null)
-                {
-                    previousTrackLink.RankPropertyValueChanged -= PreviousTrackLink_RankPropertyValueChanged;
-                    RankPropertyValueChanged -= This_RankPropertyValueChanged;
-                }
-                previousTrackLink = value;
-                if (previousTrackLink != null)
-                {
-                    if ((previousTrackLink.Position.HasValue) && (Position != previousTrackLink.Position.Value + 1))
-                    {
-                        Position = previousTrackLink.Position.Value + 1;
-                    }
-                    if ((previousTrackLink.End.HasValue) && (Begin != previousTrackLink.End.Value) && ((previousTrackLink.End.Value <= End) || (End.HasValue == false)))
-                    {
-                        Begin = previousTrackLink.End.Value;
-                    }
-                    previousTrackLink.RankPropertyValueChanged += PreviousTrackLink_RankPropertyValueChanged;
-                    RankPropertyValueChanged += This_RankPropertyValueChanged;
-                }
-            }
-        }
+        public Boolean IsLinkedToPreviousTrack { get; set; }
 
         public String GetDisplayNameLocalized(ITextLocalizer localizer)
         {
@@ -340,6 +313,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                         validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track is already in use by track(s) {2}!", nameof(Position), Position, String.Join(", ", tracksWithSamePosition)));
                     }
+                    //TODO: Check if position is correct in cuesheet
                 }
                 if (Begin.HasValue)
                 {
@@ -421,55 +395,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             OnValidateablePropertyChanged();
         }
 
-        private void PreviousTrackLink_RankPropertyValueChanged(object sender, string e)
-        {
-            if (currentlyHandlingRankPropertyChange == false)
-            {
-                currentlyHandlingRankPropertyChange = true;
-                var track = (Track)sender;
-                switch (e)
-                {
-                    case nameof(Position):
-                        if (track.Position.HasValue)
-                        {
-                            Position = track.Position + 1;
-                        }
-                        break;
-                    case nameof(End):
-                        if (track.End.HasValue)
-                        {
-                            Begin = track.End;
-                        }
-                        break;
-                }
-                currentlyHandlingRankPropertyChange = false;
-            }
-        }
-
-        private void This_RankPropertyValueChanged(object sender, string e)
-        {
-            if ((currentlyHandlingRankPropertyChange == false) && (LinkedPreviousTrack != null))
-            {
-                currentlyHandlingRankPropertyChange = true;
-                switch (e)
-                {
-                    case nameof(Position):
-                        if (Position.HasValue)
-                        {
-                            LinkedPreviousTrack.Position = Position - 1;
-                        }
-                        break;
-                    case nameof(Begin):
-                        if (Begin.HasValue)
-                        {
-                            LinkedPreviousTrack.End = Begin;
-                        }
-                        break;
-                }
-                currentlyHandlingRankPropertyChange = false;
-            }
-        }
-
         #region Equality
 
         public override bool Equals(object obj)
@@ -492,7 +417,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 return false;
             }
             return Position == other.Position && Artist == other.Artist && Title == other.Title && Begin == other.Begin && End == other.End 
-                && Flags.SequenceEqual(other.Flags) && LinkedPreviousTrack == other.LinkedPreviousTrack && PreGap == other.PreGap && PostGap == other.PostGap;
+                && Flags.SequenceEqual(other.Flags) && IsLinkedToPreviousTrack == other.IsLinkedToPreviousTrack && PreGap == other.PreGap && PostGap == other.PostGap;
         }
 
         public static bool operator ==(Track lhs, Track rhs)
