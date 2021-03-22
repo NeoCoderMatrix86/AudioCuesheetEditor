@@ -184,6 +184,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = this;
             tracks.Add(track);
             ReCalculateTrackProperties(track);
+            track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
             if ((applicationOptions.LinkTracksWithPreviousOne.HasValue) && (applicationOptions.LinkTracksWithPreviousOne.Value == true))
             {
                 track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
@@ -210,6 +211,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.Remove(track);
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
+            track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
             OnValidateablePropertyChanged();
             //If Tracks are linked, we need to set the linked track again
             if (nextTrack != null)
@@ -502,6 +504,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
                 currentlyHandlingLinkedTrackPropertyChange.Remove(item);
+            }
+        }
+
+        private void Track_IsLinkedToPreviousTrackChanged(object sender, EventArgs e)
+        {
+            Track trackRaisedEvent = (Track)sender;
+            if (trackRaisedEvent.IsLinkedToPreviousTrack)
+            {
+                //Set values
+                var index = tracks.IndexOf(trackRaisedEvent);
+                if (index > 0)
+                {
+                    var previousTrack = tracks.ElementAt(index - 1);
+                    if ((trackRaisedEvent.Position.HasValue) && (trackRaisedEvent.Position != previousTrack.Position.Value + 1))
+                    {
+                        trackRaisedEvent.Position = previousTrack.Position.Value + 1;
+                    }
+                    if ((previousTrack.End.HasValue) && (trackRaisedEvent.Begin != previousTrack.End))
+                    {
+                        trackRaisedEvent.Begin = previousTrack.End;
+                    }
+                }
             }
         }
 

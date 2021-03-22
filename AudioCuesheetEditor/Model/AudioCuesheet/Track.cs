@@ -32,12 +32,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? end;
         private List<Flag> flags = new List<Flag>();
         private Track clonedFrom = null;
+        private Boolean isLinkedToPreviousTrack;
 
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
         /// </summary>
         public event EventHandler<String> RankPropertyValueChanged;
-        
+
+        /// <summary>
+        /// Eventhandler for IsLinkedToPreviousTrack has changed
+        /// </summary>
+        public event EventHandler IsLinkedToPreviousTrackChanged;
+
         /// <summary>
         /// Create object with copied values from input
         /// </summary>
@@ -183,7 +189,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <summary>
         /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
-        public Boolean IsLinkedToPreviousTrack { get; set; }
+        public Boolean IsLinkedToPreviousTrack
+        {
+            get { return isLinkedToPreviousTrack; }
+            set { isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); }
+        }
 
         public String GetDisplayNameLocalized(ITextLocalizer localizer)
         {
