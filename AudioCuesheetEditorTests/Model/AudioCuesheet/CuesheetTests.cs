@@ -136,7 +136,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.RemoveTrack(track2);
             cuesheet.RemoveTrack(track4);
             Assert.AreEqual(3, cuesheet.Tracks.Count);
-            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             track3.IsLinkedToPreviousTrack = true;
             track5.IsLinkedToPreviousTrack = true;
             var track1End = track1.End;
@@ -153,7 +152,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNull(cuesheet.Tracks.Last().End);
             //Reset for move down
             cuesheet.RemoveAllTracks();
-            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = false;
             track1 = new Track
             {
                 Artist = "Track 1",

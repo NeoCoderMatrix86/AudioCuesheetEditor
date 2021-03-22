@@ -550,15 +550,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Set values corresponding to their new positions
             track1.Position = (uint)indexTrack1 + 1;
             track2.Position = (uint)indexTrack2 + 1;
-            //Set also begin and end, if using linked tracks
-            if (indexTrack1 < indexTrack2)
-            {
-                //TODO
-            }
-            else
-            {
-                //TODO
-            }
+            //TODO: Set also begin and end, if using linked tracks
         }
     }
 }
