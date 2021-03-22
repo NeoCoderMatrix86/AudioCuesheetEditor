@@ -1188,7 +1188,7 @@ along with Foobar.  If not, see
         Logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
         modalDialog.Title = localizer["Confirmation required"];
-        modalDialog.Text = localizer["ConfirmDeleteOfAllTracks"];
+        modalDialog.Text = localizer["Do you really want to delete all tracks? This can not be reversed."];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
         void deleteTracksDelegate(object sender, EventArgs args)
@@ -1207,7 +1207,7 @@ along with Foobar.  If not, see
         Logger.LogInformation("RestartCuesheetClicked clicked");
         //Display a confirm warning
         modalDialog.Title = localizer["Confirmation required"];
-        modalDialog.Text = localizer["ConfirmResetCuesheet"];
+        modalDialog.Text = localizer["Do you really want to reset the cuesheet? This can not be reversed."];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
         void newCuesheetDelegate(object sender, EventArgs args)
