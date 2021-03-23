@@ -469,6 +469,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         var trackAtPosition = tracks.ElementAtOrDefault((int)trackRaisedEvent.Position.Value - 1);
                         if ((trackAtPosition != null) && (trackAtPosition != trackRaisedEvent))
                         {
+                            //TODO: handling of linked tracks (setting time values)
                             SwitchTracks(trackRaisedEvent, trackAtPosition, false);
                         }
                     }
