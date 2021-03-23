@@ -39,7 +39,6 @@ namespace AudioCuesheetEditor.Model.IO
         public static Cuesheet ImportFile(byte[] fileContent)
         {
             var json = Encoding.UTF8.GetString(fileContent);
-            //TODO: Track.Cuesheet is null on deserialization, which leads to invalid tracks if changing position after loading a projectfile
             return JsonSerializer.Deserialize<Cuesheet>(json, Options);
         }
 

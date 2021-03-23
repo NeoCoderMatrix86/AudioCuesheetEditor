@@ -68,6 +68,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 tracks = value.ToList();
                 foreach (var track in tracks)
                 {
+                    track.Cuesheet = this;
                     track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                     track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
                 }
