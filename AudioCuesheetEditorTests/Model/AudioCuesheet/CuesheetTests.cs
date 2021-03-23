@@ -413,5 +413,30 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track3.Begin = new TimeSpan(0, 7, 32);
             Assert.IsNull(track2.End);
         }
+
+        [TestMethod()]
+        public void TrackPositionChangedTest()
+        {
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet();
+            var track1 = new Track
+            {
+                Position = 3,
+                End = new TimeSpan(0, 5, 0)
+            };
+            var track2 = new Track
+            {
+                Position = 2,
+                Begin = track1.End,
+                End = new TimeSpan(0, 7, 30)
+            };
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            Assert.AreEqual(track2, cuesheet.Tracks.First());
+            Assert.AreEqual(track1, cuesheet.Tracks.Last());
+            track1.Position = 1;
+            Assert.AreEqual(track1, cuesheet.Tracks.First());
+            Assert.AreEqual(track2, cuesheet.Tracks.Last());
+        }
     }
 }

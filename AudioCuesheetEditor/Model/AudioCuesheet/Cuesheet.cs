@@ -458,8 +458,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void Track_RankPropertyValueChanged(object sender, string e)
         {
-            //TODO: Check position and call switchtracks
             Track trackRaisedEvent = (Track)sender;
+            switch(e)
+            {
+                case nameof(Track.Position):
+                    //TODO: Check position and call switchtracks
+                    if (trackRaisedEvent.Position.HasValue)
+                    {
+                        var trackAtPosition = tracks.ElementAtOrDefault((int)trackRaisedEvent.Position.Value - 1);
+                        if ((trackAtPosition != null) && (trackAtPosition != trackRaisedEvent))
+                        {
+                            SwitchTracks(trackRaisedEvent, trackAtPosition, false);
+                        }
+                    }
+                    break;
+            }
             var item = KeyValuePair.Create(e, trackRaisedEvent);
             if (currentlyHandlingLinkedTrackPropertyChange.Contains(item) == false)
             {
@@ -534,7 +547,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void SwitchTracks(Track track1, Track track2)
+        private void SwitchTracks(Track track1, Track track2, Boolean setTrackValues = true)
         {
             if (track1 == null)
             {
@@ -546,32 +559,35 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             var indexTrack1 = tracks.IndexOf(track1);
             var indexTrack2 = tracks.IndexOf(track2);
-            //Switch track positions
+            //Switch track positions in array
             tracks[indexTrack2] = track1;
             tracks[indexTrack1] = track2;
-            //Set linked tracks correct again
-            indexTrack1 = tracks.IndexOf(track1);
-            indexTrack2 = tracks.IndexOf(track2);
-            //Set values corresponding to their new positions
-            track1.Position = (uint)indexTrack1 + 1;
-            track2.Position = (uint)indexTrack2 + 1;
-            //Set also begin and end, if using linked tracks
-            Boolean setTimeValues = track1.IsLinkedToPreviousTrack || track2.IsLinkedToPreviousTrack;
-            if (setTimeValues)
+            if (setTrackValues)
             {
-                if (indexTrack1 < indexTrack2)
+                //Set linked tracks correct again
+                indexTrack1 = tracks.IndexOf(track1);
+                indexTrack2 = tracks.IndexOf(track2);
+                //Set values corresponding to their new positions
+                track1.Position = (uint)indexTrack1 + 1;
+                track2.Position = (uint)indexTrack2 + 1;
+                //Set also begin and end, if using linked tracks
+                Boolean setTimeValues = track1.IsLinkedToPreviousTrack || track2.IsLinkedToPreviousTrack;
+                if (setTimeValues)
                 {
-                    track1.Begin = track2.Begin;
-                    var newEnd = track1.End;
-                    track1.End = track2.End;
-                    track2.End = newEnd;
-                }
-                else
-                {
-                    track2.Begin = track1.Begin;
-                    var newEnd = track2.End;
-                    track2.End = track1.End;
-                    track1.End = newEnd;
+                    if (indexTrack1 < indexTrack2)
+                    {
+                        track1.Begin = track2.Begin;
+                        var newEnd = track1.End;
+                        track1.End = track2.End;
+                        track2.End = newEnd;
+                    }
+                    else
+                    {
+                        track2.Begin = track1.Begin;
+                        var newEnd = track2.End;
+                        track2.End = track1.End;
+                        track1.End = newEnd;
+                    }
                 }
             }
         }

@@ -92,8 +92,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsTrue(Object.ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
             Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
             cuesheet.Tracks.First().Position = 3;
-            Assert.AreEqual((uint)4, cuesheet.Tracks.ElementAt(1).Position.Value);
-            Assert.AreEqual((uint)12, cuesheet.Tracks.Last().Position.Value);
+            Assert.AreEqual("Artist 1", cuesheet.Tracks.ElementAt(2).Artist);
+            Assert.AreEqual("Artist 3", cuesheet.Tracks.First().Artist);
+            Assert.AreEqual((uint)10, cuesheet.Tracks.Last().Position.Value);
         }
     }
 }
