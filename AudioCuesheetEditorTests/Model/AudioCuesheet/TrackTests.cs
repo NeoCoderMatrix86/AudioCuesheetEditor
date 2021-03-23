@@ -108,5 +108,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var linked = list.Where(x => x.IsLinkedToPreviousTrack == true);
             Assert.AreEqual(2, linked.Count());
         }
+
+        [TestMethod()]
+        public void CheckPositionInCuesheetTest()
+        {
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet();
+            var track1 = new Track
+            {
+                Position = 3,
+                End = new TimeSpan(0, 5, 0)
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            var validationErrors = track1.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Any(x => x.Message.Message.Contains(" of this track does not match track position in cuesheet. Please correct the")));
+            track1.Position = 1;
+            Assert.IsTrue(track1.GetValidationErrorsFiltered(nameof(Track.Position)).Count == 0);
+        }
     }
 }
