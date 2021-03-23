@@ -65,7 +65,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     throw new ArgumentNullException(nameof(Tracks));
                 }
-                tracks = value.ToList(); 
+                tracks = value.ToList();
+                foreach (var track in tracks)
+                {
+                    track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
+                    track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
+                }
             }
         }
         

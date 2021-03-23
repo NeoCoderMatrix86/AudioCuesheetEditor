@@ -39,7 +39,6 @@ namespace AudioCuesheetEditor.Model.IO
         public static Cuesheet ImportFile(byte[] fileContent)
         {
             var json = Encoding.UTF8.GetString(fileContent);
-            //TODO: Restore events for linked track
             return JsonSerializer.Deserialize<Cuesheet>(json, Options);
         }
 
