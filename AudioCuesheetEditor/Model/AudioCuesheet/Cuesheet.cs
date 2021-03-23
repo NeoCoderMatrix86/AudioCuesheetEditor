@@ -556,20 +556,23 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track1.Position = (uint)indexTrack1 + 1;
             track2.Position = (uint)indexTrack2 + 1;
             //Set also begin and end, if using linked tracks
-            //TODO: Bedingung
-            if (indexTrack1 < indexTrack2)
+            Boolean setTimeValues = track1.IsLinkedToPreviousTrack || track2.IsLinkedToPreviousTrack;
+            if (setTimeValues)
             {
-                track1.Begin = track2.Begin;
-                var newEnd = track1.End;
-                track1.End = track2.End;
-                track2.End = newEnd;
-            }
-            else
-            {
-                track2.Begin = track1.Begin;
-                var newEnd = track2.End;
-                track2.End = track1.End;
-                track1.End = newEnd;
+                if (indexTrack1 < indexTrack2)
+                {
+                    track1.Begin = track2.Begin;
+                    var newEnd = track1.End;
+                    track1.End = track2.End;
+                    track2.End = newEnd;
+                }
+                else
+                {
+                    track2.Begin = track1.Begin;
+                    var newEnd = track2.End;
+                    track2.End = track1.End;
+                    track1.End = newEnd;
+                }
             }
         }
     }

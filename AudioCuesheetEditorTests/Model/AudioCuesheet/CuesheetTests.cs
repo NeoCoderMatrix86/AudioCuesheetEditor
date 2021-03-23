@@ -136,9 +136,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.RemoveTrack(track2);
             cuesheet.RemoveTrack(track4);
             Assert.AreEqual(3, cuesheet.Tracks.Count);
+            track1.IsLinkedToPreviousTrack = true;
             track3.IsLinkedToPreviousTrack = true;
             track5.IsLinkedToPreviousTrack = true;
             var track1End = track1.End;
+            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             cuesheet.MoveTrack(track3, MoveDirection.Up);
             Assert.AreEqual((uint)1, track3.Position);
             Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(0));
