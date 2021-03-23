@@ -463,7 +463,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             switch(e)
             {
                 case nameof(Track.Position):
-                    //TODO: Check position and call switchtracks
+                    //Check position and call switchtracks
                     if (trackRaisedEvent.Position.HasValue)
                     {
                         var trackAtPosition = tracks.ElementAtOrDefault((int)trackRaisedEvent.Position.Value - 1);
