@@ -323,10 +323,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                         validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track is already in use by track(s) {2}!", nameof(Position), Position, String.Join(", ", tracksWithSamePosition)));
                     }
-                    Track trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
-                    if ((trackAtPosition == null) || (trackAtPosition != this))
+                    if (IsCloned == false)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
+                        Track trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
+                        if ((trackAtPosition == null) || (trackAtPosition != this))
+                        {
+                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
+                        }
                     }
                 }
                 if (Begin.HasValue)
