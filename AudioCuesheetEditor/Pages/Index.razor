@@ -369,7 +369,7 @@ along with Foobar.  If not, see
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="trackPositionTableRowCell">
-                                                        <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
+                                                        <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)), seperator: Environment.NewLine)">
                                                             <NumericEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" ChangeTextOnKeyPress="false" />
                                                         </Tooltip>
                                                     </TableRowCell>

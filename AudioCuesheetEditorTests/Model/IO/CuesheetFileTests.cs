@@ -341,13 +341,21 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                     Artist = String.Format("Demo Track Artist {0}", i),
                     Title = String.Format("Demo Track Title {0}", i),
                     Begin = begin,
-                    Position = (uint)random.Next(1, 99)
+                    Position = (uint)(i + random.Next(1, 10))
                 };
                 begin = begin.Add(new TimeSpan(0, i, i));
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new Cuesheetfile(cuesheet);
+            Assert.IsFalse(cuesheetFile.IsExportable);
+            //Rearrange positions
+            cuesheet.Tracks.ElementAt(0).Position = 1;
+            cuesheet.Tracks.ElementAt(1).Position = 2;
+            cuesheet.Tracks.ElementAt(2).Position = 3;
+            cuesheet.Tracks.ElementAt(3).Position = 4;
+            cuesheet.Tracks.ElementAt(4).Position = 5;
+            Assert.IsTrue(cuesheetFile.IsExportable);
             var generatedFile = cuesheetFile.GenerateCuesheetFile();
             Assert.IsNotNull(generatedFile);
             var fileName = Path.GetTempFileName();

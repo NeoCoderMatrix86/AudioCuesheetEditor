@@ -33,6 +33,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Flag> flags = new List<Flag>();
         private Track clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
+        private Cuesheet cuesheet;
 
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
@@ -165,7 +166,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
         [JsonIgnore]
-        public Cuesheet Cuesheet { get; set; }
+        public Cuesheet Cuesheet 
+        {
+            get { return cuesheet; }
+            set { cuesheet = value; OnValidateablePropertyChanged(); }
+        }
 
         /// <summary>
         /// Indicates that this track has been cloned from another track and is a transparent proxy
