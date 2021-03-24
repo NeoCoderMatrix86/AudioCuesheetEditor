@@ -579,6 +579,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     var newEnd = track1.End;
                     track1.End = track2.End;
                     track2.End = newEnd;
+                    if (track2.IsLinkedToPreviousTrack)
+                    {
+                        var previousTrack = GetPreviousLinkedTrack(track2);
+                        if (previousTrack.End.HasValue)
+                        {
+                            track2.Begin = previousTrack.End;
+                        }
+                    }
                 }
                 else
                 {
@@ -586,6 +594,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     var newEnd = track2.End;
                     track2.End = track1.End;
                     track1.End = newEnd;
+                    if (track1.IsLinkedToPreviousTrack)
+                    {
+                        var previousTrack = GetPreviousLinkedTrack(track1);
+                        if (previousTrack.End.HasValue)
+                        {
+                            track1.Begin = previousTrack.End;
+                        }
+                    }
                 }
             }
         }
