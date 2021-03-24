@@ -23,6 +23,7 @@
     "Schemetype": "Schematyp",
     "Scheme contains placeholders that can not be solved!": "Schema enthält Platzhalter, die nicht aufgelöst werden können!",
     "SchemeCuesheet": "Schema Cuesheet",
-    "SchemeTracks": "Schema Tracks"
+    "SchemeTracks": "Schema Tracks",
+    "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!": "{0} {1} von diesem Track stimmt nicht mit der Position im Cuesheet überein. Bitte korrigieren Sie {2} von diesem Track auf {3}!"
   }
 }

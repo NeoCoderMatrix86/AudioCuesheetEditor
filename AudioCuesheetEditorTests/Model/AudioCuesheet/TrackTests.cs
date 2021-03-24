@@ -77,79 +77,56 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 1,
                 End = new TimeSpan(0, 3, 23)
             };
-            Assert.IsNull(track.LinkedPreviousTrack);
+            Assert.IsFalse(track.IsLinkedToPreviousTrack);
             var track2 = new Track
             {
                 Begin = track.End,
                 End = new TimeSpan(0, 5, 45),
                 Position = 2
             };
-            Assert.IsNull(track2.LinkedPreviousTrack);
-            track2.LinkedPreviousTrack = track;
-            Assert.AreEqual(track.End, track2.Begin);
-            track.End = new TimeSpan(0, 3, 45);
-            Assert.AreEqual(track.End, track2.Begin);
-            var track3 = new Track
+            Assert.IsFalse(track2.IsLinkedToPreviousTrack);
+            Boolean eventFired = false;
+            track2.IsLinkedToPreviousTrackChanged += delegate
             {
-                Begin = track2.End,
-                Position = 7,
-                End = new TimeSpan(0, 10, 12)
+                eventFired = true;
             };
-            track3.LinkedPreviousTrack = track2;
-            track3.End = new TimeSpan(0, 15, 2);
-            track3.Position = 3;
-            Assert.AreEqual(track2.End, track3.Begin);
-            Assert.AreEqual((uint)1, track.Position);
-            Assert.AreEqual((uint)2, track2.Position);
-            Assert.AreEqual((uint)3, track3.Position);
-            track = new Track
-            {
-                Begin = TimeSpan.Zero,
-                Position = 1,
-                End = new TimeSpan(0, 3, 23)
-            };
-            track2 = new Track
-            {
-                Begin = new TimeSpan(0, 5, 23),
-                End = new TimeSpan(0, 5, 45),
-                Position = 3
-            };
-            track3 = new Track
-            {
-                Begin = new TimeSpan(0, 7, 12),
-                Position = 5,
-                End = new TimeSpan(0, 10, 12)
-            };
-            track2.LinkedPreviousTrack = track;
-            track3.LinkedPreviousTrack = track2;
-            Assert.AreEqual((uint)2, track2.Position.Value);
-            Assert.AreEqual((uint)3, track3.Position.Value);
-            Assert.AreEqual(track.End, track2.Begin);
-            Assert.AreEqual(track2.End, track3.Begin);
-            var track4 = new Track
-            {
-                Begin = new TimeSpan(0, 11, 23),
-                Position = 4,
-                LinkedPreviousTrack = track3
-            };
-            Assert.AreEqual(track3.End, track4.Begin);
+            track2.IsLinkedToPreviousTrack = true;
+            Assert.IsTrue(eventFired);
         }
 
         [TestMethod()]
         public void EqualsTest()
         {
-            var track = new Track();
-            var track1 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", LinkedPreviousTrack = track };
+            var track1 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", IsLinkedToPreviousTrack = true };
             track1.SetFlag(Flag.DCP, SetFlagMode.Add);
             track1.SetFlag(Flag.FourCH, SetFlagMode.Add);
-            var track2 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", LinkedPreviousTrack = track };
+            var track2 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", IsLinkedToPreviousTrack = true };
             track2.SetFlag(Flag.DCP, SetFlagMode.Add);
             track2.SetFlag(Flag.FourCH, SetFlagMode.Add);
             Assert.AreEqual(track1, track2);
-            track2.LinkedPreviousTrack = track1;
             var list = new List<Track> { track1, track2 };
-            var linked = list.Single(x => x.LinkedPreviousTrack == track1);
-            Assert.AreEqual(track2, linked);
+            var linked = list.Where(x => x.IsLinkedToPreviousTrack == true);
+            Assert.AreEqual(2, linked.Count());
+            var track3 = new Track();
+            var track4 = new Track();
+            Assert.AreNotEqual(track3, track4);
+        }
+
+        [TestMethod()]
+        public void CheckPositionInCuesheetTest()
+        {
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet();
+            var track1 = new Track
+            {
+                Position = 3,
+                End = new TimeSpan(0, 5, 0)
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            var validationErrors = track1.GetValidationErrorsFiltered(nameof(Track.Position));
+            Assert.IsTrue(validationErrors.Any(x => x.Message.Message.Contains(" of this track does not match track position in cuesheet. Please correct the")));
+            track1.Position = 1;
+            Assert.IsTrue(track1.GetValidationErrorsFiltered(nameof(Track.Position)).Count == 0);
         }
     }
 }
