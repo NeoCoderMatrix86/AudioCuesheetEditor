@@ -107,6 +107,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var list = new List<Track> { track1, track2 };
             var linked = list.Where(x => x.IsLinkedToPreviousTrack == true);
             Assert.AreEqual(2, linked.Count());
+            var track3 = new Track();
+            var track4 = new Track();
+            Assert.AreNotEqual(track3, track4);
         }
 
         [TestMethod()]

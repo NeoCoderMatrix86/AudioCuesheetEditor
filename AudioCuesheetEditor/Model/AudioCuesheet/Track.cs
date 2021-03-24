@@ -438,8 +438,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 return false;
             }
-            return Position == other.Position && Artist == other.Artist && Title == other.Title && Begin == other.Begin && End == other.End 
-                && Flags.SequenceEqual(other.Flags) && IsLinkedToPreviousTrack == other.IsLinkedToPreviousTrack && PreGap == other.PreGap && PostGap == other.PostGap;
+            //2 Track objects are only equal, if they are not empty
+            if ((Position.HasValue) || (String.IsNullOrEmpty(Artist) == false) || (String.IsNullOrEmpty(Title) == false) || (Begin.HasValue) || (End.HasValue) || (Flags.Count > 0) || (PreGap.HasValue) || (PostGap.HasValue))
+            {
+                return Position == other.Position && Artist == other.Artist && Title == other.Title && Begin == other.Begin && End == other.End
+                    && Flags.SequenceEqual(other.Flags) && IsLinkedToPreviousTrack == other.IsLinkedToPreviousTrack && PreGap == other.PreGap && PostGap == other.PostGap;
+            }
+            else
+            {
+                return Object.ReferenceEquals(this, other);
+            }
         }
 
         public static bool operator ==(Track lhs, Track rhs)
