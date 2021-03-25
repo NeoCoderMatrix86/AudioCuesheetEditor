@@ -238,9 +238,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void RemoveAllTracks()
+        /// <summary>
+        /// Remove selected tracks
+        /// </summary>
+        /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
+        public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
-            tracks.Clear();
+            if (tracksToRemove == null)
+            {
+                throw new ArgumentNullException(nameof(tracksToRemove));
+            }
+            var intersection = tracks.Intersect(tracksToRemove);
+            intersection.ToList().ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
+            intersection.ToList().ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
+            tracks = tracks.Except(intersection).ToList();
             OnValidateablePropertyChanged();
         }
 

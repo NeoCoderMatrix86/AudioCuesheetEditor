@@ -124,6 +124,10 @@
     "Textimport settings": "Textimport Einstellungen",
     "Record settings": "Aufnahme Einstellungen",
     "Do you really want to reset the cuesheet? This can not be reversed.": "Möchten Sie wirklich das Cuesheet zurücksetzen? Dies kann nicht rückgangig gemacht werden.",
-    "Do you really want to delete all tracks? This can not be reversed.": "Möchten Sie wirklich alle Tracks löschen? Dies kann nicht rückgängig gemacht werden."
+    "Do you really want to delete all tracks? This can not be reversed.": "Möchten Sie wirklich alle Tracks löschen? Dies kann nicht rückgängig gemacht werden.",
+    "Display selection of tracks": "Auswahl für Tracks anzeigen",
+    "Selection": "Auswahl",
+    "Select this track for multiple track operations": "Diesen Track in Mehrfachauswahl übernehmen",
+    "Delete selected tracks": "Ausgewählte Tracks löschen"
   }
 }

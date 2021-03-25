@@ -249,3 +249,15 @@ app {
 .minWidth {
     min-width: 100px;
 }
+
+@media screen and (max-width:400px) {
+    .controlsCell {
+        min-width: 130px;
+    }
+}
+
+@media (min-width: 400px) {
+    .controlsCell {
+        min-width: 240px;
+    }
+}

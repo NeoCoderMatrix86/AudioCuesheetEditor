@@ -110,6 +110,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var track3 = new Track();
             var track4 = new Track();
             Assert.AreNotEqual(track3, track4);
+            var list2 = new List<Track>(list);
+            var intersection = list.Intersect(list2);
+            Assert.AreEqual(2, intersection.Count());
         }
 
         [TestMethod()]

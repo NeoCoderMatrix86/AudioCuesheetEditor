@@ -153,7 +153,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(track5, cuesheet.GetPreviousLinkedTrack(track1));
             Assert.IsNull(cuesheet.Tracks.Last().End);
             //Reset for move down
-            cuesheet.RemoveAllTracks();
+            cuesheet.RemoveTracks(cuesheet.Tracks);
             track1 = new Track
             {
                 Artist = "Track 1",
