@@ -49,6 +49,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly String SchemeTrackFlags;
         public static readonly String SchemeTrackPreGap;
         public static readonly String SchemeTrackPostGap;
+        public static readonly String SchemeDate;
+        public static readonly String SchemeDateTime;
+        public static readonly String SchemeTime;
 
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
@@ -58,6 +61,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         static Exportscheme()
         {
+            SchemeDate = String.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
+            SchemeDateTime = String.Format("{0}DateTime{1}", SchemeCharacter, SchemeCharacter);
+            SchemeTime = String.Format("{0}Time{1}", SchemeCharacter, SchemeCharacter);
+
             SchemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
             SchemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
             SchemeCuesheetAudiofile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
@@ -70,7 +77,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 { nameof(Cuesheet.Title), SchemeCuesheetTitle },
                 { nameof(Cuesheet.Audiofile), SchemeCuesheetAudiofile },
                 { nameof(Cuesheet.CDTextfile), SchemeCuesheetCDTextfile },
-                { nameof(Cuesheet.Cataloguenumber), SchemeCuesheetCatalogueNumber }
+                { nameof(Cuesheet.Cataloguenumber), SchemeCuesheetCatalogueNumber },
+                { "Date", SchemeDate },
+                { "DateTime", SchemeDateTime },
+                { "Time", SchemeTime }
             };
 
             SchemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
@@ -125,7 +135,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             .Replace(SchemeCuesheetTitle, cuesheet.Title)
                             .Replace(SchemeCuesheetAudiofile, cuesheet.Audiofile?.FileName)
                             .Replace(SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
-                            .Replace(SchemeCuesheetCatalogueNumber, cuesheet.Cataloguenumber?.Value);
+                            .Replace(SchemeCuesheetCatalogueNumber, cuesheet.Cataloguenumber?.Value)
+                            .Replace(SchemeDate, DateTime.Now.ToShortDateString())
+                            .Replace(SchemeDateTime, DateTime.Now.ToString())
+                            .Replace(SchemeTime, DateTime.Now.ToLongTimeString());
                         break;
                     case Schemetype.Body:
                         var track = (Track)cuesheetEntity;
@@ -138,7 +151,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
                             .Replace(SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackPostGap, track.PreGap != null ? track.PostGap.Value.ToString() : String.Empty);
+                            .Replace(SchemeTrackPostGap, track.PreGap != null ? track.PostGap.Value.ToString() : String.Empty)
+                            .Replace(SchemeDate, DateTime.Now.ToShortDateString())
+                            .Replace(SchemeDateTime, DateTime.Now.ToString())
+                            .Replace(SchemeTime, DateTime.Now.ToLongTimeString());
                         break;
                     default:
                         //Nothing to do

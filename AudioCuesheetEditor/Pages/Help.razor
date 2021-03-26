@@ -42,6 +42,8 @@ along with Foobar.  If not, see
         <br />
         <Blazorise.Link To="#importOfCuesheetFiles">@localizer["Import of cuesheetfiles"]</Blazorise.Link>
         <br />
+        <Blazorise.Link To="#headingExportOfData">@localizer["Export of data"]</Blazorise.Link>
+        <br />
         <Blazorise.Link To="#headingRecordMode">@localizer["Recordmode"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#headingOptions">@localizer["Options"]</Blazorise.Link>
@@ -90,6 +92,11 @@ along with Foobar.  If not, see
             <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
         </Heading>
         @((MarkupString)localizer["Import of cuesheetfiles helptext"])
+        <Heading id="headingExportOfData" Size="HeadingSize.Is2">
+            @localizer["Export of data"]
+            <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>
+        </Heading>
+        @((MarkupString)localizer["Export of data helptext"])
         <Heading id="headingRecordMode" Size="HeadingSize.Is2">
             @localizer["Recordmode"]
             <Blazorise.Link To="/Help">@localizer["Scroll to top"]</Blazorise.Link>

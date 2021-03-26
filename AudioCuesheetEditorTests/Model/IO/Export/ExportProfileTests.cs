@@ -198,7 +198,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.IsTrue(exportProfile.SchemeHead.IsValid);
             exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
             Assert.IsTrue(exportProfile.SchemeTracks.IsValid);
-            exportProfile.SchemeFooter.Scheme = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor";
+            exportProfile.SchemeFooter.Scheme = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
             Assert.IsTrue(exportProfile.SchemeFooter.IsValid);
             Assert.IsTrue(exportProfile.IsExportable);
             var fileContent = exportProfile.GenerateExport(cuesheet);
@@ -213,7 +213,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 Assert.AreNotEqual(content[i], ";;;;;");
                 Assert.IsTrue(content[i].StartsWith(cuesheet.Tracks.ToList()[i - 1].Position + ";"));
             }
-            Assert.AreEqual(content[^1], "Exported Demo Title from Demo Artist using AudioCuesheetEditor");
+            Assert.AreEqual(content[^1], String.Format("Exported Demo Title from Demo Artist using AudioCuesheetEditor at {0}", DateTime.Now.ToShortDateString()));
             File.Delete(tempFile);
         }
     }
