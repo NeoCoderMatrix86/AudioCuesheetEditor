@@ -23,6 +23,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using System.IO;
 using System.Text;
 using AudioCuesheetEditorTests.Properties;
+using System.Collections.Generic;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -384,6 +385,51 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual((uint)2, track3.Position.Value);
             Assert.AreEqual((uint)3, track4.Position.Value);
             Assert.AreEqual((uint)4, track5.Position.Value);
+            testHelper = new TestHelper();
+            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
+            cuesheet = new Cuesheet();
+            track1 = new Track
+            {
+                Artist = "Track 1",
+                Title = "Track 1"
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            track2 = new Track
+            {
+                Title = "Track 2",
+                Artist = "Track 2",
+                Begin = new TimeSpan(0, 5, 0)
+            };
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            track3 = new Track
+            {
+                Artist = "Track 3",
+                Title = "Track 3",
+                Begin = new TimeSpan(0, 10, 0)
+            };
+            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            track4 = new Track
+            {
+                Artist = "Track 4",
+                Title = "Track 4",
+                Begin = new TimeSpan(0, 15, 0)
+            };
+            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
+            track5 = new Track
+            {
+                Artist = "Track 5",
+                Title = "Track 5",
+                Begin = new TimeSpan(0, 20, 0)
+            };
+            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
+            var list = new List<Track>() { track2, track4 };
+            cuesheet.RemoveTracks(list.AsReadOnly());
+            Assert.AreEqual(3, cuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), track3.Begin);
+            Assert.AreEqual(new TimeSpan(0, 15, 0), track5.Begin);
+            Assert.AreEqual((uint)1, track1.Position);
+            Assert.AreEqual((uint)2, track3.Position);
+            Assert.AreEqual((uint)3, track5.Position);
         }
 
         [TestMethod()]
