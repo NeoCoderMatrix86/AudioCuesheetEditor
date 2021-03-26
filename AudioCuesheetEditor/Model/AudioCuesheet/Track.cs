@@ -470,7 +470,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Position, Artist, Title, Begin, End, PostGap, PreGap, Flags);
+            var hash = new HashCode();
+            hash.Add(Position);
+            hash.Add(Artist);
+            hash.Add(Title);
+            hash.Add(Begin);
+            hash.Add(End);
+            hash.Add(PreGap);
+            hash.Add(PostGap);
+            hash.Add(IsLinkedToPreviousTrack);
+            hash.Add(IsCloned);
+            return hash.ToHashCode();
         }
 
         #endregion

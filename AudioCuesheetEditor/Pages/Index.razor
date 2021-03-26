@@ -274,10 +274,59 @@ along with Foobar.  If not, see
                                     </Blazorise.Link>
                                 </CollapseHeader>
                                 <CollapseBody>
+                                    <Buttons Role="ButtonsRole.Toolbar">
+                                        <Buttons Margin="Margin.Is2.FromRight">
+                                            <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                                </svg>
+                                                @localizer["Add new track"]
+                                            </Button>
+                                        </Buttons>
+                                        <Buttons Margin="Margin.Is2.FromRight">
+                                            @if (trackSelectionVisible == false)
+                                            {
+                                                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                                        <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+                                                        <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+                                                    </svg>
+                                                    @localizer["Display selection of tracks"]
+                                                </Button>
+                                            }
+                                            else
+                                            {
+                                                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                                        <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+                                                        <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+                                                    </svg>
+                                                    @localizer["Hide selection of tracks"]
+                                                </Button>
+                                            }
+                                        </Buttons>
+                                        <Buttons>
+                                            <Button Color="Color.Warning" Clicked="DeleteSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                                </svg>
+                                                @localizer["Delete selected tracks"]
+                                            </Button>
+                                            <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                                                </svg>
+                                                @localizer["Delete all tracks"]
+                                            </Button>
+                                        </Buttons>
+                                    </Buttons>
+                                    <br />
                                     <Table Bordered="true" Responsive="true" Narrow="true">
                                         <TableHeader ThemeContrast="ThemeContrast.Light">
                                             <TableRow>
-                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Controls"]</TableHeaderCell>
+                                                <TableHeaderCell Display="selectionDisplay">@localizer["Selection"]</TableHeaderCell>
+                                                <TableHeaderCell Class="controlsCell">@localizer["Controls"]</TableHeaderCell>
                                                 <TableHeaderCell>#</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["Artist"]</TableHeaderCell>
                                                 <TableHeaderCell Class="minWidth">@localizer["Title"]</TableHeaderCell>
@@ -317,54 +366,67 @@ along with Foobar.  If not, see
                                                     </TableRow>
                                                 }
                                                 <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
-                                                    <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
+                                                    <TableRowCell Display="selectionDisplay">
+                                                        <Tooltip Placement="Placement.Right" Text="@localizer["Select this track for multiple track operations"]">
+                                                            <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
+                                                        </Tooltip>
+                                                    </TableRowCell>
+                                                    <TableRowCell Class="controlsCell">
                                                         <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Buttons>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Edit track tooltip"]">
-                                                                    <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                                                                        </svg>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Copy track tooltip"]">
-                                                                    <Button Size="Size.Small" Color="Color.Success" Clicked="() => CopyTrackClicked(track)">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
-                                                                            <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                                                                            <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
-                                                                        </svg>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Start playback this track"]">
-                                                                    <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
-                                                                            <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-                                                                        </svg>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Move track up tooltip"]">
-                                                                    <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                        </svg>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Delete track tooltip"]">
-                                                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => cuesheet.RemoveTrack(track)">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                                        </svg>
-                                                                    </Button>
-                                                                </Tooltip>
-                                                                <Tooltip Placement="Placement.Right" Text="@localizer["Move track down tooltip"]">
-                                                                    <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                        </svg>
-                                                                    </Button>
-                                                                </Tooltip>
+                                                            <Buttons Role="ButtonsRole.Toolbar">
+                                                                <Buttons Margin="Margin.Is1.FromRight">
+                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Edit track tooltip"]">
+                                                                        <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                                                            </svg>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Copy track tooltip"]">
+                                                                        <Button Size="Size.Small" Color="Color.Success" Clicked="() => CopyTrackClicked(track)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
+                                                                                <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                                                <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
+                                                                            </svg>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Buttons>
+                                                                <Buttons Margin="Margin.Is1.FromRight" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
+                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Start playback this track"]">
+                                                                        <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
+                                                                                <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+                                                                            </svg>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Buttons>
+                                                                <Buttons Margin="Margin.Is1.FromRight" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
+                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Move track up tooltip"]">
+                                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+                                                                            </svg>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Move track down tooltip"]">
+                                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+                                                                            </svg>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Buttons>
+                                                                <Buttons Margin="Margin.Is1.FromRight">
+                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Delete track tooltip"]">
+                                                                        <Button Size="Size.Small" Color="Color.Danger" Clicked="() => cuesheet.RemoveTrack(track)">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                                            </svg>
+                                                                        </Button>
+                                                                    </Tooltip>
+                                                                </Buttons>
                                                             </Buttons>
                                                         </Tooltip>
                                                     </TableRowCell>
@@ -417,8 +479,7 @@ along with Foobar.  If not, see
                                             }
                                         </TableBody>
                                     </Table>
-                                    <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)">@localizer["Add new track"]</Button>
-                                    <Button Color="Color.Warning" Clicked="OnDeleteAllTracksClicked">@localizer["Delete all tracks"]</Button>
+
                                 </CollapseBody>
                             </Collapse>
                         </Accordion>
@@ -1125,6 +1186,10 @@ along with Foobar.  If not, see
 
     private String selectedOptionsTab = "common";
 
+    private IFluentDisplay selectionDisplay = Display.None;
+    private Boolean trackSelectionVisible = false;
+    private List<Track> selectedTracks = new List<Track>();
+
     protected override async Task OnInitializedAsync()
     {
         Logger.LogDebug("OnInitializedAsync");
@@ -1194,7 +1259,7 @@ along with Foobar.  If not, see
         void deleteTracksDelegate(object sender, EventArgs args)
         {
             Logger.LogInformation("deleteTracksDelegate");
-            cuesheet.RemoveAllTracks();
+            cuesheet.RemoveTracks(cuesheet.Tracks);
             modalDialog.Confirmed -= deleteTracksDelegate;
             StateHasChanged();
         };
@@ -1751,5 +1816,36 @@ along with Foobar.  If not, see
 
         }
         cuesheet = sessionStateContainer.Cuesheet;
+    }
+
+    private void SwitchTrackSelectionVisible()
+    {
+        trackSelectionVisible = !trackSelectionVisible;
+        if (trackSelectionVisible)
+        {
+            selectionDisplay = Display.TableCell;
+        }
+        else
+        {
+            selectionDisplay = Display.None;
+        }
+    }
+
+    private void SelectedTrackChanged(Track track, bool selected)
+    {
+        if (selected)
+        {
+            selectedTracks.Add(track);
+        }
+        else
+        {
+            selectedTracks.Remove(track);
+        }
+    }
+
+    private void DeleteSelectedTracksClicked()
+    {
+        cuesheet.RemoveTracks(selectedTracks.AsReadOnly());
+        selectedTracks.Clear();
     }
 }

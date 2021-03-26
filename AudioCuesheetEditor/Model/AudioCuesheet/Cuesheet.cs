@@ -238,9 +238,37 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void RemoveAllTracks()
+        /// <summary>
+        /// Remove selected tracks
+        /// </summary>
+        /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
+        public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
-            tracks.Clear();
+            if (tracksToRemove == null)
+            {
+                throw new ArgumentNullException(nameof(tracksToRemove));
+            }
+            tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
+            tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
+            var intersection = tracks.Intersect(tracksToRemove);
+            tracks = tracks.Except(intersection).ToList();
+            foreach (var track in tracks)
+            {
+                if (track.IsLinkedToPreviousTrack)
+                {
+                    track.Position = (uint)tracks.IndexOf(track) + 1;
+                }
+                var previousTrack = GetPreviousLinkedTrack(track);
+                if (previousTrack != null)
+                {
+                    if (previousTrack.End.HasValue)
+                    {
+                        track.Begin = previousTrack.End;
+                    }
+                }
+            }
+            tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
+            tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             OnValidateablePropertyChanged();
         }
 
