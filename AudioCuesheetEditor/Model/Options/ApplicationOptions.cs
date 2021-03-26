@@ -83,7 +83,7 @@ namespace AudioCuesheetEditor.Model.Options
                 };
                 exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
                 exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
+                exportProfile.SchemeFooter.Scheme = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)";
                 list.Add(exportProfile);
                 exportProfile = new Exportprofile()
                 {

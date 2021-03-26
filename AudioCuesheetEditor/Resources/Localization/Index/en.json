@@ -129,6 +129,9 @@
     "Selection": "Selection",
     "Select this track for multiple track operations": "Select this track for multiple track operations",
     "Delete selected tracks": "Delete selected tracks",
-    "Hide selection of tracks": "Hide selection of tracks"
+    "Hide selection of tracks": "Hide selection of tracks",
+    "Date": "Date",
+    "DateTime": "Date and Time",
+    "Time": "Time"
   }
 }
