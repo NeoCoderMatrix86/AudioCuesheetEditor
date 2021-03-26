@@ -252,6 +252,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             intersection.ToList().ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
             intersection.ToList().ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
             tracks = tracks.Except(intersection).ToList();
+            //TODO: Check for linked tracks and restore the values correct
             OnValidateablePropertyChanged();
         }
 

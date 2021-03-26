@@ -128,6 +128,7 @@
     "Display selection of tracks": "Display selection of tracks",
     "Selection": "Selection",
     "Select this track for multiple track operations": "Select this track for multiple track operations",
-    "Delete selected tracks": "Delete selected tracks"
+    "Delete selected tracks": "Delete selected tracks",
+    "Hide selection of tracks": "Hide selection of tracks"
   }
 }
