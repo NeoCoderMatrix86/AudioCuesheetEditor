@@ -110,6 +110,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var track3 = new Track();
             var track4 = new Track();
             Assert.AreNotEqual(track3, track4);
+            //Changing one property makes track1 != track2 and this leads to intersection count 2, otherwise the intersect would be (correctly) only 1
+            track2.Artist = "Artist 2";
             var list2 = new List<Track>(list);
             var intersection = list.Intersect(list2);
             Assert.AreEqual(2, intersection.Count());
