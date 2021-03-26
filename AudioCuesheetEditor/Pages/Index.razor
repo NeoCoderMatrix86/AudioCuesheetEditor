@@ -368,7 +368,7 @@ along with Foobar.  If not, see
                                                 <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
                                                     <TableRowCell Display="selectionDisplay">
                                                         <Tooltip Placement="Placement.Right" Text="@localizer["Select this track for multiple track operations"]">
-                                                            <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)"/>
+                                                            <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
                                                         </Tooltip>
                                                     </TableRowCell>
                                                     <TableRowCell Class="controlsCell">
