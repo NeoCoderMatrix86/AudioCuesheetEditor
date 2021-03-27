@@ -25,7 +25,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Track : Validateable, ITrack<Cuesheet>
     {
-        private Guid hashGuid;
         private uint? position;
         private String artist;
         private String title;
@@ -52,7 +51,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="track">Object to copy values from</param>
         public Track(ITrack<Cuesheet> track)
         {
-            hashGuid = Guid.NewGuid();
             CopyValues(track);
         }
 
@@ -62,7 +60,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="track">Object to copy values from</param>
         public Track(ITrack<ImportCuesheet> track)
         {
-            hashGuid = Guid.NewGuid();
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -83,7 +80,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public Track()
         {
-            hashGuid = Guid.NewGuid();
             Validate();
         }
 
