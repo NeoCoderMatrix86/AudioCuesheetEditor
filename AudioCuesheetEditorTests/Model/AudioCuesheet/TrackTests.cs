@@ -95,29 +95,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         }
 
         [TestMethod()]
-        public void EqualsTest()
-        {
-            var track1 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", IsLinkedToPreviousTrack = true };
-            track1.SetFlag(Flag.DCP, SetFlagMode.Add);
-            track1.SetFlag(Flag.FourCH, SetFlagMode.Add);
-            var track2 = new Track() { Position = 1, Begin = TimeSpan.Zero, End = new TimeSpan(0, 5, 0), Artist = "Artist", Title = "Title", IsLinkedToPreviousTrack = true };
-            track2.SetFlag(Flag.DCP, SetFlagMode.Add);
-            track2.SetFlag(Flag.FourCH, SetFlagMode.Add);
-            Assert.AreEqual(track1, track2);
-            var list = new List<Track> { track1, track2 };
-            var linked = list.Where(x => x.IsLinkedToPreviousTrack == true);
-            Assert.AreEqual(2, linked.Count());
-            var track3 = new Track();
-            var track4 = new Track();
-            Assert.AreNotEqual(track3, track4);
-            //Changing one property makes track1 != track2 and this leads to intersection count 2, otherwise the intersect would be (correctly) only 1
-            track2.Artist = "Artist 2";
-            var list2 = new List<Track>(list);
-            var intersection = list.Intersect(list2);
-            Assert.AreEqual(2, intersection.Count());
-        }
-
-        [TestMethod()]
         public void CheckPositionInCuesheetTest()
         {
             var testHelper = new TestHelper();

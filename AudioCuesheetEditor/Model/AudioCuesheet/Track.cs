@@ -23,8 +23,9 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITrack<Cuesheet>, IEquatable<Track>
+    public class Track : Validateable, ITrack<Cuesheet>
     {
+        private Guid hashGuid;
         private uint? position;
         private String artist;
         private String title;
@@ -51,6 +52,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="track">Object to copy values from</param>
         public Track(ITrack<Cuesheet> track)
         {
+            hashGuid = Guid.NewGuid();
             CopyValues(track);
         }
 
@@ -60,6 +62,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="track">Object to copy values from</param>
         public Track(ITrack<ImportCuesheet> track)
         {
+            hashGuid = Guid.NewGuid();
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -80,6 +83,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public Track()
         {
+            hashGuid = Guid.NewGuid();
             Validate();
         }
 
@@ -416,73 +420,5 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
         }
-
-        #region Equality
-
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj as Track);
-        }
-
-        public bool Equals(Track other)
-        {
-            if (other is null)
-            {
-                return false;
-            }
-            if (Object.ReferenceEquals(this, other))
-            {
-                return true;
-            }
-            if (this.GetType() != other.GetType())
-            {
-                return false;
-            }
-            //2 Track objects are only equal, if they are not empty
-            if ((Position.HasValue) || (String.IsNullOrEmpty(Artist) == false) || (String.IsNullOrEmpty(Title) == false) || (Begin.HasValue) || (End.HasValue) || (Flags.Count > 0) || (PreGap.HasValue) || (PostGap.HasValue))
-            {
-                return Position == other.Position && Artist == other.Artist && Title == other.Title && Begin == other.Begin && End == other.End
-                    && Flags.SequenceEqual(other.Flags) && IsLinkedToPreviousTrack == other.IsLinkedToPreviousTrack && PreGap == other.PreGap && PostGap == other.PostGap;
-            }
-            else
-            {
-                return Object.ReferenceEquals(this, other);
-            }
-        }
-
-        public static bool operator ==(Track lhs, Track rhs)
-        {
-            if (lhs is null)
-            {
-                if (rhs is null)
-                {
-                    return true;
-                }
-                return false;
-            }
-            return lhs.Equals(rhs);
-        }
-
-        public static bool operator !=(Track lhs, Track rhs)
-        {
-            return !(lhs == rhs);
-        }
-
-        public override int GetHashCode()
-        {
-            var hash = new HashCode();
-            hash.Add(Position);
-            hash.Add(Artist);
-            hash.Add(Title);
-            hash.Add(Begin);
-            hash.Add(End);
-            hash.Add(PreGap);
-            hash.Add(PostGap);
-            hash.Add(IsLinkedToPreviousTrack);
-            hash.Add(IsCloned);
-            return hash.ToHashCode();
-        }
-
-        #endregion
     }
 }
