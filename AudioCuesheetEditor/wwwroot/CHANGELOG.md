@@ -1,5 +1,19 @@
 # Changelog
 
+## [v2.4.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.4.0) (2021-03-27)
+
+**Implemented enhancements:**
+
+- Switch localizer to Blazorise [\#149](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/149)
+- Options tabs [\#124](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/124)
+- Mark multiple tracks for deletion [\#105](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/105)
+- Extended ExportProfiles [\#75](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/75)
+
+**Fixed bugs:**
+
+- Tracks not exported by their position [\#166](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/166)
+- Handling of linked tracks incorrect [\#159](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/159)
+
 ## [v2.3.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.3.0) (2021-03-16)
 
 **Implemented enhancements:**
