@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>2.4.0</Version>
+    <Version>2.5.0</Version>
 	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
