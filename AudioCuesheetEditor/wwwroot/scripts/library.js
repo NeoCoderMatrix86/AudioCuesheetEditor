@@ -2,6 +2,7 @@
 var audioFileObjectURL = null;
 var startTime;
 var mediaStream = null;
+window.addEventListener('beforeunload', beforeunload);
 GLOBAL.Index = null;
 GLOBAL.AudioPlayer = null;
 GLOBAL.ViewModeRecord = null;
@@ -147,4 +148,13 @@ function stopAudioRecording() {
     if ((mediaStream !== null) && (rec.state !== 'inactive') && (rec.state !== 'stopped')) {
         rec.stop();
     }
+}
+
+function beforeunload(e) {
+    e.preventDefault();
+    e.returnValue = '';
+}
+
+function removeBeforeunload() {
+    window.removeEventListener('beforeunload', beforeunload);
 }
