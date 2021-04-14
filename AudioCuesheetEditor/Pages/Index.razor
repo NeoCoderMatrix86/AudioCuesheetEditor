@@ -1535,10 +1535,11 @@ along with Foobar.  If not, see
         modalDialog.Text = localizer["Confirm restart of application. All unsaved changes are lost!"];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void restartApplicationDelegate(object sender, EventArgs args)
+        async void restartApplicationDelegate(object sender, EventArgs args)
         {
             Logger.LogInformation("restartApplicationDelegate");
             modalDialog.Confirmed -= restartApplicationDelegate;
+            await JSRuntime.InvokeVoidAsync("removeBeforeunload");
             navigationManager.NavigateTo(navigationManager.Uri, true);
         };
         modalDialog.Confirmed += restartApplicationDelegate;
@@ -1560,6 +1561,7 @@ along with Foobar.  If not, see
     {
         Logger.LogInformation("OnRestartApplicationConfirmed");
         await JSRuntime.InvokeVoidAsync("resetLocalStorage");
+        await JSRuntime.InvokeVoidAsync("removeBeforeunload");
         modalDialog.Confirmed -= OnRestartApplicationConfirmed;
         navigationManager.NavigateTo(navigationManager.Uri, true);
     }
