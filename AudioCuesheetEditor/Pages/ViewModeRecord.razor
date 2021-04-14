@@ -46,13 +46,19 @@ along with Foobar.  If not, see
                 }
                 <Row>
                     <Column>
-                        <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="Cuesheet.IsRecording">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
-                                <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
-                                <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
-                            </svg>
-                            @localizer["Start recording"]
-                        </Button>
+                        <Dropdown Direction="Direction.Right">
+                            <Button Color="Color.Danger" Clicked="() => StartRecordingClicked(StartRecordMode.Direct)" Disabled="Cuesheet.IsRecording">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
+                                    <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
+                                    <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                                </svg>
+                                @localizer["Start recording"]
+                            </Button>
+                            <DropdownToggle Color="Color.Danger" Split="true"></DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem Clicked="() => StartRecordingClicked(StartRecordMode.WithCountdown)">@localizer["Start record timer"]</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </Column>
                     <Column>
                         @if (Cuesheet.RecordingTime.HasValue == true)
@@ -235,6 +241,12 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    public enum StartRecordMode
+    {
+        Direct,
+        WithCountdown
+    }
+
     public void Dispose()
     {
         JSRuntime.InvokeVoidAsync("closeAudioRecording");
@@ -332,8 +344,9 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    private async Task StartRecordingClicked()
+    private async Task StartRecordingClicked(StartRecordMode startRecordMode = StartRecordMode.Direct)
     {
+        //TODO: Check mode
         //Check for empty cuesheet and warn!
         if (Cuesheet.Tracks.Count > 0)
         {

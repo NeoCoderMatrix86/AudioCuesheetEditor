@@ -186,5 +186,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
+        public int? RecordCountdownTimer { get; set; }
     }
 }

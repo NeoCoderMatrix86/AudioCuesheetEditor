@@ -132,6 +132,7 @@
     "Hide selection of tracks": "Auswahl für Tracks ausblenden",
     "Date": "Datum",
     "DateTime": "Datum und Uhrzeit",
-    "Time": "Uhrzeit"
+    "Time": "Uhrzeit",
+    "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden"
   }
 }

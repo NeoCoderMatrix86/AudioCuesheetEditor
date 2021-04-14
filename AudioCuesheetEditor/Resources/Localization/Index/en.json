@@ -132,6 +132,7 @@
     "Hide selection of tracks": "Hide selection of tracks",
     "Date": "Date",
     "DateTime": "Date and Time",
-    "Time": "Time"
+    "Time": "Time",
+    "Record countdown timer in seconds": "Record countdown timer in seconds"
   }
 }

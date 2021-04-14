@@ -25,6 +25,7 @@
     "Download recorded audio": "Aufnahme herunterladen",
     "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.": "Das Cuesheet enthält bereits Tracks. Die Aufnahme ist nicht möglich, wenn bereits Tracks vorhanden sind. Bitte speichern Sie ihre Arbeit und starten Sie anschließend mit einem leeren Cuesheet.",
     "Error": "Fehler",
-    "Here all validation messages will be displayed. For details switch to full edit mode.": "Hier werden alle Validierungsnachrichten angezeigt. Für Details wechseln Sie bitte in den Bearbeitungsmodus \"Komplette Bearbeitung\"."
+    "Here all validation messages will be displayed. For details switch to full edit mode.": "Hier werden alle Validierungsnachrichten angezeigt. Für Details wechseln Sie bitte in den Bearbeitungsmodus \"Komplette Bearbeitung\".",
+    "Start record timer": "Aufnahmecountdown starten"
   }
 }
