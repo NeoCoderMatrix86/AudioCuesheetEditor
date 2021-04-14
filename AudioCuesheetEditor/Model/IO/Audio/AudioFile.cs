@@ -76,7 +76,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         }
 
         public String FileName { get; private set; }
-        //TODO: Get rid of objecturl and save data inside the contentstream (Memorystream)
         [JsonIgnore]
         public String ObjectURL { get; private set; }
         /// <summary>
