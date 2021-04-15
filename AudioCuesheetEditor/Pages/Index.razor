@@ -948,6 +948,12 @@ along with Foobar.  If not, see
                                     <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
                                 </FieldBody>
                             </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record countdown timer in seconds"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <NumericEdit TValue="int?" @bind-Value="optionsController.Options.RecordCountdownTimer" Min="1" />                                    
+                                </FieldBody>
+                            </Field>
                         </TabPanel>
                     </TabsContent>
                 </CardBody>

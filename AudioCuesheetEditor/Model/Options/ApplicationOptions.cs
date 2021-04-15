@@ -112,6 +112,10 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 ProjectFileName = Projectfile.DefaultFileName;
             }
+            if (RecordCountdownTimer.HasValue == false)
+            {
+                RecordCountdownTimer = 5;
+            }
         }
         public String CuesheetFileName { get; set; }
         public String CultureName { get; set; }
@@ -186,5 +190,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
+        public int? RecordCountdownTimer { get; set; }
     }
 }
