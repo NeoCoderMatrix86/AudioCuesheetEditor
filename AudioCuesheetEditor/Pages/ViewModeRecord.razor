@@ -44,10 +44,16 @@ along with Foobar.  If not, see
                         <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Record running!"]</Heading>
                     </div>
                 }
+                @if ((startRecordTimer != null) && (startRecordTimer.Enabled))
+                {
+                    <div class="BackgroundBlink rounded">
+                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]</Heading>
+                    </div>
+                }
                 <Row>
                     <Column>
                         <Dropdown Direction="Direction.Right">
-                            <Button Color="Color.Danger" Clicked="() => StartRecordingClicked(StartRecordMode.Direct)" Disabled="Cuesheet.IsRecording">
+                            <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="Cuesheet.IsRecording">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
                                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
                                     <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
@@ -56,7 +62,7 @@ along with Foobar.  If not, see
                             </Button>
                             <DropdownToggle Color="Color.Danger" Split="true"></DropdownToggle>
                             <DropdownMenu>
-                                <DropdownItem Clicked="() => StartRecordingClicked(StartRecordMode.WithCountdown)">@localizer["Start record timer"]</DropdownItem>
+                                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="startRecordTimer == null || Cuesheet.IsRecording">@localizer["Start record timer"]</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </Column>
@@ -241,12 +247,6 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    public enum StartRecordMode
-    {
-        Direct,
-        WithCountdown
-    }
-
     public void Dispose()
     {
         JSRuntime.InvokeVoidAsync("closeAudioRecording");
@@ -265,7 +265,10 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private Timer recordTimer;
+    private Timer updateGUITimer;
+    private Timer startRecordTimer;
+
+    private DateTime recordTimerStarted;
 
     private TextEdit enterCurrentTrackTitle;
     private TextEdit enterCurrentTrackArtist;
@@ -297,16 +300,26 @@ along with Foobar.  If not, see
             StateHasChanged();
         };
 
-        recordTimer = new Timer(500);
-        recordTimer.AutoReset = true;
-        recordTimer.Elapsed += delegate
+        updateGUITimer = new Timer(500);
+        updateGUITimer.AutoReset = true;
+        updateGUITimer.Elapsed += delegate
         {
             StateHasChanged();
-            if (Cuesheet.IsRecording == false)
+            if ((startRecordTimer.Enabled == false) && (Cuesheet.IsRecording == false))
             {
-                recordTimer.Stop();
+                updateGUITimer.Stop();
             }
         };
+
+        if (optionsController.Options.RecordCountdownTimer.HasValue)
+        {
+            startRecordTimer = new Timer(optionsController.Options.RecordCountdownTimer.Value * 1000);
+            startRecordTimer.Elapsed += async delegate
+            {
+                await StartRecordingClicked();
+                startRecordTimer.Stop();
+            };
+        }
     }
 
     private void HeaderClicked(ref Boolean visible, ref String chevron)
@@ -344,9 +357,8 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    private async Task StartRecordingClicked(StartRecordMode startRecordMode = StartRecordMode.Direct)
+    private async Task StartRecordingClicked()
     {
-        //TODO: Check mode
         //Check for empty cuesheet and warn!
         if (Cuesheet.Tracks.Count > 0)
         {
@@ -359,7 +371,7 @@ along with Foobar.  If not, see
         else
         {
             Cuesheet.StartRecording();
-            recordTimer.Start();
+            updateGUITimer.Start();
             enterCurrentTrackArtist.Focus();
             await JSRuntime.InvokeVoidAsync("startAudioRecording");
             if ((Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.IsRecorded))
@@ -438,5 +450,12 @@ along with Foobar.  If not, see
             Cuesheet.AddTrack(currentRecordingTrack, optionsController.Options);
             currentRecordingTrack = new Track();
         }
+    }
+
+    private void StartRecordCountdownTimer()
+    {
+        recordTimerStarted = DateTime.Now;
+        startRecordTimer.Start();
+        updateGUITimer.Start();
     }
 }

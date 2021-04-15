@@ -26,6 +26,7 @@
     "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.": "Cuesheet already contains tracks. Recording is not possible when there are tracks present in the cuesheet. Please save your work and start with a clean cuesheet.",
     "Error": "Error",
     "Here all validation messages will be displayed. For details switch to full edit mode.": "All validation messages will be displayed here. For details please switch to \"Full edit mode\".",
-    "Start record timer": "Start record countdown timer"
+    "Start record timer": "Start record countdown timer",
+    "Record will start in {0} seconds!": "Record will start in {0} seconds!"
   }
 }
