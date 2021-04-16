@@ -151,9 +151,9 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             if (String.IsNullOrEmpty(ObjectURL) == false)
             {
                 ContentStream = await httpClient.GetStreamAsync(ObjectURL);
-                ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
                 var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
                 Duration = new TimeSpan(0, 0, track.Duration);
+                ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
             }
         }
 

@@ -100,6 +100,8 @@ along with Foobar.  If not, see
                     cuesheet.Audiofile.ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
                 }
             }
+            //Also reset the duration, since audio file will change also
+            TotalTime = null;
             cuesheet = value;
             if (cuesheet != null)
             {
@@ -357,6 +359,7 @@ along with Foobar.  If not, see
         if ((Cuesheet != null) && (Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.Duration.HasValue) && (TotalTime.HasValue == false))
         {
             TotalTime = Cuesheet.Audiofile.Duration.Value;
+            StateHasChanged();
         }
     }
 }
