@@ -260,6 +260,11 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.AreEqual(cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
 
+            cuesheet = Cuesheetfile.ImportCuesheet(new MemoryStream(Resources.Playlist__36_Frames), testHelper.ApplicationOptions);
+            Assert.IsNotNull(cuesheet);
+            Assert.IsTrue(cuesheet.Tracks.Count == 12);
+            Assert.AreEqual(cuesheet.Tracks.ElementAt(2).Begin, new TimeSpan(0, 0, 9, 15, 600));
+
             builder = new StringBuilder();
             builder.AppendLine("PERFORMER \"Sample CD Artist\"");
             builder.AppendLine("TITLE \"Sample CD Title\"");

@@ -63,6 +63,16 @@ namespace AudioCuesheetEditorTests.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
+        internal static byte[] Playlist__36_Frames {
+            get {
+                object obj = ResourceManager.GetObject("Playlist__36_Frames", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
         internal static byte[] Playlist_Bug_30 {
             get {
                 object obj = ResourceManager.GetObject("Playlist_Bug_30", resourceCulture);
