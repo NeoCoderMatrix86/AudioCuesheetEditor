@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.5.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.5.0) (2021-04-16)
+
+**Implemented enhancements:**
+
+- Prevent app from getting closed [\#167](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/167)
+- Countdown start for record mode [\#114](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/114)
+- Add support for frames [\#36](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/36)
+
+**Fixed bugs:**
+
+- Reset Cuesheet doesn't reset audio length [\#172](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/172)
+
 ## [v2.4.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.4.0) (2021-03-27)
 
 **Implemented enhancements:**
