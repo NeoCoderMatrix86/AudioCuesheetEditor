@@ -34,6 +34,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
+    //TODO: ITraceable
     public class Cuesheet : Validateable, ICuesheet<Track>
     {
         private readonly object syncLock = new object();

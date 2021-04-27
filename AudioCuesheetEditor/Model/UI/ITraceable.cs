@@ -40,6 +40,9 @@ namespace AudioCuesheetEditor.Model.UI
     /// </summary>
     public interface ITraceable
     {
+        /// <summary>
+        /// A property of this object has been changed and therefore needs to be traced by the TraceChangeManager.
+        /// </summary>
         public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
     }
 }

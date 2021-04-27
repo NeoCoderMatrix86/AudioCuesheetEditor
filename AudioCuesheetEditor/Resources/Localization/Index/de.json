@@ -133,6 +133,8 @@
     "Date": "Datum",
     "DateTime": "Datum und Uhrzeit",
     "Time": "Uhrzeit",
-    "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden"
+    "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden",
+    "Undo last change": "Letzte Änderung Rückgängig machen",
+    "Redo last change": "Letzte Änderung wiederherstellen"
   }
 }

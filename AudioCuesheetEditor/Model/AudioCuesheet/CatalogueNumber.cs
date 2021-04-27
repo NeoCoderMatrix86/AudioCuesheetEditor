@@ -21,6 +21,7 @@ using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
+    //TODO: ITraceable
     public class Cataloguenumber : Validateable, IEntityDisplayName
     {
         public Cataloguenumber()

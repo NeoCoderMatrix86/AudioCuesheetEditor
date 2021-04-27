@@ -47,8 +47,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Eventhandler for IsLinkedToPreviousTrack has changed
         /// </summary>
         public event EventHandler IsLinkedToPreviousTrackChanged;
-        
-        //TODO
+
+        /// <inheritdoc/>
         public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
 
         /// <summary>

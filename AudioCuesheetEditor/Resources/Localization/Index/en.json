@@ -133,6 +133,8 @@
     "Date": "Date",
     "DateTime": "Date and Time",
     "Time": "Time",
-    "Record countdown timer in seconds": "Record countdown timer in seconds"
+    "Record countdown timer in seconds": "Record countdown timer in seconds",
+    "Undo last change": "Undo last change",
+    "Redo last change": "Redo last change"
   }
 }

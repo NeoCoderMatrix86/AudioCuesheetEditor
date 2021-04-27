@@ -21,9 +21,12 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.UI
 {
+    /// <summary>
+    /// Class for tracing changes on an object
+    /// </summary>
     public class TracedChange
     {
-        public TracedChange(object traceableObject, object propertyValue, string propertyName)
+        public TracedChange(ITraceable traceableObject, object propertyValue, string propertyName)
         {
             if (traceableObject == null)
             {
@@ -37,10 +40,14 @@ namespace AudioCuesheetEditor.Model.UI
             PropertyValue = propertyValue;
             PropertyName = propertyName;
         }
-        public object TraceableObject { get; init; }
+        public ITraceable TraceableObject { get; init; }
         public object PropertyValue { get; init; }
         public string PropertyName { get; init; }
     }
+
+    /// <summary>
+    /// Manager for Undo and Redo operations on objects.
+    /// </summary>
     public class TraceChangeManager
     {
         private static TraceChangeManager instance;
@@ -56,8 +63,6 @@ namespace AudioCuesheetEditor.Model.UI
             }
         }
 
-        private readonly List<ITraceable> tracedObjects = new();
-
         private readonly Stack<TracedChange> undoStack = new();
         private readonly Stack<TracedChange> redoStack = new();
 
@@ -69,8 +74,7 @@ namespace AudioCuesheetEditor.Model.UI
         {
             get
             {
-                //TODO
-                return false;
+                return undoStack.Count > 0;
             }
         }
 
@@ -81,8 +85,7 @@ namespace AudioCuesheetEditor.Model.UI
         {
             get
             {
-                //TODO
-                return false;
+                return redoStack.Count > 0;
             }
         }
 
@@ -95,8 +98,24 @@ namespace AudioCuesheetEditor.Model.UI
         {
             if (CurrentlyHandlingChanges == false)
             {
-                undoStack.Push(new TracedChange(sender, e.PreviousValue, e.PropertyName));
+                undoStack.Push(new TracedChange((ITraceable) sender, e.PreviousValue, e.PropertyName));
+                redoStack.Clear();
             }
+        }
+
+        public void Reset()
+        {
+            //Disconnect all
+            foreach(var tracedObject in undoStack.Select(x => x.TraceableObject))
+            {
+                tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+            }
+            foreach (var tracedObject in redoStack.Select(x => x.TraceableObject))
+            {
+                tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+            }
+            undoStack.Clear();
+            redoStack.Clear();
         }
 
         public void TraceChanges(ITraceable traceable)
@@ -106,7 +125,6 @@ namespace AudioCuesheetEditor.Model.UI
                 throw new ArgumentNullException(nameof(traceable));
             }
             traceable.TraceablePropertyChanged += Traceable_TraceablePropertyChanged;
-            tracedObjects.Add(traceable);
         }
 
         public void Undo()
