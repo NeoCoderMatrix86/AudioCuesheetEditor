@@ -186,6 +186,25 @@ along with Foobar.  If not, see
         }
     }
 
+    public async Task OnPlayTrackClicked(Track trackToPlay)
+    {
+        if ((trackToPlay != null) && (trackToPlay.Begin != null))
+        {
+            if (AudioIsPlaying == false)
+            {
+                await OnPlayClicked();
+            }
+            await Howl.Seek(trackToPlay.Begin.Value);
+            StateHasChanged();
+        }
+    }
+
+    public async Task Reset()
+    {
+        await Howl.Stop();
+        //TODO: Also unregister media keys
+    }
+
     protected Double CurrentSliderValue
     {
         get
@@ -306,19 +325,6 @@ along with Foobar.  If not, see
             };
             audioFile = Cuesheet.Audiofile;
             soundId = await Howl.Play(options);
-        }
-    }
-
-    public async Task OnPlayTrackClicked(Track trackToPlay)
-    {
-        if ((trackToPlay != null) && (trackToPlay.Begin != null))
-        {
-            if (AudioIsPlaying == false)
-            {
-                await OnPlayClicked();
-            }
-            await Howl.Seek(trackToPlay.Begin.Value);
-            StateHasChanged();
         }
     }
 
