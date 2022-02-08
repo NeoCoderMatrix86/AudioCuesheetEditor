@@ -67,7 +67,7 @@ along with Foobar.  If not, see
                                 @foreach (var name in Enum.GetNames(typeof(ViewMode)))
                                 {
                                     <BarDropdownItem>
-                                        <Button Color="Color.Warning" Clicked="() => CurrentViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
+                                        <Button Color="Color.Warning" Clicked="() => OnViewModeSelected((ViewMode)Enum.Parse(typeof(ViewMode), name))">@localizer[name]</Button>
                                     </BarDropdownItem>
                                 }
                             </BarDropdownMenu>
@@ -1855,5 +1855,15 @@ along with Foobar.  If not, see
     {
         cuesheet.RemoveTracks(selectedTracks.AsReadOnly());
         selectedTracks.Clear();
+    }
+
+    private async Task OnViewModeSelected(ViewMode selectedViewMode)
+    {
+        CurrentViewMode = selectedViewMode;
+        //In case of record view we need to make shure no playback is running
+        if (CurrentViewMode == ViewMode.ViewModeRecord)
+        {
+            await audioPlayer.Reset();
+        }
     }
 }
