@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Model.UI;
 using Blazorise.Localization;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITrack<Cuesheet>
+    public class Track : Validateable, ITrack<Cuesheet>, ITraceable
     {
         private uint? position;
         private String artist;
@@ -34,6 +35,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Track clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
         private Cuesheet cuesheet;
+        private TimeSpan? preGap;
+        private TimeSpan? postGap;
 
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
@@ -44,6 +47,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Eventhandler for IsLinkedToPreviousTrack has changed
         /// </summary>
         public event EventHandler IsLinkedToPreviousTrackChanged;
+
+        /// <inheritdoc/>
+        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
 
         /// <summary>
         /// Create object with copied values from input
@@ -86,29 +92,29 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public uint? Position 
         {
             get { return position; }
-            set { position = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Position)); }
+            set { var previousValue = position; position = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Position)); OnTraceablePropertyChanged(previousValue); }
         }
         public String Artist 
         {
             get { return artist; }
-            set { artist = value; OnValidateablePropertyChanged(); }
+            set { var previousValue = artist; artist = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
         }
         public String Title 
         {
             get { return title; }
-            set { title = value; OnValidateablePropertyChanged(); }
+            set { var previousValue = title; title = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
         }
         [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? Begin 
         {
             get { return begin; }
-            set { begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); }
+            set { var previousValue = begin; begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); OnTraceablePropertyChanged(previousValue); }
         }
         [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? End 
         {
             get { return end; }
-            set { end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); }
+            set { var previousValue = end; end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); OnTraceablePropertyChanged(previousValue); }
         }
         [JsonIgnore]
         public TimeSpan? Length 
@@ -169,7 +175,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Cuesheet Cuesheet 
         {
             get { return cuesheet; }
-            set { cuesheet = value; OnValidateablePropertyChanged(); }
+            set { var previousValue = cuesheet; cuesheet = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
         }
 
         /// <summary>
@@ -187,17 +193,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         /// <inheritdoc/>
         [JsonConverter(typeof(JsonTimeSpanConverter))]
-        public TimeSpan? PreGap { get; set; }
+        public TimeSpan? PreGap 
+        {
+            get { return preGap; }
+            set { var previousValue = preGap; preGap = value; OnTraceablePropertyChanged(previousValue); }
+        }
         /// <inheritdoc/>
         [JsonConverter(typeof(JsonTimeSpanConverter))]
-        public TimeSpan? PostGap { get; set; }
+        public TimeSpan? PostGap 
+        {
+            get { return postGap; }
+            set { var previousValue = postGap; postGap = value; OnTraceablePropertyChanged(previousValue); }
+        }
         /// <summary>
         /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
         public Boolean IsLinkedToPreviousTrack
         {
             get { return isLinkedToPreviousTrack; }
-            set { isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); }
+            set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); OnTraceablePropertyChanged(previousValue); }
         }
 
         public String GetDisplayNameLocalized(ITextLocalizer localizer)
@@ -260,6 +274,38 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             PreGap = track.PreGap;
             PostGap = track.PostGap;
             OnValidateablePropertyChanged();
+        }
+
+        ///<inheritdoc/>
+        public void SetFlag(Flag flag, SetFlagMode flagMode)
+        {
+            if (flag == null)
+            {
+                throw new ArgumentNullException(nameof(flag));
+            }
+            var previousValue = flags;
+            if ((flagMode == SetFlagMode.Add) && (Flags.Contains(flag) == false))
+            {
+                flags.Add(flag);
+            }
+            if ((flagMode == SetFlagMode.Remove) && (Flags.Contains(flag)))
+            {
+                flags.Remove(flag);
+            }
+            OnTraceablePropertyChanged(previousValue);
+        }
+
+        ///<inheritdoc/>
+        public void SetFlags(IEnumerable<Flag> flags)
+        {
+            this.flags.Clear();
+            this.flags.AddRange(flags);
+        }
+
+
+        public override string ToString()
+        {
+            return String.Format("({0} {1},{2} {3},{4} {5},{6} {7},{8} {9},{10} {11})", nameof(Position), Position, nameof(Artist), Artist, nameof(Title), Title, nameof(Begin), Begin, nameof(End), End, nameof(Length), Length);
         }
 
         protected override void Validate()
@@ -380,34 +426,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        ///<inheritdoc/>
-        public void SetFlag(Flag flag, SetFlagMode flagMode)
+        protected void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            if (flag == null)
-            {
-                throw new ArgumentNullException(nameof(flag));
-            }
-            if ((flagMode == SetFlagMode.Add) && (Flags.Contains(flag) == false))
-            {
-                flags.Add(flag);
-            }
-            if ((flagMode == SetFlagMode.Remove) && (Flags.Contains(flag)))
-            {
-                flags.Remove(flag);
-            }
-        }
-
-        ///<inheritdoc/>
-        public void SetFlags(IEnumerable<Flag> flags)
-        {
-            this.flags.Clear();
-            this.flags.AddRange(flags);
-        }
-
-
-        public override string ToString()
-        {
-            return String.Format("({0} {1},{2} {3},{4} {5},{6} {7},{8} {9},{10} {11})", nameof(Position), Position, nameof(Artist), Artist, nameof(Title), Title, nameof(Begin), Begin, nameof(End), End, nameof(Length), Length);
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertyChangedEventArgs(propertyName, previousValue));
         }
 
         private void Track_RankPropertyValueChanged(object sender, string e)
