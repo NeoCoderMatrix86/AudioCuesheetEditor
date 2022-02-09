@@ -951,7 +951,19 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record countdown timer in seconds"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <NumericEdit TValue="int?" @bind-Value="optionsController.Options.RecordCountdownTimer" Min="1" />                                    
+                                    <NumericEdit TValue="int?" @bind-Value="optionsController.Options.RecordCountdownTimer" Min="1" />
+                                </FieldBody>
+                            </Field>
+                            @*TODO*@
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record time sensitivity"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.RecordTimeSensitivityName">
+                                        @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
+                                        {
+                                            <SelectItem Value="@name">@localizer["TimeSensitivityMode." + name]</SelectItem>
+                                        }
+                                    </Select>
                                 </FieldBody>
                             </Field>
                         </TabPanel>

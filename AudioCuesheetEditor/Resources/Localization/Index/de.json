@@ -133,6 +133,10 @@
     "Date": "Datum",
     "DateTime": "Datum und Uhrzeit",
     "Time": "Uhrzeit",
-    "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden"
+    "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden",
+    "Record time sensitivity": "Genauigkeit der Aufnahmezeiten",
+    "TimeSensitivityMode.Full": "Alles (inkl. Millisekunden)",
+    "TimeSensitivityMode.Seconds": "Nur Sekunden",
+    "TimeSensitivityMode.Minutes": "Nur Minuten"
   }
 }

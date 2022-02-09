@@ -35,6 +35,13 @@ namespace AudioCuesheetEditor.Model.Options
         ViewModeRecord = 1
     }
 
+    public enum TimeSensitivityMode
+    {
+        Full = 0,
+        Seconds = 1,
+        Minutes = 2
+    }
+
     public class ApplicationOptions
     {
         private String audioFileNameRecording;
@@ -191,5 +198,13 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public int? RecordCountdownTimer { get; set; }
+
+        [JsonIgnore]
+        public TimeSensitivityMode RecordTimeSensitivity { get; set; }
+        public String RecordTimeSensitivityName
+        {
+            get { return Enum.GetName(typeof(TimeSensitivityMode), RecordTimeSensitivity); }
+            set { RecordTimeSensitivity = (TimeSensitivityMode)Enum.Parse(typeof(TimeSensitivityMode), value); }
+        }
     }
 }
