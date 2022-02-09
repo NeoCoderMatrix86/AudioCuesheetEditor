@@ -385,7 +385,7 @@ along with Foobar.  If not, see
     private async Task StopRecordingClicked()
     {
         await JSRuntime.InvokeVoidAsync("stopAudioRecording");
-        Cuesheet.StopRecording();
+        Cuesheet.StopRecording(optionsController.Options);
         //Open processing hints
         processingHintsVisible = true;
         SwitchChevron(processingHintsVisible, ref chevronProcessingHints);

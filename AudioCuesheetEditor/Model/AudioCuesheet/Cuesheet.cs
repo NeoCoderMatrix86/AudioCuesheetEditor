@@ -185,7 +185,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (IsRecording)
             {
-                track.Begin = DateTime.UtcNow - recordingStart.Value;
+                track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             track.Cuesheet = this;
             tracks.Add(track);
@@ -353,13 +353,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             recordingStart = DateTime.UtcNow;
         }
 
-        public void StopRecording()
+        public void StopRecording(ApplicationOptions applicationOptions)
         {
             //Set end of last track
             var lastTrack = Tracks.LastOrDefault();
             if (lastTrack != null)
             {
-                lastTrack.End = DateTime.UtcNow - recordingStart.Value;
+                lastTrack.End = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             recordingStart = null;
         }
@@ -632,6 +632,32 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+        }
+
+        private TimeSpan CalculateTimeSpanWithSensitivity(TimeSpan inputTimeSpan, TimeSensitivityMode sensitivityMode)
+        {
+            TimeSpan timeSpan;
+            switch (sensitivityMode)
+            {
+                default:
+                case TimeSensitivityMode.Full:
+                    timeSpan = inputTimeSpan;
+                    break;
+                case TimeSensitivityMode.Seconds:
+                    timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes, inputTimeSpan.Seconds);
+                    break;
+                case TimeSensitivityMode.Minutes:
+                    if (inputTimeSpan.Seconds >= 30)
+                    {
+                        timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes + 1, 0);
+                    }
+                    else
+                    {
+                        timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes, 0);
+                    }
+                    break;
+            }
+            return timeSpan;
         }
     }
 }

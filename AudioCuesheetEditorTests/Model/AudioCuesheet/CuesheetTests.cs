@@ -278,6 +278,23 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
             Assert.IsNotNull(track.End);
             Assert.AreNotEqual(TimeSpan.Zero, track.End);
+            //Now lets test with another RecordTimeSensitivity
+            cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+            track = new Track();
+            testHelper.ApplicationOptions.RecordTimeSensitivity = Options.TimeSensitivityMode.Seconds;
+            cuesheet.AddTrack(track, testHelper.ApplicationOptions);
+            Assert.AreEqual(TimeSpan.Zero, track.Begin);
+            Assert.IsNull(track.End);
+            System.Threading.Thread.Sleep(3000);
+            track2 = new Track();
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            Assert.IsNotNull(track.End);
+            Assert.AreNotEqual(TimeSpan.Zero, track.End);
+            Assert.AreEqual(0, track.End.Value.Milliseconds);
+            cuesheet.StopRecording(testHelper.ApplicationOptions);
+            Assert.AreEqual(track.End.Value, track2.Begin.Value);
+            Assert.AreEqual(0, track2.End.Value.Milliseconds);
         }
 
         [TestMethod()]
