@@ -68,7 +68,7 @@ along with Foobar.  If not, see
                 <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of previous track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
-                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop()" />
+                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop(soundId)" />
                 <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of next track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
@@ -79,7 +79,7 @@ along with Foobar.  If not, see
 
 @code {
     private Timer audioUpdateTimer;
-    private int? soundId;
+    private int soundId;
     private Track currentlyPlayingTrack;
     private HotKeysContext hotKeysContext;
     private Boolean paused;
@@ -131,6 +131,11 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext.Dispose();
+        Howl.OnPlay -= HowlOnPlay;
+        Howl.OnPause -= HowlOnPause;
+        Howl.OnEnd -= HowlOnEnd;
+        Howl.OnStop -= HowlOnStop;
+        audioUpdateTimer.Dispose();
     }
 
     public Boolean PlaybackPossible
@@ -186,6 +191,24 @@ along with Foobar.  If not, see
         }
     }
 
+    public async Task OnPlayTrackClicked(Track trackToPlay)
+    {
+        if ((trackToPlay != null) && (trackToPlay.Begin != null))
+        {
+            if (AudioIsPlaying == false)
+            {
+                await OnPlayClicked();
+            }
+            await Howl.Seek(soundId, trackToPlay.Begin.Value);
+            StateHasChanged();
+        }
+    }
+
+    public async Task Reset()
+    {
+        await Howl.Stop(soundId);
+    }
+
     protected Double CurrentSliderValue
     {
         get
@@ -220,10 +243,10 @@ along with Foobar.  If not, see
         audioUpdateTimer.AutoReset = true;
         audioUpdateTimer.Elapsed += async delegate
         {
-            AudioIsPlaying = await Howl.IsPlaying();
+            AudioIsPlaying = await Howl.IsPlaying(soundId);
             if (AudioIsPlaying == true)
             {
-                CurrentPlaybackPosition = await Howl.GetCurrentTime();
+                CurrentPlaybackPosition = await Howl.GetCurrentTime(soundId);
                 if (TotalTime.HasValue == false)
                 {
                     TotalTime = Howl.TotalTime;
@@ -236,39 +259,44 @@ along with Foobar.  If not, see
             StateHasChanged();
         };
 
-        Howl.OnPlay += e =>
-        {
-            paused = false;
-            audioUpdateTimer.Start();
-        };
-
-        Howl.OnPause += e =>
-        {
-            paused = true;
-        };
-
-        Howl.OnEnd += e =>
-        {
-            paused = false;
-            audioUpdateTimer.Stop();
-            CurrentlyPlayingTrack = null;
-            CurrentPlaybackPosition = null;
-            AudioIsPlaying = false;
-            StateHasChanged();
-        };
-
-        Howl.OnStop += e =>
-        {
-            paused = false;
-            audioUpdateTimer.Stop();
-            CurrentlyPlayingTrack = null;
-            CurrentPlaybackPosition = null;
-            AudioIsPlaying = false;
-            soundId = null;
-            StateHasChanged();
-        };
+        Howl.OnPlay += HowlOnPlay;
+        Howl.OnPause += HowlOnPause;
+        Howl.OnEnd += HowlOnEnd;
+        Howl.OnStop += HowlOnStop;
 
         await base.OnInitializedAsync();
+    }
+
+    private void HowlOnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs args)
+    {
+        paused = false;
+        audioUpdateTimer.Start();
+    }
+
+    private void HowlOnPause(Howler.Blazor.Components.Events.HowlEventArgs args)
+    {
+        paused = true;
+    }
+
+    private void HowlOnEnd(Howler.Blazor.Components.Events.HowlEventArgs args)
+    {
+        paused = false;
+        audioUpdateTimer.Stop();
+        CurrentlyPlayingTrack = null;
+        CurrentPlaybackPosition = null;
+        AudioIsPlaying = false;
+        StateHasChanged();
+    }
+
+    private void HowlOnStop(Howler.Blazor.Components.Events.HowlEventArgs args)
+    {
+        paused = false;
+        audioUpdateTimer.Stop();
+        CurrentlyPlayingTrack = null;
+        CurrentPlaybackPosition = null;
+        AudioIsPlaying = false;
+        soundId = default;
+        StateHasChanged();
     }
 
     private async Task OnSliderValueChanged(Double newvalue)
@@ -278,16 +306,16 @@ along with Foobar.  If not, see
         {
             await OnPlayClicked();
         }
-        await Howl.Seek(newPosition);
+        await Howl.Seek(soundId, newPosition);
     }
 
     private async Task OnPlayClicked()
     {
         if (Cuesheet.Audiofile != audioFile)
         {
-            soundId = null;
+            soundId = default;
         }
-        if (soundId != null)
+        if (soundId != default)
         {
             await Howl.Pause(soundId);
             StateHasChanged();
@@ -306,19 +334,6 @@ along with Foobar.  If not, see
             };
             audioFile = Cuesheet.Audiofile;
             soundId = await Howl.Play(options);
-        }
-    }
-
-    public async Task OnPlayTrackClicked(Track trackToPlay)
-    {
-        if ((trackToPlay != null) && (trackToPlay.Begin != null))
-        {
-            if (AudioIsPlaying == false)
-            {
-                await OnPlayClicked();
-            }
-            await Howl.Seek(trackToPlay.Begin.Value);
-            StateHasChanged();
         }
     }
 

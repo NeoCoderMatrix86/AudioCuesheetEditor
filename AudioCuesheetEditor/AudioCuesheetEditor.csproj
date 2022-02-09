@@ -75,7 +75,7 @@
     <PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3.5" />
     <PackageReference Include="Blazorise.Components" Version="0.9.3.5" />
-    <PackageReference Include="Howler.Blazor" Version="0.9.5" />
+    <PackageReference Include="Howler.Blazor" Version="0.9.8" />
     <PackageReference Include="Macross.Json.Extensions" Version="2.0.0" />
     <PackageReference Include="Markdig" Version="0.24.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.5" />

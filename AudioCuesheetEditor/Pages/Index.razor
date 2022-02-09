@@ -88,7 +88,7 @@ along with Foobar.  If not, see
                                 @foreach (var name in Enum.GetNames(typeof(ViewMode)))
                                 {
                                     <BarDropdownItem>
-                                        <Button Color="Color.Warning" Clicked="() => CurrentViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), name)">@localizer[name]</Button>
+                                        <Button Color="Color.Warning" Clicked="() => OnViewModeSelected((ViewMode)Enum.Parse(typeof(ViewMode), name))">@localizer[name]</Button>
                                     </BarDropdownItem>
                                 }
                             </BarDropdownMenu>
@@ -972,7 +972,19 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record countdown timer in seconds"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <NumericEdit TValue="int?" @bind-Value="optionsController.Options.RecordCountdownTimer" Min="1" />                                    
+                                    <NumericEdit TValue="int?" @bind-Value="optionsController.Options.RecordCountdownTimer" Min="1" />
+                                </FieldBody>
+                            </Field>
+                            @*TODO*@
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record time sensitivity"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.RecordTimeSensitivityName">
+                                        @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
+                                        {
+                                            <SelectItem Value="@name">@localizer["TimeSensitivityMode." + name]</SelectItem>
+                                        }
+                                    </Select>
                                 </FieldBody>
                             </Field>
                         </TabPanel>
@@ -1876,5 +1888,15 @@ along with Foobar.  If not, see
     {
         cuesheet.RemoveTracks(selectedTracks.AsReadOnly());
         selectedTracks.Clear();
+    }
+
+    private async Task OnViewModeSelected(ViewMode selectedViewMode)
+    {
+        CurrentViewMode = selectedViewMode;
+        //In case of record view we need to make shure no playback is running
+        if (CurrentViewMode == ViewMode.ViewModeRecord)
+        {
+            await audioPlayer.Reset();
+        }
     }
 }

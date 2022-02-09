@@ -134,6 +134,10 @@
     "DateTime": "Date and Time",
     "Time": "Time",
     "Record countdown timer in seconds": "Record countdown timer in seconds",
+    "Record time sensitivity": "Recordtime sensitivity",
+    "TimeSensitivityMode.Full": "Everything (incl. milliseconds)",
+    "TimeSensitivityMode.Seconds": "Only seconds",
+    "TimeSensitivityMode.Minutes": "Only minutes"
     "Undo last change": "Undo last change",
     "Redo last change": "Redo last change"
   }
