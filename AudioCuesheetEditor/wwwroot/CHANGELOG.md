@@ -1,5 +1,15 @@
 # Changelog
 
+## [v2.6.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.6.0) (2022-02-09)
+
+**Implemented enhancements:**
+
+- Record mode with editable sensitivity [\#180](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/180)
+
+**Fixed bugs:**
+
+- Playback doesn't stop when starting record [\#179](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/179)
+
 ## [v2.5.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.5.0) (2021-04-16)
 
 **Implemented enhancements:**
