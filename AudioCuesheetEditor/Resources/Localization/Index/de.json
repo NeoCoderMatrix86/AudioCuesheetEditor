@@ -137,7 +137,7 @@
     "Record time sensitivity": "Genauigkeit der Aufnahmezeiten",
     "TimeSensitivityMode.Full": "Alles (inkl. Millisekunden)",
     "TimeSensitivityMode.Seconds": "Nur Sekunden",
-    "TimeSensitivityMode.Minutes": "Nur Minuten"
+    "TimeSensitivityMode.Minutes": "Nur Minuten",
     "Undo last change": "Letzte Änderung Rückgängig machen",
     "Redo last change": "Letzte Änderung wiederherstellen"
   }
