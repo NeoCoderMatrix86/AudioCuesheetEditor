@@ -119,14 +119,20 @@ namespace AudioCuesheetEditor.Model.UI
         public void Reset()
         {
             //Disconnect all
-            //foreach(var tracedObject in undoStack.Select(x => x.TraceableObject))
-            //{
-            //    tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-            //}
-            //foreach (var tracedObject in redoStack.Select(x => x.TraceableObject))
-            //{
-            //    tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-            //}
+            foreach (var tracedObject in undoStack.Select(x => x.TraceableObject))
+            {
+                if (tracedObject != null)
+                {
+                    tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+                }
+            }
+            foreach (var tracedObject in redoStack.Select(x => x.TraceableObject))
+            {
+                if (tracedObject != null)
+                {
+                    tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+                }
+            }
             undoStack.Clear();
             redoStack.Clear();
         }
