@@ -47,6 +47,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var track = new Track();
             TraceChangeManager.Instance.TraceChanges(track);
             Assert.IsFalse(TraceChangeManager.Instance.CanUndo);
+            TraceChangeManager.Instance.Undo();
             track.Position = 3;
             Assert.IsTrue(TraceChangeManager.Instance.CanUndo);
             track.Artist = "Artist";
@@ -77,9 +78,13 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsTrue(TraceChangeManager.Instance.CanUndo);
             track.Artist = "Artist";
             track.End = new TimeSpan(0, 3, 23);
+            Assert.IsFalse(TraceChangeManager.Instance.CanRedo);
+            TraceChangeManager.Instance.Redo();
             TraceChangeManager.Instance.Undo();
             Assert.IsTrue(TraceChangeManager.Instance.CanRedo);
             Assert.IsNull(track.End);
+            TraceChangeManager.Instance.Redo();
+            Assert.AreEqual(new TimeSpan(0, 3, 23), track.End);
             var track2 = new Track();
             TraceChangeManager.Instance.TraceChanges(track2);
             track2.Position = 5;
@@ -90,9 +95,33 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
             TraceChangeManager.Instance.Undo();
             Assert.IsNull(track2.Length);
-            //TODO: Redo is currently not implemented!
             TraceChangeManager.Instance.Redo();
             Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
+        }
+        
+        [TestMethod()]
+        public void UndoRedoCombinationTest()
+        {
+            TraceChangeManager.Instance.Reset();
+            var track = new Track();
+            TraceChangeManager.Instance.TraceChanges(track);
+            Assert.IsFalse(TraceChangeManager.Instance.CanUndo);
+            track.Position = 3;
+            Assert.IsTrue(TraceChangeManager.Instance.CanUndo);
+            track.Artist = "Artist";
+            track.End = new TimeSpan(0, 3, 23);
+            Assert.IsFalse(TraceChangeManager.Instance.CanRedo);
+            TraceChangeManager.Instance.Redo();
+            TraceChangeManager.Instance.Undo();
+            Assert.IsTrue(TraceChangeManager.Instance.CanRedo);
+            Assert.IsNull(track.End);
+            TraceChangeManager.Instance.Redo();
+            Assert.AreEqual(new TimeSpan(0, 3, 23), track.End);
+            Assert.IsTrue(TraceChangeManager.Instance.CanUndo);
+            TraceChangeManager.Instance.Undo();
+            Assert.IsNull(track.End);
+            TraceChangeManager.Instance.Redo();
+            Assert.AreEqual(new TimeSpan(0, 3, 23), track.End);
         }
     }
 }
