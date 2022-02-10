@@ -61,6 +61,7 @@ namespace AudioCuesheetEditor.Model.UI
     /// </summary>
     public class TraceChangeManager
     {
+        //TODO: SingleTon should be safely relied on service registration
         private static TraceChangeManager instance;
         public static TraceChangeManager Instance
         {
