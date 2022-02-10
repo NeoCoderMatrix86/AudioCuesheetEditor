@@ -12,21 +12,32 @@ namespace AudioCuesheetEditor.Model.UI.Tests
     [TestClass()]
     public class TraceChangeManagerTests
     {
+        private static T CallInItsOwnScope<T>(Func<T> getter)
+        {
+            return getter();
+        }
+
         [TestMethod()]
         public void TraceChangesTest()
         {
             TraceChangeManager.Instance.Reset();
-            var track = new Track();
-            TraceChangeManager.Instance.TraceChanges(track);
-            var track2 = new Track();
-            TraceChangeManager.Instance.TraceChanges(track2);
-            track2.Title = "Title 2";
-            track.Artist = "Artist 1";
-            track = null;
-            GC.WaitForFullGCComplete();
+            var callResult = CallInItsOwnScope(() =>
+            {
+                var track = new Track();
+                TraceChangeManager.Instance.TraceChanges(track);
+                var track2 = new Track();
+                TraceChangeManager.Instance.TraceChanges(track2);
+                track2.Title = "Title 2";
+                track.Artist = "Artist 1";
+                track = null;
+                GC.Collect();
+                return track2;
+            });
+            GC.Collect();
+            Assert.IsTrue(TraceChangeManager.Instance.CanUndo);
             TraceChangeManager.Instance.Undo();
-            //TODO: Doesn't work!
-            Assert.IsNull(track2.Title);
+            Assert.IsNull(callResult.Title);
+            Assert.IsFalse(TraceChangeManager.Instance.CanUndo);
         }
 
         [TestMethod()]
@@ -79,6 +90,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
             TraceChangeManager.Instance.Undo();
             Assert.IsNull(track2.Length);
+            //TODO: Redo is currently not implemented!
             TraceChangeManager.Instance.Redo();
             Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
         }
