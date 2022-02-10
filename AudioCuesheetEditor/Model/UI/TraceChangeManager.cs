@@ -149,7 +149,6 @@ namespace AudioCuesheetEditor.Model.UI
         public void Undo()
         {
             CurrentlyHandlingRedoOrUndoChanges = true;
-            //TODO: Maybe change like Redo? 
             TracedChange changes = null;
             while ((undoStack.Count > 0) && (changes == null))
             {
