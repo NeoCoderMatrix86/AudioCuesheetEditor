@@ -20,6 +20,7 @@ using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Model.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +35,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    //TODO: ITraceable
-    public class Cuesheet : Validateable, ICuesheet<Track>
+    public class Cuesheet : Validateable, ICuesheet<Track>, ITraceable
     {
         private readonly object syncLock = new object();
 
@@ -49,6 +49,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
 
         public event EventHandler AudioFileChanged;
+        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
+
         public Cuesheet()
         {
             Tracks = new List<Track>();
@@ -79,23 +81,48 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public String Artist 
         {
             get { return artist; }
-            set { artist = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var previousValue = artist;
+                artist = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
         public String Title 
         {
             get { return title; }
-            set { title = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var previousValue = title;
+                title = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
         public Audiofile Audiofile
         {
             get { return audiofile; }
-            set { audiofile = value; OnValidateablePropertyChanged(); AudioFileChanged?.Invoke(this, EventArgs.Empty); }
+            set 
+            {
+                var previousValue = audiofile;
+                audiofile = value; 
+                OnValidateablePropertyChanged(); 
+                AudioFileChanged?.Invoke(this, EventArgs.Empty);
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
 
         public CDTextfile CDTextfile 
         {
             get { return cDTextfile; }
-            set { cDTextfile = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var previousValue = cDTextfile;
+                cDTextfile = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
 
         public Cataloguenumber Cataloguenumber 
@@ -107,12 +134,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     catalogueNumber.ValidateablePropertyChanged -= CatalogueNumber_ValidateablePropertyChanged;
                 }
+                var previousValue = catalogueNumber;
                 catalogueNumber = value;
                 if (catalogueNumber != null)
                 {
                     catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
                 }
                 OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
             }
         }
 
@@ -172,6 +201,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void AddTrack(Track track, ApplicationOptions applicationOptions)
         {
+            //TODO: TraceChanges
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -202,6 +232,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void RemoveTrack(Track track)
         {
+            //TODO: TraceChanges
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -245,6 +276,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
         public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
+            //TODO: TraceChanges
             if (tracksToRemove == null)
             {
                 throw new ArgumentNullException(nameof(tracksToRemove));
@@ -303,6 +335,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void MoveTrack(Track track, MoveDirection moveDirection)
         {
+            //TODO: TraceChanges?
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -334,6 +367,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
+            //TODO: TraceChanges?
             if (textImportFile == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
@@ -575,6 +609,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+        }
+
+        private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertyChangedEventArgs(propertyName, previousValue));
         }
 
         private void SwitchTracks(Track track1, Track track2)

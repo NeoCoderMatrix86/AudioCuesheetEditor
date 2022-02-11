@@ -31,7 +31,7 @@ along with Foobar.  If not, see
 @inject HttpClient httpClient
 @inject SessionStateContainer sessionStateContainer
 @inject ITextLocalizerService LocalizationService
-@inject TraceChangeManager traceChangeManager
+@inject TraceChangeManager _traceChangeManager
 
 <Layout>
     <LayoutHeader Fixed="true">
@@ -41,7 +41,7 @@ along with Foobar.  If not, see
                 <BarStart>
                     <BarItem Padding="Padding.Is1.OnX">
                         <Tooltip Placement="Placement.Right" Text="@localizer["Undo last change"]">
-                            <Button Color="Color.Primary" Disabled="!traceChangeManager.CanUndo" Clicked="() => traceChangeManager.Undo()" Class="nav-link">
+                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => _traceChangeManager.Undo()" Class="nav-link">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
                                     <path d="M5.83 5.146a.5.5 0 0 0 0 .708L7.975 8l-2.147 2.146a.5.5 0 0 0 .707.708l2.147-2.147 2.146 2.147a.5.5 0 0 0 .707-.708L9.39 8l2.146-2.146a.5.5 0 0 0-.707-.708L8.683 7.293 6.536 5.146a.5.5 0 0 0-.707 0z" />
                                     <path d="M13.683 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7.08a2 2 0 0 1-1.519-.698L.241 8.65a1 1 0 0 1 0-1.302L5.084 1.7A2 2 0 0 1 6.603 1h7.08zm-7.08 1a1 1 0 0 0-.76.35L1 8l4.844 5.65a1 1 0 0 0 .759.35h7.08a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7.08z" />
@@ -51,7 +51,7 @@ along with Foobar.  If not, see
                     </BarItem>
                     <BarItem Padding="Padding.Is1.OnX">
                         <Tooltip Placement="Placement.Right" Text="@localizer["Redo last change"]">
-                            <Button Color="Color.Primary" Disabled="!traceChangeManager.CanRedo" Clicked="() => traceChangeManager.Redo()" Class="nav-link">
+                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => _traceChangeManager.Redo()" Class="nav-link">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace-reverse" viewBox="0 0 16 16">
                                     <path d="M9.854 5.146a.5.5 0 0 1 0 .708L7.707 8l2.147 2.146a.5.5 0 0 1-.708.708L7 8.707l-2.146 2.147a.5.5 0 0 1-.708-.708L6.293 8 4.146 5.854a.5.5 0 1 1 .708-.708L7 7.293l2.146-2.147a.5.5 0 0 1 .708 0z" />
                                     <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7.08a2 2 0 0 0 1.519-.698l4.843-5.651a1 1 0 0 0 0-1.302L10.6 1.7A2 2 0 0 0 9.08 1H2zm7.08 1a1 1 0 0 1 .76.35L14.682 8l-4.844 5.65a1 1 0 0 1-.759.35H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7.08z" />
@@ -297,7 +297,7 @@ along with Foobar.  If not, see
                                 <CollapseBody>
                                     <Buttons Role="ButtonsRole.Toolbar">
                                         <Buttons Margin="Margin.Is2.FromRight">
-                                            <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="() => cuesheet.AddTrack(new Track(), optionsController.Options)" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                                            <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="OnAddTrackClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                                                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                                                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
@@ -1777,6 +1777,13 @@ along with Foobar.  If not, see
         }
     }
 
+    private void OnAddTrackClicked()
+    {
+        var newTrack = new Track();
+        cuesheet.AddTrack(newTrack, optionsController.Options);
+        _traceChangeManager.TraceChanges(newTrack);
+    }
+
     private void EditTrackModal(Track trackToEdit)
     {
         editTrack = new CloneTrackModel(trackToEdit);
@@ -1794,6 +1801,7 @@ along with Foobar.  If not, see
     {
         var copy = new Track(trackToCopy);
         cuesheet.AddTrack(copy, optionsController.Options);
+        _traceChangeManager.TraceChanges(copy);
         EditTrackModal(copy);
     }
 
@@ -1856,7 +1864,10 @@ along with Foobar.  If not, see
             }
 
         }
+        //TODO: Maybe reset the tracechangemanager?
         cuesheet = sessionStateContainer.Cuesheet;
+        _traceChangeManager.TraceChanges(cuesheet);
+        _traceChangeManager.TraceChanges(cuesheet.Cataloguenumber);
     }
 
     private void SwitchTrackSelectionVisible()

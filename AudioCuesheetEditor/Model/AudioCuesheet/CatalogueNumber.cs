@@ -15,14 +15,14 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Model.UI;
 using Blazorise.Localization;
 using System;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    //TODO: ITraceable
-    public class Cataloguenumber : Validateable, IEntityDisplayName
+    public class Cataloguenumber : Validateable, IEntityDisplayName, ITraceable
     {
         public Cataloguenumber()
         {
@@ -30,11 +30,26 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         private String value;
+
+        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
+
         public String Value 
         {
             get { return value; }
-            set { this.value = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var oldValue = this.value;
+                this.value = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(oldValue);
+            }
         }
+
+        public String GetDisplayNameLocalized(ITextLocalizer localizer)
+        {
+            return localizer[nameof(Cuesheet)];
+        }
+
         protected override void Validate()
         {
             if (String.IsNullOrEmpty(Value))
@@ -54,9 +69,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public String GetDisplayNameLocalized(ITextLocalizer localizer)
+        private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            return localizer[nameof(Cuesheet)];
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertyChangedEventArgs(propertyName, previousValue));
         }
     }
 }

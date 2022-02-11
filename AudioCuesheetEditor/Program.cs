@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor
 
             builder.Services.AddSingleton<SessionStateContainer>();
             builder.Services.AddSingleton<ILoggerProvider, LoggerProvider>();
-            builder.Services.AddSingleton(TraceChangeManager.Instance);
+            builder.Services.AddSingleton<TraceChangeManager>();
             builder.Services.AddLogging();
             ConfigureLogging(builder);
 

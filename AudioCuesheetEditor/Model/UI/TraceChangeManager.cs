@@ -61,20 +61,6 @@ namespace AudioCuesheetEditor.Model.UI
     /// </summary>
     public class TraceChangeManager
     {
-        //TODO: SingleTon should be safely relied on service registration
-        private static TraceChangeManager instance;
-        public static TraceChangeManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new TraceChangeManager();
-                }
-                return instance;
-            }
-        }
-
         private readonly Stack<TracedChange> undoStack = new();
         private readonly Stack<TracedChange> redoStack = new();
 
@@ -103,7 +89,7 @@ namespace AudioCuesheetEditor.Model.UI
             }
         }
 
-        private TraceChangeManager() 
+        public TraceChangeManager() 
         {
             CurrentlyHandlingRedoOrUndoChanges = false;
         }
@@ -115,27 +101,6 @@ namespace AudioCuesheetEditor.Model.UI
                 undoStack.Push(new TracedChange((ITraceable) sender, e.PreviousValue, e.PropertyName));
                 redoStack.Clear();
             }
-        }
-
-        public void Reset()
-        {
-            //Disconnect all
-            foreach (var tracedObject in undoStack.Select(x => x.TraceableObject))
-            {
-                if (tracedObject != null)
-                {
-                    tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-                }
-            }
-            foreach (var tracedObject in redoStack.Select(x => x.TraceableObject))
-            {
-                if (tracedObject != null)
-                {
-                    tracedObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-                }
-            }
-            undoStack.Clear();
-            redoStack.Clear();
         }
 
         public void TraceChanges(ITraceable traceable)
