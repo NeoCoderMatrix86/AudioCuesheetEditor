@@ -1864,7 +1864,7 @@ along with Foobar.  If not, see
             }
 
         }
-        //TODO: Maybe reset the tracechangemanager?
+        _traceChangeManager.Reset();
         cuesheet = sessionStateContainer.Cuesheet;
         _traceChangeManager.TraceChanges(cuesheet);
         _traceChangeManager.TraceChanges(cuesheet.Cataloguenumber);

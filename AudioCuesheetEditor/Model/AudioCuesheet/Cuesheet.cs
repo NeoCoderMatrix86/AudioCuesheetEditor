@@ -201,7 +201,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void AddTrack(Track track, ApplicationOptions applicationOptions)
         {
-            //TODO: TraceChanges
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -219,6 +218,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             track.Cuesheet = this;
+            var previousValue = new List<Track>(tracks);
             tracks.Add(track);
             ReCalculateTrackProperties(track);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
@@ -228,11 +228,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
+            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         public void RemoveTrack(Track track)
         {
-            //TODO: TraceChanges
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -246,6 +246,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     nextTrack = tracks.ElementAt(index + 1);
                 }
             }
+            var previousValue = new List<Track>(tracks);
             tracks.Remove(track);
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
@@ -268,6 +269,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         /// <summary>

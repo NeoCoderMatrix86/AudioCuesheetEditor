@@ -94,15 +94,6 @@ namespace AudioCuesheetEditor.Model.UI
             CurrentlyHandlingRedoOrUndoChanges = false;
         }
 
-        private void Traceable_TraceablePropertyChanged(object sender, TraceablePropertyChangedEventArgs e)
-        {
-            if (CurrentlyHandlingRedoOrUndoChanges == false)
-            {
-                undoStack.Push(new TracedChange((ITraceable) sender, e.PreviousValue, e.PropertyName));
-                redoStack.Clear();
-            }
-        }
-
         public void TraceChanges(ITraceable traceable)
         {
             if (traceable == null)
@@ -110,6 +101,14 @@ namespace AudioCuesheetEditor.Model.UI
                 throw new ArgumentNullException(nameof(traceable));
             }
             traceable.TraceablePropertyChanged += Traceable_TraceablePropertyChanged;
+        }
+
+        public void Reset()
+        {
+            undoStack.ToList().Where(x => x.TraceableObject != null).ToList().ForEach(x => x.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged);
+            redoStack.ToList().Where(x => x.TraceableObject != null).ToList().ForEach(x => x.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged);
+            undoStack.Clear();
+            redoStack.Clear();
         }
 
         public void Undo()
@@ -156,6 +155,15 @@ namespace AudioCuesheetEditor.Model.UI
                 propertyInfo.SetValue(changes.TraceableObject, changes.PropertyValue);
             }
             CurrentlyHandlingRedoOrUndoChanges = false;
+        }
+
+        private void Traceable_TraceablePropertyChanged(object sender, TraceablePropertyChangedEventArgs e)
+        {
+            if (CurrentlyHandlingRedoOrUndoChanges == false)
+            {
+                undoStack.Push(new TracedChange((ITraceable)sender, e.PreviousValue, e.PropertyName));
+                redoStack.Clear();
+            }
         }
     }
 }

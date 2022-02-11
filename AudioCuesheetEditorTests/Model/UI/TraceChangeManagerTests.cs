@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditorTests.Utility;
 
 namespace AudioCuesheetEditor.Model.UI.Tests
 {
@@ -122,6 +123,24 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsNull(track.End);
             manager.Redo();
             Assert.AreEqual(new TimeSpan(0, 3, 23), track.End);
+        }
+
+        [TestMethod()]
+        public void TrackListTest()
+        {
+            var testhelper = new TestHelper();
+            var manager = new TraceChangeManager();
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            Assert.IsFalse(manager.CanUndo);
+            cuesheet.AddTrack(new Track(), testhelper.ApplicationOptions);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            Assert.IsTrue(manager.CanRedo);
+            manager.Redo();
+            Assert.AreEqual(1, cuesheet.Tracks.Count);
+            Assert.IsFalse(manager.CanRedo);
         }
     }
 }
