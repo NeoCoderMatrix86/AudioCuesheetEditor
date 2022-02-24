@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Model.IO.Import;
+using System.IO;
+using AudioCuesheetEditorTests.Properties;
 
 namespace AudioCuesheetEditor.Model.UI.Tests
 {
@@ -141,6 +144,82 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             manager.Redo();
             Assert.AreEqual(1, cuesheet.Tracks.Count);
             Assert.IsFalse(manager.CanRedo);
+        }
+
+        [TestMethod()]
+        public void ImportCuesheetTest()
+        {
+            var testhelper = new TestHelper();
+            var manager = new TraceChangeManager();
+            var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
+            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist% - %Cuesheet.Title% - %Cuesheet.Cataloguenumber%";
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsFalse(manager.CanRedo);
+            cuesheet.Import(textImportFile, testhelper.ApplicationOptions);
+            Assert.AreEqual("DJFreezeT", cuesheet.Artist);
+            Assert.AreNotEqual(0, cuesheet.Tracks.Count);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Artist));
+        }
+
+        [TestMethod()]
+        public void RemoveTracksTest()
+        {
+            var testhelper = new TestHelper();
+            testhelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
+            var manager = new TraceChangeManager();
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            var track1 = new Track()
+            {
+                Artist = "Track 1 Artist",
+                Title = "Track 1 Title",
+                End = new TimeSpan(0, 2, 30)
+            };
+            var track2 = new Track()
+            {
+                Artist = "Track 2 Artist",
+                Title = "Track 2 Title",
+                End = new TimeSpan(0, 4, 20)
+            };
+            var track3 = new Track()
+            {
+                Artist = "Track 3 Artist",
+                Title = "Track 3 Title",
+                End = new TimeSpan(0, 7, 12)
+            };
+            var track4 = new Track()
+            {
+                Artist = "Track 4 Artist",
+                Title = "Track 4 Title",
+                End = new TimeSpan(0, 9, 12)
+            };
+            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track4, testhelper.ApplicationOptions);
+            Assert.IsTrue(track1.IsValid);
+            Assert.IsTrue(track2.IsValid);
+            Assert.IsTrue(track3.IsValid);
+            Assert.IsTrue(track4.IsValid);
+            var tracksToRemove = new List<Track>
+            {
+                track2,
+                track4
+            };
+            cuesheet.RemoveTracks(tracksToRemove);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            Assert.AreEqual(4, cuesheet.Tracks.Count);
+            Assert.IsTrue(track1.IsValid);
+            Assert.IsTrue(track2.IsValid);
+            Assert.IsTrue(track3.IsValid);
+            Assert.IsTrue(track4.IsValid);
         }
     }
 }

@@ -369,7 +369,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
-            //TODO: TraceChanges?
+            //TODO: For TraceChanges we need to enhance the tracechangemanager to trace several changes at once
             if (textImportFile == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
