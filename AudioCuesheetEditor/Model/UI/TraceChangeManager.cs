@@ -72,7 +72,6 @@ namespace AudioCuesheetEditor.Model.UI
         {
             get
             {
-                //TODO: Maybe also check if the undoStack references deleted objects?
                 return undoStack.Count > 0;
             }
         }
@@ -84,7 +83,6 @@ namespace AudioCuesheetEditor.Model.UI
         {
             get
             {
-                //TODO: Maybe also check if the redoStack references deleted objects?
                 return redoStack.Count > 0;
             }
         }
