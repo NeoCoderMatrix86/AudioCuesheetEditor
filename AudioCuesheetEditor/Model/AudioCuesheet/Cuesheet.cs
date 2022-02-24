@@ -218,6 +218,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             track.Cuesheet = this;
+            //TODO: Make a copy of Tracks as previousValue like in RemoveTracks
             var previousValue = new List<Track>(tracks);
             tracks.Add(track);
             ReCalculateTrackProperties(track);
@@ -246,6 +247,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     nextTrack = tracks.ElementAt(index + 1);
                 }
             }
+            //TODO: Make a copy of Tracks as previousValue like in RemoveTracks
             var previousValue = new List<Track>(tracks);
             tracks.Remove(track);
             track.Cuesheet = null;
@@ -278,11 +280,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
         public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
-            //TODO: TraceChanges
             if (tracksToRemove == null)
             {
                 throw new ArgumentNullException(nameof(tracksToRemove));
             }
+            var previousValue = new List<Track>();
+            tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
             var intersection = tracks.Intersect(tracksToRemove);
@@ -305,6 +308,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             OnValidateablePropertyChanged();
+            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
