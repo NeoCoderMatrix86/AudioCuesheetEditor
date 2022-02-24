@@ -355,6 +355,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Check track overlapping
             if (Cuesheet != null)
             {
+                Cuesheet.Tracks.ToList().ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
+                List<Track> tracksToAttachEventHandlerTo = new List<Track>();
                 if (Position.HasValue)
                 {
                     IEnumerable<Track> tracksWithSamePosition;
@@ -368,10 +370,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if ((tracksWithSamePosition != null) && (tracksWithSamePosition.Any()))
                     {
-                        foreach(var track in tracksWithSamePosition)
-                        {
-                            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
-                        }
+                        tracksToAttachEventHandlerTo.AddRange(tracksWithSamePosition);
                         validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track is already in use by track(s) {2}!", nameof(Position), Position, String.Join(", ", tracksWithSamePosition)));
                     }
                     if (IsCloned == false)
@@ -396,10 +395,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if ((tracksOverlapping != null) && tracksOverlapping.Any())
                     {
-                        foreach (var track in tracksOverlapping)
-                        {
-                            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
-                        }
+                        tracksToAttachEventHandlerTo.AddRange(tracksOverlapping);
                         validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(Begin), String.Join(", ", tracksOverlapping)));
                     }
                 }
@@ -416,13 +412,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if ((tracksOverlapping != null) && tracksOverlapping.Any())
                     {
-                        foreach (var track in tracksOverlapping)
-                        {
-                            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
-                        }
+                        tracksToAttachEventHandlerTo.AddRange(tracksOverlapping);
                         validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(End), String.Join(", ", tracksOverlapping)));
                     }
                 }
+                tracksToAttachEventHandlerTo.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
             }
         }
 

@@ -218,8 +218,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             track.Cuesheet = this;
-            //TODO: Make a copy of Tracks as previousValue like in RemoveTracks
-            var previousValue = new List<Track>(tracks);
+            var previousValue = new List<Track>();
+            tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.Add(track);
             ReCalculateTrackProperties(track);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
@@ -247,8 +247,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     nextTrack = tracks.ElementAt(index + 1);
                 }
             }
-            //TODO: Make a copy of Tracks as previousValue like in RemoveTracks
-            var previousValue = new List<Track>(tracks);
+            var previousValue = new List<Track>();
+            tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.Remove(track);
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
