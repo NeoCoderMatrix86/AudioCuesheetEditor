@@ -221,5 +221,46 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsTrue(track3.IsValid);
             Assert.IsTrue(track4.IsValid);
         }
+
+        [TestMethod()]
+        public void MoveTracksTest()
+        {
+            var testhelper = new TestHelper();
+            var manager = new TraceChangeManager();
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            var track1 = new Track()
+            {
+                Artist = "Track 1 Artist",
+                Title = "Track 1 Title",
+                End = new TimeSpan(0, 2, 30)
+            };
+            var track2 = new Track()
+            {
+                Artist = "Track 2 Artist",
+                Title = "Track 2 Title",
+                End = new TimeSpan(0, 4, 20)
+            };
+            var track3 = new Track()
+            {
+                Artist = "Track 3 Artist",
+                Title = "Track 3 Title",
+                End = new TimeSpan(0, 7, 12)
+            };
+            var track4 = new Track()
+            {
+                Artist = "Track 4 Artist",
+                Title = "Track 4 Title",
+                End = new TimeSpan(0, 9, 12)
+            };
+            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track3, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track4, testhelper.ApplicationOptions);
+            cuesheet.MoveTrack(track2, MoveDirection.Up);
+            Assert.AreEqual(track2, cuesheet.Tracks.First());
+            manager.Undo();
+            Assert.AreEqual(track1, cuesheet.Tracks.First());
+        }
     }
 }

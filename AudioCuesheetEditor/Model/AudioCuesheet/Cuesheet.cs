@@ -218,8 +218,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             track.Cuesheet = this;
-            var previousValue = new List<Track>();
-            tracks.ForEach(x => previousValue.Add(new Track(x)));
+            var previousValue = new List<Track>(tracks);
             tracks.Add(track);
             ReCalculateTrackProperties(track);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
@@ -341,7 +340,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void MoveTrack(Track track, MoveDirection moveDirection)
         {
-            //TODO: TraceChanges?
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -367,7 +365,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (currentTrack != null)
             {
+                var previousValue = new List<Track>(tracks);
                 SwitchTracks(track, currentTrack);
+                OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
         }
 
