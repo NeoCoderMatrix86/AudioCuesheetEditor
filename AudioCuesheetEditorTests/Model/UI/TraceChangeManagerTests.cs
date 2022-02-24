@@ -165,6 +165,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             manager.Undo();
             Assert.AreEqual(0, cuesheet.Tracks.Count);
             Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Artist));
+            Assert.IsFalse(manager.CanUndo);
         }
 
         [TestMethod()]
