@@ -47,9 +47,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
+        private Stack<TraceableChange> traceableChanges;
 
         public event EventHandler AudioFileChanged;
-        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
 
         public Cuesheet()
         {
@@ -373,7 +374,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
-            //TODO: For TraceChanges we need to enhance the tracechangemanager to trace several changes at once
             if (textImportFile == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
@@ -386,7 +386,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
             }
-            CopyValues(textImportFile.ImportCuesheet, applicationOptions);
+            //Since we use a stack for several changes we need to lock execution for everything else
+            lock (syncLock)
+            {
+                traceableChanges = new Stack<TraceableChange>();
+                CopyValues(textImportFile.ImportCuesheet, applicationOptions);
+                TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(traceableChanges));
+                traceableChanges = null;
+            }
         }
 
         public void StartRecording()
@@ -619,7 +626,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertyChangedEventArgs(propertyName, previousValue));
+            if (traceableChanges == null)
+            {
+                var changes = new Stack<TraceableChange>();
+                changes.Push(new TraceableChange(previousValue, propertyName));
+                TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
+            }
+            else
+            {
+                traceableChanges.Push(new TraceableChange(previousValue, propertyName));
+            }
         }
 
         private void SwitchTracks(Track track1, Track track2)

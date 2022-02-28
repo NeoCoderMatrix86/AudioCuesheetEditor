@@ -20,19 +20,29 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.UI
 {
-    public class TraceablePropertyChangedEventArgs
+    public class TraceableChange
     {
-        public TraceablePropertyChangedEventArgs(string propertyName, object previousValue)
+        public TraceableChange(object previousValue, string propertyName)
         {
-            if (string.IsNullOrEmpty(propertyName))
+            if (String.IsNullOrEmpty(propertyName))
             {
                 throw new ArgumentNullException(nameof(propertyName));
             }
-            PropertyName = propertyName;
             PreviousValue = previousValue;
+            PropertyName = propertyName;
         }
-        public object PreviousValue { get; init; }
-        public string PropertyName { get; init; }
+
+        public object PreviousValue { get; }
+        public string PropertyName { get; }
+    }
+
+    public class TraceablePropertiesChangedEventArgs
+    {
+        public TraceablePropertiesChangedEventArgs(Stack<TraceableChange> traceableChanges)
+        {
+            TraceableChanges = traceableChanges;
+        }
+        public Stack<TraceableChange> TraceableChanges { get; }
     }
 
     /// <summary>
@@ -43,6 +53,6 @@ namespace AudioCuesheetEditor.Model.UI
         /// <summary>
         /// A property of this object has been changed and therefore needs to be traced by the TraceChangeManager.
         /// </summary>
-        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
     }
 }

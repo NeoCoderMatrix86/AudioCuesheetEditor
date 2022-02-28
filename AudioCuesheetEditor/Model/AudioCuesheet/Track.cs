@@ -49,7 +49,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler IsLinkedToPreviousTrackChanged;
 
         /// <inheritdoc/>
-        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
 
         /// <summary>
         /// Create object with copied values from input
@@ -422,7 +422,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         protected void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertyChangedEventArgs(propertyName, previousValue));
+            var changes = new Stack<TraceableChange>();
+            changes.Push(new TraceableChange(previousValue, propertyName));
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
         }
 
         private void Track_RankPropertyValueChanged(object sender, string e)

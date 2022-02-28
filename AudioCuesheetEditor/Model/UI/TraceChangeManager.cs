@@ -27,19 +27,18 @@ namespace AudioCuesheetEditor.Model.UI
     public class TracedChange
     {
         private readonly WeakReference<ITraceable> _tracedObject;
-        public TracedChange(ITraceable traceableObject, object propertyValue, string propertyName)
+        public TracedChange(ITraceable traceableObject, Stack<TraceableChange> traceableChanges)
         {
             if (traceableObject == null)
             {
                 throw new ArgumentNullException(nameof(traceableObject));
             }
-            if (string.IsNullOrEmpty(propertyName))
+            if (traceableChanges == null)
             {
-                throw new ArgumentNullException(nameof(propertyName));
+                throw new ArgumentNullException(nameof(traceableChanges));
             }
             _tracedObject = new WeakReference<ITraceable>(traceableObject, false);
-            PropertyValue = propertyValue;
-            PropertyName = propertyName;
+            TraceableChanges = traceableChanges;
         }
         public ITraceable TraceableObject
         {
@@ -52,8 +51,8 @@ namespace AudioCuesheetEditor.Model.UI
                 return null;
             }
         }
-        public object PropertyValue { get; }
-        public string PropertyName { get; }
+
+        public Stack<TraceableChange> TraceableChanges { get; }
     }
 
     /// <summary>
@@ -123,11 +122,17 @@ namespace AudioCuesheetEditor.Model.UI
             }
             if ((changes != null) && (changes.TraceableObject != null))
             {
-                var propertyInfo = changes.TraceableObject.GetType().GetProperty(changes.PropertyName);
+                var redoChanges = new Stack<TraceableChange>();
+                do
+                {
+                    var change = changes.TraceableChanges.Pop();
+                    var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
+                    var currentValue = propertyInfo.GetValue(changes.TraceableObject);
+                    redoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
+                    propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                } while (changes.TraceableChanges.Count > 0);
                 //Push the old value to redo stack
-                var currentValue = propertyInfo.GetValue(changes.TraceableObject);
-                redoStack.Push(new TracedChange(changes.TraceableObject, currentValue, changes.PropertyName));
-                propertyInfo.SetValue(changes.TraceableObject, changes.PropertyValue);
+                redoStack.Push(new TracedChange(changes.TraceableObject, redoChanges));
             }
             CurrentlyHandlingRedoOrUndoChanges = false;
         }
@@ -146,20 +151,26 @@ namespace AudioCuesheetEditor.Model.UI
             }
             if ((changes != null) && (changes.TraceableObject != null))
             {
-                var propertyInfo = changes.TraceableObject.GetType().GetProperty(changes.PropertyName);
+                var undoChanges = new Stack<TraceableChange>();
+                do
+                {
+                    var change = changes.TraceableChanges.Pop();
+                    var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
+                    var currentValue = propertyInfo.GetValue(changes.TraceableObject);
+                    undoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
+                    propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                } while (changes.TraceableChanges.Count > 0);
                 //Push the old value to undo stack
-                var currentValue = propertyInfo.GetValue(changes.TraceableObject);
-                undoStack.Push(new TracedChange(changes.TraceableObject, currentValue, changes.PropertyName));
-                propertyInfo.SetValue(changes.TraceableObject, changes.PropertyValue);
+                undoStack.Push(new TracedChange(changes.TraceableObject, undoChanges));
             }
             CurrentlyHandlingRedoOrUndoChanges = false;
         }
 
-        private void Traceable_TraceablePropertyChanged(object sender, TraceablePropertyChangedEventArgs e)
+        private void Traceable_TraceablePropertyChanged(object sender, TraceablePropertiesChangedEventArgs e)
         {
             if (CurrentlyHandlingRedoOrUndoChanges == false)
             {
-                undoStack.Push(new TracedChange((ITraceable)sender, e.PreviousValue, e.PropertyName));
+                undoStack.Push(new TracedChange((ITraceable)sender, e.TraceableChanges));
                 redoStack.Clear();
             }
         }

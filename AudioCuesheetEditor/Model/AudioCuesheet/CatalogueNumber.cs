@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
 using Blazorise.Localization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -31,7 +32,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private String value;
 
-        public event EventHandler<TraceablePropertyChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
 
         public String Value 
         {
@@ -71,7 +72,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertyChangedEventArgs(propertyName, previousValue));
+            var changes = new Stack<TraceableChange>();
+            changes.Push(new TraceableChange(previousValue, propertyName));
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
         }
     }
 }

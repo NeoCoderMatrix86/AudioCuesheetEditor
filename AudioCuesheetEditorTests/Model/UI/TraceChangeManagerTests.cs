@@ -160,12 +160,19 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsFalse(manager.CanRedo);
             cuesheet.Import(textImportFile, testhelper.ApplicationOptions);
             Assert.AreEqual("DJFreezeT", cuesheet.Artist);
+            Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
             Assert.AreNotEqual(0, cuesheet.Tracks.Count);
             Assert.IsTrue(manager.CanUndo);
             manager.Undo();
             Assert.AreEqual(0, cuesheet.Tracks.Count);
             Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Artist));
+            Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Cataloguenumber.Value));
             Assert.IsFalse(manager.CanUndo);
+            Assert.IsTrue(manager.CanRedo);
+            manager.Redo();
+            Assert.AreEqual("DJFreezeT", cuesheet.Artist);
+            Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
+            Assert.AreNotEqual(0, cuesheet.Tracks.Count);
         }
 
         [TestMethod()]
