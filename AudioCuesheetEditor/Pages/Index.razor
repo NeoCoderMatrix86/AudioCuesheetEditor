@@ -1248,7 +1248,9 @@ along with Foobar.  If not, see
             .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
             .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show())
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
-            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show());
+            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show())
+            .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Undo())
+            .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Redo());
 
         var dotNetReference = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
