@@ -1,5 +1,6 @@
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.UI;
 using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap;
@@ -44,6 +45,7 @@ namespace AudioCuesheetEditor
 
             builder.Services.AddSingleton<SessionStateContainer>();
             builder.Services.AddSingleton<ILoggerProvider, LoggerProvider>();
+            builder.Services.AddSingleton<TraceChangeManager>();
             builder.Services.AddLogging();
             ConfigureLogging(builder);
 

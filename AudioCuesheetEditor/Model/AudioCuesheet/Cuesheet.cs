@@ -20,6 +20,7 @@ using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Reflection;
+using AudioCuesheetEditor.Model.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class Cuesheet : Validateable, ICuesheet<Track>
+    public class Cuesheet : Validateable, ICuesheet<Track>, ITraceable
     {
         private readonly object syncLock = new object();
 
@@ -46,8 +47,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
+        private Stack<TraceableChange> traceableChanges;
 
         public event EventHandler AudioFileChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
+
         public Cuesheet()
         {
             Tracks = new List<Track>();
@@ -78,23 +82,48 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public String Artist 
         {
             get { return artist; }
-            set { artist = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var previousValue = artist;
+                artist = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
         public String Title 
         {
             get { return title; }
-            set { title = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var previousValue = title;
+                title = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
         public Audiofile Audiofile
         {
             get { return audiofile; }
-            set { audiofile = value; OnValidateablePropertyChanged(); AudioFileChanged?.Invoke(this, EventArgs.Empty); }
+            set 
+            {
+                var previousValue = audiofile;
+                audiofile = value; 
+                OnValidateablePropertyChanged(); 
+                AudioFileChanged?.Invoke(this, EventArgs.Empty);
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
 
         public CDTextfile CDTextfile 
         {
             get { return cDTextfile; }
-            set { cDTextfile = value; OnValidateablePropertyChanged(); }
+            set 
+            {
+                var previousValue = cDTextfile;
+                cDTextfile = value; 
+                OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
+            }
         }
 
         public Cataloguenumber Cataloguenumber 
@@ -106,12 +135,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     catalogueNumber.ValidateablePropertyChanged -= CatalogueNumber_ValidateablePropertyChanged;
                 }
+                var previousValue = catalogueNumber;
                 catalogueNumber = value;
                 if (catalogueNumber != null)
                 {
                     catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
                 }
                 OnValidateablePropertyChanged();
+                OnTraceablePropertyChanged(previousValue);
             }
         }
 
@@ -188,6 +219,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
             track.Cuesheet = this;
+            var previousValue = new List<Track>(tracks);
             tracks.Add(track);
             ReCalculateTrackProperties(track);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
@@ -197,6 +229,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
+            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         public void RemoveTrack(Track track)
@@ -214,6 +247,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     nextTrack = tracks.ElementAt(index + 1);
                 }
             }
+            var previousValue = new List<Track>();
+            tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.Remove(track);
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
@@ -236,6 +271,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         /// <summary>
@@ -248,6 +284,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(tracksToRemove));
             }
+            var previousValue = new List<Track>();
+            tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
             var intersection = tracks.Intersect(tracksToRemove);
@@ -270,6 +308,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             OnValidateablePropertyChanged();
+            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
@@ -327,7 +366,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (currentTrack != null)
             {
+                var previousValue = new List<Track>(tracks);
                 SwitchTracks(track, currentTrack);
+                OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
         }
 
@@ -345,7 +386,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
             }
-            CopyValues(textImportFile.ImportCuesheet, applicationOptions);
+            //Since we use a stack for several changes we need to lock execution for everything else
+            lock (syncLock)
+            {
+                traceableChanges = new Stack<TraceableChange>();
+                CopyValues(textImportFile.ImportCuesheet, applicationOptions);
+                TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(traceableChanges));
+                traceableChanges = null;
+            }
         }
 
         public void StartRecording()
@@ -573,6 +621,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         trackRaisedEvent.Begin = previousTrack.End;
                     }
                 }
+            }
+        }
+
+        private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            if (traceableChanges == null)
+            {
+                var changes = new Stack<TraceableChange>();
+                changes.Push(new TraceableChange(previousValue, propertyName));
+                TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
+            }
+            else
+            {
+                traceableChanges.Push(new TraceableChange(previousValue, propertyName));
             }
         }
 
