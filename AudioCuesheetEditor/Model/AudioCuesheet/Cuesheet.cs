@@ -271,6 +271,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
+            RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
@@ -307,6 +308,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
+            RecalculateLastTrackEnd();
             OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
@@ -720,6 +722,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     break;
             }
             return timeSpan;
+        }
+
+        private void RecalculateLastTrackEnd()
+        {
+            //Try to recalculate length by recalculating last track
+            var lastTrack = tracks.LastOrDefault();
+            if (lastTrack != null)
+            {
+                ReCalculateTrackProperties(lastTrack);
+            }
         }
     }
 }
