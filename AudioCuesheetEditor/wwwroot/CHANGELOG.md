@@ -1,5 +1,17 @@
 # Changelog
 
+## [v2.7.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.7.0) (2022-03-08)
+
+**Implemented enhancements:**
+
+- Register media key "stop" for playback stop [\#189](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/189)
+- Add Undo/Redo [\#145](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/145)
+
+**Fixed bugs:**
+
+- Last track end not set, when removing a track [\#191](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/191)
+- Samples can not be opened [\#186](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/186)
+
 ## [v2.6.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.6.0) (2022-02-09)
 
 **Implemented enhancements:**
