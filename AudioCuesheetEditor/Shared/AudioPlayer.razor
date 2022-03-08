@@ -68,7 +68,7 @@ along with Foobar.  If not, see
                 <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of previous track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
-                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="() => Howl.Stop(soundId)" />
+                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="OnStopClicked" />
                 <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of next track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
@@ -231,7 +231,8 @@ along with Foobar.  If not, see
             .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked())
             .Add(ModKeys.None, Keys.MediaPlayPause, OnPlayClicked)
             .Add(ModKeys.None, Keys.MediaTrackNext, () => OnPlayNextPreviousTrackClicked())
-            .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true));
+            .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true))
+            .Add(ModKeys.None, "MediaStop", () => OnStopClicked());
 
         LocalizationService.LocalizationChanged += delegate
         {
@@ -353,6 +354,11 @@ along with Foobar.  If not, see
             }
             await OnPlayTrackClicked(trackToPlay);
         }
+    }
+
+    private async Task OnStopClicked()
+    {
+        await Howl.Stop(soundId);
     }
 
     private void Cuesheet_AudioFileChanged(object sender, EventArgs args)
