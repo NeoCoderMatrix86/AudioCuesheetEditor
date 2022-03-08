@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
-    <RazorLangVersion>3.0</RazorLangVersion>
-    <Version>2.7.0</Version>
-	<PublishTrimmed>true</PublishTrimmed>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+	<Version>2.7.0</Version>
+	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <Content Remove="Resources\Localization\About\de.json" />
     <Content Remove="Resources\Localization\About\en.json" />
@@ -65,28 +67,30 @@
     <EmbeddedResource Include="Resources\Localization\ViewModeRecord\de.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeRecord\en.json" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\Licence.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.2" PrivateAssets="all" />
+	<PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
     <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3.5" />
     <PackageReference Include="Blazorise.Components" Version="0.9.3.5" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
     <PackageReference Include="Macross.Json.Extensions" Version="2.0.0" />
     <PackageReference Include="Markdig" Version="0.24.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.5" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="10.0.1" />
     <PackageReference Include="z440.atl.core" Version="3.20.0" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -9,6 +9,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
+    <link href="manifest.json" rel="manifest" />
 
     <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
     <link href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" rel="stylesheet" />
@@ -29,10 +30,11 @@
             position: relative;
         }
     </style>
+
 </head>
 
 <body>
-    <app>
+    <div id="app">
         <div class="container">
             <div class="center">
                 <img src="loading.gif" />
@@ -41,7 +43,7 @@
                 <p>Loading application, please stand by ...</p>
             </div>
         </div>
-    </app>
+    </div>
 
     <noscript>Your browser does not support JavaScript! Without JavaScript this App can not run! Please make shure you open this App with a compatible browser.</noscript>
 
@@ -51,6 +53,7 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
 
     <script src="_content/Blazorise/blazorise.js"></script>
     <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
