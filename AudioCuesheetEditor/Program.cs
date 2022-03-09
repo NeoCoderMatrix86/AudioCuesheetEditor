@@ -18,9 +18,12 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddBlazorise(options =>
 {
-    options.ChangeTextOnKeyPress = true;
-    options.DelayTextOnKeyPress = true;
-    options.DelayTextOnKeyPressInterval = 300;
+    //TODO
+    options.Debounce = true;
+    options.DebounceInterval = 300;
+    //options.ChangeTextOnKeyPress = true;
+    //options.DelayTextOnKeyPress = true;
+    //options.DelayTextOnKeyPressInterval = 300;
 })
 .AddBootstrapProviders();
 

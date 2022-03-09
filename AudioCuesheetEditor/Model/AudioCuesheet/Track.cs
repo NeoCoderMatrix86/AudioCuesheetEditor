@@ -104,12 +104,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return title; }
             set { var previousValue = title; title = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
         }
+        //TODO: wird das bei .NET noch gebraucht?
         [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? Begin 
         {
             get { return begin; }
             set { var previousValue = begin; begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); OnTraceablePropertyChanged(previousValue); }
         }
+        //TODO: wird das bei .NET noch gebraucht?
         [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? End 
         {
@@ -193,6 +195,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         /// <inheritdoc/>
         [JsonConverter(typeof(JsonTimeSpanConverter))]
+        //TODO: wird das bei .NET noch gebraucht?
         public TimeSpan? PreGap 
         {
             get { return preGap; }
@@ -200,6 +203,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         /// <inheritdoc/>
         [JsonConverter(typeof(JsonTimeSpanConverter))]
+        //TODO: wird das bei .NET noch gebraucht?
         public TimeSpan? PostGap 
         {
             get { return postGap; }

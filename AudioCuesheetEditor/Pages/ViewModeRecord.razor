@@ -41,7 +41,7 @@ along with Foobar.  If not, see
                 {
                     var backgroundCSS = Cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
                     <div class="@backgroundCSS">
-                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Record running!"]</Heading>
+                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@localizer["Record running!"]</Heading>
                     </div>
                 }
                 @if ((startRecordTimer != null) && (startRecordTimer.Enabled))
@@ -52,7 +52,7 @@ along with Foobar.  If not, see
                 }
                 <Row>
                     <Column>
-                        <Dropdown Direction="Direction.Right">
+                        <Dropdown Direction="Direction.End">
                             <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="Cuesheet.IsRecording">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
                                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
@@ -98,7 +98,7 @@ along with Foobar.  If not, see
                 </Blazorise.Link>
             </CollapseHeader>
             <CollapseBody>
-                <Tooltip Placement="Placement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD artist"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -106,7 +106,7 @@ along with Foobar.  If not, see
                         </FieldBody>
                     </Field>
                 </Tooltip>
-                <Tooltip Placement="Placement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD title"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
