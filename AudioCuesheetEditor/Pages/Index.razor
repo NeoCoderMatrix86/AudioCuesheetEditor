@@ -141,16 +141,12 @@ along with Foobar.  If not, see
                     break;
                 case ViewMode.ViewModeFull:
                     <Column>
-                        @*TODO: Accordion sieht nach Links aus*@
                         <Accordion>
                             <Collapse Visible="dropFilesVisible">
                                 <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref dropFilesVisible, ref chevronDropFiles))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Drop files"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronDropFiles)
-                                        </div>
-                                    </Blazorise.Link>
+                                    <Heading Size="HeadingSize.Is3">
+                                        <Button Clicked="(() => dropFilesVisible = !dropFilesVisible)">@localizer["Drop files"]</Button>
+                                    </Heading>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
@@ -166,12 +162,9 @@ along with Foobar.  If not, see
                             </Collapse>
                             <Collapse Visible="importVisible">
                                 <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref importVisible, ref chevronImport))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Import from existing files"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronImport)
-                                        </div>
-                                    </Blazorise.Link>
+                                    <Heading Size="HeadingSize.Is3">
+                                        <Button Clicked="(() => importVisible = !importVisible)">@localizer["Import from existing files"]</Button>
+                                    </Heading>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Import textfile tooltip"]">
@@ -202,12 +195,9 @@ along with Foobar.  If not, see
                             </Collapse>
                             <Collapse Visible="cuesheetDataVisible">
                                 <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Cuesheet data"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronCuesheetData)
-                                        </div>
-                                    </Blazorise.Link>
+                                    <Heading Size="HeadingSize.Is3">
+                                        <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)">@localizer["Cuesheet data"]</Button>
+                                    </Heading>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
@@ -289,12 +279,9 @@ along with Foobar.  If not, see
                             </Collapse>
                             <Collapse Visible="cuesheetTracksVisible">
                                 <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Cuesheet tracks"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronCuesheetTracks)
-                                        </div>
-                                    </Blazorise.Link>
+                                    <Heading Size="HeadingSize.Is3">
+                                        <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)">@localizer["Cuesheet tracks"]</Button>
+                                    </Heading>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Buttons Role="ButtonsRole.Toolbar">
@@ -546,12 +533,9 @@ along with Foobar.  If not, see
                 <Accordion Style="margin-bottom: 1rem;">
                     <Collapse Visible="textImportFileContentVisible">
                         <CollapseHeader>
-                            <Blazorise.Link Clicked="(() => HeaderClicked(ref textImportFileContentVisible, ref chevronTextImportFileContent))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <Heading Size="HeadingSize.Is3">@localizer["Filecontent"]</Heading>
-                                <div>
-                                    @((MarkupString)chevronTextImportFileContent)
-                                </div>
-                            </Blazorise.Link>
+                            <Heading Size="HeadingSize.Is3">
+                                <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)">@localizer["Filecontent"]</Button>
+                            </Heading>
                         </CollapseHeader>
                         <CollapseBody Style="background: lightgray;">
                             <Text>
@@ -1203,12 +1187,6 @@ along with Foobar.  If not, see
 
     private String invalidFileName;
 
-    private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-    private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronTextImportFileContent = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-
     private Cuesheet cuesheet;
     private TextImportFile textImportFile;
     private CloneTrackModel editTrack;
@@ -1275,24 +1253,6 @@ along with Foobar.  If not, see
         LocalizationService.ChangeLanguage(optionsController.Options.CultureName);
     }
 
-    private void HeaderClicked(ref Boolean visible, ref String chevron)
-    {
-        visible = !visible;
-        SwitchChevron(visible, ref chevron);
-    }
-
-    private void SwitchChevron(Boolean chevronUp, ref String chevron)
-    {
-        if (chevronUp == true)
-        {
-            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-        }
-        else
-        {
-            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-        }
-    }
-
     private void OnDeleteAllTracksClicked()
     {
         Logger.LogInformation("OnDeleteAllTracksClicked");
@@ -1326,7 +1286,6 @@ along with Foobar.  If not, see
             SetCuesheetObject(new Cuesheet());
             modalDialog.Confirmed -= newCuesheetDelegate;
             dropFilesVisible = true;
-            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             StateHasChanged();
         };
         modalDialog.Confirmed += newCuesheetDelegate;
@@ -1557,9 +1516,7 @@ along with Foobar.  If not, see
         {
             //Hide the import
             dropFilesVisible = false;
-            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             importVisible = false;
-            SwitchChevron(importVisible, ref chevronImport);
         }
     }
 

@@ -4,7 +4,7 @@ using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
 using BlazorDownloadFile;
 using Blazorise;
-using Blazorise.Bootstrap;
+using Blazorise.Bootstrap5;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -25,7 +25,7 @@ builder.Services.AddBlazorise(options =>
     //options.DelayTextOnKeyPress = true;
     //options.DelayTextOnKeyPressInterval = 300;
 })
-.AddBootstrapProviders();
+.AddBootstrap5Providers();
 
 builder.Services.AddScoped<IHowl, Howl>();
 builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
