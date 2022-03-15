@@ -384,7 +384,6 @@ along with Foobar.  If not, see
                                                     <TableRowCell Class="controlsCell">
                                                         <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                                             <Buttons Role="ButtonsRole.Toolbar">
-                                                                @*TODO: Die Buttons werden in 2 Reihen angezeigt*@
                                                                 <Buttons Margin="Margin.Is1.FromEnd">
                                                                     <Tooltip Placement="TooltipPlacement.Right" Text="@localizer["Edit track tooltip"]">
                                                                         <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
@@ -403,7 +402,6 @@ along with Foobar.  If not, see
                                                                         </Button>
                                                                     </Tooltip>
                                                                 </Buttons>
-                                                                @*TODO: Die Buttons werden in 2 Reihen angezeigt*@
                                                                 <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
                                                                     <Tooltip Placement="TooltipPlacement.Right" Text="@localizer["Start playback this track"]">
                                                                         <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
