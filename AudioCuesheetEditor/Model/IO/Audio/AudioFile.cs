@@ -96,7 +96,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// <summary>
         /// Duration of the audio file
         /// </summary>
-        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? Duration { get; private set; }
 
         public AudioCodec AudioCodec 
