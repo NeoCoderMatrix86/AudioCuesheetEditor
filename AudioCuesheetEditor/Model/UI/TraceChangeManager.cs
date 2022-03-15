@@ -110,60 +110,66 @@ namespace AudioCuesheetEditor.Model.UI
 
         public void Undo()
         {
-            CurrentlyHandlingRedoOrUndoChanges = true;
-            TracedChange changes = null;
-            while ((undoStack.Count > 0) && (changes == null))
+            if (CanUndo)
             {
-                changes = undoStack.Pop();
-                if (changes.TraceableObject == null)
+                CurrentlyHandlingRedoOrUndoChanges = true;
+                TracedChange changes = null;
+                while ((undoStack.Count > 0) && (changes == null))
                 {
-                    changes = null;
-                }    
-            }
-            if ((changes != null) && (changes.TraceableObject != null))
-            {
-                var redoChanges = new Stack<TraceableChange>();
-                do
+                    changes = undoStack.Pop();
+                    if (changes.TraceableObject == null)
+                    {
+                        changes = null;
+                    }
+                }
+                if ((changes != null) && (changes.TraceableObject != null))
                 {
-                    var change = changes.TraceableChanges.Pop();
-                    var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
-                    var currentValue = propertyInfo.GetValue(changes.TraceableObject);
-                    redoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
-                    propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
-                } while (changes.TraceableChanges.Count > 0);
-                //Push the old value to redo stack
-                redoStack.Push(new TracedChange(changes.TraceableObject, redoChanges));
+                    var redoChanges = new Stack<TraceableChange>();
+                    do
+                    {
+                        var change = changes.TraceableChanges.Pop();
+                        var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
+                        var currentValue = propertyInfo.GetValue(changes.TraceableObject);
+                        redoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
+                        propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                    } while (changes.TraceableChanges.Count > 0);
+                    //Push the old value to redo stack
+                    redoStack.Push(new TracedChange(changes.TraceableObject, redoChanges));
+                }
+                CurrentlyHandlingRedoOrUndoChanges = false;
             }
-            CurrentlyHandlingRedoOrUndoChanges = false;
         }
 
         public void Redo()
         {
-            CurrentlyHandlingRedoOrUndoChanges = true;
-            TracedChange changes = null;
-            while ((redoStack.Count > 0) && (changes == null))
+            if (CanRedo)
             {
-                changes = redoStack.Pop();
-                if (changes.TraceableObject == null)
+                CurrentlyHandlingRedoOrUndoChanges = true;
+                TracedChange changes = null;
+                while ((redoStack.Count > 0) && (changes == null))
                 {
-                    changes = null;
+                    changes = redoStack.Pop();
+                    if (changes.TraceableObject == null)
+                    {
+                        changes = null;
+                    }
                 }
-            }
-            if ((changes != null) && (changes.TraceableObject != null))
-            {
-                var undoChanges = new Stack<TraceableChange>();
-                do
+                if ((changes != null) && (changes.TraceableObject != null))
                 {
-                    var change = changes.TraceableChanges.Pop();
-                    var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
-                    var currentValue = propertyInfo.GetValue(changes.TraceableObject);
-                    undoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
-                    propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
-                } while (changes.TraceableChanges.Count > 0);
-                //Push the old value to undo stack
-                undoStack.Push(new TracedChange(changes.TraceableObject, undoChanges));
+                    var undoChanges = new Stack<TraceableChange>();
+                    do
+                    {
+                        var change = changes.TraceableChanges.Pop();
+                        var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
+                        var currentValue = propertyInfo.GetValue(changes.TraceableObject);
+                        undoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
+                        propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                    } while (changes.TraceableChanges.Count > 0);
+                    //Push the old value to undo stack
+                    undoStack.Push(new TracedChange(changes.TraceableObject, undoChanges));
+                }
+                CurrentlyHandlingRedoOrUndoChanges = false;
             }
-            CurrentlyHandlingRedoOrUndoChanges = false;
         }
 
         private void Traceable_TraceablePropertyChanged(object sender, TraceablePropertiesChangedEventArgs e)

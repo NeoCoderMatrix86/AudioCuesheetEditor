@@ -138,7 +138,7 @@
     "TimeSensitivityMode.Full": "Everything (incl. milliseconds)",
     "TimeSensitivityMode.Seconds": "Only seconds",
     "TimeSensitivityMode.Minutes": "Only minutes",
-    "Undo last change": "Undo last change",
-    "Redo last change": "Redo last change"
+    "Undo last change": "Undo last change (Ctrl + z)",
+    "Redo last change": "Redo last change (Ctrl + y)"
   }
 }
