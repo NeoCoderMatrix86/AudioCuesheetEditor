@@ -28,9 +28,7 @@ along with Foobar.  If not, see
         {
             <Collapse Visible="processingHintsWarningVisible">
                 <CollapseHeader>
-                    <Heading Size="HeadingSize.Is3">
-                        <Button Clicked="(() => processingHintsWarningVisible = !processingHintsWarningVisible)">@localizer["Warnings"]</Button>
-                    </Heading>
+                    <Button Clicked="(() => processingHintsWarningVisible = !processingHintsWarningVisible)"><Heading Size="HeadingSize.Is3">@localizer["Warnings"]</Heading></Button>
                 </CollapseHeader>
                 <CollapseBody>
                     @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
@@ -72,9 +70,7 @@ along with Foobar.  If not, see
         {
             <Collapse Visible="processingHintsErrorVisible">
                 <CollapseHeader>
-                    <Heading Size="HeadingSize.Is3">
-                        <Button Clicked="(() => processingHintsErrorVisible = !processingHintsErrorVisible)">@localizer["Errors"]</Button>
-                    </Heading>
+                    <Button Clicked="(() => processingHintsErrorVisible = !processingHintsErrorVisible)"><Heading Size="HeadingSize.Is3">@localizer["Errors"]</Heading></Button>
                 </CollapseHeader>
                 <CollapseBody>
                     @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.ErrorOnly))

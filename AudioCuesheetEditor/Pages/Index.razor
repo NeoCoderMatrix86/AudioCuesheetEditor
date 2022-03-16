@@ -144,9 +144,7 @@ along with Foobar.  If not, see
                         <Accordion>
                             <Collapse Visible="dropFilesVisible">
                                 <CollapseHeader>
-                                    <Heading Size="HeadingSize.Is3">
-                                        <Button Clicked="(() => dropFilesVisible = !dropFilesVisible)">@localizer["Drop files"]</Button>
-                                    </Heading>
+                                    <Button Clicked="(() => dropFilesVisible = !dropFilesVisible)"><Heading Size="HeadingSize.Is3">@localizer["Drop files"]</Heading></Button>                                    
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
@@ -162,9 +160,7 @@ along with Foobar.  If not, see
                             </Collapse>
                             <Collapse Visible="importVisible">
                                 <CollapseHeader>
-                                    <Heading Size="HeadingSize.Is3">
-                                        <Button Clicked="(() => importVisible = !importVisible)">@localizer["Import from existing files"]</Button>
-                                    </Heading>
+                                    <Button Clicked="(() => importVisible = !importVisible)"><Heading Size="HeadingSize.Is3">@localizer["Import from existing files"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Import textfile tooltip"]">
@@ -195,9 +191,7 @@ along with Foobar.  If not, see
                             </Collapse>
                             <Collapse Visible="cuesheetDataVisible">
                                 <CollapseHeader>
-                                    <Heading Size="HeadingSize.Is3">
-                                        <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)">@localizer["Cuesheet data"]</Button>
-                                    </Heading>
+                                    <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@localizer["Cuesheet data"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
@@ -279,9 +273,7 @@ along with Foobar.  If not, see
                             </Collapse>
                             <Collapse Visible="cuesheetTracksVisible">
                                 <CollapseHeader>
-                                    <Heading Size="HeadingSize.Is3">
-                                        <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)">@localizer["Cuesheet tracks"]</Button>
-                                    </Heading>
+                                    <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@localizer["Cuesheet tracks"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
                                     <Buttons Role="ButtonsRole.Toolbar">
@@ -531,9 +523,7 @@ along with Foobar.  If not, see
                 <Accordion Style="margin-bottom: 1rem;">
                     <Collapse Visible="textImportFileContentVisible">
                         <CollapseHeader>
-                            <Heading Size="HeadingSize.Is3">
-                                <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)">@localizer["Filecontent"]</Button>
-                            </Heading>
+                            <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)"><Heading Size="HeadingSize.Is3">@localizer["Filecontent"]</Heading></Button>
                         </CollapseHeader>
                         <CollapseBody Style="background: lightgray;">
                             <Text>

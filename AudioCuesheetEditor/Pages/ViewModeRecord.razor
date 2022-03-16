@@ -29,9 +29,7 @@ along with Foobar.  If not, see
     <Accordion>
         <Collapse Visible="recordControlVisible">
             <CollapseHeader>
-                <Heading Size="HeadingSize.Is3">
-                    <Button Clicked="(() => recordControlVisible = !recordControlVisible)">@localizer["Recordcontrol"]</Button>
-                </Heading>
+                <Button Clicked="(() => recordControlVisible = !recordControlVisible)"><Heading Size="HeadingSize.Is3">@localizer["Recordcontrol"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 @if (Cuesheet.IsRecording == true)
@@ -87,9 +85,7 @@ along with Foobar.  If not, see
         </Collapse>
         <Collapse Visible="cuesheetDataVisible">
             <CollapseHeader>
-                <Heading Size="HeadingSize.Is3">
-                    <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)">@localizer["Cuesheet data"]</Button>
-                </Heading>
+                <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@localizer["Cuesheet data"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
@@ -131,9 +127,7 @@ along with Foobar.  If not, see
         </Collapse>
         <Collapse Visible="enterNewTrackVisible">
             <CollapseHeader>
-                <Heading Size="HeadingSize.Is3">
-                    <Button Clicked="(() => enterNewTrackVisible = !enterNewTrackVisible)">@localizer["Enter new track"]</Button>
-                </Heading>
+                <Button Clicked="(() => enterNewTrackVisible = !enterNewTrackVisible)"><Heading Size="HeadingSize.Is3">@localizer["Enter new track"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 <Row>
@@ -161,9 +155,7 @@ along with Foobar.  If not, see
         </Collapse>
         <Collapse Visible="cuesheetTracksVisible">
             <CollapseHeader>
-                <Heading Size="HeadingSize.Is3">
-                    <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)">@localizer["Cuesheet tracks"]</Button>
-                </Heading>
+                <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@localizer["Cuesheet tracks"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 <Table Bordered="true" Responsive="true" Narrow="true">
@@ -203,9 +195,7 @@ along with Foobar.  If not, see
         </Collapse>
         <Collapse Visible="processingHintsVisible">
             <CollapseHeader>
-                <Heading Size="HeadingSize.Is3">
-                    <Button Clicked="(() => processingHintsVisible = !processingHintsVisible)">@localizer["Hints"]</Button>
-                </Heading>
+                <Button Clicked="(() => processingHintsVisible = !processingHintsVisible)"><Heading Size="HeadingSize.Is3">@localizer["Hints"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 <ProcessingHints Cuesheet="Cuesheet" Header="@localizer["Here all validation messages will be displayed. For details switch to full edit mode."]" ActivateLinksToFields="false" ValidationMessageLocalizer="ValidationMessageLocalizer" />
