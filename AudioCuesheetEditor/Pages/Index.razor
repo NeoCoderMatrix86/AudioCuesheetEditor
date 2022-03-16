@@ -716,16 +716,14 @@ along with Foobar.  If not, see
                     </FieldBody>
                 </Field>
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Enter exportschemehead here tooltip"]">
-                            @localizer["Exportprofilescheme head"]
-                        </Tooltip>
-                    </FieldLabel>
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Exportprofilescheme head"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["Enter exportscheme head here"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportschemehead here tooltip"]" />
+                                <TextEdit id="enterExportSchemeHead" Placeholder="@localizer["Enter exportscheme head here"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme">
+                                    <Tooltip Text="@localizer["Enter exportschemehead here tooltip"]" TriggerTargetId="enterExportSchemeHead" Placement="TooltipPlacement.TopStart">
+                                    </Tooltip>
+                                </TextEdit>
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -754,16 +752,14 @@ along with Foobar.  If not, see
                     }
                 }
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Enter exportscheme track here tooltip"]">
-                            @localizer["Exportprofilescheme track"]
-                        </Tooltip>
-                    </FieldLabel>
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Exportprofilescheme track"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["Enter exportscheme track here"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportscheme track here tooltip"]" />
+                                <TextEdit id="enterExportSchemeTrack" Placeholder="@localizer["Enter exportscheme track here"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme">
+                                    <Tooltip Text="@localizer["Enter exportscheme track here tooltip"]" TriggerTargetId="enterExportSchemeTrack" Placement="TooltipPlacement.TopStart">
+                                    </Tooltip>
+                                </TextEdit>
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -792,16 +788,14 @@ along with Foobar.  If not, see
                     }
                 }
                 <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Enter exportscheme footer here tooltip"]">
-                            @localizer["Exportprofilescheme footer"]
-                        </Tooltip>
-                    </FieldLabel>
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Exportprofilescheme footer"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["Enter exportscheme footer here"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportscheme footer here tooltip"]" />
+                                <TextEdit id="enterExportSchemeFooter" Placeholder="@localizer["Enter exportscheme footer here"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme">
+                                    <Tooltip Text="@localizer["Enter exportscheme footer here tooltip"]" TriggerTargetId="enterExportSchemeFooter" Placement="TooltipPlacement.TopStart">
+                                    </Tooltip>
+                                </TextEdit>
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
