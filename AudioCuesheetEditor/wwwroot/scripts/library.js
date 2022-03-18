@@ -59,27 +59,6 @@ window.ApplicationOptions = {
     set: (value) => localStorage['ApplicationOptions'] = value
 }
 
-//TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
-function removeBrowserHistoryEntry() {
-    window.history.replaceState({}, 'ErrorReport', '/');
-}
-
-function reportError(error) {
-    if (GLOBAL.Index !== null) {
-        GLOBAL.Index.invokeMethodAsync("NotifyError", error);
-    }
-}
-
-var exLog = console.error;
-console.error = function (msg) {
-    exLog.apply(console, arguments);
-    reportError(msg);
-}
-
-window.addEventListener("unhandledrejection", function (promiseRejectionEvent) {
-    reportError(promiseRejectionEvent.reason.message);
-});
-
 function dragLeave(e, domElement) {
     e.preventDefault();
     e.stopPropagation();

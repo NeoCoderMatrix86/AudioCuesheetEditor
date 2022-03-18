@@ -1150,14 +1150,6 @@ along with Foobar.  If not, see
 
     public ViewMode CurrentViewMode { get; private set; }
 
-    [JSInvokable()]
-    public void NotifyError(string error)
-    {
-        //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
-        ErrorReport.Exception = error;
-        navigationManager.NavigateTo("ErrorReport");
-    }
-
     private Boolean cuesheetDataVisible = true;
     private Boolean cuesheetTracksVisible = true;
 

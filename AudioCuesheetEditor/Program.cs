@@ -32,7 +32,6 @@ builder.Services.AddScoped<CuesheetController>();
 builder.Services.AddScoped<OptionsController>();
 
 builder.Services.AddSingleton<SessionStateContainer>();
-builder.Services.AddSingleton<ILoggerProvider, LoggerProvider>();
 builder.Services.AddSingleton<TraceChangeManager>();
 
 builder.Services.AddLogging();
