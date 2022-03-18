@@ -16,15 +16,13 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
-@inject IJSRuntime JSRuntime
-@inject NavigationManager NavManager
-@inject ITextLocalizerService LocalizationService
-@inject ITextLocalizer<CultureSelector> localizer
-@inject OptionsController optionsController
+@inject ITextLocalizerService _localizationService
+@inject ITextLocalizer<CultureSelector> _localizer
+@inject OptionsController _optionsController
 
-@localizer["Culture setting"]
+@_localizer["Culture setting"]
 
-<Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName" Style="width: 150px; display: inherit;">
+<Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_optionsController.Options.CultureName" Style="width: 150px; display: inherit;">
     @foreach (var culture in OptionsController.AvailableCultures)
     {
         <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
@@ -34,17 +32,18 @@ along with Foobar.  If not, see
 @code{ 
     protected override Task OnInitializedAsync()
     {
-        LocalizationService.LocalizationChanged += delegate
+        _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
+            //TODO: Detach
         };
         return base.OnInitializedAsync();
     }
 
     private async Task OnCultureSelectionChanged(String value)
     {
-        optionsController.Options.CultureName = value;
-        await optionsController.SaveOptions();
-        LocalizationService.ChangeLanguage(optionsController.Options.CultureName);
+        _optionsController.Options.CultureName = value;
+        await _optionsController.SaveOptions();
+        _localizationService.ChangeLanguage(_optionsController.Options.CultureName);
     }
 }

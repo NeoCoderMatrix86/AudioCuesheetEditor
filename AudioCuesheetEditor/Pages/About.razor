@@ -17,36 +17,36 @@ along with Foobar.  If not, see
 -->
 
 @page "/about"
-@inject HttpClient Http
-@inject ITextLocalizer<About> localizer
+@inject HttpClient _httpClient
+@inject ITextLocalizer<About> _localizer
 
 <Layout>
     <LayoutContent Margin="Margin.Is2">
-        <Heading Size="HeadingSize.Is1">@localizer["About AudioCuesheetEditor"]</Heading>
-        <Heading Size="HeadingSize.Is3">@localizer["Version"] : @VersionString</Heading>
+        <Heading Size="HeadingSize.Is1">@_localizer["About AudioCuesheetEditor"]</Heading>
+        <Heading Size="HeadingSize.Is3">@_localizer["Version"] : @VersionString</Heading>
         <Paragraph>@((MarkupString)changelog)</Paragraph>
-        <Paragraph>@((MarkupString)localizer["WrittenBy"])</Paragraph>
-        <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@localizer["DonateForThisProject"]</Blazorise.Link>
+        <Paragraph>@((MarkupString)_localizer["WrittenBy"])</Paragraph>
+        <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@_localizer["DonateForThisProject"]</Blazorise.Link>
         <br />
         <br />
         <Blazorise.Link To="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor" Target="Target.Blank">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</Blazorise.Link>
         <br />
         <br />
-        <Heading Size="HeadingSize.Is3">@localizer["Licence"]</Heading>
+        <Heading Size="HeadingSize.Is3">@_localizer["Licence"]</Heading>
         <Paragraph>@((MarkupString)licence)</Paragraph>
     </LayoutContent>
 </Layout>
 
 @code {
 
-    private String licence;
-    private String changelog;
+    private String? licence;
+    private String? changelog;
 
     protected override async Task OnInitializedAsync()
     {
-        var licenceContent = await Http.GetStringAsync("Licence.txt");
+        var licenceContent = await _httpClient.GetStringAsync("Licence.txt");
         licence = Markdown.ToHtml(licenceContent);
-        var changelogContent = await Http.GetStringAsync("CHANGELOG.md");
+        var changelogContent = await _httpClient.GetStringAsync("CHANGELOG.md");
         changelog = Markdown.ToHtml(changelogContent);
     }
 

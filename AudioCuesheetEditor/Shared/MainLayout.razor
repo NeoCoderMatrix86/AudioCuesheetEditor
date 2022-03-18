@@ -17,9 +17,10 @@ along with Foobar.  If not, see
 -->
 
 @inherits LayoutComponentBase
-@inject NavigationManager navigationManager
+
+@inject NavigationManager _navigationManager
 @inject ITextLocalizer<MainLayout> _localizer
-@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizerService _localizationService
 
 <ErrorBoundary>
     <ChildContent>
@@ -27,7 +28,7 @@ along with Foobar.  If not, see
             <LayoutHeader>
                 <Bar Background="Background.Primary" ThemeContrast="ThemeContrast.Light">
                     <BarBrand>
-                        <BarLink To="@navigationManager.BaseUri">
+                        <BarLink To="@_navigationManager.BaseUri">
                             <Row Style="color:white;">
                                 <Column ColumnSize="ColumnSize.Is2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
@@ -65,9 +66,10 @@ along with Foobar.  If not, see
 @code {
     protected override Task OnInitializedAsync()
     {
-        LocalizationService.LocalizationChanged += delegate
+        _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
+            //TODO: Detach!
         };
 
         return base.OnInitializedAsync();

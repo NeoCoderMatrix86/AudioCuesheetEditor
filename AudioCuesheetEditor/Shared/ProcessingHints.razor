@@ -16,10 +16,10 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
-@inject ITextLocalizer<ProcessingHints> localizer
-@inject IJSRuntime JSRuntime
-@inject CuesheetController cuesheetController
-@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizer<ProcessingHints> _localizer
+@inject IJSRuntime _jsRuntime
+@inject CuesheetController _cuesheetController
+@inject ITextLocalizerService _localizationService
 
 <CardBody>
     <Paragraph>@Header</Paragraph>
@@ -28,7 +28,7 @@ along with Foobar.  If not, see
         {
             <Collapse Visible="processingHintsWarningVisible">
                 <CollapseHeader>
-                    <Button Clicked="(() => processingHintsWarningVisible = !processingHintsWarningVisible)"><Heading Size="HeadingSize.Is3">@localizer["Warnings"]</Heading></Button>
+                    <Button Clicked="(() => processingHintsWarningVisible = !processingHintsWarningVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Warnings"]</Heading></Button>
                 </CollapseHeader>
                 <CollapseBody>
                     @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.WarningOnly))
@@ -36,15 +36,15 @@ along with Foobar.  If not, see
                         if (ActivateLinksToFields == true)
                         {
                             var functionName = "focusElement";
-                            <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                            <Blazorise.Link Clicked="(() => _jsRuntime.InvokeVoidAsync(functionName, _cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
                                 <Alert Color="Color.Warning" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
-                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                     else
                                     {
-                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                 </Alert>
                             </Blazorise.Link>
@@ -54,11 +54,11 @@ along with Foobar.  If not, see
                             <Alert Color="Color.Warning" Visible="true">
                                 @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                 {
-                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                                 else
                                 {
-                                    <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                             </Alert>
                         }
@@ -70,7 +70,7 @@ along with Foobar.  If not, see
         {
             <Collapse Visible="processingHintsErrorVisible">
                 <CollapseHeader>
-                    <Button Clicked="(() => processingHintsErrorVisible = !processingHintsErrorVisible)"><Heading Size="HeadingSize.Is3">@localizer["Errors"]</Heading></Button>
+                    <Button Clicked="(() => processingHintsErrorVisible = !processingHintsErrorVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Errors"]</Heading></Button>
                 </CollapseHeader>
                 <CollapseBody>
                     @foreach (var validationError in GetValidationErrors(ValidationErrorFilterType.ErrorOnly))
@@ -78,15 +78,15 @@ along with Foobar.  If not, see
                         if (ActivateLinksToFields == true)
                         {
                             var functionName = "focusElement";
-                            <Blazorise.Link Clicked="(() => JSRuntime.InvokeVoidAsync(functionName, cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                            <Blazorise.Link Clicked="(() => _jsRuntime.InvokeVoidAsync(functionName, _cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
                                 <Alert Color="Color.Danger" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
-                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                     else
                                     {
-                                        <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                     }
                                 </Alert>
                             </Blazorise.Link>
@@ -96,11 +96,11 @@ along with Foobar.  If not, see
                             <Alert Color="Color.Danger" Visible="true">
                                 @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                 {
-                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                                 else
                                 {
-                                    <Paragraph>@localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
                                 }
                             </Alert>
                         }
@@ -126,9 +126,10 @@ along with Foobar.  If not, see
 
     protected override Task OnInitializedAsync()
     {
-        LocalizationService.LocalizationChanged += delegate
+        _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
+            //TODO: DEtach!
         };
         return base.OnInitializedAsync();
     }

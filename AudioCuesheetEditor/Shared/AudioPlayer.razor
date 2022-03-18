@@ -18,15 +18,13 @@ along with Foobar.  If not, see
 @using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
-@inject ITextLocalizer<AudioPlayer> localizer
-@inject IHowl Howl
-@inject IHowlGlobal HowlGlobal
-@inject HotKeys HotKeys
-@inject IJSRuntime JSRuntime
-@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizer<AudioPlayer> _localizer
+@inject IHowl _howl
+@inject HotKeys _hotKeys
+@inject ITextLocalizerService _localizationService
 
 <Card>
-    <CardHeader><h3>@localizer["Audioplayer"]</h3></CardHeader>
+    <CardHeader><h3>@_localizer["Audioplayer"]</h3></CardHeader>
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
@@ -65,11 +63,11 @@ along with Foobar.  If not, see
                 }
             </Column>
             <Column>
-                <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Set playback to begin of previous track"]">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Set playback to begin of previous track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
                 <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="OnStopClicked" />
-                <Tooltip Placement="TooltipPlacement.Top" Text="@localizer["Set playback to begin of next track"]">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Set playback to begin of next track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
             </Column>
@@ -131,10 +129,10 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext.Dispose();
-        Howl.OnPlay -= HowlOnPlay;
-        Howl.OnPause -= HowlOnPause;
-        Howl.OnEnd -= HowlOnEnd;
-        Howl.OnStop -= HowlOnStop;
+        _howl.OnPlay -= HowlOnPlay;
+        _howl.OnPause -= HowlOnPause;
+        _howl.OnEnd -= HowlOnEnd;
+        _howl.OnStop -= HowlOnStop;
         audioUpdateTimer.Dispose();
     }
 
@@ -199,14 +197,14 @@ along with Foobar.  If not, see
             {
                 await OnPlayClicked();
             }
-            await Howl.Seek(soundId, trackToPlay.Begin.Value);
+            await _howl.Seek(soundId, trackToPlay.Begin.Value);
             StateHasChanged();
         }
     }
 
     public async Task Reset()
     {
-        await Howl.Stop(soundId);
+        await _howl.Stop(soundId);
     }
 
     protected Double CurrentSliderValue
@@ -225,7 +223,7 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         //Attach shortcuts
-        hotKeysContext = HotKeys.CreateContext()
+        hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.P, OnPlayClicked)
             .Add(ModKeys.Ctrl, Keys.Left, () => OnPlayNextPreviousTrackClicked(true))
             .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked())
@@ -234,8 +232,9 @@ along with Foobar.  If not, see
             .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true))
             .Add(ModKeys.None, Keys.MediaStop, () => OnStopClicked());
 
-        LocalizationService.LocalizationChanged += delegate
+        _localizationService.LocalizationChanged += delegate
         {
+            //TODO: Detach!
             StateHasChanged();
         };
 
@@ -244,13 +243,13 @@ along with Foobar.  If not, see
         audioUpdateTimer.AutoReset = true;
         audioUpdateTimer.Elapsed += async delegate
         {
-            AudioIsPlaying = await Howl.IsPlaying(soundId);
+            AudioIsPlaying = await _howl.IsPlaying(soundId);
             if (AudioIsPlaying == true)
             {
-                CurrentPlaybackPosition = await Howl.GetCurrentTime(soundId);
+                CurrentPlaybackPosition = await _howl.GetCurrentTime(soundId);
                 if (TotalTime.HasValue == false)
                 {
-                    TotalTime = Howl.TotalTime;
+                    TotalTime = _howl.TotalTime;
                 }
             }
             if ((Cuesheet != null) && (CurrentPlaybackPosition.HasValue == true))
@@ -260,10 +259,10 @@ along with Foobar.  If not, see
             StateHasChanged();
         };
 
-        Howl.OnPlay += HowlOnPlay;
-        Howl.OnPause += HowlOnPause;
-        Howl.OnEnd += HowlOnEnd;
-        Howl.OnStop += HowlOnStop;
+        _howl.OnPlay += HowlOnPlay;
+        _howl.OnPause += HowlOnPause;
+        _howl.OnEnd += HowlOnEnd;
+        _howl.OnStop += HowlOnStop;
 
         await base.OnInitializedAsync();
     }
@@ -307,7 +306,7 @@ along with Foobar.  If not, see
         {
             await OnPlayClicked();
         }
-        await Howl.Seek(soundId, newPosition);
+        await _howl.Seek(soundId, newPosition);
     }
 
     private async Task OnPlayClicked()
@@ -318,7 +317,7 @@ along with Foobar.  If not, see
         }
         if (soundId != default)
         {
-            await Howl.Pause(soundId);
+            await _howl.Pause(soundId);
             StateHasChanged();
         }
         else
@@ -334,7 +333,7 @@ along with Foobar.  If not, see
                 Html5 = true
             };
             audioFile = Cuesheet.Audiofile;
-            soundId = await Howl.Play(options);
+            soundId = await _howl.Play(options);
         }
     }
 
@@ -358,7 +357,7 @@ along with Foobar.  If not, see
 
     private async Task OnStopClicked()
     {
-        await Howl.Stop(soundId);
+        await _howl.Stop(soundId);
     }
 
     private void Cuesheet_AudioFileChanged(object sender, EventArgs args)

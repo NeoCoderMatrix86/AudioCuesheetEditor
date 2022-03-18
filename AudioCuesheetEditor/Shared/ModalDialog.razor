@@ -17,11 +17,12 @@ along with Foobar.  If not, see
 -->
 
 @using Toolbelt.Blazor.HotKeys
+
 @implements IDisposable
 
-@inject ITextLocalizer<ModalDialog> localizer
-@inject HotKeys HotKeys
-@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizer<ModalDialog> _localizer
+@inject HotKeys _hotKeys
+@inject ITextLocalizerService _localizationService
 
 <Modal @ref="modalRef">
     <ModalContent Centered="true" Size="@modalSize">
@@ -53,11 +54,11 @@ along with Foobar.  If not, see
             @switch (Mode)
             {
                 case DialogMode.Confirm:
-                    <Button Color="Color.Primary" Clicked="Confirm">@localizer["Confirm"]</Button>
-                    <Button Color="Color.Secondary" Clicked="HideModal">@localizer["Decline"]</Button>
+                    <Button Color="Color.Primary" Clicked="Confirm">@_localizer["Confirm"]</Button>
+                    <Button Color="Color.Secondary" Clicked="HideModal">@_localizer["Decline"]</Button>
                     break;
                 case DialogMode.Alert:
-                    <Button Color="Color.Danger" Clicked="Confirm">@localizer["Ok"]</Button>
+                    <Button Color="Color.Danger" Clicked="Confirm">@_localizer["Ok"]</Button>
                     break;
             }
         </ModalFooter>
@@ -73,13 +74,14 @@ along with Foobar.  If not, see
 
     protected override Task OnInitializedAsync()
     {
-        hotKeysContext = HotKeys.CreateContext()
+        hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Alt, Keys.O, Confirm)
             .Add(ModKeys.None, Keys.ESC, HideModal);
 
-        LocalizationService.LocalizationChanged += delegate
+        _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
+            //TODO: Detach
         };
 
         return base.OnInitializedAsync();
