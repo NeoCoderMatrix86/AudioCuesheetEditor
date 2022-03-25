@@ -3,6 +3,32 @@
   "translations": {
     "About": "Über",
     "An error occured": "Ein Fehler ist aufgetreten!",
-    "An error has occured in this applciation. Please report this error with as much details as possible here. Afterwards you can reload the application.": "Es ist ein Fehler in der Anwendung aufgetreten. Bitte melden Sie diesen Fehler unter Angabe von möglichst vielen Details hier: <a href=\"https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=\" target=\"_blank\">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=</a>. Anschließend können Sie die Anwendung <a href=\"\" class=\"reload\">neu laden</a>."
+    "An error has occured in this applciation. Please report this error with as much details as possible here. Afterwards you can reload the application.": "Es ist ein Fehler in der Anwendung aufgetreten. Bitte melden Sie diesen Fehler unter Angabe von möglichst vielen Details hier: <a href=\"https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=\" target=\"_blank\">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=</a>. Anschließend können Sie die Anwendung <a href=\"\" class=\"reload\">neu laden</a>.",
+    "Help": "Hilfe",
+    "Undo last change": "Letzte Änderung Rückgängig machen",
+    "Redo last change": "Letzte Änderung wiederherstellen",
+    "Export": "Export",
+    "Please check processinghints for errors, otherwise the file is not exportable": "Bitte prüfen sie die Bearbeitungshinweise auf Fehler. Andernfalls ist Datei nicht exportierbar.",
+    "Download cuesheet": "Cuesheet herunterladen",
+    "Save project": "Projekt speichern",
+    "Open exportprofiles": "Export Profile anzeigen",
+    "Select ViewMode": "Anzeigemodus auswählen",
+    "Reset": "Zurücksetzen",
+    "Delete all tracks": "Alle Tracks löschen",
+    "Reset cuesheet": "Cuesheet zurücksetzen",
+    "Restart complete application": "Komplette Anwendung neustarten",
+    "Reset complete application": "Komplette Anwendung zurücksetzen",
+    "Filename": "Dateiname",
+    "Download projectfile": "Projektdatei herunterladen",
+    "Abort": "Abbrechen",
+    "Confirmation required": "Bestätigung erforderlich",
+    "Do you really want to reset the cuesheet? This can not be reversed.": "Möchten Sie wirklich das Cuesheet zurücksetzen? Dies kann nicht rückgangig gemacht werden.",
+    "Do you really want to delete all tracks? This can not be reversed.": "Möchten Sie wirklich alle Tracks löschen? Dies kann nicht rückgängig gemacht werden.",
+    "Confirm restart of application. All unsaved changes are lost!": "Bitte Bestätigen Sie, dass die komplette Anwendung neugestartet werden soll. Alle ungespeicherten Änderungen werden dadurch verloren!",
+    "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Bitte Bestätigen Sie, dass die komplette Anwendung auf Werkseinstellungen zurückgesetzt werden soll. Alle Daten werden gelöscht und die Anwedung neu geladen. Alle nicht gespeicherten Daten sind gelöscht!",
+    "ViewModeFull": "Komplette Bearbeitung",
+    "ViewModeRecord": "Aufnahmemodus",
+    "Undo": "Rückgängig",
+    "Redo": "Wiederherstellen"
   }
 }

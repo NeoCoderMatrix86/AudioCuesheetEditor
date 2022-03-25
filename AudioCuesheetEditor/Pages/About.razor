@@ -39,6 +39,9 @@ along with Foobar.  If not, see
 
 @code {
 
+    [CascadingParameter]
+    public MainLayout? mainLayout { get; set; }
+
     private String? licence;
     private String? changelog;
 
@@ -48,6 +51,15 @@ along with Foobar.  If not, see
         licence = Markdown.ToHtml(licenceContent);
         var changelogContent = await _httpClient.GetStringAsync("CHANGELOG.md");
         changelog = Markdown.ToHtml(changelogContent);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (mainLayout != null)
+        {
+            mainLayout.SetDisplayMenuBar(false);
+        }
     }
 
     public String VersionString

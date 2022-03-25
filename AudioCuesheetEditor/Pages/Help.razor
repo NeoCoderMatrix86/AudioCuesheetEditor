@@ -110,7 +110,10 @@ along with Foobar.  If not, see
     </LayoutContent>
 </Layout>
 
-@code { 
+@code {
+    [CascadingParameter]
+    public MainLayout? mainLayout { get; set; }
+
     protected override Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += delegate
@@ -119,5 +122,14 @@ along with Foobar.  If not, see
             //TODO: Detach!
         };
         return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (mainLayout != null)
+        {
+            mainLayout.SetDisplayMenuBar(false);
+        }
     }
 }

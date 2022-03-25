@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IJSRuntime _jsRuntime
 @inject CuesheetController _cuesheetController
 @inject ITextLocalizerService _localizationService
+@inject SessionStateContainer _sessionStateContainer
 
 <CardBody>
     <Paragraph>@Header</Paragraph>
@@ -113,9 +114,6 @@ along with Foobar.  If not, see
 
 @code {
     [Parameter]
-    public Cuesheet Cuesheet { get; set; }
-
-    [Parameter]
     public String Header { get; set; }
 
     [Parameter]
@@ -129,7 +127,7 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
-            //TODO: DEtach!
+            //TODO: Detach!
         };
         return base.OnInitializedAsync();
     }
@@ -139,8 +137,8 @@ along with Foobar.  If not, see
 
     private IReadOnlyCollection<AudioCuesheetEditor.Model.Entity.ValidationError> GetValidationErrors(ValidationErrorFilterType validationErrorFilterType)
     {
-        List<AudioCuesheetEditor.Model.Entity.ValidationError> validationErrors = Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType).ToList();
-        foreach (var track in Cuesheet.Tracks)
+        List<AudioCuesheetEditor.Model.Entity.ValidationError> validationErrors = _sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType).ToList();
+        foreach (var track in _sessionStateContainer.Cuesheet.Tracks)
         {
             validationErrors.AddRange(track.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType));
         }
