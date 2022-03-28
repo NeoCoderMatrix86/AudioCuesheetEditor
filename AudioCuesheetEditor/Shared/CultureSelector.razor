@@ -47,7 +47,11 @@ along with Foobar.  If not, see
     {
         _localizationService.LocalizationChanged += delegate
         {
-            StateHasChanged();
+            Task.Run(async delegate
+            {
+                applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+                StateHasChanged();
+            });
             //TODO: Detach
         };
 

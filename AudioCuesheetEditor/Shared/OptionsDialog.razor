@@ -164,6 +164,16 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnSaveOptionsClicked);
 
+        _localizationService.LocalizationChanged += delegate
+        {
+            Task.Run(async delegate
+            {
+                applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+                StateHasChanged();
+            });
+            //TODO: Detach
+        };
+
         applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
 
         await base.OnInitializedAsync();
