@@ -234,7 +234,7 @@ along with Foobar.  If not, see
     [JSInvokable()]
     public async Task AudioRecordingFinished(String url)
     {
-        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, _httpClient, true);
         StateHasChanged();
     }
@@ -278,7 +278,7 @@ along with Foobar.  If not, see
                 updateGUITimer.Stop();
             }
         };
-        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
         if (options.RecordCountdownTimer.HasValue)
         {
@@ -336,7 +336,7 @@ along with Foobar.  If not, see
     private async Task StopRecordingClicked()
     {
         await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
-        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _sessionStateContainer.Cuesheet.StopRecording(options);
         //Open processing hints
         processingHintsVisible = true;
@@ -396,7 +396,7 @@ along with Foobar.  If not, see
     {
         if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
-            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
             enterCurrentTrackArtist.Focus();
             await Task.Delay(50);
             _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);

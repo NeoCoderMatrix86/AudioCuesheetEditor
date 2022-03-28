@@ -21,6 +21,7 @@ namespace AudioCuesheetEditor.Data.Options
 {
     public class LocalStorageOptionsProvider
     {
+        //TODO: Event for saving options in order to reload them in different dialogs
         private readonly IJSRuntime _jsRuntime;
 
         public LocalStorageOptionsProvider(IJSRuntime jsRuntime)
@@ -33,34 +34,35 @@ namespace AudioCuesheetEditor.Data.Options
             _jsRuntime = jsRuntime;
         }
 
-        public async ValueTask<ApplicationOptions> GetApplicationOptions()
+        public async ValueTask<T> GetOptions<T>() where T : IOptions
         {
-            ApplicationOptions options = new();
-            String optionsJson = await _jsRuntime.InvokeAsync<String>("ApplicationOptions.get");
+            var type = typeof(T);
+            IOptions options = (IOptions)Activator.CreateInstance(type);
+            String optionsJson = await _jsRuntime.InvokeAsync<String>(String.Format("{0}.get", type.Name));
             if (String.IsNullOrEmpty(optionsJson) == false)
             {
                 try
                 {
-                    options = JsonSerializer.Deserialize<ApplicationOptions>(optionsJson);
+                    options = (IOptions)JsonSerializer.Deserialize(optionsJson, typeof(T));
                     if (options != null)
                     {
                         options.SetDefaultValues();
                     }
                     else
                     {
-                        options = new ApplicationOptions();
+                        options = (IOptions)Activator.CreateInstance(typeof(T));
                     }
                 }
                 catch (JsonException)
                 {
-                    //Nothing to do, we can not deserialize
-                    options = new ApplicationOptions();
+                    //nothing to do, we can not deserialize
+                    options = (IOptions)Activator.CreateInstance(typeof(T));
                 }
             }
-            return options;
+            return (T)options;
         }
 
-        public async Task SaveApplicationOptions(ApplicationOptions options)
+        public async Task SaveOptions(IOptions options)
         {
             if (options == null)
             {
@@ -71,7 +73,7 @@ namespace AudioCuesheetEditor.Data.Options
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
             var optionsJson = JsonSerializer.Serialize(options, serializerOptions);
-            await _jsRuntime.InvokeVoidAsync("ApplicationOptions.set", optionsJson);
+            await _jsRuntime.InvokeVoidAsync(String.Format("{0}.set", options.GetType().Name), optionsJson);
         }
     }
 }

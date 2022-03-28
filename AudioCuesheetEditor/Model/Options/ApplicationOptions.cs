@@ -42,7 +42,7 @@ namespace AudioCuesheetEditor.Model.Options
         Minutes = 2
     }
 
-    public class ApplicationOptions
+    public class ApplicationOptions : IOptions
     {
         public const String DefaultCultureName = "en-US";
 
@@ -77,51 +77,6 @@ namespace AudioCuesheetEditor.Model.Options
             if (String.IsNullOrEmpty(CultureName) == true)
             {
                 CultureName = DefaultCultureName;
-            }
-            if (ExportProfiles == null)
-            {
-                var list = new List<Exportprofile>();
-                var exportProfile = new Exportprofile()
-                {
-                    FileName = "YouTube.txt",
-                    Name = "YouTube"
-                };
-                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%";
-                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Mixcloud.txt",
-                    Name = "Mixcloud"
-                };
-                exportProfile.SchemeHead.Scheme = String.Empty;
-                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Export.csv",
-                    Name = "CSV Export"
-                };
-                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
-                exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
-                exportProfile.SchemeFooter.Scheme = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)";
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Tracks.txt",
-                    Name = "Tracks only"
-                };
-                exportProfile.SchemeHead.Scheme = String.Empty;
-                exportProfile.SchemeTracks.Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                ExportProfiles = list.AsReadOnly();
-            }
-            if (TextImportScheme == null)
-            {
-                TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
@@ -158,9 +113,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        //TODO: Save in extra export options (and check other properties also)
-        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; }
-        public TextImportScheme TextImportScheme { get; set; }
         [JsonIgnore]
         public ViewMode ViewMode { get; set; }
         public String ViewModeName 

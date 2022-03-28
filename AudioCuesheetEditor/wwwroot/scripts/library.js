@@ -59,6 +59,16 @@ window.ApplicationOptions = {
     set: (value) => localStorage['ApplicationOptions'] = value
 }
 
+window.ExportOptions = {
+    get: () => localStorage['ExportOptions'],
+    set: (value) => localStorage['ExportOptions'] = value
+}
+
+window.ImportOptions = {
+    get: () => localStorage['ImportOptions'],
+    set: (value) => localStorage['ImportOptions'] = value
+}
+
 function dragLeave(e, domElement) {
     e.preventDefault();
     e.stopPropagation();

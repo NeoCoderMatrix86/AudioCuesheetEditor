@@ -836,7 +836,7 @@ along with Foobar.  If not, see
         {
             if (CuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
             {
-                var options = await _localStorageOptionsProvider.GetApplicationOptions();
+                var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
@@ -868,10 +868,11 @@ along with Foobar.  If not, see
         _logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
-            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+            var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
             options.TextImportScheme = textImportFile.TextImportScheme;
-            await _localStorageOptionsProvider.SaveApplicationOptions(options);
-            _sessionStateContainer.Cuesheet.Import(textImportFile, options);
+            await _localStorageOptionsProvider.SaveOptions(options);
+            _sessionStateContainer.Cuesheet.Import(textImportFile, applicationOptions);
             modalTextImport.Hide();
             textImportFile = null;
             StateHasChanged();
@@ -885,7 +886,7 @@ along with Foobar.  If not, see
         {
             if (CuesheetController.CheckFileMimeType(e.File, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
             {
-                var options = await _localStorageOptionsProvider.GetApplicationOptions();
+                var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
@@ -1096,7 +1097,7 @@ along with Foobar.  If not, see
 
     private async Task OnAddTrackClicked()
     {
-        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var newTrack = new Track();
         _sessionStateContainer.Cuesheet.AddTrack(newTrack, options);
         _traceChangeManager.TraceChanges(newTrack);
@@ -1117,7 +1118,7 @@ along with Foobar.  If not, see
 
     private async Task CopyTrackClicked(Track trackToCopy)
     {
-        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var copy = new Track(trackToCopy);
         _sessionStateContainer.Cuesheet.AddTrack(copy, options);
         _traceChangeManager.TraceChanges(copy);

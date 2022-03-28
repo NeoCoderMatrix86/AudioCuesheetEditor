@@ -30,7 +30,7 @@ along with Foobar.  If not, see
     <Column Class="nav-link">
         @if (applicationOptions != null)
         {
-            <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@applicationOptions.CultureName">
+            <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_localizationService.SelectedCulture.Name">
                 @foreach (var culture in ApplicationOptions.AvailableCultures)
                 {
                     <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
@@ -47,15 +47,16 @@ along with Foobar.  If not, see
     {
         _localizationService.LocalizationChanged += delegate
         {
-            Task.Run(async delegate
-            {
-                applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
-                StateHasChanged();
-            });
-            //TODO: Detach
+        //    //Task.Run(async delegate
+        //    //{
+        //    //    applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        //    //    StateHasChanged();
+        //    //});
+        //    //TODO: Detach
+        StateHasChanged();
         };
 
-        applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
         _logger.LogDebug("CultureName = {0}", applicationOptions.CultureName);
 
@@ -67,7 +68,7 @@ along with Foobar.  If not, see
         if (applicationOptions != null)
         {
             applicationOptions.CultureName = value;
-            await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+            await _localStorageOptionsProvider.SaveOptions(applicationOptions);
             _localizationService.ChangeLanguage(applicationOptions.CultureName);
         }
     }

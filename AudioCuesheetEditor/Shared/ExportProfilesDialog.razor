@@ -240,12 +240,12 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
-        //TODO: Detach!
-    };
+            //TODO: Detach!
+        };
 
         if (exportProfileModels == null)
         {
-            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
             exportProfileModels = options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
             selectedExportProfileId = exportProfileModels.First().Id;
         }
@@ -289,9 +289,9 @@ along with Foobar.  If not, see
         _logger.LogInformation("SaveExportProfiles");
         if (exportProfileModels != null)
         {
-            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
             options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
-            await _localStorageOptionsProvider.SaveApplicationOptions(options);
+            await _localStorageOptionsProvider.SaveOptions(options);
         }
     }
 

@@ -259,7 +259,7 @@ along with Foobar.  If not, see
             .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show())
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
 
-        applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
         _sessionStateContainer.CurrentViewMode = applicationOptions.ViewMode;
 
@@ -384,11 +384,11 @@ along with Foobar.  If not, see
     {
         if (applicationOptions == null)
         {
-            applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+            applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
         var projectFile = new Projectfile(_sessionStateContainer.Cuesheet);
         var fileData = projectFile.GenerateFile();
-        await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         await _blazorDownloadFileService.DownloadFile(applicationOptions.ProjectFileName, fileData, "text/plain");
         await modalDownloadProjectfile.Hide();
     }
@@ -399,11 +399,11 @@ along with Foobar.  If not, see
         _logger.LogInformation("DownloadCuesheetFileClicked");
         if (applicationOptions == null)
         {
-            applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+            applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
         var cuesheetFile = new Cuesheetfile(_sessionStateContainer.Cuesheet);
         var fileData = cuesheetFile.GenerateCuesheetFile();
-        await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         await _blazorDownloadFileService.DownloadFile(applicationOptions.CuesheetFileName, fileData, "text/plain");
         await modalDownloadCuesheet.Hide();
     }
