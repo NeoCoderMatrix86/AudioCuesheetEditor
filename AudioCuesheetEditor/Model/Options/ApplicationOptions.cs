@@ -44,8 +44,24 @@ namespace AudioCuesheetEditor.Model.Options
 
     public class ApplicationOptions
     {
+        public const String DefaultCultureName = "en-US";
+
         private String audioFileNameRecording;
         private String projectFilename;
+
+        public static IReadOnlyCollection<CultureInfo> AvailableCultures
+        {
+            get
+            {
+                var cultures = new List<CultureInfo>
+                {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("de-DE")
+                };
+                return cultures.AsReadOnly();
+            }
+        }
+
         public ApplicationOptions()
         {
             SetDefaultValues();
@@ -60,7 +76,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(CultureName) == true)
             {
-                CultureName = OptionsController.DefaultCultureName;
+                CultureName = DefaultCultureName;
             }
             if (ExportProfiles == null)
             {
@@ -125,7 +141,8 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public String CuesheetFileName { get; set; }
-        public String CultureName { get; set; }
+        public String CultureName 
+        { get; set; }
         [JsonIgnore]
         public CultureInfo Culture
         {
@@ -141,6 +158,7 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
+        //TODO: Save in extra export options (and check other properties also)
         public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; }
         public TextImportScheme TextImportScheme { get; set; }
         [JsonIgnore]

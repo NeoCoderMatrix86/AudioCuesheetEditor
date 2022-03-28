@@ -18,7 +18,7 @@ along with Foobar.  If not, see
 
 @implements IDisposable
 
-@inject OptionsController _optionsController
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ITextLocalizer<OptionsDialog> _localizer
 @inject ILogger<OptionsDialog> _logger
 @inject IJSRuntime _jsRuntime
@@ -26,31 +26,33 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject ITextLocalizerService _localizationService
 
-<Modal @ref="modalOptions">
-    <ModalContent Centered="true" Size="ModalSize.Large">
-        <ModalHeader>
-            <ModalTitle>@_localizer["Options"]</ModalTitle>
-            <CloseButton Clicked="() => modalOptions.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            <Card>
-                <CardHeader>
-                    <Tabs @bind-SelectedTab="@selectedOptionsTab">
-                        <Items>
-                            <Tab Name="common">@_localizer["Common settings"]</Tab>
-                            <Tab Name="textImport">@_localizer["Textimport settings"]</Tab>
-                            <Tab Name="recording">@_localizer["Record settings"]</Tab>
-                        </Items>
-                    </Tabs>
-                </CardHeader>
-                <CardBody>
-                    <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
-                        <TabPanel Name="common" Padding="Padding.Is3.OnY">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Culture setting"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_optionsController.Options.CultureName">
-                                        @foreach (var culture in OptionsController.AvailableCultures)
+@if (applicationOptions != null)
+{
+    <Modal @ref="modalOptions">
+        <ModalContent Centered="true" Size="ModalSize.Large">
+            <ModalHeader>
+                <ModalTitle>@_localizer["Options"]</ModalTitle>
+                <CloseButton Clicked="() => modalOptions.Hide()" />
+            </ModalHeader>
+            <ModalBody>
+                <Card>
+                    <CardHeader>
+                        <Tabs @bind-SelectedTab="@selectedOptionsTab">
+                            <Items>
+                                <Tab Name="common">@_localizer["Common settings"]</Tab>
+                                <Tab Name="textImport">@_localizer["Textimport settings"]</Tab>
+                                <Tab Name="recording">@_localizer["Record settings"]</Tab>
+                            </Items>
+                        </Tabs>
+                    </CardHeader>
+                    <CardBody>
+                        <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
+                            <TabPanel Name="common" Padding="Padding.Is3.OnY">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Culture setting"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is7">
+                                        <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@applicationOptions.CultureName">
+                                            @foreach (var culture in ApplicationOptions.AvailableCultures)
                                         {
                                             <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
                                         }
@@ -60,7 +62,7 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Default viewmode"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" @bind-SelectedValue="@_optionsController.Options.ViewModeName">
+                                    <Select TValue="String" @bind-SelectedValue="@applicationOptions.ViewModeName">
                                         @foreach (var name in Enum.GetNames(typeof(ViewMode)))
                                         {
                                             <SelectItem Value="@name">@_localizer[name]</SelectItem>
@@ -71,19 +73,19 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Cuesheet filename"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="_optionsController.Options.CuesheetFileName" ChangeTextOnKeyPress="false" />
+                                    <TextEdit @bind-Text="applicationOptions.CuesheetFileName" ChangeTextOnKeyPress="false" />
                                 </FieldBody>
                             </Field>
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Project filename"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="_optionsController.Options.ProjectFileName" ChangeTextOnKeyPress="false" />
+                                    <TextEdit @bind-Text="applicationOptions.ProjectFileName" ChangeTextOnKeyPress="false" />
                                 </FieldBody>
                             </Field>
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Automatically link tracks"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Check TValue="Boolean?" @bind-Checked="_optionsController.Options.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
+                                    <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
                                 </FieldBody>
                             </Field>
                         </TabPanel>
@@ -91,13 +93,13 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Textimportscheme cuesheet"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="_optionsController.Options.TextImportScheme.SchemeCuesheet" />
+                                    <TextEdit @bind-Text="applicationOptions.TextImportScheme.SchemeCuesheet" />
                                 </FieldBody>
                             </Field>
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Textimportscheme track"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="_optionsController.Options.TextImportScheme.SchemeTracks" />
+                                    <TextEdit @bind-Text="applicationOptions.TextImportScheme.SchemeTracks" />
                                 </FieldBody>
                             </Field>
                         </TabPanel>
@@ -105,19 +107,19 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Filename for recorded audio"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="_optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
+                                    <TextEdit @bind-Text="applicationOptions.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
                                 </FieldBody>
                             </Field>
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Record countdown timer in seconds"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <NumericEdit TValue="int?" @bind-Value="_optionsController.Options.RecordCountdownTimer" Min="1" />
+                                    <NumericEdit TValue="int?" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
                                 </FieldBody>
                             </Field>
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Record time sensitivity"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" @bind-SelectedValue="@_optionsController.Options.RecordTimeSensitivityName">
+                                    <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityName">
                                         @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
                                         {
                                             <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
@@ -138,10 +140,12 @@ along with Foobar.  If not, see
         </ModalFooter>
     </ModalContent>
 </Modal>
+}
 
 @code {
     String selectedOptionsTab = "common";
-    
+    ApplicationOptions? applicationOptions;
+
     Modal modalOptions;
     HotKeysContext hotKeysContext;
 
@@ -155,39 +159,47 @@ along with Foobar.  If not, see
         modalOptions.Show();
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnSaveOptionsClicked);
 
-        return base.OnInitializedAsync();
+        applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+
+        await base.OnInitializedAsync();
     }
 
     private async Task OnCultureSelectionChanged(String value)
     {
-        _optionsController.Options.CultureName = value;
-        await _optionsController.SaveOptions();
-        _localizationService.ChangeLanguage(_optionsController.Options.CultureName);
+        if (applicationOptions != null)
+        {
+            applicationOptions.CultureName = value;
+            await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+            _localizationService.ChangeLanguage(applicationOptions.CultureName);
+        }
     }
 
     private async Task OnSaveOptionsClicked()
     {
         _logger.LogInformation("OnSaveOptionsClicked");
-        await _optionsController.SaveOptions();
-        await modalOptions.Hide();
+        if (applicationOptions != null)
+        {
+            await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+            await modalOptions.Hide();
+        }
     }
 
     private async Task OnReloadOptionsClicked()
     {
         _logger.LogInformation("OnReloadOptionsClicked");
-        await _optionsController.LoadOptions();
+        applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
     }
 
     private async Task OnResetOptionsClicked()
     {
         _logger.LogInformation("OnResetOptionsClicked");
         await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
-        await _optionsController.LoadOptions();
+        applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 }

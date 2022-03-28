@@ -22,7 +22,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ViewModeRecord> _localizer
 @inject ILogger<ViewModeRecord> _logger
 @inject HttpClient _httpClient
-@inject OptionsController _optionsController
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ITextLocalizerService _localizationService
 @inject SessionStateContainer _sessionStateContainer
 
@@ -232,9 +232,10 @@ along with Foobar.  If not, see
     public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
 
     [JSInvokable()]
-    public void AudioRecordingFinished(String url)
+    public async Task AudioRecordingFinished(String url)
     {
-        _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(_optionsController.Options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, _httpClient, true);
+        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, _httpClient, true);
         StateHasChanged();
     }
 
@@ -277,10 +278,11 @@ along with Foobar.  If not, see
                 updateGUITimer.Stop();
             }
         };
+        var options = await _localStorageOptionsProvider.GetApplicationOptions();
 
-        if (_optionsController.Options.RecordCountdownTimer.HasValue)
+        if (options.RecordCountdownTimer.HasValue)
         {
-            startRecordTimer = new Timer(_optionsController.Options.RecordCountdownTimer.Value * 1000);
+            startRecordTimer = new Timer(options.RecordCountdownTimer.Value * 1000);
             startRecordTimer.Elapsed += async delegate
             {
                 await StartRecordingClicked();
@@ -334,7 +336,8 @@ along with Foobar.  If not, see
     private async Task StopRecordingClicked()
     {
         await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
-        _sessionStateContainer.Cuesheet.StopRecording(_optionsController.Options);
+        var options = await _localStorageOptionsProvider.GetApplicationOptions();
+        _sessionStateContainer.Cuesheet.StopRecording(options);
         //Open processing hints
         processingHintsVisible = true;
     }
@@ -393,9 +396,10 @@ along with Foobar.  If not, see
     {
         if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
+            var options = await _localStorageOptionsProvider.GetApplicationOptions();
             enterCurrentTrackArtist.Focus();
             await Task.Delay(50);
-            _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, _optionsController.Options);
+            _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);
             currentRecordingTrack = new Track();
         }
     }

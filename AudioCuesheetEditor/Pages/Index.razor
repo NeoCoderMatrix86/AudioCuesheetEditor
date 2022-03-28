@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<Index> _localizer
 @inject CuesheetController _cuesheetController
 @inject NavigationManager _navigationManager
-@inject OptionsController _optionsController
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ILogger<Index> _logger
 @inject HotKeys _hotKeys
 @inject HttpClient _httpClient
@@ -836,12 +836,13 @@ along with Foobar.  If not, see
         {
             if (CuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
             {
+                var options = await _localStorageOptionsProvider.GetApplicationOptions();
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
-                textImportFile.TextImportScheme = _optionsController.Options.TextImportScheme;
+                textImportFile.TextImportScheme = options.TextImportScheme;
                 modalTextImport.Show();
             }
             else
@@ -867,9 +868,10 @@ along with Foobar.  If not, see
         _logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
-            _optionsController.Options.TextImportScheme = textImportFile.TextImportScheme;
-            await _optionsController.SaveOptions();
-            _sessionStateContainer.Cuesheet.Import(textImportFile, _optionsController.Options);
+            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            options.TextImportScheme = textImportFile.TextImportScheme;
+            await _localStorageOptionsProvider.SaveApplicationOptions(options);
+            _sessionStateContainer.Cuesheet.Import(textImportFile, options);
             modalTextImport.Hide();
             textImportFile = null;
             StateHasChanged();
@@ -883,6 +885,7 @@ along with Foobar.  If not, see
         {
             if (CuesheetController.CheckFileMimeType(e.File, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
             {
+                var options = await _localStorageOptionsProvider.GetApplicationOptions();
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
@@ -894,7 +897,7 @@ along with Foobar.  If not, see
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
                 void importCuesheetDelegate(object sender, EventArgs args)
                 {
-                    _sessionStateContainer.Cuesheet = Cuesheetfile.ImportCuesheet(memoryStream, _optionsController.Options);
+                    _sessionStateContainer.Cuesheet = Cuesheetfile.ImportCuesheet(memoryStream, options);
                     modalDialog.Confirmed -= importCuesheetDelegate;
                     StateHasChanged();
                 };
@@ -1091,10 +1094,11 @@ along with Foobar.  If not, see
         }
     }
 
-    private void OnAddTrackClicked()
+    private async Task OnAddTrackClicked()
     {
+        var options = await _localStorageOptionsProvider.GetApplicationOptions();
         var newTrack = new Track();
-        _sessionStateContainer.Cuesheet.AddTrack(newTrack, _optionsController.Options);
+        _sessionStateContainer.Cuesheet.AddTrack(newTrack, options);
         _traceChangeManager.TraceChanges(newTrack);
     }
 
@@ -1111,10 +1115,11 @@ along with Foobar.  If not, see
         modalTrackEdit.Hide();
     }
 
-    private void CopyTrackClicked(Track trackToCopy)
+    private async Task CopyTrackClicked(Track trackToCopy)
     {
+        var options = await _localStorageOptionsProvider.GetApplicationOptions();
         var copy = new Track(trackToCopy);
-        _sessionStateContainer.Cuesheet.AddTrack(copy, _optionsController.Options);
+        _sessionStateContainer.Cuesheet.AddTrack(copy, options);
         _traceChangeManager.TraceChanges(copy);
         EditTrackModal(copy);
     }

@@ -1,5 +1,6 @@
 using AudioCuesheetEditor;
 using AudioCuesheetEditor.Controller;
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
 using BlazorDownloadFile;
@@ -29,7 +30,7 @@ builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 builder.Services.AddBlazorDownloadFile();
 
 builder.Services.AddScoped<CuesheetController>();
-builder.Services.AddScoped<OptionsController>();
+builder.Services.AddScoped<LocalStorageOptionsProvider>();
 
 builder.Services.AddSingleton<SessionStateContainer>();
 builder.Services.AddSingleton<TraceChangeManager>();

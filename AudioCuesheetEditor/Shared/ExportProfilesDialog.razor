@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 
 @inject ITextLocalizerService _localizationService
 @inject ITextLocalizer<ExportProfilesDialog> _localizer
-@inject OptionsController _optionsController
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ILogger<ExportProfilesDialog> _logger
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject HotKeys _hotKeys
@@ -180,7 +180,7 @@ along with Foobar.  If not, see
 
 @code {
     Modal modalExportProfiles = default!;
-    IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
+    IReadOnlyCollection<SelectExportProfileModel> exportProfileModels = default!;
     Guid selectedExportProfileId;
     HotKeysContext? hotKeysContext;
 
@@ -235,24 +235,25 @@ along with Foobar.  If not, see
         }
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
-            //TODO: Detach!
-        };
+        //TODO: Detach!
+    };
 
         if (exportProfileModels == null)
         {
-            exportProfileModels = _optionsController.Options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
+            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            exportProfileModels = options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
             selectedExportProfileId = exportProfileModels.First().Id;
         }
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnDownloadExportProfileClicked);
 
-        return base.OnInitializedAsync();
+        await base.OnInitializedAsync();
     }
 
     private async Task ModalExportProfilesCloseClicked()
@@ -288,8 +289,9 @@ along with Foobar.  If not, see
         _logger.LogInformation("SaveExportProfiles");
         if (exportProfileModels != null)
         {
-            _optionsController.Options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
-            await _optionsController.SaveOptions();
+            var options = await _localStorageOptionsProvider.GetApplicationOptions();
+            options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
+            await _localStorageOptionsProvider.SaveApplicationOptions(options);
         }
     }
 

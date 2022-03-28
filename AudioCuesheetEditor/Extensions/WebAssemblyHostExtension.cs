@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
+using AudioCuesheetEditor.Data.Options;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -29,11 +30,11 @@ namespace AudioCuesheetEditor.Extensions
     {
         public async static Task SetDefaultCulture(this WebAssemblyHost host)
         {
-            var optionsController = host.Services.GetRequiredService<OptionsController>();
-            await optionsController.LoadOptions();
+            var localStorageOptionsProvider = host.Services.GetRequiredService<LocalStorageOptionsProvider>();
+            var options = await localStorageOptionsProvider.GetApplicationOptions();
 
-            CultureInfo.DefaultThreadCurrentCulture = optionsController.Options.Culture;
-            CultureInfo.DefaultThreadCurrentUICulture = optionsController.Options.Culture;
+            CultureInfo.DefaultThreadCurrentCulture = options.Culture;
+            CultureInfo.DefaultThreadCurrentUICulture = options.Culture;
         }
     }
 }

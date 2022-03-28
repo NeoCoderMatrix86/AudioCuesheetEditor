@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 @inject ILogger<MainLayout> _logger
 @inject IJSRuntime _jsRuntime
 @inject HotKeys _hotKeys
-@inject OptionsController _optionsController
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 
@@ -182,55 +182,59 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 <ExportProfilesDialog @ref="exportProfilesDialog" ValidationMessageLocalizer="ValidationMessageLocalizer" />
 
-<Modal @ref="modalDownloadProjectfile">
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>
-                @_localizer["Save project"]
-            </ModalTitle>
-            <CloseButton Clicked="() => modalDownloadProjectfile.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit @bind-Text="_optionsController.Options.ProjectFileName" />
-                </FieldBody>
-            </Field>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@_localizer["Download projectfile"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalDownloadProjectfile.Hide()">@_localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+@if (applicationOptions != null)
+{
+    <Modal @ref="modalDownloadProjectfile">
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>
+                    @_localizer["Save project"]
+                </ModalTitle>
+                <CloseButton Clicked="() => modalDownloadProjectfile.Hide()" />
+            </ModalHeader>
+            <ModalBody>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit @bind-Text="applicationOptions.ProjectFileName" />
+                    </FieldBody>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@_localizer["Download projectfile"]</Button>
+                <Button Color="Color.Secondary" Clicked="() => modalDownloadProjectfile.Hide()">@_localizer["Abort"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
 
-<Modal @ref="modalDownloadCuesheet">
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>
-                @_localizer["Download cuesheet"]
-            </ModalTitle>
-            <CloseButton Clicked="() => modalDownloadCuesheet.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit @bind-Text="_optionsController.Options.CuesheetFileName" />
-                </FieldBody>
-            </Field>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@_localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+    <Modal @ref="modalDownloadCuesheet">
+        <ModalContent Centered="true">
+            <ModalHeader>
+                <ModalTitle>
+                    @_localizer["Download cuesheet"]
+                </ModalTitle>
+                <CloseButton Clicked="() => modalDownloadCuesheet.Hide()" />
+            </ModalHeader>
+            <ModalBody>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit @bind-Text="applicationOptions.CuesheetFileName" />
+                    </FieldBody>
+                </Field>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
+                <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@_localizer["Abort"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
+}
 
 @code {
     Boolean displayMenuBar = false;
     HotKeysContext? hotKeysContext;
+    ApplicationOptions? applicationOptions;
 
     OptionsDialog optionsDialog = default!;
     ModalDialog modalDialog = default!;
@@ -240,7 +244,7 @@ along with Foobar.  If not, see
 
     public ITextLocalizer<ValidationMessage>? ValidationMessageLocalizer { get; private set; }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += delegate
         {
@@ -255,9 +259,11 @@ along with Foobar.  If not, see
             .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show())
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
 
-        _sessionStateContainer.CurrentViewMode = _optionsController.Options.ViewMode;
+        applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
 
-        return base.OnInitializedAsync();
+        _sessionStateContainer.CurrentViewMode = applicationOptions.ViewMode;
+
+        await base.OnInitializedAsync();
     }
 
     public void Dispose()
@@ -376,10 +382,14 @@ along with Foobar.  If not, see
 
     private async Task DownloadProjectfileClicked()
     {
+        if (applicationOptions == null)
+        {
+            applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+        }
         var projectFile = new Projectfile(_sessionStateContainer.Cuesheet);
         var fileData = projectFile.GenerateFile();
-        await _optionsController.SaveOptions();
-        await _blazorDownloadFileService.DownloadFile(_optionsController.Options.ProjectFileName, fileData, "text/plain");
+        await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+        await _blazorDownloadFileService.DownloadFile(applicationOptions.ProjectFileName, fileData, "text/plain");
         await modalDownloadProjectfile.Hide();
     }
 
@@ -387,10 +397,14 @@ along with Foobar.  If not, see
     private async Task DownloadCuesheetFileClicked()
     {
         _logger.LogInformation("DownloadCuesheetFileClicked");
+        if (applicationOptions == null)
+        {
+            applicationOptions = await _localStorageOptionsProvider.GetApplicationOptions();
+        }
         var cuesheetFile = new Cuesheetfile(_sessionStateContainer.Cuesheet);
         var fileData = cuesheetFile.GenerateCuesheetFile();
-        await _optionsController.SaveOptions();
-        await _blazorDownloadFileService.DownloadFile(_optionsController.Options.CuesheetFileName, fileData, "text/plain");
+        await _localStorageOptionsProvider.SaveApplicationOptions(applicationOptions);
+        await _blazorDownloadFileService.DownloadFile(applicationOptions.CuesheetFileName, fileData, "text/plain");
         await modalDownloadCuesheet.Hide();
     }
 
