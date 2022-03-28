@@ -28,48 +28,34 @@ along with Foobar.  If not, see
         </svg>
     </Column>
     <Column Class="nav-link">
-        @if (applicationOptions != null)
-        {
-            <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_localizationService.SelectedCulture.Name">
-                @foreach (var culture in ApplicationOptions.AvailableCultures)
-                {
-                    <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
-                }
-            </Select>
-        }
+        <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_localizationService.SelectedCulture.Name">
+            @foreach (var culture in ApplicationOptions.AvailableCultures)
+            {
+                <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
+            }
+        </Select>
     </Column>
 </Row>
 
 @code{
-    ApplicationOptions? applicationOptions;
-
     protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += delegate
         {
-        //    //Task.Run(async delegate
-        //    //{
-        //    //    applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        //    //    StateHasChanged();
-        //    //});
-        //    //TODO: Detach
-        StateHasChanged();
+            //TODO: Detach
+            StateHasChanged();
         };
 
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-
-        _logger.LogDebug("CultureName = {0}", applicationOptions.CultureName);
+        _logger.LogDebug("CultureName = {0}", _localizationService.SelectedCulture.Name);
 
         await base.OnInitializedAsync();
     }
 
     private async Task OnCultureSelectionChanged(String value)
     {
-        if (applicationOptions != null)
-        {
-            applicationOptions.CultureName = value;
-            await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-            _localizationService.ChangeLanguage(applicationOptions.CultureName);
-        }
+        var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        applicationOptions.CultureName = value;
+        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
+        _localizationService.ChangeLanguage(applicationOptions.CultureName);
     }
 }

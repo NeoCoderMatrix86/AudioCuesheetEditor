@@ -28,7 +28,7 @@ along with Foobar.  If not, see
 
 @if (applicationOptions != null)
 {
-    <Modal @ref="modalOptions">
+    <Modal @ref="modalOptions" Closed="OnModalClosed">
         <ModalContent Centered="true" Size="ModalSize.Large">
             <ModalHeader>
                 <ModalTitle>@_localizer["Options"]</ModalTitle>
@@ -37,7 +37,7 @@ along with Foobar.  If not, see
             <ModalBody>
                 <Card>
                     <CardHeader>
-                        <Tabs SelectedTab="@selectedOptionsTab">
+                        <Tabs @bind-SelectedTab="@selectedOptionsTab">
                             <Items>
                                 <Tab Name="common">@_localizer["Common settings"]</Tab>
                                 <Tab Name="textImport">@_localizer["Textimport settings"]</Tab>
@@ -46,7 +46,7 @@ along with Foobar.  If not, see
                         </Tabs>
                     </CardHeader>
                     <CardBody>
-                        <TabsContent SelectedPanel="@selectedOptionsTab">
+                        <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
                             <TabPanel Name="common" Padding="Padding.Is3.OnY">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Culture setting"]</FieldLabel>
@@ -149,6 +149,7 @@ along with Foobar.  If not, see
     String selectedOptionsTab = "common";
     ApplicationOptions? applicationOptions;
     ImportOptions? importOptions;
+    Boolean saveOptions;
 
     Modal modalOptions;
     HotKeysContext hotKeysContext;
@@ -161,6 +162,7 @@ along with Foobar.  If not, see
     public void Show()
     {
         modalOptions.Show();
+        saveOptions = false;
     }
 
     protected override async Task OnInitializedAsync()
@@ -171,13 +173,28 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += delegate
         {
             StateHasChanged();
-            //TODO: Detach
-        };
+        //TODO: Detach
+    };
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
 
+        //TODO: Detach
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+
         await base.OnInitializedAsync();
+    }
+
+    private void LocalStorageOptionsProvider_OptionSaved(object sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
+        if (options is ImportOptions)
+        {
+            importOptions = (ImportOptions)options;
+        }
     }
 
     private async Task OnCultureSelectionChanged(String value)
@@ -192,6 +209,7 @@ along with Foobar.  If not, see
     private async Task OnSaveOptionsClicked()
     {
         _logger.LogInformation("OnSaveOptionsClicked");
+        saveOptions = true;
         if ((applicationOptions != null) && (importOptions != null))
         {
             await _localStorageOptionsProvider.SaveOptions(applicationOptions);
@@ -205,6 +223,7 @@ along with Foobar.  If not, see
         _logger.LogInformation("OnReloadOptionsClicked");
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+        _localizationService.ChangeLanguage(applicationOptions.CultureName);
     }
 
     private async Task OnResetOptionsClicked()
@@ -222,5 +241,16 @@ along with Foobar.  If not, see
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _localizationService.ChangeLanguage(applicationOptions.CultureName);
         await modalOptions.Hide();
+    }
+
+    private async Task OnModalClosed()
+    {
+        _logger.LogInformation("OnModalClosed");
+        if (saveOptions == false)
+        {
+            //Reset the language if needed
+            applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            _localizationService.ChangeLanguage(applicationOptions.CultureName);
+        }
     }
 }

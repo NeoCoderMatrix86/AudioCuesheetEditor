@@ -21,7 +21,8 @@ namespace AudioCuesheetEditor.Data.Options
 {
     public class LocalStorageOptionsProvider
     {
-        //TODO: Event for saving options in order to reload them in different dialogs
+        public event EventHandler<IOptions> OptionSaved;
+
         private readonly IJSRuntime _jsRuntime;
 
         public LocalStorageOptionsProvider(IJSRuntime jsRuntime)
@@ -72,8 +73,9 @@ namespace AudioCuesheetEditor.Data.Options
             {
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
             };
-            var optionsJson = JsonSerializer.Serialize(options, serializerOptions);
+            var optionsJson = JsonSerializer.Serialize<object>(options, serializerOptions);
             await _jsRuntime.InvokeVoidAsync(String.Format("{0}.set", options.GetType().Name), optionsJson);
+            OptionSaved?.Invoke(this, options);
         }
     }
 }
