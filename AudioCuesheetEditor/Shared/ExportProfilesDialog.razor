@@ -173,7 +173,7 @@ along with Foobar.  If not, see
             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "Exportprofile is not exportable. Please check validationerrors and solve errors in order to download export.")">
                 <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@_localizer["Download export"]</Button>
             </Tooltip>
-            <Button Color="Color.Secondary" @onclick="ModalExportProfilesCloseClicked">@_localizer["Close"]</Button>
+            <Button Color="Color.Secondary" Clicked="ModalExportProfilesCloseClicked">@_localizer["Close"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
