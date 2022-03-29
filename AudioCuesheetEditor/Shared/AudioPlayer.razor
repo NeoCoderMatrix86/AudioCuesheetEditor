@@ -99,7 +99,11 @@ along with Foobar.  If not, see
         _howl.OnEnd -= HowlOnEnd;
         _howl.OnStop -= HowlOnStop;
         audioUpdateTimer.Dispose();
-        _sessionStateContainer.Cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
+        if (_sessionStateContainer.Cuesheet != null)
+        {
+            _sessionStateContainer.Cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
+        }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 
     public Boolean PlaybackPossible
@@ -198,11 +202,7 @@ along with Foobar.  If not, see
             .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true))
             .Add(ModKeys.None, Keys.MediaStop, () => OnStopClicked());
 
-        _localizationService.LocalizationChanged += delegate
-        {
-            //TODO: Detach!
-            StateHasChanged();
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         //Also reset the duration, since audio file will change also
         TotalTime = null;
@@ -353,6 +353,11 @@ along with Foobar.  If not, see
     private void AudioFile_ContentStreamLoaded(object sender, EventArgs args)
     {
         AnalyseAudioFile();
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 
     private void AnalyseAudioFile()

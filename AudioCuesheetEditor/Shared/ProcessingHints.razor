@@ -16,6 +16,8 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@implements IDisposable
+
 @inject ITextLocalizer<ProcessingHints> _localizer
 @inject IJSRuntime _jsRuntime
 @inject CuesheetController _cuesheetController
@@ -122,13 +124,15 @@ along with Foobar.  If not, see
     [Parameter]
     public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
 
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
     protected override Task OnInitializedAsync()
     {
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-            //TODO: Detach!
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+
         return base.OnInitializedAsync();
     }
 
@@ -143,5 +147,10 @@ along with Foobar.  If not, see
             validationErrors.AddRange(track.GetValidationErrorsFiltered(validationErrorFilterType: validationErrorFilterType));
         }
         return validationErrors.AsReadOnly();
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

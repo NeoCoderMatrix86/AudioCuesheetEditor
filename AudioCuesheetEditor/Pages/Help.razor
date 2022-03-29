@@ -17,6 +17,9 @@ along with Foobar.  If not, see
 -->
 
 @page "/Help"
+
+@implements IDisposable
+
 @inject ITextLocalizer<Help> _localizer
 @inject ITextLocalizerService _localizationService
 
@@ -114,13 +117,15 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public MainLayout? mainLayout { get; set; }
 
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
     protected override Task OnInitializedAsync()
     {
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-            //TODO: Detach!
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+
         return base.OnInitializedAsync();
     }
 
@@ -131,5 +136,10 @@ along with Foobar.  If not, see
         {
             mainLayout.SetDisplayMenuBar(false);
         }
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

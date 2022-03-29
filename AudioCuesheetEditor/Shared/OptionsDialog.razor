@@ -157,6 +157,8 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext.Dispose();
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     public void Show()
@@ -170,17 +172,11 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnSaveOptionsClicked);
 
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-        //TODO: Detach
-    };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-
-        //TODO: Detach
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         await base.OnInitializedAsync();
     }
@@ -197,13 +193,19 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnCultureSelectionChanged(String value)
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private Task OnCultureSelectionChanged(String value)
     {
         if (applicationOptions != null)
         {
             applicationOptions.CultureName = value;
             _localizationService.ChangeLanguage(applicationOptions.CultureName);
         }
+        return Task.CompletedTask;
     }
 
     private async Task OnSaveOptionsClicked()

@@ -246,11 +246,7 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-            //TODO: Detach!
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         ValidationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
@@ -272,6 +268,7 @@ along with Foobar.  If not, see
         {
             hotKeysContext.Dispose();
         }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 
     public void SetDisplayMenuBar(Boolean display)
@@ -424,5 +421,10 @@ along with Foobar.  If not, see
     {
         _sessionStateContainer.CurrentViewMode = selectedViewMode;
         return Task.CompletedTask;
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

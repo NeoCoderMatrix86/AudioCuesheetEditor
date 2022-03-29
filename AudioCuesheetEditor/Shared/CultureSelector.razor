@@ -16,6 +16,8 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@implements IDisposable
+
 @inject ITextLocalizerService _localizationService
 @inject ITextLocalizer<CultureSelector> _localizer
 @inject ILogger<CultureSelector> _logger
@@ -38,13 +40,15 @@ along with Foobar.  If not, see
 </Row>
 
 @code{
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        _localizationService.LocalizationChanged += delegate
-        {
-            //TODO: Detach
-            StateHasChanged();
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         _logger.LogDebug("CultureName = {0}", _localizationService.SelectedCulture.Name);
 
@@ -57,5 +61,10 @@ along with Foobar.  If not, see
         applicationOptions.CultureName = value;
         await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         _localizationService.ChangeLanguage(applicationOptions.CultureName);
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

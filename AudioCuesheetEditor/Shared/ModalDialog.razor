@@ -70,6 +70,7 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext.Dispose();
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 
     protected override Task OnInitializedAsync()
@@ -78,11 +79,7 @@ along with Foobar.  If not, see
             .Add(ModKeys.Alt, Keys.O, Confirm)
             .Add(ModKeys.None, Keys.ESC, HideModal);
 
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-            //TODO: Detach
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         return base.OnInitializedAsync();
     }
@@ -161,5 +158,10 @@ along with Foobar.  If not, see
             }
             return headerStyle;
         }
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
