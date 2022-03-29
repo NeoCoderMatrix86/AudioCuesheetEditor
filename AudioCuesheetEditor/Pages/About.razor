@@ -42,8 +42,8 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public MainLayout? mainLayout { get; set; }
 
-    private String? licence;
-    private String? changelog;
+    String licence = default!;
+    String changelog = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,7 +71,7 @@ along with Foobar.  If not, see
             {
                 return ((System.Reflection.AssemblyInformationalVersionAttribute)version).InformationalVersion;
             }
-            return null;
+            return String.Empty;
         }
     }
 }

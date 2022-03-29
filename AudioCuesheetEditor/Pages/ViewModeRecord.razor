@@ -93,7 +93,7 @@ along with Foobar.  If not, see
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                            <TextEdit Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="_sessionStateContainer.Cuesheet.Artist" ChangeTextOnKeyPress="false" />
+                            <TextEdit Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="_sessionStateContainer.Cuesheet.Artist" Immediate="false" />
                         </FieldBody>
                     </Field>
                 </Tooltip>
@@ -101,7 +101,7 @@ along with Foobar.  If not, see
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                            <TextEdit Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@_localizer["Enter cd title here"]" @bind-Text="_sessionStateContainer.Cuesheet.Title" ChangeTextOnKeyPress="false" />
+                            <TextEdit Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@_localizer["Enter cd title here"]" @bind-Text="_sessionStateContainer.Cuesheet.Title" Immediate="false" />
                         </FieldBody>
                     </Field>
                 </Tooltip>
