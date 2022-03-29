@@ -21,7 +21,7 @@ namespace AudioCuesheetEditor.Data.Options
 {
     public class LocalStorageOptionsProvider
     {
-        public event EventHandler<IOptions> OptionSaved;
+        public event EventHandler<IOptions>? OptionSaved;
 
         private readonly IJSRuntime _jsRuntime;
 
@@ -38,29 +38,36 @@ namespace AudioCuesheetEditor.Data.Options
         public async ValueTask<T> GetOptions<T>() where T : IOptions
         {
             var type = typeof(T);
-            IOptions options = (IOptions)Activator.CreateInstance(type);
+            IOptions? options = (IOptions?)Activator.CreateInstance(type);
             String optionsJson = await _jsRuntime.InvokeAsync<String>(String.Format("{0}.get", type.Name));
             if (String.IsNullOrEmpty(optionsJson) == false)
             {
                 try
                 {
-                    options = (IOptions)JsonSerializer.Deserialize(optionsJson, typeof(T));
+                    options = (IOptions?)JsonSerializer.Deserialize(optionsJson, typeof(T));
                     if (options != null)
                     {
                         options.SetDefaultValues();
                     }
                     else
                     {
-                        options = (IOptions)Activator.CreateInstance(typeof(T));
+                        options = (IOptions?)Activator.CreateInstance(typeof(T));
                     }
                 }
                 catch (JsonException)
                 {
                     //nothing to do, we can not deserialize
-                    options = (IOptions)Activator.CreateInstance(typeof(T));
+                    options = (IOptions?)Activator.CreateInstance(typeof(T));
                 }
             }
-            return (T)options;
+            if (options != null)
+            {
+                return (T)options;
+            }
+            else
+            {
+                return default!;
+            }
         }
 
         public async Task SaveOptions(IOptions options)
