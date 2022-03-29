@@ -92,6 +92,7 @@ along with Foobar.  If not, see
                             <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
                         </CollapseHeader>
                         <CollapseBody>
+                            @*TODO: Tooltip comes even when the value is set correctly*@
                             <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
                                 <Field Horizontal="true">
                                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
