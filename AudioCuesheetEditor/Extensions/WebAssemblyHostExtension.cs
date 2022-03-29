@@ -34,6 +34,8 @@ namespace AudioCuesheetEditor.Extensions
             var localStorageOptionsProvider = host.Services.GetRequiredService<LocalStorageOptionsProvider>();
             var options = await localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
+            //TODO: Seems to be a bug, since changing the culture doesn't change texts in tooltips in GUI
+
             CultureInfo.DefaultThreadCurrentCulture = options.Culture;
             CultureInfo.DefaultThreadCurrentUICulture = options.Culture;
         }

@@ -58,7 +58,6 @@ along with Foobar.  If not, see
                             <BarMenu>
                                 <BarStart>
                                     <BarItem Padding="Padding.Is1.OnX">
-                                        @*TODO: Changes on cuesheet doesn't fire an update here!*@
                                         <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Undo last change"]">
                                             <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => _traceChangeManager.Undo()" Class="nav-link">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
@@ -72,7 +71,6 @@ along with Foobar.  If not, see
                                         </Tooltip>
                                     </BarItem>
                                     <BarItem Padding="Padding.Is1.OnX">
-                                        @*TODO: Changes on cuesheet doesn't fire an update here!*@
                                         <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Redo last change"]">
                                             <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => _traceChangeManager.Redo()" Class="nav-link">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace-reverse" viewBox="0 0 16 16">
@@ -247,6 +245,7 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _traceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
 
         ValidationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
@@ -269,6 +268,7 @@ along with Foobar.  If not, see
             hotKeysContext.Dispose();
         }
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _traceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
     }
 
     public void SetDisplayMenuBar(Boolean display)
@@ -424,6 +424,11 @@ along with Foobar.  If not, see
     }
 
     private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void TraceChangeManager_TracedObjectHistoryChanged(object sender, EventArgs args)
     {
         StateHasChanged();
     }
