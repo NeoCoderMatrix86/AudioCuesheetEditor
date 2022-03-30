@@ -35,6 +35,7 @@ namespace AudioCuesheetEditor.Extensions
             var options = await localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
             //TODO: Seems to be a bug, since changing the culture doesn't change texts in tooltips in GUI
+            // Wait for https://github.com/Megabit/Blazorise/issues/3566 to be fixed in 1.0.2 of blazorize
 
             CultureInfo.DefaultThreadCurrentCulture = options.Culture;
             CultureInfo.DefaultThreadCurrentUICulture = options.Culture;

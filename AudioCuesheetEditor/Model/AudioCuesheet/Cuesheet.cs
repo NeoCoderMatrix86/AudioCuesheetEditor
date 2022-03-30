@@ -101,7 +101,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue);
             }
         }
-        public Audiofile Audiofile
+        public Audiofile? Audiofile
         {
             get { return audiofile; }
             set 

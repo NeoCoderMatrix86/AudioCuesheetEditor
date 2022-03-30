@@ -228,6 +228,7 @@ along with Foobar.  If not, see
         _jsRuntime.InvokeVoidAsync("closeAudioRecording");
     }
 
+    //TODO: Make this a cascading parameter
     [Parameter]
     public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
 
@@ -239,23 +240,23 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private Timer updateGUITimer;
-    private Timer startRecordTimer;
+    Timer updateGUITimer = default!;
+    Timer? startRecordTimer;
 
-    private DateTime recordTimerStarted;
+    DateTime recordTimerStarted;
 
-    private TextEdit enterCurrentTrackTitle;
-    private TextEdit enterCurrentTrackArtist;
+    TextEdit enterCurrentTrackTitle = default!;
+    TextEdit enterCurrentTrackArtist = default!;
 
-    private ModalDialog modalDialog;
+    ModalDialog modalDialog = default!;
 
-    private Track currentRecordingTrack = new Track();
+    Track currentRecordingTrack = new Track();
 
-    private Boolean cuesheetDataVisible = false;
-    private Boolean recordControlVisible = true;
-    private Boolean enterNewTrackVisible = true;
-    private Boolean cuesheetTracksVisible = true;
-    private Boolean processingHintsVisible = false;
+    Boolean cuesheetDataVisible = false;
+    Boolean recordControlVisible = true;
+    Boolean enterNewTrackVisible = true;
+    Boolean cuesheetTracksVisible = true;
+    Boolean processingHintsVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -273,7 +274,12 @@ along with Foobar.  If not, see
         updateGUITimer.Elapsed += delegate
         {
             StateHasChanged();
-            if ((startRecordTimer.Enabled == false) && (_sessionStateContainer.Cuesheet.IsRecording == false))
+            Boolean startRecordTimeEnabled = false;
+            if (startRecordTimer != null)
+            {
+                startRecordTimeEnabled = startRecordTimer.Enabled;
+            }
+            if ((startRecordTimeEnabled == false) && (_sessionStateContainer.Cuesheet.IsRecording == false))
             {
                 updateGUITimer.Stop();
             }
@@ -293,7 +299,7 @@ along with Foobar.  If not, see
 
     private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
     {
-        String resultString = null;
+        String resultString = String.Empty;
         if ((timeSpan != null) && (timeSpan.HasValue))
         {
             if (removeMilliseconds == true)
@@ -323,13 +329,13 @@ along with Foobar.  If not, see
         {
             _sessionStateContainer.Cuesheet.StartRecording();
             updateGUITimer.Start();
-            enterCurrentTrackArtist.Focus();
             await _jsRuntime.InvokeVoidAsync("startAudioRecording");
             if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
             {
                 await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
             }
             _sessionStateContainer.Cuesheet.Audiofile = null;
+            await enterCurrentTrackArtist.Focus();
         }
     }
 
@@ -397,8 +403,7 @@ along with Foobar.  If not, see
         if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
             var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-            enterCurrentTrackArtist.Focus();
-            await Task.Delay(50);
+            await enterCurrentTrackArtist.Focus();
             _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);
             currentRecordingTrack = new Track();
         }
@@ -407,7 +412,10 @@ along with Foobar.  If not, see
     private void StartRecordCountdownTimer()
     {
         recordTimerStarted = DateTime.Now;
-        startRecordTimer.Start();
+        if (startRecordTimer != null)
+        {
+            startRecordTimer.Start();
+        }
         updateGUITimer.Start();
     }
 }
