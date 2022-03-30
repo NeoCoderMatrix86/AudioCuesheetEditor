@@ -25,7 +25,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 
 <Card>
-    <CardHeader><h3>@_localizer["Audioplayer"]</h3></CardHeader>
+    <CardHeader><Heading Size="HeadingSize.Is3">@_localizer["Audioplayer"]</Heading></CardHeader>
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
@@ -77,12 +77,12 @@ along with Foobar.  If not, see
 </Card>
 
 @code {
-    private Timer audioUpdateTimer;
-    private int soundId;
-    private Track currentlyPlayingTrack;
-    private HotKeysContext hotKeysContext;
-    private Boolean paused;
-    private Audiofile audioFile;
+    Timer audioUpdateTimer = default!;
+    int soundId;
+    Track? currentlyPlayingTrack;
+    HotKeysContext hotKeysContext = default!;
+    Boolean paused;
+    Audiofile? audioFile;
 
     [Parameter]
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
@@ -145,7 +145,7 @@ along with Foobar.  If not, see
         }
     }
 
-    public Track CurrentlyPlayingTrack
+    public Track? CurrentlyPlayingTrack
     {
         get { return currentlyPlayingTrack; }
         private set
