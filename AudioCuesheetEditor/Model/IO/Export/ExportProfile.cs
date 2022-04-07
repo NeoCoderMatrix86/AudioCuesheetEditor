@@ -52,6 +52,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         {
             get
             {
+                //TODO: return true only when all schemes are valid (and add a unit test for this case)
                 if ((SchemeHead != null) && (SchemeHead.IsValid == false))
                 {
                     return SchemeHead.IsValid;
@@ -67,7 +68,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 return true;
             }
         }
-        public byte[] GenerateExport(Cuesheet cuesheet)
+        public byte[]? GenerateExport(Cuesheet cuesheet)
         {
             if (IsExportable == true)
             {

@@ -38,7 +38,7 @@ along with Foobar.  If not, see
             <Field Horizontal="true" JustifyContent="JustifyContent.End">
                 <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is9">
-                    <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
+                    <SelectList TItem="SelectExportProfileModel" TValue="Guid?" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
                 </FieldBody>
             </Field>
             <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@_localizer["Add new exportprofile"]</Button>
@@ -99,7 +99,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit id="enterExportSchemeTrack" Placeholder="@_localizer["Enter exportscheme track here"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme">
+                                <TextEdit id="enterExportSchemeTrack" Placeholder="@_localizer["Enter exportscheme track here"]" @bind-Text="@SelectedExportProfile.SchemeTracks.Scheme">
                                     <Tooltip Text="@_localizer["Enter exportscheme track here tooltip"]" TriggerTargetId="enterExportSchemeTrack" Placement="TooltipPlacement.TopStart">
                                     </Tooltip>
                                 </TextEdit>
@@ -181,9 +181,10 @@ along with Foobar.  If not, see
 @code {
     Modal modalExportProfiles = default!;
     IReadOnlyCollection<SelectExportProfileModel> exportProfileModels = default!;
-    Guid selectedExportProfileId;
+    Guid? selectedExportProfileId;
     HotKeysContext? hotKeysContext;
 
+    //TODO: Make this a cascading parameter
     [Parameter]
     public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
 
@@ -203,7 +204,7 @@ along with Foobar.  If not, see
         }
     }
 
-    public Exportprofile SelectedExportProfile
+    public Exportprofile? SelectedExportProfile
     {
         get
         {
@@ -303,7 +304,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private void SelectedExportProfileChanged(Guid newValue)
+    private void SelectedExportProfileChanged(Guid? newValue)
     {
         _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
         selectedExportProfileId = newValue;
