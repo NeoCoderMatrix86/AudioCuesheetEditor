@@ -90,15 +90,15 @@ along with Foobar.  If not, see
         Alert
     }
 
-    private Modal modalRef;
-    private ModalSize modalSize = ModalSize.Default;
-    private DialogMode mode = DialogMode.Confirm;
-    private HotKeysContext hotKeysContext;
+    Modal modalRef = default!;
+    ModalSize modalSize = ModalSize.Default;
+    DialogMode mode = DialogMode.Confirm;
+    HotKeysContext hotKeysContext = default!;
 
-    public String Title;
-    public String Text;
+    public String Title = default!;
+    public String Text = default!;
 
-    public event EventHandler Confirmed;
+    public event EventHandler Confirmed = default!;
 
     public void ShowModal()
     {
@@ -109,7 +109,7 @@ along with Foobar.  If not, see
     {
         modalRef.Hide();
         //Reset all confirmed handlers
-        Confirmed = null;
+        Confirmed = default!;
     }
 
     public ModalSize ModalSize
@@ -143,11 +143,11 @@ along with Foobar.  If not, see
         }
     }
 
-    private String ModalHeaderStyle
+    private String? ModalHeaderStyle
     {
         get
         {
-            String headerStyle = null;
+            String? headerStyle = null;
             switch (Mode)
             {
                 case DialogMode.Alert:
