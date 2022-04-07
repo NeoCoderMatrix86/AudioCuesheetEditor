@@ -116,11 +116,12 @@ along with Foobar.  If not, see
 
 @code {
     [Parameter]
-    public String Header { get; set; }
+    public String Header { get; set; } = default!;
 
     [Parameter]
     public Boolean ActivateLinksToFields { get; set; }
 
+    //TODO: Make this a cascading parameter
     [Parameter]
     public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
 
