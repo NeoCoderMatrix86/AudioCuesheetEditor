@@ -159,7 +159,7 @@ along with Foobar.  If not, see
         }
     }
 
-    public async Task OnPlayTrackClicked(Track trackToPlay)
+    public async Task OnPlayTrackClicked(Track? trackToPlay)
     {
         if ((trackToPlay != null) && (trackToPlay.Begin != null))
         {
@@ -282,12 +282,15 @@ along with Foobar.  If not, see
 
     private async Task OnSliderValueChanged(Double newvalue)
     {
-        var newPosition = newvalue * TotalTime.Value / 100.0;
-        if ((paused == true) || (AudioIsPlaying == false))
+        if (TotalTime.HasValue)
         {
-            await OnPlayClicked();
+            var newPosition = newvalue * TotalTime.Value / 100.0;
+            if ((paused == true) || (AudioIsPlaying == false))
+            {
+                await OnPlayClicked();
+            }
+            await _howl.Seek(soundId, newPosition);
         }
-        await _howl.Seek(soundId, newPosition);
     }
 
     private async Task OnPlayClicked()
@@ -323,7 +326,7 @@ along with Foobar.  If not, see
         if (CurrentlyPlayingTrack != null)
         {
             var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-            Track trackToPlay = null;
+            Track? trackToPlay = null;
             if (previous == false)
             {
                 trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index + 1);
