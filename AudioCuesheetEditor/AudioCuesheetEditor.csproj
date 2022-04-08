@@ -28,6 +28,8 @@
     <Content Remove="Resources\Localization\OptionsDialog\en.json" />
     <Content Remove="Resources\Localization\ProcessingHints\de.json" />
     <Content Remove="Resources\Localization\ProcessingHints\en.json" />
+    <Content Remove="Resources\Localization\TracksTable\de.json" />
+    <Content Remove="Resources\Localization\TracksTable\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
@@ -61,6 +63,8 @@
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\ProcessingHints\en.json" />
     <EmbeddedResource Include="Resources\Localization\ProcessingHints\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TracksTable\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />

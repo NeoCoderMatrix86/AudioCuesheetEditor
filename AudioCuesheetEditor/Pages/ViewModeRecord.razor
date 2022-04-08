@@ -125,39 +125,7 @@ along with Foobar.  If not, see
                 <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet tracks"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                <Table Bordered="true" Responsive="true" Narrow="true">
-                    <TableHeader ThemeContrast="ThemeContrast.Light">
-                        <TableRow>
-                            <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                            <TableHeaderCell>#</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        @foreach (var track in _sessionStateContainer.Cuesheet.Tracks)
-                        {
-                            <TableRow>
-                                <TableRowCell>
-                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => _sessionStateContainer.Cuesheet.RemoveTrack(track)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                        </svg>
-                                    </Button>
-                                </TableRowCell>
-                                <TableRowCell>@track.Position</TableRowCell>
-                                <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Artist" /></TableRowCell>
-                                <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Title" /></TableRowCell>
-                                <TableRowCell>@track.Begin</TableRowCell>
-                                <TableRowCell>@track.End</TableRowCell>
-                                <TableRowCell>@track.Length</TableRowCell>
-                            </TableRow>
-                        }
-                    </TableBody>
-                </Table>
+                <TracksTable ValidationMessageLocalizer="ValidationMessageLocalizer" />
             </CollapseBody>
         </Collapse>
         <Collapse Visible="processingHintsVisible">
