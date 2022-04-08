@@ -326,24 +326,24 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public MainLayout? mainLayout { get; set; }
 
-    private Boolean cuesheetDataVisible = true;
-    private Boolean cuesheetTracksVisible = true;
+    Boolean cuesheetDataVisible = true;
+    Boolean cuesheetTracksVisible = true;
 
-    private Boolean importVisible = false;
-    private Boolean dropFilesVisible = true;
-    private Boolean textImportFileContentVisible = true;
+    Boolean importVisible = false;
+    Boolean dropFilesVisible = true;
+    Boolean textImportFileContentVisible = true;
 
-    private HotKeysContext hotKeysContext;
+    HotKeysContext hotKeysContext = default!;
 
-    private String invalidFileName;
+    String invalidFileName = default!;
 
-    private TextImportFile textImportFile;
+    TextImportFile? textImportFile;
 
-    private ModalDialog modalDialog;
-    private Alert alertInvalidFile;
+    ModalDialog modalDialog = default!;
+    Alert alertInvalidFile = default!;
 
-    private Modal modalTextImport;
-    private AudioPlayer audioPlayer;    
+    Modal modalTextImport = default!;
+    AudioPlayer audioPlayer = default!;    
 
     protected override async Task OnInitializedAsync()
     {
@@ -424,7 +424,7 @@ along with Foobar.  If not, see
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
                 textImportFile.TextImportScheme = options.TextImportScheme;
-                modalTextImport.Show();
+                await modalTextImport.Show();
             }
             else
             {
