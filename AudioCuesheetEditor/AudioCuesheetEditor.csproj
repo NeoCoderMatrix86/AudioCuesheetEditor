@@ -16,6 +16,8 @@
     <Content Remove="Resources\Localization\AudioPlayer\en.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\de.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
+    <Content Remove="Resources\Localization\CuesheetData\de.json" />
+    <Content Remove="Resources\Localization\CuesheetData\en.json" />
     <Content Remove="Resources\Localization\ExportProfilesDialog\de.json" />
     <Content Remove="Resources\Localization\ExportProfilesDialog\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
@@ -47,6 +49,8 @@
     <EmbeddedResource Include="Resources\Localization\AudioPlayer\de.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\en.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
+    <EmbeddedResource Include="Resources\Localization\CuesheetData\de.json" />
+    <EmbeddedResource Include="Resources\Localization\CuesheetData\en.json" />
     <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
