@@ -29,10 +29,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public interface ITrack<ICuesheet> : ICuesheetEntity, IEntityDisplayName
     {
-        public ICuesheet Cuesheet { get; set; }
+        public ICuesheet? Cuesheet { get; set; }
         public uint? Position { get; set; }
-        public String Artist { get; set; }
-        public String Title { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }

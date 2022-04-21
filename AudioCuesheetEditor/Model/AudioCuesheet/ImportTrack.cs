@@ -23,10 +23,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class ImportTrack : ITrack<ImportCuesheet>
     {
-        private List<Flag> flags = new List<Flag>();
+        private List<Flag> flags = new();
         public uint? Position { get; set; }
-        public string Artist { get; set; }
-        public string Title { get; set; }
+        public String? Artist { get; set; }
+        public String? Title { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }
@@ -45,15 +45,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public ImportCuesheet Cuesheet { get; set; }
+        public ImportCuesheet? Cuesheet { get; set; }
         /// <inheritdoc/>
         public TimeSpan? PreGap { get; set; }
         /// <inheritdoc/>
         public TimeSpan? PostGap { get; set; }
 
-        public string GetDisplayNameLocalized(ITextLocalizer localizer)
+        public String? GetDisplayNameLocalized(ITextLocalizer localizer)
         {
-            String identifierString = null;
+            String? identifierString = null;
             if (Position != null)
             {
                 identifierString += String.Format("{0},", Position);

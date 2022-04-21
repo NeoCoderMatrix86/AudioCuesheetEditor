@@ -136,6 +136,8 @@ along with Foobar.  If not, see
 
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
+        //TODO: When a validatable property has been changed we need to call statehaschanged!
+
         return base.OnInitializedAsync();
     }
 
@@ -149,7 +151,7 @@ along with Foobar.  If not, see
         return validationErrors.AsReadOnly();
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

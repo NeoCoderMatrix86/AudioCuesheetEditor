@@ -181,7 +181,7 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
     }
 
-    private void LocalStorageOptionsProvider_OptionSaved(object sender, IOptions options)
+    private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
     {
         if (options is ApplicationOptions)
         {
@@ -193,7 +193,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

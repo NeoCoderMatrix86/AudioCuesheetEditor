@@ -25,5 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     /// </summary>
     public interface ICuesheetEntity
     {
+        public String? Artist { get; set; }
+        public String? Title { get; set; }
     }
 }

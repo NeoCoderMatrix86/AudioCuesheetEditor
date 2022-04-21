@@ -456,7 +456,7 @@ along with Foobar.  If not, see
         modalDialog.Text = _localizer["Do you really want to delete all tracks? This can not be reversed."];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void deleteTracksDelegate(object sender, EventArgs args)
+        void deleteTracksDelegate(object? sender, EventArgs args)
         {
             _logger.LogInformation("deleteTracksDelegate");
             _sessionStateContainer.Cuesheet.RemoveTracks(_sessionStateContainer.Cuesheet.Tracks);
@@ -505,7 +505,7 @@ along with Foobar.  If not, see
         return cssClass;
     }
 
-    private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
     {
         if (expressionToCheck == true)
         {
@@ -583,7 +583,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
