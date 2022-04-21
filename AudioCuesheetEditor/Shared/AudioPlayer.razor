@@ -344,7 +344,7 @@ along with Foobar.  If not, see
         await _howl.Stop(soundId);
     }
 
-    private void Cuesheet_AudioFileChanged(object sender, EventArgs args)
+    private void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
     {
         if (_sessionStateContainer.Cuesheet.Audiofile != null)
         {
@@ -353,12 +353,12 @@ along with Foobar.  If not, see
         TotalTime = null;
     }
 
-    private void AudioFile_ContentStreamLoaded(object sender, EventArgs args)
+    private void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)
     {
         AnalyseAudioFile();
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

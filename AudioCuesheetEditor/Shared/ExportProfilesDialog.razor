@@ -309,7 +309,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
     {
         if (expressionToCheck == true)
         {
@@ -321,7 +321,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

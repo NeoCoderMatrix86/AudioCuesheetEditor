@@ -296,7 +296,7 @@ along with Foobar.  If not, see
         modalDialog.Text = _localizer["Do you really want to delete all tracks? This can not be reversed."];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void deleteTracksDelegate(object sender, EventArgs args)
+        void deleteTracksDelegate(object? sender, EventArgs args)
         {
             _logger.LogInformation("deleteTracksDelegate");
             _sessionStateContainer.Cuesheet.RemoveTracks(_sessionStateContainer.Cuesheet.Tracks);
@@ -315,7 +315,7 @@ along with Foobar.  If not, see
         modalDialog.Text = _localizer["Do you really want to reset the cuesheet? This can not be reversed."];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void newCuesheetDelegate(object sender, EventArgs args)
+        void newCuesheetDelegate(object? sender, EventArgs args)
         {
             _logger.LogInformation("newCuesheetDelegate");
             _sessionStateContainer.Cuesheet = new Cuesheet();
@@ -334,7 +334,7 @@ along with Foobar.  If not, see
         modalDialog.Text = _localizer["Confirm restart of application. All unsaved changes are lost!"];
         modalDialog.ModalSize = ModalSize.Small;
         modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        async void restartApplicationDelegate(object sender, EventArgs args)
+        async void restartApplicationDelegate(object? sender, EventArgs args)
         {
             _logger.LogInformation("restartApplicationDelegate");
             modalDialog.Confirmed -= restartApplicationDelegate;
@@ -356,7 +356,7 @@ along with Foobar.  If not, see
         modalDialog.ShowModal();
     }
 
-    private async void OnRestartApplicationConfirmed(object sender, EventArgs args)
+    private async void OnRestartApplicationConfirmed(object? sender, EventArgs args)
     {
         _logger.LogInformation("OnRestartApplicationConfirmed");
         await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
@@ -419,12 +419,12 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
 
-    private void TraceChangeManager_TracedObjectHistoryChanged(object sender, EventArgs args)
+    private void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
