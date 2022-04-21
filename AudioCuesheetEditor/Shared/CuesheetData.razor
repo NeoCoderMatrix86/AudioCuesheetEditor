@@ -16,14 +16,17 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@implements IDisposable
+
 @inject ITextLocalizer<CuesheetData> _localizer
 @inject CuesheetController _cuesheetController
 @inject SessionStateContainer _sessionStateContainer
 @inject IJSRuntime _jsRuntime
 @inject ILogger<CuesheetData> _logger
 @inject HttpClient _httpClient
+@inject ITextLocalizerService _localizationService
 
-<Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
+<Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
     <Field Horizontal="true">
         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -31,7 +34,7 @@ along with Foobar.  If not, see
         </FieldBody>
     </Field>
 </Tooltip>
-<Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
+<Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
     <Field Horizontal="true">
         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -70,7 +73,7 @@ along with Foobar.  If not, see
                 {
                     <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
                     var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))));
-                    <InputFile class="@audioFileCSSClass" id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Audiofile))" accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@_sessionStateContainer.Cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))"></InputFile>
+                    <InputFile class="@audioFileCSSClass" id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Audiofile))" accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))"></InputFile>
                 }
                 else
                 {
@@ -91,7 +94,7 @@ along with Foobar.  If not, see
                 }
             </FieldBody>
         </Field>
-        <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
+        <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD textfile"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -114,7 +117,7 @@ along with Foobar.  If not, see
                 </FieldBody>
             </Field>
         </Tooltip>
-        <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.Cataloguenumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
+        <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.Cataloguenumber.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -129,10 +132,22 @@ along with Foobar.  If not, see
 
 @code {
     ModalDialog modalDialog = default!;
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
-    //TODO: Make this a cascading parameter
-    [Parameter]
-    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        _logger.LogDebug("OnInitializedAsync");
+        
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
+        return base.OnInitializedAsync();
+    }
 
     private async Task OnChangeAudioFileClicked()
     {
@@ -241,5 +256,10 @@ along with Foobar.  If not, see
             }
         }
         return cssClass;
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

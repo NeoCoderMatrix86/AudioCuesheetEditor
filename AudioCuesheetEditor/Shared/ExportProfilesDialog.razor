@@ -90,7 +90,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeHead.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(validationMessageLocalizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -126,7 +126,7 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeTracks.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(validationMessageLocalizer)</AlertMessage>
                         </Alert>
                     }
                 }
@@ -162,14 +162,13 @@ along with Foobar.  If not, see
                     @foreach (var validationError in SelectedExportProfile.SchemeFooter.ValidationErrors.OrderBy(x => x.Type))
                     {
                         <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
+                            <AlertMessage>@validationError.Message.GetMessageLocalized(validationMessageLocalizer)</AlertMessage>
                         </Alert>
                     }
                 }
             }
         </ModalBody>
         <ModalFooter>
-            @*TODO: Tooltip doesn't fire!*@
             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "Exportprofile is not exportable. Please check validationerrors and solve errors in order to download export.")">
                 <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@_localizer["Download export"]</Button>
             </Tooltip>
@@ -183,10 +182,7 @@ along with Foobar.  If not, see
     IReadOnlyCollection<SelectExportProfileModel> exportProfileModels = default!;
     Guid? selectedExportProfileId;
     HotKeysContext? hotKeysContext;
-
-    //TODO: Make this a cascading parameter
-    [Parameter]
-    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     public class SelectExportProfileModel
     {
@@ -240,6 +236,8 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         if (exportProfileModels == null)
         {

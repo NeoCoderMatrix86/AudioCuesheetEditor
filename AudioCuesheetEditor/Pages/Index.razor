@@ -35,7 +35,7 @@ along with Foobar.  If not, see
     @switch (_sessionStateContainer.CurrentViewMode)
     {
         case ViewMode.ViewModeRecord:
-            <ViewModeRecord ValidationMessageLocalizer="ValidationMessageLocalizer" />
+            <ViewModeRecord />
             break;
         case ViewMode.ViewModeFull:
             <Column>
@@ -92,7 +92,7 @@ along with Foobar.  If not, see
                             <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
                         </CollapseHeader>
                         <CollapseBody>
-                            <CuesheetData ValidationMessageLocalizer="ValidationMessageLocalizer" />
+                            <CuesheetData />
                         </CollapseBody>
                     </Collapse>
                     <Collapse Visible="cuesheetTracksVisible">
@@ -100,7 +100,7 @@ along with Foobar.  If not, see
                             <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet tracks"]</Heading></Button>
                         </CollapseHeader>
                         <CollapseBody>
-                            <TracksTable ValidationMessageLocalizer="ValidationMessageLocalizer" AudioPlayer="audioPlayer" />
+                            <TracksTable AudioPlayer="audioPlayer" />
                         </CollapseBody>
                     </Collapse>
                 </Accordion>
@@ -115,7 +115,7 @@ along with Foobar.  If not, see
                         <CardTitle Size="3">@_localizer["Processinghints"]</CardTitle>
                     </CardHeader>
                     <CardBody>
-                        <ProcessingHints Header="@_localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" ValidationMessageLocalizer="ValidationMessageLocalizer" />
+                        <ProcessingHints Header="@_localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" />
                     </CardBody>
                 </Card>
             </Column>
@@ -161,7 +161,7 @@ along with Foobar.  If not, see
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(ValidationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -189,7 +189,7 @@ along with Foobar.  If not, see
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(ValidationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
@@ -300,11 +300,13 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; private set; }
-
     public void Dispose()
     {
-        hotKeysContext.Dispose();
+        if (hotKeysContext != null)
+        {
+            hotKeysContext.Dispose();
+        }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
     }
 
@@ -343,19 +345,16 @@ along with Foobar.  If not, see
     Alert alertInvalidFile = default!;
 
     Modal modalTextImport = default!;
-    AudioPlayer audioPlayer = default!;    
+    AudioPlayer audioPlayer = default!;
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     protected override async Task OnInitializedAsync()
     {
         _logger.LogDebug("OnInitializedAsync");
         _logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
 
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-        };
-
-        ValidationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.H, () => _navigationManager.NavigateTo("Help"))
@@ -652,5 +651,10 @@ along with Foobar.  If not, see
     private void CurrentViewModeChanged(object sender, EventArgs args)
     {
         audioPlayer.Reset();
+    }
+
+    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

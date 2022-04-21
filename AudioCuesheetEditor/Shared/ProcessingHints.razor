@@ -43,11 +43,11 @@ along with Foobar.  If not, see
                                 <Alert Color="Color.Warning" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
-                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                     }
                                     else
                                     {
-                                        <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                     }
                                 </Alert>
                             </Blazorise.Link>
@@ -57,11 +57,11 @@ along with Foobar.  If not, see
                             <Alert Color="Color.Warning" Visible="true">
                                 @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                 {
-                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                 }
                                 else
                                 {
-                                    <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                 }
                             </Alert>
                         }
@@ -85,11 +85,11 @@ along with Foobar.  If not, see
                                 <Alert Color="Color.Danger" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
-                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                     }
                                     else
                                     {
-                                        <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                        <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                     }
                                 </Alert>
                             </Blazorise.Link>
@@ -99,11 +99,11 @@ along with Foobar.  If not, see
                             <Alert Color="Color.Danger" Visible="true">
                                 @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                 {
-                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@entityDisplayName.GetDisplayNameLocalized(_localizer) : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                 }
                                 else
                                 {
-                                    <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</Paragraph>
+                                    <Paragraph>@_localizer[validationError.FieldReference.Owner.GetType().Name] : @validationError.Message.GetMessageLocalized(validationMessageLocalizer)</Paragraph>
                                 }
                             </Alert>
                         }
@@ -121,9 +121,9 @@ along with Foobar.  If not, see
     [Parameter]
     public Boolean ActivateLinksToFields { get; set; }
 
-    //TODO: Make this a cascading parameter
-    [Parameter]
-    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
+    Boolean processingHintsWarningVisible = true;
+    Boolean processingHintsErrorVisible = true;
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     public void Dispose()
     {
@@ -134,11 +134,10 @@ along with Foobar.  If not, see
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
         return base.OnInitializedAsync();
     }
-
-    private Boolean processingHintsWarningVisible = true;
-    private Boolean processingHintsErrorVisible = true;
 
     private IReadOnlyCollection<AudioCuesheetEditor.Model.Entity.ValidationError> GetValidationErrors(ValidationErrorFilterType validationErrorFilterType)
     {

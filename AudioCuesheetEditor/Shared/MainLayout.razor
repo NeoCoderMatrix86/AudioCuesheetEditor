@@ -178,7 +178,7 @@ along with Foobar.  If not, see
 
 <OptionsDialog @ref="optionsDialog" />
 <ModalDialog @ref="modalDialog" />
-<ExportProfilesDialog @ref="exportProfilesDialog" ValidationMessageLocalizer="ValidationMessageLocalizer" />
+<ExportProfilesDialog @ref="exportProfilesDialog" />
 
 @if (applicationOptions != null)
 {
@@ -240,14 +240,10 @@ along with Foobar.  If not, see
     Modal modalDownloadProjectfile = default!;
     Modal modalDownloadCuesheet = default!;
 
-    public ITextLocalizer<ValidationMessage>? ValidationMessageLocalizer { get; private set; }
-
     protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _traceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
-
-        ValidationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.E, () => exportProfilesDialog.Show())
