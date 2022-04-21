@@ -650,7 +650,7 @@ along with Foobar.  If not, see
 
     private void CurrentViewModeChanged(object? sender, EventArgs args)
     {
-        audioPlayer.Reset();
+        Task.Run(async () => await audioPlayer.Reset());
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
