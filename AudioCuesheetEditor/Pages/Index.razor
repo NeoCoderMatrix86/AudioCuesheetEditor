@@ -453,7 +453,7 @@ along with Foobar.  If not, see
             options.TextImportScheme = textImportFile.TextImportScheme;
             await _localStorageOptionsProvider.SaveOptions(options);
             _sessionStateContainer.Cuesheet.Import(textImportFile, applicationOptions);
-            modalTextImport.Hide();
+            await modalTextImport.Hide();
             textImportFile = null;
             StateHasChanged();
         }
@@ -476,7 +476,7 @@ along with Foobar.  If not, see
                 modalDialog.Text = _localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-                void importCuesheetDelegate(object sender, EventArgs args)
+                void importCuesheetDelegate(object? sender, EventArgs args)
                 {
                     _sessionStateContainer.Cuesheet = Cuesheetfile.ImportCuesheet(memoryStream, options);
                     modalDialog.Confirmed -= importCuesheetDelegate;
@@ -499,7 +499,7 @@ along with Foobar.  If not, see
     private async Task OnDropInputfilesChanged(InputFileChangeEventArgs e)
     {
         _logger.LogInformation("OnDropInputfilesChanged with {0}", e);
-        alertInvalidFile.Hide();
+        await alertInvalidFile.Hide();
         Boolean importedAllFiles = true;
         foreach (var file in e.GetMultipleFiles())
         {
@@ -535,7 +535,7 @@ along with Foobar.  If not, see
             if (recognized == false)
             {
                 invalidFileName = e.File.Name;
-                alertInvalidFile.Show();
+                await alertInvalidFile.Show();
                 importedAllFiles = false;
             }
         }
@@ -547,7 +547,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
     {
         if (expressionToCheck == true)
         {
@@ -628,7 +628,7 @@ along with Foobar.  If not, see
                 modalDialog.Text = _localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-                void importCuesheetDelegate(object sender, EventArgs args)
+                void importCuesheetDelegate(object? sender, EventArgs args)
                 {
                     modalDialog.Confirmed -= importCuesheetDelegate;
                     _sessionStateContainer.Cuesheet = Projectfile.ImportFile(memoryStream.ToArray());
@@ -648,12 +648,12 @@ along with Foobar.  If not, see
         }
     }
 
-    private void CurrentViewModeChanged(object sender, EventArgs args)
+    private void CurrentViewModeChanged(object? sender, EventArgs args)
     {
         audioPlayer.Reset();
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

@@ -42,8 +42,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Track> tracks;
         private String artist;
         private String title;
-        private Audiofile audiofile;
-        private CDTextfile cDTextfile;
+        private Audiofile? audiofile;
+        private CDTextfile? cDTextfile;
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
@@ -114,7 +114,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public CDTextfile CDTextfile 
+        public CDTextfile? CDTextfile 
         {
             get { return cDTextfile; }
             set 
