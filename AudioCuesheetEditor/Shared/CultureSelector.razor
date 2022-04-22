@@ -63,7 +63,7 @@ along with Foobar.  If not, see
         _localizationService.ChangeLanguage(applicationOptions.CultureName);
     }
 
-    private void LocalizationService_LocalizationChanged(object sender, EventArgs args)
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
