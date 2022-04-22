@@ -376,13 +376,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
-            if (textImportFile == null)
+            if (textImportFile.ImportCuesheet == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
-            }
-            if (applicationOptions == null)
-            {
-                throw new ArgumentNullException(nameof(applicationOptions));
             }
             if (textImportFile.IsValid == false)
             {

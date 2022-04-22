@@ -310,10 +310,20 @@ along with Foobar.  If not, see
             {
                 throw new ArgumentNullException(nameof(_sessionStateContainer.Cuesheet.Audiofile));
             }
+            string[]? sources = null;
+            string[]? formats = null;
+            if (_sessionStateContainer.Cuesheet.Audiofile.ObjectURL != null)
+            {
+                sources = new[] { _sessionStateContainer.Cuesheet.Audiofile.ObjectURL };
+            }
+            if (_sessionStateContainer.Cuesheet.Audiofile.AudioFileType != null)
+            {
+                formats = new[] { _sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower() };
+            }
             var options = new HowlOptions
             {
-                Sources = new[] { _sessionStateContainer.Cuesheet.Audiofile.ObjectURL },
-                Formats = new[] { _sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower() },
+                Sources = sources,
+                Formats = formats,
                 Html5 = true
             };
             audioFile = _sessionStateContainer.Cuesheet.Audiofile;

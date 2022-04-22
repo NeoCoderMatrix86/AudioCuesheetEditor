@@ -104,8 +104,29 @@ namespace AudioCuesheetEditor.Model.UI
 
         public void Reset()
         {
-            undoStack.ToList().Where(x => x.TraceableObject != null).ToList().ForEach(x => x.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged);
-            redoStack.ToList().Where(x => x.TraceableObject != null).ToList().ForEach(x => x.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged);
+            TracedChange? tracedChange = null;
+            if (undoStack.Count > 0)
+            {
+                do
+                {
+                    tracedChange = undoStack.Pop();
+                    if (tracedChange.TraceableObject != null)
+                    {
+                        tracedChange.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+                    }
+                } while (tracedChange != null);
+            }
+            if (redoStack.Count > 0)
+            {
+                do
+                {
+                    tracedChange = redoStack.Pop();
+                    if (tracedChange.TraceableObject != null)
+                    {
+                        tracedChange.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+                    }
+                } while (tracedChange != null);
+            }
             undoStack.Clear();
             redoStack.Clear();
         }
@@ -176,13 +197,20 @@ namespace AudioCuesheetEditor.Model.UI
             CurrentlyHandlingRedoOrUndoChanges = false;
         }
 
-        private void Traceable_TraceablePropertyChanged(object sender, TraceablePropertiesChangedEventArgs e)
+        private void Traceable_TraceablePropertyChanged(object? sender, TraceablePropertiesChangedEventArgs e)
         {
             if (CurrentlyHandlingRedoOrUndoChanges == false)
             {
-                undoStack.Push(new TracedChange((ITraceable)sender, e.TraceableChanges));
-                redoStack.Clear();
-                TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
+                if (sender != null)
+                {
+                    undoStack.Push(new TracedChange((ITraceable)sender, e.TraceableChanges));
+                    redoStack.Clear();
+                    TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(sender));
+                }
             }
         }
     }

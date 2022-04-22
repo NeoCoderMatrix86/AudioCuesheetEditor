@@ -31,12 +31,12 @@ namespace AudioCuesheetEditor.Model.IO
 
         public static readonly String DefaultFileName = "Project.ace";
 
-        public static readonly JsonSerializerOptions Options = new JsonSerializerOptions()
+        public static readonly JsonSerializerOptions Options = new()
         {
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        public static Cuesheet ImportFile(byte[] fileContent)
+        public static Cuesheet? ImportFile(byte[] fileContent)
         {
             var json = Encoding.UTF8.GetString(fileContent);
             return JsonSerializer.Deserialize<Cuesheet>(json, Options);

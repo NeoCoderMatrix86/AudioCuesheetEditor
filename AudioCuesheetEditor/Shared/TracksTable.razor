@@ -257,7 +257,7 @@ along with Foobar.  If not, see
                         </TableRowCell>
                         <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                @((MarkupString)track.GetValidationErrors(validationMessageLocalizer))
+                                @GetMarkupString(track.GetValidationErrors(validationMessageLocalizer))
                             </Tooltip>
                         </TableRowCell>
                         break;
@@ -586,5 +586,15 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    private MarkupString? GetMarkupString(String? stringValue)
+    {
+        MarkupString? result = null;
+        if (stringValue != null)
+        {
+            result = new MarkupString(stringValue);
+        }
+        return result;
     }
 }

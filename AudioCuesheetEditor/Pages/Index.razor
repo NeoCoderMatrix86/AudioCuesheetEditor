@@ -631,7 +631,11 @@ along with Foobar.  If not, see
                 void importCuesheetDelegate(object? sender, EventArgs args)
                 {
                     modalDialog.Confirmed -= importCuesheetDelegate;
-                    _sessionStateContainer.Cuesheet = Projectfile.ImportFile(memoryStream.ToArray());
+                    var cuesheet = Projectfile.ImportFile(memoryStream.ToArray());
+                    if (cuesheet != null)
+                    {
+                        _sessionStateContainer.Cuesheet = cuesheet;
+                    }
                     StateHasChanged();
                 };
                 modalDialog.Confirmed += importCuesheetDelegate;

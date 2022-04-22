@@ -47,7 +47,7 @@ namespace AudioCuesheetEditor.Model.Options
         public const String DefaultCultureName = "en-US";
 
         private String audioFileNameRecording;
-        private String projectFilename;
+        private String? projectFilename;
 
         public static IReadOnlyCollection<CultureInfo> AvailableCultures
         {
@@ -62,7 +62,9 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
 
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         public ApplicationOptions()
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         {
             SetDefaultValues();
         }
@@ -95,9 +97,8 @@ namespace AudioCuesheetEditor.Model.Options
                 RecordCountdownTimer = 5;
             }
         }
-        public String CuesheetFileName { get; set; }
-        public String CultureName 
-        { get; set; }
+        public String? CuesheetFileName { get; set; }
+        public String? CultureName { get; set; }
         [JsonIgnore]
         public CultureInfo Culture
         {
@@ -115,10 +116,20 @@ namespace AudioCuesheetEditor.Model.Options
         }
         [JsonIgnore]
         public ViewMode ViewMode { get; set; }
-        public String ViewModeName 
+        public String? ViewModeName 
         {
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
-            set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
+            set 
+            {
+                if (value != null)
+                {
+                    ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+            }
         }
         public String AudioFileNameRecording 
         {
@@ -139,12 +150,12 @@ namespace AudioCuesheetEditor.Model.Options
                 }
                 else
                 {
-                    audioFileNameRecording = null;
+                    audioFileNameRecording = String.Empty;
                 }
             }
         }
         public Boolean? LinkTracksWithPreviousOne { get; set; }
-        public String ProjectFileName 
+        public String? ProjectFileName 
         {
             get { return projectFilename; }
             set
@@ -171,10 +182,20 @@ namespace AudioCuesheetEditor.Model.Options
 
         [JsonIgnore]
         public TimeSensitivityMode RecordTimeSensitivity { get; set; }
-        public String RecordTimeSensitivityName
+        public String? RecordTimeSensitivityName
         {
             get { return Enum.GetName(typeof(TimeSensitivityMode), RecordTimeSensitivity); }
-            set { RecordTimeSensitivity = (TimeSensitivityMode)Enum.Parse(typeof(TimeSensitivityMode), value); }
+            set 
+            {
+                if (value != null)
+                {
+                    RecordTimeSensitivity = (TimeSensitivityMode)Enum.Parse(typeof(TimeSensitivityMode), value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+            }
         }
     }
 }
