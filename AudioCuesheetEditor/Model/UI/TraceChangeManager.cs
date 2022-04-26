@@ -129,7 +129,7 @@ namespace AudioCuesheetEditor.Model.UI
             if (CanUndo)
             {
                 CurrentlyHandlingRedoOrUndoChanges = true;
-                TracedChange changes = null;
+                TracedChange? changes = null;
                 while ((undoStack.Count > 0) && (changes == null))
                 {
                     changes = undoStack.Pop();
@@ -145,9 +145,16 @@ namespace AudioCuesheetEditor.Model.UI
                     {
                         var change = changes.TraceableChanges.Pop();
                         var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
-                        var currentValue = propertyInfo.GetValue(changes.TraceableObject);
-                        redoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
-                        propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                        if (propertyInfo != null)
+                        {
+                            var currentValue = propertyInfo.GetValue(changes.TraceableObject);
+                            redoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
+                            propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(String.Format("Property {0} could not be found!", change.PropertyName));
+                        }
                     } while (changes.TraceableChanges.Count > 0);
                     //Push the old value to redo stack
                     redoStack.Push(new TracedChange(changes.TraceableObject, redoChanges));
@@ -161,7 +168,7 @@ namespace AudioCuesheetEditor.Model.UI
             if (CanRedo)
             {
                 CurrentlyHandlingRedoOrUndoChanges = true;
-                TracedChange changes = null;
+                TracedChange? changes = null;
                 while ((redoStack.Count > 0) && (changes == null))
                 {
                     changes = redoStack.Pop();
@@ -177,9 +184,16 @@ namespace AudioCuesheetEditor.Model.UI
                     {
                         var change = changes.TraceableChanges.Pop();
                         var propertyInfo = changes.TraceableObject.GetType().GetProperty(change.PropertyName);
-                        var currentValue = propertyInfo.GetValue(changes.TraceableObject);
-                        undoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
-                        propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                        if (propertyInfo != null)
+                        {
+                            var currentValue = propertyInfo.GetValue(changes.TraceableObject);
+                            undoChanges.Push(new TraceableChange(currentValue, change.PropertyName));
+                            propertyInfo.SetValue(changes.TraceableObject, change.PreviousValue);
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(String.Format("Property {0} could not be found!", change.PropertyName));
+                        }
                     } while (changes.TraceableChanges.Count > 0);
                     //Push the old value to undo stack
                     undoStack.Push(new TracedChange(changes.TraceableObject, undoChanges));

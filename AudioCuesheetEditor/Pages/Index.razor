@@ -356,11 +356,9 @@ along with Foobar.  If not, see
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.Ctrl, Keys.H, () => _navigationManager.NavigateTo("Help"))
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
             .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Undo())
             .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Redo());
-            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show());
 
         _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
 

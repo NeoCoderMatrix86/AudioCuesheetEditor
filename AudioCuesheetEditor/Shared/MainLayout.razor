@@ -246,6 +246,7 @@ along with Foobar.  If not, see
         _traceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
 
         hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKeys.Ctrl, Keys.H, () => _navigationManager.NavigateTo("Help"))
             .Add(ModKeys.Ctrl, Keys.E, () => exportProfilesDialog.Show())
             .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show())
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);

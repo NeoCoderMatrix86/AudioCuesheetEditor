@@ -142,7 +142,7 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
-
+        //TODO: When cuesheet is changed, we need to call statehaschanged!
         //When a validatable property has been changed we need to call statehaschanged!
         _sessionStateContainer.Cuesheet.ValidateablePropertyChanged += Cuesheet_ValidateablePropertyChanged;
         foreach (var track in _sessionStateContainer.Cuesheet.Tracks)
