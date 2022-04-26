@@ -1,5 +1,11 @@
 # Changelog
 
+## [v2.8.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.8.0) (2022-03-15)
+
+**Closed issues:**
+
+- Create documentation for  Add Undo/Redo [\#198](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/198)
+
 ## [v2.7.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.7.0) (2022-03-08)
 
 **Implemented enhancements:**
