@@ -20,8 +20,8 @@ namespace AudioCuesheetEditor.Model.Entity
 {
     public class ValidationMessage
     {
-        private readonly object[] args;
-        public ValidationMessage(String message, params object[] args)
+        private readonly object[]? args;
+        public ValidationMessage(String message, params object[]? args)
         {
             if (String.IsNullOrEmpty(message) == true)
             {
@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Model.Entity
         public String Message { get; private set; }
         public String GetMessageLocalized(ITextLocalizer localizer)
         {
-            object[] arguments = null;
+            object[]? arguments = null;
             if (args != null)
             {
                 arguments = new object[args.Length];

@@ -42,11 +42,29 @@ namespace AudioCuesheetEditor.Model.Options
         Minutes = 2
     }
 
-    public class ApplicationOptions
+    public class ApplicationOptions : IOptions
     {
+        public const String DefaultCultureName = "en-US";
+
         private String audioFileNameRecording;
-        private String projectFilename;
+        private String? projectFilename;
+
+        public static IReadOnlyCollection<CultureInfo> AvailableCultures
+        {
+            get
+            {
+                var cultures = new List<CultureInfo>
+                {
+                    new CultureInfo("en-US"),
+                    new CultureInfo("de-DE")
+                };
+                return cultures.AsReadOnly();
+            }
+        }
+
+#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         public ApplicationOptions()
+#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         {
             SetDefaultValues();
         }
@@ -60,52 +78,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(CultureName) == true)
             {
-                CultureName = OptionsController.DefaultCultureName;
-            }
-            if (ExportProfiles == null)
-            {
-                var list = new List<Exportprofile>();
-                var exportProfile = new Exportprofile()
-                {
-                    FileName = "YouTube.txt",
-                    Name = "YouTube"
-                };
-                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%";
-                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Mixcloud.txt",
-                    Name = "Mixcloud"
-                };
-                exportProfile.SchemeHead.Scheme = String.Empty;
-                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Export.csv",
-                    Name = "CSV Export"
-                };
-                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
-                exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
-                exportProfile.SchemeFooter.Scheme = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)";
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Tracks.txt",
-                    Name = "Tracks only"
-                };
-                exportProfile.SchemeHead.Scheme = String.Empty;
-                exportProfile.SchemeTracks.Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                ExportProfiles = list.AsReadOnly();
-            }
-            if (TextImportScheme == null)
-            {
-                TextImportScheme = TextImportScheme.DefaultTextImportScheme;
+                CultureName = DefaultCultureName;
             }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
@@ -124,8 +97,8 @@ namespace AudioCuesheetEditor.Model.Options
                 RecordCountdownTimer = 5;
             }
         }
-        public String CuesheetFileName { get; set; }
-        public String CultureName { get; set; }
+        public String? CuesheetFileName { get; set; }
+        public String? CultureName { get; set; }
         [JsonIgnore]
         public CultureInfo Culture
         {
@@ -141,14 +114,22 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; }
-        public TextImportScheme TextImportScheme { get; set; }
         [JsonIgnore]
         public ViewMode ViewMode { get; set; }
-        public String ViewModeName 
+        public String? ViewModeName 
         {
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
-            set { ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value); }
+            set 
+            {
+                if (value != null)
+                {
+                    ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+            }
         }
         public String AudioFileNameRecording 
         {
@@ -169,12 +150,12 @@ namespace AudioCuesheetEditor.Model.Options
                 }
                 else
                 {
-                    audioFileNameRecording = null;
+                    audioFileNameRecording = String.Empty;
                 }
             }
         }
         public Boolean? LinkTracksWithPreviousOne { get; set; }
-        public String ProjectFileName 
+        public String? ProjectFileName 
         {
             get { return projectFilename; }
             set
@@ -201,10 +182,20 @@ namespace AudioCuesheetEditor.Model.Options
 
         [JsonIgnore]
         public TimeSensitivityMode RecordTimeSensitivity { get; set; }
-        public String RecordTimeSensitivityName
+        public String? RecordTimeSensitivityName
         {
             get { return Enum.GetName(typeof(TimeSensitivityMode), RecordTimeSensitivity); }
-            set { RecordTimeSensitivity = (TimeSensitivityMode)Enum.Parse(typeof(TimeSensitivityMode), value); }
+            set 
+            {
+                if (value != null)
+                {
+                    RecordTimeSensitivity = (TimeSensitivityMode)Enum.Parse(typeof(TimeSensitivityMode), value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+            }
         }
     }
 }

@@ -18,58 +18,54 @@ along with Foobar.  If not, see
 
 @implements IDisposable
 
-@inject IJSRuntime JSRuntime
-@inject ITextLocalizer<ViewModeRecord> localizer
-@inject ILogger<ViewModeRecord> Logger
-@inject HttpClient httpClient
-@inject OptionsController optionsController
-@inject ITextLocalizerService LocalizationService
+@inject IJSRuntime _jsRuntime
+@inject ITextLocalizer<ViewModeRecord> _localizer
+@inject ILogger<ViewModeRecord> _logger
+@inject HttpClient _httpClient
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ITextLocalizerService _localizationService
+@inject SessionStateContainer _sessionStateContainer
 
 <Column>
     <Accordion>
         <Collapse Visible="recordControlVisible">
             <CollapseHeader>
-                <Blazorise.Link Clicked="(() => HeaderClicked(ref recordControlVisible, ref chevronRecordControl))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                    <Heading Size="HeadingSize.Is3">@localizer["Recordcontrol"]</Heading>
-                    <div>
-                        @((MarkupString)chevronRecordControl)
-                    </div>
-                </Blazorise.Link>
+                <Button Clicked="(() => recordControlVisible = !recordControlVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Recordcontrol"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                @if (Cuesheet.IsRecording == true)
+                @if (_sessionStateContainer.Cuesheet.IsRecording == true)
                 {
-                    var backgroundCSS = Cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
+                    var backgroundCSS = _sessionStateContainer.Cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
                     <div class="@backgroundCSS">
-                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Record running!"]</Heading>
+                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@_localizer["Record running!"]</Heading>
                     </div>
                 }
                 @if ((startRecordTimer != null) && (startRecordTimer.Enabled))
                 {
                     <div class="BackgroundBlink rounded">
-                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]</Heading>
+                        <Heading Size="HeadingSize.Is4" Alignment="TextAlignment.Center">@_localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]</Heading>
                     </div>
                 }
                 <Row>
                     <Column>
-                        <Dropdown Direction="Direction.Right">
-                            <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="Cuesheet.IsRecording">
+                        <Dropdown Direction="Direction.End">
+                            <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="_sessionStateContainer.Cuesheet.IsRecording">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
                                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
                                     <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
                                 </svg>
-                                @localizer["Start recording"]
+                                @_localizer["Start recording"]
                             </Button>
                             <DropdownToggle Color="Color.Danger" Split="true"></DropdownToggle>
                             <DropdownMenu>
-                                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="startRecordTimer == null || Cuesheet.IsRecording">@localizer["Start record timer"]</DropdownItem>
+                                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="startRecordTimer == null || _sessionStateContainer.Cuesheet.IsRecording">@_localizer["Start record timer"]</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
                     </Column>
                     <Column>
-                        @if (Cuesheet.RecordingTime.HasValue == true)
+                        @if (_sessionStateContainer.Cuesheet.RecordingTime.HasValue == true)
                         {
-                            <Heading Size="HeadingSize.Is4">@GetTimespanAsString(Cuesheet.RecordingTime, true)</Heading>
+                            <Heading Size="HeadingSize.Is4">@GetTimespanAsString(_sessionStateContainer.Cuesheet.RecordingTime, true)</Heading>
                         }
                         else
                         {
@@ -77,12 +73,12 @@ along with Foobar.  If not, see
                         }
                     </Column>
                     <Column>
-                        <Button Color="Color.Warning" Clicked="StopRecordingClicked" Disabled="!Cuesheet.IsRecording">
+                        <Button Color="Color.Warning" Clicked="StopRecordingClicked" Disabled="!_sessionStateContainer.Cuesheet.IsRecording">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
                                 <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
                                 <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
                             </svg>
-                            @localizer["Stop recording"]
+                            @_localizer["Stop recording"]
                         </Button>
                     </Column>
                 </Row>
@@ -90,154 +86,68 @@ along with Foobar.  If not, see
         </Collapse>
         <Collapse Visible="cuesheetDataVisible">
             <CollapseHeader>
-                <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                    <Heading Size="HeadingSize.Is3">@localizer["Cuesheet data"]</Heading>
-                    <div>
-                        @((MarkupString)chevronCuesheetData)
-                    </div>
-                </Blazorise.Link>
+                <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                <Tooltip Placement="Placement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD artist"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                            <TextEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@localizer["Enter cd artist here"]" @bind-Text="Cuesheet.Artist" ChangeTextOnKeyPress="false" />
-                        </FieldBody>
-                    </Field>
-                </Tooltip>
-                <Tooltip Placement="Placement.Top" Text="@Cuesheet.GetValidationErrors(localizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD title"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                            <TextEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@localizer["Enter cd title here"]" @bind-Text="Cuesheet.Title" ChangeTextOnKeyPress="false" />
-                        </FieldBody>
-                    </Field>
-                </Tooltip>
-                @if (Cuesheet.Audiofile != null)
-                {
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Audiofile"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                            <Addons>
-                                @if (Cuesheet.Audiofile.IsRecorded)
-                                {
-                                    <Addon AddonType="AddonType.Start">
-                                        <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.Audiofile.FileName">@localizer["Download recorded audio"]</Button>
-                                    </Addon>
-                                }
-                                <Addon AddonType="AddonType.Body">
-                                    <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.FileName" />
-                                </Addon>
-                            </Addons>
-                        </FieldBody>
-                    </Field>
-                }
+                <CuesheetData />
             </CollapseBody>
         </Collapse>
         <Collapse Visible="enterNewTrackVisible">
             <CollapseHeader>
-                <Blazorise.Link Clicked="(() => HeaderClicked(ref enterNewTrackVisible, ref chevronEnterNewTrack))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                    <Heading Size="HeadingSize.Is3">@localizer["Enter new track"]</Heading>
-                    <div>
-                        @((MarkupString)chevronEnterNewTrack)
-                    </div>
-                </Blazorise.Link>
+                <Button Clicked="(() => enterNewTrackVisible = !enterNewTrackVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Enter new track"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 <Row>
                     <Column ColumnSize="ColumnSize.Is5.OnDesktop.Is12.OnTablet.Is12.OnMobile">
                         <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Artist"]</FieldLabel>
+                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@_localizer["Artist"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
-                                <TextEdit @ref="enterCurrentTrackArtist" @bind-Text="currentRecordingTrack.Artist" Disabled="!Cuesheet.IsRecording" KeyDown="OnKeyDownRecordArtist" DelayTextOnKeyPressInterval="50"></TextEdit>
+                                <TextEdit @ref="enterCurrentTrackArtist" @bind-Text="currentRecordingTrack.Artist" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" KeyDown="OnKeyDownRecordArtist" DelayTextOnKeyPressInterval="50"></TextEdit>
                             </FieldBody>
                         </Field>
                     </Column>
                     <Column ColumnSize="ColumnSize.Is5.OnDesktop.Is12.OnTablet.Is12.OnMobile">
                         <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@localizer["Title"]</FieldLabel>
+                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@_localizer["Title"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
-                                <TextEdit @ref="enterCurrentTrackTitle" @bind-Text="currentRecordingTrack.Title" Disabled="!Cuesheet.IsRecording" KeyDown="OnKeyDownRecordTitle" DelayTextOnKeyPressInterval="50"></TextEdit>
+                                <TextEdit @ref="enterCurrentTrackTitle" @bind-Text="currentRecordingTrack.Title" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" KeyDown="OnKeyDownRecordTitle" DelayTextOnKeyPressInterval="50"></TextEdit>
                             </FieldBody>
                         </Field>
                     </Column>
                     <Column>
-                        <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!Cuesheet.IsRecording">@localizer["Add new track"]</Button>
+                        <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!_sessionStateContainer.Cuesheet.IsRecording">@_localizer["Add new track"]</Button>
                     </Column>
                 </Row>
             </CollapseBody>
         </Collapse>
         <Collapse Visible="cuesheetTracksVisible">
             <CollapseHeader>
-                <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                    <Heading Size="HeadingSize.Is3">@localizer["Cuesheet tracks"]</Heading>
-                    <div>
-                        @((MarkupString)chevronCuesheetTracks)
-                    </div>
-                </Blazorise.Link>
+                <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet tracks"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                <Table Bordered="true" Responsive="true" Narrow="true">
-                    <TableHeader ThemeContrast="ThemeContrast.Light">
-                        <TableRow>
-                            <TableHeaderCell>@localizer["Controls"]</TableHeaderCell>
-                            <TableHeaderCell>#</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                            <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        @foreach (var track in Cuesheet.Tracks)
-                        {
-                            <TableRow>
-                                <TableRowCell>
-                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                        </svg>
-                                    </Button>
-                                </TableRowCell>
-                                <TableRowCell>@track.Position</TableRowCell>
-                                <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Artist" /></TableRowCell>
-                                <TableRowCell Class="minWidth"><TextEdit @bind-Text="track.Title" /></TableRowCell>
-                                <TableRowCell>@track.Begin</TableRowCell>
-                                <TableRowCell>@track.End</TableRowCell>
-                                <TableRowCell>@track.Length</TableRowCell>
-                            </TableRow>
-                        }
-                    </TableBody>
-                </Table>
+                <TracksTable />
             </CollapseBody>
         </Collapse>
         <Collapse Visible="processingHintsVisible">
             <CollapseHeader>
-                <Blazorise.Link Clicked="(() => HeaderClicked(ref processingHintsVisible, ref chevronProcessingHints))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                    <Heading Size="HeadingSize.Is3">@localizer["Hints"]</Heading>
-                    <div>
-                        @((MarkupString)chevronProcessingHints)
-                    </div>
-                </Blazorise.Link>
+                <Button Clicked="(() => processingHintsVisible = !processingHintsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Hints"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                <ProcessingHints Cuesheet="Cuesheet" Header="@localizer["Here all validation messages will be displayed. For details switch to full edit mode."]" ActivateLinksToFields="false" ValidationMessageLocalizer="ValidationMessageLocalizer" />
+                <ProcessingHints Header="@_localizer["Here all validation messages will be displayed. For details switch to full edit mode."]" ActivateLinksToFields="false" />
             </CollapseBody>
         </Collapse>
     </Accordion>
     <br />
 
 
-    @if ((Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.IsRecorded))
+    @if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
     {
         <Card>
-            <CardHeader>@localizer["Recording"]</CardHeader>
-            @if ((Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.IsRecorded))
+            <CardHeader>@_localizer["Recording"]</CardHeader>
+            @if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
             {
                 <CardBody>
-                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.Audiofile.FileName">@localizer["Download recorded audio"]</Button>
+                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
                 </CardBody>
             }
         </Card>
@@ -249,71 +159,66 @@ along with Foobar.  If not, see
 @code {
     public void Dispose()
     {
-        JSRuntime.InvokeVoidAsync("closeAudioRecording");
+        _jsRuntime.InvokeVoidAsync("closeAudioRecording");
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
-    [Parameter]
-    public Cuesheet Cuesheet { get; set; }
-
-    [Parameter]
-    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; set; }
-
     [JSInvokable()]
-    public void AudioRecordingFinished(String url)
+    public async Task AudioRecordingFinished(String url)
     {
-        Cuesheet.Audiofile = new Audiofile(optionsController.Options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, httpClient, true);
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, _httpClient, true);
         StateHasChanged();
     }
 
-    private Timer updateGUITimer;
-    private Timer startRecordTimer;
+    Timer updateGUITimer = default!;
+    Timer? startRecordTimer;
 
-    private DateTime recordTimerStarted;
+    DateTime recordTimerStarted;
 
-    private TextEdit enterCurrentTrackTitle;
-    private TextEdit enterCurrentTrackArtist;
+    TextEdit enterCurrentTrackTitle = default!;
+    TextEdit enterCurrentTrackArtist = default!;
 
-    private ModalDialog modalDialog;
+    ModalDialog modalDialog = default!;
 
-    private Track currentRecordingTrack = new Track();
+    Track currentRecordingTrack = new Track();
 
-    private Boolean cuesheetDataVisible = false;
-    private Boolean recordControlVisible = true;
-    private Boolean enterNewTrackVisible = true;
-    private Boolean cuesheetTracksVisible = true;
-    private Boolean processingHintsVisible = false;
-
-    private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-    private String chevronRecordControl = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronEnterNewTrack = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronProcessingHints = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
+    Boolean cuesheetDataVisible = false;
+    Boolean recordControlVisible = true;
+    Boolean enterNewTrackVisible = true;
+    Boolean cuesheetTracksVisible = true;
+    Boolean processingHintsVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
         var dotNetReference = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
-        await JSRuntime.InvokeVoidAsync("setupAudioRecording");
+        await _jsRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
+        await _jsRuntime.InvokeVoidAsync("setupAudioRecording");
 
-        LocalizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
 
         updateGUITimer = new Timer(500);
         updateGUITimer.AutoReset = true;
         updateGUITimer.Elapsed += delegate
         {
             StateHasChanged();
-            if ((startRecordTimer.Enabled == false) && (Cuesheet.IsRecording == false))
+            Boolean startRecordTimeEnabled = false;
+            if (startRecordTimer != null)
+            {
+                startRecordTimeEnabled = startRecordTimer.Enabled;
+            }
+            if ((startRecordTimeEnabled == false) && (_sessionStateContainer.Cuesheet.IsRecording == false))
             {
                 updateGUITimer.Stop();
             }
         };
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
-        if (optionsController.Options.RecordCountdownTimer.HasValue)
+        if (options.RecordCountdownTimer.HasValue)
         {
-            startRecordTimer = new Timer(optionsController.Options.RecordCountdownTimer.Value * 1000);
+            startRecordTimer = new Timer(options.RecordCountdownTimer.Value * 1000);
             startRecordTimer.Elapsed += async delegate
             {
                 await StartRecordingClicked();
@@ -322,27 +227,9 @@ along with Foobar.  If not, see
         }
     }
 
-    private void HeaderClicked(ref Boolean visible, ref String chevron)
-    {
-        visible = !visible;
-        SwitchChevron(visible, ref chevron);
-    }
-
-    private void SwitchChevron(Boolean chevronUp, ref String chevron)
-    {
-        if (chevronUp == true)
-        {
-            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-        }
-        else
-        {
-            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-        }
-    }
-
     private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
     {
-        String resultString = null;
+        String resultString = String.Empty;
         if ((timeSpan != null) && (timeSpan.HasValue))
         {
             if (removeMilliseconds == true)
@@ -360,35 +247,35 @@ along with Foobar.  If not, see
     private async Task StartRecordingClicked()
     {
         //Check for empty cuesheet and warn!
-        if (Cuesheet.Tracks.Count > 0)
+        if (_sessionStateContainer.Cuesheet.Tracks.Count > 0)
         {
-            modalDialog.Title = localizer["Error"];
-            modalDialog.Text = localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
+            modalDialog.Title = _localizer["Error"];
+            modalDialog.Text = _localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
             modalDialog.ModalSize = ModalSize.Small;
             modalDialog.Mode = ModalDialog.DialogMode.Alert;
             modalDialog.ShowModal();
         }
         else
         {
-            Cuesheet.StartRecording();
+            _sessionStateContainer.Cuesheet.StartRecording();
             updateGUITimer.Start();
-            enterCurrentTrackArtist.Focus();
-            await JSRuntime.InvokeVoidAsync("startAudioRecording");
-            if ((Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.IsRecorded))
+            await _jsRuntime.InvokeVoidAsync("startAudioRecording");
+            if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
             {
-                await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", Cuesheet.Audiofile.ObjectURL);
+                await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
             }
-            Cuesheet.Audiofile = null;
+            _sessionStateContainer.Cuesheet.Audiofile = null;
+            await enterCurrentTrackArtist.Focus();
         }
     }
 
     private async Task StopRecordingClicked()
     {
-        await JSRuntime.InvokeVoidAsync("stopAudioRecording");
-        Cuesheet.StopRecording(optionsController.Options);
+        await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _sessionStateContainer.Cuesheet.StopRecording(options);
         //Open processing hints
         processingHintsVisible = true;
-        SwitchChevron(processingHintsVisible, ref chevronProcessingHints);
     }
 
     private String GetCSSClassAlert(Validateable validateable, String property)
@@ -399,7 +286,7 @@ along with Foobar.  If not, see
         {
             if (validationErrors.Count() > 1)
             {
-                if (Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
+                if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
                 {
                     cssClass = "alert-danger";
                 }
@@ -425,7 +312,7 @@ along with Foobar.  If not, see
 
     private void OnKeyDownRecordArtist(KeyboardEventArgs args)
     {
-        Logger.LogDebug("args = {0}", args);
+        _logger.LogDebug("args = {0}", args);
         if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
         {
             enterCurrentTrackTitle.Focus();
@@ -434,7 +321,7 @@ along with Foobar.  If not, see
 
     private async Task OnKeyDownRecordTitle(KeyboardEventArgs args)
     {
-        Logger.LogDebug("args = {0}", args);
+        _logger.LogDebug("args = {0}", args);
         if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
         {
             await AddTrackRecordingClicked();
@@ -443,11 +330,11 @@ along with Foobar.  If not, see
 
     private async Task AddTrackRecordingClicked()
     {
-        if (Cuesheet.IsRecording == true)
+        if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
-            enterCurrentTrackArtist.Focus();
-            await Task.Delay(50);
-            Cuesheet.AddTrack(currentRecordingTrack, optionsController.Options);
+            var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            await enterCurrentTrackArtist.Focus();
+            _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);
             currentRecordingTrack = new Track();
         }
     }
@@ -455,7 +342,20 @@ along with Foobar.  If not, see
     private void StartRecordCountdownTimer()
     {
         recordTimerStarted = DateTime.Now;
-        startRecordTimer.Start();
+        if (startRecordTimer != null)
+        {
+            startRecordTimer.Start();
+        }
         updateGUITimer.Start();
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

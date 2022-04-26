@@ -56,7 +56,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
-        private String scheme;
+        private String? scheme;
         private Schemetype schemeType;
 
         static Exportscheme()
@@ -109,7 +109,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public Exportscheme() { }
 
-        public String Scheme 
+        public String? Scheme 
         {
             get { return scheme; }
             set { scheme = value; OnValidateablePropertyChanged(); }
@@ -120,9 +120,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
             set { schemeType = value; OnValidateablePropertyChanged(); }
         }
         
-        public String GetExportResult(ICuesheetEntity cuesheetEntity)
+        public String? GetExportResult(ICuesheetEntity cuesheetEntity)
         {
-            String result = null;
+            String? result = null;
             if (String.IsNullOrEmpty(Scheme) == false)
             {
                 switch (SchemeType)
@@ -151,7 +151,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
                             .Replace(SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
                             .Replace(SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackPostGap, track.PreGap != null ? track.PostGap.Value.ToString() : String.Empty)
+                            .Replace(SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : String.Empty)
                             .Replace(SchemeDate, DateTime.Now.ToShortDateString())
                             .Replace(SchemeDateTime, DateTime.Now.ToString())
                             .Replace(SchemeTime, DateTime.Now.ToLongTimeString());

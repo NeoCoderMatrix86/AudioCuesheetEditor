@@ -24,10 +24,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     public interface ICuesheet<ITrack> : ICuesheetEntity
     {
         public IReadOnlyCollection<ITrack> Tracks { get; }
-        public String Artist { get; set; }
-        public String Title { get; set; }
-        public Audiofile Audiofile { get; set; }
-        public CDTextfile CDTextfile { get; set; }
+        public Audiofile? Audiofile { get; set; }
+        public CDTextfile? CDTextfile { get; set; }
         public Cataloguenumber Cataloguenumber { get; }
     }
 }

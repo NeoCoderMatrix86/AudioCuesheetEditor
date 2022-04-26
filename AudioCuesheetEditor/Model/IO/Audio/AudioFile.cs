@@ -25,9 +25,9 @@ namespace AudioCuesheetEditor.Model.IO.Audio
     public class Audiofile : IDisposable
     {
         public static readonly String RecordingFileName = "Recording.webm";
-        public static readonly AudioCodec AudioCodecWEBM = new AudioCodec("audio/webm", ".webm", "AudioCodec WEBM");
+        public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
-        public static readonly List<AudioCodec> AudioCodecs = new List<AudioCodec>()
+        public static readonly List<AudioCodec> AudioCodecs = new()
         {
             AudioCodecWEBM,
             new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"),
@@ -39,18 +39,14 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
         };
 
-        private AudioCodec audioCodec;
+        private AudioCodec? audioCodec;
         private bool disposedValue;
 
-        public event EventHandler ContentStreamLoaded;
+        public event EventHandler? ContentStreamLoaded;
         
         [JsonConstructor]
         public Audiofile(String fileName, Boolean isRecorded = false)
         {
-            if (String.IsNullOrEmpty(fileName))
-            {
-                throw new ArgumentNullException(nameof(fileName));
-            }
             FileName = fileName;
             IsRecorded = isRecorded;
         }
@@ -77,7 +73,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 
         public String FileName { get; private set; }
         [JsonIgnore]
-        public String ObjectURL { get; private set; }
+        public String? ObjectURL { get; private set; }
         /// <summary>
         /// Boolean indicating if the stream has fully been loaded
         /// </summary>
@@ -90,16 +86,15 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// File content stream. Be carefull, this stream is loaded asynchronously. Connect to the StreamLoaded for checking if loading has already been done!
         /// </summary>
         [JsonIgnore]
-        public Stream ContentStream { get; private set; }
+        public Stream? ContentStream { get; private set; }
         [JsonIgnore]
         public Boolean IsRecorded { get; private set; }
         /// <summary>
         /// Duration of the audio file
         /// </summary>
-        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? Duration { get; private set; }
 
-        public AudioCodec AudioCodec 
+        public AudioCodec? AudioCodec 
         {
             get { return audioCodec; }
             private set
@@ -108,17 +103,17 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 if ((audioCodec != null) && (FileName.EndsWith(audioCodec.FileExtension) == false))
                 {
                     //Replace file ending
-                    FileName = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(FileName), AudioCodec.FileExtension);
+                    FileName = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(FileName), audioCodec.FileExtension);
                 }
             }
         }
 
         [JsonIgnore]
-        public String AudioFileType
+        public String? AudioFileType
         {
             get 
             {
-                String audioFileType = null;
+                String? audioFileType = null;
                 if (AudioCodec != null)
                 {
                     audioFileType = AudioCodec.FileExtension.Replace(".", "").ToUpper();
@@ -148,7 +143,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 
         private async Task LoadContentStream(System.Net.Http.HttpClient httpClient)
         {
-            if (String.IsNullOrEmpty(ObjectURL) == false)
+            if ((String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null))
             {
                 ContentStream = await httpClient.GetStreamAsync(ObjectURL);
                 var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
@@ -163,9 +158,12 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             {
                 if (disposing)
                 {
-                    ContentStream.Close();
-                    ContentStream.Dispose();
-                    ContentStream = null;
+                    if (ContentStream != null)
+                    {
+                        ContentStream.Close();
+                        ContentStream.Dispose();
+                        ContentStream = null;
+                    }
                 }
 
                 disposedValue = true;

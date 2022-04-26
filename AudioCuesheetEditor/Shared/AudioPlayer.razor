@@ -18,15 +18,14 @@ along with Foobar.  If not, see
 @using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
-@inject ITextLocalizer<AudioPlayer> localizer
-@inject IHowl Howl
-@inject IHowlGlobal HowlGlobal
-@inject HotKeys HotKeys
-@inject IJSRuntime JSRuntime
-@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizer<AudioPlayer> _localizer
+@inject IHowl _howl
+@inject HotKeys _hotKeys
+@inject ITextLocalizerService _localizationService
+@inject SessionStateContainer _sessionStateContainer
 
 <Card>
-    <CardHeader><h3>@localizer["Audioplayer"]</h3></CardHeader>
+    <CardHeader><Heading Size="HeadingSize.Is3">@_localizer["Audioplayer"]</Heading></CardHeader>
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
@@ -65,11 +64,11 @@ along with Foobar.  If not, see
                 }
             </Column>
             <Column>
-                <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of previous track"]">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Set playback to begin of previous track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
                 </Tooltip>
                 <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="OnStopClicked" />
-                <Tooltip Placement="Placement.Top" Text="@localizer["Set playback to begin of next track"]">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Set playback to begin of next track"]">
                     <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
                 </Tooltip>
             </Column>
@@ -78,48 +77,12 @@ along with Foobar.  If not, see
 </Card>
 
 @code {
-    private Timer audioUpdateTimer;
-    private int soundId;
-    private Track currentlyPlayingTrack;
-    private HotKeysContext hotKeysContext;
-    private Boolean paused;
-    private Audiofile audioFile;
-    private Cuesheet cuesheet;
-
-    [Parameter]
-    public Cuesheet Cuesheet
-    {
-        get { return cuesheet; }
-        set
-        {
-            if (cuesheet != null)
-            {
-                cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
-                if (cuesheet.Audiofile != null)
-                {
-                    cuesheet.Audiofile.ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
-                }
-            }
-            //Also reset the duration, since audio file will change also
-            TotalTime = null;
-            cuesheet = value;
-            if (cuesheet != null)
-            {
-                cuesheet.AudioFileChanged += Cuesheet_AudioFileChanged;
-                if (cuesheet.Audiofile != null)
-                {
-                    if (cuesheet.Audiofile.IsContentStreamLoaded == false)
-                    {
-                        cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
-                    }
-                    else
-                    {
-                        AnalyseAudioFile();
-                    }
-                }
-            }
-        }
-    }
+    Timer audioUpdateTimer = default!;
+    int soundId;
+    Track? currentlyPlayingTrack;
+    HotKeysContext hotKeysContext = default!;
+    Boolean paused;
+    Audiofile? audioFile;
 
     [Parameter]
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
@@ -131,16 +94,21 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext.Dispose();
-        Howl.OnPlay -= HowlOnPlay;
-        Howl.OnPause -= HowlOnPause;
-        Howl.OnEnd -= HowlOnEnd;
-        Howl.OnStop -= HowlOnStop;
+        _howl.OnPlay -= HowlOnPlay;
+        _howl.OnPause -= HowlOnPause;
+        _howl.OnEnd -= HowlOnEnd;
+        _howl.OnStop -= HowlOnStop;
         audioUpdateTimer.Dispose();
+        if (_sessionStateContainer.Cuesheet != null)
+        {
+            _sessionStateContainer.Cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
+        }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 
     public Boolean PlaybackPossible
     {
-        get { return ((Cuesheet != null) && (Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.PlaybackPossible == true)); }
+        get { return ((_sessionStateContainer.Cuesheet != null) && (_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible == true)); }
     }
 
     public Boolean PreviousButtonEnabled
@@ -150,7 +118,7 @@ along with Foobar.  If not, see
             Boolean enabled = false;
             if (CurrentlyPlayingTrack != null)
             {
-                var index = Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
                 if (index >= 1)
                 {
                     enabled = true;
@@ -167,8 +135,8 @@ along with Foobar.  If not, see
             Boolean enabled = false;
             if (CurrentlyPlayingTrack != null)
             {
-                var index = Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-                if (index < (Cuesheet.Tracks.Count - 1))
+                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                if (index < (_sessionStateContainer.Cuesheet.Tracks.Count - 1))
                 {
                     enabled = true;
                 }
@@ -177,7 +145,7 @@ along with Foobar.  If not, see
         }
     }
 
-    public Track CurrentlyPlayingTrack
+    public Track? CurrentlyPlayingTrack
     {
         get { return currentlyPlayingTrack; }
         private set
@@ -191,7 +159,7 @@ along with Foobar.  If not, see
         }
     }
 
-    public async Task OnPlayTrackClicked(Track trackToPlay)
+    public async Task OnPlayTrackClicked(Track? trackToPlay)
     {
         if ((trackToPlay != null) && (trackToPlay.Begin != null))
         {
@@ -199,14 +167,14 @@ along with Foobar.  If not, see
             {
                 await OnPlayClicked();
             }
-            await Howl.Seek(soundId, trackToPlay.Begin.Value);
+            await _howl.Seek(soundId, trackToPlay.Begin.Value);
             StateHasChanged();
         }
     }
 
     public async Task Reset()
     {
-        await Howl.Stop(soundId);
+        await _howl.Stop(soundId);
     }
 
     protected Double CurrentSliderValue
@@ -225,45 +193,57 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         //Attach shortcuts
-        hotKeysContext = HotKeys.CreateContext()
+        hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.P, OnPlayClicked)
             .Add(ModKeys.Ctrl, Keys.Left, () => OnPlayNextPreviousTrackClicked(true))
             .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked())
             .Add(ModKeys.None, Keys.MediaPlayPause, OnPlayClicked)
             .Add(ModKeys.None, Keys.MediaTrackNext, () => OnPlayNextPreviousTrackClicked())
             .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true))
-            .Add(ModKeys.None, "MediaStop", () => OnStopClicked());
+            .Add(ModKeys.None, Keys.MediaStop, () => OnStopClicked());
 
-        LocalizationService.LocalizationChanged += delegate
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+
+        //Also reset the duration, since audio file will change also
+        TotalTime = null;
+        _sessionStateContainer.Cuesheet.AudioFileChanged += Cuesheet_AudioFileChanged;
+        if (_sessionStateContainer.Cuesheet.Audiofile != null)
         {
-            StateHasChanged();
-        };
+            if (_sessionStateContainer.Cuesheet.Audiofile.IsContentStreamLoaded == false)
+            {
+                _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+            }
+            else
+            {
+                AnalyseAudioFile();
+            }
+        }
 
         //Setup audio timer
         audioUpdateTimer = new Timer(500);
         audioUpdateTimer.AutoReset = true;
         audioUpdateTimer.Elapsed += async delegate
         {
-            AudioIsPlaying = await Howl.IsPlaying(soundId);
+            AudioIsPlaying = await _howl.IsPlaying(soundId);
             if (AudioIsPlaying == true)
             {
-                CurrentPlaybackPosition = await Howl.GetCurrentTime(soundId);
+                CurrentPlaybackPosition = await _howl.GetCurrentTime(soundId);
                 if (TotalTime.HasValue == false)
                 {
-                    TotalTime = Howl.TotalTime;
+                    TotalTime = _howl.TotalTime;
                 }
             }
-            if ((Cuesheet != null) && (CurrentPlaybackPosition.HasValue == true))
+            if ((_sessionStateContainer.Cuesheet != null) && (CurrentPlaybackPosition.HasValue == true))
             {
-                CurrentlyPlayingTrack = Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition.Value && x.End.Value > CurrentPlaybackPosition.Value);
+                CurrentlyPlayingTrack = _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition.Value && x.End.Value > CurrentPlaybackPosition.Value);
             }
             StateHasChanged();
         };
 
-        Howl.OnPlay += HowlOnPlay;
-        Howl.OnPause += HowlOnPause;
-        Howl.OnEnd += HowlOnEnd;
-        Howl.OnStop += HowlOnStop;
+        _howl.OnPlay += HowlOnPlay;
+        _howl.OnPause += HowlOnPause;
+        _howl.OnEnd += HowlOnEnd;
+        _howl.OnStop += HowlOnStop;
 
         await base.OnInitializedAsync();
     }
@@ -302,39 +282,52 @@ along with Foobar.  If not, see
 
     private async Task OnSliderValueChanged(Double newvalue)
     {
-        var newPosition = newvalue * TotalTime.Value / 100.0;
-        if ((paused == true) || (AudioIsPlaying == false))
+        if (TotalTime.HasValue)
         {
-            await OnPlayClicked();
+            var newPosition = newvalue * TotalTime.Value / 100.0;
+            if ((paused == true) || (AudioIsPlaying == false))
+            {
+                await OnPlayClicked();
+            }
+            await _howl.Seek(soundId, newPosition);
         }
-        await Howl.Seek(soundId, newPosition);
     }
 
     private async Task OnPlayClicked()
     {
-        if (Cuesheet.Audiofile != audioFile)
+        if (_sessionStateContainer.Cuesheet.Audiofile != audioFile)
         {
             soundId = default;
         }
         if (soundId != default)
         {
-            await Howl.Pause(soundId);
+            await _howl.Pause(soundId);
             StateHasChanged();
         }
         else
         {
-            if ((Cuesheet == null) || (Cuesheet.Audiofile == null) || (Cuesheet.Audiofile.PlaybackPossible == false))
+            if ((_sessionStateContainer.Cuesheet == null) || (_sessionStateContainer.Cuesheet.Audiofile == null) || (_sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible == false))
             {
-                throw new ArgumentNullException(nameof(Cuesheet.Audiofile));
+                throw new ArgumentNullException(nameof(_sessionStateContainer.Cuesheet.Audiofile));
+            }
+            string[]? sources = null;
+            string[]? formats = null;
+            if (_sessionStateContainer.Cuesheet.Audiofile.ObjectURL != null)
+            {
+                sources = new[] { _sessionStateContainer.Cuesheet.Audiofile.ObjectURL };
+            }
+            if (_sessionStateContainer.Cuesheet.Audiofile.AudioFileType != null)
+            {
+                formats = new[] { _sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower() };
             }
             var options = new HowlOptions
             {
-                Sources = new[] { Cuesheet.Audiofile.ObjectURL },
-                Formats = new[] { Cuesheet.Audiofile.AudioFileType.ToLower() },
+                Sources = sources,
+                Formats = formats,
                 Html5 = true
             };
-            audioFile = Cuesheet.Audiofile;
-            soundId = await Howl.Play(options);
+            audioFile = _sessionStateContainer.Cuesheet.Audiofile;
+            soundId = await _howl.Play(options);
         }
     }
 
@@ -342,15 +335,15 @@ along with Foobar.  If not, see
     {
         if (CurrentlyPlayingTrack != null)
         {
-            var index = Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-            Track trackToPlay = null;
+            var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+            Track? trackToPlay = null;
             if (previous == false)
             {
-                trackToPlay = Cuesheet.Tracks.ElementAtOrDefault(index + 1);
+                trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index + 1);
             }
             else
             {
-                trackToPlay = Cuesheet.Tracks.ElementAtOrDefault(index - 1);
+                trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index - 1);
             }
             await OnPlayTrackClicked(trackToPlay);
         }
@@ -358,28 +351,33 @@ along with Foobar.  If not, see
 
     private async Task OnStopClicked()
     {
-        await Howl.Stop(soundId);
+        await _howl.Stop(soundId);
     }
 
-    private void Cuesheet_AudioFileChanged(object sender, EventArgs args)
+    private void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
     {
-        if (Cuesheet.Audiofile != null)
+        if (_sessionStateContainer.Cuesheet.Audiofile != null)
         {
-            Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+            _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
         }
         TotalTime = null;
     }
 
-    private void AudioFile_ContentStreamLoaded(object sender, EventArgs args)
+    private void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)
     {
         AnalyseAudioFile();
     }
 
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
     private void AnalyseAudioFile()
     {
-        if ((Cuesheet != null) && (Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.Duration.HasValue) && (TotalTime.HasValue == false))
+        if ((_sessionStateContainer.Cuesheet != null) && (_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.Duration.HasValue) && (TotalTime.HasValue == false))
         {
-            TotalTime = Cuesheet.Audiofile.Duration.Value;
+            TotalTime = _sessionStateContainer.Cuesheet.Audiofile.Duration.Value;
             StateHasChanged();
         }
     }

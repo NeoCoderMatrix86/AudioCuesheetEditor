@@ -16,515 +16,111 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
-@using Toolbelt.Blazor.HotKeys
 @implements IDisposable
 
 @page "/"
-@inject IJSRuntime JSRuntime
-@inject IBlazorDownloadFileService BlazorDownloadFileService
-@inject ITextLocalizer<Index> localizer
-@inject CuesheetController cuesheetController
-@inject NavigationManager navigationManager
-@inject OptionsController optionsController
-@inject ILogger<Index> Logger
-@inject HotKeys HotKeys
-@inject HttpClient httpClient
-@inject SessionStateContainer sessionStateContainer
-@inject ITextLocalizerService LocalizationService
+@inject IJSRuntime _jsRuntime
+@inject ITextLocalizer<Index> _localizer
+@inject CuesheetController _cuesheetController
+@inject NavigationManager _navigationManager
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILogger<Index> _logger
+@inject HotKeys _hotKeys
+@inject HttpClient _httpClient
+@inject SessionStateContainer _sessionStateContainer
+@inject ITextLocalizerService _localizationService
 @inject TraceChangeManager _traceChangeManager
 
-<Layout>
-    <LayoutHeader Fixed="true">
-        <Bar Breakpoint="Breakpoint.Desktop" Background="Background.Dark" ThemeContrast="ThemeContrast.Dark">
-            <BarToggler />
-            <BarMenu>
-                <BarStart>
-                    <BarItem Padding="Padding.Is1.OnX">
-                        <Tooltip Placement="Placement.Right" Text="@localizer["Undo last change"]">
-                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => UndoChanges()" Class="nav-link">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
-                                    <path d="M5.83 5.146a.5.5 0 0 0 0 .708L7.975 8l-2.147 2.146a.5.5 0 0 0 .707.708l2.147-2.147 2.146 2.147a.5.5 0 0 0 .707-.708L9.39 8l2.146-2.146a.5.5 0 0 0-.707-.708L8.683 7.293 6.536 5.146a.5.5 0 0 0-.707 0z" />
-                                    <path d="M13.683 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7.08a2 2 0 0 1-1.519-.698L.241 8.65a1 1 0 0 1 0-1.302L5.084 1.7A2 2 0 0 1 6.603 1h7.08zm-7.08 1a1 1 0 0 0-.76.35L1 8l4.844 5.65a1 1 0 0 0 .759.35h7.08a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7.08z" />
-                                </svg>
-                            </Button>
-                        </Tooltip>
-                    </BarItem>
-                    <BarItem Padding="Padding.Is1.OnX">
-                        <Tooltip Placement="Placement.Right" Text="@localizer["Redo last change"]">
-                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => RedoChanges()" Class="nav-link">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-backspace-reverse" viewBox="0 0 16 16">
-                                    <path d="M9.854 5.146a.5.5 0 0 1 0 .708L7.707 8l2.147 2.146a.5.5 0 0 1-.708.708L7 8.707l-2.146 2.147a.5.5 0 0 1-.708-.708L6.293 8 4.146 5.854a.5.5 0 1 1 .708-.708L7 7.293l2.146-2.147a.5.5 0 0 1 .708 0z" />
-                                    <path d="M2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7.08a2 2 0 0 0 1.519-.698l4.843-5.651a1 1 0 0 0 0-1.302L10.6 1.7A2 2 0 0 0 9.08 1H2zm7.08 1a1 1 0 0 1 .76.35L14.682 8l-4.844 5.65a1 1 0 0 1-.759.35H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h7.08z" />
-                                </svg>
-                            </Button>
-                        </Tooltip>
-                    </BarItem>
-                    <BarItem Padding="Padding.Is1.OnX">
-                        <BarDropdown>
-                            <BarDropdownToggle Class="btn btn-success">
-                                @localizer["Export"]
-                            </BarDropdownToggle>
-                            <BarDropdownMenu>
-                                <BarDropdownItem>
-                                    <Tooltip Placement="Placement.Right" Text="@GetLocalizedString(cuesheet.CanWriteCuesheetFile == false, "Please check processinghints for errors, otherwise the file is not exportable")">
-                                        <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Download cuesheet"]</Button>
-                                    </Tooltip>
-                                </BarDropdownItem>
-                                <BarDropdownItem>
-                                    <Button Color="Color.Primary" Clicked="() => modalDownloadProjectfile.Show()">@localizer["Save project"]</Button>
-                                </BarDropdownItem>
-                                <BarDropdownItem>
-                                    <Button Color="Color.Secondary" Clicked="() => modalExportProfiles.Show()">@localizer["Open exportprofiles"]</Button>
-                                </BarDropdownItem>
-                            </BarDropdownMenu>
-                        </BarDropdown>
-                    </BarItem>
-                    <BarItem Padding="Padding.Is1.OnX">
-                        <BarDropdown>
-                            <BarDropdownToggle Class="btn btn-danger">
-                                @localizer["Select ViewMode"]
-                            </BarDropdownToggle>
-                            <BarDropdownMenu>
-                                @foreach (var name in Enum.GetNames(typeof(ViewMode)))
-                                {
-                                    <BarDropdownItem>
-                                        <Button Color="Color.Warning" Clicked="() => OnViewModeSelected((ViewMode)Enum.Parse(typeof(ViewMode), name))">@localizer[name]</Button>
-                                    </BarDropdownItem>
-                                }
-                            </BarDropdownMenu>
-                        </BarDropdown>
-                    </BarItem>
-                    <BarItem Padding="Padding.Is1.OnX">
-                        <Button Color="Color.Info" To="Help" Type="ButtonType.Link" Class="nav-link">@localizer["Help"]</Button>
-                    </BarItem>
-                    <BarItem Padding="Padding.Is1.OnX">
-                        <BarDropdown>
-                            <BarDropdownToggle Class="btn btn-danger">
-                                @localizer["Reset"]
-                            </BarDropdownToggle>
-                            <BarDropdownMenu Class="dropdown-menu-right">
-                                <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="OnDeleteAllTracksClicked">@localizer["Delete all tracks"]</Button>
-                                </BarDropdownItem>
-                                <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="RestartCuesheetClicked">@localizer["Reset cuesheet"]</Button>
-                                </BarDropdownItem>
-                                <Divider />
-                                <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="OnRestartCompleteApplicationClicked">@localizer["Restart complete application"]</Button>
-                                </BarDropdownItem>
-                                <BarDropdownItem>
-                                    <Button Color="Color.Danger" @onclick="OnResetCompleteApplicationClicked">@localizer["Reset complete application"]</Button>
-                                </BarDropdownItem>
-                            </BarDropdownMenu>
-                        </BarDropdown>
-                    </BarItem>
-                </BarStart>
-            </BarMenu>
-            <BarItem>
-                <Button Color="Color.Light" Clicked="() => modalOptions.Show()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
-                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
-                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
-                    </svg>
-                </Button>
-            </BarItem>
-        </Bar>
-    </LayoutHeader>
-    <LayoutContent>
-        <Row Margin="Margin.Is2">
-            @switch (CurrentViewMode)
-            {
-                case ViewMode.ViewModeRecord:
-                    <ViewModeRecord Cuesheet="cuesheet" ValidationMessageLocalizer="ValidationMessageLocalizer" />
-                    break;
-                case ViewMode.ViewModeFull:
-                    <Column>
-                        <Accordion>
-                            <Collapse Visible="dropFilesVisible">
-                                <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref dropFilesVisible, ref chevronDropFiles))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Drop files"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronDropFiles)
-                                        </div>
-                                    </Blazorise.Link>
-                                </CollapseHeader>
-                                <CollapseBody>
-                                    <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
-                                        <svg class="fileUploadDragNDropIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
-                                        <InputFile id="dropInputfiles" class="inputfile" multiple OnChange="OnDropInputfilesChanged"></InputFile>
-                                        <label for="dropInputfiles">@((MarkupString)(localizer["Choose file or drag it here"].ToString()))</label>
-                                    </div>
-                                    <Alert @ref="alertInvalidFile" Color="Color.Danger">
-                                        <AlertMessage>@localizer["Invalid file"]</AlertMessage>
-                                        <AlertDescription>@String.Format(localizer["You dropped an invalid file that can not be processed"], invalidFileName)</AlertDescription>
-                                    </Alert>
-                                </CollapseBody>
-                            </Collapse>
-                            <Collapse Visible="importVisible">
-                                <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref importVisible, ref chevronImport))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Import from existing files"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronImport)
-                                        </div>
-                                    </Blazorise.Link>
-                                </CollapseHeader>
-                                <CollapseBody>
-                                    <Tooltip Placement="Placement.Top" Text="@localizer["Import textfile tooltip"]">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Textfile"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@localizer["Import cuesheet tooltip"]">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cuesheet"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <InputFile class="form-control" accept="@Cuesheetfile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@localizer["Import project tooltip"]">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Project filename"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <InputFile class="form-control" accept="@Projectfile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                </CollapseBody>
-                            </Collapse>
-                            <Collapse Visible="cuesheetDataVisible">
-                                <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetDataVisible, ref chevronCuesheetData))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Cuesheet data"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronCuesheetData)
-                                        </div>
-                                    </Blazorise.Link>
-                                </CollapseHeader>
-                                <CollapseBody>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD artist"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@localizer["Enter cd artist here"]" @bind-Text="cuesheet.Artist" ChangeTextOnKeyPress="false" />
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD title"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@localizer["Enter cd title here"]" @bind-Text="cuesheet.Title" ChangeTextOnKeyPress="false" />
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Audiofile"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                            @if (cuesheet.Audiofile == null)
-                                            {
-                                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                                var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))));
-                                                <InputFile class="@audioFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Audiofile))" accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))"></InputFile>
-                                            }
-                                            else
-                                            {
-                                                <Addons>
-                                                    @if (cuesheet.Audiofile.IsRecorded)
-                                                    {
-                                                        <Addon AddonType="AddonType.Start">
-                                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@cuesheet.Audiofile.FileName">@localizer["Download recorded audio"]</Button>
-                                                        </Addon>
-                                                    }
-                                                    <Addon AddonType="AddonType.Body">
-                                                        <TextEdit Disabled="true" Text="@cuesheet.Audiofile.FileName" />
-                                                    </Addon>
-                                                    <Addon AddonType="AddonType.End">
-                                                        <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@localizer["Change"]</Button>
-                                                    </Addon>
-                                                </Addons>
-                                            }
-                                        </FieldBody>
-                                    </Field>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["CD textfile"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                @if (cuesheet.CDTextfile == null)
-                                                {
-                                                    var cdTextFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile))));
-                                                    <InputFile class="@cdTextFileCSSClass" id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" OnChange="OnCDTextfileChanged"></InputFile>
-                                                }
-                                                else
-                                                {
-                                                    <Addons>
-                                                        <Addon AddonType="AddonType.Body">
-                                                            <TextEdit Disabled="true" Text="@cuesheet.CDTextfile.FileName" />
-                                                        </Addon>
-                                                        <Addon AddonType="AddonType.End">
-                                                            <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeCDTextfileClicked">@localizer["Change"]</Button>
-                                                        </Addon>
-                                                    </Addons>
-                                                }
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                    <Tooltip Placement="Placement.Top" Text="@cuesheet.Cataloguenumber.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@localizer["Cataloguenumber"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@localizer["Enter cataloguenumber here"]" @bind-Text="cuesheet.Cataloguenumber.Value" ChangeTextOnKeyPress="false" />
-                                            </FieldBody>
-                                        </Field>
-                                    </Tooltip>
-                                </CollapseBody>
-                            </Collapse>
-                            <Collapse Visible="cuesheetTracksVisible">
-                                <CollapseHeader>
-                                    <Blazorise.Link Clicked="(() => HeaderClicked(ref cuesheetTracksVisible, ref chevronCuesheetTracks))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                        <Heading Size="HeadingSize.Is3">@localizer["Cuesheet tracks"]</Heading>
-                                        <div>
-                                            @((MarkupString)chevronCuesheetTracks)
-                                        </div>
-                                    </Blazorise.Link>
-                                </CollapseHeader>
-                                <CollapseBody>
-                                    <Buttons Role="ButtonsRole.Toolbar">
-                                        <Buttons Margin="Margin.Is2.FromRight">
-                                            <Button id="@cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Tracks))" Color="Color.Primary" Clicked="OnAddTrackClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                                </svg>
-                                                @localizer["Add new track"]
-                                            </Button>
-                                        </Buttons>
-                                        <Buttons Margin="Margin.Is2.FromRight">
-                                            @if (trackSelectionVisible == false)
-                                            {
-                                                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                                                        <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
-                                                        <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
-                                                    </svg>
-                                                    @localizer["Display selection of tracks"]
-                                                </Button>
-                                            }
-                                            else
-                                            {
-                                                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                                                        <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
-                                                        <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
-                                                    </svg>
-                                                    @localizer["Hide selection of tracks"]
-                                                </Button>
-                                            }
-                                        </Buttons>
-                                        <Buttons>
-                                            <Button Color="Color.Warning" Clicked="DeleteSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                                                </svg>
-                                                @localizer["Delete selected tracks"]
-                                            </Button>
-                                            <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                                                </svg>
-                                                @localizer["Delete all tracks"]
-                                            </Button>
-                                        </Buttons>
-                                    </Buttons>
-                                    <br />
-                                    <Table Bordered="true" Responsive="true" Narrow="true">
-                                        <TableHeader ThemeContrast="ThemeContrast.Light">
-                                            <TableRow>
-                                                <TableHeaderCell Display="selectionDisplay">@localizer["Selection"]</TableHeaderCell>
-                                                <TableHeaderCell Class="controlsCell">@localizer["Controls"]</TableHeaderCell>
-                                                <TableHeaderCell>#</TableHeaderCell>
-                                                <TableHeaderCell Class="minWidth">@localizer["Artist"]</TableHeaderCell>
-                                                <TableHeaderCell Class="minWidth">@localizer["Title"]</TableHeaderCell>
-                                                <TableHeaderCell Class="minWidth">@localizer["Begin"]</TableHeaderCell>
-                                                <TableHeaderCell Class="minWidth">@localizer["End"]</TableHeaderCell>
-                                                <TableHeaderCell Class="minWidth">@localizer["Length"]</TableHeaderCell>
-                                                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@localizer["Hints"]</TableHeaderCell>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            @for (int i = 0; i < cuesheet.Tracks.Count; i++)
-                                            {
-                                                var track = cuesheet.Tracks.ElementAt(i);
-                                                @if (i != 0)
-                                                {
-                                                    <TableRow>
-                                                        <TableRowCell ColumnSpan="8">
-                                                            @if (track.IsLinkedToPreviousTrack)
-                                                            {
-                                                                <Button Color="Color.Warning" Block="true" Size="Size.ExtraSmall" Clicked="() => track.IsLinkedToPreviousTrack = false">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z" />
-                                                                    </svg>
-                                                                    @localizer["Unlink this track from previous track"]
-                                                                </Button>
-                                                            }
-                                                            else
-                                                            {
-                                                                <Button Color="Color.Success" Block="true" Size="Size.ExtraSmall" Clicked="() => track.IsLinkedToPreviousTrack = true">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707l-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z" />
-                                                                    </svg>
-                                                                    @localizer["Link this track with previous track"]
-                                                                </Button>
-                                                            }
-                                                        </TableRowCell>
-                                                    </TableRow>
-                                                }
-                                                <TableRow Color="((audioPlayer.CurrentlyPlayingTrack != null) && (audioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.None">
-                                                    <TableRowCell Display="selectionDisplay">
-                                                        <Tooltip Placement="Placement.Right" Text="@localizer["Select this track for multiple track operations"]">
-                                                            <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="controlsCell">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Buttons Role="ButtonsRole.Toolbar">
-                                                                <Buttons Margin="Margin.Is1.FromRight">
-                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Edit track tooltip"]">
-                                                                        <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                                                                            </svg>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Copy track tooltip"]">
-                                                                        <Button Size="Size.Small" Color="Color.Success" Clicked="() => CopyTrackClicked(track)">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
-                                                                                <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                                                                                <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
-                                                                            </svg>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                </Buttons>
-                                                                <Buttons Margin="Margin.Is1.FromRight" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
-                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Start playback this track"]">
-                                                                        <Button Size="Size.Small" Color="Color.Info" Disabled="!audioPlayer.PlaybackPossible" Clicked="() => audioPlayer.OnPlayTrackClicked(track)">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                                                                <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
-                                                                                <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-                                                                            </svg>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                </Buttons>
-                                                                <Buttons Margin="Margin.Is1.FromRight" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
-                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Move track up tooltip"]">
-                                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Up)">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                                                <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                                            </svg>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Move track down tooltip"]">
-                                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => cuesheet.MoveTrack(track, MoveDirection.Down)">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                                                <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                                            </svg>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                </Buttons>
-                                                                <Buttons Margin="Margin.Is1.FromRight">
-                                                                    <Tooltip Placement="Placement.Right" Text="@localizer["Delete track tooltip"]">
-                                                                        <Button Size="Size.Small" Color="Color.Danger" Clicked="() => cuesheet.RemoveTrack(track)">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                                                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                                            </svg>
-                                                                        </Button>
-                                                                    </Tooltip>
-                                                                </Buttons>
-                                                            </Buttons>
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="trackPositionTableRowCell">
-                                                        <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)), seperator: Environment.NewLine)">
-                                                            <NumericEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" ChangeTextOnKeyPress="false" />
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
-                                                            </Tooltip>
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                                                                <TextEdit id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="track.Title" />
-                                                            </Tooltip>
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                                                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" ChangeTextOnKeyPress="false" />
-                                                            </Tooltip>
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                                                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" ChangeTextOnKeyPress="false" />
-                                                            </Tooltip>
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Class="minWidth">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            <Tooltip Placement="Placement.Bottom" Text="@track.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                                                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" ChangeTextOnKeyPress="false" />
-                                                            </Tooltip>
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                    <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                                                        <Tooltip Placement="Placement.Top" Text="@GetLocalizedString((audioPlayer.AudioIsPlaying == true) && (audioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                                            @((MarkupString)track.GetValidationErrors(ValidationMessageLocalizer))
-                                                        </Tooltip>
-                                                    </TableRowCell>
-                                                </TableRow>
-                                            }
-                                        </TableBody>
-                                    </Table>
-
-                                </CollapseBody>
-                            </Collapse>
-                        </Accordion>
-
-                        <br />
-                        <AudioPlayer @ref="audioPlayer" Cuesheet="@cuesheet" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
-                        <br />
-                    </Column>
-                    <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle Size="3">@localizer["Processinghints"]</CardTitle>
-                            </CardHeader>
-                            <CardBody>
-                                <ProcessingHints Cuesheet="cuesheet" Header="@localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" ValidationMessageLocalizer="ValidationMessageLocalizer" />
-                            </CardBody>
-                        </Card>
-                    </Column>
-                    break;
-            }
-
-        </Row>
-    </LayoutContent>
-</Layout>
+<Row Margin="Margin.Is2">
+    @switch (_sessionStateContainer.CurrentViewMode)
+    {
+        case ViewMode.ViewModeRecord:
+            <ViewModeRecord />
+            break;
+        case ViewMode.ViewModeFull:
+            <Column>
+                <Accordion>
+                    <Collapse Visible="dropFilesVisible">
+                        <CollapseHeader>
+                            <Button Clicked="(() => dropFilesVisible = !dropFilesVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Drop files"]</Heading></Button>                                    
+                        </CollapseHeader>
+                        <CollapseBody>
+                            <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
+                                <svg class="fileUploadDragNDropIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+                                <InputFile id="dropInputfiles" class="inputfile" multiple OnChange="OnDropInputfilesChanged"></InputFile>
+                                <label for="dropInputfiles">@((MarkupString)(_localizer["Choose file or drag it here"].ToString()))</label>
+                            </div>
+                            <Alert @ref="alertInvalidFile" Color="Color.Danger">
+                                <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
+                                <AlertDescription>@String.Format(_localizer["You dropped an invalid file that can not be processed"], invalidFileName)</AlertDescription>
+                            </Alert>
+                        </CollapseBody>
+                    </Collapse>
+                    <Collapse Visible="importVisible">
+                        <CollapseHeader>
+                            <Button Clicked="(() => importVisible = !importVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import from existing files"]</Heading></Button>
+                        </CollapseHeader>
+                        <CollapseBody>
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import textfile tooltip"]">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Textfile"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                        <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import cuesheet tooltip"]">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                        <InputFile class="form-control" accept="@Cuesheetfile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import project tooltip"]">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Project filename"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                        <InputFile class="form-control" accept="@Projectfile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
+                                    </FieldBody>
+                                </Field>
+                            </Tooltip>
+                        </CollapseBody>
+                    </Collapse>
+                    <Collapse Visible="cuesheetDataVisible">
+                        <CollapseHeader>
+                            <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
+                        </CollapseHeader>
+                        <CollapseBody>
+                            <CuesheetData />
+                        </CollapseBody>
+                    </Collapse>
+                    <Collapse Visible="cuesheetTracksVisible">
+                        <CollapseHeader>
+                            <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet tracks"]</Heading></Button>
+                        </CollapseHeader>
+                        <CollapseBody>
+                            <TracksTable AudioPlayer="audioPlayer" />
+                        </CollapseBody>
+                    </Collapse>
+                </Accordion>
+                <br />
+                <AudioPlayer @ref="audioPlayer" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
+                <br />
+            </Column>
+            <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
+                <Card>
+                    <CardHeader>
+                        <CardTitle Size="3">@_localizer["Processinghints"]</CardTitle>
+                    </CardHeader>
+                    <CardBody>
+                        <ProcessingHints Header="@_localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" />
+                    </CardBody>
+                </Card>
+            </Column>
+            break;
+    }
+</Row>
 
 <ModalDialog @ref="modalDialog" />
 
@@ -532,7 +128,7 @@ along with Foobar.  If not, see
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
-                @localizer["Textimport assistant"]
+                @_localizer["Textimport assistant"]
             </ModalTitle>
             <CloseButton Clicked="TextImportAbortClicked" />
         </ModalHeader>
@@ -542,12 +138,7 @@ along with Foobar.  If not, see
                 <Accordion Style="margin-bottom: 1rem;">
                     <Collapse Visible="textImportFileContentVisible">
                         <CollapseHeader>
-                            <Blazorise.Link Clicked="(() => HeaderClicked(ref textImportFileContentVisible, ref chevronTextImportFileContent))" Style="justify-content: space-between;display: flex;-webkit-box-pack:justify;">
-                                <Heading Size="HeadingSize.Is3">@localizer["Filecontent"]</Heading>
-                                <div>
-                                    @((MarkupString)chevronTextImportFileContent)
-                                </div>
-                            </Blazorise.Link>
+                            <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
                         </CollapseHeader>
                         <CollapseBody Style="background: lightgray;">
                             <Text>
@@ -561,25 +152,25 @@ along with Foobar.  If not, see
                 </Accordion>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter textimportscheme cuesheet tooltip"]">
-                            @localizer["Textimportscheme cuesheet"]
+                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
+                            @_localizer["Textimportscheme cuesheet"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is8">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(ValidationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["Select placeholder"]
+                                        @_localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
                                         {
-                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -589,25 +180,25 @@ along with Foobar.  If not, see
                 </Field>
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter textimportscheme track tooltip"]">
-                            @localizer["Textimportscheme track"]
+                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
+                            @_localizer["Textimportscheme track"]
                         </Tooltip>
                     </FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is8">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
                                 @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(ValidationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
+                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
                             </Addon>
                             <Addon AddonType="AddonType.End">
                                 <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
-                                        @localizer["Select placeholder"]
+                                        @_localizer["Select placeholder"]
                                     </DropdownToggle>
                                     <DropdownMenu>
                                         @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
                                         {
-                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@localizer[availableSchemeTrack.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -624,21 +215,21 @@ along with Foobar.  If not, see
                                 <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
                             </svg>
                         </AlertDescription>
-                        <AlertMessage>@localizer["Error during textimport"] : @textImportFile.AnalyseException.Message</AlertMessage>
+                        <AlertMessage>@_localizer["Error during textimport"] : @textImportFile.AnalyseException.Message</AlertMessage>
                     </Alert>
                 }
                 <Divider DividerType="DividerType.Solid" />
                 @if (textImportFile.ImportCuesheet != null)
                 {
-                    <Heading Size="HeadingSize.Is4">@localizer["ImportCuesheetValues"]</Heading>
+                    <Heading Size="HeadingSize.Is4">@_localizer["ImportCuesheetValues"]</Heading>
                     <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CD artist"]</FieldLabel>
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD artist"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.Artist" ReadOnly="true" />
                         </FieldBody>
                     </Field>
                     <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CD title"]</FieldLabel>
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD title"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
                         </FieldBody>
@@ -646,7 +237,7 @@ along with Foobar.  If not, see
                     @if (textImportFile.ImportCuesheet.Audiofile != null)
                     {
                         <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["Audiofile"]</FieldLabel>
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["Audiofile"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is8">
                                 <TextEdit Text="@textImportFile.ImportCuesheet.Audiofile.FileName" ReadOnly="true" />
                             </FieldBody>
@@ -655,29 +246,29 @@ along with Foobar.  If not, see
                     @if (textImportFile.ImportCuesheet.CDTextfile != null)
                     {
                         <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["CD textfile"]</FieldLabel>
+                            <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD textfile"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is8">
                                 <TextEdit Text="@textImportFile.ImportCuesheet.CDTextfile.FileName" ReadOnly="true" />
                             </FieldBody>
                         </Field>
                     }
                     <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@localizer["Cataloguenumber"]</FieldLabel>
+                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["Cataloguenumber"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
                             <TextEdit @bind-Text="textImportFile.ImportCuesheet.Cataloguenumber.Value" ReadOnly="true" />
                         </FieldBody>
                     </Field>
-                    <Heading Size="HeadingSize.Is5">@localizer["Cuesheet tracks"]</Heading>
+                    <Heading Size="HeadingSize.Is5">@_localizer["Cuesheet tracks"]</Heading>
                     <Table Bordered="true" Responsive="true" Narrow="true">
                         <TableHeader ThemeContrast="ThemeContrast.Light">
                             <TableRow>
                                 <TableHeaderCell>#</TableHeaderCell>
-                                <TableHeaderCell>@localizer["Artist"]</TableHeaderCell>
-                                <TableHeaderCell>@localizer["Title"]</TableHeaderCell>
-                                <TableHeaderCell>@localizer["Begin"]</TableHeaderCell>
-                                <TableHeaderCell>@localizer["End"]</TableHeaderCell>
-                                <TableHeaderCell>@localizer["Length"]</TableHeaderCell>
-                                <TableHeaderCell>@localizer["Flags"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Flags"]</TableHeaderCell>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -699,475 +290,30 @@ along with Foobar.  If not, see
             }
         </ModalBody>
         <ModalFooter>
-            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "Import not possible due to textimport errors. Please check errors!")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@localizer["Start textimport"]</Button>
+            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "Import not possible due to textimport errors. Please check errors!")">
+                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@_localizer["Start textimport"]</Button>
             </Tooltip>
-            <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
-<Modal @ref="modalExportProfiles">
-    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
-        <ModalHeader>
-            <ModalTitle>
-                @localizer["Exportprofiles"]
-            </ModalTitle>
-            <CloseButton @onclick="ModalExportProfilesCloseClicked" />
-        </ModalHeader>
-        <ModalBody>
-            <Field Horizontal="true" JustifyContent="JustifyContent.End">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Select exportprofile"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <SelectList TItem="SelectExportProfileModel" TValue="Guid" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
-                </FieldBody>
-            </Field>
-            <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@localizer["Add new exportprofile"]</Button>
-            <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@localizer["Delete selected exportprofile"]</Button>
-            <Divider />
-            @if (SelectedExportProfile != null)
-            {
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Name"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name" />
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Filename"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.FileName" />
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter exportschemehead here tooltip"]">
-                            @localizer["Exportprofilescheme head"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["Enter exportscheme head here"]" @bind-Text="SelectedExportProfile.SchemeHead.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportschemehead here tooltip"]" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableScheme in Exportscheme.AvailableCuesheetSchemes)
-                                        {
-                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeHead.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeHead.IsValid == false))
-                {
-                    <Heading Size="HeadingSize.Is6">@localizer["Exportprofilescheme head validationerrors"]</Heading>
-                    @foreach (var validationError in SelectedExportProfile.SchemeHead.ValidationErrors.OrderBy(x => x.Type))
-                    {
-                        <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
-                        </Alert>
-                    }
-                }
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter exportscheme track here tooltip"]">
-                            @localizer["Exportprofilescheme track"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["Enter exportscheme track here"]" @bind-Text="SelectedExportProfile.SchemeTracks.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportscheme track here tooltip"]" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableScheme in Exportscheme.AvailableTrackSchemes)
-                                        {
-                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeTracks.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeTracks.IsValid == false))
-                {
-                    <Heading Size="HeadingSize.Is6">@localizer["Exportprofilescheme track validationerrors"]</Heading>
-                    @foreach (var validationError in SelectedExportProfile.SchemeTracks.ValidationErrors.OrderBy(x => x.Type))
-                    {
-                        <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
-                        </Alert>
-                    }
-                }
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">
-                        <Tooltip Placement="Placement.Top" Text="@localizer["Enter exportscheme footer here tooltip"]">
-                            @localizer["Exportprofilescheme footer"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
-                                <TextEdit Placeholder="@localizer["Enter exportscheme footer here"]" @bind-Text="SelectedExportProfile.SchemeFooter.Scheme" data-toggle="tooltip" data-placement="top" title="@localizer["Enter exportscheme footer here tooltip"]" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableScheme in Exportscheme.AvailableCuesheetSchemes)
-                                        {
-                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeFooter.Scheme += availableScheme.Value">@localizer[availableScheme.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                @if ((SelectedExportProfile != null) && (SelectedExportProfile.SchemeFooter.IsValid == false))
-                {
-                    <Heading Size="HeadingSize.Is6">@localizer["Exportprofilescheme footer validationerrors"]</Heading>
-                    @foreach (var validationError in SelectedExportProfile.SchemeFooter.ValidationErrors.OrderBy(x => x.Type))
-                    {
-                        <Alert Visible="true" Color="validationError.Type == ValidationErrorType.Error ? Color.Danger : Color.Warning">
-                            <AlertMessage>@validationError.Message.GetMessageLocalized(ValidationMessageLocalizer)</AlertMessage>
-                        </Alert>
-                    }
-                }
-            }
-        </ModalBody>
-        <ModalFooter>
-            <Tooltip Placement="Placement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "Exportprofile is not exportable. Please check validationerrors and solve errors in order to download export.")">
-                <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@localizer["Download export"]</Button>
-            </Tooltip>
-            <Button Color="Color.Secondary" @onclick="ModalExportProfilesCloseClicked">@localizer["Close"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
-<Modal @ref="modalDownloadCuesheet">
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>
-                @localizer["Download cuesheet"]
-            </ModalTitle>
-            <CloseButton Clicked="() => modalDownloadCuesheet.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" />
-                </FieldBody>
-            </Field>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!cuesheet.CanWriteCuesheetFile">@localizer["Download cuesheet"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
-<Modal @ref="modalOptions">
-    <ModalContent Centered="true" Size="ModalSize.Large">
-        <ModalHeader>
-            <ModalTitle>@localizer["Options"]</ModalTitle>
-            <CloseButton Clicked="() => modalOptions.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            <Card>
-                <CardHeader>
-                    <Tabs @bind-SelectedTab="@selectedOptionsTab">
-                        <Items>
-                            <Tab Name="common">@localizer["Common settings"]</Tab>
-                            <Tab Name="textImport">@localizer["Textimport settings"]</Tab>
-                            <Tab Name="recording">@localizer["Record settings"]</Tab>
-                        </Items>
-                    </Tabs>
-                </CardHeader>
-                <CardBody>
-                    <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
-                        <TabPanel Name="common" Padding="Padding.Is3.OnY">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Culture setting"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@optionsController.Options.CultureName">
-                                        @foreach (var culture in OptionsController.AvailableCultures)
-                                        {
-                                            <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
-                                        }
-                                    </Select>
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Default viewmode"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.ViewModeName">
-                                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
-                                        {
-                                            <SelectItem Value="@name">@localizer[name]</SelectItem>
-                                        }
-                                    </Select>
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Cuesheet filename"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="optionsController.Options.CuesheetFileName" ChangeTextOnKeyPress="false" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Project filename"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" ChangeTextOnKeyPress="false" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Automatically link tracks"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Check TValue="Boolean?" @bind-Checked="optionsController.Options.LinkTracksWithPreviousOne">@localizer["Automatically link tracks with previous"]</Check>
-                                </FieldBody>
-                            </Field>
-                        </TabPanel>
-                        <TabPanel Name="textImport" Padding="Padding.Is3.OnY">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme cuesheet"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeCuesheet" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Textimportscheme track"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="optionsController.Options.TextImportScheme.SchemeTracks" />
-                                </FieldBody>
-                            </Field>
-                        </TabPanel>
-                        <TabPanel Name="recording" Padding="Padding.Is3.OnY">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Filename for recorded audio"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="optionsController.Options.AudioFileNameRecording" ChangeTextOnKeyPress="false" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record countdown timer in seconds"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <NumericEdit TValue="int?" @bind-Value="optionsController.Options.RecordCountdownTimer" Min="1" />
-                                </FieldBody>
-                            </Field>
-                            @*TODO*@
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@localizer["Record time sensitivity"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" @bind-SelectedValue="@optionsController.Options.RecordTimeSensitivityName">
-                                        @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
-                                        {
-                                            <SelectItem Value="@name">@localizer["TimeSensitivityMode." + name]</SelectItem>
-                                        }
-                                    </Select>
-                                </FieldBody>
-                            </Field>
-                        </TabPanel>
-                    </TabsContent>
-                </CardBody>
-            </Card>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@localizer["Save"]</Button>
-            <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@localizer["Reload options"]</Button>
-            <Button Color="Color.Danger" Clicked="OnResetOptionsClicked">@localizer["Reset"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalOptions.Hide()">@localizer["Close"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
-<Modal @ref="modalTrackEdit">
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>@localizer["Edit track details"]</ModalTitle>
-            <CloseButton Clicked="() => modalTrackEdit.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            @if (editTrack != null)
-            {
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Position"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
-                            <NumericEdit TValue="uint?" Max="99" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="editTrack.Clone.Position" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Artist"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <TextEdit Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="editTrack.Clone.Artist" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Title"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <TextEdit Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="editTrack.Clone.Title" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Begin"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editTrack.Clone.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Begin = x, value)" ChangeTextOnKeyPress="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["End"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editTrack.Clone.End)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.End = x, value)" ChangeTextOnKeyPress="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Length"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editTrack.Clone.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Length = x, value)" ChangeTextOnKeyPress="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Flags"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        @foreach (var flag in Flag.AvailableFlags)
-                        {
-                            <Tooltip Placement="Placement.Bottom" Text="@localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
-                                <Check TValue="bool" Checked="editTrack.Clone.Flags.Contains(flag)" CheckedChanged="(value) => editTrack.Clone.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Check>
-                            </Tooltip>
-                        }
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PreGap"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editTrack.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PreGap = x, value)" ChangeTextOnKeyPress="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["PostGap"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="Placement.Bottom" Text="@editTrack.Clone.GetValidationErrors(ValidationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editTrack.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PostGap = x, value)" ChangeTextOnKeyPress="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-            }
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="EditTrackModalSaveClicked">@localizer["Save"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalTrackEdit.Hide()">@localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
-<Modal @ref="modalDownloadProjectfile">
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>
-                @localizer["Save project"]
-            </ModalTitle>
-            <CloseButton Clicked="() => modalDownloadProjectfile.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@localizer["Filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit @bind-Text="optionsController.Options.ProjectFileName" />
-                </FieldBody>
-            </Field>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@localizer["Download projectfile"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalDownloadProjectfile.Hide()">@localizer["Abort"]</Button>
+            <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@_localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 @code {
-    public ITextLocalizer<ValidationMessage> ValidationMessageLocalizer { get; private set; }
-
     public void Dispose()
     {
-        hotKeysContext.Dispose();
-    }
-
-    public class SelectExportProfileModel
-    {
-        public Guid Id { get; private set; }
-        public Exportprofile ExportProfile { get; set; }
-
-        public SelectExportProfileModel(Exportprofile exportProfile)
+        if (hotKeysContext != null)
         {
-            if (exportProfile == null)
-            {
-                throw new ArgumentNullException(nameof(exportProfile));
-            }
-            Id = Guid.NewGuid();
-            ExportProfile = exportProfile;
+            hotKeysContext.Dispose();
         }
-    }
-
-    public class CloneTrackModel : IDisposable
-    {
-        public Track Track { get; private set; }
-        public Track Clone { get; private set; }
-
-        public CloneTrackModel(Track track)
-        {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
-            Track = track;
-            Clone = track.Clone();
-        }
-
-        public void Dispose()
-        {
-            Clone = null;
-            Track = null;
-        }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
     }
 
     public IFluentDisplay DisplayProcessingHints
     {
         get
         {
-            if (cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.All).Count > 0)
+            if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.All).Count > 0)
             {
                 return Display.Always;
             }
@@ -1178,155 +324,55 @@ along with Foobar.  If not, see
         }
     }
 
-    public ViewMode CurrentViewMode { get; private set; }
+    [CascadingParameter]
+    public MainLayout? mainLayout { get; set; }
 
-    [JSInvokable()]
-    public void NotifyError(string error)
-    {
-        //TODO: Remove this handling, when ASP.CORE 6 has global exception handling (https://github.com/dotnet/aspnetcore/issues/13452)
-        ErrorReport.Exception = error;
-        navigationManager.NavigateTo("ErrorReport");
-    }
+    Boolean cuesheetDataVisible = true;
+    Boolean cuesheetTracksVisible = true;
 
-    private Boolean cuesheetDataVisible = true;
-    private Boolean cuesheetTracksVisible = true;
+    Boolean importVisible = false;
+    Boolean dropFilesVisible = true;
+    Boolean textImportFileContentVisible = true;
 
-    private Boolean importVisible = false;
-    private Boolean dropFilesVisible = true;
-    private Boolean textImportFileContentVisible = true;
+    HotKeysContext hotKeysContext = default!;
 
-    private HotKeysContext hotKeysContext;
+    String invalidFileName = default!;
 
-    private String invalidFileName;
+    TextImportFile? textImportFile;
 
-    private String chevronCuesheetData = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronCuesheetTracks = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronImport = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-    private String chevronDropFiles = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-    private String chevronTextImportFileContent = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
+    ModalDialog modalDialog = default!;
+    Alert alertInvalidFile = default!;
 
-    private Cuesheet cuesheet;
-    private TextImportFile textImportFile;
-    private CloneTrackModel editTrack;
-
-    private IReadOnlyCollection<SelectExportProfileModel> exportProfileModels;
-    private Guid selectedExportProfileId;
-
-    private ModalDialog modalDialog;
-    private Alert alertInvalidFile;
-
-    private Modal modalTextImport;
-    private Modal modalExportProfiles;
-    private Modal modalDownloadCuesheet;
-    private Modal modalOptions;
-    private Modal modalTrackEdit;
-    private Modal modalDownloadProjectfile;
-    private AudioPlayer audioPlayer;
-
-    private String selectedOptionsTab = "common";
-
-    private IFluentDisplay selectionDisplay = Display.None;
-    private Boolean trackSelectionVisible = false;
-    private List<Track> selectedTracks = new List<Track>();
+    Modal modalTextImport = default!;
+    AudioPlayer audioPlayer = default!;
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     protected override async Task OnInitializedAsync()
     {
-        Logger.LogDebug("OnInitializedAsync");
-        Logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
+        _logger.LogDebug("OnInitializedAsync");
+        _logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
 
-        LocalizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
-        ValidationMessageLocalizer = new TextLocalizer<ValidationMessage>(LocalizationService);
-
-        SetCuesheetObject();
-
-        hotKeysContext = HotKeys.CreateContext()
-            .Add(ModKeys.Ctrl, Keys.E, () => modalExportProfiles.Show())
-            .Add(ModKeys.Ctrl, Keys.H, () => navigationManager.NavigateTo("Help"))
-            .Add(ModKeys.Ctrl, Keys.O, () => modalOptions.Show())
+        hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
-            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show())
-            .Add(ModKeys.Ctrl, Keys.Z, () => UndoChanges(true))
-            .Add(ModKeys.Ctrl, Keys.Y, () => RedoChanges(true));
+            .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Undo())
+            .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Redo());
+
+        _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
 
         var dotNetReference = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
+        await _jsRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
+    }
 
-        if (exportProfileModels == null)
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+        if (mainLayout != null)
         {
-            exportProfileModels = optionsController.Options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
-            selectedExportProfileId = exportProfileModels.First().Id;
+            mainLayout.SetDisplayMenuBar(true);
         }
-
-        CurrentViewMode = optionsController.Options.ViewMode;
-    }
-
-    private async Task OnCultureSelectionChanged(String value)
-    {
-        optionsController.Options.CultureName = value;
-        await optionsController.SaveOptions();
-        LocalizationService.ChangeLanguage(optionsController.Options.CultureName);
-    }
-
-    private void HeaderClicked(ref Boolean visible, ref String chevron)
-    {
-        visible = !visible;
-        SwitchChevron(visible, ref chevron);
-    }
-
-    private void SwitchChevron(Boolean chevronUp, ref String chevron)
-    {
-        if (chevronUp == true)
-        {
-            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-up\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z\"/></svg>";
-        }
-        else
-        {
-            chevron = "<svg width=\"1em\" height=\"1em\" viewBox=\"0 0 16 16\" class=\"bi bi-chevron-down\" fill=\"currentColor\" xmlns=\"http://www.w3.org/2000/svg\"><path fill-rule=\"evenodd\" d=\"M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\" /></svg>";
-        }
-    }
-
-    private void OnDeleteAllTracksClicked()
-    {
-        Logger.LogInformation("OnDeleteAllTracksClicked");
-        //Display a confirm warning
-        modalDialog.Title = localizer["Confirmation required"];
-        modalDialog.Text = localizer["Do you really want to delete all tracks? This can not be reversed."];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void deleteTracksDelegate(object sender, EventArgs args)
-        {
-            Logger.LogInformation("deleteTracksDelegate");
-            cuesheet.RemoveTracks(cuesheet.Tracks);
-            modalDialog.Confirmed -= deleteTracksDelegate;
-            StateHasChanged();
-        };
-        modalDialog.Confirmed += deleteTracksDelegate;
-        modalDialog.ShowModal();
-    }
-
-    private void RestartCuesheetClicked()
-    {
-        Logger.LogInformation("RestartCuesheetClicked clicked");
-        //Display a confirm warning
-        modalDialog.Title = localizer["Confirmation required"];
-        modalDialog.Text = localizer["Do you really want to reset the cuesheet? This can not be reversed."];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void newCuesheetDelegate(object sender, EventArgs args)
-        {
-            Logger.LogInformation("newCuesheetDelegate");
-            SetCuesheetObject(new Cuesheet());
-            modalDialog.Confirmed -= newCuesheetDelegate;
-            dropFilesVisible = true;
-            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
-            StateHasChanged();
-        };
-        modalDialog.Confirmed += newCuesheetDelegate;
-        modalDialog.ShowModal();
     }
 
     private String GetCSSClassAlert(Validateable validateable, String property)
@@ -1337,7 +383,7 @@ along with Foobar.  If not, see
         {
             if (validationErrors.Count() > 1)
             {
-                if (cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
+                if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
                 {
                     cssClass = "alert-danger";
                 }
@@ -1363,23 +409,24 @@ along with Foobar.  If not, see
 
     private async Task OnInputFileTextImportChange(InputFileChangeEventArgs e)
     {
-        Logger.LogInformation("OnInputFileTextImportChange with {0}", e);
+        _logger.LogInformation("OnInputFileTextImportChange with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
             {
+                var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 textImportFile = new TextImportFile(memoryStream);
-                textImportFile.TextImportScheme = optionsController.Options.TextImportScheme;
-                modalTextImport.Show();
+                textImportFile.TextImportScheme = options.TextImportScheme;
+                await modalTextImport.Show();
             }
             else
             {
-                modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Import textfile"]);
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Import textfile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1389,20 +436,22 @@ along with Foobar.  If not, see
 
     private void TextImportAbortClicked()
     {
-        Logger.LogInformation("TextImportAbortClicked");
+        _logger.LogInformation("TextImportAbortClicked");
         modalTextImport.Hide();
         textImportFile = null;
     }
 
     private async Task TextImportStartClicked()
     {
-        Logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
+        _logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
         if ((textImportFile != null) && (textImportFile.IsValid == true))
         {
-            optionsController.Options.TextImportScheme = textImportFile.TextImportScheme;
-            await optionsController.SaveOptions();
-            cuesheet.Import(textImportFile, optionsController.Options);
-            modalTextImport.Hide();
+            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+            var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            options.TextImportScheme = textImportFile.TextImportScheme;
+            await _localStorageOptionsProvider.SaveOptions(options);
+            _sessionStateContainer.Cuesheet.Import(textImportFile, applicationOptions);
+            await modalTextImport.Hide();
             textImportFile = null;
             StateHasChanged();
         }
@@ -1410,23 +459,24 @@ along with Foobar.  If not, see
 
     private async Task OnInputFileCuesheetChange(InputFileChangeEventArgs e)
     {
-        Logger.LogInformation("OnInputFileCuesheetChange with {0}", e);
+        _logger.LogInformation("OnInputFileCuesheetChange with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
             {
+                var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var stream = e.File.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 //Display a confirm warning
-                modalDialog.Title = localizer["Confirmation required"];
-                modalDialog.Text = localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
+                modalDialog.Title = _localizer["Confirmation required"];
+                modalDialog.Text = _localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-                void importCuesheetDelegate(object sender, EventArgs args)
+                void importCuesheetDelegate(object? sender, EventArgs args)
                 {
-                    SetCuesheetObject(Cuesheetfile.ImportCuesheet(memoryStream, optionsController.Options));
+                    _sessionStateContainer.Cuesheet = Cuesheetfile.ImportCuesheet(memoryStream, options);
                     modalDialog.Confirmed -= importCuesheetDelegate;
                     StateHasChanged();
                 };
@@ -1435,8 +485,8 @@ along with Foobar.  If not, see
             }
             else
             {
-                modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Import cuesheet"]);
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Import cuesheet"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1444,76 +494,14 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task ModalExportProfilesCloseClicked()
-    {
-        Logger.LogInformation("ModalExportProfilesCloseClicked");
-        await SaveExportProfiles();
-        modalExportProfiles.Hide();
-    }
-
-    private void SelectedExportProfileChanged(Guid newValue)
-    {
-        Logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
-        selectedExportProfileId = newValue;
-        StateHasChanged();
-    }
-
-    private Exportprofile SelectedExportProfile
-    {
-        get
-        {
-            if ((exportProfileModels != null) && (selectedExportProfileId != Guid.Empty))
-            {
-                var exportProfile = exportProfileModels.FirstOrDefault(x => x.Id == selectedExportProfileId);
-                if (exportProfile != null)
-                {
-                    return exportProfile.ExportProfile;
-                }
-            }
-            return null;
-        }
-    }
-
-    private async Task OnDownloadExportProfileClicked()
-    {
-        Logger.LogInformation("OnDownloadExportProfileClicked with SelectedExportProfile = {0}", SelectedExportProfile);
-        if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
-        {
-            await SaveExportProfiles();
-            await BlazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(cuesheet), "text/plain");
-            modalExportProfiles.Hide();
-        }
-    }
-
-    private void OnAddNewExportProfileClicked()
-    {
-        Logger.LogInformation("OnAddNewExportProfileClicked");
-        var list = exportProfileModels.ToList();
-        list.Add(new SelectExportProfileModel(new Exportprofile()));
-        exportProfileModels = list.AsReadOnly();
-        selectedExportProfileId = list.Last().Id;
-    }
-
-    private void OnDeleteExportProfileClicked()
-    {
-        Logger.LogInformation("OnDeleteExportProfileClicked");
-        var list = exportProfileModels.ToList();
-        list.RemoveAll(x => x.Id == selectedExportProfileId);
-        exportProfileModels = list.AsReadOnly();
-        if (exportProfileModels.Count > 0)
-        {
-            selectedExportProfileId = exportProfileModels.First().Id;
-        }
-    }
-
     private async Task OnDropInputfilesChanged(InputFileChangeEventArgs e)
     {
-        Logger.LogInformation("OnDropInputfilesChanged with {0}", e);
-        alertInvalidFile.Hide();
+        _logger.LogInformation("OnDropInputfilesChanged with {0}", e);
+        await alertInvalidFile.Hide();
         Boolean importedAllFiles = true;
         foreach (var file in e.GetMultipleFiles())
         {
-            Logger.LogInformation("file = {0}", file);
+            _logger.LogInformation("file = {0}", file);
             Boolean recognized = false;
             var files = new List<IBrowserFile>();
             files.Add(file);
@@ -1545,7 +533,7 @@ along with Foobar.  If not, see
             if (recognized == false)
             {
                 invalidFileName = e.File.Name;
-                alertInvalidFile.Show();
+                await alertInvalidFile.Show();
                 importedAllFiles = false;
             }
         }
@@ -1553,65 +541,15 @@ along with Foobar.  If not, see
         {
             //Hide the import
             dropFilesVisible = false;
-            SwitchChevron(dropFilesVisible, ref chevronDropFiles);
             importVisible = false;
-            SwitchChevron(importVisible, ref chevronImport);
         }
     }
 
-    private async Task OnChangeAudioFileClicked()
-    {
-        Logger.LogInformation("OnChangeAudioFileClicked");
-        cuesheet.Audiofile = null;
-        StateHasChanged();
-        await Task.Delay(1);
-        await JSRuntime.InvokeVoidAsync("triggerClick", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Audiofile)));
-    }
-
-    private void OnRestartCompleteApplicationClicked()
-    {
-        Logger.LogInformation("OnRestartCompleteApplicationClicked");
-        //Display a confirm warning
-        modalDialog.Title = localizer["Confirmation required"];
-        modalDialog.Text = localizer["Confirm restart of application. All unsaved changes are lost!"];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        async void restartApplicationDelegate(object sender, EventArgs args)
-        {
-            Logger.LogInformation("restartApplicationDelegate");
-            modalDialog.Confirmed -= restartApplicationDelegate;
-            await JSRuntime.InvokeVoidAsync("removeBeforeunload");
-            navigationManager.NavigateTo(navigationManager.Uri, true);
-        };
-        modalDialog.Confirmed += restartApplicationDelegate;
-        modalDialog.ShowModal();
-    }
-
-    private void OnResetCompleteApplicationClicked()
-    {
-        Logger.LogInformation("OnResetCompleteApplicationClicked");
-        //Display a confirm warning
-        modalDialog.Title = localizer["Confirmation required"];
-        modalDialog.Text = localizer["Confirm reset of application. All unsaved changes are lost and the application is reloaded!"];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Confirmed += OnRestartApplicationConfirmed;
-        modalDialog.ShowModal();
-    }
-
-    private async void OnRestartApplicationConfirmed(object sender, EventArgs args)
-    {
-        Logger.LogInformation("OnRestartApplicationConfirmed");
-        await JSRuntime.InvokeVoidAsync("resetLocalStorage");
-        await JSRuntime.InvokeVoidAsync("removeBeforeunload");
-        modalDialog.Confirmed -= OnRestartApplicationConfirmed;
-        navigationManager.NavigateTo(navigationManager.Uri, true);
-    }
-
-    private String GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
     {
         if (expressionToCheck == true)
         {
-            return localizer[localizedStringName];
+            return _localizer[localizedStringName];
         }
         else
         {
@@ -1619,140 +557,45 @@ along with Foobar.  If not, see
         }
     }
 
-    private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
-    {
-        String resultString = null;
-        if ((timeSpan != null) && (timeSpan.HasValue))
-        {
-            if (removeMilliseconds == true)
-            {
-                resultString = timeSpan.Value.Subtract(new TimeSpan(0, 0, 0, 0, timeSpan.Value.Milliseconds)).ToString();
-            }
-            else
-            {
-                resultString = timeSpan.Value.ToString();
-            }
-        }
-        return resultString;
-    }
-
-    private void OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
-    {
-        TimeSpan? result = null;
-        if (TimeSpan.TryParse(value, out TimeSpan parsedTimeSpan) == true)
-        {
-            result = parsedTimeSpan;
-        }
-        setAction(result);
-    }
-
-    private async Task OnAudioFileChanged(InputFileChangeEventArgs e)
-    {
-        Logger.LogInformation("OnAudioFileChanged with {0}", e);
-        if (e.File != null)
-        {
-            if (CuesheetController.CheckFileMimeType(e.File, Audiofile.AudioCodecs) == true)
-            {
-                await SetAudioFile(e.File, cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.Audiofile)));
-            }
-            else
-            {
-                modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Audiofile"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
-            }
-        }
-    }
-
+    //TODO: Only here because of reference by input file, remove when redesigned!
     private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
     {
-        Logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
-        if ((cuesheet.Audiofile != null) && (cuesheet.Audiofile.IsRecorded))
+        _logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
+        if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
         {
-            await JSRuntime.InvokeVoidAsync("URL.revokeObjectURL", cuesheet.Audiofile.ObjectURL);
+            await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
         }
         if (browserFile != null)
         {
-            var audioFileObjectURL = await JSRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
+            var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
             var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
-            cuesheet.Audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec, httpClient);
+            _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec, _httpClient);
         }
         else
         {
-            cuesheet.Audiofile = null;
+            _sessionStateContainer.Cuesheet.Audiofile = null;
         }
     }
 
+    //TODO: Only here because of reference by input file, remove when redesigned!
     private void OnCDTextfileChanged(InputFileChangeEventArgs e)
     {
-        Logger.LogInformation("OnCDTextfileChanged with {0}", e);
+        _logger.LogInformation("OnCDTextfileChanged with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
             {
-                cuesheet.CDTextfile = new CDTextfile(e.File.Name);
+                _sessionStateContainer.Cuesheet.CDTextfile = new CDTextfile(e.File.Name);
             }
             else
             {
-                modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["CD textfile"]);
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["CD textfile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
             }
         }
-    }
-
-    private async Task OnChangeCDTextfileClicked()
-    {
-        Logger.LogInformation("OnChangeCDTextfileClicked");
-        cuesheet.CDTextfile = null;
-        StateHasChanged();
-        await Task.Delay(1);
-        await JSRuntime.InvokeVoidAsync("triggerClick", cuesheetController.GetFieldIdentifier(cuesheet, nameof(Cuesheet.CDTextfile)));
-    }
-
-    private async Task DownloadCuesheetFileClicked()
-    {
-        Logger.LogInformation("DownloadCuesheetFileClicked");
-        var cuesheetFile = new Cuesheetfile(cuesheet);
-        var fileData = cuesheetFile.GenerateCuesheetFile();
-        await optionsController.SaveOptions();
-        await BlazorDownloadFileService.DownloadFile(optionsController.Options.CuesheetFileName, fileData, "text/plain");
-        modalDownloadCuesheet.Hide();
-    }
-
-    private async Task SaveExportProfiles()
-    {
-        Logger.LogInformation("SaveExportProfiles");
-        if (exportProfileModels != null)
-        {
-            optionsController.Options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
-            await optionsController.SaveOptions();
-        }
-    }
-
-    private async Task OnSaveOptionsClicked()
-    {
-        Logger.LogInformation("OnSaveOptionsClicked");
-        await optionsController.SaveOptions();
-        modalOptions.Hide();
-    }
-
-    private async Task OnReloadOptionsClicked()
-    {
-        Logger.LogInformation("OnReloadOptionsClicked");
-        await optionsController.LoadOptions();
-    }
-
-    private async Task OnResetOptionsClicked()
-    {
-        Logger.LogInformation("OnResetOptionsClicked");
-        await JSRuntime.InvokeVoidAsync("resetLocalStorage");
-        await optionsController.LoadOptions();
-        navigationManager.NavigateTo(navigationManager.Uri, true);
     }
 
     private async Task OnEnterKeyDown()
@@ -1761,64 +604,15 @@ along with Foobar.  If not, see
         {
             await TextImportStartClicked();
         }
-        if (modalExportProfiles.Visible)
-        {
-            await OnDownloadExportProfileClicked();
-        }
-        if (modalDownloadCuesheet.Visible)
-        {
-            await DownloadCuesheetFileClicked();
-        }
-        if (modalOptions.Visible)
-        {
-            await OnSaveOptionsClicked();
-        }
         if (modalDialog.Visible)
         {
             modalDialog.Confirm();
         }
     }
 
-    private void OnAddTrackClicked()
-    {
-        var newTrack = new Track();
-        cuesheet.AddTrack(newTrack, optionsController.Options);
-        _traceChangeManager.TraceChanges(newTrack);
-    }
-
-    private void EditTrackModal(Track trackToEdit)
-    {
-        editTrack = new CloneTrackModel(trackToEdit);
-        modalTrackEdit.Show();
-    }
-
-    private void EditTrackModalSaveClicked()
-    {
-        editTrack.Track.CopyValues(editTrack.Clone);
-        editTrack = null;
-        modalTrackEdit.Hide();
-    }
-
-    private void CopyTrackClicked(Track trackToCopy)
-    {
-        var copy = new Track(trackToCopy);
-        cuesheet.AddTrack(copy, optionsController.Options);
-        _traceChangeManager.TraceChanges(copy);
-        EditTrackModal(copy);
-    }
-
-    private async Task DownloadProjectfileClicked()
-    {
-        var projectFile = new Projectfile(cuesheet);
-        var fileData = projectFile.GenerateFile();
-        await optionsController.SaveOptions();
-        await BlazorDownloadFileService.DownloadFile(optionsController.Options.ProjectFileName, fileData, "text/plain");
-        modalDownloadProjectfile.Hide();
-    }
-
     private async Task OnProjectfileChanged(InputFileChangeEventArgs e)
     {
-        Logger.LogInformation("OnProjectfileChanged with {0}", e);
+        _logger.LogInformation("OnProjectfileChanged with {0}", e);
         if (e.File != null)
         {
             if (CuesheetController.CheckFileMimeType(e.File, Projectfile.MimeType, Projectfile.FileExtension) == true)
@@ -1828,14 +622,18 @@ along with Foobar.  If not, see
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
                 //Display a confirm warning
-                modalDialog.Title = localizer["Confirmation required"];
-                modalDialog.Text = localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
+                modalDialog.Title = _localizer["Confirmation required"];
+                modalDialog.Text = _localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-                void importCuesheetDelegate(object sender, EventArgs args)
+                void importCuesheetDelegate(object? sender, EventArgs args)
                 {
                     modalDialog.Confirmed -= importCuesheetDelegate;
-                    SetCuesheetObject(Projectfile.ImportFile(memoryStream.ToArray()));
+                    var cuesheet = Projectfile.ImportFile(memoryStream.ToArray());
+                    if (cuesheet != null)
+                    {
+                        _sessionStateContainer.Cuesheet = cuesheet;
+                    }
                     StateHasChanged();
                 };
                 modalDialog.Confirmed += importCuesheetDelegate;
@@ -1843,8 +641,8 @@ along with Foobar.  If not, see
             }
             else
             {
-                modalDialog.Title = localizer["Error"];
-                modalDialog.Text = String.Format(localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, localizer["Import textfile"]);
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Import textfile"]);
                 modalDialog.ModalSize = ModalSize.Small;
                 modalDialog.Mode = ModalDialog.DialogMode.Alert;
                 modalDialog.ShowModal();
@@ -1852,82 +650,13 @@ along with Foobar.  If not, see
         }
     }
 
-    private void SetCuesheetObject(Cuesheet cuesheetToSet = null)
+    private void CurrentViewModeChanged(object? sender, EventArgs args)
     {
-        if ((sessionStateContainer.Cuesheet == null) || (cuesheetToSet != null))
-        {
-            if (cuesheetToSet != null)
-            {
-                sessionStateContainer.Cuesheet = cuesheetToSet;
-            }
-            else
-            {
-                sessionStateContainer.Cuesheet = new Cuesheet();
-            }
-
-        }
-        _traceChangeManager.Reset();
-        cuesheet = sessionStateContainer.Cuesheet;
-        _traceChangeManager.TraceChanges(cuesheet);
-        _traceChangeManager.TraceChanges(cuesheet.Cataloguenumber);
+        Task.Run(async () => await audioPlayer.Reset());
     }
 
-    private void SwitchTrackSelectionVisible()
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
-        trackSelectionVisible = !trackSelectionVisible;
-        if (trackSelectionVisible)
-        {
-            selectionDisplay = Display.TableCell;
-        }
-        else
-        {
-            selectionDisplay = Display.None;
-        }
-    }
-
-    private void SelectedTrackChanged(Track track, bool selected)
-    {
-        if (selected)
-        {
-            selectedTracks.Add(track);
-        }
-        else
-        {
-            selectedTracks.Remove(track);
-        }
-    }
-
-    private void DeleteSelectedTracksClicked()
-    {
-        cuesheet.RemoveTracks(selectedTracks.AsReadOnly());
-        selectedTracks.Clear();
-    }
-
-    private async Task OnViewModeSelected(ViewMode selectedViewMode)
-    {
-        CurrentViewMode = selectedViewMode;
-        //In case of record view we need to make shure no playback is running
-        if (CurrentViewMode == ViewMode.ViewModeRecord)
-        {
-            await audioPlayer.Reset();
-        }
-    }
-
-    private void UndoChanges(Boolean fireStateHasChanged = false)
-    {
-        _traceChangeManager.Undo();
-        if (fireStateHasChanged == true)
-        {
-            StateHasChanged();
-        }
-    }
-
-    private void RedoChanges(Boolean fireStateHasChanged = false)
-    {
-        _traceChangeManager.Redo();
-        if (fireStateHasChanged == true)
-        {
-            StateHasChanged();
-        }
+        StateHasChanged();
     }
 }

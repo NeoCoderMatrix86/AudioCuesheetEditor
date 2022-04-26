@@ -27,29 +27,29 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     public class Track : Validateable, ITrack<Cuesheet>, ITraceable
     {
         private uint? position;
-        private String artist;
-        private String title;
+        private String? artist;
+        private String? title;
         private TimeSpan? begin;
         private TimeSpan? end;
-        private List<Flag> flags = new List<Flag>();
-        private Track clonedFrom = null;
+        private List<Flag> flags = new();
+        private Track? clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
-        private Cuesheet cuesheet;
+        private Cuesheet? cuesheet;
         private TimeSpan? preGap;
         private TimeSpan? postGap;
 
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
         /// </summary>
-        public event EventHandler<String> RankPropertyValueChanged;
+        public event EventHandler<String>? RankPropertyValueChanged;
 
         /// <summary>
         /// Eventhandler for IsLinkedToPreviousTrack has changed
         /// </summary>
-        public event EventHandler IsLinkedToPreviousTrackChanged;
+        public event EventHandler? IsLinkedToPreviousTrackChanged;
 
         /// <inheritdoc/>
-        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
         /// <summary>
         /// Create object with copied values from input
@@ -94,23 +94,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return position; }
             set { var previousValue = position; position = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Position)); OnTraceablePropertyChanged(previousValue); }
         }
-        public String Artist 
+        public String? Artist 
         {
             get { return artist; }
             set { var previousValue = artist; artist = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
         }
-        public String Title 
+        public String? Title 
         {
             get { return title; }
             set { var previousValue = title; title = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
-        }
-        [JsonConverter(typeof(JsonTimeSpanConverter))]
+        }        
         public TimeSpan? Begin 
         {
             get { return begin; }
             set { var previousValue = begin; begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); OnTraceablePropertyChanged(previousValue); }
         }
-        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? End 
         {
             get { return end; }
@@ -145,11 +143,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     else
                     {
-                        if (End.HasValue == false)
+                        if ((End.HasValue == false) && (Begin.HasValue))
                         {
                             End = Begin.Value + value;
                         }
-                        if (Begin.HasValue == false)
+                        if ((Begin.HasValue == false) && (End.HasValue))
                         {
                             Begin = End.Value - value;
                         }
@@ -172,7 +170,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
         [JsonIgnore]
-        public Cuesheet Cuesheet 
+        public Cuesheet? Cuesheet 
         {
             get { return cuesheet; }
             set { var previousValue = cuesheet; cuesheet = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
@@ -186,20 +184,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <summary>
         /// Get the original track that this track has been cloned from. Can be null on original objects
         /// </summary>
-        public Track ClonedFrom
+        public Track? ClonedFrom
         {
             get { return clonedFrom; }
             private set { clonedFrom = value; OnValidateablePropertyChanged(); }
         }
         /// <inheritdoc/>
-        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? PreGap 
         {
             get { return preGap; }
             set { var previousValue = preGap; preGap = value; OnTraceablePropertyChanged(previousValue); }
         }
         /// <inheritdoc/>
-        [JsonConverter(typeof(JsonTimeSpanConverter))]
         public TimeSpan? PostGap 
         {
             get { return postGap; }
@@ -214,9 +210,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); OnTraceablePropertyChanged(previousValue); }
         }
 
-        public String GetDisplayNameLocalized(ITextLocalizer localizer)
+        public String? GetDisplayNameLocalized(ITextLocalizer localizer)
         {
-            String identifierString = null;
+            String? identifierString = null;
             if (Position != null)
             {
                 identifierString += String.Format("{0}", Position);
@@ -356,7 +352,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if (Cuesheet != null)
             {
                 Cuesheet.Tracks.ToList().ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
-                List<Track> tracksToAttachEventHandlerTo = new List<Track>();
+                List<Track> tracksToAttachEventHandlerTo = new();
                 if (Position.HasValue)
                 {
                     IEnumerable<Track> tracksWithSamePosition;
@@ -375,7 +371,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if (IsCloned == false)
                     {
-                        Track trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
+                        Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
                         if ((trackAtPosition == null) || (trackAtPosition != this))
                         {
                             validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
@@ -420,18 +416,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        protected void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        protected void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var changes = new Stack<TraceableChange>();
             changes.Push(new TraceableChange(previousValue, propertyName));
             TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
         }
 
-        private void Track_RankPropertyValueChanged(object sender, string e)
+        private void Track_RankPropertyValueChanged(object? sender, string e)
         {
-            Track track = (Track)sender;
-            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
-            OnValidateablePropertyChanged();
+            if (sender != null)
+            {
+                Track track = (Track)sender;
+                track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
+                OnValidateablePropertyChanged();
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(sender));
+            }
         }
     }
 }

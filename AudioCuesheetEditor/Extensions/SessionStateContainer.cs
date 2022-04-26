@@ -13,8 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +26,40 @@ namespace AudioCuesheetEditor.Extensions
 {
     public class SessionStateContainer
     {
-        public Cuesheet Cuesheet { get; set; }
+        public event EventHandler? CurrentViewModeChanged;
+        public event EventHandler? CuesheetChanged;
+
+        private readonly TraceChangeManager _traceChangeManager;
+        private ViewMode currentViewMode;
+        private Cuesheet cuesheet;
+
+        public SessionStateContainer(TraceChangeManager traceChangeManager)
+        {
+            _traceChangeManager = traceChangeManager ?? throw new ArgumentNullException(nameof(traceChangeManager));
+            cuesheet = new Cuesheet();
+            _traceChangeManager.TraceChanges(Cuesheet);
+        }
+
+        public Cuesheet Cuesheet 
+        {
+            get { return cuesheet; }
+            set
+            {
+                cuesheet = value;
+                _traceChangeManager.Reset();
+                _traceChangeManager.TraceChanges(Cuesheet);
+                CuesheetChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public ViewMode CurrentViewMode 
+        {
+            get { return currentViewMode; }
+            set
+            {
+                currentViewMode = value;
+                CurrentViewModeChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 }

@@ -74,18 +74,18 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public static readonly String DefaultSchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\\t]{1,}%Cuesheet.AudioFile%";
         public static readonly String DefaultSchemeTracks = "%Track.Artist% - %Track.Title%[\\t]{1,}%Track.End%";
 
-        public static readonly TextImportScheme DefaultTextImportScheme = new TextImportScheme 
+        public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
             SchemeCuesheet = DefaultSchemeCuesheet,
             SchemeTracks = DefaultSchemeTracks
         };
 
-        private string schemeTracks;
-        private string schemeCuesheet;
+        private string? schemeTracks;
+        private string? schemeCuesheet;
 
-        public event EventHandler<String> SchemeChanged;
+        public event EventHandler<String>? SchemeChanged;
 
-        public String SchemeTracks
+        public String? SchemeTracks
         {
             get { return schemeTracks; }
             set
@@ -96,7 +96,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
         }
 
-        public String SchemeCuesheet
+        public String? SchemeCuesheet
         {
             get { return schemeCuesheet; }
             set

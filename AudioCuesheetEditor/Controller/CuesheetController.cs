@@ -26,16 +26,12 @@ namespace AudioCuesheetEditor.Controller
 {
     public class CuesheetController
     {
-        private readonly Dictionary<FieldReference, Guid> fieldIdentifier = new Dictionary<FieldReference, Guid>();
+        private readonly Dictionary<FieldReference, Guid> fieldIdentifier = new();
 
         public String GetFieldIdentifier(IValidateable validateable, String property)
         {
-            if (validateable == null)
-            {
-                throw new ArgumentNullException(nameof(validateable));
-            }
             var identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
-            if (identifier.Key == null)
+            if (identifier.Equals(default(KeyValuePair<FieldReference, Guid>)))
             {
                 fieldIdentifier.Add(FieldReference.Create(validateable, property), Guid.NewGuid());
                 identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
@@ -45,12 +41,8 @@ namespace AudioCuesheetEditor.Controller
 
         public String GetFieldIdentifier(FieldReference fieldReference)
         {
-            if (fieldReference == null)
-            {
-                throw new ArgumentNullException(nameof(fieldReference));
-            }
             var identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
-            if (identifier.Key == null)
+            if (identifier.Equals(default(KeyValuePair<FieldReference, Guid>)))
             {
                 fieldIdentifier.Add(fieldReference, Guid.NewGuid());
                 identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);

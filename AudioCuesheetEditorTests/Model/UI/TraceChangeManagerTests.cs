@@ -102,7 +102,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             manager.Redo();
             Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
         }
-        
+
         [TestMethod()]
         public void UndoRedoCombinationTest()
         {
@@ -269,6 +269,28 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.AreEqual(track2, cuesheet.Tracks.First());
             manager.Undo();
             Assert.AreEqual(track1, cuesheet.Tracks.First());
+        }
+
+        [TestMethod()]
+        public void ResetTest()
+        {
+            var testhelper = new TestHelper();
+            var manager = new TraceChangeManager();
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsFalse(manager.CanRedo);
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            var track1 = new Track()
+            {
+                Artist = "Track 1 Artist",
+                Title = "Track 1 Title",
+                End = new TimeSpan(0, 2, 30)
+            };
+            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Reset();
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsFalse(manager.CanRedo);
         }
     }
 }

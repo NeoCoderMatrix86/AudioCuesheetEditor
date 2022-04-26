@@ -30,11 +30,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Validate();
         }
 
-        private String value;
+        private String? value;
 
-        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
-        public String Value 
+        public String? Value 
         {
             get { return value; }
             set 
@@ -70,7 +70,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var changes = new Stack<TraceableChange>();
             changes.Push(new TraceableChange(previousValue, propertyName));

@@ -35,13 +35,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public TextImportFile(MemoryStream fileContent)
         {
+            textImportScheme = new TextImportScheme();
             if (fileContent == null)
             {
                 throw new ArgumentNullException(nameof(fileContent));
             }
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);
-            List<String> lines = new List<String>();
+            List<String?> lines = new();
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -53,22 +54,18 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <summary>
         /// File content (each element is a file line)
         /// </summary>
-        public IReadOnlyCollection<String> FileContent { get; private set; }
+        public IReadOnlyCollection<String?> FileContent { get; private set; }
 
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        public IReadOnlyCollection<String> FileContentRecognized { get; private set; }
+        public IReadOnlyCollection<String?>? FileContentRecognized { get; private set; }
 
         public TextImportScheme TextImportScheme 
         {
             get { return textImportScheme; }
             set 
             { 
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(TextImportScheme));
-                }
                 if (textImportScheme != null)
                 {
                     textImportScheme.SchemeChanged -= TextImportScheme_SchemeChanged;
@@ -79,13 +76,13 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
         }
         
-        public Exception AnalyseException { get; private set; }
+        public Exception? AnalyseException { get; private set; }
 
         public Boolean IsValid { get { return AnalyseException == null; } }
 
-        public ImportCuesheet ImportCuesheet { get; private set; }
+        public ImportCuesheet? ImportCuesheet { get; private set; }
 
-        private void TextImportScheme_SchemeChanged(object sender, string e)
+        private void TextImportScheme_SchemeChanged(object? sender, string e)
         {
             Analyse();
         }
@@ -100,7 +97,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var regicesCuesheet = AnalyseScheme(TextImportScheme.SchemeCuesheet);
                 var regicesTracks = AnalyseScheme(TextImportScheme.SchemeTracks);
                 Boolean cuesheetRecognized = false;
-                List<String> recognizedFileContent = new List<string>();
+                List<String?> recognizedFileContent = new();
                 foreach (var line in FileContent)
                 {
                     if (String.IsNullOrEmpty(line) == false)
@@ -146,9 +143,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// </summary>
         /// <param name="scheme">Scheme to analyse</param>
         /// <returns>A read only dictionary with regular expressions and in format: "PropertyBefore", "PropertyAfter", Regular Expression </returns>
-        private IReadOnlyDictionary<Tuple<String, String>, Regex> AnalyseScheme(String scheme)
+        private IReadOnlyDictionary<Tuple<String, String>, Regex> AnalyseScheme(String? scheme)
         {
-            Dictionary<Tuple<String, String>, Regex> regices = new Dictionary<Tuple<String, String>, Regex>();
+            Dictionary<Tuple<String, String>, Regex> regices = new();
             try
             {
                 AnalyseException = null;
@@ -192,9 +189,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <param name="entity">Entity to set properties on</param>
         /// <param name="regices">Regular expressions for analysing</param>
         /// <returns>Analysed line with marking what has been matched</returns>
-        private static String AnalyseLine(String line, ICuesheetEntity entity, IReadOnlyDictionary<Tuple<String, String>, Regex> regices)
+        private static String? AnalyseLine(String line, ICuesheetEntity entity, IReadOnlyDictionary<Tuple<String, String>, Regex> regices)
         {
-            String recognized = null;
+            String? recognized = null;
             if ((String.IsNullOrEmpty(line) == false) && (entity != null) && (regices != null))
             {
                 var index = 0;
@@ -219,13 +216,27 @@ namespace AudioCuesheetEditor.Model.IO.Import
                                 i = regices.Count;
                             }
                         }
-                        SetValue(entity, propertyBefore, propertyValueBefore);
-                        //Set recognized
-                        recognized += String.Format("<Mark>{0}</Mark>{1}", line.Substring(index, match.Index), match.Value);
-                        if (otherMatchRegEx == false)
+                        if (propertyBefore != null)
                         {
-                            SetValue(entity, propertyAfter, propertyValueAfter);
-                            recognized += String.Format("<Mark>{0}</Mark>", line.Substring(index + match.Index + match.Length));
+                            SetValue(entity, propertyBefore, propertyValueBefore);
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(String.Format("PropertyInfo before was not found {0} for line content {1}", regexRelation.Key.Item1, line));
+                        }
+                        if (propertyAfter != null)
+                        {
+                            //Set recognized
+                            recognized += String.Format("<Mark>{0}</Mark>{1}", line.Substring(index, match.Index), match.Value);
+                            if (otherMatchRegEx == false)
+                            {
+                                SetValue(entity, propertyAfter, propertyValueAfter);
+                                recognized += String.Format("<Mark>{0}</Mark>", line.Substring(index + match.Index + match.Length));
+                            }
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(String.Format("PropertyInfo after was not found {0} for line content {1}", regexRelation.Key.Item2, line));
                         }
                         index = index + match.Index + match.Length;
                     }
@@ -242,14 +253,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <param name="value">Value to set</param>
         private static void SetValue(ICuesheetEntity entity, PropertyInfo property, string value)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-            if (property == null)
-            {
-                throw new ArgumentNullException(nameof(property));
-            }
             if (property.PropertyType == typeof(TimeSpan?))
             {
                 property.SetValue(entity, TimeSpan.Parse(value));

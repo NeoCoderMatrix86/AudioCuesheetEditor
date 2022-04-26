@@ -1,0 +1,273 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@implements IDisposable
+
+@inject ITextLocalizer<CuesheetData> _localizer
+@inject CuesheetController _cuesheetController
+@inject SessionStateContainer _sessionStateContainer
+@inject IJSRuntime _jsRuntime
+@inject ILogger<CuesheetData> _logger
+@inject HttpClient _httpClient
+@inject ITextLocalizerService _localizationService
+
+<Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)), seperator: Environment.NewLine)">
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+            <TextEdit id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="_sessionStateContainer.Cuesheet.Artist" Immediate="false" />
+        </FieldBody>
+    </Field>
+</Tooltip>
+<Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)), seperator: Environment.NewLine)">
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+            <TextEdit id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@_localizer["Enter cd title here"]" @bind-Text="_sessionStateContainer.Cuesheet.Title" Immediate="false" />
+        </FieldBody>
+    </Field>
+</Tooltip>
+@switch (_sessionStateContainer.CurrentViewMode)
+{
+    case ViewMode.ViewModeRecord:
+        @if (_sessionStateContainer.Cuesheet.Audiofile != null)
+        {
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Audiofile"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                    <Addons>
+                        @if (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded)
+                        {
+                            <Addon AddonType="AddonType.Start">
+                                <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
+                            </Addon>
+                        }
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit Disabled="true" Text="@_sessionStateContainer.Cuesheet.Audiofile.FileName" />
+                        </Addon>
+                    </Addons>
+                </FieldBody>
+            </Field>
+        }
+        break;
+    case ViewMode.ViewModeFull:
+        <Field Horizontal="true">
+            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Audiofile"]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                @if (_sessionStateContainer.Cuesheet.Audiofile == null)
+                {
+                    <!--TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664 -->
+                    var audioFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))));
+                    <InputFile class="@audioFileCSSClass" id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Audiofile))" accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnChange="OnAudioFileChanged" data-toggle="tooltip" data-placement="top" title="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))"></InputFile>
+                }
+                else
+                {
+                    <Addons>
+                        @if (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded)
+                        {
+                            <Addon AddonType="AddonType.Start">
+                                <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
+                            </Addon>
+                        }
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit Disabled="true" Text="@_sessionStateContainer.Cuesheet.Audiofile.FileName" />
+                        </Addon>
+                        <Addon AddonType="AddonType.End">
+                            <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@_localizer["Change"]</Button>
+                        </Addon>
+                    </Addons>
+                }
+            </FieldBody>
+        </Field>
+        <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)), seperator: Environment.NewLine)">
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD textfile"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                    @if (_sessionStateContainer.Cuesheet.CDTextfile == null)
+                    {
+                        var cdTextFileCSSClass = String.Format("form-control {0}", GetCSSClassAlert(_sessionStateContainer.Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile))));
+                        <InputFile class="@cdTextFileCSSClass" id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" OnChange="OnCDTextfileChanged"></InputFile>
+                    }
+                    else
+                    {
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Disabled="true" Text="@_sessionStateContainer.Cuesheet.CDTextfile.FileName" />
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeCDTextfileClicked">@_localizer["Change"]</Button>
+                            </Addon>
+                        </Addons>
+                    }
+                </FieldBody>
+            </Field>
+        </Tooltip>
+        <Tooltip Placement="TooltipPlacement.Top" Text="@_sessionStateContainer.Cuesheet.Cataloguenumber.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)), seperator: Environment.NewLine)">
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                    <TextEdit id="@_cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(_sessionStateContainer.Cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="_sessionStateContainer.Cuesheet.Cataloguenumber.Value" Immediate="false" />
+                </FieldBody>
+            </Field>
+        </Tooltip>
+        break;
+}
+
+<ModalDialog @ref="modalDialog" />
+
+@code {
+    ModalDialog modalDialog = default!;
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        _logger.LogDebug("OnInitializedAsync");
+        
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+
+        return base.OnInitializedAsync();
+    }
+
+    private async Task OnChangeAudioFileClicked()
+    {
+        _logger.LogInformation("OnChangeAudioFileClicked");
+        _sessionStateContainer.Cuesheet.Audiofile = null;
+        StateHasChanged();
+        await Task.Delay(1);
+        await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Audiofile)));
+    }
+
+    private async Task OnAudioFileChanged(InputFileChangeEventArgs e)
+    {
+        _logger.LogInformation("OnAudioFileChanged with {0}", e);
+        if (e.File != null)
+        {
+            if (CuesheetController.CheckFileMimeType(e.File, Audiofile.AudioCodecs) == true)
+            {
+                await SetAudioFile(e.File, _cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.Audiofile)));
+            }
+            else
+            {
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Audiofile"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
+        }
+    }
+
+    private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
+    {
+        _logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
+        if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
+        {
+            await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
+        }
+        if (browserFile != null)
+        {
+            var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
+            var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
+            _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec, _httpClient);
+        }
+        else
+        {
+            _sessionStateContainer.Cuesheet.Audiofile = null;
+        }
+    }
+
+    private async Task OnChangeCDTextfileClicked()
+    {
+        _logger.LogInformation("OnChangeCDTextfileClicked");
+        _sessionStateContainer.Cuesheet.CDTextfile = null;
+        StateHasChanged();
+        await Task.Delay(1);
+        await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(_sessionStateContainer.Cuesheet, nameof(Cuesheet.CDTextfile)));
+    }
+
+    private void OnCDTextfileChanged(InputFileChangeEventArgs e)
+    {
+        _logger.LogInformation("OnCDTextfileChanged with {0}", e);
+        if (e.File != null)
+        {
+            if (CuesheetController.CheckFileMimeType(e.File, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
+            {
+                _sessionStateContainer.Cuesheet.CDTextfile = new CDTextfile(e.File.Name);
+            }
+            else
+            {
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["CD textfile"]);
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                modalDialog.ShowModal();
+            }
+        }
+    }
+
+    private String GetCSSClassAlert(Validateable validateable, String property)
+    {
+        String cssClass = String.Empty;
+        var validationErrors = validateable.GetValidationErrorsFiltered(property);
+        if (validationErrors.Count() >= 1)
+        {
+            if (validationErrors.Count() > 1)
+            {
+                if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
+                {
+                    cssClass = "alert-danger";
+                }
+                else
+                {
+                    cssClass = "alert-warning";
+                }
+            }
+            else
+            {
+                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Error)
+                {
+                    cssClass = "alert-danger";
+                }
+                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Warning)
+                {
+                    cssClass = "alert-warning";
+                }
+            }
+        }
+        return cssClass;
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+}
