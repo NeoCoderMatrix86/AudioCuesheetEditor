@@ -109,6 +109,7 @@ namespace AudioCuesheetEditor.Model.UI
             {
                 do
                 {
+                    //TODO: Throws exception because of stack beeing empty!
                     tracedChange = undoStack.Pop();
                     if (tracedChange.TraceableObject != null)
                     {
@@ -120,6 +121,7 @@ namespace AudioCuesheetEditor.Model.UI
             {
                 do
                 {
+                    //TODO: Throws exception because of stack beeing empty!
                     tracedChange = redoStack.Pop();
                     if (tracedChange.TraceableObject != null)
                     {
