@@ -9,6 +9,11 @@ labels: 'unreviewed bug'
 **Describe the bug**
 A clear and concise description of what the bug is.
 
+**Exception details (if possible)**
+1. Open developer tools (usually found by pressing F12)
+2. Open tab console.
+3. Copy contents and paste here.
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'

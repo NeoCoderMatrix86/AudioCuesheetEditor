@@ -104,7 +104,6 @@ along with Foobar.  If not, see
                         </CollapseBody>
                     </Collapse>
                 </Accordion>
-
                 <br />
                 <AudioPlayer @ref="audioPlayer" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
                 <br />
@@ -361,6 +360,7 @@ along with Foobar.  If not, see
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
             .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Undo())
             .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Redo());
+            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show());
 
         _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
 
