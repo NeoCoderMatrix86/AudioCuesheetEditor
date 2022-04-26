@@ -104,30 +104,21 @@ namespace AudioCuesheetEditor.Model.UI
 
         public void Reset()
         {
-            TracedChange? tracedChange = null;
-            if (undoStack.Count > 0)
+            while (undoStack.Count > 0)
             {
-                do
+                var tracedChange = undoStack.Pop();
+                if (tracedChange.TraceableObject != null)
                 {
-                    //TODO: Throws exception because of stack beeing empty!
-                    tracedChange = undoStack.Pop();
-                    if (tracedChange.TraceableObject != null)
-                    {
-                        tracedChange.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-                    }
-                } while (tracedChange != null);
+                    tracedChange.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+                }
             }
-            if (redoStack.Count > 0)
+            while (redoStack.Count > 0)
             {
-                do
+                var tracedChange = redoStack.Pop();
+                if (tracedChange.TraceableObject != null)
                 {
-                    //TODO: Throws exception because of stack beeing empty!
-                    tracedChange = redoStack.Pop();
-                    if (tracedChange.TraceableObject != null)
-                    {
-                        tracedChange.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-                    }
-                } while (tracedChange != null);
+                    tracedChange.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
+                }
             }
             undoStack.Clear();
             redoStack.Clear();
