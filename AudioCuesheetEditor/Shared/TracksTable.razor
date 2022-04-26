@@ -257,7 +257,7 @@ along with Foobar.  If not, see
                         </TableRowCell>
                         <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                @GetMarkupString(track.GetValidationErrors(validationMessageLocalizer))
+                                @((MarkupString)GetMarkupString(track.GetValidationErrors(validationMessageLocalizer)))
                             </Tooltip>
                         </TableRowCell>
                         break;
@@ -588,9 +588,9 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private MarkupString? GetMarkupString(String? stringValue)
+    private MarkupString GetMarkupString(String? stringValue)
     {
-        MarkupString? result = null;
+        MarkupString result = new MarkupString(String.Empty);
         if (stringValue != null)
         {
             result = new MarkupString(stringValue);
