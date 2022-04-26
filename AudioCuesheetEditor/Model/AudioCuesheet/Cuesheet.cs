@@ -35,6 +35,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
+    public class TrackAddRemoveEventArgs : EventArgs
+    {
+        public TrackAddRemoveEventArgs(Track track)
+        {
+            Track = track;
+        }
+
+        public Track Track { get; private set; }
+    }
+
     public class Cuesheet : Validateable, ICuesheet<Track>, ITraceable
     {
         private readonly object syncLock = new();
@@ -51,6 +61,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
+        public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
+        public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
 
         public Cuesheet()
         {
@@ -230,6 +242,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
         }
 
         public void RemoveTrack(Track track)
@@ -273,6 +286,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            TrackRemoved?.Invoke(this, new TrackAddRemoveEventArgs(track));
         }
 
         /// <summary>

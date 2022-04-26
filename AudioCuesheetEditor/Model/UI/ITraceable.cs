@@ -36,7 +36,7 @@ namespace AudioCuesheetEditor.Model.UI
         public string PropertyName { get; }
     }
 
-    public class TraceablePropertiesChangedEventArgs
+    public class TraceablePropertiesChangedEventArgs : EventArgs
     {
         public TraceablePropertiesChangedEventArgs(Stack<TraceableChange> traceableChanges)
         {
