@@ -28,19 +28,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <summary>
         /// 4CH (Four channel audio)
         /// </summary>
-        public static readonly Flag FourCH = new Flag("4CH", "4CH");
+        public static readonly Flag FourCH = new("4CH", "4CH");
         /// <summary>
         /// DCP (Digital copy permitted)
         /// </summary>
-        public static readonly Flag DCP = new Flag("DCP", "DCP");
+        public static readonly Flag DCP = new("DCP", "DCP");
         /// <summary>
         /// PRE (Pre-emphasis enabled)
         /// </summary>
-        public static readonly Flag PRE = new Flag("PRE", "PRE");
+        public static readonly Flag PRE = new("PRE", "PRE");
         /// <summary>
         /// SCMS (Serial copy management system)
         /// </summary>
-        public static readonly Flag SCMS = new Flag("SCMS", "SCMS");
+        public static readonly Flag SCMS = new("SCMS", "SCMS");
 
         public static readonly IReadOnlyCollection<Flag> AvailableFlags;
         static Flag()
