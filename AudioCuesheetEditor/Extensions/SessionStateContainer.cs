@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.Extensions
     public class SessionStateContainer
     {
         public event EventHandler? CurrentViewModeChanged;
-
+        public event EventHandler? CuesheetChanged;
 
         private readonly TraceChangeManager _traceChangeManager;
         private ViewMode currentViewMode;
@@ -48,6 +48,7 @@ namespace AudioCuesheetEditor.Extensions
                 cuesheet = value;
                 _traceChangeManager.Reset();
                 _traceChangeManager.TraceChanges(Cuesheet);
+                CuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

@@ -160,6 +160,8 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         _jsRuntime.InvokeVoidAsync("closeAudioRecording");
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
     [JSInvokable()]
@@ -194,10 +196,8 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
         await _jsRuntime.InvokeVoidAsync("setupAudioRecording");
 
-        _localizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
 
         updateGUITimer = new Timer(500);
         updateGUITimer.AutoReset = true;
@@ -347,5 +347,15 @@ along with Foobar.  If not, see
             startRecordTimer.Start();
         }
         updateGUITimer.Start();
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

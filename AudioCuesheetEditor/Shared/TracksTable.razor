@@ -409,14 +409,17 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
     protected override Task OnInitializedAsync()
     {
         _logger.LogDebug("OnInitializedAsync");
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
 
         return base.OnInitializedAsync();
     }
@@ -596,5 +599,10 @@ along with Foobar.  If not, see
             result = new MarkupString(stringValue);
         }
         return result;
+    }
+
+    private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
