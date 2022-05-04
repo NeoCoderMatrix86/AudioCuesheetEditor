@@ -32,7 +32,8 @@ namespace AudioCuesheetEditor.Model.Options
     public enum ViewMode
     {
         ViewModeFull = 0,
-        ViewModeRecord = 1
+        ViewModeRecord = 1,
+        ViewModeImport = 2
     }
 
     public enum TimeSensitivityMode

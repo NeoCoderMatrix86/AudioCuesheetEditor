@@ -28,10 +28,12 @@ namespace AudioCuesheetEditor.Extensions
     {
         public event EventHandler? CurrentViewModeChanged;
         public event EventHandler? CuesheetChanged;
+        public event EventHandler? ImportCuesheetChanged;
 
         private readonly TraceChangeManager _traceChangeManager;
         private ViewMode currentViewMode;
         private Cuesheet cuesheet;
+        private Cuesheet? importCuesheet;
 
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
@@ -39,7 +41,6 @@ namespace AudioCuesheetEditor.Extensions
             cuesheet = new Cuesheet();
             _traceChangeManager.TraceChanges(Cuesheet);
         }
-
         public Cuesheet Cuesheet 
         {
             get { return cuesheet; }
@@ -49,6 +50,16 @@ namespace AudioCuesheetEditor.Extensions
                 _traceChangeManager.Reset();
                 _traceChangeManager.TraceChanges(Cuesheet);
                 CuesheetChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        //TODO: Maybe use importcuesheet class?
+        public Cuesheet? ImportCuesheet
+        {
+            get { return importCuesheet; }
+            set
+            {
+                importCuesheet = value;
+                ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

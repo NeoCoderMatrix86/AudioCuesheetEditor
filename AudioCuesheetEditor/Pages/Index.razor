@@ -40,53 +40,6 @@ along with Foobar.  If not, see
         case ViewMode.ViewModeFull:
             <Column>
                 <Accordion>
-                    <Collapse Visible="dropFilesVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => dropFilesVisible = !dropFilesVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Drop files"]</Heading></Button>                                    
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <div class="fileUploadDragNDrop mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropInputfiles')">
-                                <svg class="fileUploadDragNDropIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
-                                <InputFile id="dropInputfiles" class="inputfile" multiple OnChange="OnDropInputfilesChanged"></InputFile>
-                                <label for="dropInputfiles">@((MarkupString)(_localizer["Choose file or drag it here"].ToString()))</label>
-                            </div>
-                            <Alert @ref="alertInvalidFile" Color="Color.Danger">
-                                <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
-                                <AlertDescription>@String.Format(_localizer["You dropped an invalid file that can not be processed"], invalidFileName)</AlertDescription>
-                            </Alert>
-                        </CollapseBody>
-                    </Collapse>
-                    <Collapse Visible="importVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => importVisible = !importVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import from existing files"]</Heading></Button>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import textfile tooltip"]">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Textfile"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                        <InputFile class="form-control" accept="@TextImportFile.MimeType" OnChange="OnInputFileTextImportChange"></InputFile>
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import cuesheet tooltip"]">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                        <InputFile class="form-control" accept="@Cuesheetfile.FileExtension" OnChange="OnInputFileCuesheetChange"></InputFile>
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import project tooltip"]">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Project filename"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                        <InputFile class="form-control" accept="@Projectfile.FileExtension" OnChange="OnProjectfileChanged"></InputFile>
-                                    </FieldBody>
-                                </Field>
-                            </Tooltip>
-                        </CollapseBody>
-                    </Collapse>
                     <Collapse Visible="cuesheetDataVisible">
                         <CollapseHeader>
                             <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
@@ -119,184 +72,13 @@ along with Foobar.  If not, see
                 </Card>
             </Column>
             break;
+        case ViewMode.ViewModeImport:
+            <ViewModeImport />
+            break;
     }
 </Row>
 
 <ModalDialog @ref="modalDialog" />
-
-<Modal @ref="modalTextImport">
-    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
-        <ModalHeader>
-            <ModalTitle>
-                @_localizer["Textimport assistant"]
-            </ModalTitle>
-            <CloseButton Clicked="TextImportAbortClicked" />
-        </ModalHeader>
-        <ModalBody>
-            @if (textImportFile != null)
-            {
-                <Accordion Style="margin-bottom: 1rem;">
-                    <Collapse Visible="textImportFileContentVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
-                        </CollapseHeader>
-                        <CollapseBody Style="background: lightgray;">
-                            <Text>
-                                @if (textImportFile.FileContentRecognized != null)
-                                {
-                                    @((MarkupString)String.Join("<br />", textImportFile.FileContentRecognized))
-                                }
-                            </Text>
-                        </CollapseBody>
-                    </Collapse>
-                </Accordion>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
-                            @_localizer["Textimportscheme cuesheet"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is8">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @_localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
-                                        {
-                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
-                            @_localizer["Textimportscheme track"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is8">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @_localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
-                                        {
-                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                @if (textImportFile.AnalyseException != null)
-                {
-                    <Alert Color="Color.Danger" Visible="true">
-                        <AlertDescription>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-exclamation-octagon" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1L1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z" />
-                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
-                            </svg>
-                        </AlertDescription>
-                        <AlertMessage>@_localizer["Error during textimport"] : @textImportFile.AnalyseException.Message</AlertMessage>
-                    </Alert>
-                }
-                <Divider DividerType="DividerType.Solid" />
-                @if (textImportFile.ImportCuesheet != null)
-                {
-                    <Heading Size="HeadingSize.Is4">@_localizer["ImportCuesheetValues"]</Heading>
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD artist"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Artist" ReadOnly="true" />
-                        </FieldBody>
-                    </Field>
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD title"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
-                        </FieldBody>
-                    </Field>
-                    @if (textImportFile.ImportCuesheet.Audiofile != null)
-                    {
-                        <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["Audiofile"]</FieldLabel>
-                            <FieldBody ColumnSize="ColumnSize.Is8">
-                                <TextEdit Text="@textImportFile.ImportCuesheet.Audiofile.FileName" ReadOnly="true" />
-                            </FieldBody>
-                        </Field>
-                    }
-                    @if (textImportFile.ImportCuesheet.CDTextfile != null)
-                    {
-                        <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD textfile"]</FieldLabel>
-                            <FieldBody ColumnSize="ColumnSize.Is8">
-                                <TextEdit Text="@textImportFile.ImportCuesheet.CDTextfile.FileName" ReadOnly="true" />
-                            </FieldBody>
-                        </Field>
-                    }
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["Cataloguenumber"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Cataloguenumber.Value" ReadOnly="true" />
-                        </FieldBody>
-                    </Field>
-                    <Heading Size="HeadingSize.Is5">@_localizer["Cuesheet tracks"]</Heading>
-                    <Table Bordered="true" Responsive="true" Narrow="true">
-                        <TableHeader ThemeContrast="ThemeContrast.Light">
-                            <TableRow>
-                                <TableHeaderCell>#</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Flags"]</TableHeaderCell>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            @foreach (var track in textImportFile.ImportCuesheet.Tracks)
-                            {
-                                <TableRow>
-                                    <TableRowCell>@track.Position</TableRowCell>
-                                    <TableRowCell>@track.Artist</TableRowCell>
-                                    <TableRowCell>@track.Title</TableRowCell>
-                                    <TableRowCell>@track.Begin</TableRowCell>
-                                    <TableRowCell>@track.End</TableRowCell>
-                                    <TableRowCell>@track.Length</TableRowCell>
-                                    <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
-                                </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
-                }
-            }
-        </ModalBody>
-        <ModalFooter>
-            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "Import not possible due to textimport errors. Please check errors!")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@_localizer["Start textimport"]</Button>
-            </Tooltip>
-            <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@_localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
 
 @code {
     public void Dispose()
@@ -330,20 +112,9 @@ along with Foobar.  If not, see
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
 
-    Boolean importVisible = false;
-    Boolean dropFilesVisible = true;
-    Boolean textImportFileContentVisible = true;
-
     HotKeysContext hotKeysContext = default!;
 
-    String invalidFileName = default!;
-
-    TextImportFile? textImportFile;
-
     ModalDialog modalDialog = default!;
-    Alert alertInvalidFile = default!;
-
-    Modal modalTextImport = default!;
     AudioPlayer audioPlayer = default!;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
@@ -407,144 +178,6 @@ along with Foobar.  If not, see
         return cssClass;
     }
 
-    private async Task OnInputFileTextImportChange(InputFileChangeEventArgs e)
-    {
-        _logger.LogInformation("OnInputFileTextImportChange with {0}", e);
-        if (e.File != null)
-        {
-            if (CuesheetController.CheckFileMimeType(e.File, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
-            {
-                var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-                var stream = e.File.OpenReadStream();
-                MemoryStream memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                stream.Close();
-                textImportFile = new TextImportFile(memoryStream);
-                textImportFile.TextImportScheme = options.TextImportScheme;
-                await modalTextImport.Show();
-            }
-            else
-            {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Import textfile"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
-            }
-        }
-    }
-
-    private void TextImportAbortClicked()
-    {
-        _logger.LogInformation("TextImportAbortClicked");
-        modalTextImport.Hide();
-        textImportFile = null;
-    }
-
-    private async Task TextImportStartClicked()
-    {
-        _logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
-        if ((textImportFile != null) && (textImportFile.IsValid == true))
-        {
-            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-            var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-            options.TextImportScheme = textImportFile.TextImportScheme;
-            await _localStorageOptionsProvider.SaveOptions(options);
-            _sessionStateContainer.Cuesheet.Import(textImportFile, applicationOptions);
-            await modalTextImport.Hide();
-            textImportFile = null;
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnInputFileCuesheetChange(InputFileChangeEventArgs e)
-    {
-        _logger.LogInformation("OnInputFileCuesheetChange with {0}", e);
-        if (e.File != null)
-        {
-            if (CuesheetController.CheckFileMimeType(e.File, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
-            {
-                var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-                var stream = e.File.OpenReadStream();
-                MemoryStream memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                stream.Close();
-                //Display a confirm warning
-                modalDialog.Title = _localizer["Confirmation required"];
-                modalDialog.Text = _localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-                void importCuesheetDelegate(object? sender, EventArgs args)
-                {
-                    _sessionStateContainer.Cuesheet = Cuesheetfile.ImportCuesheet(memoryStream, options);
-                    modalDialog.Confirmed -= importCuesheetDelegate;
-                    StateHasChanged();
-                };
-                modalDialog.Confirmed += importCuesheetDelegate;
-                modalDialog.ShowModal();
-            }
-            else
-            {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Import cuesheet"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
-            }
-        }
-    }
-
-    private async Task OnDropInputfilesChanged(InputFileChangeEventArgs e)
-    {
-        _logger.LogInformation("OnDropInputfilesChanged with {0}", e);
-        await alertInvalidFile.Hide();
-        Boolean importedAllFiles = true;
-        foreach (var file in e.GetMultipleFiles())
-        {
-            _logger.LogInformation("file = {0}", file);
-            Boolean recognized = false;
-            var files = new List<IBrowserFile>();
-            files.Add(file);
-            if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
-            {
-                recognized = true;
-                await OnInputFileTextImportChange(new InputFileChangeEventArgs(files.AsReadOnly()));
-            }
-            if (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
-            {
-                recognized = true;
-                await OnInputFileCuesheetChange(new InputFileChangeEventArgs(files.AsReadOnly()));
-            }
-            if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
-            {
-                recognized = true;
-                await SetAudioFile(file, "dropInputfiles");
-            }
-            if (CuesheetController.CheckFileMimeType(file, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
-            {
-                recognized = true;
-                OnCDTextfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
-            }
-            if (CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
-            {
-                recognized = true;
-                await OnProjectfileChanged(new InputFileChangeEventArgs(files.AsReadOnly()));
-            }
-            if (recognized == false)
-            {
-                invalidFileName = e.File.Name;
-                await alertInvalidFile.Show();
-                importedAllFiles = false;
-            }
-        }
-        if (importedAllFiles == true)
-        {
-            //Hide the import
-            dropFilesVisible = false;
-            importVisible = false;
-        }
-    }
-
     private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
     {
         if (expressionToCheck == true)
@@ -557,97 +190,13 @@ along with Foobar.  If not, see
         }
     }
 
-    //TODO: Only here because of reference by input file, remove when redesigned!
-    private async Task SetAudioFile(IBrowserFile browserFile, String inputDomId)
+    private Task OnEnterKeyDown()
     {
-        _logger.LogInformation("SetAudioFile with {0}, {1}", browserFile, inputDomId);
-        if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
-        {
-            await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
-        }
-        if (browserFile != null)
-        {
-            var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
-            var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase));
-            _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec, _httpClient);
-        }
-        else
-        {
-            _sessionStateContainer.Cuesheet.Audiofile = null;
-        }
-    }
-
-    //TODO: Only here because of reference by input file, remove when redesigned!
-    private void OnCDTextfileChanged(InputFileChangeEventArgs e)
-    {
-        _logger.LogInformation("OnCDTextfileChanged with {0}", e);
-        if (e.File != null)
-        {
-            if (CuesheetController.CheckFileMimeType(e.File, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
-            {
-                _sessionStateContainer.Cuesheet.CDTextfile = new CDTextfile(e.File.Name);
-            }
-            else
-            {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["CD textfile"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
-            }
-        }
-    }
-
-    private async Task OnEnterKeyDown()
-    {
-        if (modalTextImport.Visible)
-        {
-            await TextImportStartClicked();
-        }
         if (modalDialog.Visible)
         {
             modalDialog.Confirm();
         }
-    }
-
-    private async Task OnProjectfileChanged(InputFileChangeEventArgs e)
-    {
-        _logger.LogInformation("OnProjectfileChanged with {0}", e);
-        if (e.File != null)
-        {
-            if (CuesheetController.CheckFileMimeType(e.File, Projectfile.MimeType, Projectfile.FileExtension) == true)
-            {
-                var stream = e.File.OpenReadStream();
-                MemoryStream memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                stream.Close();
-                //Display a confirm warning
-                modalDialog.Title = _localizer["Confirmation required"];
-                modalDialog.Text = _localizer["Do you really want to import this file? This can not be undone and unsaved changes are lost!"];
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-                void importCuesheetDelegate(object? sender, EventArgs args)
-                {
-                    modalDialog.Confirmed -= importCuesheetDelegate;
-                    var cuesheet = Projectfile.ImportFile(memoryStream.ToArray());
-                    if (cuesheet != null)
-                    {
-                        _sessionStateContainer.Cuesheet = cuesheet;
-                    }
-                    StateHasChanged();
-                };
-                modalDialog.Confirmed += importCuesheetDelegate;
-                modalDialog.ShowModal();
-            }
-            else
-            {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], e.File.Name, _localizer["Import textfile"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
-            }
-        }
+        return Task.CompletedTask;
     }
 
     private void CurrentViewModeChanged(object? sender, EventArgs args)

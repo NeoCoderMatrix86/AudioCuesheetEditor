@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Reflection;
+using Blazorise;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
@@ -50,14 +51,14 @@ namespace AudioCuesheetEditor.Controller
             return String.Format("{0}_{1}", identifier.Key.CompleteName, identifier.Value.ToString());
         }
 
-        public static Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
+        public static Boolean CheckFileMimeType(IFileEntry file, String mimeType, String fileExtension)
         {
             Boolean fileMimeTypeMatches = false;
             if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
             {
-                if (String.IsNullOrEmpty(file.ContentType) == false)
+                if (String.IsNullOrEmpty(file.Type) == false)
                 {
-                    fileMimeTypeMatches = file.ContentType.ToLower() == mimeType.ToLower();
+                    fileMimeTypeMatches = file.Type.ToLower() == mimeType.ToLower();
                 }
                 else
                 {
@@ -69,13 +70,13 @@ namespace AudioCuesheetEditor.Controller
             return fileMimeTypeMatches;
         }
 
-        public static Boolean CheckFileMimeType(IBrowserFile file, IReadOnlyCollection<AudioCodec> audioCodecs)
+        public static Boolean CheckFileMimeType(IFileEntry file, IReadOnlyCollection<AudioCodec> audioCodecs)
         {
             Boolean fileMimeTypeMatches = false;
             if ((file != null) && (audioCodecs != null))
             {
                 var extension = Path.GetExtension(file.Name).ToLower();
-                var audioCodecsFound = audioCodecs.Where(x => x.MimeType.Equals(file.ContentType, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
+                var audioCodecsFound = audioCodecs.Where(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
                 fileMimeTypeMatches = (audioCodecsFound != null) && (audioCodecsFound.Any());
             }
             return fileMimeTypeMatches;
