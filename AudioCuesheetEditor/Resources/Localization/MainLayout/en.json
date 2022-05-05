@@ -28,6 +28,7 @@
     "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost!",
     "ViewModeFull": "Full edit mode",
     "ViewModeRecord": "Live record mode",
+    "ViewModeImport": "Import assistant mode",
     "Undo": "Undo",
     "Redo": "Redo"
   }

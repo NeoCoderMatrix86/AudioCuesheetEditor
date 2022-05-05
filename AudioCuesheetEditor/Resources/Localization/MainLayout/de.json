@@ -28,6 +28,7 @@
     "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Bitte Bestätigen Sie, dass die komplette Anwendung auf Werkseinstellungen zurückgesetzt werden soll. Alle Daten werden gelöscht und die Anwedung neu geladen. Alle nicht gespeicherten Daten sind gelöscht!",
     "ViewModeFull": "Komplette Bearbeitung",
     "ViewModeRecord": "Aufnahmemodus",
+    "ViewModeImport": "Import Assistent",
     "Undo": "Rückgängig",
     "Redo": "Wiederherstellen"
   }

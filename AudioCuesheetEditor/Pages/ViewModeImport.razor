@@ -16,6 +16,8 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@implements IDisposable
+
 @inject ITextLocalizer<ViewModeImport> _localizer
 @inject SessionStateContainer _sessionStateContainer
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
@@ -102,14 +104,13 @@ along with Foobar.  If not, see
             <Card>
                 <CardHeader><CardTitle Size="2">@_localizer["Validate data for import"]</CardTitle></CardHeader>
                 <CardBody>
-                    @*TODO*@
                     <Alert Color="Color.Info" Visible>
                         <Heading Size="HeadingSize.Is3">
                             @_localizer["Recognition of import data finished"]
                         </Heading>
                         <Paragraph>@_localizer["Please validate the following data recognized by import assistant. Once you have validated all input, you can confirm import of data."]</Paragraph>
                         <Paragraph>
-                            <Button Color="Color.Success">@_localizer["Import the displayed data"]</Button>
+                            <Button Color="Color.Success" Clicked="ImportData">@_localizer["Import the displayed data"]</Button>
                         </Paragraph>
                     </Alert>
                     <Accordion>
@@ -233,7 +234,7 @@ along with Foobar.  If not, see
                 <Divider DividerType="DividerType.Solid" />
                 @if (textImportFile.ImportCuesheet != null)
                 {
-                    <Heading Size="HeadingSize.Is4">@_localizer["ImportCuesheetValues"]</Heading>
+                    <Heading Size="HeadingSize.Is4">@_localizer["Cuesheet data"]</Heading>
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD artist"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is8">
@@ -310,6 +311,8 @@ along with Foobar.  If not, see
     </ModalContent>
 </Modal>
 
+<ModalDialog @ref="modalDialog" />
+
 @code {
     String selectedStep = "selectFiles";
     String dragNDropUploadFilter = String.Join(',', TextImportFile.MimeType, Cuesheetfile.FileExtension, Projectfile.FileExtension);
@@ -319,6 +322,7 @@ along with Foobar.  If not, see
     Modal modalTextImport = default!;
     Boolean selectFilesCompleted = false;
     Alert alertInvalidFile = default!;
+    ModalDialog modalDialog = default!;
     List<String> invalidTextImportFileNames = new();
     List<String> invalidCuesheetfileNames = new();
     List<String> invalidProjectfileNames = new();
@@ -328,11 +332,22 @@ along with Foobar.  If not, see
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     HotKeysContext hotKeysContext = default!;
 
+    public void Dispose()
+    {
+        if (hotKeysContext != null)
+        {
+            hotKeysContext.Dispose();
+        }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
     protected override Task OnInitializedAsync()
     {
         _logger.LogDebug("OnInitializedAsync");
 
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
@@ -355,7 +370,11 @@ along with Foobar.  If not, see
                 }
                 else
                 {
-                    //TODO: Warn user
+                    modalDialog.Title = _localizer["Not possible!"];
+                    modalDialog.Text = _localizer["Please select files for import before going to validation!"];
+                    modalDialog.ModalSize = ModalSize.Small;
+                    modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                    modalDialog.ShowModal();
                 }
                 break;
         }
@@ -548,9 +567,26 @@ along with Foobar.  If not, see
 
     private async Task OnEnterKeyDown()
     {
+        if (modalDialog.Visible)
+        {
+            modalDialog.Confirm();
+        }
         if (modalTextImport.Visible)
         {
             await TextImportStartClicked();
         }
+    }
+
+    private Task ImportData()
+    {
+        _sessionStateContainer.StartImportCuesheet();
+        _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

@@ -72,5 +72,14 @@ namespace AudioCuesheetEditor.Extensions
                 CurrentViewModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
+
+        public void StartImportCuesheet()
+        {
+            if (ImportCuesheet != null)
+            {
+                Cuesheet = ImportCuesheet;
+                ImportCuesheet = null;
+            }
+        }
     }
 }
