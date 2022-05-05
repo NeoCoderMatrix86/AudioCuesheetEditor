@@ -6,7 +6,7 @@ on:
     branches: [ master ]
   pull_request:
     types: [opened, reopened]
-    
+
 jobs:    
   run-unit-tests:
     # use ubuntu-latest image to run steps on
