@@ -52,14 +52,6 @@ namespace AudioCuesheetEditor.Model.IO
         public static Cuesheet ImportCuesheet(MemoryStream fileContent, ApplicationOptions applicationOptions)
         {
             //TODO: Redesign to get recognized text passages
-            if (fileContent == null)
-            {
-                throw new ArgumentNullException(nameof(fileContent));
-            }
-            if (applicationOptions == null)
-            {
-                throw new ArgumentNullException(nameof(applicationOptions));
-            }
             var cuesheet = new Cuesheet();
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);

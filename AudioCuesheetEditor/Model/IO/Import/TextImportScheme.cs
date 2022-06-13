@@ -122,6 +122,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     {
                         if (SchemeCuesheet.Contains(availableScheme.Value) == true)
                         {
+                            //TODO: Add field name to validation error!
                             addValidationError = true;
                             break;
                         }
@@ -145,6 +146,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     {
                         if (SchemeTracks.Contains(availableScheme.Value) == true)
                         {
+                            //TODO: Add field name to validation error!
                             addValidationError = true;
                             break;
                         }
