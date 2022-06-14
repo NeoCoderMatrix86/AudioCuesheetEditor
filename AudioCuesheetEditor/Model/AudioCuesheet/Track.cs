@@ -24,7 +24,13 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITrack<Cuesheet>, ITraceable
+    public enum SetFlagMode
+    {
+        Add,
+        Remove
+    }
+
+    public class Track : Validateable, ICuesheetEntity, ITraceable
     {
         private uint? position;
         private String? artist;
@@ -55,33 +61,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public Track(ITrack<Cuesheet> track)
+        public Track(Track track)
         {
             CopyValues(track);
-        }
-
-        /// <summary>
-        /// Create object with copied values from input
-        /// </summary>
-        /// <param name="track">Object to copy values from</param>
-        public Track(ITrack<ImportCuesheet> track)
-        {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
-            //Use public setter since we need to fire all events with positioning
-            Position = track.Position;
-            //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
-            artist = track.Artist;
-            title = track.Title;
-            begin = track.Begin;
-            end = track.End;
-            flags.Clear();
-            flags.AddRange(track.Flags);
-            PreGap = track.PreGap;
-            PostGap = track.PostGap;
-            Validate();
         }
 
         public Track()
@@ -251,12 +233,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Copies values from input object to this object
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public void CopyValues(ITrack<Cuesheet> track)
+        public void CopyValues(Track track)
         {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
             Cuesheet = track.Cuesheet;
             //Use public setter since we need to fire all events with positioning
             Position = track.Position;

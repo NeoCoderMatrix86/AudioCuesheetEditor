@@ -40,11 +40,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
-                {nameof(ImportCuesheet.Artist), schemeCuesheetArtist },
-                {nameof(ImportCuesheet.Title), schemeCuesheetTitle },
-                {nameof(ImportCuesheet.Audiofile), schemeCuesheetAudioFile },
-                {nameof(ImportCuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
-                {nameof(ImportCuesheet.CDTextfile), schemeCuesheetCDTextfile }
+                {nameof(Cuesheet.Artist), schemeCuesheetArtist },
+                {nameof(Cuesheet.Title), schemeCuesheetTitle },
+                {nameof(Cuesheet.Audiofile), schemeCuesheetAudioFile },
+                {nameof(Cuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
+                {nameof(Cuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 
             var schemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
@@ -59,15 +59,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {
-                { nameof(ImportTrack.Position), schemeTrackPosition },
-                { nameof(ImportTrack.Artist), schemeTrackArtist },
-                { nameof(ImportTrack.Title), schemeTrackTitle },
-                { nameof(ImportTrack.Begin), schemeTrackBegin },
-                { nameof(ImportTrack.End), schemeTrackEnd },
-                { nameof(ImportTrack.Length), schemeTrackLength },
-                { nameof(ImportTrack.Flags), schemeTrackFlags },
-                { nameof(ImportTrack.PreGap), schemeTrackPreGap },
-                { nameof(ImportTrack.PostGap), schemeTrackPostGap }
+                { nameof(Track.Position), schemeTrackPosition },
+                { nameof(Track.Artist), schemeTrackArtist },
+                { nameof(Track.Title), schemeTrackTitle },
+                { nameof(Track.Begin), schemeTrackBegin },
+                { nameof(Track.End), schemeTrackEnd },
+                { nameof(Track.Length), schemeTrackLength },
+                { nameof(Track.Flags), schemeTrackFlags },
+                { nameof(Track.PreGap), schemeTrackPreGap },
+                { nameof(Track.PostGap), schemeTrackPostGap }
             };
         }
 

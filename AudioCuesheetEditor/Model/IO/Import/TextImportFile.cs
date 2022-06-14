@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,7 +34,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         private TextImportScheme textImportScheme;
 
-        public TextImportFile(MemoryStream fileContent)
+        public TextImportFile(MemoryStream fileContent, ImportOptions? importOptions = null)
         {
             textImportScheme = new TextImportScheme();
             if (fileContent == null)
@@ -48,7 +49,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 lines.Add(reader.ReadLine());
             }
             FileContent = lines.AsReadOnly();
-            TextImportScheme = TextImportScheme.DefaultTextImportScheme;
+            if (importOptions == null)
+            {
+                TextImportScheme = TextImportScheme.DefaultTextImportScheme;
+            }
+            else
+            {
+                TextImportScheme = importOptions.TextImportScheme;
+            }
         }
 
         /// <summary>
@@ -59,6 +67,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
+        //TODO: Contains only recognized text and not missing passages (for example only cuesheet data and not tracks)
         public IReadOnlyCollection<String?>? FileContentRecognized { get; private set; }
 
         public TextImportScheme TextImportScheme 
@@ -80,7 +89,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public Boolean IsValid { get { return AnalyseException == null; } }
 
-        public ImportCuesheet? ImportCuesheet { get; private set; }
+        public Cuesheet? Cuesheet { get; private set; }
 
         private void TextImportScheme_SchemeChanged(object? sender, string e)
         {
@@ -91,8 +100,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             try
             {
-                ImportCuesheet = new ImportCuesheet();
-
+                Cuesheet = new Cuesheet();
+                FileContentRecognized = null;
                 AnalyseException = null;
                 var regicesCuesheet = AnalyseScheme(TextImportScheme.SchemeCuesheet);
                 var regicesTracks = AnalyseScheme(TextImportScheme.SchemeTracks);
@@ -110,7 +119,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 recognized = true;
                                 cuesheetRecognized = true;
-                                recognizedFileContent.Add(AnalyseLine(line, ImportCuesheet, regicesCuesheet));
+                                recognizedFileContent.Add(AnalyseLine(line, Cuesheet, regicesCuesheet));
                             }
                         }
                         if ((recognized == false) && (regicesTracks.Count > 0))
@@ -119,9 +128,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (firstRegiceTrack.Value.IsMatch(line))
                             {
                                 recognized = true;
-                                var track = new ImportTrack();
+                                var track = new Track();
                                 recognizedFileContent.Add(AnalyseLine(line, track, regicesTracks));
-                                ImportCuesheet.AddTrack(track);
+                                Cuesheet.AddTrack(track);
                             }
                         }
                     }
@@ -133,8 +142,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
             catch (Exception ex)
             {
+                FileContentRecognized = FileContent;
                 AnalyseException = ex;
-                ImportCuesheet = null;
+                Cuesheet = null;
             }
         }
 
@@ -165,8 +175,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                                 var propertyAfter = scheme.Substring(nextPropertyStartIndex + 1, nextPropertyEndIndex - (nextPropertyStartIndex + 1));
                                 var regExString = scheme.Substring(endIndex + 1, nextPropertyStartIndex - (endIndex + 1));
                                 //Remove entity names
-                                propertyBefore = propertyBefore.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty).Replace(String.Format("{0}.", nameof(ImportCuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(ImportTrack)), String.Empty);
-                                propertyAfter = propertyAfter.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty).Replace(String.Format("{0}.", nameof(ImportCuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(ImportTrack)), String.Empty);
+                                propertyBefore = propertyBefore.Replace(string.Format("{0}.", nameof(AudioCuesheet.Cuesheet)), string.Empty).Replace(string.Format("{0}.", nameof(AudioCuesheet.Track)), string.Empty).Replace(string.Format("{0}.", nameof(Cuesheet)), string.Empty);
+                                propertyAfter = propertyAfter.Replace(string.Format("{0}.", nameof(AudioCuesheet.Cuesheet)), string.Empty).Replace(string.Format("{0}.", nameof(AudioCuesheet.Track)), string.Empty).Replace(string.Format("{0}.", nameof(Cuesheet)), string.Empty);
                                 regices.Add(new Tuple<string, string>(propertyBefore, propertyAfter), new Regex(regExString));
                                 //Recalculate next index
                                 i = nextPropertyStartIndex - 1;
@@ -268,7 +278,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             if (property.PropertyType == typeof(IReadOnlyCollection<Flag>))
             {
                 var list = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
-                ((ImportTrack)entity).SetFlags(list);
+                ((Track)entity).SetFlags(list);
             }
             if (property.PropertyType == typeof(Audiofile))
             {
@@ -276,7 +286,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
             if (property.PropertyType == typeof(Cataloguenumber))
             {
-                ((ImportCuesheet)entity).Cataloguenumber.Value = value;
+                ((Cuesheet)entity).Cataloguenumber.Value = value;
             }
             if (property.PropertyType == typeof(CDTextfile))
             {

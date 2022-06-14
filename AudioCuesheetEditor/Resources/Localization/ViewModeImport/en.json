@@ -43,7 +43,8 @@
     "Length": "Length",
     "Not possible!": "Not possible!",
     "Please select files for import before going to validation!": "Please select files for import before going to validation!",
-    "Textimportscheme cuesheet": "Textimport regular expression for cuesheet properties",
-    "Textimportscheme track": "Textimport regular expression for track properties"
+    "Textimportscheme cuesheet": "Textimport scheme cuesheet",
+    "Textimportscheme track": "Textimport scheme track",
+    "Import Options": "Import options"
   }
 }

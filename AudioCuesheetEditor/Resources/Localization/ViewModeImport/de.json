@@ -44,7 +44,8 @@
     "Length": "Länge",
     "Not possible!": "Ungültig!",
     "Please select files for import before going to validation!": "Bitte selektieren Sie Dateien bevor Sie zur Validierung wechseln!",
-    "Textimportscheme cuesheet": "Textschema für den Import von Cuesheeteigenschaften",
-    "Textimportscheme track": "Textschema für den Import von Trackeigenschaften"
+    "Textimportscheme cuesheet": "Import Schema Cuesheet",
+    "Textimportscheme track": "Import Schema Track",
+    "Import Options": "Importoptionen"
   }
 }

@@ -44,8 +44,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public Track Track { get; private set; }
     }
-
-    public class Cuesheet : Validateable, ICuesheet<Track>, ITraceable
+    public class Cuesheet : Validateable, ICuesheetEntity, ITraceable
     {
         private readonly object syncLock = new();
 
@@ -212,33 +211,29 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return previousLinkedTrack;
         }
 
-        public void AddTrack(Track track, ApplicationOptions applicationOptions)
+        public void AddTrack(Track track, ApplicationOptions? applicationOptions = null)
         {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
-            if (applicationOptions == null)
-            {
-                throw new ArgumentNullException(nameof(applicationOptions));
-            }
             if (track.IsCloned)
             {
                 throw new ArgumentException("Cloned tracks may not be added!");
             }
-            if ((IsRecording) && (recordingStart.HasValue))
+            var previousValue = new List<Track>(tracks);
+            track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
+            //When no applications are available (because of used by import for example) we don't try to calculate properties
+            if (applicationOptions != null)
             {
-                track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
+                if (IsRecording && (recordingStart.HasValue))
+                {
+                    track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
+                }                
+                if (applicationOptions.LinkTracksWithPreviousOne.HasValue)
+                {
+                    track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
+                }
             }
             track.Cuesheet = this;
-            var previousValue = new List<Track>(tracks);
             tracks.Add(track);
             ReCalculateTrackProperties(track);
-            track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
-            if (applicationOptions.LinkTracksWithPreviousOne.HasValue)
-            {
-                track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
-            }
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
@@ -387,10 +382,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
         }
+        //TODO: Remove
 
         public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
         {
-            if (textImportFile.ImportCuesheet == null)
+            if (textImportFile.Cuesheet == null)
             {
                 throw new ArgumentNullException(nameof(textImportFile));
             }
@@ -402,7 +398,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             lock (syncLock)
             {
                 traceableChanges = new Stack<TraceableChange>();
-                CopyValues(textImportFile.ImportCuesheet, applicationOptions);
+                CopyValues(textImportFile.Cuesheet, applicationOptions);
                 TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(traceableChanges));
                 traceableChanges = null;
             }
@@ -516,7 +512,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="cuesheet">Reference to import cuesheet</param>
         /// <param name="applicationOptions">Reference to application options</param>
-        private void CopyValues(ICuesheet<ImportTrack> cuesheet, ApplicationOptions applicationOptions)
+        private void CopyValues(Cuesheet cuesheet, ApplicationOptions applicationOptions)
         {
             if (String.IsNullOrEmpty(cuesheet.Artist) == false)
             {
