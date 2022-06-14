@@ -67,7 +67,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        //TODO: Contains only recognized text and not missing passages (for example only cuesheet data and not tracks)
         public IReadOnlyCollection<String?>? FileContentRecognized { get; private set; }
 
         public TextImportScheme TextImportScheme 
@@ -109,6 +108,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 List<String?> recognizedFileContent = new();
                 foreach (var line in FileContent)
                 {
+                    var recognizedLine = line;
                     if (String.IsNullOrEmpty(line) == false)
                     {
                         Boolean recognized = false;
@@ -119,7 +119,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 recognized = true;
                                 cuesheetRecognized = true;
-                                recognizedFileContent.Add(AnalyseLine(line, Cuesheet, regicesCuesheet));
+                                recognizedLine = AnalyseLine(line, Cuesheet, regicesCuesheet);
                             }
                         }
                         if ((recognized == false) && (regicesTracks.Count > 0))
@@ -129,11 +129,12 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             {
                                 recognized = true;
                                 var track = new Track();
-                                recognizedFileContent.Add(AnalyseLine(line, track, regicesTracks));
+                                recognizedLine = AnalyseLine(line, track, regicesTracks);
                                 Cuesheet.AddTrack(track);
                             }
                         }
                     }
+                    recognizedFileContent.Add(recognizedLine);
                 }
                 if (recognizedFileContent.Count > 0)
                 {
