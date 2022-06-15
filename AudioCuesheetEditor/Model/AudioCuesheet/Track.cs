@@ -355,7 +355,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (IsCloned == false)
                     {
                         Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
-                        if ((trackAtPosition != null) && (trackAtPosition != this))
+                        if ((trackAtPosition == null) || (trackAtPosition != this))
                         {
                             validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
                         }
