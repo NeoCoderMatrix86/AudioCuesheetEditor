@@ -64,6 +64,8 @@ namespace AudioCuesheetEditor.Model.UI
         private readonly Stack<TracedChange> redoStack = new();
 
         public event EventHandler? TracedObjectHistoryChanged;
+        public event EventHandler? UndoDone;
+        public event EventHandler? RedoDone;
 
         public Boolean CurrentlyHandlingRedoOrUndoChanges { get; private set; }
         /// <summary>
@@ -160,6 +162,7 @@ namespace AudioCuesheetEditor.Model.UI
                     redoStack.Push(new TracedChange(changes.TraceableObject, redoChanges));
                 }
                 CurrentlyHandlingRedoOrUndoChanges = false;
+                UndoDone?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -199,6 +202,7 @@ namespace AudioCuesheetEditor.Model.UI
                     undoStack.Push(new TracedChange(changes.TraceableObject, undoChanges));
                 }
                 CurrentlyHandlingRedoOrUndoChanges = false;
+                RedoDone?.Invoke(this, EventArgs.Empty);
             }
         }
 
