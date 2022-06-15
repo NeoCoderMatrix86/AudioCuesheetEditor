@@ -117,19 +117,17 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 if (AvailableSchemesTrack != null)
                 {
-                    Boolean addValidationError = false;
+                    List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemesTrack)
                     {
                         if (SchemeCuesheet.Contains(availableScheme.Value) == true)
                         {
-                            //TODO: Add field name to validation error!
-                            addValidationError = true;
-                            break;
+                            schemesFound.Add(availableScheme.Value);
                         }
                     }
-                    if (addValidationError == true)
+                    if (schemesFound.Count > 0)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
                     }
                 }
             }
@@ -141,19 +139,17 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 if (AvailableSchemeCuesheet != null)
                 {
-                    Boolean addValidationError = false;
+                    List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemeCuesheet)
                     {
                         if (SchemeTracks.Contains(availableScheme.Value) == true)
                         {
-                            //TODO: Add field name to validation error!
-                            addValidationError = true;
-                            break;
+                            schemesFound.Add(availableScheme.Value);
                         }
                     }
-                    if (addValidationError == true)
+                    if (schemesFound.Count > 0)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
                     }
                 }
             }
