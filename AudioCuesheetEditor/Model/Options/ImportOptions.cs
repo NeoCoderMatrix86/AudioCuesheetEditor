@@ -31,6 +31,7 @@ namespace AudioCuesheetEditor.Model.Options
 
         public void SetDefaultValues()
         {
+            //TODO: Does this ever work?
             //Declare defaults
             if (TextImportScheme == null)
             {

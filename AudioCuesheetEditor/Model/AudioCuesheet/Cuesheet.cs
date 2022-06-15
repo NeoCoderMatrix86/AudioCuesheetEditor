@@ -382,23 +382,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
         }
-        //TODO: Remove
 
-        public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
+        public void Import(Cuesheet cuesheet, ApplicationOptions applicationOptions)
         {
-            if (textImportFile.Cuesheet == null)
-            {
-                throw new ArgumentNullException(nameof(textImportFile));
-            }
-            if (textImportFile.IsValid == false)
-            {
-                throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
-            }
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
             {
                 traceableChanges = new Stack<TraceableChange>();
-                CopyValues(textImportFile.Cuesheet, applicationOptions);
+                CopyValues(cuesheet, applicationOptions);
                 TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(traceableChanges));
                 traceableChanges = null;
             }

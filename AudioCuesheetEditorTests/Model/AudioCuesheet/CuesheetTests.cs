@@ -233,7 +233,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 
             var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
-            cuesheet.Import(textImportFile, testHelper.ApplicationOptions);
+            cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
 
             Assert.IsNull(cuesheet.CDTextfile);
             Assert.AreEqual(2, cuesheet.ValidationErrors.Count);
@@ -252,7 +252,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 39);
             Assert.IsTrue(textImportFile.IsValid);
             var cuesheet = new Cuesheet();
-            cuesheet.Import(textImportFile, testHelper.ApplicationOptions);
+            cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
             Assert.IsTrue(cuesheet.Tracks.Count == 39);
             Assert.IsTrue(cuesheet.Tracks.ElementAt(0).End == new TimeSpan(0, 5, 24));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(38).Begin == new TimeSpan(3, 13, 13));

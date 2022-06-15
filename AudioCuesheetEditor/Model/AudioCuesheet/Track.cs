@@ -352,6 +352,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
                         if ((trackAtPosition == null) || (trackAtPosition != this))
                         {
+                            //TODO: Comes during import and I have no idea why
                             validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
                         }
                     }

@@ -108,11 +108,11 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public void StartImportCuesheet()
+        public void StartImportCuesheet(ApplicationOptions applicationOptions)
         {
             if (ImportCuesheet != null)
             {
-                Cuesheet = ImportCuesheet;
+                Cuesheet.Import(ImportCuesheet, applicationOptions);
                 ImportCuesheet = null;
             }
             TextImportFile = null;

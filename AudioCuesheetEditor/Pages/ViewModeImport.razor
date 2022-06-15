@@ -463,12 +463,12 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    private Task ImportData()
+    private async Task ImportData()
     {
-        _sessionStateContainer.StartImportCuesheet();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _sessionStateContainer.StartImportCuesheet(options);
         _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
         StateHasChanged();
-        return Task.CompletedTask;
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
