@@ -237,6 +237,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 
             Assert.IsNull(cuesheet.CDTextfile);
             Assert.AreEqual(2, cuesheet.ValidationErrors.Count);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(0).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(1).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(2).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(3).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(4).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(5).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(6).IsValid);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(7).IsValid);
 
             File.Delete(tempFile);
         }

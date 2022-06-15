@@ -61,9 +61,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public Track(Track track)
+        /// /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
+        public Track(Track track, Boolean copyCuesheetReference = true)
         {
-            CopyValues(track);
+            CopyValues(track, copyCuesheetReference);
         }
 
         public Track()
@@ -233,9 +234,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Copies values from input object to this object
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public void CopyValues(Track track)
+        /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
+        public void CopyValues(Track track, Boolean copyCuesheetReference = true)
         {
-            Cuesheet = track.Cuesheet;
+            if (copyCuesheetReference)
+            {
+                Cuesheet = track.Cuesheet;
+            }
             //Use public setter since we need to fire all events with positioning
             Position = track.Position;
             //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
@@ -350,9 +355,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (IsCloned == false)
                     {
                         Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
-                        if ((trackAtPosition == null) || (trackAtPosition != this))
+                        if ((trackAtPosition != null) && (trackAtPosition != this))
                         {
-                            //TODO: Comes during import and I have no idea why
                             validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
                         }
                     }

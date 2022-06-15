@@ -527,7 +527,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             foreach (var importTrack in cuesheet.Tracks)
             {
-                var track = new Track(importTrack);
+                //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
+                var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
         }
