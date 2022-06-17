@@ -69,7 +69,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                <FileEdit Filter="@Cuesheetfile.FileExtension" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
+                                <FileEdit Filter="@Cuesheet.FileExtension" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
                             </FieldBody>
                         </Field>
                     </Tooltip>
@@ -114,21 +114,21 @@ along with Foobar.  If not, see
                         </Paragraph>
                     </Alert>
                     <Accordion>
-                        @if (_sessionStateContainer.TextImportFile != null)
+                        @if (FileContentRecognized != null)
                         {
-                            <Collapse Visible="textImportFileContentVisible">
+                            <Collapse Visible="importFileContentVisible">
                                 <CollapseHeader>
-                                    <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
+                                    <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody Background="Background.Light">
                                     <Text>
-                                        @if (_sessionStateContainer.TextImportFile.FileContentRecognized != null)
-                                        {
-                                            @((MarkupString)String.Join("<br />", _sessionStateContainer.TextImportFile.FileContentRecognized))
-                                        }
+                                        @((MarkupString)String.Join("<br />", FileContentRecognized))
                                     </Text>
                                 </CollapseBody>
                             </Collapse>
+                        }
+                        @if (_sessionStateContainer.TextImportFile != null)
+                        {
                             <Collapse Visible="importOptionsVisible">
                                 <CollapseHeader>
                                     <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
@@ -234,10 +234,10 @@ along with Foobar.  If not, see
 
 @code {
     String selectedStep = "selectFiles";
-    String dragNDropUploadFilter = String.Join(',', TextImportFile.MimeType, Cuesheetfile.FileExtension, Projectfile.FileExtension);
+    String dragNDropUploadFilter = String.Join(',', TextImportFile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
-    Boolean textImportFileContentVisible = true;
+    Boolean importFileContentVisible = true;
     Boolean importOptionsVisible = true;
     Boolean selectFilesCompleted = false;
     Alert alertInvalidFile = default!;
@@ -249,6 +249,22 @@ along with Foobar.  If not, see
 
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     HotKeysContext hotKeysContext = default!;
+
+    public IReadOnlyCollection<String?>? FileContentRecognized
+    {
+        get
+        {
+            if (_sessionStateContainer.TextImportFile != null)
+            {
+                return _sessionStateContainer.TextImportFile.FileContentRecognized;
+            }
+            if (_sessionStateContainer.CuesheetImportFile != null)
+            {
+                return _sessionStateContainer.CuesheetImportFile.FileContentRecognized;
+            }
+            return null;
+        }
+    }
 
     public void Dispose()
     {
@@ -324,7 +340,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == false)
+            if (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
             {
                 invalidCuesheetfileNames.Add(file.Name);
             }
@@ -360,7 +376,7 @@ along with Foobar.  If not, see
         foreach (var file in e.Files)
         {
             if ((CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
-                && (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == false)
+                && (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
                 && (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == false))
             {
                 invalidDropFileNames.Add(file.Name);
@@ -388,14 +404,14 @@ along with Foobar.  If not, see
                 _sessionStateContainer.ImportCuesheet = cuesheet;
             }
         }
-        if (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
+        if (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == true)
         {
             var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
             var stream = file.OpenReadStream();
             MemoryStream memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             stream.Close();
-            _sessionStateContainer.ImportCuesheet = Cuesheetfile.ImportCuesheet(memoryStream, options);
+            _sessionStateContainer.CuesheetImportFile = new CuesheetImportFile(memoryStream, options);
         }
         if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
         {

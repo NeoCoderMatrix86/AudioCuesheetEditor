@@ -37,10 +37,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public TextImportFile(MemoryStream fileContent, ImportOptions? importOptions = null)
         {
             textImportScheme = new TextImportScheme();
-            if (fileContent == null)
-            {
-                throw new ArgumentNullException(nameof(fileContent));
-            }
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);
             List<String?> lines = new();

@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Extensions
         private Cuesheet cuesheet;
         private Cuesheet? importCuesheet;
         private TextImportFile? textImportFile;
+        private CuesheetImportFile? cuesheetImportFile;
 
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
@@ -86,6 +87,23 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
+        public CuesheetImportFile? CuesheetImportFile
+        {
+            get { return cuesheetImportFile; }
+            set
+            {
+                cuesheetImportFile = value;
+                if ((CuesheetImportFile != null) && (CuesheetImportFile.Cuesheet != null))
+                {
+                    ImportCuesheet = CuesheetImportFile.Cuesheet;
+                }
+                else
+                {
+                    ImportCuesheet = null;
+                }
+            }
+        }
+
         private void TextImportScheme_SchemeChanged(object? sender, string e)
         {
             if (textImportFile != null)
@@ -116,6 +134,7 @@ namespace AudioCuesheetEditor.Extensions
                 ImportCuesheet = null;
             }
             TextImportFile = null;
+            CuesheetImportFile = null;
         }
     }
 }

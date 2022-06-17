@@ -46,6 +46,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     }
     public class Cuesheet : Validateable, ICuesheetEntity, ITraceable
     {
+        public const String MimeType = "text/*";
+        public const String FileExtension = ".cue";
+
         private readonly object syncLock = new();
 
         private List<Track> tracks = default!;
