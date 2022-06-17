@@ -234,8 +234,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
                 }
             }
-            track.Cuesheet = this;
             tracks.Add(track);
+            track.Cuesheet = this;
             ReCalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();

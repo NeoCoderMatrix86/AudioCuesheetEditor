@@ -221,7 +221,6 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var cuesheetFile = new Cuesheetfile(cuesheet);
-            //TODO: Sometimes fails because of missing validation error in tracks!
             Assert.IsFalse(cuesheetFile.IsExportable);
             //Rearrange positions
             cuesheet.Tracks.ElementAt(0).Position = 1;
