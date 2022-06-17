@@ -23,7 +23,8 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditorTests.Model.IO.Import
 {
-    class TextImportSchemeTests
+    [TestClass()]
+    public class TextImportSchemeTests
     {
         [TestMethod()]
         public void TextImportSchemeValidationTest()
@@ -34,8 +35,14 @@ namespace AudioCuesheetEditorTests.Model.IO.Import
                 SchemeCuesheet = String.Empty
             };
             Assert.IsFalse(importScheme.IsValid);
-            importScheme.SchemeCuesheet = "%Track.Begin - %Cuesheet.Artist";
-            Assert.IsTrue(importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeCuesheet))).Count == 1);
+            importScheme.SchemeCuesheet = "%Track.Begin% - %Cuesheet.Artist%";
+            var validationErrors = importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeCuesheet)));
+            Assert.IsTrue(validationErrors.Count == 1);
+            Assert.IsTrue(validationErrors.First().Message.Parameter.First().ToString() == "%Track.Begin%");
+            importScheme.SchemeCuesheet = "%Track.Begin% - %Cuesheet.Artist% - %Track.Artist%";
+            validationErrors = importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeCuesheet)));
+            Assert.IsTrue(validationErrors.Count == 1);
+            Assert.AreEqual("%Track.Artist%,%Track.Begin%", validationErrors.First().Message.Parameter.First().ToString());
             Boolean eventFiredCorrect = false;
             importScheme.SchemeChanged += delegate (object sender, String property) 
             { 
@@ -46,7 +53,9 @@ namespace AudioCuesheetEditorTests.Model.IO.Import
             };
             importScheme.SchemeTracks = "%Cuesheet.Title% - %Track.End%";
             Assert.AreEqual(true, eventFiredCorrect);
-            Assert.IsTrue(importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeTracks))).Count == 1);
+            validationErrors = importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeTracks)));
+            Assert.IsTrue(validationErrors.Count == 1);
+            Assert.AreEqual("%Cuesheet.Title%", validationErrors.First().Message.Parameter.First().ToString());
             importScheme.SchemeCuesheet = "%Cuesheet.Artist% - %Cuesheet.AudioFile%";
             importScheme.SchemeTracks = "%Track.Artist% - %Track.Begin%";
             Assert.IsTrue(importScheme.IsValid);

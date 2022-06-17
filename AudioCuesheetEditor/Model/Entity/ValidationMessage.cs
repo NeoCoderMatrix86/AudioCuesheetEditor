@@ -20,7 +20,6 @@ namespace AudioCuesheetEditor.Model.Entity
 {
     public class ValidationMessage
     {
-        private readonly object[]? args;
         public ValidationMessage(String message, params object[]? args)
         {
             if (String.IsNullOrEmpty(message) == true)
@@ -28,16 +27,17 @@ namespace AudioCuesheetEditor.Model.Entity
                 throw new ArgumentNullException(nameof(message));
             }
             Message = message;
-            this.args = args;
+            Parameter = args;
         }
         public String Message { get; private set; }
+        public object[]? Parameter { get; private set; }
         public String GetMessageLocalized(ITextLocalizer localizer)
         {
             object[]? arguments = null;
-            if (args != null)
+            if (Parameter != null)
             {
-                arguments = new object[args.Length];
-                args.CopyTo(arguments, 0);
+                arguments = new object[Parameter.Length];
+                Parameter.CopyTo(arguments, 0);
             }
             if (arguments != null)
             {

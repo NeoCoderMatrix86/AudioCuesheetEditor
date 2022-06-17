@@ -69,7 +69,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                <FileEdit Filter="@Cuesheetfile.FileExtension" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
+                                <FileEdit Filter="@Cuesheet.FileExtension" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
                             </FieldBody>
                         </Field>
                     </Tooltip>
@@ -114,6 +114,99 @@ along with Foobar.  If not, see
                         </Paragraph>
                     </Alert>
                     <Accordion>
+                        @if (FileContentRecognized != null)
+                        {
+                            <Collapse Visible="importFileContentVisible">
+                                <CollapseHeader>
+                                    <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
+                                </CollapseHeader>
+                                <CollapseBody Background="Background.Light">
+                                    <Text>
+                                        @((MarkupString)String.Join("<br />", FileContentRecognized))
+                                    </Text>
+                                </CollapseBody>
+                            </Collapse>
+                        }
+                        @if (_sessionStateContainer.TextImportFile != null)
+                        {
+                            <Collapse Visible="importOptionsVisible">
+                                <CollapseHeader>
+                                    <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
+                                </CollapseHeader>
+                                <CollapseBody>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                            <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
+                                                @_localizer["Textimportscheme cuesheet"]
+                                            </Tooltip>
+                                        </FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                            <Addons>
+                                                <Addon AddonType="AddonType.Body">
+                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Class="@GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
+                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" TriggerTargetId="TextImportScheme.SchemeCuesheet" />
+                                                    </TextEdit>
+                                                </Addon>
+                                                <Addon AddonType="AddonType.End">
+                                                    <Dropdown>
+                                                        <DropdownToggle Color="Color.Secondary">
+                                                            @_localizer["Select placeholder"]
+                                                        </DropdownToggle>
+                                                        <DropdownMenu>
+                                                            @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
+                                                            {
+                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                            }
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                </Addon>
+                                            </Addons>
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
+                                                @_localizer["Textimportscheme track"]
+                                            </Tooltip>
+                                        </FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                            <Addons>
+                                                <Addon AddonType="AddonType.Body">
+                                                    <TextEdit id="TextImportScheme.SchemeTracks" Class="@GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
+                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" TriggerTargetId="TextImportScheme.SchemeTracks" />
+                                                    </TextEdit>
+                                                </Addon>
+                                                <Addon AddonType="AddonType.End">
+                                                    <Dropdown>
+                                                        <DropdownToggle Color="Color.Secondary">
+                                                            @_localizer["Select placeholder"]
+                                                        </DropdownToggle>
+                                                        <DropdownMenu>
+                                                            @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
+                                                            {
+                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                            }
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                </Addon>
+                                            </Addons>
+                                        </FieldBody>
+                                    </Field>
+                                </CollapseBody>
+                            </Collapse>
+                            @if (_sessionStateContainer.TextImportFile.AnalyseException != null)
+                            {
+                                <Alert Color="Color.Danger" Visible="true">
+                                    <AlertDescription>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-exclamation-octagon" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1L1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z" />
+                                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+                                        </svg>
+                                    </AlertDescription>
+                                    <AlertMessage>@_localizer["Error during textimport"] : @_sessionStateContainer.TextImportFile.AnalyseException.Message</AlertMessage>
+                                </Alert>
+                            }
+                        }
                         <Collapse Visible="cuesheetDataVisible">
                             <CollapseHeader>
                                 <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
@@ -137,189 +230,15 @@ along with Foobar.  If not, see
     </Content>
 </Steps>
 
-<Modal @ref="modalTextImport">
-    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
-        <ModalHeader>
-            <ModalTitle>
-                @_localizer["Textimport assistant"]
-            </ModalTitle>
-            <CloseButton Clicked="TextImportAbortClicked" />
-        </ModalHeader>
-        <ModalBody>
-            @if (textImportFile != null)
-            {
-                <Accordion Style="margin-bottom: 1rem;">
-                    <Collapse Visible="textImportFileContentVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => textImportFileContentVisible = !textImportFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
-                        </CollapseHeader>
-                        <CollapseBody Style="background: lightgray;">
-                            <Text>
-                                @if (textImportFile.FileContentRecognized != null)
-                                {
-                                    @((MarkupString)String.Join("<br />", textImportFile.FileContentRecognized))
-                                }
-                            </Text>
-                        </CollapseBody>
-                    </Collapse>
-                </Accordion>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
-                            @_localizer["Textimportscheme cuesheet"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is8">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="textImportFile.TextImportScheme.SchemeCuesheet" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @_localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
-                                        {
-                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is4">
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
-                            @_localizer["Textimportscheme track"]
-                        </Tooltip>
-                    </FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is8">
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                @*TODO: Native because of Bug : https://github.com/stsrki/Blazorise/issues/1664*@
-                                <TextEdit Class="@GetCSSClassAlert(textImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="textImportFile.TextImportScheme.SchemeTracks" data-toggle="tooltip" data-placement="top" title="@textImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Dropdown>
-                                    <DropdownToggle Color="Color.Secondary">
-                                        @_localizer["Select placeholder"]
-                                    </DropdownToggle>
-                                    <DropdownMenu>
-                                        @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
-                                        {
-                                            <DropdownItem Clicked="() => textImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                        }
-                                    </DropdownMenu>
-                                </Dropdown>
-                            </Addon>
-                        </Addons>
-                    </FieldBody>
-                </Field>
-                @if (textImportFile.AnalyseException != null)
-                {
-                    <Alert Color="Color.Danger" Visible="true">
-                        <AlertDescription>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-exclamation-octagon" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1L1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z" />
-                                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
-                            </svg>
-                        </AlertDescription>
-                        <AlertMessage>@_localizer["Error during textimport"] : @textImportFile.AnalyseException.Message</AlertMessage>
-                    </Alert>
-                }
-                <Divider DividerType="DividerType.Solid" />
-                @if (textImportFile.ImportCuesheet != null)
-                {
-                    <Heading Size="HeadingSize.Is4">@_localizer["Cuesheet data"]</Heading>
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD artist"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Artist" ReadOnly="true" />
-                        </FieldBody>
-                    </Field>
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD title"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Title" ReadOnly="true" />
-                        </FieldBody>
-                    </Field>
-                    @if (textImportFile.ImportCuesheet.Audiofile != null)
-                    {
-                        <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["Audiofile"]</FieldLabel>
-                            <FieldBody ColumnSize="ColumnSize.Is8">
-                                <TextEdit Text="@textImportFile.ImportCuesheet.Audiofile.FileName" ReadOnly="true" />
-                            </FieldBody>
-                        </Field>
-                    }
-                    @if (textImportFile.ImportCuesheet.CDTextfile != null)
-                    {
-                        <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["CD textfile"]</FieldLabel>
-                            <FieldBody ColumnSize="ColumnSize.Is8">
-                                <TextEdit Text="@textImportFile.ImportCuesheet.CDTextfile.FileName" ReadOnly="true" />
-                            </FieldBody>
-                        </Field>
-                    }
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is4">@_localizer["Cataloguenumber"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is8">
-                            <TextEdit @bind-Text="textImportFile.ImportCuesheet.Cataloguenumber.Value" ReadOnly="true" />
-                        </FieldBody>
-                    </Field>
-                    <Heading Size="HeadingSize.Is5">@_localizer["Cuesheet tracks"]</Heading>
-                    <Table Bordered="true" Responsive="true" Narrow="true">
-                        <TableHeader ThemeContrast="ThemeContrast.Light">
-                            <TableRow>
-                                <TableHeaderCell>#</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
-                                <TableHeaderCell>@_localizer["Flags"]</TableHeaderCell>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            @foreach (var track in textImportFile.ImportCuesheet.Tracks)
-                            {
-                                <TableRow>
-                                    <TableRowCell>@track.Position</TableRowCell>
-                                    <TableRowCell>@track.Artist</TableRowCell>
-                                    <TableRowCell>@track.Title</TableRowCell>
-                                    <TableRowCell>@track.Begin</TableRowCell>
-                                    <TableRowCell>@track.End</TableRowCell>
-                                    <TableRowCell>@track.Length</TableRowCell>
-                                    <TableRowCell>@String.Join(" ", track.Flags.Select(x => x.Name))</TableRowCell>
-                                </TableRow>
-                            }
-                        </TableBody>
-                    </Table>
-                }
-            }
-        </ModalBody>
-        <ModalFooter>
-            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((textImportFile != null) && (textImportFile.AnalyseException == null)), "Import not possible due to textimport errors. Please check errors!")">
-                <Button Color="Color.Primary" Disabled="!((textImportFile != null) && (textImportFile.AnalyseException == null))" Clicked="TextImportStartClicked">@_localizer["Start textimport"]</Button>
-            </Tooltip>
-            <Button Color="Color.Secondary" @onclick="TextImportAbortClicked">@_localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
-
 <ModalDialog @ref="modalDialog" />
 
 @code {
     String selectedStep = "selectFiles";
-    String dragNDropUploadFilter = String.Join(',', TextImportFile.MimeType, Cuesheetfile.FileExtension, Projectfile.FileExtension);
+    String dragNDropUploadFilter = String.Join(',', TextImportFile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
-    Boolean textImportFileContentVisible = true;
-    Modal modalTextImport = default!;
+    Boolean importFileContentVisible = true;
+    Boolean importOptionsVisible = true;
     Boolean selectFilesCompleted = false;
     Alert alertInvalidFile = default!;
     ModalDialog modalDialog = default!;
@@ -328,9 +247,24 @@ along with Foobar.  If not, see
     List<String> invalidProjectfileNames = new();
     List<String> invalidDropFileNames = new();
 
-    TextImportFile? textImportFile;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     HotKeysContext hotKeysContext = default!;
+
+    public IReadOnlyCollection<String?>? FileContentRecognized
+    {
+        get
+        {
+            if (_sessionStateContainer.TextImportFile != null)
+            {
+                return _sessionStateContainer.TextImportFile.FileContentRecognized;
+            }
+            if (_sessionStateContainer.CuesheetImportFile != null)
+            {
+                return _sessionStateContainer.CuesheetImportFile.FileContentRecognized;
+            }
+            return null;
+        }
+    }
 
     public void Dispose()
     {
@@ -363,7 +297,7 @@ along with Foobar.  If not, see
                 selectedStep = name;
                 break;
             case "validateData":
-                if (_sessionStateContainer.ImportCuesheet != null)
+                if ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.TextImportFile != null))
                 {
                     selectFilesCompleted = true;
                     selectedStep = name;
@@ -388,7 +322,6 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            //TODO: Remove when redesign of text import is finished
             if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == false)
             {
                 invalidTextImportFileNames.Add(file.Name);
@@ -407,7 +340,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == false)
+            if (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
             {
                 invalidCuesheetfileNames.Add(file.Name);
             }
@@ -443,7 +376,7 @@ along with Foobar.  If not, see
         foreach (var file in e.Files)
         {
             if ((CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
-                && (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == false)
+                && (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
                 && (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == false))
             {
                 invalidDropFileNames.Add(file.Name);
@@ -470,19 +403,16 @@ along with Foobar.  If not, see
             {
                 _sessionStateContainer.ImportCuesheet = cuesheet;
             }
-            await OnSelectedStepChanged("validateData");
         }
-        if (CuesheetController.CheckFileMimeType(file, Cuesheetfile.MimeType, Cuesheetfile.FileExtension) == true)
+        if (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == true)
         {
             var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
             var stream = file.OpenReadStream();
             MemoryStream memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             stream.Close();
-            _sessionStateContainer.ImportCuesheet = Cuesheetfile.ImportCuesheet(memoryStream, options);
-            await OnSelectedStepChanged("validateData");
+            _sessionStateContainer.CuesheetImportFile = new CuesheetImportFile(memoryStream, options);
         }
-        //TODO: Remove when redesign of text import is finished
         if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
         {
             var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
@@ -490,35 +420,10 @@ along with Foobar.  If not, see
             MemoryStream memoryStream = new MemoryStream();
             await stream.CopyToAsync(memoryStream);
             stream.Close();
-            textImportFile = new TextImportFile(memoryStream);
-            textImportFile.TextImportScheme = options.TextImportScheme;
-            await modalTextImport.Show();
+            _sessionStateContainer.TextImportFile = new TextImportFile(memoryStream, options);
         }
+        await OnSelectedStepChanged("validateData");
         StateHasChanged();
-    }
-
-    private void TextImportAbortClicked()
-    {
-        _logger.LogInformation("TextImportAbortClicked");
-        modalTextImport.Hide();
-        textImportFile = null;
-    }
-
-    private async Task TextImportStartClicked()
-    {
-        _logger.LogInformation("TextImportStartClicked with textImportFile = {0}", textImportFile);
-        if ((textImportFile != null) && (textImportFile.IsValid == true))
-        {
-            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-            var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-            options.TextImportScheme = textImportFile.TextImportScheme;
-            await _localStorageOptionsProvider.SaveOptions(options);
-            _sessionStateContainer.Cuesheet.Import(textImportFile, applicationOptions);
-            await modalTextImport.Hide();
-            textImportFile = null;
-            _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
-            StateHasChanged();
-        }
     }
 
     private String GetCSSClassAlert(Validateable validateable, String property)
@@ -565,24 +470,21 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnEnterKeyDown()
+    private Task OnEnterKeyDown()
     {
         if (modalDialog.Visible)
         {
             modalDialog.Confirm();
         }
-        if (modalTextImport.Visible)
-        {
-            await TextImportStartClicked();
-        }
+        return Task.CompletedTask;
     }
 
-    private Task ImportData()
+    private async Task ImportData()
     {
-        _sessionStateContainer.StartImportCuesheet();
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _sessionStateContainer.StartImportCuesheet(options);
         _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
         StateHasChanged();
-        return Task.CompletedTask;
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)

@@ -24,7 +24,13 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITrack<Cuesheet>, ITraceable
+    public enum SetFlagMode
+    {
+        Add,
+        Remove
+    }
+
+    public class Track : Validateable, ICuesheetEntity, ITraceable
     {
         private uint? position;
         private String? artist;
@@ -55,33 +61,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public Track(ITrack<Cuesheet> track)
+        /// /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
+        public Track(Track track, Boolean copyCuesheetReference = true)
         {
-            CopyValues(track);
-        }
-
-        /// <summary>
-        /// Create object with copied values from input
-        /// </summary>
-        /// <param name="track">Object to copy values from</param>
-        public Track(ITrack<ImportCuesheet> track)
-        {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
-            //Use public setter since we need to fire all events with positioning
-            Position = track.Position;
-            //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
-            artist = track.Artist;
-            title = track.Title;
-            begin = track.Begin;
-            end = track.End;
-            flags.Clear();
-            flags.AddRange(track.Flags);
-            PreGap = track.PreGap;
-            PostGap = track.PostGap;
-            Validate();
+            CopyValues(track, copyCuesheetReference);
         }
 
         public Track()
@@ -251,13 +234,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Copies values from input object to this object
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        public void CopyValues(ITrack<Cuesheet> track)
+        /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
+        public void CopyValues(Track track, Boolean copyCuesheetReference = true)
         {
-            if (track == null)
+            if (copyCuesheetReference)
             {
-                throw new ArgumentNullException(nameof(track));
+                Cuesheet = track.Cuesheet;
             }
-            Cuesheet = track.Cuesheet;
             //Use public setter since we need to fire all events with positioning
             Position = track.Position;
             //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
@@ -371,8 +354,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if (IsCloned == false)
                     {
+                        Boolean addValidationError = false;
                         Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
-                        if ((trackAtPosition == null) || (trackAtPosition != this))
+                        if (trackAtPosition != null)
+                        {
+                            if (trackAtPosition != this)
+                            {
+                                addValidationError = true;
+                            }
+                        }
+                        else
+                        {
+                            // Only validate the position if the current track belongs to cuesheet since otherwise it gets validated during AddTrack
+                            if ((Cuesheet.Tracks.Contains(this)) && ((Cuesheet.Tracks.ToList().IndexOf(this) + 1) != Position.Value))
+                            {
+                                addValidationError = true;
+                            }
+                        }
+                        if (addValidationError)
                         {
                             validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
                         }

@@ -40,11 +40,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
-                {nameof(ImportCuesheet.Artist), schemeCuesheetArtist },
-                {nameof(ImportCuesheet.Title), schemeCuesheetTitle },
-                {nameof(ImportCuesheet.Audiofile), schemeCuesheetAudioFile },
-                {nameof(ImportCuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
-                {nameof(ImportCuesheet.CDTextfile), schemeCuesheetCDTextfile }
+                {nameof(Cuesheet.Artist), schemeCuesheetArtist },
+                {nameof(Cuesheet.Title), schemeCuesheetTitle },
+                {nameof(Cuesheet.Audiofile), schemeCuesheetAudioFile },
+                {nameof(Cuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
+                {nameof(Cuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 
             var schemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
@@ -59,15 +59,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {
-                { nameof(ImportTrack.Position), schemeTrackPosition },
-                { nameof(ImportTrack.Artist), schemeTrackArtist },
-                { nameof(ImportTrack.Title), schemeTrackTitle },
-                { nameof(ImportTrack.Begin), schemeTrackBegin },
-                { nameof(ImportTrack.End), schemeTrackEnd },
-                { nameof(ImportTrack.Length), schemeTrackLength },
-                { nameof(ImportTrack.Flags), schemeTrackFlags },
-                { nameof(ImportTrack.PreGap), schemeTrackPreGap },
-                { nameof(ImportTrack.PostGap), schemeTrackPostGap }
+                { nameof(Track.Position), schemeTrackPosition },
+                { nameof(Track.Artist), schemeTrackArtist },
+                { nameof(Track.Title), schemeTrackTitle },
+                { nameof(Track.Begin), schemeTrackBegin },
+                { nameof(Track.End), schemeTrackEnd },
+                { nameof(Track.Length), schemeTrackLength },
+                { nameof(Track.Flags), schemeTrackFlags },
+                { nameof(Track.PreGap), schemeTrackPreGap },
+                { nameof(Track.PostGap), schemeTrackPostGap }
             };
         }
 
@@ -117,18 +117,17 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 if (AvailableSchemesTrack != null)
                 {
-                    Boolean addValidationError = false;
+                    List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemesTrack)
                     {
                         if (SchemeCuesheet.Contains(availableScheme.Value) == true)
                         {
-                            addValidationError = true;
-                            break;
+                            schemesFound.Add(availableScheme.Value);
                         }
                     }
-                    if (addValidationError == true)
+                    if (schemesFound.Count > 0)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
                     }
                 }
             }
@@ -140,18 +139,17 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 if (AvailableSchemeCuesheet != null)
                 {
-                    Boolean addValidationError = false;
+                    List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemeCuesheet)
                     {
                         if (SchemeTracks.Contains(availableScheme.Value) == true)
                         {
-                            addValidationError = true;
-                            break;
+                            schemesFound.Add(availableScheme.Value);
                         }
                     }
-                    if (addValidationError == true)
+                    if (schemesFound.Count > 0)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
                     }
                 }
             }
