@@ -54,7 +54,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Track> tracks = default!;
         private String? artist;
         private String? title;
-        private Audiofile? audiofile;
+        private AudioFile? audiofile;
         private CDTextfile? cDTextfile;
         private Cataloguenumber catalogueNumber = default!;
         private DateTime? recordingStart;
@@ -115,13 +115,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue);
             }
         }
-        public Audiofile? Audiofile
+        public AudioFile? Audiofile
         {
             get { return audiofile; }
             set 
             {
                 var previousValue = audiofile;
-                audiofile = value; 
+                audiofile = value;
                 OnValidateablePropertyChanged(); 
                 AudioFileChanged?.Invoke(this, EventArgs.Empty);
                 OnTraceablePropertyChanged(previousValue);
