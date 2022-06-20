@@ -112,7 +112,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var audioFile = matchGroup.Value;
-                                Cuesheet.Audiofile = new Audiofile(audioFile);
+                                Cuesheet.Audiofile = new AudioFile(audioFile);
                             }
                             else
                             {

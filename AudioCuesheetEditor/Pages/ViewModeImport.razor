@@ -375,6 +375,7 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in e.Files)
         {
+            //TODO: If we drop a textimport file with an audio file, an error is shown and the audiofile will not bet set. This is confusing for the user!
             if ((CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
                 && (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
                 && (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == false))

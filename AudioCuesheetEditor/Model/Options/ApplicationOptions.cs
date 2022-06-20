@@ -83,7 +83,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
             {
-                AudioFileNameRecording = Audiofile.RecordingFileName;
+                AudioFileNameRecording = AudioFile.RecordingFileName;
             }
             if (LinkTracksWithPreviousOne.HasValue == false)
             {
@@ -140,9 +140,9 @@ namespace AudioCuesheetEditor.Model.Options
                 if (String.IsNullOrEmpty(value) == false)
                 {
                     var extension = Path.GetExtension(value);
-                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
+                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(AudioFile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
                     {
-                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Audiofile.AudioCodecWEBM.FileExtension);
+                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), AudioFile.AudioCodecWEBM.FileExtension);
                     }
                     else
                     {

@@ -168,7 +168,7 @@ along with Foobar.  If not, see
     public async Task AudioRecordingFinished(String url)
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, _httpClient, true);
+        _sessionStateContainer.Cuesheet.Audiofile = new AudioFile(options.AudioFileNameRecording, url, AudioFile.AudioCodecWEBM, _httpClient, true);
         StateHasChanged();
     }
 

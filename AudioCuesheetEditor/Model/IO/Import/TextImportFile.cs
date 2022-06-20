@@ -277,9 +277,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var list = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
                 ((Track)entity).SetFlags(list);
             }
-            if (property.PropertyType == typeof(Audiofile))
+            if (property.PropertyType == typeof(AudioFile))
             {
-                property.SetValue(entity, new Audiofile(value));
+                property.SetValue(entity, new AudioFile(value));
             }
             if (property.PropertyType == typeof(Cataloguenumber))
             {
