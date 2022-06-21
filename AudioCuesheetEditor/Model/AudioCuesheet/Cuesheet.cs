@@ -121,7 +121,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             set 
             {
                 var previousValue = audiofile;
+                if (audiofile != null)
+                {
+                    audiofile.ContentStreamLoaded -= Audiofile_ContentStreamLoaded;
+                }
                 audiofile = value;
+                if (audiofile != null)
+                {
+                    if (audiofile.IsContentStreamLoaded == false)
+                    {
+                        audiofile.ContentStreamLoaded += Audiofile_ContentStreamLoaded;
+                    }
+                    else
+                    {
+                        RecalculateLastTrackEnd();
+                    }
+                }
                 OnValidateablePropertyChanged(); 
                 AudioFileChanged?.Invoke(this, EventArgs.Empty);
                 OnTraceablePropertyChanged(previousValue);
@@ -653,6 +668,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 traceableChanges.Push(new TraceableChange(previousValue, propertyName));
             }
+        }
+
+        private void Audiofile_ContentStreamLoaded(object? sender, EventArgs e)
+        {
+            RecalculateLastTrackEnd();
         }
 
         private void SwitchTracks(Track track1, Track track2)
