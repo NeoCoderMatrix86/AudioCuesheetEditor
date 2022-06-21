@@ -371,6 +371,7 @@ along with Foobar.  If not, see
     List<Track> selectedTracks = new List<Track>();
     CloneTrackModel? editTrack;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
+    Track? lastTrack;
 
     [Parameter]
     public Boolean TrackSelectionVisible { get; set; } = false;
@@ -427,6 +428,12 @@ along with Foobar.  If not, see
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
+        if (lastTrack != null)
+        {
+            lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
+        }
     }
 
     protected override Task OnInitializedAsync()
@@ -441,6 +448,10 @@ along with Foobar.  If not, see
 
         _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+
+        _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
+        AttachToLastTrackValidateablePropertyChanged();
 
         return base.OnInitializedAsync();
     }
@@ -622,6 +633,19 @@ along with Foobar.  If not, see
         return result;
     }
 
+    private void AttachToLastTrackValidateablePropertyChanged()
+    {
+        if (lastTrack != null)
+        {
+            lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
+        }
+        lastTrack = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault();
+        if (lastTrack != null)
+        {
+            lastTrack.ValidateablePropertyChanged += Cuesheet_LastTrack_ValidateablePropertyChanged;
+        }
+    }
+
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
@@ -638,6 +662,21 @@ along with Foobar.  If not, see
     }
 
     private void TraceChangeManager_RedoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void Cuesheet_TrackAdded(object? sender, EventArgs args)
+    {
+        AttachToLastTrackValidateablePropertyChanged();
+    }
+
+    private void Cuesheet_TrackRemoved(object? sender, EventArgs args)
+    {
+        AttachToLastTrackValidateablePropertyChanged();
+    }
+
+    private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
