@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
@@ -37,6 +38,7 @@ namespace AudioCuesheetEditor.Extensions
         private Cuesheet? importCuesheet;
         private TextImportFile? textImportFile;
         private CuesheetImportFile? cuesheetImportFile;
+        private AudioFile? importAudioFile;
 
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
@@ -61,6 +63,11 @@ namespace AudioCuesheetEditor.Extensions
             set
             {
                 importCuesheet = value;
+                //When there is an audiofile from import, we use this file because it has an object url and gets duration, etc.
+                if ((importCuesheet != null) && (ImportAudioFile != null))
+                {
+                    importCuesheet.Audiofile = ImportAudioFile;
+                }
                 ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -104,6 +111,20 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
+        public AudioFile? ImportAudioFile
+        {
+            get => importAudioFile;
+            set
+            {
+                importAudioFile = value;
+                if ((ImportCuesheet != null) && (ImportAudioFile != null))
+                {
+                    ImportCuesheet.Audiofile = ImportAudioFile;
+                    ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
         private void TextImportScheme_SchemeChanged(object? sender, string e)
         {
             if (textImportFile != null)
@@ -126,6 +147,13 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
+        public void ResetImport()
+        {
+            TextImportFile = null;
+            CuesheetImportFile = null;
+            ImportAudioFile = null;
+        }
+
         public void StartImportCuesheet(ApplicationOptions applicationOptions)
         {
             if (ImportCuesheet != null)
@@ -133,8 +161,7 @@ namespace AudioCuesheetEditor.Extensions
                 Cuesheet.Import(ImportCuesheet, applicationOptions);
                 ImportCuesheet = null;
             }
-            TextImportFile = null;
-            CuesheetImportFile = null;
+            ResetImport();
         }
     }
 }

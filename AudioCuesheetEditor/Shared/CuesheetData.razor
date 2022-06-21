@@ -241,6 +241,7 @@ along with Foobar.  If not, see
         await Task.Delay(1);
         await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
     }
+
     private async Task OnAudioFileChanged(FileChangedEventArgs e)
     {
         _logger.LogInformation("OnAudioFileChanged with {0}", e);

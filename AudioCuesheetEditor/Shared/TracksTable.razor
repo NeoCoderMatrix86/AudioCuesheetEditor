@@ -639,7 +639,7 @@ along with Foobar.  If not, see
         {
             lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
         }
-        lastTrack = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault();
+        lastTrack = Cuesheet.Tracks.LastOrDefault();
         if (lastTrack != null)
         {
             lastTrack.ValidateablePropertyChanged += Cuesheet_LastTrack_ValidateablePropertyChanged;
@@ -653,6 +653,7 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
+        AttachToLastTrackValidateablePropertyChanged();
         StateHasChanged();
     }
 
