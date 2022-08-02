@@ -234,11 +234,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         if (propertyAfter != null)
                         {
                             //Set recognized
-                            recognized += String.Format("<Mark>{0}</Mark>{1}", line.Substring(index, match.Index), match.Value);
+                            recognized += String.Format(CuesheetConstants.RecognizedMarkHTML, line.Substring(index, match.Index)) + match.Value;
                             if (otherMatchRegEx == false)
                             {
                                 SetValue(entity, propertyAfter, propertyValueAfter);
-                                recognized += String.Format("<Mark>{0}</Mark>", line.Substring(index + match.Index + match.Length));
+                                recognized += String.Format(CuesheetConstants.RecognizedMarkHTML, line.Substring(index + match.Index + match.Length));
                             }
                         }
                         else

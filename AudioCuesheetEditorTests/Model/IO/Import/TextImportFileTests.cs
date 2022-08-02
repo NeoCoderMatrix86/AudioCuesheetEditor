@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using System.IO;
 using AudioCuesheetEditorTests.Utility;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.AudioCuesheet;
 
 namespace AudioCuesheetEditor.Model.IO.Import.Tests
 {
@@ -283,7 +284,10 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsNotNull(textImportFile.Cuesheet);
             Assert.IsNotNull(textImportFile.FileContentRecognized);
-            Assert.AreEqual("<Mark>CuesheetArtist</Mark> - <Mark>CuesheetTitle</Mark>				<Mark>c:\\tmp\\Testfile.mp3</Mark>", textImportFile.FileContentRecognized.First());
+            Assert.AreEqual(String.Format("{0} - {1}				{2}", 
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"), 
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), textImportFile.FileContentRecognized.First());
             Assert.AreEqual("CuesheetArtist", textImportFile.Cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", textImportFile.Cuesheet.Title);
             Assert.AreEqual("c:\\tmp\\Testfile.mp3", textImportFile.Cuesheet.Audiofile.FileName);
@@ -301,7 +305,10 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             Assert.AreEqual(textImportFile.Cuesheet.Tracks.ToArray()[0].Artist, "Sample Artist 1");
             Assert.AreEqual(textImportFile.Cuesheet.Tracks.ToArray()[0].Title, "Sample Title 1");
             Assert.AreEqual(textImportFile.Cuesheet.Tracks.ToArray()[0].End, new TimeSpan(0, 5, 0));
-            Assert.AreEqual("<Mark>Sample Artist 8</Mark> - <Mark>Sample Title 8</Mark>				<Mark>01:15:54</Mark>", textImportFile.FileContentRecognized.Last());
+            Assert.AreEqual(String.Format("{0} - {1}				{2}",
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Title 8"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), textImportFile.FileContentRecognized.Last());
 
             File.Delete(tempFile);
         }
