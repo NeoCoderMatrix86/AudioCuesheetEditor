@@ -243,6 +243,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         }
                         else
                         {
+                            //TODO: Sample_Inputfile.txt can not be imported!
                             throw new NullReferenceException(String.Format("PropertyInfo after was not found {0} for line content {1}", regexRelation.Key.Item2, line));
                         }
                         index = index + match.Index + match.Length;
