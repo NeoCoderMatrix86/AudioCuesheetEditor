@@ -27,14 +27,14 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class TextImportFile
+    public class TextImportfile
     {
         public const String MimeType = "text/plain";
         public const String FileExtension = ".txt";
 
         private TextImportScheme textImportScheme;
 
-        public TextImportFile(MemoryStream fileContent, ImportOptions? importOptions = null)
+        public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null)
         {
             textImportScheme = new TextImportScheme();
             fileContent.Position = 0;
@@ -98,8 +98,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 Cuesheet = new Cuesheet();
                 FileContentRecognized = null;
                 AnalyseException = null;
-                var regicesCuesheet = AnalyseScheme(TextImportScheme.SchemeCuesheet);
-                var regicesTracks = AnalyseScheme(TextImportScheme.SchemeTracks);
                 Boolean cuesheetRecognized = false;
                 List<String?> recognizedFileContent = new();
                 foreach (var line in FileContent)
@@ -108,26 +106,20 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     if (String.IsNullOrEmpty(line) == false)
                     {
                         Boolean recognized = false;
-                        if ((recognized == false) && (cuesheetRecognized == false) && (regicesCuesheet.Count > 0))
+                        if ((recognized == false) && (cuesheetRecognized == false) && (String.IsNullOrEmpty(TextImportScheme.SchemeCuesheet) == false))
                         {
-                            var firstRegiceCuesheet = regicesCuesheet.First();
-                            if (firstRegiceCuesheet.Value.IsMatch(line))
-                            {
-                                recognized = true;
-                                cuesheetRecognized = true;
-                                recognizedLine = AnalyseLine(line, Cuesheet, regicesCuesheet);
-                            }
+                            var regExCuesheet = new Regex(TextImportScheme.SchemeCuesheet);
+                            recognizedLine = AnalyseLine(line, Cuesheet, regExCuesheet);
+                            recognized = recognizedLine != null;
+                            cuesheetRecognized = recognizedLine != null;
                         }
-                        if ((recognized == false) && (regicesTracks.Count > 0))
+                        if ((recognized == false) && (String.IsNullOrEmpty(TextImportScheme.SchemeTracks) == false))
                         {
-                            var firstRegiceTrack = regicesTracks.First();
-                            if (firstRegiceTrack.Value.IsMatch(line))
-                            {
-                                recognized = true;
-                                var track = new Track();
-                                recognizedLine = AnalyseLine(line, track, regicesTracks);
-                                Cuesheet.AddTrack(track);
-                            }
+                            var regExTracks = new Regex(TextImportScheme.SchemeTracks);
+                            var track = new Track();
+                            recognizedLine = AnalyseLine(line, track, regExTracks);
+                            recognized = recognizedLine != null;
+                            Cuesheet.AddTrack(track);
                         }
                     }
                     recognizedFileContent.Add(recognizedLine);
@@ -146,106 +138,47 @@ namespace AudioCuesheetEditor.Model.IO.Import
         }
 
         /// <summary>
-        /// Analyse the input format scheme
-        /// </summary>
-        /// <param name="scheme">Scheme to analyse</param>
-        /// <returns>A read only dictionary with regular expressions and in format: "PropertyBefore", "PropertyAfter", Regular Expression </returns>
-        private IReadOnlyDictionary<Tuple<String, String>, Regex> AnalyseScheme(String? scheme)
-        {
-            Dictionary<Tuple<String, String>, Regex> regices = new();
-            try
-            {
-                AnalyseException = null;
-                if (String.IsNullOrEmpty(scheme) == false)
-                {
-                    for (int i = 0; i <= scheme.Length; i++)
-                    {
-                        if (scheme.Substring(i).StartsWith(TextImportScheme.SchemeCharacter) == true)
-                        {
-                            var endIndex = scheme.IndexOf(TextImportScheme.SchemeCharacter, i + 1);
-                            //Only search if there is somethine behind the Scheme identifier
-                            if ((endIndex > 0) && ((endIndex + 1) < scheme.Length))
-                            {
-                                var propertyBefore = scheme.Substring(i + TextImportScheme.SchemeCharacter.Length, endIndex - (i + TextImportScheme.SchemeCharacter.Length));
-                                var nextPropertyStartIndex = scheme.IndexOf(TextImportScheme.SchemeCharacter, endIndex + 1);
-                                var nextPropertyEndIndex = scheme.IndexOf(TextImportScheme.SchemeCharacter, nextPropertyStartIndex + 1);
-                                var propertyAfter = scheme.Substring(nextPropertyStartIndex + 1, nextPropertyEndIndex - (nextPropertyStartIndex + 1));
-                                var regExString = scheme.Substring(endIndex + 1, nextPropertyStartIndex - (endIndex + 1));
-                                //Remove entity names
-                                propertyBefore = propertyBefore.Replace(string.Format("{0}.", nameof(AudioCuesheet.Cuesheet)), string.Empty).Replace(string.Format("{0}.", nameof(AudioCuesheet.Track)), string.Empty).Replace(string.Format("{0}.", nameof(Cuesheet)), string.Empty);
-                                propertyAfter = propertyAfter.Replace(string.Format("{0}.", nameof(AudioCuesheet.Cuesheet)), string.Empty).Replace(string.Format("{0}.", nameof(AudioCuesheet.Track)), string.Empty).Replace(string.Format("{0}.", nameof(Cuesheet)), string.Empty);
-                                regices.Add(new Tuple<string, string>(propertyBefore, propertyAfter), new Regex(regExString));
-                                //Recalculate next index
-                                i = nextPropertyStartIndex - 1;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                AnalyseException = ex;
-            }
-            return regices;
-        }
-
-        /// <summary>
         /// Analyses a line and sets the properties on the entity
         /// </summary>
         /// <param name="line">Line to analyse</param>
         /// <param name="entity">Entity to set properties on</param>
-        /// <param name="regices">Regular expressions for analysing</param>
-        /// <returns>Analysed line with marking what has been matched</returns>
-        private static String? AnalyseLine(String line, ICuesheetEntity entity, IReadOnlyDictionary<Tuple<String, String>, Regex> regices)
+        /// <param name="regex">Regular expression to use for analysis</param>
+        /// <returns>Analysed line with marking what has been matched or empty string</returns>
+        /// <exception cref="NullReferenceException">Occurs when property or group could not be found!</exception>
+        private static String? AnalyseLine(String line, ICuesheetEntity entity, Regex regex)
         {
             String? recognized = null;
-            if ((String.IsNullOrEmpty(line) == false) && (entity != null) && (regices != null))
+            string? recognizedLine = line;
+            if (String.IsNullOrEmpty(line) == false)
             {
-                var index = 0;
-                foreach (var regexRelation in regices)
+                var match = regex.Match(line);
+                if (match.Success == true)
                 {
-                    var match = regexRelation.Value.Match(line.Substring(index));
-                    if (match.Success == true)
+                    for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
                     {
-                        var propertyValueBefore = line.Substring(index, match.Index);
-                        var propertyBefore = entity.GetType().GetProperty(regexRelation.Key.Item1, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                        var propertyValueAfter = line.Substring(index + match.Index + match.Length);
-                        var propertyAfter = entity.GetType().GetProperty(regexRelation.Key.Item2, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                        //Check if other regices might match the value after
-                        Boolean otherMatchRegEx = false;
-                        var elementIndex = regices.ToList().IndexOf(regexRelation);
-                        for (int i = elementIndex; i < regices.Count; i++)
+                        var key = match.Groups.Keys.ElementAt(groupCounter);
+                        var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (property != null)
                         {
-                            var nextRegExRelation = regices.ElementAt(i);
-                            if (nextRegExRelation.Value.IsMatch(propertyValueAfter) == true)
+                            var group = match.Groups.GetValueOrDefault(key);
+                            if (group != null)
                             {
-                                otherMatchRegEx = true;
-                                i = regices.Count;
+                                SetValue(entity, property, group.Value);
+                                recognizedLine = recognizedLine.Replace(group.Value, String.Format("<Mark>{0}</Mark>", group.Value));
                             }
-                        }
-                        if (propertyBefore != null)
-                        {
-                            SetValue(entity, propertyBefore, propertyValueBefore);
-                        }
-                        else
-                        {
-                            throw new NullReferenceException(String.Format("PropertyInfo before was not found {0} for line content {1}", regexRelation.Key.Item1, line));
-                        }
-                        if (propertyAfter != null)
-                        {
-                            //Set recognized
-                            recognized += String.Format("<Mark>{0}</Mark>{1}", line.Substring(index, match.Index), match.Value);
-                            if (otherMatchRegEx == false)
+                            else
                             {
-                                SetValue(entity, propertyAfter, propertyValueAfter);
-                                recognized += String.Format("<Mark>{0}</Mark>", line.Substring(index + match.Index + match.Length));
+                                throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
                             }
                         }
                         else
                         {
-                            throw new NullReferenceException(String.Format("PropertyInfo after was not found {0} for line content {1}", regexRelation.Key.Item2, line));
+                            throw new NullReferenceException(String.Format("Property '{0}' was not found for line content {1}", key, line));
                         }
-                        index = index + match.Index + match.Length;
+                    }
+                    if (recognizedLine.Contains("<Mark>"))
+                    {
+                        recognized = recognizedLine;
                     }
                 }
             }
@@ -277,9 +210,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var list = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
                 ((Track)entity).SetFlags(list);
             }
-            if (property.PropertyType == typeof(AudioFile))
+            if (property.PropertyType == typeof(Audiofile))
             {
-                property.SetValue(entity, new AudioFile(value));
+                property.SetValue(entity, new Audiofile(value));
             }
             if (property.PropertyType == typeof(Cataloguenumber))
             {

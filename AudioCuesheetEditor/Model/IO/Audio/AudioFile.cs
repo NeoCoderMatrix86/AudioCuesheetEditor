@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
-    public class AudioFile : IDisposable
+    public class Audiofile : IDisposable
     {
         public static readonly String RecordingFileName = "Recording.webm";
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
@@ -45,13 +45,13 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         public event EventHandler? ContentStreamLoaded;
         
         [JsonConstructor]
-        public AudioFile(String fileName, Boolean isRecorded = false)
+        public Audiofile(String fileName, Boolean isRecorded = false)
         {
             FileName = fileName;
             IsRecorded = isRecorded;
         }
 
-        public AudioFile(String fileName, String objectURL, AudioCodec audioCodec, System.Net.Http.HttpClient httpClient, Boolean isRecorded = false) : this(fileName, isRecorded)
+        public Audiofile(String fileName, String objectURL, AudioCodec audioCodec, System.Net.Http.HttpClient httpClient, Boolean isRecorded = false) : this(fileName, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {

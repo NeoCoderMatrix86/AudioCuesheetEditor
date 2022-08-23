@@ -48,7 +48,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = "%Track.Artist% - %Track.Title%[\t]{1,}%Track.End%";
             textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.Audiofile%";
             Assert.IsNull(textImportFile.AnalyseException);
@@ -78,13 +78,13 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             File.WriteAllText(tempFile, builder.ToString());
 
-            textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist%[|]%Cuesheet.Title%[\\t]{1,}%Cuesheet.CDTextfile%";
             textImportFile.TextImportScheme.SchemeTracks = "%Position%|%Artist% - %Title%[\t]{1,}%End%";            
 
             Assert.IsNotNull(textImportFile.AnalyseException);
 
-            textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = "%Position%[|]%Artist% - %Title%[\t]{1,}%End%";
 
             Assert.IsNull(textImportFile.AnalyseException);
@@ -122,13 +122,13 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             File.WriteAllText(tempFile, builder.ToString());
 
-            textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist%[|]%Cuesheet.Title%[\\t]{1,}%Cuesheet.CDTextfile%[\\t]{1,}%Cuesheet.Cataloguenumber%";
             textImportFile.TextImportScheme.SchemeTracks = "%Position%|%Artist% - %Title%[\t]{1,}%End%";
 
             Assert.IsNotNull(textImportFile.AnalyseException);
 
-            textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = "%Position%[|]%Artist% - %Title%[\t]{1,}%End%";
 
             Assert.IsNull(textImportFile.AnalyseException);
@@ -162,7 +162,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
 
@@ -193,7 +193,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%[\t]{1,}%Flags%";
             
@@ -232,7 +232,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%PreGap%[\t]{1,}%End%[\t]{1,}%PostGap%";
             
@@ -277,7 +277,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = String.Empty;
             textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.Audiofile%";
             Assert.IsNull(textImportFile.AnalyseException);
@@ -304,6 +304,14 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             Assert.AreEqual("<Mark>Sample Artist 8</Mark> - <Mark>Sample Title 8</Mark>				<Mark>01:15:54</Mark>", textImportFile.FileContentRecognized.Last());
 
             File.Delete(tempFile);
+        }
+
+        [TestMethod()]
+        public void TestSampleFiles()
+        {
+            //Test TextImportFile
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(@"C:\tmp\AudioCuesheetEditor\AudioCuesheetEditor\wwwroot\samples\Sample_Inputfile.txt")));
+            Assert.IsNull(textImportFile.AnalyseException);
         }
     }
 }

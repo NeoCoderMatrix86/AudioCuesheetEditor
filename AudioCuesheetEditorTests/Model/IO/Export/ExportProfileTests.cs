@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                Audiofile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };            
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)
@@ -163,7 +163,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             {
                 Artist = "Demo Artist",
                 Title = "Demo Title",
-                Audiofile = new AudioFile("Testfile.mp3")
+                Audiofile = new Audiofile("Testfile.mp3")
             };
             var begin = TimeSpan.Zero;
             for (int i = 1; i < 25; i++)

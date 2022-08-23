@@ -76,7 +76,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             var tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            var importFile = new CuesheetImportFile(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
+            var importFile = new CuesheetImportfile(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.Cuesheet);
             Assert.IsTrue(importFile.Cuesheet.IsValid);
@@ -94,18 +94,18 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             File.Delete(tempFile);
 
-            importFile = new CuesheetImportFile(new MemoryStream(Resources.Playlist_Bug_30), testHelper.ApplicationOptions);
+            importFile = new CuesheetImportfile(new MemoryStream(Resources.Playlist_Bug_30), testHelper.ApplicationOptions);
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.Cuesheet);
             Assert.IsNull(importFile.Cuesheet.GetValidationErrors(testHelper.Localizer, validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly));
 
-            importFile = new CuesheetImportFile(new MemoryStream(Resources.Playlist_Bug_57), testHelper.ApplicationOptions);
+            importFile = new CuesheetImportfile(new MemoryStream(Resources.Playlist_Bug_57), testHelper.ApplicationOptions);
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.Cuesheet);
             Assert.IsTrue(importFile.Cuesheet.Tracks.Count == 39);
             Assert.AreEqual(importFile.Cuesheet.Tracks.ElementAt(24).Begin, new TimeSpan(2, 8, 21));
 
-            importFile = new CuesheetImportFile(new MemoryStream(Resources.Playlist__36_Frames), testHelper.ApplicationOptions);
+            importFile = new CuesheetImportfile(new MemoryStream(Resources.Playlist__36_Frames), testHelper.ApplicationOptions);
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.Cuesheet);
             Assert.IsTrue(importFile.Cuesheet.Tracks.Count == 12);
@@ -157,7 +157,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             tempFile = Path.GetTempFileName();
             File.WriteAllText(tempFile, builder.ToString());
 
-            importFile = new CuesheetImportFile(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
+            importFile = new CuesheetImportfile(new MemoryStream(File.ReadAllBytes(tempFile)), testHelper.ApplicationOptions);
 
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.Cuesheet);

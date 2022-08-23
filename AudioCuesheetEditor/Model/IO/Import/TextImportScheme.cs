@@ -71,8 +71,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
             };
         }
 
-        public static readonly String DefaultSchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\\t]{1,}%Cuesheet.AudioFile%";
-        public static readonly String DefaultSchemeTracks = "%Track.Artist% - %Track.Title%[\\t]{1,}%Track.End%";
+        public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\A.*) - (?'Title'\w{1,})\t{1,}(?'Audiofile'.{1,})";
+        public static readonly String DefaultSchemeTracks = @"(?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})";
 
         public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 

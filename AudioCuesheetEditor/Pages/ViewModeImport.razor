@@ -55,7 +55,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Textfile"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                <FileEdit Filter="@TextImportFile.MimeType" Changed="OnTextImportFileChanged" AutoReset="false"></FileEdit>
+                                <FileEdit Filter="@TextImportfile.MimeType" Changed="OnTextImportFileChanged" AutoReset="false"></FileEdit>
                             </FieldBody>
                         </Field>
                     </Tooltip>
@@ -236,7 +236,7 @@ along with Foobar.  If not, see
 
 @code {
     String selectedStep = "selectFiles";
-    String dragNDropUploadFilter = String.Join(',', TextImportFile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
+    String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
     Boolean importFileContentVisible = true;
@@ -326,7 +326,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == false)
+            if (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
             {
                 invalidTextImportFileNames.Add(file.Name);
             }
@@ -381,8 +381,8 @@ along with Foobar.  If not, see
         {
             if ((CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
                 && (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
-                && (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == false)
-                && (CuesheetController.CheckFileMimeType(file, AudioFile.AudioCodecs) == false))
+                && (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
+                && (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == false))
             {
                 invalidDropFileNames.Add(file.Name);
             }
@@ -419,22 +419,22 @@ along with Foobar.  If not, see
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
-                _sessionStateContainer.CuesheetImportFile = new CuesheetImportFile(memoryStream, options);
+                _sessionStateContainer.CuesheetImportFile = new CuesheetImportfile(memoryStream, options);
             }
-            if (CuesheetController.CheckFileMimeType(file, TextImportFile.MimeType, TextImportFile.FileExtension) == true)
+            if (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == true)
             {
                 var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
                 var stream = file.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
-                _sessionStateContainer.TextImportFile = new TextImportFile(memoryStream, options);
+                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options);
             }
-            if (CuesheetController.CheckFileMimeType(file, AudioFile.AudioCodecs) == true)
+            if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
             {
                 var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
-                var codec = AudioFile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
-                _sessionStateContainer.ImportAudioFile = new AudioFile(file.Name, audioFileObjectURL, codec, _httpClient);
+                var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
+                _sessionStateContainer.ImportAudioFile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
             }
         }
         await OnSelectedStepChanged("validateData");

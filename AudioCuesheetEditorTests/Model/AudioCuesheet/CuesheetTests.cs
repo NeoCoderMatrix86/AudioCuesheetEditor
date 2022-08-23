@@ -48,7 +48,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNull(cuesheet.Audiofile);
             var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))).FirstOrDefault();
             Assert.IsNotNull(validationErrorAudioFile);
-            cuesheet.Audiofile = new AudioFile("AudioFile01.ogg");
+            cuesheet.Audiofile = new Audiofile("AudioFile01.ogg");
             validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.Audiofile)).FirstOrDefault();
             Assert.IsNull(validationErrorAudioFile);
         }
@@ -224,7 +224,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             //Test TextImportFile
-            var textImportFile = new TextImportFile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
             textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.Audiofile%";
             Assert.IsNull(textImportFile.AnalyseException);
@@ -253,7 +253,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public void ImportTestCalculateEndCorrectly()
         {
             var testHelper = new TestHelper();
-            var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_Bug_54));
+            var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug_54));
             textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             Assert.IsNull(textImportFile.AnalyseException);

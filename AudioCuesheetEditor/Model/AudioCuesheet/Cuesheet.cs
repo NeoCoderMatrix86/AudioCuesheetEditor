@@ -54,7 +54,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Track> tracks = default!;
         private String? artist;
         private String? title;
-        private AudioFile? audiofile;
+        private Audiofile? audiofile;
         private CDTextfile? cDTextfile;
         private Cataloguenumber catalogueNumber = default!;
         private DateTime? recordingStart;
@@ -115,7 +115,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue);
             }
         }
-        public AudioFile? Audiofile
+        public Audiofile? Audiofile
         {
             get { return audiofile; }
             set 
