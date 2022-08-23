@@ -225,8 +225,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 
             //Test TextImportFile
             var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
-            textImportFile.TextImportScheme.SchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\t]{1,}%Cuesheet.Audiofile%";
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
             Assert.IsTrue(textImportFile.IsValid);
@@ -254,7 +252,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         {
             var testHelper = new TestHelper();
             var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug_54));
-            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 39);

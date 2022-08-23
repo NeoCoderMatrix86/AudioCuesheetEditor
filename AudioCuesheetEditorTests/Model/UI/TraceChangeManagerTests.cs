@@ -152,8 +152,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var testhelper = new TestHelper();
             var manager = new TraceChangeManager();
             var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
-            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
-            textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist% - %Cuesheet.Title% - %Cuesheet.Cataloguenumber%";
+            textImportFile.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             Assert.IsFalse(manager.CanUndo);

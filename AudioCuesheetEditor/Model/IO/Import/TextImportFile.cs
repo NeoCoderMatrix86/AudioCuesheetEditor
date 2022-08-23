@@ -152,28 +152,28 @@ namespace AudioCuesheetEditor.Model.IO.Import
             if (String.IsNullOrEmpty(line) == false)
             {
                 var match = regex.Match(line);
-                if (match.Success == true)
+                if (match.Success)
                 {
                     for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
                     {
                         var key = match.Groups.Keys.ElementAt(groupCounter);
-                        var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                        if (property != null)
+                        var group = match.Groups.GetValueOrDefault(key);
+                        if ((group != null) && (group.Success))
                         {
-                            var group = match.Groups.GetValueOrDefault(key);
-                            if (group != null)
+                            var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                            if (property != null)
                             {
                                 SetValue(entity, property, group.Value);
                                 recognizedLine = recognizedLine.Replace(group.Value, String.Format("<Mark>{0}</Mark>", group.Value));
                             }
                             else
                             {
-                                throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
+                                throw new NullReferenceException(String.Format("Property '{0}' was not found for line content {1}", key, line));
                             }
                         }
                         else
                         {
-                            throw new NullReferenceException(String.Format("Property '{0}' was not found for line content {1}", key, line));
+                            throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
                         }
                     }
                     if (recognizedLine.Contains("<Mark>"))
