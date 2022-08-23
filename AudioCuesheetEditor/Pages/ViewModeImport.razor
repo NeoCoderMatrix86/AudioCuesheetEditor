@@ -157,7 +157,7 @@ along with Foobar.  If not, see
                                                         <DropdownMenu>
                                                             @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
                                                             {
-                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
                                                             }
                                                         </DropdownMenu>
                                                     </Dropdown>

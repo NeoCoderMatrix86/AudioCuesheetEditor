@@ -25,18 +25,18 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class TextImportScheme : Validateable
     {
-        public const String SchemeCharacter = "%";
+        public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemeCuesheet;
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
 
         static TextImportScheme()
         {
-            var schemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
-            var schemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            var schemeCuesheetAudioFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
-            var schemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-            var schemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
+            var schemeCuesheetArtist = String.Format("(?'{0}'{1})", nameof(Cuesheet.Artist), EnterRegularExpressionHere);
+            var schemeCuesheetTitle = String.Format("(?'{0}'{1})", nameof(Cuesheet.Title), EnterRegularExpressionHere);
+            var schemeCuesheetAudioFile = String.Format("(?'{0}'{1})", nameof(Cuesheet.Audiofile), EnterRegularExpressionHere);
+            var schemeCuesheetCDTextfile = String.Format("(?'{0}'{1})", nameof(Cuesheet.CDTextfile), EnterRegularExpressionHere);
+            var schemeCuesheetCatalogueNumber = String.Format("(?'{0}'{1})", nameof(Cuesheet.Cataloguenumber), EnterRegularExpressionHere);
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
@@ -47,15 +47,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 {nameof(Cuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 
-            var schemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
-            var schemeTrackTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Title), SchemeCharacter);
-            var schemeTrackBegin = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Begin), SchemeCharacter);
-            var schemeTrackEnd = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.End), SchemeCharacter);
-            var schemeTrackLength = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
-            var schemeTrackPosition = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
-            var schemeTrackFlags = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
-            var schemeTrackPreGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
-            var schemeTrackPostGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
+            var schemeTrackArtist = String.Format("(?'{0}'{1})", nameof(Track.Artist), EnterRegularExpressionHere);
+            var schemeTrackTitle = String.Format("(?'{0}'{1})", nameof(Track.Title), EnterRegularExpressionHere);
+            var schemeTrackBegin = String.Format("(?'{0}'{1})", nameof(Track.Begin), EnterRegularExpressionHere);
+            var schemeTrackEnd = String.Format("(?'{0}'{1})", nameof(Track.End), EnterRegularExpressionHere);
+            var schemeTrackLength = String.Format("(?'{0}'{1})", nameof(Track.Length), EnterRegularExpressionHere);
+            var schemeTrackPosition = String.Format("(?'{0}'{1})", nameof(Track.Position), EnterRegularExpressionHere);
+            var schemeTrackFlags = String.Format("(?'{0}'{1})", nameof(Track.Flags), EnterRegularExpressionHere);
+            var schemeTrackPreGap = String.Format("(?'{0}'{1})", nameof(Track.PreGap), EnterRegularExpressionHere);
+            var schemeTrackPostGap = String.Format("(?'{0}'{1})", nameof(Track.PostGap), EnterRegularExpressionHere);
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {

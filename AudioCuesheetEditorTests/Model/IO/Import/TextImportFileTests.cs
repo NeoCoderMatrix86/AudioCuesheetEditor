@@ -305,13 +305,5 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             File.Delete(tempFile);
         }
-
-        [TestMethod()]
-        public void TestSampleFiles()
-        {
-            //Test TextImportFile
-            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(@"C:\tmp\AudioCuesheetEditor\AudioCuesheetEditor\wwwroot\samples\Sample_Inputfile.txt")));
-            Assert.IsNull(textImportFile.AnalyseException);
-        }
     }
 }
