@@ -168,7 +168,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (property != null)
                             {
                                 SetValue(entity, property, group.Value);
-                                recognizedLine = recognizedLine.Replace(group.Value, String.Format("<Mark>{0}</Mark>", group.Value));
+                                recognizedLine = recognizedLine.Replace(group.Value, String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value));
                             }
                             else
                             {
@@ -180,7 +180,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
                         }
                     }
-                    if (recognizedLine.Contains("<Mark>"))
+                    if (recognizedLine.Contains(CuesheetConstants.RecognizedMarkHTML.Substring(0, CuesheetConstants.RecognizedMarkHTML.IndexOf("{0}"))))
                     {
                         recognized = recognizedLine;
                     }
