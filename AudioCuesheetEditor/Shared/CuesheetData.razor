@@ -73,7 +73,7 @@ along with Foobar.  If not, see
                 @if (Cuesheet.Audiofile == null)
                 {
                     <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                        <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                        <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                     </Tooltip>
                 }
                 else
@@ -135,7 +135,7 @@ along with Foobar.  If not, see
                     @if (Cuesheet.Audiofile == null)
                     {
                         <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                            <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", AudioFile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                            <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                         </Tooltip>
                     }
                     else
@@ -248,7 +248,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (CuesheetController.CheckFileMimeType(file, AudioFile.AudioCodecs) == true)
+            if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
             {
                 await SetAudioFile(file, _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
             }
@@ -273,8 +273,8 @@ along with Foobar.  If not, see
         if (file != null)
         {
             var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
-            var codec = AudioFile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
-            Cuesheet.Audiofile = new AudioFile(file.Name, audioFileObjectURL, codec, _httpClient);
+            var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
+            Cuesheet.Audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
         }
         else
         {

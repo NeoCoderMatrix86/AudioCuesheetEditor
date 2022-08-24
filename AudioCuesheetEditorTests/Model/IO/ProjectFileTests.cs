@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             {
                 Artist = "CuesheetArtist",
                 Title = "CuesheetTitle",
-                Audiofile = new AudioFile("AudioFile.mp3"),
+                Audiofile = new Audiofile("AudioFile.mp3"),
                 CDTextfile = new CDTextfile("CDTextfile.cdt"),
             };
             cuesheet.Cataloguenumber.Value = "A123";
