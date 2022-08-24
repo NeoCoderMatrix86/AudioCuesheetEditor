@@ -108,14 +108,18 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         Boolean recognized = false;
                         if ((recognized == false) && (cuesheetRecognized == false) && (String.IsNullOrEmpty(TextImportScheme.SchemeCuesheet) == false))
                         {
-                            var regExCuesheet = new Regex(TextImportScheme.SchemeCuesheet);
+                            //Remove entity names
+                            var expression = TextImportScheme.SchemeCuesheet.Replace(String.Format("{0}.", nameof(AudioCuesheet.Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty);
+                            var regExCuesheet = new Regex(expression);
                             recognizedLine = AnalyseLine(line, Cuesheet, regExCuesheet);
                             recognized = recognizedLine != null;
                             cuesheetRecognized = recognizedLine != null;
                         }
                         if ((recognized == false) && (String.IsNullOrEmpty(TextImportScheme.SchemeTracks) == false))
                         {
-                            var regExTracks = new Regex(TextImportScheme.SchemeTracks);
+                            //Remove entity names
+                            var expression = TextImportScheme.SchemeTracks.Replace(String.Format("{0}.", nameof(AudioCuesheet.Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty);
+                            var regExTracks = new Regex(expression);
                             var track = new Track();
                             recognizedLine = AnalyseLine(line, track, regExTracks);
                             recognized = recognizedLine != null;

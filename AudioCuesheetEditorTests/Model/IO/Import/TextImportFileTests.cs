@@ -77,13 +77,13 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeCuesheet = @"(?'Artist'\A.*)[|](?'Title'\w{1,})\t{1,}(?'CDTextfile'.{1,})";
-            textImportFile.TextImportScheme.SchemeTracks = @"(?'Position'.{1,})|(?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})";
+            textImportFile.TextImportScheme.SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'.{1,})";
+            textImportFile.TextImportScheme.SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})";
 
             Assert.IsNotNull(textImportFile.AnalyseException);
 
             textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeTracks = @"(?'Position'\d{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})";
+            textImportFile.TextImportScheme.SchemeTracks = @"(?'Track.Position'\d{1,})[|](?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})";
 
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.AreEqual("CuesheetArtist", textImportFile.Cuesheet.Artist);
@@ -121,13 +121,13 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             File.WriteAllText(tempFile, builder.ToString());
 
             textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeCuesheet = @"(?'Artist'\A.*)[|](?'Title'\w{1,})\t{1,}(?'CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cataloguenumber'.{1,})";
-            textImportFile.TextImportScheme.SchemeTracks = @"(?'Position'.{1,})|(?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})";
+            textImportFile.TextImportScheme.SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cuesheet.Cataloguenumber'.{1,})";
+            textImportFile.TextImportScheme.SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})";
 
             Assert.IsNotNull(textImportFile.AnalyseException);
 
             textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            textImportFile.TextImportScheme.SchemeTracks = @"(?'Position'.{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})";
+            textImportFile.TextImportScheme.SchemeTracks = @"(?'Track.Position'.{1,})[|](?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})";
 
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.AreEqual("CuesheetArtist", textImportFile.Cuesheet.Artist);
@@ -193,7 +193,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             //Test TextImportFile
             var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
-            textImportFile.TextImportScheme.SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Flags'[a-zA-Z 0-9,]{1,})";
+            textImportFile.TextImportScheme.SchemeTracks = "(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Track.Flags'[a-zA-Z 0-9,]{1,})";
             
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
@@ -232,7 +232,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             //Test TextImportFile
             var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
-            textImportFile.TextImportScheme.SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'PreGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'PostGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})";
+            textImportFile.TextImportScheme.SchemeTracks = "(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.PreGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Track.End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Track.PostGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})";
             
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);

@@ -32,11 +32,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         static TextImportScheme()
         {
-            var schemeCuesheetArtist = String.Format("(?'{0}'{1})", nameof(Cuesheet.Artist), EnterRegularExpressionHere);
-            var schemeCuesheetTitle = String.Format("(?'{0}'{1})", nameof(Cuesheet.Title), EnterRegularExpressionHere);
-            var schemeCuesheetAudioFile = String.Format("(?'{0}'{1})", nameof(Cuesheet.Audiofile), EnterRegularExpressionHere);
-            var schemeCuesheetCDTextfile = String.Format("(?'{0}'{1})", nameof(Cuesheet.CDTextfile), EnterRegularExpressionHere);
-            var schemeCuesheetCatalogueNumber = String.Format("(?'{0}'{1})", nameof(Cuesheet.Cataloguenumber), EnterRegularExpressionHere);
+            var schemeCuesheetArtist = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Artist), EnterRegularExpressionHere);
+            var schemeCuesheetTitle = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Title), EnterRegularExpressionHere);
+            var schemeCuesheetAudioFile = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Audiofile), EnterRegularExpressionHere);
+            var schemeCuesheetCDTextfile = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.CDTextfile), EnterRegularExpressionHere);
+            var schemeCuesheetCatalogueNumber = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), EnterRegularExpressionHere);
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
@@ -47,15 +47,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 {nameof(Cuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 
-            var schemeTrackArtist = String.Format("(?'{0}'{1})", nameof(Track.Artist), EnterRegularExpressionHere);
-            var schemeTrackTitle = String.Format("(?'{0}'{1})", nameof(Track.Title), EnterRegularExpressionHere);
-            var schemeTrackBegin = String.Format("(?'{0}'{1})", nameof(Track.Begin), EnterRegularExpressionHere);
-            var schemeTrackEnd = String.Format("(?'{0}'{1})", nameof(Track.End), EnterRegularExpressionHere);
-            var schemeTrackLength = String.Format("(?'{0}'{1})", nameof(Track.Length), EnterRegularExpressionHere);
-            var schemeTrackPosition = String.Format("(?'{0}'{1})", nameof(Track.Position), EnterRegularExpressionHere);
-            var schemeTrackFlags = String.Format("(?'{0}'{1})", nameof(Track.Flags), EnterRegularExpressionHere);
-            var schemeTrackPreGap = String.Format("(?'{0}'{1})", nameof(Track.PreGap), EnterRegularExpressionHere);
-            var schemeTrackPostGap = String.Format("(?'{0}'{1})", nameof(Track.PostGap), EnterRegularExpressionHere);
+            var schemeTrackArtist = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Artist), EnterRegularExpressionHere);
+            var schemeTrackTitle = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Title), EnterRegularExpressionHere);
+            var schemeTrackBegin = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Begin), EnterRegularExpressionHere);
+            var schemeTrackEnd = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.End), EnterRegularExpressionHere);
+            var schemeTrackLength = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Length), EnterRegularExpressionHere);
+            var schemeTrackPosition = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Position), EnterRegularExpressionHere);
+            var schemeTrackFlags = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Flags), EnterRegularExpressionHere);
+            var schemeTrackPreGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PreGap), EnterRegularExpressionHere);
+            var schemeTrackPostGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PostGap), EnterRegularExpressionHere);
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {
@@ -71,8 +71,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
             };
         }
 
-        public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\A.*) - (?'Title'\w{1,})\t{1,}(?'Audiofile'.{1,})";
-        public static readonly String DefaultSchemeTracks = @"(?'Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'End'.{1,})";
+        public static readonly String DefaultSchemeCuesheet = @"(?'Cuesheet.Artist'\A.*) - (?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.Audiofile'.{1,})";
+        public static readonly String DefaultSchemeTracks = @"(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'.{1,})";
 
         public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
@@ -120,9 +120,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemesTrack)
                     {
-                        if (SchemeCuesheet.Contains(availableScheme.Value) == true)
+                        if (SchemeCuesheet.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
-                            schemesFound.Add(availableScheme.Value);
+                            var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
+                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(")", startIndex) + 1) - startIndex);
+                            schemesFound.Add(realRegularExpression);
                         }
                     }
                     if (schemesFound.Count > 0)
@@ -142,9 +144,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemeCuesheet)
                     {
-                        if (SchemeTracks.Contains(availableScheme.Value) == true)
+                        if (SchemeTracks.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
-                            schemesFound.Add(availableScheme.Value);
+                            var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
+                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(")", startIndex) + 1) - startIndex);
+                            schemesFound.Add(realRegularExpression);
                         }
                     }
                     if (schemesFound.Count > 0)
