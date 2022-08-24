@@ -20,7 +20,7 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class CuesheetImportFile
+    public class CuesheetImportfile
     {
         /// <summary>
         /// File content (each element is a file line)
@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public Exception? AnalyseException { get; private set; }
         public Cuesheet? Cuesheet { get; private set; }
 
-        public CuesheetImportFile(MemoryStream fileContent, ApplicationOptions applicationOptions)
+        public CuesheetImportfile(MemoryStream fileContent, ApplicationOptions applicationOptions)
         {
             try
             {
@@ -112,7 +112,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var audioFile = matchGroup.Value;
-                                Cuesheet.Audiofile = new AudioFile(audioFile);
+                                Cuesheet.Audiofile = new Audiofile(audioFile);
                             }
                             else
                             {
