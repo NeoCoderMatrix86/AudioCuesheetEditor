@@ -82,7 +82,7 @@ along with Foobar.  If not, see
     Track? currentlyPlayingTrack;
     HotKeysContext hotKeysContext = default!;
     Boolean paused;
-    AudioFile? audioFile;
+    Audiofile? audioFile;
 
     [Parameter]
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
@@ -368,7 +368,7 @@ along with Foobar.  If not, see
         if (sender != null)
         {
             //We need to unlink ourself since the event should only occur once (for each object)
-            ((AudioFile)sender).ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
+            ((Audiofile)sender).ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
         }
         AnalyseAudioFile();
     }

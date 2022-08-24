@@ -36,9 +36,9 @@ namespace AudioCuesheetEditor.Extensions
         private ViewMode currentViewMode;
         private Cuesheet cuesheet;
         private Cuesheet? importCuesheet;
-        private TextImportFile? textImportFile;
-        private CuesheetImportFile? cuesheetImportFile;
-        private AudioFile? importAudioFile;
+        private TextImportfile? textImportFile;
+        private CuesheetImportfile? cuesheetImportFile;
+        private Audiofile? importAudioFile;
 
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
@@ -72,7 +72,7 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public TextImportFile? TextImportFile
+        public TextImportfile? TextImportFile
         {
             get { return textImportFile; }
             set
@@ -94,7 +94,7 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public CuesheetImportFile? CuesheetImportFile
+        public CuesheetImportfile? CuesheetImportFile
         {
             get { return cuesheetImportFile; }
             set
@@ -111,7 +111,7 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public AudioFile? ImportAudioFile
+        public Audiofile? ImportAudioFile
         {
             get => importAudioFile;
             set
