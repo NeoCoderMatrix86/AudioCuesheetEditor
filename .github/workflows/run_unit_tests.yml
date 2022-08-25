@@ -3,7 +3,6 @@ name: Run unit tests
 # Run workflow on every push to the master branch
 on:
   push:
-    branches: [ master ]
   pull_request:
     types: [opened, reopened]
 
