@@ -50,6 +50,8 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             //Test TextImportFile
             var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile.TextImportScheme.SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet;
+            textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsNotNull(textImportFile.Cuesheet);
             Assert.AreEqual("CuesheetArtist", textImportFile.Cuesheet.Artist);
@@ -277,6 +279,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             //Test TextImportFile
             var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile.TextImportScheme.SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet;
             textImportFile.TextImportScheme.SchemeTracks = String.Empty;
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsNotNull(textImportFile.Cuesheet);
