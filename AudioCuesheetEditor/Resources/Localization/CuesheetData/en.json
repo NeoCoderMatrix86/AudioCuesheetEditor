@@ -1,0 +1,15 @@
+{
+  "culture": "en",
+  "translations": {
+    "CD artist": "CD artist",
+    "CD title": "CD title",
+    "Audiofile": "Audiofile",
+    "Download recorded audio": "Download recorded audiofile",
+    "Change": "Change",
+    "CD textfile": "CD Textfile",
+    "Cataloguenumber": "Cataloguenumber",
+    "Enter cd artist here": "Enter CD artist here",
+    "Enter cd title here": "Enter CD title here",
+    "Enter cataloguenumber here": "Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number."
+  }
+}

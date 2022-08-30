@@ -35,22 +35,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class Cuesheet : Validateable, ICuesheet<Track>, ITraceable
+    public class TrackAddRemoveEventArgs : EventArgs
     {
-        private readonly object syncLock = new object();
+        public TrackAddRemoveEventArgs(Track track)
+        {
+            Track = track;
+        }
 
-        private List<Track> tracks;
-        private String artist;
-        private String title;
-        private Audiofile audiofile;
-        private CDTextfile cDTextfile;
-        private Cataloguenumber catalogueNumber;
+        public Track Track { get; private set; }
+    }
+    public class Cuesheet : Validateable, ICuesheetEntity, ITraceable
+    {
+        public const String MimeType = "text/*";
+        public const String FileExtension = ".cue";
+
+        private readonly object syncLock = new();
+
+        private List<Track> tracks = default!;
+        private String? artist;
+        private String? title;
+        private Audiofile? audiofile;
+        private CDTextfile? cDTextfile;
+        private Cataloguenumber catalogueNumber = default!;
         private DateTime? recordingStart;
-        private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new List<KeyValuePair<String, Track>>();
-        private Stack<TraceableChange> traceableChanges;
+        private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
+        private Stack<TraceableChange>? traceableChanges;
 
-        public event EventHandler AudioFileChanged;
-        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
+        public event EventHandler? AudioFileChanged;
+        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
+        public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
+        public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
 
         public Cuesheet()
         {
@@ -79,7 +93,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
         
-        public String Artist 
+        public String? Artist 
         {
             get { return artist; }
             set 
@@ -90,7 +104,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue);
             }
         }
-        public String Title 
+        public String? Title 
         {
             get { return title; }
             set 
@@ -101,20 +115,35 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 OnTraceablePropertyChanged(previousValue);
             }
         }
-        public Audiofile Audiofile
+        public Audiofile? Audiofile
         {
             get { return audiofile; }
             set 
             {
                 var previousValue = audiofile;
-                audiofile = value; 
+                if (audiofile != null)
+                {
+                    audiofile.ContentStreamLoaded -= Audiofile_ContentStreamLoaded;
+                }
+                audiofile = value;
+                if (audiofile != null)
+                {
+                    if (audiofile.IsContentStreamLoaded == false)
+                    {
+                        audiofile.ContentStreamLoaded += Audiofile_ContentStreamLoaded;
+                    }
+                    else
+                    {
+                        RecalculateLastTrackEnd();
+                    }
+                }
                 OnValidateablePropertyChanged(); 
                 AudioFileChanged?.Invoke(this, EventArgs.Empty);
                 OnTraceablePropertyChanged(previousValue);
             }
         }
 
-        public CDTextfile CDTextfile 
+        public CDTextfile? CDTextfile 
         {
             get { return cDTextfile; }
             set 
@@ -182,9 +211,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="track">Track object to get the previous link to</param>
         /// <returns>Previous linked track or null (if not linked)</returns>
-        public Track GetPreviousLinkedTrack(Track track)
+        public Track? GetPreviousLinkedTrack(Track track)
         {
-            Track previousLinkedTrack = null;
+            Track? previousLinkedTrack = null;
             if (track == null)
             {
                 throw new ArgumentNullException(nameof(track));
@@ -200,36 +229,33 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return previousLinkedTrack;
         }
 
-        public void AddTrack(Track track, ApplicationOptions applicationOptions)
+        public void AddTrack(Track track, ApplicationOptions? applicationOptions = null)
         {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
-            if (applicationOptions == null)
-            {
-                throw new ArgumentNullException(nameof(applicationOptions));
-            }
             if (track.IsCloned)
             {
                 throw new ArgumentException("Cloned tracks may not be added!");
             }
-            if (IsRecording)
-            {
-                track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
-            }
-            track.Cuesheet = this;
             var previousValue = new List<Track>(tracks);
-            tracks.Add(track);
-            ReCalculateTrackProperties(track);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
-            if (applicationOptions.LinkTracksWithPreviousOne.HasValue)
+            //When no applications are available (because of used by import for example) we don't try to calculate properties
+            if (applicationOptions != null)
             {
-                track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
+                if (IsRecording && (recordingStart.HasValue))
+                {
+                    track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
+                }                
+                if (applicationOptions.LinkTracksWithPreviousOne.HasValue)
+                {
+                    track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
+                }
             }
+            tracks.Add(track);
+            track.Cuesheet = this;
+            ReCalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
         }
 
         public void RemoveTrack(Track track)
@@ -239,7 +265,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             var index = tracks.IndexOf(track);
-            Track nextTrack = null;
+            Track? nextTrack = null;
             if ((index + 1) < tracks.Count)
             {
                 if (tracks.ElementAt(index + 1).IsLinkedToPreviousTrack)
@@ -273,6 +299,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            TrackRemoved?.Invoke(this, new TrackAddRemoveEventArgs(track));
         }
 
         /// <summary>
@@ -348,7 +375,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 throw new ArgumentNullException(nameof(track));
             }
             var index = tracks.IndexOf(track);
-            Track currentTrack = null;
+            Track? currentTrack = null;
             switch (moveDirection)
             {
                 case MoveDirection.Up:
@@ -374,25 +401,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(TextImportFile textImportFile, ApplicationOptions applicationOptions)
+        public void Import(Cuesheet cuesheet, ApplicationOptions applicationOptions)
         {
-            if (textImportFile == null)
-            {
-                throw new ArgumentNullException(nameof(textImportFile));
-            }
-            if (applicationOptions == null)
-            {
-                throw new ArgumentNullException(nameof(applicationOptions));
-            }
-            if (textImportFile.IsValid == false)
-            {
-                throw new InvalidOperationException(String.Format("{0} was not valid!", nameof(textImportFile)));
-            }
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
             {
                 traceableChanges = new Stack<TraceableChange>();
-                CopyValues(textImportFile.ImportCuesheet, applicationOptions);
+                CopyValues(cuesheet, applicationOptions);
                 TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(traceableChanges));
                 traceableChanges = null;
             }
@@ -407,7 +422,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             //Set end of last track
             var lastTrack = Tracks.LastOrDefault();
-            if (lastTrack != null)
+            if ((lastTrack != null) && (recordingStart.HasValue))
             {
                 lastTrack.End = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
             }
@@ -447,7 +462,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private void CatalogueNumber_ValidateablePropertyChanged(object sender, EventArgs e)
+        private void CatalogueNumber_ValidateablePropertyChanged(object? sender, EventArgs e)
         {
             OnValidateablePropertyChanged();
         }
@@ -506,7 +521,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="cuesheet">Reference to import cuesheet</param>
         /// <param name="applicationOptions">Reference to application options</param>
-        private void CopyValues(ICuesheet<ImportTrack> cuesheet, ApplicationOptions applicationOptions)
+        private void CopyValues(Cuesheet cuesheet, ApplicationOptions applicationOptions)
         {
             if (String.IsNullOrEmpty(cuesheet.Artist) == false)
             {
@@ -530,103 +545,118 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             foreach (var importTrack in cuesheet.Tracks)
             {
-                var track = new Track(importTrack);
+                //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
+                var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
         }
 
-        private void Track_RankPropertyValueChanged(object sender, string e)
+        private void Track_RankPropertyValueChanged(object? sender, string e)
         {
-            Track trackRaisedEvent = (Track)sender;
-            switch(e)
+            if (sender != null)
             {
-                case nameof(Track.Position):
-                    //Check position and call switchtracks
-                    if (trackRaisedEvent.Position.HasValue)
-                    {
-                        var trackAtPosition = tracks.ElementAtOrDefault((int)trackRaisedEvent.Position.Value - 1);
-                        if ((trackAtPosition != null) && (trackAtPosition != trackRaisedEvent))
+                Track trackRaisedEvent = (Track)sender;
+                switch (e)
+                {
+                    case nameof(Track.Position):
+                        //Check position and call switchtracks
+                        if (trackRaisedEvent.Position.HasValue)
                         {
-                            SwitchTracks(trackRaisedEvent, trackAtPosition);
+                            var trackAtPosition = tracks.ElementAtOrDefault((int)trackRaisedEvent.Position.Value - 1);
+                            if ((trackAtPosition != null) && (trackAtPosition != trackRaisedEvent))
+                            {
+                                SwitchTracks(trackRaisedEvent, trackAtPosition);
+                            }
                         }
-                    }
-                    break;
-            }
-            var item = KeyValuePair.Create(e, trackRaisedEvent);
-            if (currentlyHandlingLinkedTrackPropertyChange.Contains(item) == false)
-            {
-                currentlyHandlingLinkedTrackPropertyChange.Add(item);
-                var linkedPreviousTrack = GetPreviousLinkedTrack(trackRaisedEvent);
-                //Check if raising track has linked previous track
-                if ((trackRaisedEvent.IsLinkedToPreviousTrack) && (linkedPreviousTrack != null))
-                {
-                    switch (e)
-                    {
-                        case nameof(Track.Position):
-                            if (trackRaisedEvent.Position.HasValue)
-                            {
-                                linkedPreviousTrack.Position = trackRaisedEvent.Position.Value - 1;
-                            }
-                            break;
-                        case nameof(Track.Begin):
-                            if (trackRaisedEvent.Begin.HasValue)
-                            {
-                                linkedPreviousTrack.End = trackRaisedEvent.Begin;
-                            }
-                            break;
-                    }
+                        break;
                 }
-                //Check if track is linked by next track
-                var index = tracks.IndexOf(trackRaisedEvent);
-                if ((index + 1) < tracks.Count)
+                var item = KeyValuePair.Create(e, trackRaisedEvent);
+                if (currentlyHandlingLinkedTrackPropertyChange.Contains(item) == false)
                 {
-                    var nextTrack = tracks.ElementAt(index + 1);
-                    if (nextTrack.IsLinkedToPreviousTrack)
+                    currentlyHandlingLinkedTrackPropertyChange.Add(item);
+                    var linkedPreviousTrack = GetPreviousLinkedTrack(trackRaisedEvent);
+                    //Check if raising track has linked previous track
+                    if ((trackRaisedEvent.IsLinkedToPreviousTrack) && (linkedPreviousTrack != null))
                     {
                         switch (e)
                         {
                             case nameof(Track.Position):
                                 if (trackRaisedEvent.Position.HasValue)
                                 {
-                                    nextTrack.Position = trackRaisedEvent.Position.Value + 1;
+                                    linkedPreviousTrack.Position = trackRaisedEvent.Position.Value - 1;
                                 }
                                 break;
-                            case nameof(Track.End):
-                                if (trackRaisedEvent.End.HasValue)
+                            case nameof(Track.Begin):
+                                if (trackRaisedEvent.Begin.HasValue)
                                 {
-                                    nextTrack.Begin = trackRaisedEvent.End;
+                                    linkedPreviousTrack.End = trackRaisedEvent.Begin;
                                 }
                                 break;
                         }
                     }
+                    //Check if track is linked by next track
+                    var index = tracks.IndexOf(trackRaisedEvent);
+                    if ((index + 1) < tracks.Count)
+                    {
+                        var nextTrack = tracks.ElementAt(index + 1);
+                        if (nextTrack.IsLinkedToPreviousTrack)
+                        {
+                            switch (e)
+                            {
+                                case nameof(Track.Position):
+                                    if (trackRaisedEvent.Position.HasValue)
+                                    {
+                                        nextTrack.Position = trackRaisedEvent.Position.Value + 1;
+                                    }
+                                    break;
+                                case nameof(Track.End):
+                                    if (trackRaisedEvent.End.HasValue)
+                                    {
+                                        nextTrack.Begin = trackRaisedEvent.End;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    currentlyHandlingLinkedTrackPropertyChange.Remove(item);
                 }
-                currentlyHandlingLinkedTrackPropertyChange.Remove(item);
             }
-        }
-
-        private void Track_IsLinkedToPreviousTrackChanged(object sender, EventArgs e)
-        {
-            Track trackRaisedEvent = (Track)sender;
-            if (trackRaisedEvent.IsLinkedToPreviousTrack)
+            else
             {
-                //Set values
-                var index = tracks.IndexOf(trackRaisedEvent);
-                if (index > 0)
-                {
-                    var previousTrack = tracks.ElementAt(index - 1);
-                    if ((trackRaisedEvent.Position.HasValue) && (trackRaisedEvent.Position != previousTrack.Position.Value + 1))
-                    {
-                        trackRaisedEvent.Position = previousTrack.Position.Value + 1;
-                    }
-                    if ((previousTrack.End.HasValue) && (trackRaisedEvent.Begin != previousTrack.End))
-                    {
-                        trackRaisedEvent.Begin = previousTrack.End;
-                    }
-                }
+                throw new ArgumentNullException(nameof(sender));
             }
         }
 
-        private void OnTraceablePropertyChanged(object previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void Track_IsLinkedToPreviousTrackChanged(object? sender, EventArgs e)
+        {
+            if (sender != null)
+            {
+                Track trackRaisedEvent = (Track)sender;
+                if (trackRaisedEvent.IsLinkedToPreviousTrack)
+                {
+                    //Set values
+                    var index = tracks.IndexOf(trackRaisedEvent);
+                    if (index > 0)
+                    {
+                        var previousTrack = tracks.ElementAt(index - 1);
+                        if ((trackRaisedEvent.Position.HasValue) && (previousTrack.Position.HasValue) && (trackRaisedEvent.Position != previousTrack.Position.Value + 1))
+                        {
+                            trackRaisedEvent.Position = previousTrack.Position.Value + 1;
+                        }
+                        if ((previousTrack.End.HasValue) && (trackRaisedEvent.Begin != previousTrack.End))
+                        {
+                            trackRaisedEvent.Begin = previousTrack.End;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException(nameof(sender));
+            }
+        }
+
+        private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             if (traceableChanges == null)
             {
@@ -638,6 +668,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 traceableChanges.Push(new TraceableChange(previousValue, propertyName));
             }
+        }
+
+        private void Audiofile_ContentStreamLoaded(object? sender, EventArgs e)
+        {
+            RecalculateLastTrackEnd();
         }
 
         private void SwitchTracks(Track track1, Track track2)
@@ -668,13 +703,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 if (indexTrack1 < indexTrack2)
                 {
                     track1.Begin = track2.Begin;
-                    var newEnd = track1.End;
-                    track1.End = track2.End;
-                    track2.End = newEnd;
+                    (track2.End, track1.End) = (track1.End, track2.End);
                     if (track2.IsLinkedToPreviousTrack)
                     {
                         var previousTrack = GetPreviousLinkedTrack(track2);
-                        if (previousTrack.End.HasValue)
+                        if ((previousTrack != null) && (previousTrack.End.HasValue))
                         {
                             track2.Begin = previousTrack.End;
                         }
@@ -683,13 +716,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 else
                 {
                     track2.Begin = track1.Begin;
-                    var newEnd = track2.End;
-                    track2.End = track1.End;
-                    track1.End = newEnd;
+                    (track1.End, track2.End) = (track2.End, track1.End);
                     if (track1.IsLinkedToPreviousTrack)
                     {
                         var previousTrack = GetPreviousLinkedTrack(track1);
-                        if (previousTrack.End.HasValue)
+                        if ((previousTrack != null) && (previousTrack.End.HasValue))
                         {
                             track1.Begin = previousTrack.End;
                         }
@@ -698,7 +729,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private TimeSpan CalculateTimeSpanWithSensitivity(TimeSpan inputTimeSpan, TimeSensitivityMode sensitivityMode)
+        private static TimeSpan CalculateTimeSpanWithSensitivity(TimeSpan inputTimeSpan, TimeSensitivityMode sensitivityMode)
         {
             TimeSpan timeSpan;
             switch (sensitivityMode)

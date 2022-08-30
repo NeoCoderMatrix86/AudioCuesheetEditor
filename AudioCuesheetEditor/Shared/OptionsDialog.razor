@@ -1,0 +1,258 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@implements IDisposable
+
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ITextLocalizer<OptionsDialog> _localizer
+@inject ILogger<OptionsDialog> _logger
+@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navigationManager
+@inject HotKeys _hotKeys
+@inject ITextLocalizerService _localizationService
+
+@if (applicationOptions != null)
+{
+    <Modal @ref="modalOptions" Closed="OnModalClosed">
+        <ModalContent Centered="true" Size="ModalSize.Large">
+            <ModalHeader>
+                <ModalTitle>@_localizer["Options"]</ModalTitle>
+                <CloseButton Clicked="OnCloseClicked" />
+            </ModalHeader>
+            <ModalBody>
+                <Card>
+                    <CardHeader>
+                        <Tabs @bind-SelectedTab="@selectedOptionsTab">
+                            <Items>
+                                <Tab Name="common">@_localizer["Common settings"]</Tab>
+                                <Tab Name="textImport">@_localizer["Textimport settings"]</Tab>
+                                <Tab Name="recording">@_localizer["Record settings"]</Tab>
+                            </Items>
+                        </Tabs>
+                    </CardHeader>
+                    <CardBody>
+                        <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
+                            <TabPanel Name="common" Padding="Padding.Is3.OnY">
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Culture setting"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is7">
+                                        <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_localizationService.SelectedCulture.Name">
+                                            @foreach (var culture in ApplicationOptions.AvailableCultures)
+                                            {
+                                                <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
+                                            }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Default viewmode"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Select TValue="String" @bind-SelectedValue="@applicationOptions.ViewModeName">
+                                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                                        {
+                                            <SelectItem Value="@name">@_localizer[name]</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Cuesheet filename"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="applicationOptions.CuesheetFileName" Immediate="false" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Project filename"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="applicationOptions.ProjectFileName" Immediate="false" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Automatically link tracks"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
+                                </FieldBody>
+                            </Field>
+                        </TabPanel>
+                        @if (importOptions != null)
+                        {
+                            <TabPanel Name="textImport" Padding="Padding.Is3.OnY">
+                                <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Textimportscheme cuesheet"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="importOptions.TextImportScheme.SchemeCuesheet" />
+                                </FieldBody>
+                                </Field>
+                                <Field Horizontal="true">
+                                    <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Textimportscheme track"]</FieldLabel>
+                                    <FieldBody ColumnSize="ColumnSize.Is7">
+                                        <TextEdit @bind-Text="importOptions.TextImportScheme.SchemeTracks" />
+                                    </FieldBody>
+                                </Field>
+                            </TabPanel>
+                        }
+                        <TabPanel Name="recording" Padding="Padding.Is3.OnY">
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Filename for recorded audio"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit @bind-Text="applicationOptions.AudioFileNameRecording" Immediate="false" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Record countdown timer in seconds"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <NumericEdit TValue="int?" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
+                                </FieldBody>
+                            </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Record time sensitivity"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityName">
+                                        @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
+                                        {
+                                            <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
+                                        }
+                                    </Select>
+                                </FieldBody>
+                            </Field>
+                        </TabPanel>
+                    </TabsContent>
+                </CardBody>
+            </Card>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@_localizer["Save"]</Button>
+            <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@_localizer["Reload options"]</Button>
+            <Button Color="Color.Danger" Clicked="OnResetOptionsClicked">@_localizer["Reset"]</Button>
+            <Button Color="Color.Secondary" Clicked="OnCloseClicked">@_localizer["Close"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+}
+
+@code {
+    String selectedOptionsTab = "common";
+    ApplicationOptions? applicationOptions;
+    ImportOptions? importOptions;
+    Boolean saveOptions;
+
+    Modal modalOptions = default!;
+    HotKeysContext hotKeysContext = default!;
+
+    public void Dispose()
+    {
+        hotKeysContext.Dispose();
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    public void Show()
+    {
+        modalOptions.Show();
+        saveOptions = false;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKeys.None, Keys.Enter, OnSaveOptionsClicked);
+
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
+        if (options is ImportOptions)
+        {
+            importOptions = (ImportOptions)options;
+        }
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private Task OnCultureSelectionChanged(String value)
+    {
+        if (applicationOptions != null)
+        {
+            applicationOptions.CultureName = value;
+            _localizationService.ChangeLanguage(applicationOptions.CultureName);
+        }
+        return Task.CompletedTask;
+    }
+
+    private async Task OnSaveOptionsClicked()
+    {
+        _logger.LogInformation("OnSaveOptionsClicked");
+        saveOptions = true;
+        if ((applicationOptions != null) && (importOptions != null))
+        {
+            await _localStorageOptionsProvider.SaveOptions(applicationOptions);
+            await _localStorageOptionsProvider.SaveOptions(importOptions);
+            await modalOptions.Hide();
+        }
+    }
+
+    private async Task OnReloadOptionsClicked()
+    {
+        _logger.LogInformation("OnReloadOptionsClicked");
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+        _localizationService.ChangeLanguage(applicationOptions.CultureName);
+    }
+
+    private async Task OnResetOptionsClicked()
+    {
+        _logger.LogInformation("OnResetOptionsClicked");
+        await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+        _navigationManager.NavigateTo(_navigationManager.Uri, true);
+    }
+
+    private async Task OnCloseClicked()
+    {
+        _logger.LogInformation("OnCloseClicked");
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localizationService.ChangeLanguage(applicationOptions.CultureName);
+        await modalOptions.Hide();
+    }
+
+    private async Task OnModalClosed()
+    {
+        _logger.LogInformation("OnModalClosed");
+        if (saveOptions == false)
+        {
+            //Reset the language if needed
+            applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            _localizationService.ChangeLanguage(applicationOptions.CultureName);
+        }
+    }
+}

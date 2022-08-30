@@ -1,6 +1,35 @@
 {
   "culture": "en",
   "translations": {
-    "About": "About"
+    "About": "About",
+    "An error occured": "An error has occured!",
+    "An error has occured in this applciation. Please report this error with as much details as possible here. Afterwards you can reload the application.": "An error has occured in this applciation. Please report this error with as much details as possible here: <a href=\"https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=\" target=\"_blank\">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=</a>. Afterwards you can <a href=\"\" class=\"reload\">reload</a> the application.",
+    "Help": "Help",
+    "Undo last change": "Undo last change",
+    "Redo last change": "Redo last change",
+    "Export": "Export",
+    "Please check processinghints for errors, otherwise the file is not exportable": "Please check processing hints for errors. Otherwise the file is not exportable.",
+    "Download cuesheet": "Download cuesheet",
+    "Save project": "Save project",
+    "Open exportprofiles": "Display Export Profiles",
+    "Select ViewMode": "Select viewmode",
+    "Reset": "Reset",
+    "Delete all tracks": "Delete all tracks",
+    "Reset cuesheet": "Reset cuesheet",
+    "Restart complete application": "Restart complete application",
+    "Reset complete application": "Reset complete application",
+    "Filename": "Filename",
+    "Download projectfile": "Download projectfile",
+    "Abort": "Abort",
+    "Confirmation required": "Confirmation required",
+    "Do you really want to reset the cuesheet? This can not be reversed.": "Do you really want to reset the cuesheet? This can not be reversed.",
+    "Do you really want to delete all tracks? This can not be reversed.": "Do you really want to delete all tracks? This can not be reversed.",
+    "Confirm restart of application. All unsaved changes are lost!": "Please confirm, that you want to restart the whole application. All data will be lost if not saved before!",
+    "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost!",
+    "ViewModeFull": "Full edit mode",
+    "ViewModeRecord": "Live record mode",
+    "ViewModeImport": "Import assistant mode",
+    "Undo": "Undo",
+    "Redo": "Redo"
   }
 }

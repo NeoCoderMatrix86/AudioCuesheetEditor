@@ -22,7 +22,7 @@ namespace AudioCuesheetEditor.Model.UI
 {
     public class TraceableChange
     {
-        public TraceableChange(object previousValue, string propertyName)
+        public TraceableChange(object? previousValue, string propertyName)
         {
             if (String.IsNullOrEmpty(propertyName))
             {
@@ -32,11 +32,11 @@ namespace AudioCuesheetEditor.Model.UI
             PropertyName = propertyName;
         }
 
-        public object PreviousValue { get; }
+        public object? PreviousValue { get; }
         public string PropertyName { get; }
     }
 
-    public class TraceablePropertiesChangedEventArgs
+    public class TraceablePropertiesChangedEventArgs : EventArgs
     {
         public TraceablePropertiesChangedEventArgs(Stack<TraceableChange> traceableChanges)
         {

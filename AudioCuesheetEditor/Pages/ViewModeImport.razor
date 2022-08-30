@@ -1,0 +1,514 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@implements IDisposable
+
+@inject ITextLocalizer<ViewModeImport> _localizer
+@inject SessionStateContainer _sessionStateContainer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILogger<ViewModeImport> _logger
+@inject ITextLocalizerService _localizationService
+@inject HotKeys _hotKeys
+@inject IJSRuntime _jsRuntime
+@inject HttpClient _httpClient
+
+<Steps SelectedStep="@selectedStep" SelectedStepChanged="@OnSelectedStepChanged">
+    <Items>
+        <Step Name="selectFiles" Completed="selectFilesCompleted">@_localizer["Select files"]</Step>
+        <Step Name="validateData">@_localizer["Validate"]</Step>
+    </Items>
+    <Content>
+        <StepPanel Name="selectFiles">
+            <Card>
+                <CardHeader><CardTitle Size="2">@_localizer["Select files for import"]</CardTitle></CardHeader>
+                <CardBody>
+                    <div class="dragNDropFile mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropFileInput')">
+                        <svg class="dragNDropFileIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+                        <FileEdit id="dropFileInput" Class="hideInput" Multiple Filter="@dragNDropUploadFilter" Changed="OnDropFileChanged" AutoReset="false"></FileEdit>
+                        <label for="dropFileInput">@((MarkupString)(_localizer["Choose file or drag it here"].ToString()))</label>
+                    </div>
+                    @foreach (var invalidFileName in invalidDropFileNames)
+                    {
+                        <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
+                            <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
+                            <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
+                            <CloseButton />
+                        </Alert>
+                    }
+                    <Divider />
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import textfile tooltip"]">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Textfile"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                <FileEdit Filter="@TextImportfile.MimeType" Changed="OnTextImportFileChanged" AutoReset="false"></FileEdit>
+                            </FieldBody>
+                        </Field>
+                    </Tooltip>
+                    @foreach (var invalidFileName in invalidTextImportFileNames)
+                    {
+                        <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
+                            <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
+                            <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
+                            <CloseButton />
+                        </Alert>
+                    }
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import cuesheet tooltip"]">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                <FileEdit Filter="@Cuesheet.FileExtension" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
+                            </FieldBody>
+                        </Field>
+                    </Tooltip>
+                    @foreach (var invalidFileName in invalidCuesheetfileNames)
+                    {
+                        <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
+                            <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
+                            <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
+                            <CloseButton />
+                        </Alert>
+                    }
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import project tooltip"]">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Project filename"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                <FileEdit Filter="@Projectfile.FileExtension" Changed="OnProjectfileChanged" AutoReset="false"></FileEdit>
+                            </FieldBody>
+                        </Field>
+                    </Tooltip>
+                    @foreach (var invalidFileName in invalidProjectfileNames)
+                    {
+                        <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
+                            <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
+                            <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
+                            <CloseButton />
+                        </Alert>
+                    }
+                </CardBody>
+            </Card>
+        </StepPanel>
+        <StepPanel Name="validateData">
+            <Card>
+                <CardHeader><CardTitle Size="2">@_localizer["Validate data for import"]</CardTitle></CardHeader>
+                <CardBody>
+                    <Alert Color="Color.Info" Visible>
+                        <Heading Size="HeadingSize.Is3">
+                            @_localizer["Recognition of import data finished"]
+                        </Heading>
+                        <Paragraph>@_localizer["Please validate the following data recognized by import assistant. Once you have validated all input, you can confirm import of data."]</Paragraph>
+                        <Paragraph>
+                            <Button Color="Color.Success" Clicked="ImportData">@_localizer["Import the displayed data"]</Button>
+                        </Paragraph>
+                    </Alert>
+                    <Accordion>
+                        @if (FileContentRecognized != null)
+                        {
+                            <Collapse Visible="importFileContentVisible">
+                                <CollapseHeader>
+                                    <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
+                                </CollapseHeader>
+                                <CollapseBody Background="Background.Light">
+                                    <Text>
+                                        @((MarkupString)String.Join("<br />", FileContentRecognized))
+                                    </Text>
+                                </CollapseBody>
+                            </Collapse>
+                        }
+                        @if (_sessionStateContainer.TextImportFile != null)
+                        {
+                            <Collapse Visible="importOptionsVisible">
+                                <CollapseHeader>
+                                    <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
+                                </CollapseHeader>
+                                <CollapseBody>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                            <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
+                                                @_localizer["Textimportscheme cuesheet"]
+                                            </Tooltip>
+                                        </FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                            <Addons>
+                                                <Addon AddonType="AddonType.Body">
+                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Class="@GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
+                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" TriggerTargetId="TextImportScheme.SchemeCuesheet" />
+                                                    </TextEdit>
+                                                </Addon>
+                                                <Addon AddonType="AddonType.End">
+                                                    <Dropdown>
+                                                        <DropdownToggle Color="Color.Secondary">
+                                                            @_localizer["Select placeholder"]
+                                                        </DropdownToggle>
+                                                        <DropdownMenu>
+                                                            @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
+                                                            {
+                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                            }
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                </Addon>
+                                            </Addons>
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
+                                                @_localizer["Textimportscheme track"]
+                                            </Tooltip>
+                                        </FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                            <Addons>
+                                                <Addon AddonType="AddonType.Body">
+                                                    <TextEdit id="TextImportScheme.SchemeTracks" Class="@GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
+                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" TriggerTargetId="TextImportScheme.SchemeTracks" />
+                                                    </TextEdit>
+                                                </Addon>
+                                                <Addon AddonType="AddonType.End">
+                                                    <Dropdown>
+                                                        <DropdownToggle Color="Color.Secondary">
+                                                            @_localizer["Select placeholder"]
+                                                        </DropdownToggle>
+                                                        <DropdownMenu>
+                                                            @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
+                                                            {
+                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                            }
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                </Addon>
+                                            </Addons>
+                                        </FieldBody>
+                                    </Field>
+                                </CollapseBody>
+                            </Collapse>
+                            @if (_sessionStateContainer.TextImportFile.AnalyseException != null)
+                            {
+                                <Alert Color="Color.Danger" Visible="true">
+                                    <AlertDescription>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-exclamation-octagon" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M4.54.146A.5.5 0 0 1 4.893 0h6.214a.5.5 0 0 1 .353.146l4.394 4.394a.5.5 0 0 1 .146.353v6.214a.5.5 0 0 1-.146.353l-4.394 4.394a.5.5 0 0 1-.353.146H4.893a.5.5 0 0 1-.353-.146L.146 11.46A.5.5 0 0 1 0 11.107V4.893a.5.5 0 0 1 .146-.353L4.54.146zM5.1 1L1 5.1v5.8L5.1 15h5.8l4.1-4.1V5.1L10.9 1H5.1z" />
+                                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
+                                        </svg>
+                                    </AlertDescription>
+                                    <AlertMessage>@_localizer["Error during textimport"] : @_sessionStateContainer.TextImportFile.AnalyseException.Message</AlertMessage>
+                                </Alert>
+                            }
+                        }
+                        <Collapse Visible="cuesheetDataVisible">
+                            <CollapseHeader>
+                                <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
+                            </CollapseHeader>
+                            <CollapseBody>
+                                <CuesheetData />
+                            </CollapseBody>
+                        </Collapse>
+                        <Collapse Visible="cuesheetTracksVisible">
+                            <CollapseHeader>
+                                <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet tracks"]</Heading></Button>
+                            </CollapseHeader>
+                            <CollapseBody>
+                                <TracksTable />
+                            </CollapseBody>
+                        </Collapse>
+                    </Accordion>
+                </CardBody>
+            </Card>
+        </StepPanel>
+    </Content>
+</Steps>
+
+<ModalDialog @ref="modalDialog" />
+
+@code {
+    String selectedStep = "selectFiles";
+    String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
+    Boolean cuesheetDataVisible = true;
+    Boolean cuesheetTracksVisible = true;
+    Boolean importFileContentVisible = true;
+    Boolean importOptionsVisible = true;
+    Boolean selectFilesCompleted = false;
+    Alert alertInvalidFile = default!;
+    ModalDialog modalDialog = default!;
+    List<String> invalidTextImportFileNames = new();
+    List<String> invalidCuesheetfileNames = new();
+    List<String> invalidProjectfileNames = new();
+    List<String> invalidDropFileNames = new();
+
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
+    HotKeysContext hotKeysContext = default!;
+
+    public IReadOnlyCollection<String?>? FileContentRecognized
+    {
+        get
+        {
+            if (_sessionStateContainer.TextImportFile != null)
+            {
+                return _sessionStateContainer.TextImportFile.FileContentRecognized;
+            }
+            if (_sessionStateContainer.CuesheetImportFile != null)
+            {
+                return _sessionStateContainer.CuesheetImportFile.FileContentRecognized;
+            }
+            return null;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (hotKeysContext != null)
+        {
+            hotKeysContext.Dispose();
+        }
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
+    }
+
+    protected override Task OnInitializedAsync()
+    {
+        _logger.LogDebug("OnInitializedAsync");
+
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
+
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
+
+        return Task.CompletedTask;
+    }
+
+    private Task OnSelectedStepChanged(String name)
+    {
+        switch (name)
+        {
+            case "selectFiles":
+                selectedStep = name;
+                break;
+            case "validateData":
+                if ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.TextImportFile != null))
+                {
+                    selectFilesCompleted = true;
+                    selectedStep = name;
+                }
+                else
+                {
+                    modalDialog.Title = _localizer["Not possible!"];
+                    modalDialog.Text = _localizer["Please select files for import before going to validation!"];
+                    modalDialog.ModalSize = ModalSize.Small;
+                    modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                    modalDialog.ShowModal();
+                }
+                break;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task OnTextImportFileChanged(FileChangedEventArgs e)
+    {
+        invalidTextImportFileNames.Clear();
+        if (e.Files.FirstOrDefault() != null)
+        {
+            var file = e.Files.First();
+            if (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
+            {
+                invalidTextImportFileNames.Add(file.Name);
+            }
+            else
+            {
+                await OnFileChanged(new List<IFileEntry>() { file });
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnCuesheetfileChanged(FileChangedEventArgs e)
+    {
+        invalidCuesheetfileNames.Clear();
+        if (e.Files.FirstOrDefault() != null)
+        {
+            var file = e.Files.First();
+            if (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
+            {
+                invalidCuesheetfileNames.Add(file.Name);
+            }
+            else
+            {
+                await OnFileChanged(new List<IFileEntry>() { file });
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnProjectfileChanged(FileChangedEventArgs e)
+    {
+        invalidProjectfileNames.Clear();
+        if (e.Files.FirstOrDefault() != null)
+        {
+            var file = e.Files.First();
+            if (CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
+            {
+                invalidProjectfileNames.Add(file.Name);
+            }
+            else
+            {
+                await OnFileChanged(new List<IFileEntry>() { file });
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnDropFileChanged(FileChangedEventArgs e)
+    {
+        invalidDropFileNames.Clear();
+        foreach (var file in e.Files)
+        {
+            if ((CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
+                && (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
+                && (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
+                && (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == false))
+            {
+                invalidDropFileNames.Add(file.Name);
+            }
+        }
+        if (invalidDropFileNames.Count == 0)
+        {
+            await OnFileChanged(e.Files);
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnFileChanged(IReadOnlyCollection<IFileEntry> files)
+    {
+        _sessionStateContainer.ResetImport();
+        foreach (var file in files)
+        {
+            if (CuesheetController.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
+            {
+                //We have a valid file here
+                var fileContent = new MemoryStream();
+                var stream = file.OpenReadStream();
+                await stream.CopyToAsync(fileContent);
+                stream.Close();
+                var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
+                if (cuesheet != null)
+                {
+                    _sessionStateContainer.ImportCuesheet = cuesheet;
+                }
+            }
+            if (CuesheetController.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == true)
+            {
+                var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                var stream = file.OpenReadStream();
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                stream.Close();
+                _sessionStateContainer.CuesheetImportFile = new CuesheetImportfile(memoryStream, options);
+            }
+            if (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == true)
+            {
+                var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+                var stream = file.OpenReadStream();
+                MemoryStream memoryStream = new MemoryStream();
+                await stream.CopyToAsync(memoryStream);
+                stream.Close();
+                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options);
+            }
+            if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
+            {
+                var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
+                var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
+                _sessionStateContainer.ImportAudioFile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+            }
+        }
+        await OnSelectedStepChanged("validateData");
+        StateHasChanged();
+    }
+
+    private String GetCSSClassAlert(Validateable validateable, String property)
+    {
+        String cssClass = String.Empty;
+        var validationErrors = validateable.GetValidationErrorsFiltered(property);
+        if (validationErrors.Count() >= 1)
+        {
+            if (validationErrors.Count() > 1)
+            {
+                if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
+                {
+                    cssClass = "alert-danger";
+                }
+                else
+                {
+                    cssClass = "alert-warning";
+                }
+            }
+            else
+            {
+                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Error)
+                {
+                    cssClass = "alert-danger";
+                }
+                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Warning)
+                {
+                    cssClass = "alert-warning";
+                }
+            }
+        }
+        return cssClass;
+    }
+
+    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    {
+        if (expressionToCheck == true)
+        {
+            return _localizer[localizedStringName];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    private Task OnEnterKeyDown()
+    {
+        if (modalDialog.Visible)
+        {
+            modalDialog.Confirm();
+        }
+        return Task.CompletedTask;
+    }
+
+    private async Task ImportData()
+    {
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _sessionStateContainer.StartImportCuesheet(options);
+        _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
+        StateHasChanged();
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+}

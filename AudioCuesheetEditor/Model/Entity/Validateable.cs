@@ -23,7 +23,7 @@ namespace AudioCuesheetEditor.Model.Entity
 {
     public abstract class Validateable : IValidateable
     {
-        protected List<ValidationError> validationErrors = new List<ValidationError>();
+        protected List<ValidationError> validationErrors = new();
         
         [JsonIgnore]
         public bool IsValid
@@ -37,12 +37,12 @@ namespace AudioCuesheetEditor.Model.Entity
             get { return validationErrors.AsReadOnly(); }
         }
 
-        public IReadOnlyCollection<ValidationError> GetValidationErrorsFiltered(String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All)
+        public IReadOnlyCollection<ValidationError> GetValidationErrorsFiltered(String? property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All)
         {
             IReadOnlyCollection<ValidationError> returnValue = ValidationErrors;
             if (String.IsNullOrEmpty(property) == false)
             {
-                if (property.Contains(".") == true)
+                if (property.Contains('.') == true)
                 {
                     returnValue = ValidationErrors.Where(x => x.FieldReference.CompleteName == property).ToList().AsReadOnly();
                 }
@@ -66,7 +66,7 @@ namespace AudioCuesheetEditor.Model.Entity
             return returnValue;
         }
 
-        public String GetValidationErrors(ITextLocalizer localizer, String property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All, String seperator = "<br />")
+        public String? GetValidationErrors(ITextLocalizer localizer, String? property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All, String seperator = "<br />")
         {
             var errorsFiltered = GetValidationErrorsFiltered(property, validationErrorFilterType);
             if (errorsFiltered.Any())
@@ -76,7 +76,7 @@ namespace AudioCuesheetEditor.Model.Entity
             return null;
         }
 
-        public event EventHandler ValidateablePropertyChanged;
+        public event EventHandler? ValidateablePropertyChanged;
 
         protected void OnValidateablePropertyChanged()
         {

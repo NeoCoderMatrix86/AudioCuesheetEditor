@@ -102,7 +102,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             manager.Redo();
             Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
         }
-        
+
         [TestMethod()]
         public void UndoRedoCombinationTest()
         {
@@ -151,14 +151,14 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         {
             var testhelper = new TestHelper();
             var manager = new TraceChangeManager();
-            var textImportFile = new TextImportFile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
-            textImportFile.TextImportScheme.SchemeTracks = "%Artist% - %Title%[\t]{1,}%End%";
-            textImportFile.TextImportScheme.SchemeCuesheet = "%Cuesheet.Artist% - %Cuesheet.Title% - %Cuesheet.Cataloguenumber%";
+            var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
+            textImportFile.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             Assert.IsFalse(manager.CanUndo);
             Assert.IsFalse(manager.CanRedo);
-            cuesheet.Import(textImportFile, testhelper.ApplicationOptions);
+            Assert.IsNotNull(textImportFile.Cuesheet);
+            cuesheet.Import(textImportFile.Cuesheet, testhelper.ApplicationOptions);
             Assert.AreEqual("DJFreezeT", cuesheet.Artist);
             Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
             Assert.AreNotEqual(0, cuesheet.Tracks.Count);
@@ -269,6 +269,28 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.AreEqual(track2, cuesheet.Tracks.First());
             manager.Undo();
             Assert.AreEqual(track1, cuesheet.Tracks.First());
+        }
+
+        [TestMethod()]
+        public void ResetTest()
+        {
+            var testhelper = new TestHelper();
+            var manager = new TraceChangeManager();
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsFalse(manager.CanRedo);
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            var track1 = new Track()
+            {
+                Artist = "Track 1 Artist",
+                Title = "Track 1 Title",
+                End = new TimeSpan(0, 2, 30)
+            };
+            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Reset();
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsFalse(manager.CanRedo);
         }
     }
 }

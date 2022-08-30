@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -11,7 +11,7 @@
     <link href="css/app.css" rel="stylesheet" />
 
     <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
-    <link href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" rel="stylesheet" />
+    <link href="_content/Blazorise.Bootstrap5/blazorise.bootstrap5.css" rel="stylesheet" />
 
     <script src="scripts/howler.core.min.js"></script>
     <script src="_content/Howler.Blazor/JsInteropHowl.js"></script>
@@ -29,10 +29,11 @@
             position: relative;
         }
     </style>
+
 </head>
 
 <body>
-    <app>
+    <div id="app">
         <div class="container">
             <div class="center">
                 <img src="loading.gif" />
@@ -41,7 +42,7 @@
                 <p>Loading application, please stand by ...</p>
             </div>
         </div>
-    </app>
+    </div>
 
     <noscript>Your browser does not support JavaScript! Without JavaScript this App can not run! Please make shure you open this App with a compatible browser.</noscript>
 
@@ -51,10 +52,7 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-
-    <script src="_content/Blazorise/blazorise.js"></script>
-    <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
-
+    <script src="scripts/bootstrap.bundle.min.js"></script>
     <script src="scripts/fix-webm-duration.js"></script>
     <script src="scripts/library.js"></script>
 </body>
