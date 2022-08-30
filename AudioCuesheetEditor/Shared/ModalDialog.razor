@@ -24,7 +24,7 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject ITextLocalizerService _localizationService
 
-<Modal @ref="modalRef">
+<Modal @ref="modalRef" VisibleChanged="ModalRef_VisibleChanged">
     <ModalContent Centered="true" Size="@modalSize">
         <ModalHeader Class="@ModalHeaderStyle">
             <ModalTitle>
@@ -94,6 +94,7 @@ along with Foobar.  If not, see
     ModalSize modalSize = ModalSize.Default;
     DialogMode mode = DialogMode.Confirm;
     HotKeysContext hotKeysContext = default!;
+    Boolean modalRefVisible = false;
 
     public String Title = default!;
     public String Text = default!;
@@ -126,7 +127,7 @@ along with Foobar.  If not, see
 
     public Boolean Visible
     {
-        get { return modalRef.Visible; }
+        get => modalRefVisible;
     }
 
     public void Confirm()
@@ -163,5 +164,10 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    private void ModalRef_VisibleChanged(Boolean visible)
+    {
+        modalRefVisible = visible;
     }
 }

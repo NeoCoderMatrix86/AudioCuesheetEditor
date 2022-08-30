@@ -28,7 +28,7 @@ along with Foobar.  If not, see
 
 @if (applicationOptions != null)
 {
-    <Modal @ref="modalOptions" Closed="OnModalClosed">
+    <Modal @ref="modalOptions" Closed="OnModalClosed" VisibleChanged="ModalOptions_VisibleChanged">
         <ModalContent Centered="true" Size="ModalSize.Large">
             <ModalHeader>
                 <ModalTitle>@_localizer["Options"]</ModalTitle>
@@ -150,6 +150,7 @@ along with Foobar.  If not, see
     ApplicationOptions? applicationOptions;
     ImportOptions? importOptions;
     Boolean saveOptions;
+    Boolean modalOptionsVisible = false;
 
     Modal modalOptions = default!;
     HotKeysContext hotKeysContext = default!;
@@ -170,7 +171,7 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, OnSaveOptionsClicked);
+            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
@@ -179,6 +180,14 @@ along with Foobar.  If not, see
         importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task OnEnterKeyDown()
+    {
+        if (modalOptionsVisible)
+        {
+            await OnSaveOptionsClicked();
+        }
     }
 
     private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
@@ -254,5 +263,10 @@ along with Foobar.  If not, see
             applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
             _localizationService.ChangeLanguage(applicationOptions.CultureName);
         }
+    }
+
+    private void ModalOptions_VisibleChanged(Boolean visible)
+    {
+        modalOptionsVisible = visible;
     }
 }

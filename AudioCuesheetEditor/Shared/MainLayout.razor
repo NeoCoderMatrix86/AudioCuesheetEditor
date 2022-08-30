@@ -182,7 +182,7 @@ along with Foobar.  If not, see
 
 @if (applicationOptions != null)
 {
-    <Modal @ref="modalDownloadProjectfile">
+    <Modal @ref="modalDownloadProjectfile" VisibleChanged="ModalDownloadProjectfile_VisibleChanged">
         <ModalContent Centered="true">
             <ModalHeader>
                 <ModalTitle>
@@ -194,7 +194,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.ProjectFileName" />
+                        <TextEdit @bind-Text="applicationOptions.ProjectFileName" Immediate="false" />
                     </FieldBody>
                 </Field>
             </ModalBody>
@@ -205,7 +205,7 @@ along with Foobar.  If not, see
         </ModalContent>
     </Modal>
 
-    <Modal @ref="modalDownloadCuesheet">
+    <Modal @ref="modalDownloadCuesheet" VisibleChanged="ModalDownloadCuesheet_VisibleChanged">
         <ModalContent Centered="true">
             <ModalHeader>
                 <ModalTitle>
@@ -217,7 +217,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.CuesheetFileName" />
+                        <TextEdit @bind-Text="applicationOptions.CuesheetFileName" Immediate="false" />
                     </FieldBody>
                 </Field>
             </ModalBody>
@@ -233,6 +233,8 @@ along with Foobar.  If not, see
     Boolean displayMenuBar = false;
     HotKeysContext? hotKeysContext;
     ApplicationOptions? applicationOptions;
+    Boolean modalDownloadCuesheetVisible = false;
+    Boolean modalDownloadProjectfileVisible = false;
 
     OptionsDialog optionsDialog = default!;
     ModalDialog modalDialog = default!;
@@ -404,11 +406,11 @@ along with Foobar.  If not, see
 
     private async Task OnEnterKeyDown()
     {
-        if (modalDownloadCuesheet.Visible)
+        if (modalDownloadProjectfileVisible)
         {
             await DownloadProjectfileClicked();
         }
-        if (modalDownloadCuesheet.Visible)
+        if (modalDownloadCuesheetVisible)
         {
             await DownloadCuesheetFileClicked();
         }
@@ -428,5 +430,15 @@ along with Foobar.  If not, see
     private void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    private void ModalDownloadCuesheet_VisibleChanged(Boolean visible)
+    {
+        modalDownloadCuesheetVisible = visible;
+    }
+
+    private void ModalDownloadProjectfile_VisibleChanged(Boolean visible)
+    {
+        modalDownloadProjectfileVisible = visible;
     }
 }
