@@ -1,13 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
-    <RazorLangVersion>3.0</RazorLangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
+	<RazorLangVersion>3.0</RazorLangVersion>
     <Version>2.8.0</Version>
 	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <Content Remove="Resources\Localization\About\de.json" />
     <Content Remove="Resources\Localization\About\en.json" />
@@ -15,14 +18,20 @@
     <Content Remove="Resources\Localization\AudioPlayer\en.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\de.json" />
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
-    <Content Remove="Resources\Localization\ErrorReport\de.json" />
-    <Content Remove="Resources\Localization\ErrorReport\en.json" />
+    <Content Remove="Resources\Localization\CuesheetData\de.json" />
+    <Content Remove="Resources\Localization\CuesheetData\en.json" />
+    <Content Remove="Resources\Localization\ExportProfilesDialog\de.json" />
+    <Content Remove="Resources\Localization\ExportProfilesDialog\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
     <Content Remove="Resources\Localization\MainLayout\en.json" />
     <Content Remove="Resources\Localization\ModalDialog\de.json" />
     <Content Remove="Resources\Localization\ModalDialog\en.json" />
+    <Content Remove="Resources\Localization\OptionsDialog\de.json" />
+    <Content Remove="Resources\Localization\OptionsDialog\en.json" />
     <Content Remove="Resources\Localization\ProcessingHints\de.json" />
     <Content Remove="Resources\Localization\ProcessingHints\en.json" />
+    <Content Remove="Resources\Localization\TracksTable\de.json" />
+    <Content Remove="Resources\Localization\TracksTable\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
@@ -33,6 +42,8 @@
     <Content Remove="Resources\Localization\Index\de.json" />
     <Content Remove="Resources\Localization\Index\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\en.json" />
+    <Content Remove="Resources\Localization\ViewModeImport\de.json" />
+    <Content Remove="Resources\Localization\ViewModeImport\en.json" />
     <Content Remove="Resources\Localization\ViewModeRecord\de.json" />
     <Content Remove="Resources\Localization\ViewModeRecord\en.json" />
   </ItemGroup>
@@ -44,14 +55,20 @@
     <EmbeddedResource Include="Resources\Localization\AudioPlayer\de.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\en.json" />
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ErrorReport\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ErrorReport\de.json" />
+    <EmbeddedResource Include="Resources\Localization\CuesheetData\de.json" />
+    <EmbeddedResource Include="Resources\Localization\CuesheetData\en.json" />
+    <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\OptionsDialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\ProcessingHints\en.json" />
     <EmbeddedResource Include="Resources\Localization\ProcessingHints\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TracksTable\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
@@ -62,31 +79,30 @@
     <EmbeddedResource Include="Resources\Localization\Help\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ViewModeImport\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ViewModeImport\en.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeRecord\de.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeRecord\en.json" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\Licence.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorDownloadFile" Version="2.1.6" />
-    <PackageReference Include="Blazorise.Bootstrap" Version="0.9.3.5" />
-    <PackageReference Include="Blazorise.Components" Version="0.9.3.5" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.4" PrivateAssets="all" />
+	<PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
+    <PackageReference Include="Blazorise.Components" Version="1.0.4" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
-    <PackageReference Include="Macross.Json.Extensions" Version="2.0.0" />
-    <PackageReference Include="Markdig" Version="0.24.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.5" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="10.0.1" />
-    <PackageReference Include="z440.atl.core" Version="3.20.0" />
+    <PackageReference Include="Markdig" Version="0.30.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="12.1.1" />
+    <PackageReference Include="z440.atl.core" Version="4.4.0" />
   </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

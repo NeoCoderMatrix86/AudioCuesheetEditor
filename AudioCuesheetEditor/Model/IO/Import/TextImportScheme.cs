@@ -25,67 +25,67 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class TextImportScheme : Validateable
     {
-        public const String SchemeCharacter = "%";
+        public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemeCuesheet;
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
 
         static TextImportScheme()
         {
-            var schemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
-            var schemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            var schemeCuesheetAudioFile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
-            var schemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-            var schemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
+            var schemeCuesheetArtist = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Artist), EnterRegularExpressionHere);
+            var schemeCuesheetTitle = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Title), EnterRegularExpressionHere);
+            var schemeCuesheetAudioFile = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Audiofile), EnterRegularExpressionHere);
+            var schemeCuesheetCDTextfile = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.CDTextfile), EnterRegularExpressionHere);
+            var schemeCuesheetCatalogueNumber = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), EnterRegularExpressionHere);
 
             AvailableSchemeCuesheet = new Dictionary<string, string>
             {
-                {nameof(ImportCuesheet.Artist), schemeCuesheetArtist },
-                {nameof(ImportCuesheet.Title), schemeCuesheetTitle },
-                {nameof(ImportCuesheet.Audiofile), schemeCuesheetAudioFile },
-                {nameof(ImportCuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
-                {nameof(ImportCuesheet.CDTextfile), schemeCuesheetCDTextfile }
+                {nameof(Cuesheet.Artist), schemeCuesheetArtist },
+                {nameof(Cuesheet.Title), schemeCuesheetTitle },
+                {nameof(Cuesheet.Audiofile), schemeCuesheetAudioFile },
+                {nameof(Cuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
+                {nameof(Cuesheet.CDTextfile), schemeCuesheetCDTextfile }
             };
 
-            var schemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
-            var schemeTrackTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Title), SchemeCharacter);
-            var schemeTrackBegin = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Begin), SchemeCharacter);
-            var schemeTrackEnd = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.End), SchemeCharacter);
-            var schemeTrackLength = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
-            var schemeTrackPosition = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
-            var schemeTrackFlags = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
-            var schemeTrackPreGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
-            var schemeTrackPostGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
+            var schemeTrackArtist = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Artist), EnterRegularExpressionHere);
+            var schemeTrackTitle = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Title), EnterRegularExpressionHere);
+            var schemeTrackBegin = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Begin), EnterRegularExpressionHere);
+            var schemeTrackEnd = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.End), EnterRegularExpressionHere);
+            var schemeTrackLength = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Length), EnterRegularExpressionHere);
+            var schemeTrackPosition = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Position), EnterRegularExpressionHere);
+            var schemeTrackFlags = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Flags), EnterRegularExpressionHere);
+            var schemeTrackPreGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PreGap), EnterRegularExpressionHere);
+            var schemeTrackPostGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PostGap), EnterRegularExpressionHere);
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {
-                { nameof(ImportTrack.Position), schemeTrackPosition },
-                { nameof(ImportTrack.Artist), schemeTrackArtist },
-                { nameof(ImportTrack.Title), schemeTrackTitle },
-                { nameof(ImportTrack.Begin), schemeTrackBegin },
-                { nameof(ImportTrack.End), schemeTrackEnd },
-                { nameof(ImportTrack.Length), schemeTrackLength },
-                { nameof(ImportTrack.Flags), schemeTrackFlags },
-                { nameof(ImportTrack.PreGap), schemeTrackPreGap },
-                { nameof(ImportTrack.PostGap), schemeTrackPostGap }
+                { nameof(Track.Position), schemeTrackPosition },
+                { nameof(Track.Artist), schemeTrackArtist },
+                { nameof(Track.Title), schemeTrackTitle },
+                { nameof(Track.Begin), schemeTrackBegin },
+                { nameof(Track.End), schemeTrackEnd },
+                { nameof(Track.Length), schemeTrackLength },
+                { nameof(Track.Flags), schemeTrackFlags },
+                { nameof(Track.PreGap), schemeTrackPreGap },
+                { nameof(Track.PostGap), schemeTrackPostGap }
             };
         }
 
-        public static readonly String DefaultSchemeCuesheet = "\\A.*%Cuesheet.Artist% - %Cuesheet.Title%[\\t]{1,}%Cuesheet.AudioFile%";
-        public static readonly String DefaultSchemeTracks = "%Track.Artist% - %Track.Title%[\\t]{1,}%Track.End%";
+        public static readonly String DefaultSchemeCuesheet = @"(?'Cuesheet.Artist'\A.*) - (?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.Audiofile'.{1,})";
+        public static readonly String DefaultSchemeTracks = @"(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'.{1,})";
 
-        public static readonly TextImportScheme DefaultTextImportScheme = new TextImportScheme 
+        public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
             SchemeCuesheet = DefaultSchemeCuesheet,
             SchemeTracks = DefaultSchemeTracks
         };
 
-        private string schemeTracks;
-        private string schemeCuesheet;
+        private string? schemeTracks;
+        private string? schemeCuesheet;
 
-        public event EventHandler<String> SchemeChanged;
+        public event EventHandler<String>? SchemeChanged;
 
-        public String SchemeTracks
+        public String? SchemeTracks
         {
             get { return schemeTracks; }
             set
@@ -96,7 +96,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
         }
 
-        public String SchemeCuesheet
+        public String? SchemeCuesheet
         {
             get { return schemeCuesheet; }
             set
@@ -117,18 +117,19 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 if (AvailableSchemesTrack != null)
                 {
-                    Boolean addValidationError = false;
+                    List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemesTrack)
                     {
-                        if (SchemeCuesheet.Contains(availableScheme.Value) == true)
+                        if (SchemeCuesheet.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
-                            addValidationError = true;
-                            break;
+                            var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
+                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(")", startIndex) + 1) - startIndex);
+                            schemesFound.Add(realRegularExpression);
                         }
                     }
-                    if (addValidationError == true)
+                    if (schemesFound.Count > 0)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
                     }
                 }
             }
@@ -140,18 +141,19 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 if (AvailableSchemeCuesheet != null)
                 {
-                    Boolean addValidationError = false;
+                    List<String> schemesFound = new();
                     foreach (var availableScheme in AvailableSchemeCuesheet)
                     {
-                        if (SchemeTracks.Contains(availableScheme.Value) == true)
+                        if (SchemeTracks.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
-                            addValidationError = true;
-                            break;
+                            var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
+                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(")", startIndex) + 1) - startIndex);
+                            schemesFound.Add(realRegularExpression);
                         }
                     }
-                    if (addValidationError == true)
+                    if (schemesFound.Count > 0)
                     {
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
                     }
                 }
             }

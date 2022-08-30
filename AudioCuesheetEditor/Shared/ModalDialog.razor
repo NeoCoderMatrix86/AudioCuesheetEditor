@@ -17,11 +17,12 @@ along with Foobar.  If not, see
 -->
 
 @using Toolbelt.Blazor.HotKeys
+
 @implements IDisposable
 
-@inject ITextLocalizer<ModalDialog> localizer
-@inject HotKeys HotKeys
-@inject ITextLocalizerService LocalizationService
+@inject ITextLocalizer<ModalDialog> _localizer
+@inject HotKeys _hotKeys
+@inject ITextLocalizerService _localizationService
 
 <Modal @ref="modalRef">
     <ModalContent Centered="true" Size="@modalSize">
@@ -53,11 +54,11 @@ along with Foobar.  If not, see
             @switch (Mode)
             {
                 case DialogMode.Confirm:
-                    <Button Color="Color.Primary" Clicked="Confirm">@localizer["Confirm"]</Button>
-                    <Button Color="Color.Secondary" Clicked="HideModal">@localizer["Decline"]</Button>
+                    <Button Color="Color.Primary" Clicked="Confirm">@_localizer["Confirm"]</Button>
+                    <Button Color="Color.Secondary" Clicked="HideModal">@_localizer["Decline"]</Button>
                     break;
                 case DialogMode.Alert:
-                    <Button Color="Color.Danger" Clicked="Confirm">@localizer["Ok"]</Button>
+                    <Button Color="Color.Danger" Clicked="Confirm">@_localizer["Ok"]</Button>
                     break;
             }
         </ModalFooter>
@@ -69,18 +70,16 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext.Dispose();
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 
     protected override Task OnInitializedAsync()
     {
-        hotKeysContext = HotKeys.CreateContext()
+        hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Alt, Keys.O, Confirm)
             .Add(ModKeys.None, Keys.ESC, HideModal);
 
-        LocalizationService.LocalizationChanged += delegate
-        {
-            StateHasChanged();
-        };
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         return base.OnInitializedAsync();
     }
@@ -91,15 +90,15 @@ along with Foobar.  If not, see
         Alert
     }
 
-    private Modal modalRef;
-    private ModalSize modalSize = ModalSize.Default;
-    private DialogMode mode = DialogMode.Confirm;
-    private HotKeysContext hotKeysContext;
+    Modal modalRef = default!;
+    ModalSize modalSize = ModalSize.Default;
+    DialogMode mode = DialogMode.Confirm;
+    HotKeysContext hotKeysContext = default!;
 
-    public String Title;
-    public String Text;
+    public String Title = default!;
+    public String Text = default!;
 
-    public event EventHandler Confirmed;
+    public event EventHandler Confirmed = default!;
 
     public void ShowModal()
     {
@@ -110,7 +109,7 @@ along with Foobar.  If not, see
     {
         modalRef.Hide();
         //Reset all confirmed handlers
-        Confirmed = null;
+        Confirmed = default!;
     }
 
     public ModalSize ModalSize
@@ -144,11 +143,11 @@ along with Foobar.  If not, see
         }
     }
 
-    private String ModalHeaderStyle
+    private String? ModalHeaderStyle
     {
         get
         {
-            String headerStyle = null;
+            String? headerStyle = null;
             switch (Mode)
             {
                 case DialogMode.Alert:
@@ -159,5 +158,10 @@ along with Foobar.  If not, see
             }
             return headerStyle;
         }
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

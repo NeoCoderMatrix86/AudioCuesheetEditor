@@ -20,6 +20,6 @@ namespace AudioCuesheetEditor.Model.Entity
 {
     public interface IEntityDisplayName
     {
-        public String GetDisplayNameLocalized(ITextLocalizer localizer);
+        public String? GetDisplayNameLocalized(ITextLocalizer localizer);
     }
 }

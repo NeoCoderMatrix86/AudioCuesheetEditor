@@ -1,0 +1,15 @@
+{
+  "culture": "de",
+  "translations": {
+    "CD artist": "CD Künstler",
+    "CD title": "CD Titel",
+    "Audiofile": "Audiodatei",
+    "Download recorded audio": "Aufnahme herunterladen",
+    "Change": "Ändern",
+    "CD textfile": "CD Textdatei",
+    "Cataloguenumber": "Katalognummer",
+    "Enter cd artist here": "CD Künstler hier eingeben",
+    "Enter cd title here": "CD Titel hier eingeben",
+    "Enter cataloguenumber here": "Geben Sie hier die Katalognummer des Cuesheets an. Die Katalognummer ist eine 13 stellige Zahl."
+  }
+}

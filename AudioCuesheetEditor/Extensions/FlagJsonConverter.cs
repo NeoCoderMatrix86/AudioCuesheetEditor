@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Extensions
 {
     public class FlagJsonConverter : JsonConverter<Flag>
     {
-        public override Flag Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override Flag? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var json = reader.GetString();
             if (string.IsNullOrEmpty(json) == false)

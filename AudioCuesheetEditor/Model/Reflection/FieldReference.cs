@@ -23,7 +23,7 @@ namespace AudioCuesheetEditor.Model.Reflection
 {
     public class FieldReference : IEquatable<FieldReference>
     {
-        private readonly PropertyInfo propertyInfo;
+        private readonly PropertyInfo? propertyInfo;
 
         public static FieldReference Create(object ownerObject, String property)
         {
@@ -32,9 +32,9 @@ namespace AudioCuesheetEditor.Model.Reflection
 
         #region IEquatable
 
-        public override bool Equals(object obj) => (obj is FieldReference other) && this.Equals(other);
+        public override bool Equals(object? obj) => (obj is FieldReference other) && this.Equals(other);
 
-        public bool Equals(FieldReference other)
+        public bool Equals(FieldReference? other)
         {
             if (other is null)
             {
@@ -94,8 +94,34 @@ namespace AudioCuesheetEditor.Model.Reflection
             }
         }
 
-        public String CompleteName { get { return String.Format("{0}.{1}", Owner.GetType().Name, propertyInfo.Name); } }
+        public String? CompleteName 
+        { 
+            get 
+            {
+                if (propertyInfo != null)
+                {
+                    return String.Format("{0}.{1}", Owner.GetType().Name, propertyInfo.Name);
+                }
+                else
+                {
+                    return null;
+                }
+            } 
+        }
         public object Owner { get; private set; }
-        public String Property { get { return propertyInfo.Name; } }
+        public String? Property 
+        { 
+            get 
+            {
+                if (propertyInfo != null)
+                {
+                    return propertyInfo.Name;
+                }
+                else
+                {
+                    return null;
+                }
+            } 
+        }
     }
 }

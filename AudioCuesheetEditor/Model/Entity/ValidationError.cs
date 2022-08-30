@@ -44,10 +44,6 @@ namespace AudioCuesheetEditor.Model.Entity
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            if (fieldReference == null)
-            {
-                throw new ArgumentNullException(nameof(fieldReference));
-            }
             Message = new ValidationMessage(message, messageParameter);
             Type = validationErrorType;
             FieldReference = fieldReference;
