@@ -21,7 +21,7 @@ jobs:
       - name: "➕ Add changelog to working tree"
         run: cp ${{ github.workspace}}/CHANGELOG.md AudioCuesheetEditor/wwwroot/CHANGELOG.md
       - name: "📤 Commit changelog"
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@v9
         with:
           add: "AudioCuesheetEditor/wwwroot/CHANGELOG.md"
           message: "Updated Changelog"
