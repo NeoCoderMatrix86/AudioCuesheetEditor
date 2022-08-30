@@ -1,5 +1,19 @@
 # Changelog
 
+## [v3.0.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.0.0) (2022-08-30)
+
+**Implemented enhancements:**
+
+- Redesign Help [\#206](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/206)
+- Update to .NET6 [\#199](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/199)
+- Detach import view [\#187](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/187)
+- Redesign Textimport modal window [\#139](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/139)
+
+**Fixed bugs:**
+
+- Sample\_Inputfile.txt can not be imported [\#217](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/217)
+- Audio file length is not set to last track [\#204](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/204)
+
 ## [v2.8.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.8.0) (2022-03-15)
 
 **Closed issues:**
