@@ -192,6 +192,7 @@ along with Foobar.  If not, see
     Guid? selectedExportProfileId;
     HotKeysContext? hotKeysContext;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
+    Boolean modalExportProfilesVisible = false;
 
     public class SelectExportProfileModel
     {
@@ -239,6 +240,7 @@ along with Foobar.  If not, see
         if (modalExportProfiles != null)
         {
             await modalExportProfiles.Show();
+            modalExportProfilesVisible = true;
         }
     }
 
@@ -256,9 +258,17 @@ along with Foobar.  If not, see
         }
 
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, OnDownloadExportProfileClicked);
+            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
 
         await base.OnInitializedAsync();
+    }
+
+    private async Task OnEnterKeyDown()
+    {
+        if (modalExportProfilesVisible)
+        {
+            await OnDownloadExportProfileClicked();
+        }
     }
 
     private async Task ModalExportProfilesCloseClicked()
@@ -306,7 +316,7 @@ along with Foobar.  If not, see
         if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
         {
             await SaveExportProfiles();
-            await _blazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(_sessionStateContainer.Cuesheet), "text/plain");
+            await _blazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(_sessionStateContainer.Cuesheet), contentType: "application/octet-stream");
             await modalExportProfiles.Hide();
         }
     }
@@ -333,5 +343,10 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    private void ModalExportProfiles_VisibleChanged(Boolean visible)
+    {
+        modalExportProfilesVisible = visible;
     }
 }
