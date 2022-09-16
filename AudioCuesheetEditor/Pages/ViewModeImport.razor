@@ -124,7 +124,9 @@ along with Foobar.  If not, see
                                 </CollapseHeader>
                                 <CollapseBody Background="Background.Light">
                                     <Text>
-                                        @((MarkupString)String.Join("<br />", FileContentRecognized))
+                                        <pre>
+                                            @((MarkupString)String.Join("<br />", FileContentRecognized))
+                                        </pre>
                                     </Text>
                                 </CollapseBody>
                             </Collapse>
