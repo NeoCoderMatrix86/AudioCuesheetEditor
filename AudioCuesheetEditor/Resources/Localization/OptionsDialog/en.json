@@ -9,6 +9,7 @@
     "Default viewmode": "Default viewmode",
     "ViewModeFull": "Full edit mode",
     "ViewModeRecord": "Live record mode",
+    "ViewModeImport": "Import assistant mode",
     "Cuesheet filename": "Cuesheet filename",
     "Project filename": "Project filename",
     "Automatically link tracks": "Automatically link tracks",
