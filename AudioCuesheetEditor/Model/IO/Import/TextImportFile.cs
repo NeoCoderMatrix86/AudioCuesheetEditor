@@ -185,6 +185,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         recognized = recognizedLine;
                     }
                 }
+                else
+                {
+                    recognized = line;
+                }
             }
             return recognized;
         }
