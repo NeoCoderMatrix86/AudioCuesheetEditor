@@ -590,13 +590,10 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    private void OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
-        TimeSpan? result = null;
-        if (TimeSpan.TryParse(value, out TimeSpan parsedTimeSpan) == true)
-        {
-            result = parsedTimeSpan;
-        }
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimespanFormat);
         setAction(result);
     }
 

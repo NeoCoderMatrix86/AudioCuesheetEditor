@@ -88,6 +88,12 @@ along with Foobar.  If not, see
                                     <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
                                 </FieldBody>
                             </Field>
+                            <Field Horizontal="true">
+                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Customized timespan format"]</FieldLabel>
+                                <FieldBody ColumnSize="ColumnSize.Is7">
+                                    <TextEdit Immediate="false" TextChanged="OnTimespanformatChanged" />
+                                </FieldBody>
+                            </Field>
                         </TabPanel>
                         @if (importOptions != null)
                         {
@@ -146,6 +152,7 @@ along with Foobar.  If not, see
 }
 
 @code {
+    //TODO: Customized timespan format lokalisieren und validierung, etc.
     String selectedOptionsTab = "common";
     ApplicationOptions? applicationOptions;
     ImportOptions? importOptions;
@@ -268,5 +275,25 @@ along with Foobar.  If not, see
     private void ModalOptions_VisibleChanged(Boolean visible)
     {
         modalOptionsVisible = visible;
+    }
+
+    Task OnTimespanformatChanged(string value)
+    {
+        if ((applicationOptions != null) && (String.IsNullOrEmpty(value) == false))
+        {
+            if (applicationOptions.TimespanFormat == null)
+            {
+                applicationOptions.TimespanFormat = new Timespanformat();
+            }
+            applicationOptions.TimespanFormat.Scheme = value;
+        }
+        else
+        {
+            if (applicationOptions != null)
+            {
+                applicationOptions.TimespanFormat = null;
+            }
+        }
+        return Task.CompletedTask;
     }
 }

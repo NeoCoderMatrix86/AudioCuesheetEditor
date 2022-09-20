@@ -203,6 +203,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             if (property.PropertyType == typeof(TimeSpan?))
             {
+                //TODO: Use DateTimeUtility for parsing!
                 property.SetValue(entity, TimeSpan.Parse(value));
             }
             if (property.PropertyType == typeof(uint?))
