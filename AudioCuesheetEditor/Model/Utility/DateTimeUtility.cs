@@ -23,7 +23,7 @@ namespace AudioCuesheetEditor.Model.Utility
 {
     public class DateTimeUtility
     {
-        public static TimeSpan? ParseTimeSpan(String input, Timespanformat? timespanformat = null)
+        public static TimeSpan? ParseTimeSpan(String input, TimeSpanFormat? timespanformat = null)
         {
             TimeSpan? result = null;
             if (String.IsNullOrEmpty(input) == false)

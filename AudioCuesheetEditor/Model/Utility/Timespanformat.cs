@@ -19,7 +19,7 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.Utility
 {
-    public class Timespanformat : Validateable
+    public class TimeSpanFormat : Validateable
     {
         public const String Days = "Days";
         public const String Hours = "Hours";
@@ -32,21 +32,21 @@ namespace AudioCuesheetEditor.Model.Utility
         public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
         public static readonly IReadOnlyDictionary<String, String> AvailableTimespanScheme;
 
-        static Timespanformat()
+        static TimeSpanFormat()
         {
-            var schemeDays = String.Format("(?'{0}.{1}'{2})", nameof(Timespanformat), nameof(Timespanformat.Days), EnterRegularExpressionHere);
-            var schemeHours = String.Format("(?'{0}.{1}'{2})", nameof(Timespanformat), nameof(Timespanformat.Hours), EnterRegularExpressionHere);
-            var schemeMinutes = String.Format("(?'{0}.{1}'{2})", nameof(Timespanformat), nameof(Timespanformat.Minutes), EnterRegularExpressionHere);
-            var schemeSeconds = String.Format("(?'{0}.{1}'{2})", nameof(Timespanformat), nameof(Timespanformat.Seconds), EnterRegularExpressionHere);
-            var schemeMilliseconds = String.Format("(?'{0}.{1}'{2})", nameof(Timespanformat), nameof(Timespanformat.Milliseconds), EnterRegularExpressionHere);
+            var schemeDays = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Days), EnterRegularExpressionHere);
+            var schemeHours = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Hours), EnterRegularExpressionHere);
+            var schemeMinutes = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Minutes), EnterRegularExpressionHere);
+            var schemeSeconds = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Seconds), EnterRegularExpressionHere);
+            var schemeMilliseconds = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Milliseconds), EnterRegularExpressionHere);
 
             AvailableTimespanScheme = new Dictionary<string, string>
             {
-                { nameof(Timespanformat.Days), schemeDays },
-                { nameof(Timespanformat.Hours), schemeHours },
-                { nameof(Timespanformat.Minutes), schemeMinutes },
-                { nameof(Timespanformat.Seconds), schemeSeconds },
-                { nameof(Timespanformat.Milliseconds), schemeMilliseconds }
+                { nameof(TimeSpanFormat.Days), schemeDays },
+                { nameof(TimeSpanFormat.Hours), schemeHours },
+                { nameof(TimeSpanFormat.Minutes), schemeMinutes },
+                { nameof(TimeSpanFormat.Seconds), schemeSeconds },
+                { nameof(TimeSpanFormat.Milliseconds), schemeMilliseconds }
             };
         }
 
@@ -65,7 +65,7 @@ namespace AudioCuesheetEditor.Model.Utility
             TimeSpan? timespan = null;
             if (String.IsNullOrEmpty(Scheme) == false)
             {
-                var match = Regex.Match(input, Scheme);
+                var match = Regex.Match(input, Scheme.Replace(String.Format("{0}.", nameof(TimeSpanFormat)), ""));
                 if (match.Success)
                 {
                     int days = 0;
@@ -107,8 +107,21 @@ namespace AudioCuesheetEditor.Model.Utility
 
         protected override void Validate()
         {
-            //TODO
-            //throw new NotImplementedException();
+            if (String.IsNullOrEmpty(Scheme))
+            {
+                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} has no value!", nameof(Scheme)));
+            }
+            else
+            {
+                if ((Scheme.Contains(Days) == false)
+                    && (Scheme.Contains(Hours) == false)
+                    && (Scheme.Contains(Minutes) == false)
+                    && (Scheme.Contains(Seconds) == false)
+                    && (Scheme.Contains(Milliseconds) == false))
+                {
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} contains no placeholder!", nameof(Scheme)));
+                }
+            }
         }
     }
 }

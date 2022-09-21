@@ -97,16 +97,16 @@ along with Foobar.  If not, see
                                 <FieldBody ColumnSize="ColumnSize.Is7">
                                     <Addons>
                                         <Addon AddonType="AddonType.Body">
-                                            @if ((applicationOptions != null) && (applicationOptions.Timespanformat != null))
+                                            @if ((applicationOptions != null) && (applicationOptions.TimeSpanFormat != null))
                                             {
-                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.Timespanformat?.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(applicationOptions?.Timespanformat, nameof(Timespanformat.Scheme))">
-                                                    <Tooltip Text="@applicationOptions?.Timespanformat?.GetValidationErrors(validationMessageLocalizer, nameof(Timespanformat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
+                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(applicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))">
+                                                    <Tooltip Text="@applicationOptions?.TimeSpanFormat?.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
                                                 </TextEdit>
                                             }
                                             else
                                             {
-                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.Timespanformat?.Scheme">
-                                                    <Tooltip Text="@applicationOptions?.Timespanformat?.GetValidationErrors(validationMessageLocalizer, nameof(Timespanformat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
+                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme">
+                                                    <Tooltip Text="@applicationOptions?.TimeSpanFormat?.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
                                                 </TextEdit>
                                             }
                                         </Addon>
@@ -116,9 +116,9 @@ along with Foobar.  If not, see
                                                     @_localizer["Select placeholder"]
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    @foreach (var availableFormat in Timespanformat.AvailableTimespanScheme)
+                                                    @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
                                                     {
-                                                        <DropdownItem Value="@availableFormat.Value" Clicked="OnCustomizedTimespanFormatDropdownClicked">@_localizer[availableFormat.Key]</DropdownItem>
+                                                        <DropdownItem Value="@availableFormat.Value" Clicked="OnCustomizedTimeSpanFormatDropdownClicked">@_localizer[availableFormat.Key]</DropdownItem>
                                                     }
                                                 </DropdownMenu>
                                             </Dropdown>
@@ -315,37 +315,37 @@ along with Foobar.  If not, see
     {
         if ((applicationOptions != null) && (String.IsNullOrEmpty(value) == false))
         {
-            if (applicationOptions.Timespanformat == null)
+            if (applicationOptions.TimeSpanFormat == null)
             {
-                applicationOptions.Timespanformat = new Timespanformat();
+                applicationOptions.TimeSpanFormat = new TimeSpanFormat();
             }
-            applicationOptions.Timespanformat.Scheme = value;
+            applicationOptions.TimeSpanFormat.Scheme = value;
         }
         else
         {
             if (applicationOptions != null)
             {
-                applicationOptions.Timespanformat = null;
+                applicationOptions.TimeSpanFormat = null;
             }
         }
         return Task.CompletedTask;
     }
 
-    Task OnCustomizedTimespanFormatDropdownClicked(object value)
+    Task OnCustomizedTimeSpanFormatDropdownClicked(object value)
     {
         if ((applicationOptions != null) && (value != null))
         {
-            if (applicationOptions.Timespanformat == null)
+            if (applicationOptions.TimeSpanFormat == null)
             {
-                applicationOptions.Timespanformat = new Timespanformat();
+                applicationOptions.TimeSpanFormat = new TimeSpanFormat();
             }
-            applicationOptions.Timespanformat.Scheme += value.ToString();
+            applicationOptions.TimeSpanFormat.Scheme += value.ToString();
         }
         else
         {
             if (applicationOptions != null)
             {
-                applicationOptions.Timespanformat = null;
+                applicationOptions.TimeSpanFormat = null;
             }
         }
         return Task.CompletedTask;

@@ -18,7 +18,7 @@ namespace AudioCuesheetEditor.Model.Utility.Tests
             var timespan = DateTimeUtility.ParseTimeSpan("01:23:45");
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(1, 23, 45), timespan);
-            var format = new Timespanformat() { Scheme = "(?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = "(?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
             timespan = DateTimeUtility.ParseTimeSpan("3:12", format);
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(0, 3, 12), timespan);
@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Model.Utility.Tests
             timespan = DateTimeUtility.ParseTimeSpan("2.23:45:56", format);
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(2, 23, 45, 56), timespan);
-            format.Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})";
+            format.Scheme = "(?'Hours'\\d{1,})[:](?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})[.](?'TimeSpanFormat.Milliseconds'\\d{1,})";
             timespan = DateTimeUtility.ParseTimeSpan("23:45:56.599", format);
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(0, 23, 45, 56, 599), timespan);

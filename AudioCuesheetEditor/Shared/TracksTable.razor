@@ -561,7 +561,7 @@ along with Foobar.  If not, see
     async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.Timespanformat);
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
         setAction(result);
     }
 
