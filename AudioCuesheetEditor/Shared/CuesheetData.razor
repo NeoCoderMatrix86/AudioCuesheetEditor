@@ -31,7 +31,7 @@ along with Foobar.  If not, see
     <Field Horizontal="true">
         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-            <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Artist))" Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="Cuesheet.Artist" Immediate="false" />
+            <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Artist)))" Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="Cuesheet.Artist" Immediate="false" />
         </FieldBody>
     </Field>
 </Tooltip>
@@ -39,7 +39,7 @@ along with Foobar.  If not, see
     <Field Horizontal="true">
         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-            <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Title))" Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@_localizer["Enter cd title here"]" @bind-Text="Cuesheet.Title" Immediate="false" />
+            <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Title))" Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Title)))" Placeholder="@_localizer["Enter cd title here"]" @bind-Text="Cuesheet.Title" Immediate="false" />
         </FieldBody>
     </Field>
 </Tooltip>
@@ -73,7 +73,7 @@ along with Foobar.  If not, see
                 @if (Cuesheet.Audiofile == null)
                 {
                     <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                        <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                        <FileEdit Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                     </Tooltip>
                 }
                 else
@@ -101,7 +101,7 @@ along with Foobar.  If not, see
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                     @if (Cuesheet.CDTextfile == null)
                     {
-                        <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
+                        <FileEdit Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
                     }
                     else
                     {
@@ -121,7 +121,7 @@ along with Foobar.  If not, see
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                    <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(Cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
+                    <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
                 </FieldBody>
             </Field>
         </Tooltip>
@@ -135,7 +135,7 @@ along with Foobar.  If not, see
                     @if (Cuesheet.Audiofile == null)
                     {
                         <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                            <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                            <FileEdit Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                         </Tooltip>
                     }
                     else
@@ -163,7 +163,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                         @if (Cuesheet.CDTextfile == null)
                         {
-                            <FileEdit Class="@GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
+                            <FileEdit Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.CDTextfile)))" id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
                         }
                         else
                         {
@@ -183,7 +183,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@GetCSSClassAlert(Cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
+                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Class="@BootstrapUtility.GetCSSClassAlert(Cuesheet.Cataloguenumber, String.Format("{0}.{1}", nameof(Cataloguenumber), nameof(Cataloguenumber.Value)))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
                     </FieldBody>
                 </Field>
             </Tooltip>
@@ -310,38 +310,6 @@ along with Foobar.  If not, see
                 modalDialog.ShowModal();
             }
         }
-    }
-
-    private String GetCSSClassAlert(Validateable validateable, String property)
-    {
-        String cssClass = String.Empty;
-        var validationErrors = validateable.GetValidationErrorsFiltered(property);
-        if (validationErrors.Count() >= 1)
-        {
-            if (validationErrors.Count() > 1)
-            {
-                if (Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
-                {
-                    cssClass = "alert-danger";
-                }
-                else
-                {
-                    cssClass = "alert-warning";
-                }
-            }
-            else
-            {
-                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Error)
-                {
-                    cssClass = "alert-danger";
-                }
-                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Warning)
-                {
-                    cssClass = "alert-warning";
-                }
-            }
-        }
-        return cssClass;
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)

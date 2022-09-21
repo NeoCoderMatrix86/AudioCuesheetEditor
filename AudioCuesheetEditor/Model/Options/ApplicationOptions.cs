@@ -225,6 +225,6 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
 
-        public Timespanformat? TimespanFormat { get; set; }
+        public Timespanformat? Timespanformat { get; set; }
     }
 }

@@ -89,9 +89,41 @@ along with Foobar.  If not, see
                                 </FieldBody>
                             </Field>
                             <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Customized timespan format"]</FieldLabel>
+                                <FieldLabel ColumnSize="ColumnSize.Is5">
+                                    <Tooltip Text="@_localizer["Enter custom timespan format here"]">
+                                        @_localizer["Customized timespan format"]
+                                    </Tooltip>
+                                </FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit Immediate="false" TextChanged="OnTimespanformatChanged" />
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Body">
+                                            @if ((applicationOptions != null) && (applicationOptions.Timespanformat != null))
+                                            {
+                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.Timespanformat?.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(applicationOptions?.Timespanformat, nameof(Timespanformat.Scheme))">
+                                                    <Tooltip Text="@applicationOptions?.Timespanformat?.GetValidationErrors(validationMessageLocalizer, nameof(Timespanformat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
+                                                </TextEdit>
+                                            }
+                                            else
+                                            {
+                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.Timespanformat?.Scheme">
+                                                    <Tooltip Text="@applicationOptions?.Timespanformat?.GetValidationErrors(validationMessageLocalizer, nameof(Timespanformat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
+                                                </TextEdit>
+                                            }
+                                        </Addon>
+                                        <Addon AddonType="AddonType.End">
+                                            <Dropdown>
+                                                <DropdownToggle Color="Color.Secondary">
+                                                    @_localizer["Select placeholder"]
+                                                </DropdownToggle>
+                                                <DropdownMenu>
+                                                    @foreach (var availableFormat in Timespanformat.AvailableTimespanScheme)
+                                                    {
+                                                        <DropdownItem Value="@availableFormat.Value" Clicked="OnCustomizedTimespanFormatDropdownClicked">@_localizer[availableFormat.Key]</DropdownItem>
+                                                    }
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </Addon>
+                                    </Addons>
                                 </FieldBody>
                             </Field>
                         </TabPanel>
@@ -157,10 +189,11 @@ along with Foobar.  If not, see
     ApplicationOptions? applicationOptions;
     ImportOptions? importOptions;
     Boolean saveOptions;
-    Boolean modalOptionsVisible = false;
+    Boolean modalOptionsVisible = false;    
 
     Modal modalOptions = default!;
     HotKeysContext hotKeysContext = default!;
+    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     public void Dispose()
     {
@@ -185,6 +218,7 @@ along with Foobar.  If not, see
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         await base.OnInitializedAsync();
     }
@@ -281,17 +315,37 @@ along with Foobar.  If not, see
     {
         if ((applicationOptions != null) && (String.IsNullOrEmpty(value) == false))
         {
-            if (applicationOptions.TimespanFormat == null)
+            if (applicationOptions.Timespanformat == null)
             {
-                applicationOptions.TimespanFormat = new Timespanformat();
+                applicationOptions.Timespanformat = new Timespanformat();
             }
-            applicationOptions.TimespanFormat.Scheme = value;
+            applicationOptions.Timespanformat.Scheme = value;
         }
         else
         {
             if (applicationOptions != null)
             {
-                applicationOptions.TimespanFormat = null;
+                applicationOptions.Timespanformat = null;
+            }
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnCustomizedTimespanFormatDropdownClicked(object value)
+    {
+        if ((applicationOptions != null) && (value != null))
+        {
+            if (applicationOptions.Timespanformat == null)
+            {
+                applicationOptions.Timespanformat = new Timespanformat();
+            }
+            applicationOptions.Timespanformat.Scheme += value.ToString();
+        }
+        else
+        {
+            if (applicationOptions != null)
+            {
+                applicationOptions.Timespanformat = null;
             }
         }
         return Task.CompletedTask;

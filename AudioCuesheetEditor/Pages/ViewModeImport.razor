@@ -147,7 +147,7 @@ along with Foobar.  If not, see
                                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
-                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Class="@GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
+                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
                                                         <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" TriggerTargetId="TextImportScheme.SchemeCuesheet" />
                                                     </TextEdit>
                                                 </Addon>
@@ -176,7 +176,7 @@ along with Foobar.  If not, see
                                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
-                                                    <TextEdit id="TextImportScheme.SchemeTracks" Class="@GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
+                                                    <TextEdit id="TextImportScheme.SchemeTracks" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
                                                         <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" TriggerTargetId="TextImportScheme.SchemeTracks" />
                                                     </TextEdit>
                                                 </Addon>
@@ -237,6 +237,7 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    //TODO: Display customized timespan format
     String selectedStep = "selectFiles";
     String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
@@ -441,38 +442,6 @@ along with Foobar.  If not, see
         }
         await OnSelectedStepChanged("validateData");
         StateHasChanged();
-    }
-
-    private String GetCSSClassAlert(Validateable validateable, String property)
-    {
-        String cssClass = String.Empty;
-        var validationErrors = validateable.GetValidationErrorsFiltered(property);
-        if (validationErrors.Count() >= 1)
-        {
-            if (validationErrors.Count() > 1)
-            {
-                if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
-                {
-                    cssClass = "alert-danger";
-                }
-                else
-                {
-                    cssClass = "alert-warning";
-                }
-            }
-            else
-            {
-                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Error)
-                {
-                    cssClass = "alert-danger";
-                }
-                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Warning)
-                {
-                    cssClass = "alert-warning";
-                }
-            }
-        }
-        return cssClass;
     }
 
     private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
