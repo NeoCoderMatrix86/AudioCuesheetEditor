@@ -127,6 +127,9 @@
   <data name="Playlist__36_Frames" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Playlist-#36-Frames.cue;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="Textimport_Bug_213" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Textimport_Bug_213.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="Textimport_Bug_54" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Textimport-Bug-#54.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

@@ -50,6 +50,8 @@ namespace AudioCuesheetEditor.Model.Utility
             };
         }
 
+        public event EventHandler? SchemeChanged;
+
         public String? Scheme
         {
             get => scheme;
@@ -57,6 +59,7 @@ namespace AudioCuesheetEditor.Model.Utility
             {
                 scheme = value;
                 OnValidateablePropertyChanged();
+                SchemeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -113,6 +116,7 @@ namespace AudioCuesheetEditor.Model.Utility
             }
             else
             {
+                //TODO: Also check for EnterRegularExpressionHere
                 if ((Scheme.Contains(Days) == false)
                     && (Scheme.Contains(Hours) == false)
                     && (Scheme.Contains(Minutes) == false)
