@@ -24,6 +24,7 @@
     "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.": "Schema enthält Platzhalter, die nicht aufgelöst werden können! Bitte entfernen Sie die ungültigen Platzhalter '{0}'.",
     "SchemeCuesheet": "Schema Cuesheet",
     "SchemeTracks": "Schema Tracks",
-    "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!": "{0} {1} von diesem Track stimmt nicht mit der Position im Cuesheet überein. Bitte korrigieren Sie {2} von diesem Track auf {3}!"
+    "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!": "{0} {1} von diesem Track stimmt nicht mit der Position im Cuesheet überein. Bitte korrigieren Sie {2} von diesem Track auf {3}!",
+    "{0} contains no placeholder!": "{0} enthält keine Platzhalter!"
   }
 }

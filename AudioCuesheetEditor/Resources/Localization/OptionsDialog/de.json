@@ -25,6 +25,14 @@
     "Save": "Speichern",
     "Reload options": "Optionen neu laden",
     "Reset": "Zurücksetzen",
-    "Close": "Schließen"
+    "Close": "Schließen",
+    "Enter custom timespan format here": "Hier können Sie bei Bedarf ein angepasstes Format für Zeitspannen eingeben. Details können der Hilfe entnommen werden.",
+    "Customized timespan format": "Angepasstes Zeitspannenformat",
+    "Select placeholder": "Platzhalter auswählen",
+    "Days": "Tage",
+    "Hours": "Stunden",
+    "Minutes": "Minuten",
+    "Seconds": "Sekunden",
+    "Milliseconds": "Millisekunden"
   }
 }
