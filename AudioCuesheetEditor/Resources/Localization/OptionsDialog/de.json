@@ -33,6 +33,7 @@
     "Hours": "Stunden",
     "Minutes": "Minuten",
     "Seconds": "Sekunden",
-    "Milliseconds": "Millisekunden"
+    "Milliseconds": "Millisekunden",
+    "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben"
   }
 }

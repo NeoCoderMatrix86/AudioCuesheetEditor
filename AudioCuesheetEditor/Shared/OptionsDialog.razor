@@ -338,7 +338,7 @@ along with Foobar.  If not, see
             {
                 applicationOptions.TimeSpanFormat = new TimeSpanFormat();
             }
-            applicationOptions.TimeSpanFormat.Scheme += value.ToString();
+            applicationOptions.TimeSpanFormat.Scheme += value.ToString()?.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere]);
         }
         else
         {

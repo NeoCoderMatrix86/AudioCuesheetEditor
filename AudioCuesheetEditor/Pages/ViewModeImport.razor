@@ -188,7 +188,7 @@ along with Foobar.  If not, see
                                                         <DropdownMenu>
                                                             @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
                                                             {
-                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
                                                             }
                                                         </DropdownMenu>
                                                     </Dropdown>
@@ -217,7 +217,7 @@ along with Foobar.  If not, see
                                                         <DropdownMenu>
                                                             @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
                                                             {
-                                                                <DropdownItem Value="@availableFormat.Value" Clicked="() => _sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme += availableFormat.Value">@_localizer[availableFormat.Key]</DropdownItem>
+                                                                <DropdownItem Value="@availableFormat.Value" Clicked="() => _sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme += availableFormat.Value.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere])">@_localizer[availableFormat.Key]</DropdownItem>
                                                             }
                                                         </DropdownMenu>
                                                     </Dropdown>
