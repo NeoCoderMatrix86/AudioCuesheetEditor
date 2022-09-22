@@ -25,6 +25,7 @@
     "SchemeCuesheet": "Schema Cuesheet",
     "SchemeTracks": "Schema Tracks",
     "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!": "{0} {1} von diesem Track stimmt nicht mit der Position im Cuesheet überein. Bitte korrigieren Sie {2} von diesem Track auf {3}!",
-    "{0} contains no placeholder!": "{0} enthält keine Platzhalter!"
+    "{0} contains no placeholder!": "{0} enthält keine Platzhalter!",
+    "Replace {0} by a regular expression!": "Ersetzen sie {0} bitte durch einen regulären Ausdruck!"
   }
 }

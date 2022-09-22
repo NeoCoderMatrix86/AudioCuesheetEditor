@@ -116,7 +116,6 @@ namespace AudioCuesheetEditor.Model.Utility
             }
             else
             {
-                //TODO: Also check for EnterRegularExpressionHere
                 if ((Scheme.Contains(Days) == false)
                     && (Scheme.Contains(Hours) == false)
                     && (Scheme.Contains(Minutes) == false)
@@ -124,6 +123,10 @@ namespace AudioCuesheetEditor.Model.Utility
                     && (Scheme.Contains(Milliseconds) == false))
                 {
                     validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} contains no placeholder!", nameof(Scheme)));
+                }
+                if (Scheme.Contains(EnterRegularExpressionHere))
+                {
+                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Replace {0} by a regular expression!", EnterRegularExpressionHere));
                 }
             }
         }
