@@ -277,39 +277,7 @@ along with Foobar.  If not, see
         //Open processing hints
         processingHintsVisible = true;
     }
-
-    private String GetCSSClassAlert(Validateable validateable, String property)
-    {
-        String cssClass = String.Empty;
-        var validationErrors = validateable.GetValidationErrorsFiltered(property);
-        if (validationErrors.Count() >= 1)
-        {
-            if (validationErrors.Count() > 1)
-            {
-                if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(property, Model.Entity.ValidationErrorFilterType.ErrorOnly).Count() >= 1)
-                {
-                    cssClass = "alert-danger";
-                }
-                else
-                {
-                    cssClass = "alert-warning";
-                }
-            }
-            else
-            {
-                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Error)
-                {
-                    cssClass = "alert-danger";
-                }
-                if (validationErrors.First().Type == Model.Entity.ValidationErrorType.Warning)
-                {
-                    cssClass = "alert-warning";
-                }
-            }
-        }
-        return cssClass;
-    }
-
+    
     private void OnKeyDownRecordArtist(KeyboardEventArgs args)
     {
         _logger.LogDebug("args = {0}", args);

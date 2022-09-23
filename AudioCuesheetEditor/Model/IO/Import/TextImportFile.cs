@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -27,15 +28,27 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class TextImportfile
+    public class TextImportfile : IDisposable
     {
         public const String MimeType = "text/plain";
         public const String FileExtension = ".txt";
 
-        private TextImportScheme textImportScheme;
+        public EventHandler? AnalysisFinished;
 
-        public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null)
+        private TextImportScheme textImportScheme;
+        private bool disposedValue;
+
+        public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null, TimeSpanFormat? timeSpanFormat = null)
         {
+            if (timeSpanFormat == null)
+            {
+                TimeSpanFormat = new TimeSpanFormat();
+            }
+            else
+            {
+                TimeSpanFormat = timeSpanFormat;
+            }
+            TimeSpanFormat.SchemeChanged += TimeSpanFormat_SchemeChanged;
             textImportScheme = new TextImportScheme();
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);
@@ -70,10 +83,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             get { return textImportScheme; }
             set 
             { 
-                if (textImportScheme != null)
-                {
-                    textImportScheme.SchemeChanged -= TextImportScheme_SchemeChanged;
-                }
+                textImportScheme.SchemeChanged -= TextImportScheme_SchemeChanged;
                 textImportScheme = value;
                 textImportScheme.SchemeChanged += TextImportScheme_SchemeChanged;
                 Analyse();
@@ -86,7 +96,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public Cuesheet? Cuesheet { get; private set; }
 
+        public TimeSpanFormat TimeSpanFormat { get; private set; }
+
         private void TextImportScheme_SchemeChanged(object? sender, string e)
+        {
+            Analyse();
+        }
+
+        private void TimeSpanFormat_SchemeChanged(object? sender, EventArgs eventArgs)
         {
             Analyse();
         }
@@ -139,6 +156,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 AnalyseException = ex;
                 Cuesheet = null;
             }
+            AnalysisFinished?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -149,7 +167,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <param name="regex">Regular expression to use for analysis</param>
         /// <returns>Analysed line with marking what has been matched or empty string</returns>
         /// <exception cref="NullReferenceException">Occurs when property or group could not be found!</exception>
-        private static String? AnalyseLine(String line, ICuesheetEntity entity, Regex regex)
+        private String? AnalyseLine(String line, ICuesheetEntity entity, Regex regex)
         {
             String? recognized = null;
             string? recognizedLine = line;
@@ -199,11 +217,18 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <param name="entity">Entity object to set the value on</param>
         /// <param name="property">Property to set</param>
         /// <param name="value">Value to set</param>
-        private static void SetValue(ICuesheetEntity entity, PropertyInfo property, string value)
+        private void SetValue(ICuesheetEntity entity, PropertyInfo property, string value)
         {
             if (property.PropertyType == typeof(TimeSpan?))
             {
-                property.SetValue(entity, TimeSpan.Parse(value));
+                if (String.IsNullOrEmpty(TimeSpanFormat.Scheme))
+                {
+                    property.SetValue(entity, DateTimeUtility.ParseTimeSpan(value));
+                }
+                else
+                {
+                    property.SetValue(entity, DateTimeUtility.ParseTimeSpan(value, TimeSpanFormat));
+                }
             }
             if (property.PropertyType == typeof(uint?))
             {
@@ -230,6 +255,26 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 property.SetValue(entity, new CDTextfile(value));
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    TimeSpanFormat.SchemeChanged -= TimeSpanFormat_SchemeChanged;
+                    textImportScheme.SchemeChanged -= TextImportScheme_SchemeChanged;
+                }
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

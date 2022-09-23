@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Utility;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -99,6 +100,7 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 RecordCountdownTimer = 5;
             }
+            
         }
         public String? CuesheetFileName 
         {
@@ -222,5 +224,7 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
+
+        public TimeSpanFormat? TimeSpanFormat { get; set; }
     }
 }
