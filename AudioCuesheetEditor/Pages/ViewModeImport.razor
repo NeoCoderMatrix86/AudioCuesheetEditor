@@ -125,7 +125,13 @@ along with Foobar.  If not, see
                                 <CollapseBody Background="Background.Light">
                                     <Text>
                                         <pre>
-                                            @((MarkupString)String.Join("<br />", FileContentRecognized))
+                                            @foreach(var line in FileContentRecognized)
+                                            {
+                                                if (line != null)
+                                                {
+                                                    @((MarkupString)String.Format("{0}<br />", line))
+                                                }
+                                            }
                                         </pre>
                                     </Text>
                                 </CollapseBody>
