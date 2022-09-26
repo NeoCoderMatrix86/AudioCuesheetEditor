@@ -147,3 +147,7 @@ a, .btn-link {
     color:inherit!important;
     background-color: rgba(0,0,0,.03)!important;
 }
+
+.controlsCellFixedWidth {
+    width: 40px;
+}
