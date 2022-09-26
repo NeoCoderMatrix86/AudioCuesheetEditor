@@ -321,6 +321,17 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
                 String.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), textImportFile.FileContentRecognized.Last());
 
             File.Delete(tempFile);
+
+            textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug__233));
+            textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
+            textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsNotNull(textImportFile.Cuesheet);
+            Assert.IsNotNull(textImportFile.FileContentRecognized);
+            Assert.AreEqual(String.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "Age Of Love"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), textImportFile.FileContentRecognized.ElementAt(53));
         }
     }
 }

@@ -72,7 +72,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         }
 
         public static readonly String DefaultSchemeCuesheet = @"(?'Cuesheet.Artist'\A.*) - (?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.Audiofile'.{1,})";
-        public static readonly String DefaultSchemeTracks = @"(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'.{1,})";
+        public static readonly String DefaultSchemeTracks = @"(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,'*-]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü&'*-]{1,})\t{0,}(?'Track.End'.{1,})";
 
         public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
