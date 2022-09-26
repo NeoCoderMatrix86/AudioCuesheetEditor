@@ -93,7 +93,7 @@ function dropFiles(e, domElement, domID) {
 }
 
 function setupAudioRecording() {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => { handleAudioRecording(stream) }).catch(function () {  });
+    navigator.mediaDevices.getUserMedia({ audio: { channelCount: 2, sampleRate: 480000 } }).then(stream => { handleAudioRecording(stream) }).catch(function () { });
 }
 
 function closeAudioRecording() {
@@ -104,7 +104,11 @@ function closeAudioRecording() {
 
 function handleAudioRecording(stream) {
     mediaStream = stream;
-    rec = new MediaRecorder(stream);
+    const options = {
+        audioBitsPerSecond: 320000,
+        audioBitrateMode: "constant"
+    }
+    rec = new MediaRecorder(stream, options);
     rec.ondataavailable = e => {
         audioChunks.push(e.data);
     }
