@@ -85,7 +85,16 @@ along with Foobar.  If not, see
             {
                 <TableHeaderCell Display="selectionDisplay">@_localizer["Selection"]</TableHeaderCell>
             }
-            <TableHeaderCell Class="controlsCell">@_localizer["Controls"]</TableHeaderCell>
+            @switch (_sessionStateContainer.CurrentViewMode)
+            {
+                case ViewMode.ViewModeFull:
+                case ViewMode.ViewModeImport:
+                    <TableHeaderCell Class="controlsCell">@_localizer["Controls"]</TableHeaderCell>
+                    break;
+                case ViewMode.ViewModeRecord:
+                    <TableHeaderCell Class="controlsCellFixedWidth">@_localizer["Controls"]</TableHeaderCell>
+                    break;
+            }
             <TableHeaderCell>#</TableHeaderCell>
             <TableHeaderCell Class="minWidth">@_localizer["Artist"]</TableHeaderCell>
             <TableHeaderCell Class="minWidth">@_localizer["Title"]</TableHeaderCell>
@@ -136,7 +145,7 @@ along with Foobar.  If not, see
                 @switch (_sessionStateContainer.CurrentViewMode)
                 {
                     case ViewMode.ViewModeRecord:
-                        <TableRowCell>
+                        <TableRowCell Class="controlsCellFixedWidth">
                             <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
@@ -635,6 +644,7 @@ along with Foobar.  If not, see
     private void Cuesheet_TrackAdded(object? sender, EventArgs args)
     {
         AttachToLastTrackValidateablePropertyChanged();
+        StateHasChanged();
     }
 
     private void Cuesheet_TrackRemoved(object? sender, EventArgs args)
