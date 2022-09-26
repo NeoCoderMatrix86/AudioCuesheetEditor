@@ -225,6 +225,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 
             //Test TextImportFile
             var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
+            textImportFile.TextImportScheme.SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet;
+            textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
             Assert.IsNull(textImportFile.AnalyseException);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
             Assert.IsTrue(textImportFile.IsValid);
