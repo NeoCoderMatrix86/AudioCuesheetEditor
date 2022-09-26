@@ -186,7 +186,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (property != null)
                             {
                                 SetValue(entity, property, group.Value);
-                                recognizedLine = recognizedLine.Replace(group.Value, String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value));
+                                recognizedLine = recognizedLine.Substring(0, group.Index + (13 * (groupCounter - 1)))
+                                    + String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
+                                    + recognizedLine.Substring(group.Index + (13 * (groupCounter - 1)) + group.Length);
                             }
                             else
                             {
