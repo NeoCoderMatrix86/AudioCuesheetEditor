@@ -79,12 +79,12 @@ namespace AudioCuesheetEditor.Extensions
             {
                 if (textImportFile != null)
                 {
-                    textImportFile.TextImportScheme.SchemeChanged -= TextImportScheme_SchemeChanged;
+                    textImportFile.AnalysisFinished -= TextImportScheme_AnalysisFinished;
                 }
                 textImportFile = value;
                 if (textImportFile != null)
                 {
-                    textImportFile.TextImportScheme.SchemeChanged += TextImportScheme_SchemeChanged;
+                    textImportFile.AnalysisFinished += TextImportScheme_AnalysisFinished;
                     ImportCuesheet = textImportFile.Cuesheet;
                 }
                 else
@@ -125,7 +125,7 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        private void TextImportScheme_SchemeChanged(object? sender, string e)
+        private void TextImportScheme_AnalysisFinished(object? sender, EventArgs eventArgs)
         {
             if (textImportFile != null)
             {

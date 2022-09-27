@@ -9,6 +9,7 @@
     "Default viewmode": "Default viewmode",
     "ViewModeFull": "Full edit mode",
     "ViewModeRecord": "Live record mode",
+    "ViewModeImport": "Import assistant mode",
     "Cuesheet filename": "Cuesheet filename",
     "Project filename": "Project filename",
     "Automatically link tracks": "Automatically link tracks",
@@ -24,6 +25,15 @@
     "Save": "Save",
     "Reload options": "Reload options",
     "Reset": "Reset",
-    "Close": "Close"
+    "Close": "Close",
+    "Enter custom timespan format here": "You can enter a custom format for timespan here. Details can be found in help.",
+    "Customized timespan format": "Customized timespan format",
+    "Select placeholder": "Select placeholder",
+    "Days": "Days",
+    "Hours": "Hours",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "Milliseconds": "Milliseconds",
+    "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here"
   }
 }

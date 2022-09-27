@@ -1,5 +1,22 @@
 # Changelog
 
+## [v3.1.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.1.0) (2022-09-27)
+
+**Implemented enhancements:**
+
+- Improve standard regular expressions for textimport [\#233](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/233)
+- Treat AA:BB input as mm:ss not hh:mm in length [\#209](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/209)
+- Set higher quality for recording of audio [\#188](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/188)
+
+**Fixed bugs:**
+
+- Track in record mode is added only when adding a second one [\#242](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/242)
+- Localization in options for standard view mode is missing [\#232](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/232)
+- Filecontent not displayed when using an invalid import scheme [\#231](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/231)
+- File extension is not set [\#220](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/220)
+- Textimport fails [\#214](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/214)
+- Import textfile times are not recognized correctly [\#213](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/213)
+
 ## [v3.0.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.0.0) (2022-08-30)
 
 **Implemented enhancements:**

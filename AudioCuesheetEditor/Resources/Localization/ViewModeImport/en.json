@@ -46,6 +46,13 @@
     "Textimportscheme cuesheet": "Textimport scheme cuesheet",
     "Textimportscheme track": "Textimport scheme track",
     "Import Options": "Import options",
-    "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here"
+    "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here",
+    "Enter custom timespan format here": "You can enter a custom format for timespan here. Details can be found in help.",
+    "Customized timespan format": "Costumized timespan format",
+    "Days": "Days",
+    "Hours": "Hours",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "Milliseconds": "Milliseconds"
   }
 }

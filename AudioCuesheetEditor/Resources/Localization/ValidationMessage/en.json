@@ -24,6 +24,8 @@
     "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.": "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.",
     "SchemeCuesheet": "Scheme Cuesheet",
     "SchemeTracks": "Scheme Tracks",
-    "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!": "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!"
+    "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!": "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!",
+    "{0} contains no placeholder!": "{0} contains no placeholder!",
+    "Replace {0} by a regular expression!": "Replace {0} by a regular expression!"
   }
 }

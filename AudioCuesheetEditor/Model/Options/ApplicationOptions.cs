@@ -14,10 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Controller;
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Utility;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -49,6 +51,7 @@ namespace AudioCuesheetEditor.Model.Options
 
         private String audioFileNameRecording;
         private String? projectFilename;
+        private String? cuesheetFilename;
 
         public static IReadOnlyCollection<CultureInfo> AvailableCultures
         {
@@ -97,8 +100,31 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 RecordCountdownTimer = 5;
             }
+            
         }
-        public String? CuesheetFileName { get; set; }
+        public String? CuesheetFileName 
+        {
+            get => cuesheetFilename;
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    var extension = Path.GetExtension(value);
+                    if (extension.Equals(Cuesheet.FileExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        cuesheetFilename = value;
+                    }
+                    else
+                    {
+                        cuesheetFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Cuesheet.FileExtension);
+                    }
+                }
+                else
+                {
+                    cuesheetFilename = null;
+                }
+            }
+        }
         public String? CultureName { get; set; }
         [JsonIgnore]
         public CultureInfo Culture
@@ -198,5 +224,7 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
+
+        public TimeSpanFormat? TimeSpanFormat { get; set; }
     }
 }

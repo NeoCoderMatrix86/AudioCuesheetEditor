@@ -24,6 +24,8 @@ using System.IO;
 using AudioCuesheetEditorTests.Utility;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditor.Model.Utility;
 
 namespace AudioCuesheetEditor.Model.IO.Import.Tests
 {
@@ -174,6 +176,14 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             Assert.AreEqual(textImportFile.Cuesheet.Tracks.ToArray()[7].End, new TimeSpan(1, 15, 54));
 
             File.Delete(tempFile);
+
+            var timespanFormat = new TimeSpanFormat() { Scheme = "(?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})" };
+            textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug_213), timeSpanFormat: timespanFormat);
+            textImportFile.TextImportScheme.SchemeCuesheet = "(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'.{1,})";
+            textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 4);
+            Assert.AreEqual(new TimeSpan(2, 3, 23), textImportFile.Cuesheet.Tracks.ToArray()[3].End);
         }
 
         [TestMethod()]
@@ -311,6 +321,17 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
                 String.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), textImportFile.FileContentRecognized.Last());
 
             File.Delete(tempFile);
+
+            textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug__233));
+            textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
+            textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsNotNull(textImportFile.Cuesheet);
+            Assert.IsNotNull(textImportFile.FileContentRecognized);
+            Assert.AreEqual(String.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "Age Of Love"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
+                String.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), textImportFile.FileContentRecognized.ElementAt(53));
         }
     }
 }
