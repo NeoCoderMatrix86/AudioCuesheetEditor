@@ -2,7 +2,7 @@ name: Generate Changelog
 
 on:
   release:
-    types: [created]
+    types: [published]
   workflow_dispatch:
     
 
