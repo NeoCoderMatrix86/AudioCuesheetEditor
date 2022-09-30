@@ -23,13 +23,19 @@ namespace AudioCuesheetEditor.Data.Services
         public const String Application = "AudioCuesheetEditor";
         public const String ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
 
+        //TODO: Link results (artist -> title, title -> artist) and provide more information on selected value changed
+
         public async Task<Dictionary<Guid, String?>> SearchArtistAsync(String searchString)
         {
             var artistSearchResult = await Query.FindArtistsAsync(searchString, simple: true);
             return artistSearchResult.Results.ToDictionary(x => x.Item.Id,x => x.Item.Name);
         }
 
-        //TODO: SearchTitle
+        public async Task<Dictionary<Guid, String?>> SearchTitleAsync(String searchString)
+        {
+            var titleSearchResult = await Query.FindRecordingsAsync(searchString, simple: true);
+            return titleSearchResult.Results.ToDictionary(x => x.Item.Id, x => x.Item.Title);
+        }
 
         private Query Query
         {
