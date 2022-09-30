@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject TraceChangeManager _traceChangeManager
 @inject ILogger<TracksTable> _logger
 @inject ITextLocalizerService _localizationService
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
 
 @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
 {
@@ -225,7 +226,9 @@ along with Foobar.  If not, see
                 <TableRowCell Class="minWidth">
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
+                            <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" SelectedValueChanged="(value) => autocompleteSelectedTrackArtists[track] = value">
+
+                            </Autocomplete>
                         </Tooltip>
                     </Tooltip>
                 </TableRowCell>
@@ -374,6 +377,7 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+    //TODO: Artist merken und dann in der title suche verwenden
     ModalDialog modalDialog = default!;
     Modal modalTrackEdit = default!;
     IFluentDisplay selectionDisplay = Display.None;
@@ -381,6 +385,14 @@ along with Foobar.  If not, see
     CloneTrackModel? editTrack;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Track? lastTrack;
+    IEnumerable<AutocompleteSearchModel>? autocompleteTrackArtists;
+    Dictionary<Track, Guid> autocompleteSelectedTrackArtists = new();
+
+    public class AutocompleteSearchModel 
+    {
+        public String? Text { get; set; }
+        public Guid Value { get; set; }
+    }
 
     [Parameter]
     public Boolean TrackSelectionVisible { get; set; } = false;
@@ -655,5 +667,17 @@ along with Foobar.  If not, see
     private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    private async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested )
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackArtists = artists.ToList().ConvertAll(x => new AutocompleteSearchModel() { Text = x.Value, Value = x.Key });
+            }
+        }
     }
 }

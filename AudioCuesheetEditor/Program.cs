@@ -1,6 +1,7 @@
 using AudioCuesheetEditor;
 using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Data.Options;
+using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
@@ -32,6 +33,7 @@ builder.Services.AddBlazorDownloadFile();
 
 builder.Services.AddScoped<CuesheetController>();
 builder.Services.AddScoped<LocalStorageOptionsProvider>();
+builder.Services.AddScoped<MusicBrainzDataProvider>();
 
 builder.Services.AddSingleton<SessionStateContainer>();
 builder.Services.AddSingleton<TraceChangeManager>();
