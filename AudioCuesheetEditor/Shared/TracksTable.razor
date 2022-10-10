@@ -697,6 +697,7 @@ along with Foobar.  If not, see
 
     async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
     {
+        //TODO: Prüfen, ob im record und import modus ein problem besteht!
         var selectedTrack = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
         if (selectedTrack != null)
         {
