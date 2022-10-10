@@ -226,8 +226,8 @@ along with Foobar.  If not, see
                 <TableRowCell Class="minWidth">
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" SelectedValueChanged="(value) => autocompleteSelectedTrackArtists[track] = value">
-
+                            <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist">
+                                
                             </Autocomplete>
                         </Tooltip>
                     </Tooltip>
@@ -235,7 +235,7 @@ along with Foobar.  If not, see
                 <TableRowCell Class="minWidth">
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Title" ReadData="OnReadDataAutocompleteTrackTitle">
+                            <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)">
 
                             </Autocomplete>
                         </Tooltip>
@@ -389,7 +389,6 @@ along with Foobar.  If not, see
     Track? lastTrack;
     IEnumerable<AutocompleteSearchModel>? autocompleteTrackArtists;
     IEnumerable<AutocompleteSearchModel>? autocompleteTrackTitles;
-    Dictionary<Track, Guid> autocompleteSelectedTrackArtists = new();
 
     public class AutocompleteSearchModel 
     {
@@ -674,7 +673,7 @@ along with Foobar.  If not, see
 
     private async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
     {
-        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested )
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
         {
             var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
             if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
@@ -684,15 +683,24 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnReadDataAutocompleteTrackTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    private async Task OnReadDataAutocompleteTrackTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
     {
-        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested )
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
         {
-            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue);
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
             if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
             {
                 autocompleteTrackTitles = titles.ToList().ConvertAll(x => new AutocompleteSearchModel() { Text = x.Value, Value = x.Key });
             }
+        }
+    }
+
+    async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
+    {
+        var selectedTrack = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+        if (selectedTrack != null)
+        {
+            track.Length = selectedTrack.Length;
         }
     }
 }
