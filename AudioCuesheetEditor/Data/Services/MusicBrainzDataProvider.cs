@@ -67,11 +67,18 @@ namespace AudioCuesheetEditor.Data.Services
         {
             MusicBrainzTrack? track = null;
             var query = new Query(Application, ApplicationVersion, ProjectUrl);
-            var recording = await query.LookupRecordingAsync(id);
+            var recording = await query.LookupRecordingAsync(id, Include.Artists);
             if (recording != null)
             {
-                //TODO: Artist
-                track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Length = recording.Length };
+                String artist = String.Empty;
+                if (recording.ArtistCredit != null)
+                {
+                    foreach (var credit in recording.ArtistCredit)
+                    {
+                        artist += String.Format("{0} {1}", credit.Artist?.Name, credit.JoinPhrase);
+                    }
+                }
+                track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
             }
             return track;
         }
