@@ -694,10 +694,10 @@ along with Foobar.  If not, see
         {
             case ViewMode.ViewModeFull:
             case ViewMode.ViewModeImport:
-                var selectedTrack = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
-                if (selectedTrack != null)
+                var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+                if (trackDetails != null)
                 {
-                    track.Length = selectedTrack.Length;
+                    track.Length = trackDetails.Length;
                 }
                 break;
         }
