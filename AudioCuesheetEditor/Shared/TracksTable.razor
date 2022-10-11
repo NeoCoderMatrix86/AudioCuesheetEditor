@@ -42,7 +42,7 @@ along with Foobar.  If not, see
         <Buttons Margin="Margin.Is2.FromEnd">
             @if (TrackSelectionVisible == false)
             {
-                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                         <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
                         <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
@@ -52,7 +52,7 @@ along with Foobar.  If not, see
             }
             else
             {
-                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                         <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
                         <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
@@ -79,29 +79,29 @@ along with Foobar.  If not, see
     <br />
 }
 
-<Table Bordered="true" Responsive="true" Narrow="true">
+<Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
     <TableHeader ThemeContrast="ThemeContrast.Light">
         <TableRow>
-            @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+            @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
             {
-                <TableHeaderCell Display="selectionDisplay">@_localizer["Selection"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Selection"]</TableHeaderCell>
             }
             @switch (_sessionStateContainer.CurrentViewMode)
             {
                 case ViewMode.ViewModeFull:
                 case ViewMode.ViewModeImport:
-                    <TableHeaderCell Class="controlsCell">@_localizer["Controls"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
                     break;
                 case ViewMode.ViewModeRecord:
-                    <TableHeaderCell Class="controlsCellFixedWidth">@_localizer["Controls"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
                     break;
             }
             <TableHeaderCell>#</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Artist"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Title"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Begin"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["End"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Length"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
             @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
             {
                 <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Hints"]</TableHeaderCell>
@@ -138,15 +138,18 @@ along with Foobar.  If not, see
                 </TableRow>
             }
             <TableRow Color="((AudioPlayer != null) && (AudioPlayer.CurrentlyPlayingTrack != null) && (AudioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.Default">
-                <TableRowCell Display="selectionDisplay">
-                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select this track for multiple track operations"]">
-                        <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
-                    </Tooltip>
-                </TableRowCell>
+                @if (TrackSelectionVisible)
+                {
+                    <TableRowCell>
+                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select this track for multiple track operations"]">
+                            <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
+                        </Tooltip>
+                    </TableRowCell>
+                }
                 @switch (_sessionStateContainer.CurrentViewMode)
                 {
                     case ViewMode.ViewModeRecord:
-                        <TableRowCell Class="controlsCellFixedWidth">
+                        <TableRowCell>
                             <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
@@ -157,7 +160,7 @@ along with Foobar.  If not, see
                         break;
                     case ViewMode.ViewModeFull:
                     case ViewMode.ViewModeImport:
-                        <TableRowCell Class="controlsCell">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Buttons Role="ButtonsRole.Toolbar">
                                     <Buttons Margin="Margin.Is1.FromEnd">
@@ -216,14 +219,14 @@ along with Foobar.  If not, see
                                 </Buttons>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Class="trackPositionTableRowCell">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)), seperator: Environment.NewLine)">
                                 <NumericEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" Immediate="false" />
                             </Tooltip>
                         </TableRowCell>
                         break;
                 }
-                <TableRowCell Class="minWidth">
+                <TableRowCell>
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
                             <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist">
@@ -232,7 +235,7 @@ along with Foobar.  If not, see
                         </Tooltip>
                     </Tooltip>
                 </TableRowCell>
-                <TableRowCell Class="minWidth">
+                <TableRowCell>
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
                             <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)">
@@ -250,32 +253,35 @@ along with Foobar.  If not, see
                         break;
                     case ViewMode.ViewModeFull:
                     case ViewMode.ViewModeImport:
-                        <TableRowCell Class="minWidth">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Class="minWidth">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Class="minWidth">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                @((MarkupString)GetMarkupString(track.GetValidationErrors(validationMessageLocalizer)))
-                            </Tooltip>
-                        </TableRowCell>
+                        @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+                        {
+                            <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
+                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                    @((MarkupString)GetMarkupString(track.GetValidationErrors(validationMessageLocalizer)))
+                                </Tooltip>
+                            </TableRowCell>
+                        }
                         break;
                 }
             </TableRow>
@@ -380,9 +386,9 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
+    //TODO: Also add auto complete to edit dialog!
     ModalDialog modalDialog = default!;
     Modal modalTrackEdit = default!;
-    IFluentDisplay selectionDisplay = Display.None;
     List<Track> selectedTracks = new List<Track>();
     CloneTrackModel? editTrack;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
@@ -485,19 +491,6 @@ along with Foobar.  If not, see
         var newTrack = new Track();
         Cuesheet.AddTrack(newTrack, options);
         _traceChangeManager.TraceChanges(newTrack);
-    }
-
-    private void SwitchTrackSelectionVisible()
-    {
-        TrackSelectionVisible = !TrackSelectionVisible;
-        if (TrackSelectionVisible)
-        {
-            selectionDisplay = Display.TableCell;
-        }
-        else
-        {
-            selectionDisplay = Display.None;
-        }
     }
 
     private void DeleteSelectedTracksClicked()
@@ -697,11 +690,16 @@ along with Foobar.  If not, see
 
     async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
     {
-        //TODO: Prüfen, ob im record und import modus ein problem besteht!
-        var selectedTrack = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
-        if (selectedTrack != null)
+        switch (_sessionStateContainer.CurrentViewMode)
         {
-            track.Length = selectedTrack.Length;
+            case ViewMode.ViewModeFull:
+            case ViewMode.ViewModeImport:
+                var selectedTrack = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+                if (selectedTrack != null)
+                {
+                    track.Length = selectedTrack.Length;
+                }
+                break;
         }
     }
 }
