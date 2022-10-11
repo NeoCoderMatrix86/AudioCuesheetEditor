@@ -39,46 +39,55 @@ namespace AudioCuesheetEditor.Data.Services
         public async Task<Dictionary<Guid, String?>> SearchArtistAsync(String searchString)
         {
             Dictionary<Guid, String?> artistSearchResult = new();
-            using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-            var result = await query.FindArtistsAsync(searchString, simple: true);
-            artistSearchResult = result.Results.ToDictionary(x => x.Item.Id, x => x.Item.Name);
+            if (String.IsNullOrEmpty(searchString) == false)
+            {
+                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                var result = await query.FindArtistsAsync(searchString, simple: true);
+                artistSearchResult = result.Results.ToDictionary(x => x.Item.Id, x => x.Item.Name);
+            }
             return artistSearchResult;
         }
 
         public async Task<Dictionary<Guid, String>> SearchTitleAsync(String searchString, String? artist = null)
         {
             Dictionary<Guid, String> titleSearchResult = new();
-            using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-            ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
-            if (String.IsNullOrEmpty(artist))
+            if (String.IsNullOrEmpty(searchString) == false)
             {
-                findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true);
+                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
+                if (String.IsNullOrEmpty(artist))
+                {
+                    findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true);
+                }
+                else
+                {
+                    findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
+                }
+                //TODO: Disambiguation als einzelnes anzeigefeld nehmen und nicht im title anhängen (sonst wird es automatisch beim track title angesetzt)
+                titleSearchResult = findRecordingsResult.Results.ToDictionary(x => x.Item.Id, x => $"{x.Item.Title} ({x.Item.Disambiguation})");
             }
-            else
-            {
-                findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
-            }
-            //TODO: Disambiguation als einzelnes anzeigefeld nehmen und nicht im title anhängen (sonst wird es automatisch beim track title angesetzt)
-            titleSearchResult = findRecordingsResult.Results.ToDictionary(x => x.Item.Id, x => $"{x.Item.Title} ({x.Item.Disambiguation})");
             return titleSearchResult;
         }
 
         public async Task<MusicBrainzTrack?> GetDetailsAsync(Guid id)
         {
             MusicBrainzTrack? track = null;
-            var query = new Query(Application, ApplicationVersion, ProjectUrl);
-            var recording = await query.LookupRecordingAsync(id, Include.Artists);
-            if (recording != null)
+            if (id != Guid.Empty)
             {
-                String artist = String.Empty;
-                if (recording.ArtistCredit != null)
+                var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                var recording = await query.LookupRecordingAsync(id, Include.Artists);
+                if (recording != null)
                 {
-                    foreach (var credit in recording.ArtistCredit)
+                    String artist = String.Empty;
+                    if (recording.ArtistCredit != null)
                     {
-                        artist += String.Format("{0} {1}", credit.Artist?.Name, credit.JoinPhrase);
+                        foreach (var credit in recording.ArtistCredit)
+                        {
+                            artist += String.Format("{0} {1}", credit.Artist?.Name, credit.JoinPhrase);
+                        }
                     }
+                    track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
                 }
-                track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
             }
             return track;
         }
