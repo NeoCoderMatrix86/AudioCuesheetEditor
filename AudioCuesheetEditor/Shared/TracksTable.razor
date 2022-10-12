@@ -710,6 +710,10 @@ along with Foobar.  If not, see
                 if (trackDetails != null)
                 {
                     track.Length = trackDetails.Length;
+                    if (String.IsNullOrEmpty(track.Artist))
+                    {
+                        track.Artist = trackDetails.Artist;
+                    }
                 }
                 break;
         }
