@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ITextLocalizerService _localizationService
 @inject SessionStateContainer _sessionStateContainer
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
 
 <Column>
     <Accordion>
@@ -102,7 +103,18 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@_localizer["Artist"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
-                                <TextEdit @ref="enterCurrentTrackArtist" @bind-Text="currentRecordingTrack.Artist" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" KeyDown="OnKeyDownRecordArtist" DelayTextOnKeyPressInterval="50"></TextEdit>
+                                <Autocomplete @ref="autocompleteArtist" TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="currentRecordingTrack.Artist" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" ReadData="OnReadDataAutocompleteArtist" @onkeydown="OnKeyDownRecordArtist">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
                             </FieldBody>
                         </Field>
                     </Column>
@@ -110,12 +122,23 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@_localizer["Title"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
-                                <TextEdit @ref="enterCurrentTrackTitle" @bind-Text="currentRecordingTrack.Title" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" KeyDown="OnKeyDownRecordTitle" DelayTextOnKeyPressInterval="50"></TextEdit>
+                                <Autocomplete @ref="autocompleteTitle" TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="currentRecordingTrack.Title" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" ReadData="OnReadDataAutocompleteTitle" SelectedValueChanged="OnSelectedValueChangedTrackTitle" @onkeydown="OnKeyDownRecordTitle">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
                             </FieldBody>
                         </Field>
                     </Column>
                     <Column>
-                        <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!_sessionStateContainer.Cuesheet.IsRecording">@_localizer["Add new track"]</Button>
+                        <Button Color="Color.Primary" Clicked="AddTrackRecordingClicked" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" @onkeydown="OnKeyDownAddRecording">@_localizer["Add new track"]</Button>
                     </Column>
                 </Row>
             </CollapseBody>
@@ -157,8 +180,6 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    //TODO: Anbindung MusicBrainz während aufnahme!
-
     public void Dispose()
     {
         _jsRuntime.InvokeVoidAsync("closeAudioRecording");
@@ -179,10 +200,10 @@ along with Foobar.  If not, see
 
     DateTime recordTimerStarted;
 
-    TextEdit enterCurrentTrackTitle = default!;
-    TextEdit enterCurrentTrackArtist = default!;
-
     ModalDialog modalDialog = default!;
+
+    Autocomplete<MusicBrainzArtist, Guid>? autocompleteArtist;
+    Autocomplete<MusicBrainzTrack, Guid>? autocompleteTitle;
 
     Track currentRecordingTrack = new Track();
 
@@ -191,6 +212,9 @@ along with Foobar.  If not, see
     Boolean enterNewTrackVisible = true;
     Boolean cuesheetTracksVisible = true;
     Boolean processingHintsVisible = false;
+
+    IEnumerable<MusicBrainzArtist>? autocompleteArtists;
+    IEnumerable<MusicBrainzTrack>? autocompleteTitles;
 
     protected override async Task OnInitializedAsync()
     {
@@ -246,7 +270,7 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    private async Task StartRecordingClicked()
+    async Task StartRecordingClicked()
     {
         //Check for empty cuesheet and warn!
         if (_sessionStateContainer.Cuesheet.Tracks.Count > 0)
@@ -267,7 +291,10 @@ along with Foobar.  If not, see
                 await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
             }
             _sessionStateContainer.Cuesheet.Audiofile = null;
-            await enterCurrentTrackArtist.Focus();
+            if (autocompleteArtist != null)
+            {
+                await autocompleteArtist.Focus();
+            }
         }
     }
 
@@ -279,17 +306,20 @@ along with Foobar.  If not, see
         //Open processing hints
         processingHintsVisible = true;
     }
-    
-    private void OnKeyDownRecordArtist(KeyboardEventArgs args)
+
+    async Task OnKeyDownRecordArtist(KeyboardEventArgs args)
     {
         _logger.LogDebug("args = {0}", args);
         if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
         {
-            enterCurrentTrackTitle.Focus();
+            if (autocompleteTitle != null)
+            {
+                await autocompleteTitle.Focus();
+            }
         }
     }
 
-    private async Task OnKeyDownRecordTitle(KeyboardEventArgs args)
+    async Task OnKeyDownRecordTitle(KeyboardEventArgs args)
     {
         _logger.LogDebug("args = {0}", args);
         if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
@@ -298,14 +328,32 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task AddTrackRecordingClicked()
+    async Task OnKeyDownAddRecording(KeyboardEventArgs args)
+    {
+        _logger.LogDebug("args = {0}", args);
+        if ((args.Key == "Enter") && (args.CtrlKey == false) && (args.AltKey == false) && (args.MetaKey == false) && (args.Repeat == false) && (args.ShiftKey == false))
+        {
+            await AddTrackRecordingClicked();
+        }
+    }
+
+    async Task AddTrackRecordingClicked()
     {
         if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
             var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-            await enterCurrentTrackArtist.Focus();
             _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);
             currentRecordingTrack = new Track();
+            if (autocompleteTitle != null)
+            {
+                await autocompleteTitle.Clear();
+                await autocompleteTitle.Focus();
+            }
+            if (autocompleteArtist != null)
+            {
+                await autocompleteArtist.Clear();
+                await autocompleteArtist.Focus();
+            }
         }
     }
 
@@ -327,5 +375,41 @@ along with Foobar.  If not, see
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    async Task OnReadDataAutocompleteArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteArtists = artists;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, currentRecordingTrack.Artist);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTitles = titles;
+            }
+        }
+    }
+
+    async Task OnSelectedValueChangedTrackTitle(Guid selectedValue)
+    {
+        if (String.IsNullOrEmpty(currentRecordingTrack.Artist))
+        {
+            var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+            if (trackDetails != null)
+            {
+                currentRecordingTrack.Artist = trackDetails.Artist;
+            }
+        }
     }
 }
