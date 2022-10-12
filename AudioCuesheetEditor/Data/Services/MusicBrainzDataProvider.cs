@@ -22,6 +22,12 @@ using System.Reflection;
 
 namespace AudioCuesheetEditor.Data.Services
 {
+    public class MusicBrainzArtist
+    {
+        public Guid Id { get; init; }
+        public String? Name { get; init; }
+        public String? Disambiguation { get; init; }
+    }
     public class MusicBrainzTrack
     {
         public Guid Id { get; init; }
@@ -37,16 +43,16 @@ namespace AudioCuesheetEditor.Data.Services
 
         private String? applicationVersion = null;
 
-        public async Task<Dictionary<Guid, String?>> SearchArtistAsync(String searchString)
+        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String searchString)
         {
-            Dictionary<Guid, String?> artistSearchResult = new();
+            List<MusicBrainzArtist> artistSearchResult = new();
             if (String.IsNullOrEmpty(searchString) == false)
             {
                 using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                var result = await query.FindArtistsAsync(searchString, simple: true);
-                artistSearchResult = result.Results.ToDictionary(x => x.Item.Id, x => x.Item.Name);
+                var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true);
+                artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
             }
-            return artistSearchResult;
+            return artistSearchResult.AsReadOnly();
         }
 
         public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String searchString, String? artist = null)
