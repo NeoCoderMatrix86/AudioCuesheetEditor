@@ -109,9 +109,13 @@ namespace AudioCuesheetEditor.Data.Services
                     String artist = String.Empty;
                     if (recording.ArtistCredit != null)
                     {
-                        foreach (var credit in recording.ArtistCredit)
+                        foreach (var artistCredit in recording.ArtistCredit)
                         {
-                            artist += String.Format("{0} {1}", credit.Artist?.Name, credit.JoinPhrase);
+                            artist += artistCredit.Name;
+                            if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                            {
+                                artist += artistCredit.JoinPhrase;
+                            }
                         }
                     }
                     track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
