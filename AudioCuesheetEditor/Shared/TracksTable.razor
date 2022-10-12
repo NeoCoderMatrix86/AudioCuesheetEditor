@@ -238,8 +238,17 @@ along with Foobar.  If not, see
                 <TableRowCell>
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <Autocomplete id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" TItem="AutocompleteSearchModel" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Text)" ValueField="@((item) => item.Value)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)">
-
+                            <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
                             </Autocomplete>
                         </Tooltip>
                     </Tooltip>
@@ -394,7 +403,7 @@ along with Foobar.  If not, see
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Track? lastTrack;
     IEnumerable<AutocompleteSearchModel>? autocompleteTrackArtists;
-    IEnumerable<AutocompleteSearchModel>? autocompleteTrackTitles;
+    IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
 
     public class AutocompleteSearchModel 
     {
@@ -683,7 +692,7 @@ along with Foobar.  If not, see
             var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
             if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
             {
-                autocompleteTrackTitles = titles.ToList().ConvertAll(x => new AutocompleteSearchModel() { Text = x.Value, Value = x.Key });
+                autocompleteTrackTitles = titles;
             }
         }
     }

@@ -28,6 +28,7 @@ namespace AudioCuesheetEditor.Data.Services
         public String? Artist { get; init; }
         public String? Title { get; init; }
         public TimeSpan? Length { get; init; }
+        public String? Disambiguation { get; init; }
     }
     public class MusicBrainzDataProvider
     {
@@ -48,9 +49,9 @@ namespace AudioCuesheetEditor.Data.Services
             return artistSearchResult;
         }
 
-        public async Task<Dictionary<Guid, String>> SearchTitleAsync(String searchString, String? artist = null)
+        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String searchString, String? artist = null)
         {
-            Dictionary<Guid, String> titleSearchResult = new();
+            List<MusicBrainzTrack> titleSearchResult = new();
             if (String.IsNullOrEmpty(searchString) == false)
             {
                 using var query = new Query(Application, ApplicationVersion, ProjectUrl);
@@ -63,10 +64,31 @@ namespace AudioCuesheetEditor.Data.Services
                 {
                     findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
                 }
-                //TODO: Disambiguation als einzelnes anzeigefeld nehmen und nicht im title anhängen (sonst wird es automatisch beim track title angesetzt)
-                titleSearchResult = findRecordingsResult.Results.ToDictionary(x => x.Item.Id, x => $"{x.Item.Title} ({x.Item.Disambiguation})");
+                foreach (var result in findRecordingsResult.Results)
+                {
+                    String artistString = String.Empty;
+                    if (result.Item.ArtistCredit != null)
+                    {
+                        foreach (var artistCredit in result.Item.ArtistCredit)
+                        {
+                            artistString += artistCredit.Name;
+                            if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                            {
+                                artistString += artistCredit.JoinPhrase;
+                            }
+                        }
+                    }
+                    titleSearchResult.Add(new MusicBrainzTrack()
+                    {
+                        Id = result.Item.Id,
+                        Artist = artistString,
+                        Title = result.Item.Title,
+                        Length = result.Item.Length,
+                        Disambiguation = result.Item.Disambiguation
+                    });
+                }
             }
-            return titleSearchResult;
+            return titleSearchResult.AsReadOnly();
         }
 
         public async Task<MusicBrainzTrack?> GetDetailsAsync(Guid id)
