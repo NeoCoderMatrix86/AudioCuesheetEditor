@@ -252,6 +252,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             flags.AddRange(track.Flags);
             PreGap = track.PreGap;
             PostGap = track.PostGap;
+            IsLinkedToPreviousTrack = track.isLinkedToPreviousTrack;
             OnValidateablePropertyChanged();
         }
 
