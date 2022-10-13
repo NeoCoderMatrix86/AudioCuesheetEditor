@@ -190,7 +190,7 @@ along with Foobar.  If not, see
     Boolean saveOptions;
     Boolean modalOptionsVisible = false;    
 
-    Modal modalOptions = default!;
+    Modal? modalOptions;
     HotKeysContext hotKeysContext = default!;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
@@ -201,9 +201,12 @@ along with Foobar.  If not, see
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
-    public void Show()
+    public async Task Show()
     {
-        modalOptions.Show();
+        if (modalOptions != null)
+        {
+            await modalOptions.Show();
+        }
         saveOptions = false;
     }
 
@@ -257,7 +260,7 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    private async Task OnSaveOptionsClicked()
+    async Task OnSaveOptionsClicked()
     {
         _logger.LogInformation("OnSaveOptionsClicked");
         saveOptions = true;
@@ -265,7 +268,10 @@ along with Foobar.  If not, see
         {
             await _localStorageOptionsProvider.SaveOptions(applicationOptions);
             await _localStorageOptionsProvider.SaveOptions(importOptions);
-            await modalOptions.Hide();
+            if (modalOptions != null)
+            {
+                await modalOptions.Hide();
+            }
         }
     }
 
@@ -286,12 +292,15 @@ along with Foobar.  If not, see
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 
-    private async Task OnCloseClicked()
+    async Task OnCloseClicked()
     {
         _logger.LogInformation("OnCloseClicked");
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _localizationService.ChangeLanguage(applicationOptions.CultureName);
-        await modalOptions.Hide();
+        if (modalOptions != null)
+        {
+            await modalOptions.Hide();
+        }
     }
 
     private async Task OnModalClosed()
