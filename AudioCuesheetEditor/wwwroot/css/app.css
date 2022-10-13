@@ -122,32 +122,7 @@ a, .btn-link {
     }
 }
 
-.trackPositionTableRowCell {
-    min-width: 50px;
-    max-width: 85px;
-}
-
-.minWidth {
-    min-width: 100px;
-}
-
-@media screen and (max-width:400px) {
-    .controlsCell {
-        min-width: 130px;
-    }
-}
-
-@media (min-width: 400px) {
-    .controlsCell {
-        min-width: 240px;
-    }
-}
-
 .accordion-button {
     color:inherit!important;
     background-color: rgba(0,0,0,.03)!important;
-}
-
-.controlsCellFixedWidth {
-    width: 40px;
 }
