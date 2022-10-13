@@ -187,7 +187,7 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    Modal modalExportProfiles = default!;
+    Modal? modalExportProfiles;
     IReadOnlyCollection<SelectExportProfileModel> exportProfileModels = default!;
     Guid? selectedExportProfileId;
     HotKeysContext? hotKeysContext;
@@ -271,11 +271,14 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task ModalExportProfilesCloseClicked()
+    async Task ModalExportProfilesCloseClicked()
     {
         _logger.LogInformation("ModalExportProfilesCloseClicked");
         await SaveExportProfiles();
-        await modalExportProfiles.Hide();
+        if (modalExportProfiles != null)
+        {
+            await modalExportProfiles.Hide();
+        }
     }
 
     private void OnAddNewExportProfileClicked()
@@ -310,14 +313,17 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnDownloadExportProfileClicked()
+    async Task OnDownloadExportProfileClicked()
     {
         _logger.LogInformation("OnDownloadExportProfileClicked with SelectedExportProfile = {0}", SelectedExportProfile);
         if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
         {
             await SaveExportProfiles();
             await _blazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(_sessionStateContainer.Cuesheet), contentType: "application/octet-stream");
-            await modalExportProfiles.Hide();
+            if (modalExportProfiles != null)
+            {
+                await modalExportProfiles.Hide();
+            }
         }
     }
 
