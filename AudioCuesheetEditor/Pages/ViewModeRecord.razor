@@ -200,7 +200,7 @@ along with Foobar.  If not, see
 
     DateTime recordTimerStarted;
 
-    ModalDialog modalDialog = default!;
+    ModalDialog? modalDialog;
 
     Autocomplete<MusicBrainzArtist, Guid>? autocompleteArtist;
     Autocomplete<MusicBrainzTrack, Guid>? autocompleteTitle;
@@ -275,11 +275,14 @@ along with Foobar.  If not, see
         //Check for empty cuesheet and warn!
         if (_sessionStateContainer.Cuesheet.Tracks.Count > 0)
         {
-            modalDialog.Title = _localizer["Error"];
-            modalDialog.Text = _localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
-            modalDialog.ModalSize = ModalSize.Small;
-            modalDialog.Mode = ModalDialog.DialogMode.Alert;
-            modalDialog.ShowModal();
+            if (modalDialog != null)
+            {
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = _localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                await modalDialog.ShowModal();
+            }
         }
         else
         {

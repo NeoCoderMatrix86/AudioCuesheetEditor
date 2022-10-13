@@ -313,7 +313,7 @@ along with Foobar.  If not, see
     <ModalContent Centered="true">
         <ModalHeader>
             <ModalTitle>@_localizer["Edit track details"]</ModalTitle>
-            <CloseButton Clicked="() => modalTrackEdit.Hide()" />
+            <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
         </ModalHeader>
         <ModalBody>
             @if ((editTrack != null) && (editTrack.Clone != null))
@@ -419,15 +419,15 @@ along with Foobar.  If not, see
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="EditTrackModalSaveClicked">@_localizer["Save changes"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalTrackEdit.Hide()">@_localizer["Abort"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalTrackEdit, false)">@_localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 @code {
     //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
-    ModalDialog modalDialog = default!;
-    Modal modalTrackEdit = default!;
+    ModalDialog? modalDialog;
+    Modal? modalTrackEdit;
     List<Track> selectedTracks = new List<Track>();
     CloneTrackModel? editTrack;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
@@ -534,29 +534,35 @@ along with Foobar.  If not, see
         selectedTracks.Clear();
     }
 
-    private void OnDeleteAllTracksClicked()
+    async Task OnDeleteAllTracksClicked()
     {
         _logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
-        modalDialog.Title = _localizer["Confirmation required"];
-        modalDialog.Text = _localizer["Do you really want to delete all tracks? This can not be reversed."];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void deleteTracksDelegate(object? sender, EventArgs args)
+        if (modalDialog != null)
         {
-            _logger.LogInformation("deleteTracksDelegate");
-            Cuesheet.RemoveTracks(Cuesheet.Tracks);
-            modalDialog.Confirmed -= deleteTracksDelegate;
-            StateHasChanged();
-        };
-        modalDialog.Confirmed += deleteTracksDelegate;
-        modalDialog.ShowModal();
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Do you really want to delete all tracks?"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            void deleteTracksDelegate(object? sender, EventArgs args)
+            {
+                _logger.LogInformation("deleteTracksDelegate");
+                Cuesheet.RemoveTracks(Cuesheet.Tracks);
+                modalDialog.Confirmed -= deleteTracksDelegate;
+                StateHasChanged();
+            };
+            modalDialog.Confirmed += deleteTracksDelegate;
+            await modalDialog.ShowModal();
+        }
     }
 
-    private void EditTrackModal(Track trackToEdit)
+    async Task EditTrackModal(Track trackToEdit)
     {
-        editTrack = new CloneTrackModel(trackToEdit);
-        modalTrackEdit.Show();
+        if (modalTrackEdit != null)
+        {
+            editTrack = new CloneTrackModel(trackToEdit);
+            await modalTrackEdit.Show();
+        }
     }
 
     private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
@@ -583,13 +589,13 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task CopyTrackClicked(Track trackToCopy)
+    async Task CopyTrackClicked(Track trackToCopy)
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var copy = new Track(trackToCopy);
         Cuesheet.AddTrack(copy, options);
         _traceChangeManager.TraceChanges(copy);
-        EditTrackModal(copy);
+        await EditTrackModal(copy);
     }
 
     private String? GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
@@ -616,13 +622,16 @@ along with Foobar.  If not, see
         setAction(result);
     }
 
-    private void EditTrackModalSaveClicked()
+    async Task EditTrackModalSaveClicked()
     {
         if (editTrack != null)
         {
             editTrack.ApplyChanges();
             editTrack = null;
-            modalTrackEdit.Hide();
+            if (modalTrackEdit != null)
+            {
+                await modalTrackEdit.Hide();
+            }
         }
     }
 
@@ -763,6 +772,21 @@ along with Foobar.  If not, see
                     }
                 }
                 break;
+        }
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
         }
     }
 }
