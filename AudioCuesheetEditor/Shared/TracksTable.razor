@@ -330,7 +330,18 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Artist"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="editTrack.Clone.Artist" />
+                            <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="editTrack.Clone.Artist" ReadData="OnReadDataAutocompleteTrackArtistEditDialog">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -338,7 +349,18 @@ along with Foobar.  If not, see
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Title"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="editTrack.Clone.Title" />
+                            <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editTrack.Clone.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editTrack.Clone)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editTrack.Clone)">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
                         </Tooltip>
                     </FieldBody>
                 </Field>
@@ -404,7 +426,6 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
-    //TODO: Also add auto complete to edit dialog!
     ModalDialog modalDialog = default!;
     Modal modalTrackEdit = default!;
     List<Track> selectedTracks = new List<Track>();
@@ -413,6 +434,8 @@ along with Foobar.  If not, see
     Track? lastTrack;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
+    IEnumerable<MusicBrainzArtist>? autocompleteTrackArtistsEditDialog;
+    IEnumerable<MusicBrainzTrack>? autocompleteTrackTitlesEditDialog;
 
     [Parameter]
     public Boolean TrackSelectionVisible { get; set; } = false;
@@ -676,7 +699,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
     {
         if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
         {
@@ -688,7 +711,19 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnReadDataAutocompleteTrackTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
+    async Task OnReadDataAutocompleteTrackArtistEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackArtistsEditDialog = artists;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
     {
         if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
         {
@@ -696,6 +731,18 @@ along with Foobar.  If not, see
             if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
             {
                 autocompleteTrackTitles = titles;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackTitleEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackTitlesEditDialog = titles;
             }
         }
     }
