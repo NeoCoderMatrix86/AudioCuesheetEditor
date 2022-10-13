@@ -260,7 +260,7 @@ along with Foobar.  If not, see
                     modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["Audiofile"]);
                     modalDialog.ModalSize = ModalSize.Small;
                     modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                    modalDialog.ShowModal();
+                    await modalDialog.ShowModal();
                 }
             }
         }
@@ -294,7 +294,7 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile)));
     }
 
-    private void OnCDTextfileChanged(FileChangedEventArgs e)
+    async Task OnCDTextfileChanged(FileChangedEventArgs e)
     {
         _logger.LogInformation("OnCDTextfileChanged with {0}", e);
         if (e.Files.FirstOrDefault() != null)
@@ -312,7 +312,7 @@ along with Foobar.  If not, see
                     modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["CD textfile"]);
                     modalDialog.ModalSize = ModalSize.Small;
                     modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                    modalDialog.ShowModal();
+                    await modalDialog.ShowModal();
                 }
             }
         }

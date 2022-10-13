@@ -330,7 +330,7 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    private Task OnSelectedStepChanged(String name)
+    async Task OnSelectedStepChanged(String name)
     {
         switch (name)
         {
@@ -351,13 +351,11 @@ along with Foobar.  If not, see
                         modalDialog.Text = _localizer["Please select files for import before going to validation!"];
                         modalDialog.ModalSize = ModalSize.Small;
                         modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                        modalDialog.ShowModal();
+                        await modalDialog.ShowModal();
                     }
                 }
                 break;
         }
-
-        return Task.CompletedTask;
     }
 
     private async Task OnTextImportFileChanged(FileChangedEventArgs e)
@@ -494,13 +492,12 @@ along with Foobar.  If not, see
         }
     }
 
-    Task OnEnterKeyDown()
+    async Task OnEnterKeyDown()
     {
         if ((modalDialog != null) && (modalDialog.Visible))
         {
-            modalDialog.Confirm();
+            await modalDialog.Confirm();
         }
-        return Task.CompletedTask;
     }
 
     private async Task ImportData()

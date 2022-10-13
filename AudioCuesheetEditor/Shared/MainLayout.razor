@@ -291,7 +291,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private void OnDeleteAllTracksClicked()
+    async Task OnDeleteAllTracksClicked()
     {
         _logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
@@ -309,11 +309,11 @@ along with Foobar.  If not, see
                 StateHasChanged();
             };
             modalDialog.Confirmed += deleteTracksDelegate;
-            modalDialog.ShowModal();
+            await modalDialog.ShowModal();
         }
     }
 
-    private void RestartCuesheetClicked()
+    async Task RestartCuesheetClicked()
     {
         _logger.LogInformation("RestartCuesheetClicked clicked");
         //Display a confirm warning
@@ -331,11 +331,11 @@ along with Foobar.  If not, see
                 StateHasChanged();
             };
             modalDialog.Confirmed += newCuesheetDelegate;
-            modalDialog.ShowModal();
+            await modalDialog.ShowModal();
         }
     }
 
-    private void OnRestartCompleteApplicationClicked()
+    async Task OnRestartCompleteApplicationClicked()
     {
         _logger.LogInformation("OnRestartCompleteApplicationClicked");
         //Display a confirm warning
@@ -353,11 +353,11 @@ along with Foobar.  If not, see
                 _navigationManager.NavigateTo(_navigationManager.Uri, true);
             };
             modalDialog.Confirmed += restartApplicationDelegate;
-            modalDialog.ShowModal();
+            await modalDialog.ShowModal();
         }
     }
 
-    private void OnResetCompleteApplicationClicked()
+    async Task OnResetCompleteApplicationClicked()
     {
         _logger.LogInformation("OnResetCompleteApplicationClicked");
         //Display a confirm warning
@@ -367,7 +367,7 @@ along with Foobar.  If not, see
             modalDialog.Text = _localizer["Confirm reset of application. All unsaved changes are lost and the application is reloaded!"];
             modalDialog.ModalSize = ModalSize.Small;
             modalDialog.Confirmed += OnRestartApplicationConfirmed;
-            modalDialog.ShowModal();
+            await modalDialog.ShowModal();
         }
     }
 

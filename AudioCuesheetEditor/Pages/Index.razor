@@ -146,13 +146,12 @@ along with Foobar.  If not, see
         }
     }
 
-    Task OnEnterKeyDown()
+    async Task OnEnterKeyDown()
     {
         if ((modalDialog != null) && (modalDialog.Visible))
         {
-            modalDialog.Confirm();
+            await modalDialog.Confirm();
         }
-        return Task.CompletedTask;
     }
 
     private void CurrentViewModeChanged(object? sender, EventArgs args)

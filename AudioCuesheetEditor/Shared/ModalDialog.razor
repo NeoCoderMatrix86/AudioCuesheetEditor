@@ -90,7 +90,7 @@ along with Foobar.  If not, see
         Alert
     }
 
-    Modal modalRef = default!;
+    Modal? modalRef;
     ModalSize modalSize = ModalSize.Default;
     DialogMode mode = DialogMode.Confirm;
     HotKeysContext hotKeysContext = default!;
@@ -101,14 +101,20 @@ along with Foobar.  If not, see
 
     public event EventHandler Confirmed = default!;
 
-    public void ShowModal()
+    public async Task ShowModal()
     {
-        modalRef.Show();
+        if (modalRef != null)
+        {
+            await modalRef.Show();
+        }
     }
 
-    public void HideModal()
+    public async Task HideModal()
     {
-        modalRef.Hide();
+        if (modalRef != null)
+        {
+            await modalRef.Hide();
+        }
         //Reset all confirmed handlers
         Confirmed = default!;
     }
@@ -130,10 +136,10 @@ along with Foobar.  If not, see
         get => modalRefVisible;
     }
 
-    public void Confirm()
+    public async Task Confirm()
     {
         OnConfirmed(new EventArgs());
-        HideModal();
+        await HideModal();
     }
 
     protected virtual void OnConfirmed(EventArgs args)
