@@ -194,7 +194,7 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    ModalDialog modalDialog = default!;
+    ModalDialog? modalDialog;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     public Cuesheet Cuesheet
@@ -242,7 +242,7 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
     }
 
-    private async Task OnAudioFileChanged(FileChangedEventArgs e)
+    async Task OnAudioFileChanged(FileChangedEventArgs e)
     {
         _logger.LogInformation("OnAudioFileChanged with {0}", e);
         if (e.Files.FirstOrDefault() != null)
@@ -254,11 +254,14 @@ along with Foobar.  If not, see
             }
             else
             {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["Audiofile"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
+                if (modalDialog != null)
+                {
+                    modalDialog.Title = _localizer["Error"];
+                    modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["Audiofile"]);
+                    modalDialog.ModalSize = ModalSize.Small;
+                    modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                    await modalDialog.ShowModal();
+                }
             }
         }
     }
@@ -291,7 +294,7 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile)));
     }
 
-    private void OnCDTextfileChanged(FileChangedEventArgs e)
+    async Task OnCDTextfileChanged(FileChangedEventArgs e)
     {
         _logger.LogInformation("OnCDTextfileChanged with {0}", e);
         if (e.Files.FirstOrDefault() != null)
@@ -303,11 +306,14 @@ along with Foobar.  If not, see
             }
             else
             {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["CD textfile"]);
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                modalDialog.ShowModal();
+                if (modalDialog != null)
+                {
+                    modalDialog.Title = _localizer["Error"];
+                    modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["CD textfile"]);
+                    modalDialog.ModalSize = ModalSize.Small;
+                    modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                    await modalDialog.ShowModal();
+                }
             }
         }
     }

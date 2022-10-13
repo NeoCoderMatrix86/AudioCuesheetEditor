@@ -91,11 +91,11 @@ along with Foobar.  If not, see
                                             <BarDropdownMenu Background="Background.Dark">
                                                 <BarDropdownItem>
                                                     <Tooltip Placement="TooltipPlacement.Right" Text="@GetLocalizedString(_sessionStateContainer.Cuesheet.CanWriteCuesheetFile == false, "Please check processinghints for errors, otherwise the file is not exportable")">
-                                                        <Button Color="Color.Primary" Clicked="() => modalDownloadCuesheet.Show()" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
+                                                        <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, true)" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
                                                     </Tooltip>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
-                                                    <Button Color="Color.Primary" Clicked="() => modalDownloadProjectfile.Show()">@_localizer["Save project"]</Button>
+                                                    <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, true)">@_localizer["Save project"]</Button>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
                                                     <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked">@_localizer["Open exportprofiles"]</Button>
@@ -147,7 +147,7 @@ along with Foobar.  If not, see
                             <CultureSelector />
                         </BarItem>
                         <BarItem Padding="Padding.Is3.OnX">
-                            <Button Color="Color.Light" Clicked="() => optionsDialog.Show()">
+                            <Button Color="Color.Light" Clicked="() => OpenOptionsDialog(optionsDialog)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
                                     <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
                                     <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
@@ -188,7 +188,7 @@ along with Foobar.  If not, see
                 <ModalTitle>
                     @_localizer["Save project"]
                 </ModalTitle>
-                <CloseButton Clicked="() => modalDownloadProjectfile.Hide()" />
+                <CloseButton Clicked="() => ControlModalDialog(modalDownloadProjectfile, false)" />
             </ModalHeader>
             <ModalBody>
                 <Field Horizontal="true">
@@ -200,7 +200,7 @@ along with Foobar.  If not, see
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@_localizer["Download projectfile"]</Button>
-                <Button Color="Color.Secondary" Clicked="() => modalDownloadProjectfile.Hide()">@_localizer["Abort"]</Button>
+                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, false)">@_localizer["Abort"]</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>
@@ -211,7 +211,7 @@ along with Foobar.  If not, see
                 <ModalTitle>
                     @_localizer["Download cuesheet"]
                 </ModalTitle>
-                <CloseButton Clicked="() => modalDownloadCuesheet.Hide()" />
+                <CloseButton Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)" />
             </ModalHeader>
             <ModalBody>
                 <Field Horizontal="true">
@@ -223,7 +223,7 @@ along with Foobar.  If not, see
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
-                <Button Color="Color.Secondary" Clicked="() => modalDownloadCuesheet.Hide()">@_localizer["Abort"]</Button>
+                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)">@_localizer["Abort"]</Button>
             </ModalFooter>
         </ModalContent>
     </Modal>
@@ -236,11 +236,11 @@ along with Foobar.  If not, see
     Boolean modalDownloadCuesheetVisible = false;
     Boolean modalDownloadProjectfileVisible = false;
 
-    OptionsDialog optionsDialog = default!;
-    ModalDialog modalDialog = default!;
-    ExportProfilesDialog exportProfilesDialog = default!;
-    Modal modalDownloadProjectfile = default!;
-    Modal modalDownloadCuesheet = default!;
+    OptionsDialog? optionsDialog;
+    ModalDialog? modalDialog;
+    ExportProfilesDialog? exportProfilesDialog;
+    Modal? modalDownloadProjectfile;
+    Modal? modalDownloadCuesheet;
 
     protected override async Task OnInitializedAsync()
     {
@@ -249,8 +249,8 @@ along with Foobar.  If not, see
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.H, () => _navigationManager.NavigateTo("Help"))
-            .Add(ModKeys.Ctrl, Keys.E, () => exportProfilesDialog.Show())
-            .Add(ModKeys.Ctrl, Keys.S, () => modalDownloadProjectfile.Show())
+            .Add(ModKeys.Ctrl, Keys.E, OnStrgEKeyDown)
+            .Add(ModKeys.Ctrl, Keys.S, OnStrgSKeyDown)
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
@@ -291,72 +291,84 @@ along with Foobar.  If not, see
         }
     }
 
-    private void OnDeleteAllTracksClicked()
+    async Task OnDeleteAllTracksClicked()
     {
         _logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
-        modalDialog.Title = _localizer["Confirmation required"];
-        modalDialog.Text = _localizer["Do you really want to delete all tracks? This can not be reversed."];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void deleteTracksDelegate(object? sender, EventArgs args)
+        if (modalDialog != null)
         {
-            _logger.LogInformation("deleteTracksDelegate");
-            _sessionStateContainer.Cuesheet.RemoveTracks(_sessionStateContainer.Cuesheet.Tracks);
-            modalDialog.Confirmed -= deleteTracksDelegate;
-            StateHasChanged();
-        };
-        modalDialog.Confirmed += deleteTracksDelegate;
-        modalDialog.ShowModal();
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Do you really want to delete all tracks? This can not be reversed."];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            void deleteTracksDelegate(object? sender, EventArgs args)
+            {
+                _logger.LogInformation("deleteTracksDelegate");
+                _sessionStateContainer.Cuesheet.RemoveTracks(_sessionStateContainer.Cuesheet.Tracks);
+                modalDialog.Confirmed -= deleteTracksDelegate;
+                StateHasChanged();
+            };
+            modalDialog.Confirmed += deleteTracksDelegate;
+            await modalDialog.ShowModal();
+        }
     }
 
-    private void RestartCuesheetClicked()
+    async Task RestartCuesheetClicked()
     {
         _logger.LogInformation("RestartCuesheetClicked clicked");
         //Display a confirm warning
-        modalDialog.Title = _localizer["Confirmation required"];
-        modalDialog.Text = _localizer["Do you really want to reset the cuesheet? This can not be reversed."];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void newCuesheetDelegate(object? sender, EventArgs args)
+        if (modalDialog != null)
         {
-            _logger.LogInformation("newCuesheetDelegate");
-            _sessionStateContainer.Cuesheet = new Cuesheet();
-            modalDialog.Confirmed -= newCuesheetDelegate;
-            StateHasChanged();
-        };
-        modalDialog.Confirmed += newCuesheetDelegate;
-        modalDialog.ShowModal();
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Do you really want to reset the cuesheet? This can not be reversed."];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            void newCuesheetDelegate(object? sender, EventArgs args)
+            {
+                _logger.LogInformation("newCuesheetDelegate");
+                _sessionStateContainer.Cuesheet = new Cuesheet();
+                modalDialog.Confirmed -= newCuesheetDelegate;
+                StateHasChanged();
+            };
+            modalDialog.Confirmed += newCuesheetDelegate;
+            await modalDialog.ShowModal();
+        }
     }
 
-    private void OnRestartCompleteApplicationClicked()
+    async Task OnRestartCompleteApplicationClicked()
     {
         _logger.LogInformation("OnRestartCompleteApplicationClicked");
         //Display a confirm warning
-        modalDialog.Title = _localizer["Confirmation required"];
-        modalDialog.Text = _localizer["Confirm restart of application. All unsaved changes are lost!"];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        async void restartApplicationDelegate(object? sender, EventArgs args)
+        if (modalDialog != null)
         {
-            _logger.LogInformation("restartApplicationDelegate");
-            modalDialog.Confirmed -= restartApplicationDelegate;
-            await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
-            _navigationManager.NavigateTo(_navigationManager.Uri, true);
-        };
-        modalDialog.Confirmed += restartApplicationDelegate;
-        modalDialog.ShowModal();
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Confirm restart of application. All unsaved changes are lost!"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            async void restartApplicationDelegate(object? sender, EventArgs args)
+            {
+                _logger.LogInformation("restartApplicationDelegate");
+                modalDialog.Confirmed -= restartApplicationDelegate;
+                await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+                _navigationManager.NavigateTo(_navigationManager.Uri, true);
+            };
+            modalDialog.Confirmed += restartApplicationDelegate;
+            await modalDialog.ShowModal();
+        }
     }
 
-    private void OnResetCompleteApplicationClicked()
+    async Task OnResetCompleteApplicationClicked()
     {
         _logger.LogInformation("OnResetCompleteApplicationClicked");
         //Display a confirm warning
-        modalDialog.Title = _localizer["Confirmation required"];
-        modalDialog.Text = _localizer["Confirm reset of application. All unsaved changes are lost and the application is reloaded!"];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Confirmed += OnRestartApplicationConfirmed;
-        modalDialog.ShowModal();
+        if (modalDialog != null)
+        {
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Confirm reset of application. All unsaved changes are lost and the application is reloaded!"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Confirmed += OnRestartApplicationConfirmed;
+            await modalDialog.ShowModal();
+        }
     }
 
     private async void OnRestartApplicationConfirmed(object? sender, EventArgs args)
@@ -364,7 +376,10 @@ along with Foobar.  If not, see
         _logger.LogInformation("OnRestartApplicationConfirmed");
         await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
         await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
-        modalDialog.Confirmed -= OnRestartApplicationConfirmed;
+        if (modalDialog != null)
+        {
+            modalDialog.Confirmed -= OnRestartApplicationConfirmed;
+        }
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 
@@ -386,7 +401,10 @@ along with Foobar.  If not, see
         var fileData = projectFile.GenerateFile();
         await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         await _blazorDownloadFileService.DownloadFile(applicationOptions.ProjectFileName, fileData, "text/plain");
-        await modalDownloadProjectfile.Hide();
+        if (modalDownloadProjectfile != null)
+        {
+            await modalDownloadProjectfile.Hide();
+        }
     }
 
 
@@ -401,7 +419,10 @@ along with Foobar.  If not, see
         var fileData = cuesheetFile.GenerateCuesheetFile();
         await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         await _blazorDownloadFileService.DownloadFile(applicationOptions.CuesheetFileName, fileData, "text/plain");
-        await modalDownloadCuesheet.Hide();
+        if (modalDownloadCuesheet != null)
+        {
+            await modalDownloadCuesheet.Hide();
+        }
     }
 
     private async Task OnEnterKeyDown()
@@ -413,6 +434,22 @@ along with Foobar.  If not, see
         if (modalDownloadCuesheetVisible)
         {
             await DownloadCuesheetFileClicked();
+        }
+    }
+
+    async Task OnStrgEKeyDown()
+    {
+        if (exportProfilesDialog != null)
+        {
+            await exportProfilesDialog.Show();
+        }
+    }
+
+    async Task OnStrgSKeyDown()
+    {
+        if (modalDownloadProjectfile != null)
+        {
+            await modalDownloadProjectfile.Show();
         }
     }
 
@@ -440,5 +477,28 @@ along with Foobar.  If not, see
     private void ModalDownloadProjectfile_VisibleChanged(Boolean visible)
     {
         modalDownloadProjectfileVisible = visible;
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
+        }
+    }
+
+    async Task OpenOptionsDialog(OptionsDialog? dialog)
+    {
+        if (dialog != null)
+        {
+            await dialog.Show();
+        }
     }
 }
