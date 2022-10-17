@@ -1,0 +1,386 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inject ITextLocalizer<EditTrackModal> _localizer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject SessionStateContainer _sessionStateContainer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+
+<Modal @ref="modalTrackEdit">
+    <ModalContent Centered="true">
+        <ModalHeader>
+            <ModalTitle>@_localizer["Edit track details"]</ModalTitle>
+            <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
+        </ModalHeader>
+        <ModalBody>
+            @if (tracksToEdit?.Count == 1)
+            {
+                var trackToEdit = tracksToEdit?.First();
+                @if (trackToEdit != null)
+                {
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
+                                <NumericEdit TValue="uint?" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(trackToEdit.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="trackToEdit.Clone.Position" />
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Artist"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                                <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="trackToEdit.Clone.Artist" ReadData="OnReadDataAutocompleteTrackArtistEditDialog">
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Title"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                                <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="trackToEdit.Clone.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, trackToEdit.Clone)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, trackToEdit.Clone)">
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Begin"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(trackToEdit.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(trackToEdit.Clone.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => trackToEdit.Clone.Begin = x, value)" Immediate="false" />
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["End"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(trackToEdit.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(trackToEdit.Clone.End)" TextChanged="(value) => OnTimespanTextChanged(x => trackToEdit.Clone.End = x, value)" Immediate="false" />
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Length"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(trackToEdit.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(trackToEdit.Clone.Length)" TextChanged="(value) => OnTimespanTextChanged(x => trackToEdit.Clone.Length = x, value)" Immediate="false" />
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Flags"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            @foreach (var flag in Flag.AvailableFlags)
+                            {
+                                <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
+                                    <Switch TValue="bool" Checked="trackToEdit.Clone.Flags.Contains(flag)" CheckedChanged="(value) => trackToEdit.Clone.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
+                                </Tooltip>
+                            }
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PreGap"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
+                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(trackToEdit.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(trackToEdit.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => trackToEdit.Clone.PreGap = x, value)" Immediate="false" />
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PostGap"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@trackToEdit.Clone.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
+                                <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(trackToEdit.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(trackToEdit.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => trackToEdit.Clone.PostGap = x, value)" Immediate="false" />
+                            </Tooltip>
+                        </FieldBody>
+                    </Field>
+                }
+            }
+            else
+            {
+                //TODO: Multiple edit!
+                <Table Borderless>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHeaderCell>@_localizer["Change Value"]</TableHeaderCell>
+                            <TableHeaderCell>@_localizer["Property"]</TableHeaderCell>
+                            <TableHeaderCell>@_localizer["Value"]</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackPosition"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Position"]</TableRowCell>
+                            <TableRowCell><NumericEdit TValue="uint?" Max="99" ReadOnly="!massEditTrackPosition"/></TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackArtist"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Artist"]</TableRowCell>
+                            <TableRowCell>
+                                <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" ReadData="OnReadDataAutocompleteTrackArtistEditDialog" Disabled="!massEditTrackArtist">
+                                    <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                                <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                                <Paragraph>@context.Text</Paragraph>
+                                    }
+                                    </ItemContent>
+                                </Autocomplete>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackTitle"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Title"]</TableRowCell>
+                                <TableRowCell>
+                                    TODO
+                                </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackBegin"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Begin"]</TableRowCell>
+                            <TableRowCell><TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Immediate="false" ReadOnly="!massEditTrackBegin" /></TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackEnd"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["End"]</TableRowCell>
+                            <TableRowCell><TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Immediate="false" ReadOnly="!massEditTrackEnd" /></TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackLength"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Length"]</TableRowCell>
+                            <TableRowCell><TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Immediate="false" ReadOnly="!massEditTrackLength" /></TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackFlags"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Flags"]</TableRowCell>
+                            <TableRowCell>
+                            @foreach (var flag in Flag.AvailableFlags)
+                            {
+                                <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
+                                    <Switch TValue="bool" ReadOnly="!massEditTrackFlags">@flag.Name</Switch>
+                                </Tooltip>
+                            }
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackPreGap"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["PreGap"]</TableRowCell>
+                            <TableRowCell><TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Immediate="false" ReadOnly="!massEditTrackPreGap" /></TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="massEditTrackPostGap"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["PostGap"]</TableRowCell>
+                            <TableRowCell><TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Immediate="false" ReadOnly="!massEditTrackPostGap" /></TableRowCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            }
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="EditTrackModalSaveClicked">@_localizer["Save changes"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalTrackEdit, false)">@_localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    public class CloneTrackModel
+    {
+        public Track Track { get; private set; }
+        public Track Clone { get; private set; }
+
+        public CloneTrackModel(Track track)
+        {
+            if (track == null)
+            {
+                throw new ArgumentNullException(nameof(track));
+            }
+            Track = track;
+            Clone = track.Clone();
+        }
+
+        public void ApplyChanges()
+        {
+            if ((Track != null) && (Clone != null))
+            {
+                Track.CopyValues(Clone);
+            }
+        }
+    }
+
+    public IReadOnlyCollection<Track>? TracksToEdit 
+    {
+        get => tracksToEdit?.Select(x => x.Track).ToList().AsReadOnly();
+        set
+        {
+            if (value != null)
+            {
+                tracksToEdit = value.ToList().ConvertAll(x => new CloneTrackModel(x));
+            }
+            else
+            {
+                tracksToEdit = null;
+            }
+        }
+    }
+
+    IEnumerable<MusicBrainzArtist>? autocompleteTrackArtistsEditDialog;
+    IEnumerable<MusicBrainzTrack>? autocompleteTrackTitlesEditDialog;
+
+    Modal? modalTrackEdit;
+    List<CloneTrackModel>? tracksToEdit;
+
+    bool massEditTrackPosition = false;
+    bool massEditTrackArtist = false;
+    bool massEditTrackTitle = false;
+    bool massEditTrackBegin = false;
+    bool massEditTrackEnd = false;
+    bool massEditTrackLength = false;
+    bool massEditTrackFlags = false;
+    bool massEditTrackPreGap = false;
+    bool massEditTrackPostGap = false;
+
+    public async Task Show()
+    {
+        if (modalTrackEdit != null)
+        {
+            await modalTrackEdit.Show();
+        }
+    }
+
+    async Task EditTrackModalSaveClicked()
+    {
+        //TODO
+        //if (editTrack != null)
+        //{
+        //    editTrack.ApplyChanges();
+        //    editTrack = null;
+        //    if (modalTrackEdit != null)
+        //    {
+        //        await modalTrackEdit.Hide();
+        //    }
+        //}
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackArtistEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackArtistsEditDialog = artists;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackTitleEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackTitlesEditDialog = titles;
+            }
+        }
+    }
+
+    async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
+    {
+        switch (_sessionStateContainer.CurrentViewMode)
+        {
+            case ViewMode.ViewModeFull:
+            case ViewMode.ViewModeImport:
+                var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+                if (trackDetails != null)
+                {
+                    track.Length = trackDetails.Length;
+                    if (String.IsNullOrEmpty(track.Artist))
+                    {
+                        track.Artist = trackDetails.Artist;
+                    }
+                }
+                break;
+        }
+    }
+
+    String? GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
+    {
+        String? resultString = null;
+        if ((timeSpan != null) && (timeSpan.HasValue))
+        {
+            if (removeMilliseconds == true)
+            {
+                resultString = timeSpan.Value.Subtract(new TimeSpan(0, 0, 0, 0, timeSpan.Value.Milliseconds)).ToString();
+            }
+            else
+            {
+                resultString = timeSpan.Value.ToString();
+            }
+        }
+        return resultString;
+    }
+
+    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    {
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
+        setAction(result);
+    }
+}
