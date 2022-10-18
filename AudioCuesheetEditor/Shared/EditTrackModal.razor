@@ -244,7 +244,7 @@ along with Foobar.  If not, see
             _tracksToEdit = value;
             if (IsMultipleEdit)
             {
-                editedTrack = new();
+                editedTrack = new() {AutomaticallyCalculateLength = false };
             }
             else
             {
@@ -266,7 +266,7 @@ along with Foobar.  If not, see
 
     IReadOnlyCollection<Track>? _tracksToEdit;
     Modal? modalTrackEdit;
-    Track editedTrack = new();
+    Track editedTrack = new() {AutomaticallyCalculateLength = false };
 
     Boolean _editTrackIsLinkedToPreviousTrack;
     Boolean _editTrackPosition;
@@ -365,7 +365,6 @@ along with Foobar.  If not, see
             _editTrackLength = value;
             if (_editTrackLength == false)
             {
-                //TODO: Setting Length to null causes Begin to be set to 00:00:00
                 editedTrack.Length = null;
             }
         }

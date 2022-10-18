@@ -40,6 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String? title;
         private TimeSpan? begin;
         private TimeSpan? end;
+        private TimeSpan? _length;
         private List<Flag> flags = new();
         private Track? clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
@@ -100,44 +101,64 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return end; }
             set { var previousValue = end; end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); OnTraceablePropertyChanged(previousValue); }
         }
+        /// <summary>
+        /// If <see cref="Length"/> is set, should it be automatically change begin and end? Defaulting to true, because only during edit dialog this should be set to false. 
+        /// If set to false an internal field will be used.
+        /// </summary>
+        [JsonIgnore]
+        public Boolean AutomaticallyCalculateLength { get; init; } = true;
         [JsonIgnore]
         public TimeSpan? Length 
         {
             get
             {
-                if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
+                if (AutomaticallyCalculateLength)
                 {
-                    return End - Begin;
+                    if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
+                    {
+                        return End - Begin;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
-                    return null;
+                    return _length;
                 }
             }
             set
             {
-                if ((Begin.HasValue == false) && (End.HasValue == false))
+                if (AutomaticallyCalculateLength)
                 {
-                    Begin = TimeSpan.Zero;
-                    End = Begin.Value + value;
-                }
-                else
-                {
-                    if ((Begin.HasValue == true) && (End.HasValue == true))
+                    if ((Begin.HasValue == false) && (End.HasValue == false))
                     {
+                        Begin = TimeSpan.Zero;
                         End = Begin.Value + value;
                     }
                     else
                     {
-                        if ((End.HasValue == false) && (Begin.HasValue))
+                        if ((Begin.HasValue == true) && (End.HasValue == true))
                         {
                             End = Begin.Value + value;
                         }
-                        if ((Begin.HasValue == false) && (End.HasValue))
+                        else
                         {
-                            Begin = End.Value - value;
+                            if ((End.HasValue == false) && (Begin.HasValue))
+                            {
+                                End = Begin.Value + value;
+                            }
+                            if ((Begin.HasValue == false) && (End.HasValue))
+                            {
+                                Begin = End.Value - value;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    _length = value;
                 }
                 OnValidateablePropertyChanged();
             }
