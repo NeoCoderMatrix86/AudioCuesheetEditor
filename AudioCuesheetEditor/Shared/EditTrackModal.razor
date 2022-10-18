@@ -134,7 +134,7 @@ along with Foobar.  If not, see
                 <Table Borderless>
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderCell>@_localizer["Change Value"]</TableHeaderCell>
+                            <TableHeaderCell>@_localizer["Overwrite"]</TableHeaderCell>
                             <TableHeaderCell>@_localizer["Property"]</TableHeaderCell>
                             <TableHeaderCell>@_localizer["Value"]</TableHeaderCell>
                         </TableRow>
@@ -143,7 +143,7 @@ along with Foobar.  If not, see
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackIsLinkedToPreviousTrack"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["IsLinkedToPreviousTrack"]</TableRowCell>
-                            <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack" ></Switch></TableRowCell>
+                            <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack"></Switch></TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPosition"></Switch></TableRowCell>
