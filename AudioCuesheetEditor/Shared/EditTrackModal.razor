@@ -365,6 +365,7 @@ along with Foobar.  If not, see
             _editTrackLength = value;
             if (_editTrackLength == false)
             {
+                //TODO: Setting Length to null causes Begin to be set to 00:00:00
                 editedTrack.Length = null;
             }
         }
@@ -489,7 +490,6 @@ along with Foobar.  If not, see
 
     async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
     {
-        //TODO: Should this be used in multiple edit?
         switch (_sessionStateContainer.CurrentViewMode)
         {
             case ViewMode.ViewModeFull:
@@ -497,8 +497,11 @@ along with Foobar.  If not, see
                 var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
                 if (trackDetails != null)
                 {
-                    track.Length = trackDetails.Length;
-                    if (String.IsNullOrEmpty(track.Artist))
+                    if ((EditTrackLength) && (track.Length.HasValue == false))
+                    {
+                        track.Length = trackDetails.Length;
+                    }
+                    if ((EditTrackArtist) && (String.IsNullOrEmpty(track.Artist)))
                     {
                         track.Artist = trackDetails.Artist;
                     }
