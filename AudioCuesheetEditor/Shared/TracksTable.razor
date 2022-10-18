@@ -321,14 +321,23 @@ along with Foobar.  If not, see
     //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
-    List<Track> selectedTracks = new List<Track>();
+    List<Track> selectedTracks = new ();
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Track? lastTrack;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
+    Boolean _trackSelectionVisible = false;
 
     [Parameter]
-    public Boolean TrackSelectionVisible { get; set; } = false;
+    public Boolean TrackSelectionVisible 
+    { 
+        get => _trackSelectionVisible; 
+        set
+        {
+            _trackSelectionVisible = value;
+            selectedTracks = new();
+        } 
+    }
 
     [Parameter]
     public AudioPlayer? AudioPlayer { get; set; }
