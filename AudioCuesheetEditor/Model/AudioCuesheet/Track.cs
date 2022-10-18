@@ -320,7 +320,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setLength)
             {
-                //TODO: Doesn't work when using multiple edit
                 Length = track.Length;
             }
             if (setFlags)
