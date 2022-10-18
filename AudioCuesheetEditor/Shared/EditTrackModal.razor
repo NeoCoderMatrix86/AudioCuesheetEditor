@@ -235,6 +235,7 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+    //TODO: Localization!
     public IReadOnlyCollection<Track>? TracksToEdit 
     { 
         get => _tracksToEdit;
@@ -429,7 +430,7 @@ along with Foobar.  If not, see
     {
         if (IsMultipleEdit)
         {
-            //TODO: Set only specific values
+            TracksToEdit?.ToList().ForEach(x => x.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: EditTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: EditTrackBegin, setEnd: EditTrackEnd, setLength: EditTrackLength, setFlags: EditTrackFlags, setPreGap: EditTrackPreGap, setPostGap: EditTrackPostGap, useInternalSetters: Track.AllPropertyNames));
         }
         else
         {
