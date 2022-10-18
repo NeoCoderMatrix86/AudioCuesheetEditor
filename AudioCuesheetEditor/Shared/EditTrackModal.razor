@@ -208,7 +208,7 @@ along with Foobar.  If not, see
                             @foreach (var flag in Flag.AvailableFlags)
                             {
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
-                                    <Switch TValue="bool" ReadOnly="!EditTrackFlags">@flag.Name</Switch>
+                                    <Switch TValue="bool" ReadOnly="!EditTrackFlags" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
                                 </Tooltip>
                             }
                             </TableRowCell>
@@ -369,7 +369,6 @@ along with Foobar.  If not, see
             _editTrackFlags = value;
             if (_editTrackFlags == false)
             {
-                //TODO: Doesn't work!
                 editedTrack.SetFlags(new List<Flag>());
             }
         }
