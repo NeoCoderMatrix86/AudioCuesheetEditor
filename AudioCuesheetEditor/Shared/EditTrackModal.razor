@@ -29,7 +29,7 @@ along with Foobar.  If not, see
             <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
         </ModalHeader>
         <ModalBody>
-            @if (TracksToEdit?.Count == 1)
+            @if (IsMultipleEdit == false)
             {
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
@@ -129,7 +129,7 @@ along with Foobar.  If not, see
                     </FieldBody>
                 </Field>
             }
-            @if (TracksToEdit?.Count > 1)
+            else
             {
                 <Table Borderless>
                     <TableHeader>
@@ -251,6 +251,8 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback TracksEdited { get; set; }
+
+    public Boolean IsMultipleEdit { get => TracksToEdit?.Count > 1; }
 
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtistsEditDialog;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitlesEditDialog;
@@ -402,16 +404,37 @@ along with Foobar.  If not, see
 
     public async Task Show()
     {
+        SetInitialState();
         if (modalTrackEdit != null)
         {
             await modalTrackEdit.Show();
         }
     }
 
+    void SetInitialState()
+    {
+        EditTrackIsLinkedToPreviousTrack = false;
+        EditTrackPosition = false;
+        EditTrackArtist = false;
+        EditTrackTitle = false;
+        EditTrackBegin = false;
+        EditTrackEnd = false;
+        EditTrackLength = false;
+        EditTrackFlags = false;
+        EditTrackPreGap = false;
+        EditTrackPostGap = false;
+    }
+
     async Task EditTrackModalSaveClicked()
     {
-        //TODO: In case of mass edit use another method (for not firing recalculation)?
-        TracksToEdit?.ToList().ForEach(x => x.CopyValues(editedTrack));
+        if (IsMultipleEdit)
+        {
+            //TODO: Set only specific values
+        }
+        else
+        {
+            TracksToEdit?.ToList().ForEach(x => x.CopyValues(editedTrack));
+        }
         await ControlModalDialog(modalTrackEdit, false);
     }
 
