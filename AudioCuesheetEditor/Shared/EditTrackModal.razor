@@ -242,10 +242,16 @@ along with Foobar.  If not, see
         set 
         {
             _tracksToEdit = value;
-            editedTrack = new();
-            if (_tracksToEdit?.Count == 1)
+            if (IsMultipleEdit)
             {
-                editedTrack = _tracksToEdit.First().Clone();
+                editedTrack = new();
+            }
+            else
+            {
+                if (_tracksToEdit != null)
+                {
+                    editedTrack = _tracksToEdit.First().Clone();
+                }
             }
         }
     }
@@ -414,16 +420,20 @@ along with Foobar.  If not, see
 
     void SetInitialState()
     {
-        EditTrackIsLinkedToPreviousTrack = false;
-        EditTrackPosition = false;
-        EditTrackArtist = false;
-        EditTrackTitle = false;
-        EditTrackBegin = false;
-        EditTrackEnd = false;
-        EditTrackLength = false;
-        EditTrackFlags = false;
-        EditTrackPreGap = false;
-        EditTrackPostGap = false;
+        if (IsMultipleEdit)
+        {
+            EditTrackIsLinkedToPreviousTrack = false;
+            EditTrackPosition = false;
+            EditTrackArtist = false;
+            EditTrackTitle = false;
+            EditTrackBegin = false;
+            EditTrackEnd = false;
+            EditTrackLength = false;
+            EditTrackFlags = false;
+            EditTrackPreGap = false;
+            EditTrackPostGap = false;
+            StateHasChanged();
+        }
     }
 
     async Task EditTrackModalSaveClicked()
