@@ -1,0 +1,25 @@
+{
+  "culture": "en",
+  "translations": {
+    "Artist": "Artist",
+    "Title": "Title",
+    "Begin": "Begin",
+    "End": "End",
+    "Length": "Length",
+    "Edit track details": "Edit track details",
+    "Position": "Position",
+    "Flags": "Flags",
+    "Flag4CHTooltip": "Set this if track contains four channel audio",
+    "FlagDCPTooltip": "Set this if track is digital copy permitted",
+    "FlagPRETooltip": "Set this if track has Pre-emphasis enabled",
+    "FlagSCMSTooltip": "Set this if track has \"Serial Copy Management System\"",
+    "PreGap": "Pregap",
+    "PostGap": "Postgap",
+    "Abort": "Abort",
+    "Save changes": "Save changes",
+    "IsLinkedToPreviousTrack": "Linked with previous",
+    "Change": "Change",
+    "Property": "Property",
+    "Value": "Value"
+  }
+}

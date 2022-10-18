@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 
 <Modal @ref="modalTrackEdit">
-    <ModalContent Centered="true">
+    <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>@_localizer["Edit track details"]</ModalTitle>
             <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
@@ -134,7 +134,7 @@ along with Foobar.  If not, see
                 <Table Borderless>
                     <TableHeader>
                         <TableRow>
-                            <TableHeaderCell>@_localizer["Overwrite"]</TableHeaderCell>
+                            <TableHeaderCell>@_localizer["Change"]</TableHeaderCell>
                             <TableHeaderCell>@_localizer["Property"]</TableHeaderCell>
                             <TableHeaderCell>@_localizer["Value"]</TableHeaderCell>
                         </TableRow>
@@ -235,7 +235,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    //TODO: Localization!
     public IReadOnlyCollection<Track>? TracksToEdit 
     { 
         get => _tracksToEdit;
