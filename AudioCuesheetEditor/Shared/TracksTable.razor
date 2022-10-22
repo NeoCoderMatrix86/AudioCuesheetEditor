@@ -84,7 +84,14 @@ along with Foobar.  If not, see
         <TableRow>
             @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
             {
-                <TableHeaderCell>@_localizer["Selection"]</TableHeaderCell>
+                <TableHeaderCell>
+                    <Div Class="d-flex align-items-center">
+                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                            <Check TValue="bool" CheckedChanged="(selected) => SelectAllTracks(selected)" Checked="selectedTracks.Any()" />
+                        </Tooltip>
+                        @_localizer["Selection"]
+                    </Div>
+                </TableHeaderCell>
             }
             @switch (_sessionStateContainer.CurrentViewMode)
             {
@@ -586,6 +593,18 @@ along with Foobar.  If not, see
         else
         {
             selectedTracks.Remove(track);
+        }
+    }   
+    
+    private void SelectAllTracks(bool select)
+    {
+        if(select)
+        {
+            selectedTracks.AddRange(Cuesheet.Tracks);
+        }
+        else
+        {
+            selectedTracks.Clear();
         }
     }
 
