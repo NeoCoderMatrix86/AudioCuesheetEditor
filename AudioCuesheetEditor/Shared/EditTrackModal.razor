@@ -148,7 +148,20 @@ along with Foobar.  If not, see
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPosition"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["Position"]</TableRowCell>
-                            <TableRowCell><NumericEdit TValue="uint?" Min="1" Max="99" ReadOnly="!EditTrackPosition" @bind-Value="editedTrack.Position" /></TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPosition" @bind-SelectedValue="_editModeTrackPosition">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <NumericEdit TValue="uint?" Min="1" Max="99" ReadOnly="!EditTrackPosition" @bind-Value="editedTrack.Position" Style="width: 65%" />
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackArtist"></Switch></TableRowCell>
@@ -189,17 +202,56 @@ along with Foobar.  If not, see
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackBegin"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["Begin"]</TableRowCell>
-                            <TableRowCell><TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" /></TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackBegin" @bind-SelectedValue="_editModeTrackBegin">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Style="width: 65%" />
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackEnd"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["End"]</TableRowCell>
-                            <TableRowCell><TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)"/></TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackEnd" @bind-SelectedValue="_editModeTrackEnd">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Style="width: 65%"/>
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackLength"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["Length"]</TableRowCell>
-                            <TableRowCell><TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" /></TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackLength" @bind-SelectedValue="_editModeTrackLength">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Style="width: 65%" />
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackFlags"></Switch></TableRowCell>
@@ -216,12 +268,38 @@ along with Foobar.  If not, see
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPreGap"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["PreGap"]</TableRowCell>
-                            <TableRowCell><TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)"/></TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPreGap" @bind-SelectedValue="_editModeTrackPreGap">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Style="width: 65%"/>
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPostGap"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["PostGap"]</TableRowCell>
-                            <TableRowCell><TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)"/></TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPostGap" @bind-SelectedValue="_editModeTrackPostGap">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Style="width: 65%"/>
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
                         </TableRow>
                     </TableBody>
                 </Table>
@@ -235,7 +313,13 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    //TODO: Dynamic values (like add one hour to begin)
+    enum DynamicEditValue 
+    {
+        EnteredValueEquals = 0,
+        EnteredValueAdd = 1,
+        EnteredValueSubstract = 2
+    }
+
     public IReadOnlyCollection<Track>? TracksToEdit 
     { 
         get => _tracksToEdit;
@@ -278,6 +362,12 @@ along with Foobar.  If not, see
     Boolean _editTrackFlags;
     Boolean _editTrackPreGap;
     Boolean _editTrackPostGap;
+    DynamicEditValue _editModeTrackPosition;
+    DynamicEditValue _editModeTrackBegin;
+    DynamicEditValue _editModeTrackEnd;
+    DynamicEditValue _editModeTrackLength;
+    DynamicEditValue _editModeTrackPreGap;
+    DynamicEditValue _editModeTrackPostGap;
 
     public Boolean EditTrackIsLinkedToPreviousTrack
     {
@@ -439,6 +529,7 @@ along with Foobar.  If not, see
     {
         if (IsMultipleEdit)
         {
+            //TODO: Dynamic values (like add one hour to begin)
             TracksToEdit?.ToList().ForEach(x => x.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: EditTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: EditTrackBegin, setEnd: EditTrackEnd, setLength: EditTrackLength, setFlags: EditTrackFlags, setPreGap: EditTrackPreGap, setPostGap: EditTrackPostGap, useInternalSetters: Track.AllPropertyNames));
         }
         else
