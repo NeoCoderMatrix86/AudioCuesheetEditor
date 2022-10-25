@@ -32,6 +32,14 @@ along with Foobar.  If not, see
             @if (IsMultipleEdit == false)
             {
                 <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["IsLinkedToPreviousTrack"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.IsLinkedToPreviousTrack)))">
+                            <Switch TValue="bool" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch>
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
@@ -143,7 +151,7 @@ along with Foobar.  If not, see
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackIsLinkedToPreviousTrack"></Switch></TableRowCell>
                             <TableRowCell>@_localizer["IsLinkedToPreviousTrack"]</TableRowCell>
-                            <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack"></Switch></TableRowCell>
+                            <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch></TableRowCell>
                         </TableRow>
                         <TableRow>
                             <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPosition"></Switch></TableRowCell>

@@ -17,7 +17,8 @@
     "PostGap": "Nachlücke",
     "Abort": "Abbrechen",
     "Save changes": "Änderungen speichern",
-    "IsLinkedToPreviousTrack": "Verknüpft mit Vorgänger",
+    "IsLinkedToPreviousTrack": "Verknüpft",
+    "IsLinkedToPreviousTrackValue": "Verknüpft mit Vorgänger",
     "Change": "Ändern",
     "Property": "Eigenschaft",
     "Value": "Wert"

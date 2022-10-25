@@ -17,7 +17,8 @@
     "PostGap": "Postgap",
     "Abort": "Abort",
     "Save changes": "Save changes",
-    "IsLinkedToPreviousTrack": "Linked with previous",
+    "IsLinkedToPreviousTrack": "Linked",
+    "IsLinkedToPreviousTrackValue": "Linked with previous",
     "Change": "Change",
     "Property": "Property",
     "Value": "Value"
