@@ -348,8 +348,7 @@ along with Foobar.  If not, see
         }
     }
 
-    [Parameter]
-    public EventCallback TracksEdited { get; set; }
+    [Parameter] public EventCallback SaveClicked { get; set; }
 
     public Boolean IsMultipleEdit { get => TracksToEdit?.Count > 1; }
 
@@ -657,11 +656,11 @@ along with Foobar.  If not, see
             }
         }
         await ControlModalDialog(modalTrackEdit, false);
+        await SaveClicked.InvokeAsync();
     }
 
     async Task ControlModalDialog(Modal? dialog, Boolean show)
     {
-        //TODO: After multiple edit with add or substract we don't update the tracks table, maybe use a statehaschanged somewhere!
         if (dialog != null)
         {
             if (show)

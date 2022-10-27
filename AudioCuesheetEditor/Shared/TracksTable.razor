@@ -315,13 +315,13 @@ along with Foobar.  If not, see
 </Table>
 
 <ModalDialog @ref="modalDialog" />
-<EditTrackModal @ref="modalTrackEdit" />
+<EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
     //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
-    List<Track> selectedTracks = new ();
+    List<Track> selectedTracks = new();
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Track? lastTrack;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
