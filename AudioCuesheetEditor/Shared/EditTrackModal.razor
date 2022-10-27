@@ -558,6 +558,7 @@ along with Foobar.  If not, see
                     Boolean copyTrackLength = EditTrackLength;
                     Boolean copyTrackPreGap = EditTrackPreGap;
                     Boolean copyTrackPostGap = EditTrackPostGap;
+                    //TODO: We need to fire events for IsLinkedToPreviousTrack to work. Maybe have a parameter for the CopyValues method!
                     //First process dynamic edit, because we need to increase each value seperately
                     switch (_editModeTrackPosition)
                     {
