@@ -548,11 +548,13 @@ along with Foobar.  If not, see
                 {
                     var position = editedTrack.Position;
                     var begin = editedTrack.Begin;
+                    var end = editedTrack.End;
                     var length = editedTrack.Length;
                     var preGap = editedTrack.PreGap;
                     var postGap = editedTrack.PostGap;
                     Boolean copyTrackPosition = EditTrackPosition;
                     Boolean copyTrackBegin = EditTrackBegin;
+                    Boolean copyTrackEnd = EditTrackEnd;
                     Boolean copyTrackLength = EditTrackLength;
                     Boolean copyTrackPreGap = EditTrackPreGap;
                     Boolean copyTrackPostGap = EditTrackPostGap;
@@ -568,7 +570,8 @@ along with Foobar.  If not, see
                             editedTrack.Position = position;
                             break;
                         case DynamicEditValue.EnteredValueSubstract:
-                            editedTrack.Position -= track.Position;
+                            var newValue = track.Position - editedTrack.Position;
+                            editedTrack.Position = newValue;
                             track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
                             copyTrackPosition = false;
                             break;
@@ -584,10 +587,27 @@ along with Foobar.  If not, see
                             copyTrackBegin = false;
                             break;
                         case DynamicEditValue.EnteredValueSubstract:
-                            newValue = editedTrack.Begin - track.Begin;
+                            newValue = track.Begin - editedTrack.Begin;
                             editedTrack.Begin = newValue;
                             track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
                             copyTrackBegin = false;
+                            break;
+                    }
+                    switch (_editModeTrackEnd)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.End + track.End;
+                            editedTrack.End = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackEnd = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = track.End - editedTrack.End;
+                            editedTrack.End = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackEnd = false;
                             break;
                     }
                     switch (_editModeTrackLength)
@@ -601,7 +621,7 @@ along with Foobar.  If not, see
                             copyTrackLength = false;
                             break;
                         case DynamicEditValue.EnteredValueSubstract:
-                            newValue = editedTrack.Length - track.Length;
+                            newValue = track.Length - editedTrack.Length;
                             editedTrack.Length = newValue;
                             track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
                             copyTrackLength = false;
@@ -618,7 +638,7 @@ along with Foobar.  If not, see
                             copyTrackPreGap = false;
                             break;
                         case DynamicEditValue.EnteredValueSubstract:
-                            newValue = editedTrack.PreGap - track.PreGap;
+                            newValue = track.PreGap - editedTrack.PreGap;
                             editedTrack.PreGap = newValue;
                             track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
                             copyTrackPreGap = false;
@@ -635,7 +655,7 @@ along with Foobar.  If not, see
                             copyTrackPostGap = false;
                             break;
                         case DynamicEditValue.EnteredValueSubstract:
-                            newValue = editedTrack.PostGap - track.PostGap;
+                            newValue = track.PostGap - editedTrack.PostGap;
                             editedTrack.PostGap = newValue;
                             track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
                             copyTrackPostGap = false;
@@ -643,11 +663,12 @@ along with Foobar.  If not, see
                     }
                     editedTrack.Position = position;
                     editedTrack.Begin = begin;
+                    editedTrack.End = end;
                     editedTrack.Length = length;
                     editedTrack.PreGap = preGap;
                     editedTrack.PostGap = postGap;
                     //Now set all values!
-                    track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: copyTrackBegin, setEnd: EditTrackEnd, setLength: copyTrackLength, setFlags: EditTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                    track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: EditTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
                 }
                 else
                 {
