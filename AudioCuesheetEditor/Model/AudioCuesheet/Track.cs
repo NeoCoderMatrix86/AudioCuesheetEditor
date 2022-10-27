@@ -32,11 +32,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public class Track : Validateable, ICuesheetEntity, ITraceable
     {
+        public static readonly List<String> DefaultCopyValuesUseInternalSetters = new() { nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags) };
+        public static readonly List<String> AllPropertyNames = new() { nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length) };
+
         private uint? position;
         private String? artist;
         private String? title;
         private TimeSpan? begin;
         private TimeSpan? end;
+        private TimeSpan? _length;
         private List<Flag> flags = new();
         private Track? clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
@@ -97,44 +101,64 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return end; }
             set { var previousValue = end; end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); OnTraceablePropertyChanged(previousValue); }
         }
+        /// <summary>
+        /// If <see cref="Length"/> is set, should it be automatically change begin and end? Defaulting to true, because only during edit dialog this should be set to false. 
+        /// If set to false an internal field will be used.
+        /// </summary>
+        [JsonIgnore]
+        public Boolean AutomaticallyCalculateLength { get; init; } = true;
         [JsonIgnore]
         public TimeSpan? Length 
         {
             get
             {
-                if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
+                if (AutomaticallyCalculateLength)
                 {
-                    return End - Begin;
+                    if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
+                    {
+                        return End - Begin;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
-                    return null;
+                    return _length;
                 }
             }
             set
             {
-                if ((Begin.HasValue == false) && (End.HasValue == false))
+                if (AutomaticallyCalculateLength)
                 {
-                    Begin = TimeSpan.Zero;
-                    End = Begin.Value + value;
-                }
-                else
-                {
-                    if ((Begin.HasValue == true) && (End.HasValue == true))
+                    if ((Begin.HasValue == false) && (End.HasValue == false))
                     {
+                        Begin = TimeSpan.Zero;
                         End = Begin.Value + value;
                     }
                     else
                     {
-                        if ((End.HasValue == false) && (Begin.HasValue))
+                        if ((Begin.HasValue == true) && (End.HasValue == true))
                         {
                             End = Begin.Value + value;
                         }
-                        if ((Begin.HasValue == false) && (End.HasValue))
+                        else
                         {
-                            Begin = End.Value - value;
+                            if ((End.HasValue == false) && (Begin.HasValue))
+                            {
+                                End = Begin.Value + value;
+                            }
+                            if ((Begin.HasValue == false) && (End.HasValue))
+                            {
+                                Begin = End.Value - value;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    _length = value;
                 }
                 OnValidateablePropertyChanged();
             }
@@ -231,28 +255,139 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         /// <summary>
-        /// Copies values from input object to this object
+        /// Copy values from input object to this object
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
-        public void CopyValues(Track track, Boolean copyCuesheetReference = true)
+        /// <param name="setCuesheet">Copy Cuesheet reference from track also?</param>
+        /// <param name="setIsLinkedToPreviousTrack">Copy IsLinkedToPreviousTrack from track also?</param>
+        /// <param name="setPosition">Copy Position from track also?</param>
+        /// <param name="setArtist">Copy Artist from track also?</param>
+        /// <param name="setTitle">Copy Title from track also?</param>
+        /// <param name="setBegin">Copy Begin from track also?</param>
+        /// <param name="setEnd">Copy End from track also?</param>
+        /// <param name="setLength">Copy Length from track also?</param>
+        /// <param name="setFlags">Copy Flags from track also?</param>
+        /// <param name="setPreGap">Copy PreGap from track also?</param>
+        /// <param name="setPostGap">Copy PostGap from track also?</param>
+        /// <param name="useInternalSetters">A list of properties, for whom the internal set construct should be used, in order to avoid automatic calculation. Defaults to "<see cref="DefaultCopyValuesUseInternalSetters"/>" if is null.</param>
+        public void CopyValues(Track track, Boolean setCuesheet = true, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true, IEnumerable<String>? useInternalSetters = null)
         {
-            if (copyCuesheetReference)
+            useInternalSetters ??= DefaultCopyValuesUseInternalSetters;
+            if (setCuesheet)
             {
-                Cuesheet = track.Cuesheet;
+                if (useInternalSetters.Contains(nameof(Cuesheet)))
+                {
+                    cuesheet = track.Cuesheet;
+                }
+                else
+                {
+                    Cuesheet = track.Cuesheet;
+                }
             }
-            //Use public setter since we need to fire all events with positioning
-            Position = track.Position;
-            //We use the internal properties because we only want to set the values, everything around like validation or automatic calculation doesn't need to be fired
-            artist = track.Artist;
-            title = track.Title;
-            begin = track.Begin;
-            end = track.End;
-            flags.Clear();
-            flags.AddRange(track.Flags);
-            PreGap = track.PreGap;
-            PostGap = track.PostGap;
-            IsLinkedToPreviousTrack = track.isLinkedToPreviousTrack;
+            if (setPosition)
+            {
+                if (useInternalSetters.Contains(nameof(Position)))
+                {
+                    position = track.Position;
+                }
+                else
+                {
+                    Position = track.Position;
+                }
+            }
+            if (setArtist)
+            {
+                if (useInternalSetters.Contains(nameof(Artist)))
+                {
+                    artist = track.Artist;
+                }
+                else
+                {
+                    Artist = track.Artist;
+                }
+            }
+            if (setTitle)
+            {
+                if (useInternalSetters.Contains(nameof(Title)))
+                {
+                    title = track.Title;
+                }
+                else
+                {
+                    Title = track.Title;
+                }
+            }
+            if (setBegin)
+            {
+                if (useInternalSetters.Contains(nameof(Begin)))
+                {
+                    begin = track.Begin;
+                }
+                else
+                {
+                    Begin = track.Begin;
+                }
+            }
+            if (setEnd)
+            {
+                if (useInternalSetters.Contains(nameof(End)))
+                {
+                    end = track.End;
+                }
+                else
+                {
+                    End = track.End;
+                }
+            }
+            if (setLength)
+            {
+                Length = track.Length;
+            }
+            if (setFlags)
+            {
+                if (useInternalSetters.Contains(nameof(Flags)))
+                {
+                    flags.Clear();
+                    flags.AddRange(track.Flags);
+                }
+                else
+                {
+                    SetFlags(track.Flags);
+                }
+            }
+            if (setPreGap)
+            {
+                if (useInternalSetters.Contains(nameof(PreGap)))
+                {
+                    preGap = track.PreGap;
+                }
+                else
+                {
+                    PreGap = track.PreGap;
+                }
+            }
+            if (setPostGap)
+            {
+                if (useInternalSetters.Contains(nameof(PostGap)))
+                {
+                    postGap = track.PostGap;
+                }
+                else
+                {
+                    PostGap = track.PostGap;
+                }
+            }
+            if (setIsLinkedToPreviousTrack)
+            {
+                if (useInternalSetters.Contains(nameof(IsLinkedToPreviousTrack)))
+                {
+                    isLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
+                }
+                else
+                {
+                    IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
+                }
+            }
             OnValidateablePropertyChanged();
         }
 

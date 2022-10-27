@@ -1,0 +1,746 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inject ITextLocalizer<EditTrackModal> _localizer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject SessionStateContainer _sessionStateContainer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+
+<Modal @ref="modalTrackEdit">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>@_localizer["Edit track details"]</ModalTitle>
+            <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
+        </ModalHeader>
+        <ModalBody>
+            @if (IsMultipleEdit == false)
+            {
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["IsLinkedToPreviousTrack"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.IsLinkedToPreviousTrack)))">
+                            <Switch TValue="bool" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch>
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
+                            <NumericEdit TValue="uint?" Min="1" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="editedTrack.Position" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Artist"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
+                            <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Artist" ReadData="OnReadDataAutocompleteTrackArtistEditDialog">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Title"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
+                            <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editedTrack)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editedTrack)">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Begin"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
+                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Immediate="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["End"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
+                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Immediate="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Length"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
+                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Immediate="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Flags"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        @foreach (var flag in Flag.AvailableFlags)
+                        {
+                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
+                                <Switch TValue="bool" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
+                            </Tooltip>
+                        }
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PreGap"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
+                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Immediate="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PostGap"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
+                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Immediate="false" />
+                        </Tooltip>
+                    </FieldBody>
+                </Field>
+            }
+            else
+            {
+                <Table Borderless>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHeaderCell>@_localizer["Change"]</TableHeaderCell>
+                            <TableHeaderCell>@_localizer["Property"]</TableHeaderCell>
+                            <TableHeaderCell>@_localizer["Value"]</TableHeaderCell>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackIsLinkedToPreviousTrack"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["IsLinkedToPreviousTrack"]</TableRowCell>
+                            <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch></TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPosition"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Position"]</TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPosition" @bind-SelectedValue="_editModeTrackPosition">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <NumericEdit TValue="uint?" Min="1" Max="99" ReadOnly="!EditTrackPosition" @bind-Value="editedTrack.Position" Style="width: 65%" />
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackArtist"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Artist"]</TableRowCell>
+                            <TableRowCell>
+                                <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" ReadData="OnReadDataAutocompleteTrackArtistEditDialog" Disabled="!EditTrackArtist" @bind-SelectedText="editedTrack.Artist">
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackTitle"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Title"]</TableRowCell>
+                                <TableRowCell>
+                                    <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Title" Disabled="!EditTrackTitle" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editedTrack)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editedTrack)">
+                                        <ItemContent>
+                                            @if (context.Item.Disambiguation != null)
+                                            {
+                                                <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                            }
+                                            else
+                                            {
+                                                <Paragraph>@context.Text</Paragraph>
+                                            }
+                                        </ItemContent>
+                                    </Autocomplete>
+                                </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackBegin"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Begin"]</TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackBegin" @bind-SelectedValue="_editModeTrackBegin">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Style="width: 65%" />
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackEnd"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["End"]</TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackEnd" @bind-SelectedValue="_editModeTrackEnd">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Style="width: 65%"/>
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackLength"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Length"]</TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackLength" @bind-SelectedValue="_editModeTrackLength">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Style="width: 65%" />
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackFlags"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["Flags"]</TableRowCell>
+                            <TableRowCell>
+                            @foreach (var flag in Flag.AvailableFlags)
+                            {
+                                <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
+                                    <Switch TValue="bool" ReadOnly="!EditTrackFlags" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
+                                </Tooltip>
+                            }
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPreGap"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["PreGap"]</TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPreGap" @bind-SelectedValue="_editModeTrackPreGap">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Style="width: 65%"/>
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPostGap"></Switch></TableRowCell>
+                            <TableRowCell>@_localizer["PostGap"]</TableRowCell>
+                            <TableRowCell>
+                                <Addons>
+                                    <Addon AddonType="AddonType.Start">
+                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPostGap" @bind-SelectedValue="_editModeTrackPostGap">
+                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                        </Select>
+                                    </Addon>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Style="width: 65%"/>
+                                    </Addon>
+                                </Addons>
+                            </TableRowCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            }
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="EditTrackModalSaveClicked">@_localizer["Save changes"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalTrackEdit, false)">@_localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    enum DynamicEditValue 
+    {
+        EnteredValueEquals = 0,
+        EnteredValueAdd = 1,
+        EnteredValueSubstract = 2
+    }
+
+    public IReadOnlyCollection<Track>? TracksToEdit 
+    { 
+        get => _tracksToEdit;
+        set 
+        {
+            _tracksToEdit = value;
+            if (IsMultipleEdit)
+            {
+                editedTrack = new() { AutomaticallyCalculateLength = false };
+            }
+            else
+            {
+                if (_tracksToEdit != null)
+                {
+                    editedTrack = _tracksToEdit.First().Clone();
+                }
+            }
+        }
+    }
+
+    [Parameter] public EventCallback SaveClicked { get; set; }
+
+    public Boolean IsMultipleEdit { get => TracksToEdit?.Count > 1; }
+
+    IEnumerable<MusicBrainzArtist>? autocompleteTrackArtistsEditDialog;
+    IEnumerable<MusicBrainzTrack>? autocompleteTrackTitlesEditDialog;
+
+    IReadOnlyCollection<Track>? _tracksToEdit;
+    Modal? modalTrackEdit;
+    Track editedTrack = new() { AutomaticallyCalculateLength = false };
+
+    Boolean _editTrackIsLinkedToPreviousTrack;
+    Boolean _editTrackPosition;
+    Boolean _editTrackArtist;
+    Boolean _editTrackTitle;
+    Boolean _editTrackBegin;
+    Boolean _editTrackEnd;
+    Boolean _editTrackLength;
+    Boolean _editTrackFlags;
+    Boolean _editTrackPreGap;
+    Boolean _editTrackPostGap;
+    DynamicEditValue _editModeTrackPosition;
+    DynamicEditValue _editModeTrackBegin;
+    DynamicEditValue _editModeTrackEnd;
+    DynamicEditValue _editModeTrackLength;
+    DynamicEditValue _editModeTrackPreGap;
+    DynamicEditValue _editModeTrackPostGap;
+
+    public Boolean EditTrackIsLinkedToPreviousTrack
+    {
+        get => _editTrackIsLinkedToPreviousTrack;
+        private set 
+        {
+            _editTrackIsLinkedToPreviousTrack = value;
+            if (_editTrackIsLinkedToPreviousTrack == false)
+            {
+                editedTrack.IsLinkedToPreviousTrack = false;
+            }
+        }
+    }
+
+    public Boolean EditTrackPosition
+    {
+        get => _editTrackPosition;
+        private set
+        {
+            _editTrackPosition = value;
+            if (_editTrackPosition == false)
+            {
+                editedTrack.Position = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackArtist
+    {
+        get => _editTrackArtist;
+        private set
+        {
+            _editTrackArtist = value;
+            if (_editTrackArtist == false)
+            {
+                editedTrack.Artist = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackTitle
+    {
+        get => _editTrackTitle;
+        private set
+        {
+            _editTrackTitle = value;
+            if (_editTrackTitle == false)
+            {
+                editedTrack.Title = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackBegin
+    {
+        get => _editTrackBegin;
+        private set
+        {
+            _editTrackBegin = value;
+            if (_editTrackBegin == false)
+            {
+                editedTrack.Begin = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackEnd
+    {
+        get => _editTrackEnd;
+        private set
+        {
+            _editTrackEnd = value;
+            if (_editTrackEnd == false)
+            {
+                editedTrack.End = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackLength
+    {
+        get => _editTrackLength;
+        private set
+        {
+            _editTrackLength = value;
+            if (_editTrackLength == false)
+            {
+                editedTrack.Length = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackFlags
+    {
+        get => _editTrackFlags;
+        private set
+        {
+            _editTrackFlags = value;
+            if (_editTrackFlags == false)
+            {
+                editedTrack.SetFlags(new List<Flag>());
+            }
+        }
+    }
+
+    public Boolean EditTrackPreGap
+    {
+        get => _editTrackPreGap;
+        private set
+        {
+            _editTrackPreGap = value;
+            if (_editTrackPreGap == false)
+            {
+                editedTrack.PreGap = null;
+            }
+        }
+    }
+
+    public Boolean EditTrackPostGap
+    {
+        get => _editTrackPostGap;
+        private set
+        {
+            _editTrackPostGap = value;
+            if (_editTrackPostGap == false)
+            {
+                editedTrack.PostGap = null;
+            }
+        }
+    }
+
+    public async Task Show()
+    {
+        SetInitialState();
+        if (modalTrackEdit != null)
+        {
+            await modalTrackEdit.Show();
+        }
+    }
+
+    void SetInitialState()
+    {
+        if (IsMultipleEdit)
+        {
+            EditTrackIsLinkedToPreviousTrack = false;
+            EditTrackPosition = false;
+            EditTrackArtist = false;
+            EditTrackTitle = false;
+            EditTrackLength = false;
+            EditTrackBegin = false;
+            EditTrackEnd = false;
+            EditTrackFlags = false;
+            EditTrackPreGap = false;
+            EditTrackPostGap = false;
+            _editModeTrackPosition = DynamicEditValue.EnteredValueEquals;
+            _editModeTrackBegin = DynamicEditValue.EnteredValueEquals;
+            _editModeTrackEnd = DynamicEditValue.EnteredValueEquals;
+            _editModeTrackLength = DynamicEditValue.EnteredValueEquals;
+            _editModeTrackPreGap = DynamicEditValue.EnteredValueEquals;
+            _editModeTrackPostGap = DynamicEditValue.EnteredValueEquals;
+        }
+    }
+
+    async Task EditTrackModalSaveClicked()
+    {
+        if (TracksToEdit != null)
+        {
+            foreach (var track in TracksToEdit)
+            {
+                if (IsMultipleEdit)
+                {
+                    var position = editedTrack.Position;
+                    var begin = editedTrack.Begin;
+                    var length = editedTrack.Length;
+                    var preGap = editedTrack.PreGap;
+                    var postGap = editedTrack.PostGap;
+                    Boolean copyTrackPosition = EditTrackPosition;
+                    Boolean copyTrackBegin = EditTrackBegin;
+                    Boolean copyTrackLength = EditTrackLength;
+                    Boolean copyTrackPreGap = EditTrackPreGap;
+                    Boolean copyTrackPostGap = EditTrackPostGap;
+                    //First process dynamic edit, because we need to increase each value seperately
+                    switch (_editModeTrackPosition)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            editedTrack.Position += track.Position;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPosition = false;
+                            editedTrack.Position = position;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            editedTrack.Position -= track.Position;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPosition = false;
+                            break;
+                    }
+                    switch (_editModeTrackBegin)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.Begin + track.Begin;
+                            editedTrack.Begin = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackBegin = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.Begin - track.Begin;
+                            editedTrack.Begin = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackBegin = false;
+                            break;
+                    }
+                    switch (_editModeTrackLength)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.Length + track.Length;
+                            editedTrack.Length = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackLength = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.Length - track.Length;
+                            editedTrack.Length = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackLength = false;
+                            break;
+                    }
+                    switch (_editModeTrackPreGap)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.PreGap + track.PreGap;
+                            editedTrack.PreGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPreGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.PreGap - track.PreGap;
+                            editedTrack.PreGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPreGap = false;
+                            break;
+                    }
+                    switch (_editModeTrackPostGap)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.PostGap + track.PostGap;
+                            editedTrack.PostGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPostGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.PostGap - track.PostGap;
+                            editedTrack.PostGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPostGap = false;
+                            break;
+                    }
+                    editedTrack.Position = position;
+                    editedTrack.Begin = begin;
+                    editedTrack.Length = length;
+                    editedTrack.PreGap = preGap;
+                    editedTrack.PostGap = postGap;
+                    //Now set all values!
+                    track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: copyTrackBegin, setEnd: EditTrackEnd, setLength: copyTrackLength, setFlags: EditTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                }
+                else
+                {
+                    track.CopyValues(editedTrack);
+                }
+            }
+        }
+        await ControlModalDialog(modalTrackEdit, false);
+        await SaveClicked.InvokeAsync();
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackArtistEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackArtistsEditDialog = artists;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackTitleEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackTitlesEditDialog = titles;
+            }
+        }
+    }
+
+    async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
+    {
+        switch (_sessionStateContainer.CurrentViewMode)
+        {
+            case ViewMode.ViewModeFull:
+            case ViewMode.ViewModeImport:
+                var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+                if (trackDetails != null)
+                {
+                    if ((EditTrackLength) && (track.Length.HasValue == false))
+                    {
+                        track.Length = trackDetails.Length;
+                    }
+                    if ((EditTrackArtist) && (String.IsNullOrEmpty(track.Artist)))
+                    {
+                        track.Artist = trackDetails.Artist;
+                    }
+                }
+                break;
+        }
+    }
+
+    String? GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
+    {
+        String? resultString = null;
+        if ((timeSpan != null) && (timeSpan.HasValue))
+        {
+            if (removeMilliseconds == true)
+            {
+                resultString = timeSpan.Value.Subtract(new TimeSpan(0, 0, 0, 0, timeSpan.Value.Milliseconds)).ToString();
+            }
+            else
+            {
+                resultString = timeSpan.Value.ToString();
+            }
+        }
+        return resultString;
+    }
+
+    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    {
+        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
+        setAction(result);
+    }
+}

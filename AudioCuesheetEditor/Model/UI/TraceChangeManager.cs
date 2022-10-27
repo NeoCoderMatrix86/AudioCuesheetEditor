@@ -29,14 +29,6 @@ namespace AudioCuesheetEditor.Model.UI
         private readonly WeakReference<ITraceable> _tracedObject;
         public TracedChange(ITraceable traceableObject, Stack<TraceableChange> traceableChanges)
         {
-            if (traceableObject == null)
-            {
-                throw new ArgumentNullException(nameof(traceableObject));
-            }
-            if (traceableChanges == null)
-            {
-                throw new ArgumentNullException(nameof(traceableChanges));
-            }
             _tracedObject = new WeakReference<ITraceable>(traceableObject, false);
             TraceableChanges = traceableChanges;
         }
@@ -97,10 +89,6 @@ namespace AudioCuesheetEditor.Model.UI
 
         public void TraceChanges(ITraceable traceable)
         {
-            if (traceable == null)
-            {
-                throw new ArgumentNullException(nameof(traceable));
-            }
             traceable.TraceablePropertyChanged += Traceable_TraceablePropertyChanged;
         }
 

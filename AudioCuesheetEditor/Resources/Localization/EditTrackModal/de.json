@@ -1,0 +1,26 @@
+{
+  "culture": "de",
+  "translations": {
+    "Artist": "Künstler",
+    "Title": "Titel",
+    "Begin": "Beginn",
+    "End": "Ende",
+    "Length": "Länge",
+    "Edit track details": "Trackdetails bearbeiten",
+    "Position": "Position",
+    "Flags": "Markierungen",
+    "Flag4CHTooltip": "Setzen Sie diese Markierung, wenn der Track 4 Kanal Audio enthält",
+    "FlagDCPTooltip": "Setzen Sie diese Markierung, wenn digitale Kopien verboten sind",
+    "FlagPRETooltip": "Setzen Sie diese Markierung, wenn der Track Höhenanhebung hat",
+    "FlagSCMSTooltip": "Setzen Sie diese Markierung, wenn der Track \"Serial Copy Management System\" hat",
+    "PreGap": "Vorlücke",
+    "PostGap": "Nachlücke",
+    "Abort": "Abbrechen",
+    "Save changes": "Änderungen speichern",
+    "IsLinkedToPreviousTrack": "Verknüpft",
+    "IsLinkedToPreviousTrackValue": "Verknüpft mit Vorgänger",
+    "Change": "Ändern",
+    "Property": "Eigenschaft",
+    "Value": "Wert"
+  }
+}

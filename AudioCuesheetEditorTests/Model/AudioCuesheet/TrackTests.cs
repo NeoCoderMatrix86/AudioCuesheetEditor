@@ -110,5 +110,44 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track1.Position = 1;
             Assert.IsTrue(track1.GetValidationErrorsFiltered(nameof(Track.Position)).Count == 0);
         }
+
+        [TestMethod()]
+        public void CopyValuesTest()
+        {
+            var sourceTrack = new Track();
+            var destinyTrack = new Track();
+            Assert.AreNotEqual(sourceTrack, destinyTrack);
+            sourceTrack.Cuesheet = new Cuesheet();
+            sourceTrack.IsLinkedToPreviousTrack = true;
+            sourceTrack.Position = 23;
+            sourceTrack.Artist = "Testartist";
+            sourceTrack.Title = "Testtitle";
+            sourceTrack.Begin = new TimeSpan(0, 2, 10);
+            sourceTrack.End = new TimeSpan(0, 5, 32);
+            sourceTrack.PreGap = new TimeSpan(0, 0, 10);
+            sourceTrack.PostGap = new TimeSpan(0, 0, 12);
+            Assert.IsNull(destinyTrack.Cuesheet);
+            destinyTrack.CopyValues(sourceTrack);
+            Assert.AreEqual(sourceTrack.IsLinkedToPreviousTrack, destinyTrack.IsLinkedToPreviousTrack);
+            Assert.AreEqual(sourceTrack.Cuesheet, destinyTrack.Cuesheet);
+            Assert.AreEqual(sourceTrack.Position, destinyTrack.Position);
+            Assert.AreEqual(sourceTrack.Artist, destinyTrack.Artist);
+            Assert.AreEqual(sourceTrack.Title, destinyTrack.Title);
+            Assert.AreEqual(sourceTrack.Begin, destinyTrack.Begin);
+            Assert.AreEqual(sourceTrack.End, destinyTrack.End);
+            Assert.AreEqual(sourceTrack.PreGap, destinyTrack.PreGap);
+            Assert.AreEqual(sourceTrack.PostGap, destinyTrack.PostGap);
+            var destinationTracks = new List<Track>() { new Track(), new Track(), new Track() };
+            destinationTracks.ForEach(x => x.CopyValues(sourceTrack, useInternalSetters: Track.AllPropertyNames));
+            Assert.IsTrue(destinationTracks.All(x => x.IsLinkedToPreviousTrack == sourceTrack.IsLinkedToPreviousTrack));
+            Assert.IsTrue(destinationTracks.All(x => x.Cuesheet == sourceTrack.Cuesheet));
+            Assert.IsTrue(destinationTracks.All(x => x.Position == sourceTrack.Position));
+            Assert.IsTrue(destinationTracks.All(x => x.Artist == sourceTrack.Artist));
+            Assert.IsTrue(destinationTracks.All(x => x.Title == sourceTrack.Title));
+            Assert.IsTrue(destinationTracks.All(x => x.Begin == sourceTrack.Begin));
+            Assert.IsTrue(destinationTracks.All(x => x.End == sourceTrack.End));
+            Assert.IsTrue(destinationTracks.All(x => x.PreGap == sourceTrack.PreGap));
+            Assert.IsTrue(destinationTracks.All(x => x.PostGap == sourceTrack.PostGap));
+        }
     }
 }
