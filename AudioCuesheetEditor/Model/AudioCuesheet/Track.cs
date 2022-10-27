@@ -32,7 +32,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public class Track : Validateable, ICuesheetEntity, ITraceable
     {
-        public static readonly List<String> DefaultCopyValuesUseInternalSetters = new() { nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags) };
         public static readonly List<String> AllPropertyNames = new() { nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length) };
 
         private uint? position;
@@ -269,13 +268,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="setFlags">Copy Flags from track also?</param>
         /// <param name="setPreGap">Copy PreGap from track also?</param>
         /// <param name="setPostGap">Copy PostGap from track also?</param>
-        /// <param name="useInternalSetters">A list of properties, for whom the internal set construct should be used, in order to avoid automatic calculation. Defaults to "<see cref="DefaultCopyValuesUseInternalSetters"/>" if is null.</param>
+        /// <param name="useInternalSetters">A list of properties, for whom the internal set construct should be used, in order to avoid automatic calculation.</param>
         public void CopyValues(Track track, Boolean setCuesheet = true, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true, IEnumerable<String>? useInternalSetters = null)
         {
-            useInternalSetters ??= DefaultCopyValuesUseInternalSetters;
             if (setCuesheet)
             {
-                if (useInternalSetters.Contains(nameof(Cuesheet)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Cuesheet))))
                 {
                     cuesheet = track.Cuesheet;
                 }
@@ -286,7 +284,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setPosition)
             {
-                if (useInternalSetters.Contains(nameof(Position)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Position))))
                 {
                     position = track.Position;
                 }
@@ -297,7 +295,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setArtist)
             {
-                if (useInternalSetters.Contains(nameof(Artist)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Artist))))
                 {
                     artist = track.Artist;
                 }
@@ -308,7 +306,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setTitle)
             {
-                if (useInternalSetters.Contains(nameof(Title)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Title))))
                 {
                     title = track.Title;
                 }
@@ -319,7 +317,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setBegin)
             {
-                if (useInternalSetters.Contains(nameof(Begin)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Begin))))
                 {
                     begin = track.Begin;
                 }
@@ -330,7 +328,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setEnd)
             {
-                if (useInternalSetters.Contains(nameof(End)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(End))))
                 {
                     end = track.End;
                 }
@@ -345,7 +343,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setFlags)
             {
-                if (useInternalSetters.Contains(nameof(Flags)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Flags))))
                 {
                     flags.Clear();
                     flags.AddRange(track.Flags);
@@ -357,7 +355,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setPreGap)
             {
-                if (useInternalSetters.Contains(nameof(PreGap)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(PreGap))))
                 {
                     preGap = track.PreGap;
                 }
@@ -368,7 +366,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setPostGap)
             {
-                if (useInternalSetters.Contains(nameof(PostGap)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(PostGap))))
                 {
                     postGap = track.PostGap;
                 }
@@ -379,7 +377,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setIsLinkedToPreviousTrack)
             {
-                if (useInternalSetters.Contains(nameof(IsLinkedToPreviousTrack)))
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(IsLinkedToPreviousTrack))))
                 {
                     isLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
                 }
