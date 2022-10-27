@@ -336,7 +336,7 @@ along with Foobar.  If not, see
             _tracksToEdit = value;
             if (IsMultipleEdit)
             {
-                editedTrack = new() {AutomaticallyCalculateLength = false };
+                editedTrack = new() { AutomaticallyCalculateLength = false };
             }
             else
             {
@@ -358,7 +358,7 @@ along with Foobar.  If not, see
 
     IReadOnlyCollection<Track>? _tracksToEdit;
     Modal? modalTrackEdit;
-    Track editedTrack = new() {AutomaticallyCalculateLength = false };
+    Track editedTrack = new() { AutomaticallyCalculateLength = false };
 
     Boolean _editTrackIsLinkedToPreviousTrack;
     Boolean _editTrackPosition;
@@ -541,20 +541,127 @@ along with Foobar.  If not, see
 
     async Task EditTrackModalSaveClicked()
     {
-        if (IsMultipleEdit)
+        if (TracksToEdit != null)
         {
-            //TODO: Dynamic values (like add one hour to begin)
-            TracksToEdit?.ToList().ForEach(x => x.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: EditTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: EditTrackBegin, setEnd: EditTrackEnd, setLength: EditTrackLength, setFlags: EditTrackFlags, setPreGap: EditTrackPreGap, setPostGap: EditTrackPostGap, useInternalSetters: Track.AllPropertyNames));
-        }
-        else
-        {
-            TracksToEdit?.ToList().ForEach(x => x.CopyValues(editedTrack));
+            foreach (var track in TracksToEdit)
+            {
+                if (IsMultipleEdit)
+                {
+                    var position = editedTrack.Position;
+                    var begin = editedTrack.Begin;
+                    var length = editedTrack.Length;
+                    var preGap = editedTrack.PreGap;
+                    var postGap = editedTrack.PostGap;
+                    Boolean copyTrackPosition = EditTrackPosition;
+                    Boolean copyTrackBegin = EditTrackBegin;
+                    Boolean copyTrackLength = EditTrackLength;
+                    Boolean copyTrackPreGap = EditTrackPreGap;
+                    Boolean copyTrackPostGap = EditTrackPostGap;
+                    //First process dynamic edit, because we need to increase each value seperately
+                    switch (_editModeTrackPosition)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            editedTrack.Position += track.Position;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPosition = false;
+                            editedTrack.Position = position;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            editedTrack.Position -= track.Position;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPosition = false;
+                            break;
+                    }
+                    switch (_editModeTrackBegin)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.Begin + track.Begin;
+                            editedTrack.Begin = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackBegin = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.Begin - track.Begin;
+                            editedTrack.Begin = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackBegin = false;
+                            break;
+                    }
+                    switch (_editModeTrackLength)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.Length + track.Length;
+                            editedTrack.Length = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackLength = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.Length - track.Length;
+                            editedTrack.Length = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackLength = false;
+                            break;
+                    }
+                    switch (_editModeTrackPreGap)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.PreGap + track.PreGap;
+                            editedTrack.PreGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPreGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.PreGap - track.PreGap;
+                            editedTrack.PreGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPreGap = false;
+                            break;
+                    }
+                    switch (_editModeTrackPostGap)
+                    {
+                        case DynamicEditValue.EnteredValueEquals:
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editedTrack.PostGap + track.PostGap;
+                            editedTrack.PostGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPostGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = editedTrack.PostGap - track.PostGap;
+                            editedTrack.PostGap = newValue;
+                            track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                            copyTrackPostGap = false;
+                            break;
+                    }
+                    editedTrack.Position = position;
+                    editedTrack.Begin = begin;
+                    editedTrack.Length = length;
+                    editedTrack.PreGap = preGap;
+                    editedTrack.PostGap = postGap;
+                    //Now set all values!
+                    track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: copyTrackBegin, setEnd: EditTrackEnd, setLength: copyTrackLength, setFlags: EditTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                }
+                else
+                {
+                    track.CopyValues(editedTrack);
+                }
+            }
         }
         await ControlModalDialog(modalTrackEdit, false);
     }
 
     async Task ControlModalDialog(Modal? dialog, Boolean show)
     {
+        //TODO: After multiple edit with add or substract we don't update the tracks table, maybe use a statehaschanged somewhere!
         if (dialog != null)
         {
             if (show)
