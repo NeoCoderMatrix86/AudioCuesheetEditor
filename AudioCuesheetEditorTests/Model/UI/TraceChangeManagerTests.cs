@@ -292,5 +292,58 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsFalse(manager.CanUndo);
             Assert.IsFalse(manager.CanRedo);
         }
+
+        [TestMethod()]
+        public void BulkEditTracksTest()
+        {
+            var helper = new TestHelper();
+            var manager = new TraceChangeManager();
+            var cuesheet = new Cuesheet();
+            manager.TraceChanges(cuesheet);
+            var track1 = new Track();
+            var track2 = new Track();
+            var track3 = new Track();
+            var track4 = new Track();
+            manager.TraceChanges(track1);
+            manager.TraceChanges(track2);
+            manager.TraceChanges(track3);
+            manager.TraceChanges(track4);
+            cuesheet.AddTrack(track1, helper.ApplicationOptions);
+            cuesheet.AddTrack(track2, helper.ApplicationOptions);
+            cuesheet.AddTrack(track3, helper.ApplicationOptions);
+            cuesheet.AddTrack(track4, helper.ApplicationOptions);
+            track1.IsLinkedToPreviousTrack = true;
+            track2.IsLinkedToPreviousTrack = true;
+            track3.IsLinkedToPreviousTrack = true;
+            track4.IsLinkedToPreviousTrack = true;
+            var editedTrack = new Track() { Artist = "Test", Title = "Testtitle", Length = new TimeSpan(0, 2, 0) };
+            track1.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true, useInternalSetters: Track.AllPropertyNames);
+            track2.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin:false, setEnd:false, setLength: true, useInternalSetters: Track.AllPropertyNames);
+            track3.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true, useInternalSetters: Track.AllPropertyNames);
+            track4.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true, useInternalSetters: Track.AllPropertyNames);
+            Assert.IsTrue(manager.CanUndo);
+            Assert.AreEqual(editedTrack.Length, track1.End);
+            Assert.AreEqual(track1.End, track2.Begin);
+            Assert.AreEqual(track2.End, track3.Begin);
+            Assert.AreEqual(track3.End, track4.Begin);
+            Assert.IsNotNull(track4.End);
+            Assert.AreEqual(editedTrack.Artist, track1.Artist);
+            Assert.AreEqual(editedTrack.Artist, track2.Artist);
+            Assert.AreEqual(editedTrack.Artist, track3.Artist);
+            Assert.AreEqual(editedTrack.Artist, track4.Artist);
+            Assert.AreEqual(editedTrack.Title, track1.Title);
+            Assert.AreEqual(editedTrack.Title, track2.Title);
+            Assert.AreEqual(editedTrack.Title, track3.Title);
+            Assert.AreEqual(editedTrack.Title, track4.Title);
+            manager.Undo();
+            Assert.IsNull(track1.End);
+            Assert.IsNull(track2.End);
+            Assert.IsNull(track3.End);
+            Assert.IsNull(track4.End);
+            Assert.IsNull(track1.Artist);
+            Assert.IsNull(track2.Artist);
+            Assert.IsNull(track3.Artist);
+            Assert.IsNull(track4.Artist);
+        }
     }
 }
