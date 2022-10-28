@@ -558,7 +558,6 @@ along with Foobar.  If not, see
                     Boolean copyTrackLength = EditTrackLength;
                     Boolean copyTrackPreGap = EditTrackPreGap;
                     Boolean copyTrackPostGap = EditTrackPostGap;
-                    //TODO: We need to fire events for IsLinkedToPreviousTrack to work. Maybe have a parameter for the CopyValues method!
                     //First process dynamic edit, because we need to increase each value seperately
                     switch (_editModeTrackPosition)
                     {
@@ -674,6 +673,31 @@ along with Foobar.  If not, see
                 else
                 {
                     track.CopyValues(editedTrack);
+                }
+            }
+            // We need to fire events for IsLinkedToPreviousTrack to work, if we have done a multiple edit.
+            if (IsMultipleEdit)
+            {
+                switch (_editModeTrackPosition)
+                {
+                    case DynamicEditValue.EnteredValueAdd:
+                    case DynamicEditValue.EnteredValueSubstract:
+                        TracksToEdit.ToList().ForEach(x => x.Position = x.Position);
+                        break;
+                }
+                switch (_editModeTrackBegin)
+                {
+                    case DynamicEditValue.EnteredValueAdd:
+                    case DynamicEditValue.EnteredValueSubstract:
+                        TracksToEdit.ToList().ForEach(x => x.Begin = x.Begin);
+                        break;
+                }
+                switch (_editModeTrackEnd)
+                {
+                    case DynamicEditValue.EnteredValueAdd:
+                    case DynamicEditValue.EnteredValueSubstract:
+                        TracksToEdit.ToList().ForEach(x => x.End = x.End);
+                        break;
                 }
             }
         }
