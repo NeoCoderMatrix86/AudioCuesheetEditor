@@ -678,27 +678,9 @@ along with Foobar.  If not, see
             // We need to fire events for IsLinkedToPreviousTrack to work, if we have done a multiple edit.
             if (IsMultipleEdit)
             {
-                switch (_editModeTrackPosition)
-                {
-                    case DynamicEditValue.EnteredValueAdd:
-                    case DynamicEditValue.EnteredValueSubstract:
-                        TracksToEdit.ToList().ForEach(x => x.Position = x.Position);
-                        break;
-                }
-                switch (_editModeTrackBegin)
-                {
-                    case DynamicEditValue.EnteredValueAdd:
-                    case DynamicEditValue.EnteredValueSubstract:
-                        TracksToEdit.ToList().ForEach(x => x.Begin = x.Begin);
-                        break;
-                }
-                switch (_editModeTrackEnd)
-                {
-                    case DynamicEditValue.EnteredValueAdd:
-                    case DynamicEditValue.EnteredValueSubstract:
-                        TracksToEdit.ToList().ForEach(x => x.End = x.End);
-                        break;
-                }
+                TracksToEdit.ToList().ForEach(x => x.Position = x.Position);
+                TracksToEdit.ToList().ForEach(x => x.Begin = x.Begin);
+                TracksToEdit.ToList().ForEach(x => x.End = x.End);
             }
         }
         await ControlModalDialog(modalTrackEdit, false);
