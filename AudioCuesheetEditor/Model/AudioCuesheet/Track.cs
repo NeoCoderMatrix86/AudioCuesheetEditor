@@ -20,6 +20,7 @@ using Blazorise.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -77,28 +78,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public uint? Position 
         {
-            get { return position; }
-            set { var previousValue = position; position = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Position)); OnTraceablePropertyChanged(previousValue); }
+            get => position;
+            set { var previousValue = position; position = value; FireEvents(previousValue, propertyName: nameof(Position)); }
         }
         public String? Artist 
         {
-            get { return artist; }
-            set { var previousValue = artist; artist = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
+            get => artist;
+            set { var previousValue = artist; artist = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Artist)); }
         }
         public String? Title 
         {
-            get { return title; }
-            set { var previousValue = title; title = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
+            get => title;
+            set { var previousValue = title; title = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Title)); }
         }        
         public TimeSpan? Begin 
         {
-            get { return begin; }
-            set { var previousValue = begin; begin = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(Begin)); OnTraceablePropertyChanged(previousValue); }
+            get => begin;
+            set { var previousValue = begin; begin = value; FireEvents(previousValue, propertyName: nameof(Begin)); }
         }
         public TimeSpan? End 
         {
-            get { return end; }
-            set { var previousValue = end; end = value; OnValidateablePropertyChanged(); RankPropertyValueChanged?.Invoke(this, nameof(End)); OnTraceablePropertyChanged(previousValue); }
+            get => end;
+            set { var previousValue = end; end = value; FireEvents(previousValue, propertyName: nameof(End)); }
         }
         /// <summary>
         /// If <see cref="Length"/> is set, should it be automatically change begin and end? Defaulting to true, because only during edit dialog this should be set to false. 
@@ -178,8 +179,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public Cuesheet? Cuesheet 
         {
-            get { return cuesheet; }
-            set { var previousValue = cuesheet; cuesheet = value; OnValidateablePropertyChanged(); OnTraceablePropertyChanged(previousValue); }
+            get => cuesheet;
+            set { var previousValue = cuesheet; cuesheet = value; FireEvents(previousValue, fireRankPropertyValueChanged:false, propertyName: nameof(Cuesheet)); }
         }
 
         /// <summary>
@@ -192,28 +193,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         public Track? ClonedFrom
         {
-            get { return clonedFrom; }
+            get => clonedFrom;
             private set { clonedFrom = value; OnValidateablePropertyChanged(); }
         }
         /// <inheritdoc/>
         public TimeSpan? PreGap 
         {
-            get { return preGap; }
-            set { var previousValue = preGap; preGap = value; OnTraceablePropertyChanged(previousValue); }
+            get => preGap;
+            set { var previousValue = preGap; preGap = value; FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(PreGap)); }
         }
         /// <inheritdoc/>
         public TimeSpan? PostGap 
         {
-            get { return postGap; }
-            set { var previousValue = postGap; postGap = value; OnTraceablePropertyChanged(previousValue); }
+            get => postGap;
+            set { var previousValue = postGap; postGap = value; FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(PostGap)); }
         }
         /// <summary>
         /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
         public Boolean IsLinkedToPreviousTrack
         {
-            get { return isLinkedToPreviousTrack; }
-            set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); OnTraceablePropertyChanged(previousValue); }
+            get => isLinkedToPreviousTrack;
+            set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(IsLinkedToPreviousTrack)); }
         }
 
         public String? GetDisplayNameLocalized(ITextLocalizer localizer)
@@ -565,6 +566,43 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             else
             {
                 throw new ArgumentNullException(nameof(sender));
+            }
+        }
+
+        /// <summary>
+        /// Method for checking if fire of events should be done
+        /// </summary>
+        /// <param name="previousValue">Previous value of the property firing events</param>
+        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
+        /// <param name="fireRankPropertyValueChanged">Fire RankPropertyValueChanged?</param>
+        /// <param name="fireTraceablePropertyChanged">Fire OnTraceablePropertyChanged?</param>
+        /// <param name="propertyName">Property firing the events</param>
+        /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
+        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireRankPropertyValueChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            var propertyInfo = GetType().GetProperty(propertyName);
+            if (propertyInfo != null)
+            {
+                var propertyValue = propertyInfo.GetValue(this);
+                if (Equals(propertyValue, previousValue) == false)
+                {
+                    if (fireValidateablePropertyChanged)
+                    {
+                        OnValidateablePropertyChanged();
+                    }
+                    if (fireRankPropertyValueChanged)
+                    {
+                        RankPropertyValueChanged?.Invoke(this, propertyName);
+                    }
+                    if (fireTraceablePropertyChanged)
+                    {
+                        OnTraceablePropertyChanged(previousValue, propertyName);
+                    }
+                }
+            }
+            else
+            {
+                throw new NullReferenceException(String.Format("Property {0} could not be found!", propertyName));
             }
         }
     }

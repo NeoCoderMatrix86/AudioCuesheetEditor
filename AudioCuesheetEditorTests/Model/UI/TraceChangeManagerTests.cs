@@ -317,10 +317,12 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             track3.IsLinkedToPreviousTrack = true;
             track4.IsLinkedToPreviousTrack = true;
             var editedTrack = new Track() { Artist = "Test", Title = "Testtitle", Length = new TimeSpan(0, 2, 0) };
-            track1.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true, useInternalSetters: Track.AllPropertyNames);
-            track2.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin:false, setEnd:false, setLength: true, useInternalSetters: Track.AllPropertyNames);
-            track3.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true, useInternalSetters: Track.AllPropertyNames);
-            track4.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true, useInternalSetters: Track.AllPropertyNames);
+            manager.BulkEdit = true;
+            track1.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true);
+            track2.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true);
+            track3.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true);
+            track4.CopyValues(editedTrack, false, setIsLinkedToPreviousTrack: false, setBegin: false, setEnd: false, setLength: true);
+            manager.BulkEdit = false;
             Assert.IsTrue(manager.CanUndo);
             Assert.AreEqual(editedTrack.Length, track1.End);
             Assert.AreEqual(track1.End, track2.Begin);
@@ -344,6 +346,10 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsNull(track2.Artist);
             Assert.IsNull(track3.Artist);
             Assert.IsNull(track4.Artist);
+            Assert.IsNull(track1.Title);
+            Assert.IsNull(track2.Title);
+            Assert.IsNull(track3.Title);
+            Assert.IsNull(track4.Title);
         }
     }
 }

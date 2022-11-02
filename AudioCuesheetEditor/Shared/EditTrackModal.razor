@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject TraceChangeManager _traceChangeManager
 
 <Modal @ref="modalTrackEdit">
     <ModalContent Centered>
@@ -542,6 +543,10 @@ along with Foobar.  If not, see
     {
         if (TracksToEdit != null)
         {
+            if (IsMultipleEdit)
+            {
+                _traceChangeManager.BulkEdit = true;
+            }
             foreach (var track in TracksToEdit)
             {
                 if (IsMultipleEdit)
@@ -668,7 +673,7 @@ along with Foobar.  If not, see
                     editedTrack.PreGap = preGap;
                     editedTrack.PostGap = postGap;
                     //Now set all values!
-                    track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: EditTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                    track.CopyValues(editedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: EditTrackIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: EditTrackArtist, setTitle: EditTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: EditTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
                 }
                 else
                 {
@@ -678,9 +683,7 @@ along with Foobar.  If not, see
             // We need to fire events for IsLinkedToPreviousTrack to work, if we have done a multiple edit.
             if (IsMultipleEdit)
             {
-                TracksToEdit.ToList().ForEach(x => x.Position = x.Position);
-                TracksToEdit.ToList().ForEach(x => x.Begin = x.Begin);
-                TracksToEdit.ToList().ForEach(x => x.End = x.End);
+                _traceChangeManager.BulkEdit = false;
             }
         }
         await ControlModalDialog(modalTrackEdit, false);

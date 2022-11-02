@@ -94,29 +94,27 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         
         public String? Artist 
         {
-            get { return artist; }
+            get => artist;
             set 
             {
                 var previousValue = artist;
-                artist = value; 
-                OnValidateablePropertyChanged();
-                OnTraceablePropertyChanged(previousValue);
+                artist = value;
+                FireEvents(previousValue, propertyName: nameof(Artist));
             }
         }
         public String? Title 
         {
-            get { return title; }
+            get => title;
             set 
             {
                 var previousValue = title;
-                title = value; 
-                OnValidateablePropertyChanged();
-                OnTraceablePropertyChanged(previousValue);
+                title = value;
+                FireEvents(previousValue, propertyName: nameof(Title));
             }
         }
         public Audiofile? Audiofile
         {
-            get { return audiofile; }
+            get => audiofile;
             set 
             {
                 var previousValue = audiofile;
@@ -136,27 +134,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         RecalculateLastTrackEnd();
                     }
                 }
-                OnValidateablePropertyChanged(); 
-                AudioFileChanged?.Invoke(this, EventArgs.Empty);
-                OnTraceablePropertyChanged(previousValue);
+                FireEvents(previousValue, fireAudioFileChanged: true, propertyName: nameof(Audiofile));
             }
         }
 
         public CDTextfile? CDTextfile 
         {
-            get { return cDTextfile; }
+            get => cDTextfile;
             set 
             {
                 var previousValue = cDTextfile;
-                cDTextfile = value; 
-                OnValidateablePropertyChanged();
-                OnTraceablePropertyChanged(previousValue);
+                cDTextfile = value;
+                FireEvents(previousValue, propertyName: nameof(CDTextfile));
             }
         }
 
         public Cataloguenumber Cataloguenumber 
         {
-            get { return catalogueNumber; }
+            get => catalogueNumber;
             set
             {
                 if (catalogueNumber != null)
@@ -169,8 +164,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
                 }
-                OnValidateablePropertyChanged();
-                OnTraceablePropertyChanged(previousValue);
+                FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
             }
         }
 
@@ -758,6 +752,43 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if (lastTrack != null)
             {
                 ReCalculateTrackProperties(lastTrack);
+            }
+        }
+
+        /// <summary>
+        /// Method for checking if fire of events should be done
+        /// </summary>
+        /// <param name="previousValue">Previous value of the property firing events</param>
+        /// <param name="fireAudioFileChanged">Fire AudioFileChanged?</param>
+        /// <param name="fireValidateablePropertyChanged">Fire ValidateablePropertyChanged?</param>
+        /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
+        /// <param name="propertyName">Property firing the event</param>
+        /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
+        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            var propertyInfo = GetType().GetProperty(propertyName);
+            if (propertyInfo != null)
+            {
+                var propertyValue = propertyInfo.GetValue(this);
+                if (Equals(propertyValue, previousValue) == false)
+                {
+                    if (fireAudioFileChanged)
+                    {
+                        AudioFileChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    if (fireValidateablePropertyChanged)
+                    {
+                        OnValidateablePropertyChanged();
+                    }
+                    if (fireTraceablePropertyChanged)
+                    {
+                        OnTraceablePropertyChanged(previousValue, propertyName);
+                    }
+                }
+            }
+            else
+            {
+                throw new NullReferenceException(String.Format("Property {0} could not be found!", propertyName));
             }
         }
     }

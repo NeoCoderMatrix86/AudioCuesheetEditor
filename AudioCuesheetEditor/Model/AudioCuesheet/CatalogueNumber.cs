@@ -36,13 +36,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public String? Value 
         {
-            get { return value; }
+            get => value;
             set 
             {
                 var oldValue = this.value;
-                this.value = value; 
-                OnValidateablePropertyChanged();
-                OnTraceablePropertyChanged(oldValue);
+                this.value = value;
+                FireEvents(oldValue, propertyName: nameof(Value));
             }
         }
 
@@ -73,6 +72,38 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
+        }
+
+        /// <summary>
+        /// Method for checking if fire of events should be done
+        /// </summary>
+        /// <param name="previousValue">Previous value of the property firing events</param>
+        /// <param name="fireValidateablePropertyChanged">Fire ValidateablePropertyChanged?</param>
+        /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
+        /// <param name="propertyName">Property firing the event</param>
+        /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
+        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            var propertyInfo = GetType().GetProperty(propertyName);
+            if (propertyInfo != null)
+            {
+                var propertyValue = propertyInfo.GetValue(this);
+                if (Equals(propertyValue, previousValue) == false)
+                {
+                    if (fireValidateablePropertyChanged)
+                    {
+                        OnValidateablePropertyChanged();
+                    }
+                    if (fireTraceablePropertyChanged)
+                    {
+                        OnTraceablePropertyChanged(previousValue, propertyName);
+                    }
+                }
+            }
+            else
+            {
+                throw new NullReferenceException(String.Format("Property {0} could not be found!", propertyName));
+            }
         }
     }
 }
