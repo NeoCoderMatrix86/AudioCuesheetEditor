@@ -59,7 +59,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber = default!;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
-        private Stack<TraceableChange>? traceableChanges;
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
@@ -401,15 +400,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(Cuesheet cuesheet, ApplicationOptions applicationOptions)
+        public void Import(Cuesheet cuesheet, ApplicationOptions applicationOptions, TraceChangeManager? traceChangeManager = null)
         {
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
             {
-                traceableChanges = new Stack<TraceableChange>();
+                //We are doing a bulk edit, so inform the TraceChangeManager
+                if (traceChangeManager != null)
+                {
+                    traceChangeManager.BulkEdit = true;
+                }
                 CopyValues(cuesheet, applicationOptions);
-                TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(traceableChanges));
-                traceableChanges = null;
+                if (traceChangeManager != null)
+                {
+                    traceChangeManager.BulkEdit = false;
+                }
             }
         }
 
@@ -658,16 +663,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            if (traceableChanges == null)
-            {
-                var changes = new Stack<TraceableChange>();
-                changes.Push(new TraceableChange(previousValue, propertyName));
-                TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
-            }
-            else
-            {
-                traceableChanges.Push(new TraceableChange(previousValue, propertyName));
-            }
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
         }
 
         private void Audiofile_ContentStreamLoaded(object? sender, EventArgs e)

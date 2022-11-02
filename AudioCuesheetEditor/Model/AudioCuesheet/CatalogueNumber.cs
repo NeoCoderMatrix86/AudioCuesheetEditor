@@ -72,9 +72,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            var changes = new Stack<TraceableChange>();
-            changes.Push(new TraceableChange(previousValue, propertyName));
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(changes));
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
         }
     }
 }

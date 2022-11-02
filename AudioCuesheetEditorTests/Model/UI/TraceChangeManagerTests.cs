@@ -158,7 +158,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.IsFalse(manager.CanUndo);
             Assert.IsFalse(manager.CanRedo);
             Assert.IsNotNull(textImportFile.Cuesheet);
-            cuesheet.Import(textImportFile.Cuesheet, testhelper.ApplicationOptions);
+            cuesheet.Import(textImportFile.Cuesheet, testhelper.ApplicationOptions, manager);
             Assert.AreEqual("DJFreezeT", cuesheet.Artist);
             Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
             Assert.AreNotEqual(0, cuesheet.Tracks.Count);
