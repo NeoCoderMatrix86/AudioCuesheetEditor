@@ -462,12 +462,11 @@ along with Foobar.  If not, see
             if (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == true)
             {
                 var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var stream = file.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
-                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options, applicationOptions.TimeSpanFormat);
+                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options);
             }
             if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
             {
@@ -503,6 +502,12 @@ along with Foobar.  If not, see
     private async Task ImportData()
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        if (_sessionStateContainer.TextImportFile != null)
+        {
+            //Save import options (values are inside the TextImportFile)
+            var importOptions = new ImportOptions(_sessionStateContainer.TextImportFile);
+            await _localStorageOptionsProvider.SaveOptions(importOptions);
+        }
         _sessionStateContainer.StartImportCuesheet(options);
         _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
         StateHasChanged();
