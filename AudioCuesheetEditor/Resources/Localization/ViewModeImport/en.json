@@ -48,7 +48,7 @@
     "Import Options": "Import options",
     "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here",
     "Enter custom timespan format here": "You can enter a custom format for timespan here. Details can be found in help.",
-    "Customized timespan format": "Costumized timespan format",
+    "Customized timespan format import": "Timespan format for import",
     "Days": "Days",
     "Hours": "Hours",
     "Minutes": "Minutes",
