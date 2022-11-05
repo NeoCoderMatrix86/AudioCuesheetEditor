@@ -86,9 +86,12 @@ along with Foobar.  If not, see
             {
                 <TableHeaderCell>
                     <Div Class="d-flex align-items-center">
-                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
-                            <Check TValue="bool" CheckedChanged="(selected) => SelectAllTracks(selected)" Checked="selectedTracks.Any()" />
-                        </Tooltip>
+                        @if (Cuesheet.Tracks.Count > 0)
+                        {
+                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="OnAllTracksSelected()" />
+                                </Tooltip>
+                        }
                         @_localizer["Selection"]
                     </Div>
                 </TableHeaderCell>
@@ -216,7 +219,7 @@ along with Foobar.  If not, see
                                     </Buttons>
                                     <Buttons Margin="Margin.Is1.FromEnd">
                                         <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete track tooltip"]">
-                                            <Button Size="Size.Small" Color="Color.Danger" Clicked="() => Cuesheet.RemoveTrack(track)">
+                                            <Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteTrackClicked(track)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                                 </svg>
@@ -535,6 +538,12 @@ along with Foobar.  If not, see
         _traceChangeManager.TraceChanges(newTrack);
     }
 
+    private void OnDeleteTrackClicked(Track track)
+    {
+        Cuesheet.RemoveTrack(track);
+        selectedTracks.Remove(track);
+    }
+
     private void DeleteSelectedTracksClicked()
     {
         Cuesheet.RemoveTracks(selectedTracks.AsReadOnly());
@@ -555,6 +564,7 @@ along with Foobar.  If not, see
             {
                 _logger.LogInformation("deleteTracksDelegate");
                 Cuesheet.RemoveTracks(Cuesheet.Tracks);
+                selectedTracks.Clear();
                 modalDialog.Confirmed -= deleteTracksDelegate;
                 StateHasChanged();
             };
@@ -595,17 +605,27 @@ along with Foobar.  If not, see
             selectedTracks.Remove(track);
         }
     }   
-    
-    private void SelectAllTracks(bool select)
+
+    private void OnSelectAllTracks(bool select)
     {
         if(select)
         {
-            selectedTracks.AddRange(Cuesheet.Tracks);
+            foreach(var track in Cuesheet.Tracks)
+            {
+                if (!selectedTracks.Contains(track))
+                    selectedTracks.Add(track);
+            }
         }
         else
         {
             selectedTracks.Clear();
         }
+    }
+
+    private bool OnAllTracksSelected()
+    {
+        return selectedTracks.Count > 0 
+            && selectedTracks.Count == Cuesheet.Tracks.Count;
     }
 
     async Task CopyTrackClicked(Track trackToCopy)
