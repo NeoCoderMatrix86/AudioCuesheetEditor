@@ -40,7 +40,6 @@ along with Foobar.  If not, see
                         <Tabs @bind-SelectedTab="@selectedOptionsTab">
                             <Items>
                                 <Tab Name="common">@_localizer["Common settings"]</Tab>
-                                <Tab Name="textImport">@_localizer["Textimport settings"]</Tab>
                                 <Tab Name="recording">@_localizer["Record settings"]</Tab>
                             </Items>
                         </Tabs>
@@ -127,23 +126,6 @@ along with Foobar.  If not, see
                                 </FieldBody>
                             </Field>
                         </TabPanel>
-                        @if (importOptions != null)
-                        {
-                            <TabPanel Name="textImport" Padding="Padding.Is3.OnY">
-                                <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Textimportscheme cuesheet"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="importOptions.TextImportScheme.SchemeCuesheet" />
-                                </FieldBody>
-                                </Field>
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Textimportscheme track"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is7">
-                                        <TextEdit @bind-Text="importOptions.TextImportScheme.SchemeTracks" />
-                                    </FieldBody>
-                                </Field>
-                            </TabPanel>
-                        }
                         <TabPanel Name="recording" Padding="Padding.Is3.OnY">
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Filename for recorded audio"]</FieldLabel>
@@ -186,7 +168,6 @@ along with Foobar.  If not, see
 @code {
     String selectedOptionsTab = "common";
     ApplicationOptions? applicationOptions;
-    ImportOptions? importOptions;
     Boolean saveOptions;
     Boolean modalOptionsVisible = false;    
 
@@ -219,7 +200,6 @@ along with Foobar.  If not, see
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         await base.OnInitializedAsync();
@@ -238,10 +218,6 @@ along with Foobar.  If not, see
         if (options is ApplicationOptions)
         {
             applicationOptions = (ApplicationOptions)options;
-        }
-        if (options is ImportOptions)
-        {
-            importOptions = (ImportOptions)options;
         }
     }
 
@@ -264,10 +240,9 @@ along with Foobar.  If not, see
     {
         _logger.LogInformation("OnSaveOptionsClicked");
         saveOptions = true;
-        if ((applicationOptions != null) && (importOptions != null))
+        if (applicationOptions != null)
         {
             await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-            await _localStorageOptionsProvider.SaveOptions(importOptions);
             if (modalOptions != null)
             {
                 await modalOptions.Hide();
@@ -279,7 +254,6 @@ along with Foobar.  If not, see
     {
         _logger.LogInformation("OnReloadOptionsClicked");
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
         _localizationService.ChangeLanguage(applicationOptions.CultureName);
     }
 
@@ -288,7 +262,6 @@ along with Foobar.  If not, see
         _logger.LogInformation("OnResetOptionsClicked");
         await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        importOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 
