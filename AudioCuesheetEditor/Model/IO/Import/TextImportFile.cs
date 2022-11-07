@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public EventHandler? AnalysisFinished;
 
         private TextImportScheme textImportScheme;
+        private TimeSpanFormat? timeSpanFormat;
         private bool disposedValue;
 
         public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null)
@@ -49,9 +50,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 lines.Add(reader.ReadLine());
             }
             FileContent = lines.AsReadOnly();
+            TimeSpanFormat = new TimeSpanFormat();
             if (importOptions == null)
             {
-                TimeSpanFormat = new TimeSpanFormat();
                 TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             }
             else
@@ -60,13 +61,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 {
                     TimeSpanFormat = importOptions.TimeSpanFormat;
                 }
-                else
-                {
-                    TimeSpanFormat = new TimeSpanFormat();
-                }
                 TextImportScheme = importOptions.TextImportScheme;
             }
-            TimeSpanFormat.SchemeChanged += TimeSpanFormat_SchemeChanged;
         }
 
         /// <summary>
@@ -97,7 +93,26 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public Cuesheet? Cuesheet { get; private set; }
 
-        public TimeSpanFormat TimeSpanFormat { get; private set; }
+        public TimeSpanFormat TimeSpanFormat 
+        {
+            get 
+            { 
+                timeSpanFormat ??= new TimeSpanFormat();
+                return timeSpanFormat;
+            }
+            set
+            {
+                if (timeSpanFormat != null)
+                {
+                    timeSpanFormat.SchemeChanged -= TimeSpanFormat_SchemeChanged;
+                }
+                timeSpanFormat = value;
+                if (timeSpanFormat != null)
+                {
+                    timeSpanFormat.SchemeChanged += TimeSpanFormat_SchemeChanged;
+                }
+            }
+        }
 
         private void TextImportScheme_SchemeChanged(object? sender, string e)
         {

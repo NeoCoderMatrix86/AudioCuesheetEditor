@@ -144,7 +144,7 @@ along with Foobar.  If not, see
                                     <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
-                                    <Field Horizontal="true">
+                                    <Field Horizontal>
                                         <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
                                             <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
                                                 @_localizer["Textimportscheme cuesheet"]
@@ -173,7 +173,7 @@ along with Foobar.  If not, see
                                             </Addons>
                                         </FieldBody>
                                     </Field>
-                                    <Field Horizontal="true">
+                                    <Field Horizontal>
                                         <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                             <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
                                                 @_localizer["Textimportscheme track"]
@@ -202,7 +202,7 @@ along with Foobar.  If not, see
                                             </Addons>
                                         </FieldBody>
                                     </Field>
-                                    <Field Horizontal="true">
+                                    <Field Horizontal>
                                         <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                             <Tooltip Text="@_localizer["Enter custom timespan format here"]">
                                                 @_localizer["Customized timespan format import"]
@@ -229,6 +229,15 @@ along with Foobar.  If not, see
                                                     </Dropdown>
                                                 </Addon>
                                             </Addons>
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal>
+                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
+                                            @_localizer["Reset import options"]
+                                        </FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                                            <Button Color="Color.Warning" Clicked="OnReloadImportOptionsClicked">@_localizer["Reload import options"]</Button>
+                                            <Button Color="Color.Danger" Clicked="OnResetImportOptionsClicked">@_localizer["Reset import options to defaults"]</Button>
                                         </FieldBody>
                                     </Field>
                                 </CollapseBody>
@@ -521,5 +530,52 @@ along with Foobar.  If not, see
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    async Task OnResetImportOptionsClicked()
+    {
+        if (modalDialog != null)
+        {
+            modalDialog.Title = _localizer["Please confirm"];
+            modalDialog.Text = _localizer["Do you really want to reset the import options to default? This can not be undone!"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            modalDialog.Confirmed += OnModalDialogConfirmed;
+            await modalDialog.ShowModal();
+        }
+    }
+
+    void OnModalDialogConfirmed(object? sender, EventArgs args)
+    {
+        ResetImportOptions().ConfigureAwait(false);
+        if (modalDialog != null)
+        {
+            modalDialog.Confirmed -= OnModalDialogConfirmed;
+        }
+    }
+
+    async Task ResetImportOptions()
+    {
+        var newOptions = new ImportOptions();
+        await _localStorageOptionsProvider.SaveOptions(newOptions);
+        await OnReloadImportOptionsClicked();
+    }
+
+    async Task OnReloadImportOptionsClicked()
+    {
+        var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+        if (_sessionStateContainer.TextImportFile != null)
+        {
+            if (options.TimeSpanFormat != null)
+            {
+                _sessionStateContainer.TextImportFile.TimeSpanFormat = options.TimeSpanFormat;
+            }
+            else
+            {
+                _sessionStateContainer.TextImportFile.TimeSpanFormat = new TimeSpanFormat();
+            }
+            _sessionStateContainer.TextImportFile.TextImportScheme = options.TextImportScheme;
+            StateHasChanged();
+        }
     }
 }
