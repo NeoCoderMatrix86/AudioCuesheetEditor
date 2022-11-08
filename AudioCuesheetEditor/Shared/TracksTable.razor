@@ -89,7 +89,7 @@ along with Foobar.  If not, see
                         @if (Cuesheet.Tracks.Count > 0)
                         {
                                 <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
-                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="OnAllTracksSelected()" />
+                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="OnAllTracksSelected()" Indeterminate="SelectAllIndeterminate"/>
                                 </Tooltip>
                         }
                         @_localizer["Selection"]
@@ -592,6 +592,12 @@ along with Foobar.  If not, see
         {
             return null;
         }
+    }
+
+    private bool SelectAllIndeterminate
+    {
+        get => selectedTracks.Count > 0 
+            && selectedTracks.Count < Cuesheet.Tracks.Count;
     }
 
     private void SelectedTrackChanged(Track track, bool selected)
