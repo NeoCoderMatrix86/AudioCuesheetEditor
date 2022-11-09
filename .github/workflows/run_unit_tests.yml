@@ -4,7 +4,6 @@ name: Run unit tests
 on:
   push:
   pull_request:
-    types: [opened, reopened]
 
 jobs:    
   run-unit-tests:
