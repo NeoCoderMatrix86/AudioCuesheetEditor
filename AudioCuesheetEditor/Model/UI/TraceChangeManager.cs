@@ -148,6 +148,7 @@ namespace AudioCuesheetEditor.Model.UI
                             {
                                 var currentValue = propertyInfo.GetValue(tracedObject);
                                 redoChanges.Add(new TracedChange(tracedObject, new TraceableChange(currentValue, traceAbleChange.PropertyName)));
+                                _logger.LogDebug("Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}", traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
                                 propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
                             }
                             else
@@ -196,6 +197,7 @@ namespace AudioCuesheetEditor.Model.UI
                             {
                                 var currentValue = propertyInfo.GetValue(tracedObject);
                                 undoChanges.Add(new TracedChange(tracedObject, new TraceableChange(currentValue, traceAbleChange.PropertyName)));
+                                _logger.LogDebug("Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}", traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
                                 propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
                             }
                             else
@@ -253,10 +255,10 @@ namespace AudioCuesheetEditor.Model.UI
 
         private void Traceable_TraceablePropertyChanged(object? sender, TraceablePropertiesChangedEventArgs e)
         {
-            _logger.LogDebug("Traceable_TraceablePropertyChanged called with {sender} and {e}", sender, e);
+            _logger.LogDebug("Traceable_TraceablePropertyChanged called with {sender}, {PropertyName}, {PreviousValue}", sender, e.TraceableChange.PropertyName, e.TraceableChange.PreviousValue);
+            _logger.LogDebug("CurrentlyHandlingRedoOrUndoChanges = {CurrentlyHandlingRedoOrUndoChanges}", CurrentlyHandlingRedoOrUndoChanges);
             if (CurrentlyHandlingRedoOrUndoChanges == false)
             {
-                _logger.LogDebug("CurrentlyHandlingRedoOrUndoChanges was false");
                 if (sender != null)
                 {
                     _logger.LogDebug("BulkEdit = {BulkEdit}", BulkEdit);
