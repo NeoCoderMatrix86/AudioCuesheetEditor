@@ -24,7 +24,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         [TestMethod()]
         public void TraceChangesTest()
         {
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var callResult = CallInItsOwnScope(() =>
             {
                 var track = new Track();
@@ -47,7 +47,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         [TestMethod()]
         public void UndoTest()
         {
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var track = new Track();
             manager.TraceChanges(track);
             Assert.IsFalse(manager.CanUndo);
@@ -74,7 +74,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         [TestMethod()]
         public void RedoTest()
         {
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var track = new Track();
             manager.TraceChanges(track);
             Assert.IsFalse(manager.CanUndo);
@@ -106,7 +106,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         [TestMethod()]
         public void UndoRedoCombinationTest()
         {
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var track = new Track();
             manager.TraceChanges(track);
             Assert.IsFalse(manager.CanUndo);
@@ -132,7 +132,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         public void TrackListTest()
         {
             var testhelper = new TestHelper();
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             Assert.IsFalse(manager.CanUndo);
@@ -150,7 +150,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         public void ImportCuesheetTest()
         {
             var testhelper = new TestHelper();
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
             textImportFile.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             var cuesheet = new Cuesheet();
@@ -180,7 +180,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         {
             var testhelper = new TestHelper();
             testhelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             var track1 = new Track()
@@ -234,7 +234,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         public void MoveTracksTest()
         {
             var testhelper = new TestHelper();
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             var track1 = new Track()
@@ -275,7 +275,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         public void ResetTest()
         {
             var testhelper = new TestHelper();
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             Assert.IsFalse(manager.CanUndo);
             Assert.IsFalse(manager.CanRedo);
             var cuesheet = new Cuesheet();
@@ -297,7 +297,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         public void BulkEditTracksTest()
         {
             var helper = new TestHelper();
-            var manager = new TraceChangeManager();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             var track1 = new Track();
