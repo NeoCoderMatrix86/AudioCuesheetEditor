@@ -25,18 +25,11 @@
     "Move track up tooltip": "Diesen Track eine Position nach oben schieben",
     "Delete track tooltip": "Diesen Track löschen",
     "Move track down tooltip": "Diesen Track eine Position nach unten schieben",
-    "Edit track details": "Trackdetails bearbeiten",
     "Position": "Position",
-    "Flags": "Markierungen",
-    "Flag4CHTooltip": "Setzen Sie diese Markierung, wenn der Track 4 Kanal Audio enthält",
-    "FlagDCPTooltip": "Setzen Sie diese Markierung, wenn digitale Kopien verboten sind",
-    "FlagPRETooltip": "Setzen Sie diese Markierung, wenn der Track Höhenanhebung hat",
-    "FlagSCMSTooltip": "Setzen Sie diese Markierung, wenn der Track \"Serial Copy Management System\" hat",
-    "PreGap": "Vorlücke",
-    "PostGap": "Nachlücke",
     "Abort": "Abbrechen",
     "Save changes": "Änderungen speichern",
     "Confirmation required": "Bestätigung erforderlich",
-    "Do you really want to delete all tracks?": "Möchten Sie wirklich alle Tracks löschen?"
+    "Do you really want to delete all tracks?": "Möchten Sie wirklich alle Tracks löschen?",
+    "Edit selected tracks": "Selektierte Tracks bearbeiten"
   }
 }

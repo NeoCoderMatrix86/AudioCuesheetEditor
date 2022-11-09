@@ -15,12 +15,14 @@
 //<http: //www.gnu.org/licenses />.
 
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Utility;
 
 namespace AudioCuesheetEditor.Model.Options
 {
     public class ImportOptions : IOptions
     {
         public TextImportScheme TextImportScheme { get; set; }
+        public TimeSpanFormat? TimeSpanFormat { get; set; }
 
 #pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         public ImportOptions()
@@ -29,13 +31,17 @@ namespace AudioCuesheetEditor.Model.Options
             SetDefaultValues();
         }
 
+        public ImportOptions(TextImportfile textImportfile)
+        {
+            TextImportScheme = textImportfile.TextImportScheme;
+            TimeSpanFormat = textImportfile.TimeSpanFormat;
+        }
+
         public void SetDefaultValues()
         {
             //Declare defaults
-            if (TextImportScheme == null)
-            {
-                TextImportScheme = TextImportScheme.DefaultTextImportScheme;
-            }
+            TextImportScheme ??= TextImportScheme.DefaultTextImportScheme;
+            TimeSpanFormat ??= new TimeSpanFormat();
         }
     }
 }
