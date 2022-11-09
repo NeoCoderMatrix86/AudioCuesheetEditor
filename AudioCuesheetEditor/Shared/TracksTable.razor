@@ -95,9 +95,9 @@ along with Foobar.  If not, see
                     <Div Class="d-flex align-items-center">
                         @if (Cuesheet.Tracks.Count > 0)
                         {
-                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
-                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="OnAllTracksSelected()" Indeterminate="SelectAllIndeterminate"/>
-                                </Tooltip>
+                            <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                                <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
+                            </Tooltip>
                         }
                         @_localizer["Selection"]
                     </Div>
@@ -472,10 +472,9 @@ along with Foobar.  If not, see
         }
     }
 
-    private bool SelectAllIndeterminate
+    bool SelectAllIndeterminate
     {
-        get => selectedTracks.Count > 0 
-            && selectedTracks.Count < Cuesheet.Tracks.Count;
+        get => selectedTracks.Count > 0 && selectedTracks.Count < Cuesheet.Tracks.Count;
     }
 
     private void SelectedTrackChanged(Track track, bool selected)
@@ -492,12 +491,14 @@ along with Foobar.  If not, see
 
     private void OnSelectAllTracks(bool select)
     {
-        if(select)
+        if (select)
         {
             foreach(var track in Cuesheet.Tracks)
             {
                 if (!selectedTracks.Contains(track))
+                {
                     selectedTracks.Add(track);
+                }
             }
         }
         else
@@ -506,10 +507,9 @@ along with Foobar.  If not, see
         }
     }
 
-    private bool OnAllTracksSelected()
+    bool AllTracksSelected
     {
-        return selectedTracks.Count > 0 
-            && selectedTracks.Count == Cuesheet.Tracks.Count;
+        get => selectedTracks.Count > 0 && selectedTracks.Count == Cuesheet.Tracks.Count;
     }
 
     async Task CopyTrackClicked(Track trackToCopy)
