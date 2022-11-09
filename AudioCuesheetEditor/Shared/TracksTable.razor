@@ -412,7 +412,7 @@ along with Foobar.  If not, see
         Cuesheet.RemoveTrack(track);
         selectedTracks.Remove(track);
     }
-    
+
     async Task EditSelectedTracksClicked()
     {
         if (modalTrackEdit != null)
@@ -583,6 +583,7 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
+        selectedTracks.Clear();
         StateHasChanged();
     }
 
