@@ -33,6 +33,8 @@ along with Foobar.  If not, see
         <br />
         <Blazorise.Link To="#features">@_localizer["Features"]</Blazorise.Link>
         <br />
+        <Blazorise.Link To="#userInterface">@_localizer["User Interface"]</Blazorise.Link>
+        <br />
         <Blazorise.Link To="#validation">@_localizer["Validation"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#trackLinking">@_localizer["Track linking"]</Blazorise.Link>
@@ -70,6 +72,11 @@ along with Foobar.  If not, see
             <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Validation helptext"])
+        <Row>
+            <Column><Heading id="userInterface" Size="HeadingSize.Is3">@_localizer["User Interface"]</Heading></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+        </Row>
+        @((MarkupString)_localizer["User Interface helptext"])
         <Row>
             <Column><Heading id="trackLinking" Size="HeadingSize.Is3">@_localizer["Track linking"]</Heading></Column>
             <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
