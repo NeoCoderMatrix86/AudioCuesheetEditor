@@ -738,13 +738,19 @@ along with Foobar.  If not, see
                 var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
                 if (trackDetails != null)
                 {
-                    if ((EditTrackLength) && (track.Length.HasValue == false))
+                    if (track.Length.HasValue == false)
                     {
-                        track.Length = trackDetails.Length;
+                        if ((IsMultipleEdit == false) || (EditTrackLength))
+                        {
+                            track.Length = trackDetails.Length;
+                        }
                     }
-                    if ((EditTrackArtist) && (String.IsNullOrEmpty(track.Artist)))
+                    if (String.IsNullOrEmpty(track.Artist))
                     {
-                        track.Artist = trackDetails.Artist;
+                        if ((IsMultipleEdit == false) || (EditTrackArtist))
+                        {
+                            track.Artist = trackDetails.Artist;
+                        }
                     }
                 }
                 break;
