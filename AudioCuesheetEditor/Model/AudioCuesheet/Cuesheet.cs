@@ -609,10 +609,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                                     }
                                     break;
                                 case nameof(Track.End):
-                                    if (trackRaisedEvent.End.HasValue)
-                                    {
-                                        nextTrack.Begin = trackRaisedEvent.End;
-                                    }
+                                    nextTrack.Begin = trackRaisedEvent.End;
                                     break;
                             }
                         }
