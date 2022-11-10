@@ -17,6 +17,8 @@ using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
 using Blazorise.Localization;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AudioCuesheetEditorTests.Utility
 {
@@ -36,5 +38,15 @@ namespace AudioCuesheetEditorTests.Utility
         public ITextLocalizer Localizer { get; private set; }
         public CuesheetController CuesheetController { get; private set; }
         public ApplicationOptions ApplicationOptions { get; private set; }
+        public static ILogger<T> CreateLogger<T>()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddLogging()
+                .BuildServiceProvider();
+
+            var factory = serviceProvider.GetService<ILoggerFactory>();
+
+            return factory.CreateLogger<T>();
+        }
     }
 }
