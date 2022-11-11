@@ -12,7 +12,7 @@ jobs:
       - name: "📥 Check-out"
         uses: actions/checkout@v3.1.0
       - name: "✏️ Generate changelog"
-        uses: heinrichreimer/action-github-changelog-generator@v2.2
+        uses: heinrichreimer/action-github-changelog-generator@v2.3
         with:
           token: ${{ secrets.GENERATECHANGELOGTOKEN }}
           stripGeneratorNotice: true
