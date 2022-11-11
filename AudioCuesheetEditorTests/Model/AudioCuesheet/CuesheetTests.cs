@@ -508,5 +508,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(track1, cuesheet.Tracks.First());
             Assert.AreEqual(track2, cuesheet.Tracks.Last());
         }
+
+        [TestMethod()]
+        public void TrackLengthChangedWithIsLinkedToPreivousTest()
+        {
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            track1.IsLinkedToPreviousTrack = true;
+            track2.IsLinkedToPreviousTrack = true;
+            Assert.IsNull(track2.Begin);
+            Assert.IsNotNull(track1.Begin);
+            var editedTrack = new Track() { Begin = TimeSpan.Zero, Length = new TimeSpan(0, 2, 23) };
+            track1.CopyValues(editedTrack);
+            Assert.IsNotNull(track1.End);
+            Assert.AreEqual(track1.End, track2.Begin);
+            Assert.AreEqual(editedTrack.End, track2.Begin);
+        }
     }
 }

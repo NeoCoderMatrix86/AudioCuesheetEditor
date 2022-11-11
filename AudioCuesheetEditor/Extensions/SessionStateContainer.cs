@@ -158,7 +158,7 @@ namespace AudioCuesheetEditor.Extensions
         {
             if (ImportCuesheet != null)
             {
-                Cuesheet.Import(ImportCuesheet, applicationOptions);
+                Cuesheet.Import(ImportCuesheet, applicationOptions, _traceChangeManager);
                 ImportCuesheet = null;
             }
             ResetImport();

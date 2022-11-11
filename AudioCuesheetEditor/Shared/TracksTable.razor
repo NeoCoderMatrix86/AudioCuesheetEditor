@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject TraceChangeManager _traceChangeManager
 @inject ILogger<TracksTable> _logger
 @inject ITextLocalizerService _localizationService
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
 
 @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
 {
@@ -41,7 +42,7 @@ along with Foobar.  If not, see
         <Buttons Margin="Margin.Is2.FromEnd">
             @if (TrackSelectionVisible == false)
             {
-                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                         <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
                         <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
@@ -51,7 +52,7 @@ along with Foobar.  If not, see
             }
             else
             {
-                <Button Color="Color.Info" Clicked="SwitchTrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
                         <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
                         <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
@@ -61,6 +62,13 @@ along with Foobar.  If not, see
             }
         </Buttons>
         <Buttons>
+            <Button Color="Color.Secondary" Clicked="EditSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stickies" viewBox="0 0 16 16">
+                  <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1H1.5z"/>
+                  <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2h-11zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5v-11zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293L10 14.793z"/>
+                </svg>
+                @_localizer["Edit selected tracks"]
+            </Button>
             <Button Color="Color.Warning" Clicked="DeleteSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                     <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
@@ -78,29 +86,39 @@ along with Foobar.  If not, see
     <br />
 }
 
-<Table Bordered="true" Responsive="true" Narrow="true">
+<Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
     <TableHeader ThemeContrast="ThemeContrast.Light">
         <TableRow>
-            @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+            @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
             {
-                <TableHeaderCell Display="selectionDisplay">@_localizer["Selection"]</TableHeaderCell>
+                <TableHeaderCell>
+                    <Div Class="d-flex align-items-center">
+                        @if (Cuesheet.Tracks.Count > 0)
+                        {
+                            <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                                <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
+                            </Tooltip>
+                        }
+                        @_localizer["Selection"]
+                    </Div>
+                </TableHeaderCell>
             }
             @switch (_sessionStateContainer.CurrentViewMode)
             {
                 case ViewMode.ViewModeFull:
                 case ViewMode.ViewModeImport:
-                    <TableHeaderCell Class="controlsCell">@_localizer["Controls"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
                     break;
                 case ViewMode.ViewModeRecord:
-                    <TableHeaderCell Class="controlsCellFixedWidth">@_localizer["Controls"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
                     break;
             }
             <TableHeaderCell>#</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Artist"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Title"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Begin"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["End"]</TableHeaderCell>
-            <TableHeaderCell Class="minWidth">@_localizer["Length"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
+            <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
             @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
             {
                 <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Hints"]</TableHeaderCell>
@@ -137,15 +155,18 @@ along with Foobar.  If not, see
                 </TableRow>
             }
             <TableRow Color="((AudioPlayer != null) && (AudioPlayer.CurrentlyPlayingTrack != null) && (AudioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.Default">
-                <TableRowCell Display="selectionDisplay">
-                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select this track for multiple track operations"]">
-                        <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
-                    </Tooltip>
-                </TableRowCell>
+                @if (TrackSelectionVisible)
+                {
+                    <TableRowCell>
+                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select this track for multiple track operations"]">
+                            <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
+                        </Tooltip>
+                    </TableRowCell>
+                }
                 @switch (_sessionStateContainer.CurrentViewMode)
                 {
                     case ViewMode.ViewModeRecord:
-                        <TableRowCell Class="controlsCellFixedWidth">
+                        <TableRowCell>
                             <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
@@ -156,7 +177,7 @@ along with Foobar.  If not, see
                         break;
                     case ViewMode.ViewModeFull:
                     case ViewMode.ViewModeImport:
-                        <TableRowCell Class="controlsCell">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Buttons Role="ButtonsRole.Toolbar">
                                     <Buttons Margin="Margin.Is1.FromEnd">
@@ -205,7 +226,7 @@ along with Foobar.  If not, see
                                     </Buttons>
                                     <Buttons Margin="Margin.Is1.FromEnd">
                                         <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete track tooltip"]">
-                                            <Button Size="Size.Small" Color="Color.Danger" Clicked="() => Cuesheet.RemoveTrack(track)">
+                                            <Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteTrackClicked(track)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                                 </svg>
@@ -215,24 +236,46 @@ along with Foobar.  If not, see
                                 </Buttons>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Class="trackPositionTableRowCell">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)), seperator: Environment.NewLine)">
                                 <NumericEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" Immediate="false" />
                             </Tooltip>
                         </TableRowCell>
                         break;
                 }
-                <TableRowCell Class="minWidth">
+                <TableRowCell>
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Artist))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="track.Artist" />
+                            <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
                         </Tooltip>
                     </Tooltip>
                 </TableRowCell>
-                <TableRowCell Class="minWidth">
+                <TableRowCell>
                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Title))" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="track.Title" />
+                            <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)">
+                                <ItemContent>
+                                    @if (context.Item.Disambiguation != null)
+                                    {
+                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                    }
+                                    else
+                                    {
+                                        <Paragraph>@context.Text</Paragraph>
+                                    }
+                                </ItemContent>
+                            </Autocomplete>
                         </Tooltip>
                     </Tooltip>
                 </TableRowCell>
@@ -245,32 +288,35 @@ along with Foobar.  If not, see
                         break;
                     case ViewMode.ViewModeFull:
                     case ViewMode.ViewModeImport:
-                        <TableRowCell Class="minWidth">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Class="minWidth">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Class="minWidth">
+                        <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                @((MarkupString)GetMarkupString(track.GetValidationErrors(validationMessageLocalizer)))
-                            </Tooltip>
-                        </TableRowCell>
+                        @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+                        {
+                            <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
+                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                    @((MarkupString)GetMarkupString(track.GetValidationErrors(validationMessageLocalizer)))
+                                </Tooltip>
+                            </TableRowCell>
+                        }
                         break;
                 }
             </TableRow>
@@ -279,144 +325,32 @@ along with Foobar.  If not, see
 </Table>
 
 <ModalDialog @ref="modalDialog" />
-
-<Modal @ref="modalTrackEdit">
-    <ModalContent Centered="true">
-        <ModalHeader>
-            <ModalTitle>@_localizer["Edit track details"]</ModalTitle>
-            <CloseButton Clicked="() => modalTrackEdit.Hide()" />
-        </ModalHeader>
-        <ModalBody>
-            @if ((editTrack != null) && (editTrack.Clone != null))
-            {
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
-                            <NumericEdit TValue="uint?" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="editTrack.Clone.Position" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Artist"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))" @bind-Text="editTrack.Clone.Artist" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Title"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))" @bind-Text="editTrack.Clone.Title" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Begin"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editTrack.Clone.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Begin = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["End"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editTrack.Clone.End)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.End = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Length"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editTrack.Clone.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.Length = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Flags"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        @foreach (var flag in Flag.AvailableFlags)
-                        {
-                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
-                                <Check TValue="bool" Checked="editTrack.Clone.Flags.Contains(flag)" CheckedChanged="(value) => editTrack.Clone.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Check>
-                            </Tooltip>
-                        }
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PreGap"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editTrack.Clone.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PreGap = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PostGap"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editTrack.Clone.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
-                            <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" Class="@BootstrapUtility.GetCSSClassAlert(editTrack.Clone, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editTrack.Clone.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editTrack.Clone.PostGap = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-            }
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="EditTrackModalSaveClicked">@_localizer["Save changes"]</Button>
-            <Button Color="Color.Secondary" Clicked="() => modalTrackEdit.Hide()">@_localizer["Abort"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+<EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    ModalDialog modalDialog = default!;
-    Modal modalTrackEdit = default!;
-    IFluentDisplay selectionDisplay = Display.None;
-    List<Track> selectedTracks = new List<Track>();
-    CloneTrackModel? editTrack;
+    //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
+    ModalDialog? modalDialog;
+    EditTrackModal? modalTrackEdit;
+    List<Track> selectedTracks = new();
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Track? lastTrack;
+    IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
+    IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
+    Boolean _trackSelectionVisible = false;
 
     [Parameter]
-    public Boolean TrackSelectionVisible { get; set; } = false;
+    public Boolean TrackSelectionVisible 
+    { 
+        get => _trackSelectionVisible; 
+        set
+        {
+            _trackSelectionVisible = value;
+            selectedTracks = new();
+        } 
+    }
 
     [Parameter]
     public AudioPlayer? AudioPlayer { get; set; }
-
-    public class CloneTrackModel : IDisposable
-    {
-        public Track? Track { get; private set; }
-        public Track? Clone { get; private set; }
-
-        public CloneTrackModel(Track track)
-        {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
-            Track = track;
-            Clone = track.Clone();
-        }
-
-        public void Dispose()
-        {
-            Clone = null;
-            Track = null;
-        }
-
-        public void ApplyChanges()
-        {
-            if ((Track != null) && (Clone != null))
-            {
-                Track.CopyValues(Clone);
-            }
-        }
-    }
 
     public Cuesheet Cuesheet
     {
@@ -473,16 +407,18 @@ along with Foobar.  If not, see
         _traceChangeManager.TraceChanges(newTrack);
     }
 
-    private void SwitchTrackSelectionVisible()
+    void OnDeleteTrackClicked(Track track)
     {
-        TrackSelectionVisible = !TrackSelectionVisible;
-        if (TrackSelectionVisible)
+        Cuesheet.RemoveTrack(track);
+        selectedTracks.Remove(track);
+    }
+
+    async Task EditSelectedTracksClicked()
+    {
+        if (modalTrackEdit != null)
         {
-            selectionDisplay = Display.TableCell;
-        }
-        else
-        {
-            selectionDisplay = Display.None;
+            modalTrackEdit.TracksToEdit = selectedTracks;
+            await modalTrackEdit.Show();
         }
     }
 
@@ -492,29 +428,36 @@ along with Foobar.  If not, see
         selectedTracks.Clear();
     }
 
-    private void OnDeleteAllTracksClicked()
+    async Task OnDeleteAllTracksClicked()
     {
         _logger.LogInformation("OnDeleteAllTracksClicked");
         //Display a confirm warning
-        modalDialog.Title = _localizer["Confirmation required"];
-        modalDialog.Text = _localizer["Do you really want to delete all tracks? This can not be reversed."];
-        modalDialog.ModalSize = ModalSize.Small;
-        modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-        void deleteTracksDelegate(object? sender, EventArgs args)
+        if (modalDialog != null)
         {
-            _logger.LogInformation("deleteTracksDelegate");
-            Cuesheet.RemoveTracks(Cuesheet.Tracks);
-            modalDialog.Confirmed -= deleteTracksDelegate;
-            StateHasChanged();
-        };
-        modalDialog.Confirmed += deleteTracksDelegate;
-        modalDialog.ShowModal();
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Do you really want to delete all tracks?"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            void deleteTracksDelegate(object? sender, EventArgs args)
+            {
+                _logger.LogInformation("deleteTracksDelegate");
+                Cuesheet.RemoveTracks(Cuesheet.Tracks);
+                selectedTracks.Clear();
+                modalDialog.Confirmed -= deleteTracksDelegate;
+                StateHasChanged();
+            };
+            modalDialog.Confirmed += deleteTracksDelegate;
+            await modalDialog.ShowModal();
+        }
     }
 
-    private void EditTrackModal(Track trackToEdit)
+    async Task EditTrackModal(Track trackToEdit)
     {
-        editTrack = new CloneTrackModel(trackToEdit);
-        modalTrackEdit.Show();
+        if (modalTrackEdit != null)
+        {
+            modalTrackEdit.TracksToEdit = new List<Track>() { trackToEdit };
+            await modalTrackEdit.Show();
+        }
     }
 
     private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
@@ -529,6 +472,11 @@ along with Foobar.  If not, see
         }
     }
 
+    bool SelectAllIndeterminate
+    {
+        get => selectedTracks.Count > 0 && selectedTracks.Count < Cuesheet.Tracks.Count;
+    }
+
     private void SelectedTrackChanged(Track track, bool selected)
     {
         if (selected)
@@ -539,15 +487,38 @@ along with Foobar.  If not, see
         {
             selectedTracks.Remove(track);
         }
+    }   
+
+    private void OnSelectAllTracks(bool select)
+    {
+        if (select)
+        {
+            foreach(var track in Cuesheet.Tracks)
+            {
+                if (!selectedTracks.Contains(track))
+                {
+                    selectedTracks.Add(track);
+                }
+            }
+        }
+        else
+        {
+            selectedTracks.Clear();
+        }
     }
 
-    private async Task CopyTrackClicked(Track trackToCopy)
+    bool AllTracksSelected
+    {
+        get => selectedTracks.Count > 0 && selectedTracks.Count == Cuesheet.Tracks.Count;
+    }
+
+    async Task CopyTrackClicked(Track trackToCopy)
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var copy = new Track(trackToCopy);
         Cuesheet.AddTrack(copy, options);
         _traceChangeManager.TraceChanges(copy);
-        EditTrackModal(copy);
+        await EditTrackModal(copy);
     }
 
     private String? GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
@@ -572,16 +543,6 @@ along with Foobar.  If not, see
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
         setAction(result);
-    }
-
-    private void EditTrackModalSaveClicked()
-    {
-        if (editTrack != null)
-        {
-            editTrack.ApplyChanges();
-            editTrack = null;
-            modalTrackEdit.Hide();
-        }
     }
 
     private async Task OnPlayTrackClicked(Track track)
@@ -622,6 +583,7 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
+        selectedTracks.Clear();
         StateHasChanged();
     }
 
@@ -655,5 +617,48 @@ along with Foobar.  If not, see
     private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackArtists = artists;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackTitles = titles;
+            }
+        }
+    }
+
+    async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
+    {
+        switch (_sessionStateContainer.CurrentViewMode)
+        {
+            case ViewMode.ViewModeFull:
+            case ViewMode.ViewModeImport:
+                var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+                if (trackDetails != null)
+                {
+                    track.Length = trackDetails.Length;
+                    if (String.IsNullOrEmpty(track.Artist))
+                    {
+                        track.Artist = trackDetails.Artist;
+                    }
+                }
+                break;
+        }
     }
 }

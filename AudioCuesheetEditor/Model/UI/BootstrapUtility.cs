@@ -19,32 +19,35 @@ namespace AudioCuesheetEditor.Model.UI
 {
     public class BootstrapUtility
     {
-        public static String GetCSSClassAlert(Validateable validateable, String property)
+        public static String GetCSSClassAlert(Validateable? validateable, String property)
         {
             String cssClass = String.Empty;
-            var validationErrors = validateable.GetValidationErrorsFiltered(property);
-            if (validationErrors.Count >= 1)
+            if (validateable != null)
             {
-                if (validationErrors.Count > 1)
+                var validationErrors = validateable.GetValidationErrorsFiltered(property);
+                if (validationErrors.Count >= 1)
                 {
-                    if (validateable.GetValidationErrorsFiltered(property, ValidationErrorFilterType.ErrorOnly).Count >= 1)
+                    if (validationErrors.Count > 1)
                     {
-                        cssClass = "alert-danger";
+                        if (validateable.GetValidationErrorsFiltered(property, ValidationErrorFilterType.ErrorOnly).Count >= 1)
+                        {
+                            cssClass = "alert-danger";
+                        }
+                        else
+                        {
+                            cssClass = "alert-warning";
+                        }
                     }
                     else
                     {
-                        cssClass = "alert-warning";
-                    }
-                }
-                else
-                {
-                    if (validationErrors.First().Type == ValidationErrorType.Error)
-                    {
-                        cssClass = "alert-danger";
-                    }
-                    if (validationErrors.First().Type == ValidationErrorType.Warning)
-                    {
-                        cssClass = "alert-warning";
+                        if (validationErrors.First().Type == ValidationErrorType.Error)
+                        {
+                            cssClass = "alert-danger";
+                        }
+                        if (validationErrors.First().Type == ValidationErrorType.Warning)
+                        {
+                            cssClass = "alert-warning";
+                        }
                     }
                 }
             }

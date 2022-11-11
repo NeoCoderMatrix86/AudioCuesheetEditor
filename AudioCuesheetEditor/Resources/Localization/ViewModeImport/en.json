@@ -48,11 +48,16 @@
     "Import Options": "Import options",
     "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here",
     "Enter custom timespan format here": "You can enter a custom format for timespan here. Details can be found in help.",
-    "Customized timespan format": "Costumized timespan format",
+    "Customized timespan format import": "Timespan format for import",
     "Days": "Days",
     "Hours": "Hours",
     "Minutes": "Minutes",
     "Seconds": "Seconds",
-    "Milliseconds": "Milliseconds"
+    "Milliseconds": "Milliseconds",
+    "Reset import options": "Reset import options",
+    "Reload import options": "Reload import options",
+    "Reset import options to defaults": "Reset import options to defaults",
+    "Please confirm": "Please confirm",
+    "Do you really want to reset the import options to default? This can not be undone!": "Do you really want to reset the import options to default? This can not be undone!"
   }
 }

@@ -114,8 +114,8 @@ along with Foobar.  If not, see
 
     HotKeysContext hotKeysContext = default!;
 
-    ModalDialog modalDialog = default!;
-    AudioPlayer audioPlayer = default!;
+    ModalDialog? modalDialog;
+    AudioPlayer? audioPlayer;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     protected override async Task OnInitializedAsync()
@@ -146,18 +146,20 @@ along with Foobar.  If not, see
         }
     }
 
-    private Task OnEnterKeyDown()
+    async Task OnEnterKeyDown()
     {
-        if (modalDialog.Visible)
+        if ((modalDialog != null) && (modalDialog.Visible))
         {
-            modalDialog.Confirm();
+            await modalDialog.Confirm();
         }
-        return Task.CompletedTask;
     }
 
     private void CurrentViewModeChanged(object? sender, EventArgs args)
     {
-        Task.Run(async () => await audioPlayer.Reset());
+        if (audioPlayer != null)
+        {
+            Task.Run(async () => await audioPlayer.Reset());
+        }
         StateHasChanged();
     }
 

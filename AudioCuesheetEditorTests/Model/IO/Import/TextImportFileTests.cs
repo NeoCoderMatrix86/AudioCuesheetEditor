@@ -26,6 +26,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditorTests.Properties;
 using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Model.Options;
 
 namespace AudioCuesheetEditor.Model.IO.Import.Tests
 {
@@ -177,8 +178,9 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
 
             File.Delete(tempFile);
 
-            var timespanFormat = new TimeSpanFormat() { Scheme = "(?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})" };
-            textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug_213), timeSpanFormat: timespanFormat);
+            var importOptions = new ImportOptions();
+            importOptions.TimeSpanFormat.Scheme = "(?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})";
+            textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug_213), importOptions);
             textImportFile.TextImportScheme.SchemeCuesheet = "(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'.{1,})";
             textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
             Assert.IsNull(textImportFile.AnalyseException);

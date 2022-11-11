@@ -10,6 +10,7 @@
     "Cataloguenumber": "Cataloguenumber",
     "Enter cd artist here": "Enter CD artist here",
     "Enter cd title here": "Enter CD title here",
-    "Enter cataloguenumber here": "Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number."
+    "Enter cataloguenumber here": "Enter the catalogue number of the cuesheet. Catalogue number is a 13 decimal digits number.",
+    "The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!": "The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"
   }
 }

@@ -36,19 +36,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public EventHandler? AnalysisFinished;
 
         private TextImportScheme textImportScheme;
+        private TimeSpanFormat? timeSpanFormat;
         private bool disposedValue;
 
-        public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null, TimeSpanFormat? timeSpanFormat = null)
+        public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null)
         {
-            if (timeSpanFormat == null)
-            {
-                TimeSpanFormat = new TimeSpanFormat();
-            }
-            else
-            {
-                TimeSpanFormat = timeSpanFormat;
-            }
-            TimeSpanFormat.SchemeChanged += TimeSpanFormat_SchemeChanged;
             textImportScheme = new TextImportScheme();
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);
@@ -58,12 +50,17 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 lines.Add(reader.ReadLine());
             }
             FileContent = lines.AsReadOnly();
+            TimeSpanFormat = new TimeSpanFormat();
             if (importOptions == null)
             {
                 TextImportScheme = TextImportScheme.DefaultTextImportScheme;
             }
             else
             {
+                if (importOptions.TimeSpanFormat != null)
+                {
+                    TimeSpanFormat = importOptions.TimeSpanFormat;
+                }
                 TextImportScheme = importOptions.TextImportScheme;
             }
         }
@@ -96,7 +93,26 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public Cuesheet? Cuesheet { get; private set; }
 
-        public TimeSpanFormat TimeSpanFormat { get; private set; }
+        public TimeSpanFormat TimeSpanFormat 
+        {
+            get 
+            { 
+                timeSpanFormat ??= new TimeSpanFormat();
+                return timeSpanFormat;
+            }
+            set
+            {
+                if (timeSpanFormat != null)
+                {
+                    timeSpanFormat.SchemeChanged -= TimeSpanFormat_SchemeChanged;
+                }
+                timeSpanFormat = value;
+                if (timeSpanFormat != null)
+                {
+                    timeSpanFormat.SchemeChanged += TimeSpanFormat_SchemeChanged;
+                }
+            }
+        }
 
         private void TextImportScheme_SchemeChanged(object? sender, string e)
         {
@@ -186,9 +202,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (property != null)
                             {
                                 SetValue(entity, property, group.Value);
-                                recognizedLine = recognizedLine.Substring(0, group.Index + (13 * (groupCounter - 1)))
-                                    + String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
-                                    + recognizedLine.Substring(group.Index + (13 * (groupCounter - 1)) + group.Length);
+                                recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
+                                    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
+                                    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
                             }
                             else
                             {

@@ -49,11 +49,16 @@
     "Import Options": "Importoptionen",
     "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben",
     "Enter custom timespan format here": "Hier können Sie bei Bedarf ein angepasstes Format für Zeitspannen eingeben. Details können der Hilfe entnommen werden.",
-    "Customized timespan format": "Angepasstes Zeitspannenformat",
+    "Customized timespan format import": "Zeitspannenformat für Import",
     "Days": "Tage",
     "Hours": "Stunden",
     "Minutes": "Minuten",
     "Seconds": "Sekunden",
-    "Milliseconds": "Millisekunden"
+    "Milliseconds": "Millisekunden",
+    "Reset import options": "Optionen zurücksetzen",
+    "Reload import options": "Optionen erneut laden",
+    "Reset import options to defaults": "Optionen auf Standardeinstellung zurücksetzen",
+    "Please confirm": "Bestätigung erforderlich",
+    "Do you really want to reset the import options to default? This can not be undone!": "Möchten Sie wirklich die Import Optionen zurücksetzen? Dies kann nicht rückgängig gemacht werden!"
   }
 }

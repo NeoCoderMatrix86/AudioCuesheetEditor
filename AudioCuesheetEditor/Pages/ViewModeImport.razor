@@ -144,13 +144,13 @@ along with Foobar.  If not, see
                                     <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                    <Field Horizontal>
+                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
                                             <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
                                                 @_localizer["Textimportscheme cuesheet"]
                                             </Tooltip>
                                         </FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
                                                     <TextEdit id="TextImportScheme.SchemeCuesheet" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
@@ -173,13 +173,13 @@ along with Foobar.  If not, see
                                             </Addons>
                                         </FieldBody>
                                     </Field>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                    <Field Horizontal>
+                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                             <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
                                                 @_localizer["Textimportscheme track"]
                                             </Tooltip>
                                         </FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
                                                     <TextEdit id="TextImportScheme.SchemeTracks" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
@@ -202,13 +202,13 @@ along with Foobar.  If not, see
                                             </Addons>
                                         </FieldBody>
                                     </Field>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">
+                                    <Field Horizontal>
+                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                             <Tooltip Text="@_localizer["Enter custom timespan format here"]">
-                                                @_localizer["Customized timespan format"]
+                                                @_localizer["Customized timespan format import"]
                                             </Tooltip>
                                         </FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
+                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
                                                     <TextEdit Id="Timespanformat.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" @bind-Text="_sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme">
@@ -229,6 +229,15 @@ along with Foobar.  If not, see
                                                     </Dropdown>
                                                 </Addon>
                                             </Addons>
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal>
+                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
+                                            @_localizer["Reset import options"]
+                                        </FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                                            <Button Color="Color.Warning" Clicked="OnReloadImportOptionsClicked">@_localizer["Reload import options"]</Button>
+                                            <Button Color="Color.Danger" Clicked="OnResetImportOptionsClicked">@_localizer["Reset import options to defaults"]</Button>
                                         </FieldBody>
                                     </Field>
                                 </CollapseBody>
@@ -279,8 +288,8 @@ along with Foobar.  If not, see
     Boolean importFileContentVisible = true;
     Boolean importOptionsVisible = true;
     Boolean selectFilesCompleted = false;
-    Alert alertInvalidFile = default!;
-    ModalDialog modalDialog = default!;
+    Alert? alertInvalidFile;
+    ModalDialog? modalDialog;
     List<String> invalidTextImportFileNames = new();
     List<String> invalidCuesheetfileNames = new();
     List<String> invalidProjectfileNames = new();
@@ -330,7 +339,7 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    private Task OnSelectedStepChanged(String name)
+    async Task OnSelectedStepChanged(String name)
     {
         switch (name)
         {
@@ -345,16 +354,17 @@ along with Foobar.  If not, see
                 }
                 else
                 {
-                    modalDialog.Title = _localizer["Not possible!"];
-                    modalDialog.Text = _localizer["Please select files for import before going to validation!"];
-                    modalDialog.ModalSize = ModalSize.Small;
-                    modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                    modalDialog.ShowModal();
+                    if (modalDialog != null)
+                    {
+                        modalDialog.Title = _localizer["Not possible!"];
+                        modalDialog.Text = _localizer["Please select files for import before going to validation!"];
+                        modalDialog.ModalSize = ModalSize.Small;
+                        modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                        await modalDialog.ShowModal();
+                    }
                 }
                 break;
         }
-
-        return Task.CompletedTask;
     }
 
     private async Task OnTextImportFileChanged(FileChangedEventArgs e)
@@ -461,12 +471,11 @@ along with Foobar.  If not, see
             if (CuesheetController.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == true)
             {
                 var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var stream = file.OpenReadStream();
                 MemoryStream memoryStream = new MemoryStream();
                 await stream.CopyToAsync(memoryStream);
                 stream.Close();
-                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options, applicationOptions.TimeSpanFormat);
+                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options);
             }
             if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
             {
@@ -491,18 +500,23 @@ along with Foobar.  If not, see
         }
     }
 
-    private Task OnEnterKeyDown()
+    async Task OnEnterKeyDown()
     {
-        if (modalDialog.Visible)
+        if ((modalDialog != null) && (modalDialog.Visible))
         {
-            modalDialog.Confirm();
+            await modalDialog.Confirm();
         }
-        return Task.CompletedTask;
     }
 
     private async Task ImportData()
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        if (_sessionStateContainer.TextImportFile != null)
+        {
+            //Save import options (values are inside the TextImportFile)
+            var importOptions = new ImportOptions(_sessionStateContainer.TextImportFile);
+            await _localStorageOptionsProvider.SaveOptions(importOptions);
+        }
         _sessionStateContainer.StartImportCuesheet(options);
         _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
         StateHasChanged();
@@ -516,5 +530,52 @@ along with Foobar.  If not, see
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    async Task OnResetImportOptionsClicked()
+    {
+        if (modalDialog != null)
+        {
+            modalDialog.Title = _localizer["Please confirm"];
+            modalDialog.Text = _localizer["Do you really want to reset the import options to default? This can not be undone!"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            modalDialog.Confirmed += OnModalDialogConfirmed;
+            await modalDialog.ShowModal();
+        }
+    }
+
+    void OnModalDialogConfirmed(object? sender, EventArgs args)
+    {
+        ResetImportOptions().ConfigureAwait(false);
+        if (modalDialog != null)
+        {
+            modalDialog.Confirmed -= OnModalDialogConfirmed;
+        }
+    }
+
+    async Task ResetImportOptions()
+    {
+        var newOptions = new ImportOptions();
+        await _localStorageOptionsProvider.SaveOptions(newOptions);
+        await OnReloadImportOptionsClicked();
+    }
+
+    async Task OnReloadImportOptionsClicked()
+    {
+        var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+        if (_sessionStateContainer.TextImportFile != null)
+        {
+            if (options.TimeSpanFormat != null)
+            {
+                _sessionStateContainer.TextImportFile.TimeSpanFormat = options.TimeSpanFormat;
+            }
+            else
+            {
+                _sessionStateContainer.TextImportFile.TimeSpanFormat = new TimeSpanFormat();
+            }
+            _sessionStateContainer.TextImportFile.TextImportScheme = options.TextImportScheme;
+            StateHasChanged();
+        }
     }
 }
