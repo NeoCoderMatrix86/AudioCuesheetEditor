@@ -33,6 +33,8 @@ along with Foobar.  If not, see
         <br />
         <Blazorise.Link To="#features">@_localizer["Features"]</Blazorise.Link>
         <br />
+        <Blazorise.Link To="#userInterface">@_localizer["User Interface"]</Blazorise.Link>
+        <br />
         <Blazorise.Link To="#validation">@_localizer["Validation"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#trackLinking">@_localizer["Track linking"]</Blazorise.Link>
@@ -53,60 +55,65 @@ along with Foobar.  If not, see
         <br />
         <Row>
             <Column><Heading id="headingIntroduction" Size="HeadingSize.Is2">@_localizer["Introduction"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         <Row>
             <Column><Heading id="whatIsAudioCuesheetEditor" Size="HeadingSize.Is3">@_localizer["What is AudioCuesheetEditor"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["What is AudioCuesheetEditor helptext"])
         <Row>
             <Column><Heading id="features" Size="HeadingSize.Is3">@_localizer["Features"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Features helptext"])
         <Row>
             <Column><Heading id="validation" Size="HeadingSize.Is3">@_localizer["Validation"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Validation helptext"])
         <Row>
+            <Column><Heading id="userInterface" Size="HeadingSize.Is3">@_localizer["User Interface"]</Heading></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+        </Row>
+        @((MarkupString)_localizer["User Interface helptext"])
+        <Row>
             <Column><Heading id="trackLinking" Size="HeadingSize.Is3">@_localizer["Track linking"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Track linking helptext"])
         <Row>
             <Column><Heading id="headingCreateCuesheet" Size="HeadingSize.Is2">@_localizer["Create cuesheet"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Create cuesheet helptext"])
         <Row>
             <Column><Heading id="headingImportOfFiles" Size="HeadingSize.Is2">@_localizer["Import of files"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         <Row>
             <Column><Heading id="importOfTextFiles" Size="HeadingSize.Is3">@_localizer["Import of textfiles"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Import of textfiles helptext"])
         <Row>
             <Column><Heading id="importOfCuesheetFiles" Size="HeadingSize.Is3">@_localizer["Import of cuesheetfiles"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Import of cuesheetfiles helptext"])
         <Row>
             <Column><Heading id="headingExportOfData" Size="HeadingSize.Is2">@_localizer["Export of data"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Export of data helptext"])
         <Row>
             <Column><Heading id="headingRecordMode" Size="HeadingSize.Is2">@_localizer["Recordmode"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Recordmode helptext"])
         <Row>
             <Column><Heading id="headingOptions" Size="HeadingSize.Is2">@_localizer["Options"]</Heading></Column>
-            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="/Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Options helptext"])
     </LayoutContent>
