@@ -1,6 +1,55 @@
 # Changelog
 
+## [Unreleased](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/HEAD)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.1.0...HEAD)
+
+**Implemented enhancements:**
+
+- Add "Select All" to tracks table [\#252](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/252)
+- Divide Options [\#239](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/239)
+- Remove Warnings for Nullable on .razor components [\#236](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/236)
+- Batch edit for properties [\#216](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/216)
+- Load inforamtion from musicbrainz [\#208](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/208)
+- User editable design [\#35](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/35)
+
+**Fixed bugs:**
+
+- Undo multiple times doesn't work [\#267](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/267)
+- Multiple Edit with dynamic value subtract doesn't work as expected [\#265](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/265)
+- Linked Track Begin is not set if editing previous Track End [\#261](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/261)
+- Edit track dialog doesn't update track [\#258](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/258)
+- Restored tracks are not linked like they were deleted [\#256](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/256)
+- Language is always en-US [\#249](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/249)
+
+**Closed issues:**
+
+- Update user documentation for version 3.2 [\#238](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/238)
+
+**Merged pull requests:**
+
+- 238 update user documentation for version 32 [\#273](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/273) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 267 undo multiple times doesnt work [\#272](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/272) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Moved ImportOptions to ViewModeImport [\#268](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/268) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 265 multiple edit with dynamic value subtract doesnt work as expected [\#266](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/266) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Corrected CopyValues to use public setters default [\#264](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/264) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Updated nuget references [\#263](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/263) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added Select All toggle [\#262](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/262) ([etroo44](https://github.com/etroo44))
+- 216 batch edit for properties [\#260](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/260) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update Track.cs [\#259](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/259) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 236 remove warnings for nullable on razor components [\#257](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/257) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update 236-remove-warnings-for-nullable-on-razor-components [\#255](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/255) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 236 remove warnings for nullable on razor components [\#254](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/254) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 208 load inforamtion from musicbrainz [\#253](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/253) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Deploy V3.0.0 [\#228](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/228) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Deploy v2.8.0 [\#201](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/201) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Deploy Version 2.7.0 [\#197](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/197) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Deploy Version 2.7.0 [\#196](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/196) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Updated Changelog [\#184](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/184) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v3.1.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.1.0) (2022-09-27)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.0.0...v3.1.0)
 
 **Implemented enhancements:**
 
@@ -17,7 +66,30 @@
 - Textimport fails [\#214](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/214)
 - Import textfile times are not recognized correctly [\#213](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/213)
 
+**Closed issues:**
+
+- Update user documentation Version 3.1 [\#237](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/237)
+
+**Merged pull requests:**
+
+- Updated Changelog [\#247](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/247) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Updated screenshots for help [\#246](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/246) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Enhanced standard regular expressions [\#245](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/245) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Bugfix for reload if track is added [\#244](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/244) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update library.js [\#243](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/243) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update ViewModeImport.razor [\#241](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/241) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 209 treat aabb input as mmss not hhmm in length [\#240](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/240) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 231 filecontent not displayed when using an invalid import scheme [\#235](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/235) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- - added missing localization [\#234](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/234) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Set file extension always [\#230](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/230) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Set file extension always [\#229](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/229) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Updated Changelog [\#227](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/227) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update generateChangelog.yml [\#226](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/226) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update generateChangelog.yml [\#225](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/225) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v3.0.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.0.0) (2022-08-30)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.8.0...v3.0.0)
 
 **Implemented enhancements:**
 
@@ -31,13 +103,35 @@
 - Sample\_Inputfile.txt can not be imported [\#217](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/217)
 - Audio file length is not set to last track [\#204](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/204)
 
+**Merged pull requests:**
+
+- \#206 redesign help [\#224](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/224) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update from v3.x [\#222](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/222) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#217 Sample Inputfile can not be imported [\#221](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/221) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#206 redesign help [\#219](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/219) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Edit file content during textimport [\#215](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/215) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Set end of track when duration of audiofile is available [\#212](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/212) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Redesign import [\#211](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/211) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#187 detach import view [\#210](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/210) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- V3.x [\#207](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/207) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#199 update to .net6 [\#205](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/205) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update V3 with changes from previous versions [\#202](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/202) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.8.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.8.0) (2022-03-15)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.7.0...v2.8.0)
 
 **Closed issues:**
 
 - Create documentation for  Add Undo/Redo [\#198](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/198)
 
+**Merged pull requests:**
+
+- Improved Undo/Redo [\#200](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/200) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.7.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.7.0) (2022-03-08)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.6.0...v2.7.0)
 
 **Implemented enhancements:**
 
@@ -49,7 +143,17 @@
 - Last track end not set, when removing a track [\#191](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/191)
 - Samples can not be opened [\#186](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/186)
 
+**Merged pull requests:**
+
+- Registered MediaStop [\#195](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/195) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Switched link to samples \(hoping this will work for github\) [\#194](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/194) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Recalculate Length when Track\(s\) are removed [\#193](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/193) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#145 add undo/redo [\#192](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/192) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update Redo/Undo Branch [\#185](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/185) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.6.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.6.0) (2022-02-09)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.5.0...v2.6.0)
 
 **Implemented enhancements:**
 
@@ -59,7 +163,14 @@
 
 - Playback doesn't stop when starting record [\#179](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/179)
 
+**Merged pull requests:**
+
+- Added possibility for selecting record time sensitivity [\#182](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/182) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#179 playback doesn't stop when starting record [\#181](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/181) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.5.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.5.0) (2021-04-16)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.4.0...v2.5.0)
 
 **Implemented enhancements:**
 
@@ -71,7 +182,16 @@
 
 - Reset Cuesheet doesn't reset audio length [\#172](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/172)
 
+**Merged pull requests:**
+
+- Added frames support for CuesheetFile.cs [\#177](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/177) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Reset duration if cuesheet is reset [\#176](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/176) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#114 countdown start for record mode [\#175](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/175) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added beforeunload event [\#174](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/174) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.4.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.4.0) (2021-03-27)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.3.0...v2.4.0)
 
 **Implemented enhancements:**
 
@@ -85,7 +205,18 @@
 - Tracks not exported by their position [\#166](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/166)
 - Handling of linked tracks incorrect [\#159](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/159)
 
+**Merged pull requests:**
+
+- Added placeholders for date/datetime/time [\#171](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/171) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#105 mark multiple tracks for delete [\#170](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/170) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#166 tracks not exported by their position [\#169](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/169) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Made Options use Tabs [\#165](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/165) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#159 handling of linked tracks incorrect [\#164](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/164) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#149 switch localizer to blazorise [\#163](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/163) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.3.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.3.0) (2021-03-16)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v2.2.0...v2.3.0)
 
 **Implemented enhancements:**
 
@@ -104,7 +235,81 @@
 - Record view not usable on firefox [\#138](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/138)
 - Audio file name gets saved in options with file extension [\#137](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/137)
 
+**Merged pull requests:**
+
+- Bugfix for referenced linked tracks on deserialization [\#158](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/158) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#152 position not calculated correctly if using up/down [\#157](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/157) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Removed all code for audio recoding \(ffmpeg wasm is experimental currently\) [\#155](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/155) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Set linked track again if removing track [\#153](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/153) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Save AudioFileNameRecording and ProjectFileName with correct extensions [\#151](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/151) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Save Index Cuesheet in SessionStateContainer [\#150](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/150) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added processing hints view to recording view [\#148](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/148) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Bugfix for firing Confirmed if modal has been aborted [\#147](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/147) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#133 native file format [\#144](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/144) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#128 add changelog [\#136](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/136) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Fix text edit fields for time inputs [\#134](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/134) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Correctly open and close import files tab [\#132](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/132) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Display timespan without milliseconds [\#130](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/130) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#103 help page scalable [\#127](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/127) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Catch JSONException during Deserialize of ApplicationOptions [\#126](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/126) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#10 extend textimport [\#125](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/125) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added linking Track with previous Track [\#119](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/119) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added ATL library for getting audio file duration [\#117](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/117) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#67 add support for multiple record formats [\#116](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/116) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Handle media recorder state when stopping [\#113](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/113) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#109 record mode tracks are not correctly calculated [\#112](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/112) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Capture AudioFile changed in AudioPlayer [\#110](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/110) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#8 implement postgap like pregap for track [\#107](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/107) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Corrected GUI handling of tracks [\#104](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/104) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#97 check track overlapping and position [\#100](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/100) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added duplicate button [\#98](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/98) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added new Event for handling rank property changes and react to this in Cuesheet [\#96](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/96) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Reset audio permission when switching viewmode back to normal [\#94](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/94) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Use Pattern for textedit with timespans based on culture [\#91](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/91) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Implement Flags for Track [\#90](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/90) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added external library to calculate duration [\#89](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/89) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added external library to calculate duration [\#88](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/88) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added event for OnEnd of Howl [\#87](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/87) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Use async OnInitializedAsync for setting up recording [\#85](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/85) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Use async OnInitializedAsync for setting up recording [\#84](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/84) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Fixed menu for smartphone view [\#83](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/83) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Production [\#79](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/79) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Deploy Version 2.0 [\#77](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/77) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added default profiles for mixcloud and youtube [\#76](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/76) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update Index.razor [\#74](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/74) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- New view recordmode as sub component because of render performance [\#73](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/73) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Corrected breakpoints for Smartphone\(s\) [\#70](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/70) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update favicon.ico [\#69](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/69) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added help for record mode [\#68](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/68) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#49 Add a record mode [\#66](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/66) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Switched to Version 2.0 [\#65](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/65) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Fixed Bug in Cuesheetfile import [\#61](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/61) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added Toolbelt.Blazor.Hotkeys libary for keyboard shortcuts [\#60](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/60) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update AudioPlayer.razor [\#58](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/58) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Bugfix for import of textfiles [\#56](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/56) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added logging [\#55](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/55) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Version 1.2 [\#52](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/52) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Reworked Validation [\#51](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/51) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added CatalogueNumber and CDTextfile to ExportProfile [\#50](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/50) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Redesigned validation messages in GUI [\#48](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/48) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update Cuesheet.cs [\#44](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/44) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added files upload for error report [\#42](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/42) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- First approach to use options [\#39](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/39) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Version 1.1 [\#37](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/37) ([tflynt91](https://github.com/tflynt91))
+- Version 1.1 [\#34](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/34) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Implement CDTextfile [\#32](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/32) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#28 reduce code TODOs [\#29](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/29) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#25 add documentation for user [\#27](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/27) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- \#3 GUI redesign [\#24](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/24) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Updated Howler 2.1.2 to 2.2.1 [\#21](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/21) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added local error reporting [\#20](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/20) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- First Version with audio player [\#18](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/18) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Fix Import if one line doesn't match input format [\#16](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/16) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Add export profiles \#2 [\#12](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/12) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v2.2.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v2.2.0) (2021-02-25)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/9d9d41cd41de8626b55c7392d014b2504fa1fa25...v2.2.0)
 
 **Implemented enhancements:**
 
