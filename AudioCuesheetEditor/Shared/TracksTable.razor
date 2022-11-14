@@ -118,7 +118,7 @@ along with Foobar.  If not, see
             <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
             <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
             <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-            <TableHeaderCell>@_localizer["Length"]</TableHeaderCell>
+            <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
             @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
             {
                 <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Hints"]</TableHeaderCell>
@@ -306,7 +306,7 @@ along with Foobar.  If not, see
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
-                        <TableRowCell>
+                        <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
                                     <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
