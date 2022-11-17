@@ -154,6 +154,11 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
             textImportFile.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             var cuesheet = new Cuesheet();
+            Boolean eventFired = false;
+            cuesheet.TrackAdded += delegate
+            {
+                eventFired = true;
+            };
             manager.TraceChanges(cuesheet);
             Assert.IsFalse(manager.CanUndo);
             Assert.IsFalse(manager.CanRedo);
@@ -173,6 +178,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.AreEqual("DJFreezeT", cuesheet.Artist);
             Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
             Assert.AreNotEqual(0, cuesheet.Tracks.Count);
+            Assert.IsFalse(eventFired);
         }
 
         [TestMethod()]
