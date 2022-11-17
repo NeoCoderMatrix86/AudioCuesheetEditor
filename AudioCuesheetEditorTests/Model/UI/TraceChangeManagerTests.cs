@@ -306,6 +306,11 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
+            var tracedObjectHistoryChangedFired = false;
+            manager.TracedObjectHistoryChanged += delegate
+            {
+                tracedObjectHistoryChangedFired = true;
+            };
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
@@ -343,6 +348,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             Assert.AreEqual(editedTrack.Title, track2.Title);
             Assert.AreEqual(editedTrack.Title, track3.Title);
             Assert.AreEqual(editedTrack.Title, track4.Title);
+            Assert.IsTrue(tracedObjectHistoryChangedFired);
             manager.Undo();
             Assert.IsNull(track1.End);
             Assert.IsNull(track2.End);
