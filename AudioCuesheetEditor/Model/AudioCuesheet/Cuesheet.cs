@@ -77,11 +77,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get { return tracks.AsReadOnly(); }
             private set 
-            { 
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(Tracks));
-                }
+            {
+                var previousValue = tracks;
                 tracks = value.ToList();
                 foreach (var track in tracks)
                 {
@@ -89,6 +86,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                     track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
                 }
+                FireEvents(previousValue, false, true, false);
             }
         }
         
@@ -199,6 +197,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        [JsonIgnore]
+        public Boolean IsImporting { get; private set; }
+
         /// <summary>
         /// Get the previous linked track of a track object
         /// </summary>
@@ -248,7 +249,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
+            if (IsImporting == false)
+            {
+                TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
+            }
         }
 
         public void RemoveTrack(Track track)
@@ -399,6 +403,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
             {
+                IsImporting = true;
                 //We are doing a bulk edit, so inform the TraceChangeManager
                 if (traceChangeManager != null)
                 {
@@ -409,6 +414,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     traceChangeManager.BulkEdit = false;
                 }
+                IsImporting = false;
             }
         }
 
