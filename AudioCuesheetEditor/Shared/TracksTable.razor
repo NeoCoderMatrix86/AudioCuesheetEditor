@@ -319,21 +319,21 @@ along with Foobar.  If not, see
                         <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                                    <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(track.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false" />
+                                    <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
                         <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                                    <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(track.End)" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false" />
+                                    <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
                         <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                                    <TextEdit MaskType="MaskType.RegEx" EditMask="^(\d[.][0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d[:][0-5]\d)|([0-2][0-3][:][0-5]\d)|[0-9:.]" id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(track.Length)" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
+                                    <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
                                 </Tooltip>
                             </Tooltip>
                         </TableRowCell>
@@ -547,23 +547,6 @@ along with Foobar.  If not, see
         Cuesheet.AddTrack(copy, options);
         _traceChangeManager.TraceChanges(copy);
         await EditTrackModal(copy);
-    }
-
-    private String? GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
-    {
-        String? resultString = null;
-        if ((timeSpan != null) && (timeSpan.HasValue))
-        {
-            if (removeMilliseconds == true)
-            {
-                resultString = timeSpan.Value.Subtract(new TimeSpan(0, 0, 0, 0, timeSpan.Value.Milliseconds)).ToString();
-            }
-            else
-            {
-                resultString = timeSpan.Value.ToString();
-            }
-        }
-        return resultString;
     }
 
     async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
