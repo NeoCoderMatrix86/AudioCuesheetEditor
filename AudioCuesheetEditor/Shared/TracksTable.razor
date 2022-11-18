@@ -365,6 +365,8 @@ along with Foobar.  If not, see
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
     Boolean _trackSelectionVisible = false;
+    //Saved locally because of performance (do not load everytime something is edited)
+    ApplicationOptions? applicationOptions;
 
     [Parameter]
     public Boolean TrackSelectionVisible 
@@ -395,6 +397,7 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
@@ -407,12 +410,15 @@ along with Foobar.  If not, see
         }
     }
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         _logger.LogDebug("OnInitializedAsync");
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
@@ -423,8 +429,6 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
         _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
         AttachToLastTrackValidateablePropertyChanged();
-
-        return base.OnInitializedAsync();
     }
 
     private async Task OnAddTrackClicked()
@@ -549,11 +553,11 @@ along with Foobar.  If not, see
         await EditTrackModal(copy);
     }
 
-    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
         setAction(result);
+        return Task.CompletedTask;
     }
 
     private async Task OnPlayTrackClicked(Track track)
@@ -670,6 +674,14 @@ along with Foobar.  If not, see
                     }
                 }
                 break;
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
         }
     }
 }
