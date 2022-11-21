@@ -431,12 +431,12 @@ along with Foobar.  If not, see
         AttachToLastTrackValidateablePropertyChanged();
     }
 
-    private async Task OnAddTrackClicked()
+    Task OnAddTrackClicked()
     {
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var newTrack = new Track();
-        Cuesheet.AddTrack(newTrack, options);
+        Cuesheet.AddTrack(newTrack, applicationOptions);
         _traceChangeManager.TraceChanges(newTrack);
+        return Task.CompletedTask;
     }
 
     void OnDeleteTrackClicked(Track track)
@@ -546,9 +546,8 @@ along with Foobar.  If not, see
 
     async Task CopyTrackClicked(Track trackToCopy)
     {
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var copy = new Track(trackToCopy);
-        Cuesheet.AddTrack(copy, options);
+        Cuesheet.AddTrack(copy, applicationOptions);
         _traceChangeManager.TraceChanges(copy);
         await EditTrackModal(copy);
     }
