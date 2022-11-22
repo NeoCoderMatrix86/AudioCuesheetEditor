@@ -62,13 +62,17 @@ namespace AudioCuesheetEditor.Extensions
             get { return importCuesheet; }
             set
             {
+                var previousValue = importCuesheet;
                 importCuesheet = value;
                 //When there is an audiofile from import, we use this file because it has an object url and gets duration, etc.
                 if ((importCuesheet != null) && (ImportAudioFile != null))
                 {
                     importCuesheet.Audiofile = ImportAudioFile;
                 }
-                ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
+                if (Object.Equals(previousValue, importCuesheet) == false)
+                {
+                    ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 

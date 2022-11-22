@@ -230,6 +230,7 @@ namespace AudioCuesheetEditor.Model.UI
                     if (bulkEditTracedChanges != null)
                     {
                         undoStack.Push(new TracedChanges(bulkEditTracedChanges));
+                        TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
                         bulkEditTracedChanges = null;
                     }
                 }

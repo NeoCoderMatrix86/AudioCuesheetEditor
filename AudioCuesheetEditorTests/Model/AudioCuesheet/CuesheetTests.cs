@@ -35,9 +35,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         {
             var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
+            var trackAddedFired = false;
+            cuesheet.TrackAdded += delegate
+            {
+                trackAddedFired = true;
+            };
             Assert.AreEqual(cuesheet.Tracks.Count, 0);
             cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
             Assert.AreEqual(cuesheet.Tracks.Count, 1);
+            Assert.IsTrue(trackAddedFired);
         }
 
         [TestMethod()]
