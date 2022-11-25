@@ -69,7 +69,7 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        hotKeysContext.Dispose();
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 
@@ -93,7 +93,7 @@ along with Foobar.  If not, see
     Modal? modalRef;
     ModalSize modalSize = ModalSize.Default;
     DialogMode mode = DialogMode.Confirm;
-    HotKeysContext hotKeysContext = default!;
+    HotKeysContext? hotKeysContext;
     Boolean modalRefVisible = false;
 
     public String Title = default!;

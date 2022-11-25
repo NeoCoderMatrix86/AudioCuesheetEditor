@@ -246,6 +246,8 @@ along with Foobar.  If not, see
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _traceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
+        _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.Ctrl, Keys.H, () => _navigationManager.NavigateTo("Help"))
@@ -262,12 +264,11 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        if (hotKeysContext != null)
-        {
-            hotKeysContext.Dispose();
-        }
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _traceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
+        _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
     }
 
     public void SetDisplayMenuBar(Boolean display)
@@ -465,6 +466,16 @@ along with Foobar.  If not, see
     }
 
     private void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void TraceChangeManager_UndoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void TraceChangeManager_RedoDone(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

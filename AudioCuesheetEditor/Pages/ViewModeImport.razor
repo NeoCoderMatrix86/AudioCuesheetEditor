@@ -296,7 +296,7 @@ along with Foobar.  If not, see
     List<String> invalidDropFileNames = new();
 
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
-    HotKeysContext hotKeysContext = default!;
+    HotKeysContext? hotKeysContext;
 
     public IReadOnlyCollection<String?>? FileContentRecognized
     {
@@ -316,10 +316,7 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        if (hotKeysContext != null)
-        {
-            hotKeysContext.Dispose();
-        }
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
