@@ -81,12 +81,10 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    
     public void Dispose()
     {
-        if (hotKeysContext != null)
-        {
-            hotKeysContext.Dispose();
-        }
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
     }
@@ -112,7 +110,7 @@ along with Foobar.  If not, see
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
 
-    HotKeysContext hotKeysContext = default!;
+    HotKeysContext? hotKeysContext;
 
     ModalDialog? modalDialog;
     AudioPlayer? audioPlayer;
@@ -128,8 +126,8 @@ along with Foobar.  If not, see
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
-            .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Undo())
-            .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Redo());
+            .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Undo())
+            .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Redo());
 
         _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
 
