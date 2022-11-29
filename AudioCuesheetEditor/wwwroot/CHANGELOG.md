@@ -1,6 +1,28 @@
 # Changelog
 
-## [v3.2.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.2.0)
+## [Unreleased](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/HEAD)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.2.0...HEAD)
+
+**Implemented enhancements:**
+
+- Save modal track edit with "Enter" key [\#270](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/270)
+- Sortable Track list [\#102](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/102)
+
+**Fixed bugs:**
+
+- Import mode overwrites current changes before committed [\#279](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/279)
+- Make control column widen as one line [\#271](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/271)
+- Increase performance [\#269](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/269)
+
+**Merged pull requests:**
+
+- 279 import mode overwrites current changes before committed [\#281](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/281) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Hotkey redesigned [\#280](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/280) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 269 increase performance [\#278](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/278) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Make controls column display as one row [\#276](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/276) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
+## [v3.2.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.2.0) (2022-11-11)
 
 [Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.1.0...v3.2.0)
 
@@ -28,6 +50,7 @@
 
 **Merged pull requests:**
 
+- Update changelog [\#274](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/274) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
 - 238 update user documentation for version 32 [\#273](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/273) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
 - 267 undo multiple times doesnt work [\#272](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/272) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
 - Moved ImportOptions to ViewModeImport [\#268](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/268) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
