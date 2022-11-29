@@ -395,7 +395,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var testHelper = new TestHelper();
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             var cuesheet = new Cuesheet();
-            var track1 = new Track() { Artist="1", Title="1"};
+            var track1 = new Track() { Artist = "1", Title = "1" };
             var track2 = new Track() { Artist = "2", Title = "2" };
             var track3 = new Track() { Artist = "3", Title = "3" };
             var track4 = new Track() { Artist = "4", Title = "4" };
@@ -472,8 +472,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 1,
                 End = new TimeSpan(0, 3, 23)
             };
-            var track2 = new Track 
-            { 
+            var track2 = new Track
+            {
                 Position = 2
             };
             var track3 = new Track
@@ -533,6 +533,51 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsNotNull(track1.End);
             Assert.AreEqual(track1.End, track2.Begin);
             Assert.AreEqual(editedTrack.End, track2.Begin);
+        }
+        [TestMethod()]
+        public void ImportSamplesTest()
+        {
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt")));
+            textImportFile.TextImportScheme.SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet;
+            textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
+            Assert.IsTrue(textImportFile.IsValid);
+
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Testartist",
+                Title = "Testtitle"
+            };
+            cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
+            Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", cuesheet.Title);
+            Assert.AreEqual(8, cuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
+        }
+
+        [TestMethod()]
+        public void ImportSamples2Test()
+        {
+            var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt")));
+            textImportFile.TextImportScheme.SchemeCuesheet = null;
+            textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            Assert.IsNull(textImportFile.AnalyseException);
+            Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
+            Assert.IsTrue(textImportFile.IsValid);
+
+            var testHelper = new TestHelper();
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Testartist",
+                Title = "Testtitle"
+            };
+            cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
+            Assert.AreEqual("", cuesheet.Artist);
+            Assert.AreEqual("", cuesheet.Title);
+            Assert.AreEqual(8, cuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
         }
     }
 }
