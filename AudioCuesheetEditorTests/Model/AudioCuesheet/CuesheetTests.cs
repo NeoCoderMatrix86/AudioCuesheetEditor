@@ -574,8 +574,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Title = "Testtitle"
             };
             cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
-            Assert.AreEqual("", cuesheet.Artist);
-            Assert.AreEqual("", cuesheet.Title);
+            Assert.IsNull(cuesheet.Artist);
+            Assert.IsNull(cuesheet.Title);
             Assert.AreEqual(8, cuesheet.Tracks.Count);
             Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
         }
