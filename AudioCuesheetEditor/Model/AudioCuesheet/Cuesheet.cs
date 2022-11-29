@@ -528,26 +528,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="applicationOptions">Reference to application options</param>
         private void CopyValues(Cuesheet cuesheet, ApplicationOptions applicationOptions)
         {
-            if (String.IsNullOrEmpty(cuesheet.Artist) == false)
-            {
-                Artist = cuesheet.Artist;
-            }
-            if (String.IsNullOrEmpty(cuesheet.Title) == false)
-            {
-                Title = cuesheet.Title;
-            }
-            if (cuesheet.Audiofile != null)
-            {
-                Audiofile = cuesheet.Audiofile;
-            }
-            if (cuesheet.CDTextfile != null)
-            {
-                CDTextfile = cuesheet.CDTextfile;
-            }
-            if (cuesheet.Cataloguenumber != null)
-            {
-                Cataloguenumber = cuesheet.Cataloguenumber;
-            }
+            Artist = cuesheet.Artist;
+            Title = cuesheet.Title;
+            Audiofile = cuesheet.Audiofile;
+            CDTextfile = cuesheet.CDTextfile;
+            Cataloguenumber = cuesheet.Cataloguenumber;
             foreach (var importTrack in cuesheet.Tracks)
             {
                 //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
