@@ -77,11 +77,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get { return tracks.AsReadOnly(); }
             private set 
-            { 
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(Tracks));
-                }
+            {
+                var previousValue = tracks;
                 tracks = value.ToList();
                 foreach (var track in tracks)
                 {
@@ -89,6 +86,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                     track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
                 }
+                FireEvents(previousValue, false, true, false);
             }
         }
         
@@ -199,6 +197,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        [JsonIgnore]
+        public Boolean IsImporting { get; private set; }
+
         /// <summary>
         /// Get the previous linked track of a track object
         /// </summary>
@@ -248,7 +249,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
+            if (IsImporting == false)
+            {
+                TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
+            }
         }
 
         public void RemoveTrack(Track track)
@@ -399,6 +403,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
             {
+                IsImporting = true;
                 //We are doing a bulk edit, so inform the TraceChangeManager
                 if (traceChangeManager != null)
                 {
@@ -409,6 +414,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     traceChangeManager.BulkEdit = false;
                 }
+                IsImporting = false;
             }
         }
 
@@ -522,26 +528,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="applicationOptions">Reference to application options</param>
         private void CopyValues(Cuesheet cuesheet, ApplicationOptions applicationOptions)
         {
-            if (String.IsNullOrEmpty(cuesheet.Artist) == false)
-            {
-                Artist = cuesheet.Artist;
-            }
-            if (String.IsNullOrEmpty(cuesheet.Title) == false)
-            {
-                Title = cuesheet.Title;
-            }
-            if (cuesheet.Audiofile != null)
-            {
-                Audiofile = cuesheet.Audiofile;
-            }
-            if (cuesheet.CDTextfile != null)
-            {
-                CDTextfile = cuesheet.CDTextfile;
-            }
-            if (cuesheet.Cataloguenumber != null)
-            {
-                Cataloguenumber = cuesheet.Cataloguenumber;
-            }
+            Artist = cuesheet.Artist;
+            Title = cuesheet.Title;
+            Audiofile = cuesheet.Audiofile;
+            CDTextfile = cuesheet.CDTextfile;
+            Cataloguenumber = cuesheet.Cataloguenumber;
             foreach (var importTrack in cuesheet.Tracks)
             {
                 //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object

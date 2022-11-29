@@ -16,12 +16,15 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
+@implements IDisposable
+
 @inject ITextLocalizer<EditTrackModal> _localizer
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject TraceChangeManager _traceChangeManager
+@inject HotKeys _hotKeys
 
 <Modal @ref="modalTrackEdit">
     <ModalContent Centered>
@@ -322,6 +325,12 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+
+    public void Dispose()
+    {
+        hotKeysContext?.Dispose();
+    }
+
     enum DynamicEditValue 
     {
         EnteredValueEquals = 0,
@@ -376,6 +385,18 @@ along with Foobar.  If not, see
     DynamicEditValue _editModeTrackLength;
     DynamicEditValue _editModeTrackPreGap;
     DynamicEditValue _editModeTrackPostGap;
+
+    HotKeysContext? hotKeysContext;
+
+    protected override void OnInitialized()
+    {
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKeys.None, Keys.Enter, EditTrackModalSaveClicked)
+            .Add(ModKeys.None, Keys.ESC, () => ControlModalDialog(modalTrackEdit, false));
+
+        base.OnInitialized();
+    }
+
 
     public Boolean EditTrackIsLinkedToPreviousTrack
     {

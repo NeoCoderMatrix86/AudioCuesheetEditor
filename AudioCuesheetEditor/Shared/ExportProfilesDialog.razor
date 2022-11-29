@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject SessionStateContainer _sessionStateContainer
 
-<Modal @ref="modalExportProfiles">
+<Modal @ref="modalExportProfiles" VisibleChanged="ModalExportProfiles_VisibleChanged">
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
@@ -228,10 +228,7 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        if (hotKeysContext != null)
-        {
-            hotKeysContext.Dispose();
-        }
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
     }
 

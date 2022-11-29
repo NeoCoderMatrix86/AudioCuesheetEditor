@@ -59,6 +59,7 @@
     "Reload import options": "Optionen erneut laden",
     "Reset import options to defaults": "Optionen auf Standardeinstellung zurücksetzen",
     "Please confirm": "Bestätigung erforderlich",
-    "Do you really want to reset the import options to default? This can not be undone!": "Möchten Sie wirklich die Import Optionen zurücksetzen? Dies kann nicht rückgängig gemacht werden!"
+    "Do you really want to reset the import options to default? This can not be undone!": "Möchten Sie wirklich die Import Optionen zurücksetzen? Dies kann nicht rückgängig gemacht werden!",
+    "Abort import of displayed data": "Import der angezeigten Daten abbrechen"
   }
 }

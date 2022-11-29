@@ -172,12 +172,12 @@ along with Foobar.  If not, see
     Boolean modalOptionsVisible = false;    
 
     Modal? modalOptions;
-    HotKeysContext hotKeysContext = default!;
+    HotKeysContext? hotKeysContext;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     public void Dispose()
     {
-        hotKeysContext.Dispose();
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }

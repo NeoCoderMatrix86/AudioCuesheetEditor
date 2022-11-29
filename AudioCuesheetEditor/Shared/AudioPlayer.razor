@@ -80,7 +80,7 @@ along with Foobar.  If not, see
     Timer audioUpdateTimer = default!;
     int soundId;
     Track? currentlyPlayingTrack;
-    HotKeysContext hotKeysContext = default!;
+    HotKeysContext? hotKeysContext;
     Boolean paused;
     Audiofile? audioFile;
 
@@ -93,7 +93,7 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        hotKeysContext.Dispose();
+        hotKeysContext?.Dispose();
         _howl.OnPlay -= HowlOnPlay;
         _howl.OnPause -= HowlOnPause;
         _howl.OnEnd -= HowlOnEnd;
