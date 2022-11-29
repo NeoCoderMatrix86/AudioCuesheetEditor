@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 @inject IJSRuntime _jsRuntime
 @inject HttpClient _httpClient
 
-<Steps SelectedStep="@selectedStep" SelectedStepChanged="@OnSelectedStepChanged">
+<Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
     <Items>
         <Step Name="selectFiles" Completed="selectFilesCompleted">@_localizer["Select files"]</Step>
         <Step Name="validateData">@_localizer["Validate"]</Step>
@@ -113,6 +113,7 @@ along with Foobar.  If not, see
                         <Paragraph>@_localizer["Please validate the following data recognized by import assistant. Once you have validated all input, you can confirm import of data."]</Paragraph>
                         <Paragraph>
                             <Button Color="Color.Success" Clicked="ImportData">@_localizer["Import the displayed data"]</Button>
+                            <Button Color="Color.Danger" Clicked="AbortImport">@_localizer["Abort import of displayed data"]</Button>
                         </Paragraph>
                     </Alert>
                     <Accordion>
@@ -288,6 +289,7 @@ along with Foobar.  If not, see
     Boolean importFileContentVisible = true;
     Boolean importOptionsVisible = true;
     Boolean selectFilesCompleted = false;
+    Boolean userChangedSelectedStep = false;
     Alert? alertInvalidFile;
     ModalDialog? modalDialog;
     List<String> invalidTextImportFileNames = new();
@@ -338,6 +340,7 @@ along with Foobar.  If not, see
 
     async Task OnSelectedStepChanged(String name)
     {
+        userChangedSelectedStep = true;
         switch (name)
         {
             case "selectFiles":
@@ -361,6 +364,19 @@ along with Foobar.  If not, see
                     }
                 }
                 break;
+        }
+    }
+
+    String SelectedStep
+    {
+        get
+        {
+            if ((userChangedSelectedStep == false) && ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.TextImportFile != null)))
+            {
+                selectFilesCompleted = true;
+                selectedStep = "validateData";
+            }
+            return selectedStep;
         }
     }
 
@@ -517,6 +533,12 @@ along with Foobar.  If not, see
         _sessionStateContainer.StartImportCuesheet(options);
         _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
         StateHasChanged();
+    }
+
+    async Task AbortImport()
+    {
+        _sessionStateContainer.ResetImport();
+        await OnSelectedStepChanged("selectFiles");
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
