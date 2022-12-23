@@ -17,10 +17,6 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
 using Blazorise.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -75,7 +71,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             Validate();
         }
-
         public uint? Position 
         {
             get => position;
@@ -90,7 +85,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get => title;
             set { var previousValue = title; title = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Title)); }
-        }        
+        }
         public TimeSpan? Begin 
         {
             get => begin;

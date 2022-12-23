@@ -19,7 +19,6 @@ along with Foobar.  If not, see
 @implements IDisposable
 
 @inject ITextLocalizer<CuesheetData> _localizer
-@inject CuesheetController _cuesheetController
 @inject SessionStateContainer _sessionStateContainer
 @inject IJSRuntime _jsRuntime
 @inject ILogger<CuesheetData> _logger
@@ -33,7 +32,7 @@ along with Foobar.  If not, see
         <Field Horizontal="true">
             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Artist))" Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="Cuesheet.Artist" Immediate="false" />
+                <TextEdit Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="Cuesheet.Artist" Immediate="false" />
             </FieldBody>
         </Field>
     </Tooltip>
@@ -41,7 +40,7 @@ along with Foobar.  If not, see
         <Field Horizontal="true">
             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Title))" Placeholder="@_localizer["Enter cd title here"]" @bind-Text="Cuesheet.Title" Immediate="false" />
+                <TextEdit Placeholder="@_localizer["Enter cd title here"]" @bind-Text="Cuesheet.Title" Immediate="false" />
             </FieldBody>
         </Field>
     </Tooltip>
@@ -75,7 +74,7 @@ along with Foobar.  If not, see
                     @if (Cuesheet.Audiofile == null)
                     {
                         <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                            <FileEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                            <FileEdit Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                         </Tooltip>
                     }
                     else
@@ -103,7 +102,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                         @if (Cuesheet.CDTextfile == null)
                         {
-                            <FileEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
+                            <FileEdit accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
                         }
                         else
                         {
@@ -123,7 +122,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
+                        <TextEdit Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
                     </FieldBody>
                 </Field>
             </Tooltip>
@@ -137,7 +136,7 @@ along with Foobar.  If not, see
                         @if (Cuesheet.Audiofile == null)
                         {
                             <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                                <FileEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                                <FileEdit Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                             </Tooltip>
                         }
                         else
@@ -165,7 +164,7 @@ along with Foobar.  If not, see
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                             @if (Cuesheet.CDTextfile == null)
                             {
-                                <FileEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile))" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
+                                <FileEdit accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
                             }
                             else
                             {
@@ -185,7 +184,7 @@ along with Foobar.  If not, see
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                            <TextEdit id="@_cuesheetController.GetFieldIdentifier(Cuesheet.Cataloguenumber, nameof(Cataloguenumber.Value))" Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
+                            <TextEdit Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false" />
                         </FieldBody>
                     </Field>
                 </Tooltip>
@@ -249,7 +248,8 @@ along with Foobar.  If not, see
             Cuesheet.Audiofile = null;
             StateHasChanged();
             await Task.Delay(1);
-            await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
+            //TODO
+            //await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
         }
     }
 
@@ -261,9 +261,10 @@ along with Foobar.  If not, see
             if (Cuesheet != null)
             {
                 var file = e.Files.First();
-                if (CuesheetController.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
+                if (IOUtility.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
                 {
-                    await SetAudioFile(file, _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
+                    //TODO
+                    //await SetAudioFile(file, _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
                 }
                 else
                 {
@@ -310,7 +311,8 @@ along with Foobar.  If not, see
             Cuesheet.CDTextfile = null;
             StateHasChanged();
             await Task.Delay(1);
-            await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile)));
+            //TODO
+            //await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile)));
         }
     }
 
@@ -322,7 +324,7 @@ along with Foobar.  If not, see
             if (Cuesheet != null)
             {
                 var file = e.Files.First();
-                if (CuesheetController.CheckFileMimeType(file, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
+                if (IOUtility.CheckFileMimeType(file, CDTextfile.MimeType, CDTextfile.FileExtension) == true)
                 {
                     Cuesheet.CDTextfile = new CDTextfile(file.Name);
                 }

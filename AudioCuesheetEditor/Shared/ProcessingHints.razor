@@ -20,7 +20,6 @@ along with Foobar.  If not, see
 
 @inject ITextLocalizer<ProcessingHints> _localizer
 @inject IJSRuntime _jsRuntime
-@inject CuesheetController _cuesheetController
 @inject ITextLocalizerService _localizationService
 @inject SessionStateContainer _sessionStateContainer
 
@@ -39,7 +38,7 @@ along with Foobar.  If not, see
                         if (ActivateLinksToFields == true)
                         {
                             var functionName = "focusElement";
-                            <Blazorise.Link Clicked="(() => _jsRuntime.InvokeVoidAsync(functionName, _cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                            <Blazorise.Link Style="cursor:pointer">
                                 <Alert Color="Color.Warning" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {
@@ -81,7 +80,7 @@ along with Foobar.  If not, see
                         if (ActivateLinksToFields == true)
                         {
                             var functionName = "focusElement";
-                            <Blazorise.Link Clicked="(() => _jsRuntime.InvokeVoidAsync(functionName, _cuesheetController.GetFieldIdentifier(validationError.FieldReference)))" Style="cursor:pointer">
+                            <Blazorise.Link Style="cursor:pointer">
                                 <Alert Color="Color.Danger" Visible="true">
                                     @if (validationError.FieldReference.Owner is IEntityDisplayName entityDisplayName)
                                     {

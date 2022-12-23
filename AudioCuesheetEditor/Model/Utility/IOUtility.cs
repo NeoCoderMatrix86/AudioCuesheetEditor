@@ -13,44 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Reflection;
 using Blazorise;
-using Microsoft.AspNetCore.Components.Forms;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
-namespace AudioCuesheetEditor.Controller
+namespace AudioCuesheetEditor.Model.Utility
 {
-    public class CuesheetController
+    public class IOUtility
     {
-        private readonly Dictionary<FieldReference, Guid> fieldIdentifier = new();
-
-        public String GetFieldIdentifier(IValidateable validateable, String property)
-        {
-            var identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
-            if (identifier.Equals(default(KeyValuePair<FieldReference, Guid>)))
-            {
-                fieldIdentifier.Add(FieldReference.Create(validateable, property), Guid.NewGuid());
-                identifier = fieldIdentifier.FirstOrDefault(x => x.Key.Owner == validateable && x.Key.Property == property);
-            }
-            return String.Format("{0}_{1}", identifier.Key.CompleteName, identifier.Value.ToString());
-        }
-
-        public String GetFieldIdentifier(FieldReference fieldReference)
-        {
-            var identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
-            if (identifier.Equals(default(KeyValuePair<FieldReference, Guid>)))
-            {
-                fieldIdentifier.Add(fieldReference, Guid.NewGuid());
-                identifier = fieldIdentifier.FirstOrDefault(x => x.Key == fieldReference);
-            }
-            return String.Format("{0}_{1}", identifier.Key.CompleteName, identifier.Value.ToString());
-        }
-
         public static Boolean CheckFileMimeType(IFileEntry file, String mimeType, String fileExtension)
         {
             Boolean fileMimeTypeMatches = false;

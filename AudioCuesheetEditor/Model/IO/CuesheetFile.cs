@@ -13,17 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
 {
