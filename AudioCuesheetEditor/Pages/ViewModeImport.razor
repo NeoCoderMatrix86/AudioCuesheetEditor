@@ -154,7 +154,7 @@ along with Foobar.  If not, see
                                         <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
-                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeCuesheet))" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
+                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
                                                         <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" TriggerTargetId="TextImportScheme.SchemeCuesheet" />
                                                     </TextEdit>
                                                 </Addon>
@@ -183,7 +183,7 @@ along with Foobar.  If not, see
                                         <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
-                                                    <TextEdit id="TextImportScheme.SchemeTracks" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TextImportScheme, nameof(TextImportScheme.SchemeTracks))" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
+                                                    <TextEdit id="TextImportScheme.SchemeTracks" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
                                                         <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" TriggerTargetId="TextImportScheme.SchemeTracks" />
                                                     </TextEdit>
                                                 </Addon>
@@ -212,7 +212,7 @@ along with Foobar.  If not, see
                                         <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
                                             <Addons>
                                                 <Addon AddonType="AddonType.Body">
-                                                    <TextEdit Id="Timespanformat.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(_sessionStateContainer.TextImportFile.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" @bind-Text="_sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme">
+                                                    <TextEdit Id="Timespanformat.Scheme" @bind-Text="_sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme">
                                                         <Tooltip Text="@_sessionStateContainer.TextImportFile.TimeSpanFormat.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
                                                     </TextEdit>
                                                 </Addon>

@@ -268,7 +268,7 @@ along with Foobar.  If not, see
                             </TableRowCell>
                             <TableRowCell>
                                 <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)), seperator: Environment.NewLine)">
-                                    <NumericEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(track, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="track.Position" Immediate="false" />
+                                    <NumericEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Position))" TValue="uint?" Max="99" @bind-Value="track.Position" Immediate="false" />
                                 </Tooltip>
                             </TableRowCell>
                             break;
@@ -321,21 +321,21 @@ along with Foobar.  If not, see
                             <TableRowCell>
                                 <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                     <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false" />
+                                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Begin))" Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false" />
                                     </Tooltip>
                                 </Tooltip>
                             </TableRowCell>
                             <TableRowCell>
                                 <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                     <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false" />
+                                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.End))" Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false" />
                                     </Tooltip>
                                 </Tooltip>
                             </TableRowCell>
                             <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                                 <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                     <Tooltip Placement="TooltipPlacement.Bottom" Text="@track.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Class="@BootstrapUtility.GetCSSClassAlert(track,String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
+                                        <TextEdit id="@_cuesheetController.GetFieldIdentifier(track, nameof(Track.Length))" Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false" />
                                     </Tooltip>
                                 </Tooltip>
                             </TableRowCell>

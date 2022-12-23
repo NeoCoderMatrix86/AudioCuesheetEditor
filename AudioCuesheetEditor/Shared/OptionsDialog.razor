@@ -98,7 +98,7 @@ along with Foobar.  If not, see
                                         <Addon AddonType="AddonType.Body">
                                             @if ((applicationOptions != null) && (applicationOptions.TimeSpanFormat != null))
                                             {
-                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(applicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))">
+                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme">
                                                     <Tooltip Text="@applicationOptions?.TimeSpanFormat?.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
                                                 </TextEdit>
                                             }
