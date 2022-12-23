@@ -16,14 +16,10 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
-using Blazorise.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Cataloguenumber : Validateable, IEntityDisplayName, ITraceable
+    public class Cataloguenumber : Validateable, ITraceable
     {
         public Cataloguenumber()
         {
@@ -43,11 +39,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 this.value = value;
                 FireEvents(oldValue, propertyName: nameof(Value));
             }
-        }
-
-        public String GetDisplayNameLocalized(ITextLocalizer localizer)
-        {
-            return localizer[nameof(Cuesheet)];
         }
 
         protected override void Validate()
