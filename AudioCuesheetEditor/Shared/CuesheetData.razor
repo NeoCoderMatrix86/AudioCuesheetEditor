@@ -74,7 +74,7 @@ along with Foobar.  If not, see
                     @if (Cuesheet.Audiofile == null)
                     {
                         <Tooltip Placement="TooltipPlacement.Top" Text="@Cuesheet.GetValidationErrors(validationMessageLocalizer, String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile)))">
-                            <FileEdit Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
+                            <FileEdit id="@fileEditAudiofileId" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false"></FileEdit>
                         </Tooltip>
                     }
                     else
@@ -102,7 +102,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                         @if (Cuesheet.CDTextfile == null)
                         {
-                            <FileEdit accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
+                            <FileEdit id="@fileEditCDTextFileId" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged"></FileEdit>
                         }
                         else
                         {
@@ -197,6 +197,8 @@ along with Foobar.  If not, see
 @code {
     ModalDialog? modalDialog;
     ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
+    Guid fileEditCDTextFileId = Guid.NewGuid();
+    Guid fileEditAudiofileId = Guid.NewGuid();
 
     public Cuesheet? Cuesheet
     {
@@ -248,8 +250,7 @@ along with Foobar.  If not, see
             Cuesheet.Audiofile = null;
             StateHasChanged();
             await Task.Delay(1);
-            //TODO
-            //await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
+            await _jsRuntime.InvokeVoidAsync("triggerClick", fileEditAudiofileId);
         }
     }
 
@@ -263,8 +264,7 @@ along with Foobar.  If not, see
                 var file = e.Files.First();
                 if (IOUtility.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
                 {
-                    //TODO
-                    //await SetAudioFile(file, _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.Audiofile)));
+                    await SetAudioFile(file);
                 }
                 else
                 {
@@ -281,9 +281,9 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task SetAudioFile(IFileEntry file, String inputDomId)
+    private async Task SetAudioFile(IFileEntry file)
     {
-        _logger.LogInformation("SetAudioFile with {0}, {1}", file, inputDomId);
+        _logger.LogInformation("SetAudioFile with {0}", file);
         if (Cuesheet != null)
         {
             if ((Cuesheet.Audiofile != null) && (Cuesheet.Audiofile.IsRecorded))
@@ -292,7 +292,7 @@ along with Foobar.  If not, see
             }
             if (file != null)
             {
-                var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", inputDomId);
+                var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", fileEditAudiofileId);
                 var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
                 Cuesheet.Audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
             }
@@ -311,8 +311,7 @@ along with Foobar.  If not, see
             Cuesheet.CDTextfile = null;
             StateHasChanged();
             await Task.Delay(1);
-            //TODO
-            //await _jsRuntime.InvokeVoidAsync("triggerClick", _cuesheetController.GetFieldIdentifier(Cuesheet, nameof(Cuesheet.CDTextfile)));
+            await _jsRuntime.InvokeVoidAsync("triggerClick", fileEditCDTextFileId);
         }
     }
 
