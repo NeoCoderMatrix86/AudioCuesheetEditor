@@ -144,10 +144,6 @@ along with Foobar.  If not, see
                 <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
                 <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
                 <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
-                @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
-                {
-                    <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Hints"]</TableHeaderCell>
-                }
             </TableRow>
         </TableHeader>
         <TableBody>
@@ -338,14 +334,6 @@ along with Foobar.  If not, see
                                     </Tooltip>
                                 </Tooltip>
                             </TableRowCell>
-                            @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
-                            {
-                                <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                        @((MarkupString)GetMarkupString(track.GetValidationErrors(validationMessageLocalizer)))
-                                    </Tooltip>
-                                </TableRowCell>
-                            }
                             break;
                     }
                 </TableRow>
@@ -358,7 +346,6 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Validation for autocomplete and focus for autocomplete doesn't currently work
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();

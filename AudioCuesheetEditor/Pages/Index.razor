@@ -60,16 +60,6 @@ along with Foobar.  If not, see
                 <AudioPlayer @ref="audioPlayer" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
                 <br />
             </Column>
-            <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
-                <Card>
-                    <CardHeader>
-                        <CardTitle Size="3">@_localizer["Processinghints"]</CardTitle>
-                    </CardHeader>
-                    <CardBody>
-                        <ProcessingHints Header="@_localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" />
-                    </CardBody>
-                </Card>
-            </Column>
             break;
         case ViewMode.ViewModeImport:
             <ViewModeImport />
@@ -86,21 +76,6 @@ along with Foobar.  If not, see
         hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
-    }
-
-    public IFluentDisplay DisplayProcessingHints
-    {
-        get
-        {
-            if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.All).Count > 0)
-            {
-                return Display.Always;
-            }
-            else
-            {
-                return Display.None;
-            }
-        }
     }
 
     [CascadingParameter]
