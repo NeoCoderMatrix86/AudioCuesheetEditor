@@ -88,7 +88,6 @@ along with Foobar.  If not, see
 
     ModalDialog? modalDialog;
     AudioPlayer? audioPlayer;
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -96,7 +95,6 @@ along with Foobar.  If not, see
         _logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)

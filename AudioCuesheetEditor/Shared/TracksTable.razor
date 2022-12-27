@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizerService _localizationService
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 
-@if (Cuesheet != null)
+@*@if (Cuesheet != null)
 {
     @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
     {
@@ -340,16 +340,16 @@ along with Foobar.  If not, see
             }
         </TableBody>
     </Table>
-}
+}*@
 
 <ModalDialog @ref="modalDialog" />
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
+    //TODO
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Track? lastTrack;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
@@ -401,7 +401,8 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
         if (lastTrack != null)
         {
-            lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
+            //TODO
+            //lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
         }
     }
 
@@ -410,7 +411,6 @@ along with Foobar.  If not, see
         _logger.LogDebug("OnInitializedAsync");
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
@@ -584,12 +584,14 @@ along with Foobar.  If not, see
     {
         if (lastTrack != null)
         {
-            lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
+            //TODO
+            //lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
         }
         lastTrack = Cuesheet?.Tracks.LastOrDefault();
         if (lastTrack != null)
         {
-            lastTrack.ValidateablePropertyChanged += Cuesheet_LastTrack_ValidateablePropertyChanged;
+            //TODO
+            //lastTrack.ValidateablePropertyChanged += Cuesheet_LastTrack_ValidateablePropertyChanged;
         }
     }
 

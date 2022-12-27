@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject SessionStateContainer _sessionStateContainer
 
-<Modal @ref="modalExportProfiles" VisibleChanged="ModalExportProfiles_VisibleChanged">
+@*<Modal @ref="modalExportProfiles" VisibleChanged="ModalExportProfiles_VisibleChanged">
     <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
@@ -184,14 +184,14 @@ along with Foobar.  If not, see
             <Button Color="Color.Secondary" Clicked="ModalExportProfilesCloseClicked">@_localizer["Close"]</Button>
         </ModalFooter>
     </ModalContent>
-</Modal>
+</Modal>*@
 
 @code {
+    //TODO
     Modal? modalExportProfiles;
     IReadOnlyCollection<SelectExportProfileModel> exportProfileModels = default!;
     Guid? selectedExportProfileId;
     HotKeysContext? hotKeysContext;
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     Boolean modalExportProfilesVisible = false;
 
     public class SelectExportProfileModel
@@ -244,8 +244,6 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         if (exportProfileModels == null)
         {

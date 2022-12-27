@@ -15,10 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
@@ -31,7 +27,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         Body,
         Footer
     }
-    public class Exportscheme : Validateable
+    public class Exportscheme : Validateable<Exportscheme>
     {
         public const String SchemeCharacter = "%";
 
@@ -112,12 +108,18 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public String? Scheme 
         {
             get { return scheme; }
-            set { scheme = value; OnValidateablePropertyChanged(); }
+            set
+            {
+                scheme = value; //TODOOnValidateablePropertyChanged(); }
+            }
         }
         public Schemetype SchemeType 
         {
             get { return schemeType; }
-            set { schemeType = value; OnValidateablePropertyChanged(); }
+            set
+            {
+                schemeType = value; //TODOOnValidateablePropertyChanged(); }
+            }
         }
         
         public String? GetExportResult(ICuesheetEntity cuesheetEntity)
@@ -164,47 +166,54 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return result;
         }
 
-        protected override void Validate()
+        //TODO
+        protected override ValidationResult Validate(string property)
         {
-            if (String.IsNullOrEmpty(Scheme) == false)
-            {
-                Boolean addValidationError = false;
-                switch (SchemeType)
-                {
-                    case Schemetype.Header:
-                    case Schemetype.Footer:
-                        foreach (var availableScheme in AvailableTrackSchemes)
-                        {
-                            if (Scheme.Contains(availableScheme.Value) == true)
-                            {
-                                addValidationError = true;
-                                break;
-                            }
-                        }
-                        if (addValidationError == true)
-                        {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
-                        }
-                        break;
-                    case Schemetype.Body:
-                        foreach (var availableScheme in AvailableCuesheetSchemes)
-                        {
-                            if (Scheme.Contains(availableScheme.Value) == true)
-                            {
-                                addValidationError = true;
-                                break;
-                            }
-                        }
-                        if (addValidationError == true)
-                        {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
-                        }
-                        break;
-                    case Schemetype.Unknown:
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "{0} has invalid value!", nameof(SchemeType)));
-                        break;
-                }
-            }
+            throw new NotImplementedException();
         }
+
+        //TODO
+        //protected override void Validate()
+        //{
+        //    if (String.IsNullOrEmpty(Scheme) == false)
+        //    {
+        //        Boolean addValidationError = false;
+        //        switch (SchemeType)
+        //        {
+        //            case Schemetype.Header:
+        //            case Schemetype.Footer:
+        //                foreach (var availableScheme in AvailableTrackSchemes)
+        //                {
+        //                    if (Scheme.Contains(availableScheme.Value) == true)
+        //                    {
+        //                        addValidationError = true;
+        //                        break;
+        //                    }
+        //                }
+        //                if (addValidationError == true)
+        //                {
+        //                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+        //                }
+        //                break;
+        //            case Schemetype.Body:
+        //                foreach (var availableScheme in AvailableCuesheetSchemes)
+        //                {
+        //                    if (Scheme.Contains(availableScheme.Value) == true)
+        //                    {
+        //                        addValidationError = true;
+        //                        break;
+        //                    }
+        //                }
+        //                if (addValidationError == true)
+        //                {
+        //                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
+        //                }
+        //                break;
+        //            case Schemetype.Unknown:
+        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "{0} has invalid value!", nameof(SchemeType)));
+        //                break;
+        //        }
+        //    }
+        //}
     }
 }

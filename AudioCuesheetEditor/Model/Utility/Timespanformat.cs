@@ -14,12 +14,11 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.Utility
 {
-    public class TimeSpanFormat : Validateable
+    public class TimeSpanFormat : Validateable<TimeSpanFormat>
     {
         public const String Days = "Days";
         public const String Hours = "Hours";
@@ -58,7 +57,8 @@ namespace AudioCuesheetEditor.Model.Utility
             set
             {
                 scheme = value;
-                OnValidateablePropertyChanged();
+                //TODO
+                //OnValidateablePropertyChanged();
                 SchemeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -107,28 +107,34 @@ namespace AudioCuesheetEditor.Model.Utility
             }
             return timespan;
         }
-
-        protected override void Validate()
+        //TODO
+        protected override ValidationResult Validate(string property)
         {
-            if (String.IsNullOrEmpty(Scheme))
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} has no value!", nameof(Scheme)));
-            }
-            else
-            {
-                if ((Scheme.Contains(Days) == false)
-                    && (Scheme.Contains(Hours) == false)
-                    && (Scheme.Contains(Minutes) == false)
-                    && (Scheme.Contains(Seconds) == false)
-                    && (Scheme.Contains(Milliseconds) == false))
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} contains no placeholder!", nameof(Scheme)));
-                }
-                if (Scheme.Contains(EnterRegularExpressionHere))
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Replace {0} by a regular expression!", EnterRegularExpressionHere));
-                }
-            }
+            throw new NotImplementedException();
         }
+
+        //TODO
+        //protected override void Validate()
+        //{
+        //    if (String.IsNullOrEmpty(Scheme))
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} has no value!", nameof(Scheme)));
+        //    }
+        //    else
+        //    {
+        //        if ((Scheme.Contains(Days) == false)
+        //            && (Scheme.Contains(Hours) == false)
+        //            && (Scheme.Contains(Minutes) == false)
+        //            && (Scheme.Contains(Seconds) == false)
+        //            && (Scheme.Contains(Milliseconds) == false))
+        //        {
+        //            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} contains no placeholder!", nameof(Scheme)));
+        //        }
+        //        if (Scheme.Contains(EnterRegularExpressionHere))
+        //        {
+        //            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Replace {0} by a regular expression!", EnterRegularExpressionHere));
+        //        }
+        //    }
+        //}
     }
 }

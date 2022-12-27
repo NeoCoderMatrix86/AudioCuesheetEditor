@@ -19,14 +19,13 @@ along with Foobar.  If not, see
 @implements IDisposable
 
 @inject ITextLocalizer<EditTrackModal> _localizer
-@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject TraceChangeManager _traceChangeManager
 @inject HotKeys _hotKeys
 
-<Modal @ref="modalTrackEdit">
+@*<Modal @ref="modalTrackEdit">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>@_localizer["Edit track details"]</ModalTitle>
@@ -322,9 +321,10 @@ along with Foobar.  If not, see
             <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalTrackEdit, false)">@_localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
-</Modal>
+</Modal>*@
 
 @code {
+    //TODO
 
     public void Dispose()
     {

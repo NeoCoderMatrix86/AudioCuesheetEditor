@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 @inject IJSRuntime _jsRuntime
 @inject HttpClient _httpClient
 
-<Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
+@*<Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
     <Items>
         <Step Name="selectFiles" Completed="selectFilesCompleted">@_localizer["Select files"]</Step>
         <Step Name="validateData">@_localizer["Validate"]</Step>
@@ -277,11 +277,12 @@ along with Foobar.  If not, see
             </Card>
         </StepPanel>
     </Content>
-</Steps>
+</Steps>*@
 
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    //TODO
     String selectedStep = "selectFiles";
     String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
@@ -297,7 +298,6 @@ along with Foobar.  If not, see
     List<String> invalidProjectfileNames = new();
     List<String> invalidDropFileNames = new();
 
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
     HotKeysContext? hotKeysContext;
 
     public IReadOnlyCollection<String?>? FileContentRecognized
@@ -326,8 +326,6 @@ along with Foobar.  If not, see
     protected override Task OnInitializedAsync()
     {
         _logger.LogDebug("OnInitializedAsync");
-
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;

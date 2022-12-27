@@ -14,18 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Cataloguenumber : Validateable, ITraceable
+    public class Cataloguenumber : Validateable<Cataloguenumber>, ITraceable
     {
-        public Cataloguenumber()
-        {
-            Validate();
-        }
-
         private String? value;
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
@@ -40,24 +34,37 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 FireEvents(oldValue, propertyName: nameof(Value));
             }
         }
-
-        protected override void Validate()
+        protected override ValidationResult Validate(string property)
         {
-            if (String.IsNullOrEmpty(Value))
+            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            List<String>? errors = null;
+            switch (property)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
+                case nameof(Value):
+                    if (String.IsNullOrEmpty(Value) == false)
+                    {
+                        if (Value.All(Char.IsDigit) == false)
+                        {
+                            errors = new() { String.Format("{0} must only contain numbers!", nameof(Value)) };
+                        }
+                        else
+                        {
+                            result.Status = ValidationStatus.Success;
+                        }
+                        if (Value.Length != 13)
+                        {
+                            errors ??= new();
+                            errors.Add(String.Format("{0} has an invalid length. Allowed length is {1}!", nameof(Value), 13));
+                        }
+                        else
+                        {
+                            result.Status = ValidationStatus.Success;
+                        }
+                    }
+                    break;
             }
-            else
-            {
-                if (Value.All(Char.IsDigit) == false)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} does not only contain numbers.", nameof(Cataloguenumber)));
-                }
-                if (Value.Length != 13)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} has invalid length ({1})!", nameof(Cataloguenumber), 13));
-                }
-            }
+            result.ErrorMessages = errors;
+            return result;
         }
 
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
@@ -69,11 +76,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Method for checking if fire of events should be done
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireValidateablePropertyChanged">Fire ValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -81,10 +87,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var propertyValue = propertyInfo.GetValue(this);
                 if (Equals(propertyValue, previousValue) == false)
                 {
-                    if (fireValidateablePropertyChanged)
-                    {
-                        OnValidateablePropertyChanged();
-                    }
                     if (fireTraceablePropertyChanged)
                     {
                         OnTraceablePropertyChanged(previousValue, propertyName);

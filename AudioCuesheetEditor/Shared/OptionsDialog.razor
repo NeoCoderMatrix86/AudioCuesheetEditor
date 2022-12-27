@@ -28,7 +28,7 @@ along with Foobar.  If not, see
 
 @if (applicationOptions != null)
 {
-    <Modal @ref="modalOptions" Closed="OnModalClosed" VisibleChanged="ModalOptions_VisibleChanged">
+    @*<Modal @ref="modalOptions" Closed="OnModalClosed" VisibleChanged="ModalOptions_VisibleChanged">
         <ModalContent Centered="true" Size="ModalSize.Large">
             <ModalHeader>
                 <ModalTitle>@_localizer["Options"]</ModalTitle>
@@ -162,10 +162,11 @@ along with Foobar.  If not, see
             <Button Color="Color.Secondary" Clicked="OnCloseClicked">@_localizer["Close"]</Button>
         </ModalFooter>
     </ModalContent>
-</Modal>
+</Modal>*@
 }
 
 @code {
+    //TODO
     String selectedOptionsTab = "common";
     ApplicationOptions? applicationOptions;
     Boolean saveOptions;
@@ -173,7 +174,6 @@ along with Foobar.  If not, see
 
     Modal? modalOptions;
     HotKeysContext? hotKeysContext;
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     public void Dispose()
     {
@@ -200,7 +200,6 @@ along with Foobar.  If not, see
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         await base.OnInitializedAsync();
     }

@@ -13,16 +13,56 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
     public interface IValidateable
     {
-        public Boolean IsValid { get; }
-        public IReadOnlyCollection<ValidationError> ValidationErrors { get; }
+        /// <summary>
+        /// Validate all properties and return the result of validation.
+        /// </summary>
+        /// <returns>Validation result.</returns>
+        ValidationResult Validate();
+    }
+    public interface IValidateable<T> : IValidateable
+    {
+        /// <summary>
+        /// Validate a property and return the result of validation.
+        /// </summary>
+        /// <typeparam name="TProperty">Property type</typeparam>
+        /// <param name="expression">Property selector</param>
+        /// <returns>Validation result.</returns>
+        ValidationResult Validate<TProperty>(Expression<Func<T, TProperty>> expression);
+    }
+
+    public enum ValidationStatus
+    {
+        NoValidation,
+        Success,
+        Error
+    }
+    public class ValidationResult
+    {
+        private List<String>? errors;
+
+        public ValidationStatus Status { get; set; }
+        public List<String>? ErrorMessages 
+        {
+            get => errors;
+            set
+            {
+                errors = value;
+                if ((errors != null) && errors.Any())
+                {
+                    Status = ValidationStatus.Error;
+                }
+            }
+        }
     }
 }

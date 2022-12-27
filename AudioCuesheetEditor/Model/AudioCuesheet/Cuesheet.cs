@@ -17,7 +17,6 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
 
@@ -38,7 +37,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public Track Track { get; private set; }
     }
-    public class Cuesheet : Validateable, ICuesheetEntity, ITraceable
+    public class Cuesheet : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
     {
         public const String MimeType = "text/*";
         public const String FileExtension = ".cue";
@@ -63,7 +62,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             Tracks = new List<Track>();
             Cataloguenumber = new Cataloguenumber();
-            OnValidateablePropertyChanged();
         }
 
         [JsonInclude]
@@ -146,16 +144,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get => catalogueNumber;
             set
             {
-                if (catalogueNumber != null)
-                {
-                    catalogueNumber.ValidateablePropertyChanged -= CatalogueNumber_ValidateablePropertyChanged;
-                }
+                //TODO
+                //if (catalogueNumber != null)
+                //{
+                //    catalogueNumber.ValidateablePropertyChanged -= CatalogueNumber_ValidateablePropertyChanged;
+                //}
                 var previousValue = catalogueNumber;
                 catalogueNumber = value;
-                if (catalogueNumber != null)
-                {
-                    catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
-                }
+                //if (catalogueNumber != null)
+                //{
+                //    catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
+                //}
                 FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
             }
         }
@@ -241,7 +240,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = this;
             ReCalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
-            OnValidateablePropertyChanged();
+            //TODO
+            //OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             if (IsImporting == false)
             {
@@ -270,7 +270,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
-            OnValidateablePropertyChanged();
+            //TODO
+            //OnValidateablePropertyChanged();
             //If Tracks are linked, we need to set the linked track again
             if (nextTrack != null)
             {
@@ -327,7 +328,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
-            OnValidateablePropertyChanged();
+            //TODO
+            //OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
@@ -428,42 +430,123 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             recordingStart = null;
         }
 
-        protected override void Validate()
+        //TODO
+
+        protected override ValidationResult Validate(string property)
         {
-            if (String.IsNullOrEmpty(Artist) == true)
+            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            List<String>? errors = null;
+            switch (property)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "{0} has no value!", nameof(Artist)));
+                case nameof(Tracks):
+                    if (Tracks.Count <= 0)
+                    {
+                        errors = new() { String.Format("{0} has invalid Count ({1})!", nameof(Tracks), 0) };
+                    }
+                    else
+                    {
+                        result.Status = ValidationStatus.Success;
+                    }
+                    break;
+                case nameof(Audiofile):
+                    if (Audiofile == null)
+                    {
+                        errors = new() { String.Format("{0} has no value!", nameof(Audiofile)) };
+                    }
+                    else
+                    {
+                        result.Status = ValidationStatus.Success;
+                    }
+                    break;
+                default:
+                    result.Status = ValidationStatus.NoValidation;
+                    break;
             }
-            if (String.IsNullOrEmpty(Title) == true)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
-            }
-            if (Audiofile == null)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Audiofile)), ValidationErrorType.Error, "{0} has no value!", nameof(Audiofile)));
-            }
-            if (tracks.Count < 1)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error, "{0} has invalid Count ({1})!", nameof(Tracks), 0));
-            }
-            if (CDTextfile == null)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "{0} has no value!", nameof(CDTextfile)));
-            }
-            if (Cataloguenumber == null)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Cataloguenumber)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
-            }
-            else
-            {
-                _ = Cataloguenumber.IsValid;
-                validationErrors.AddRange(Cataloguenumber.ValidationErrors);
-            }
+            result.ErrorMessages = errors;
+            return result;
         }
+
+        //public override IEnumerable<string> Validate()
+        //{
+        //    var errors = new List<String>();
+        //    var properties = typeof(Cuesheet).GetProperties();
+        //    foreach (var property in properties)
+        //    {
+        //        errors.AddRange(Validate(property.Name));
+        //    }
+
+        //    return errors;
+        //}
+
+        //public override IEnumerable<String> Validate<TProperty>(Expression<Func<Cuesheet, TProperty>> expression)
+        //{
+        //    if (expression.Body is not MemberExpression body)
+        //    {
+        //        throw new ArgumentException("'expression' should be a member expression");
+        //    }
+        //    return Validate(body.Member.Name);
+        //}
+
+        //private IEnumerable<String> Validate(String propertyName)
+        //{
+        //    var errors = new List<String>();
+        //    switch (propertyName)
+        //    {
+        //        //DEBUG
+        //        case nameof(Artist):
+        //            if (String.IsNullOrEmpty(Artist))
+        //            {
+        //                errors.Add("Artist darf nicht leer sein!");
+        //            }
+        //            break;
+        //        //DEBUG
+        //        case nameof(Tracks):
+        //            if (Tracks.Count <= 0)
+        //            {
+        //                errors.Add("Fehler1");
+        //            }
+        //            break;
+        //    }
+        //    return errors;
+        //}
+
+        //protected override void Validate()
+        //{
+        //    if (String.IsNullOrEmpty(Artist) == true)
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "{0} has no value!", nameof(Artist)));
+        //    }
+        //    if (String.IsNullOrEmpty(Title) == true)
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
+        //    }
+        //    if (Audiofile == null)
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Audiofile)), ValidationErrorType.Error, "{0} has no value!", nameof(Audiofile)));
+        //    }
+        //    if (tracks.Count < 1)
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error, "{0} has invalid Count ({1})!", nameof(Tracks), 0));
+        //    }
+        //    if (CDTextfile == null)
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "{0} has no value!", nameof(CDTextfile)));
+        //    }
+        //    if (Cataloguenumber == null)
+        //    {
+        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Cataloguenumber)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
+        //    }
+        //    else
+        //    {
+        //        _ = Cataloguenumber.IsValid;
+        //        validationErrors.AddRange(Cataloguenumber.ValidationErrors);
+        //    }
+        //}
 
         private void CatalogueNumber_ValidateablePropertyChanged(object? sender, EventArgs e)
         {
-            OnValidateablePropertyChanged();
+            //TODO
+            //OnValidateablePropertyChanged();
         }
 
         private void ReCalculateTrackProperties(Track trackToCalculate)
@@ -760,7 +843,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if (fireValidateablePropertyChanged)
                     {
-                        OnValidateablePropertyChanged();
+                        //TODO
+                        //OnValidateablePropertyChanged();
                     }
                     if (fireTraceablePropertyChanged)
                     {

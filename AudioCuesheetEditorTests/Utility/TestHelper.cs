@@ -25,15 +25,12 @@ namespace AudioCuesheetEditorTests.Utility
     {
         public TestHelper()
         {
-            var localizerService = new TextLocalizerService();
-            Localizer = new TextLocalizer<ValidationMessage>(localizerService);
             ApplicationOptions = new ApplicationOptions
             {
                 LinkTracksWithPreviousOne = false
             };
         }
 
-        public ITextLocalizer Localizer { get; private set; }
         public ApplicationOptions ApplicationOptions { get; private set; }
         public static ILogger<T> CreateLogger<T>()
         {

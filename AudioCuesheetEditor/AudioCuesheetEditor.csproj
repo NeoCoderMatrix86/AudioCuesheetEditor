@@ -24,6 +24,8 @@
     <Content Remove="Resources\Localization\EditTrackModal\en.json" />
     <Content Remove="Resources\Localization\ExportProfilesDialog\de.json" />
     <Content Remove="Resources\Localization\ExportProfilesDialog\en.json" />
+    <Content Remove="Resources\Localization\IValidateable\de.json" />
+    <Content Remove="Resources\Localization\IValidateable\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
     <Content Remove="Resources\Localization\MainLayout\en.json" />
     <Content Remove="Resources\Localization\ModalDialog\de.json" />
@@ -32,7 +34,6 @@
     <Content Remove="Resources\Localization\OptionsDialog\en.json" />
     <Content Remove="Resources\Localization\TracksTable\de.json" />
     <Content Remove="Resources\Localization\TracksTable\en.json" />
-    <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
     <Content Remove="Resources\Localization\FileEdit\de.json" />
@@ -41,7 +42,6 @@
     <Content Remove="Resources\Localization\Help\en.json" />
     <Content Remove="Resources\Localization\Index\de.json" />
     <Content Remove="Resources\Localization\Index\en.json" />
-    <Content Remove="Resources\Localization\ValidationMessage\en.json" />
     <Content Remove="Resources\Localization\ViewModeImport\de.json" />
     <Content Remove="Resources\Localization\ViewModeImport\en.json" />
     <Content Remove="Resources\Localization\ViewModeRecord\de.json" />
@@ -61,6 +61,8 @@
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
     <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\en.json" />
+    <EmbeddedResource Include="Resources\Localization\IValidateable\de.json" />
+    <EmbeddedResource Include="Resources\Localization\IValidateable\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
@@ -69,8 +71,6 @@
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\en.json" />
     <EmbeddedResource Include="Resources\Localization\FileEdit\de.json" />

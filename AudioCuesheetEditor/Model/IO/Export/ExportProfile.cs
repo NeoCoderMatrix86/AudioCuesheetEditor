@@ -52,7 +52,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
         {
             get
             {
-                return SchemeHead.IsValid && SchemeTracks.IsValid && SchemeFooter.IsValid;
+                //TODO
+                //return SchemeHead.IsValid && SchemeTracks.IsValid && SchemeFooter.IsValid;
+                return true;
             }
         }
         public byte[]? GenerateExport(Cuesheet cuesheet)

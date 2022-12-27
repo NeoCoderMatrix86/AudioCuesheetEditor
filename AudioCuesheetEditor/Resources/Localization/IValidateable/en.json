@@ -1,0 +1,9 @@
+{
+  "culture": "en",
+  "translations": {
+    "Artist has no value!": "Artist has no value!",
+    "Audiofile has no value!": "Audiofile has no value!",
+    "Value must only contain numbers!": "Value must only contain numbers!",
+    "Value has an invalid length. Allowed length is 13!": "Value has an invalid length. Allowed length is 13!"
+  }
+}
