@@ -22,7 +22,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
 {
     public class ValidateableTestClass : Validateable<ValidateableTestClass>
     {
-        public String TestProperty { get; set; }
+        public String? TestProperty { get; set; }
         protected override ValidationResult Validate(string property)
         {
             var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
