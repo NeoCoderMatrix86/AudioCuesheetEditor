@@ -5,6 +5,7 @@
     "Begin has no value!": "Begin has no value!",
     "End has no value!": "End has no value!",
     "Audiofile has no value!": "Audiofile has no value!",
+    "Position has no value!": "Position has no value!",
     "Length has no value!": "Length has no value!",
     "Value must only contain numbers!": "Value must only contain numbers!",
     "Value has an invalid length. Allowed length is 13!": "Value has an invalid length. Allowed length is 13!",
