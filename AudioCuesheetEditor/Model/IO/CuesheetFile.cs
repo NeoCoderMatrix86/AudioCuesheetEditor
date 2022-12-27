@@ -38,11 +38,10 @@ namespace AudioCuesheetEditor.Model.IO
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();
-                //TODO
-                //if ((Cuesheet.Cataloguenumber != null) && (Cuesheet.Cataloguenumber.IsValid == true))
-                //{
-                //    builder.AppendLine(String.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, Cuesheet.Cataloguenumber.Value));
-                //}
+                if ((Cuesheet.Cataloguenumber != null) && (String.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false) && (Cuesheet.Cataloguenumber.Validate().Status != Entity.ValidationStatus.Error))
+                {
+                    builder.AppendLine(String.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, Cuesheet.Cataloguenumber.Value));
+                }
                 if (Cuesheet.CDTextfile != null)
                 {
                     builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, Cuesheet.CDTextfile.FileName));
@@ -84,15 +83,18 @@ namespace AudioCuesheetEditor.Model.IO
         {
             get
             {
-                //TODO
-                //if (Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
-                //{
-                //    return false;
-                //}
-                //if (Cuesheet.Tracks.Any(x => x.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0) == true)
-                //{ 
-                //    return false;
-                //}
+                if (Cuesheet.Validate().Status == Entity.ValidationStatus.Error)
+                {
+                    return false;
+                }
+                if (Cuesheet.Cataloguenumber.Validate().Status == Entity.ValidationStatus.Error)
+                {
+                    return false;
+                }
+                if (Cuesheet.Tracks.Any(x => x.Validate().Status == Entity.ValidationStatus.Error))
+                {
+                    return false;
+                }
                 return true;
             }
         }

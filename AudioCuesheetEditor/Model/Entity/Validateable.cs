@@ -33,12 +33,23 @@ namespace AudioCuesheetEditor.Model.Entity
         public ValidationResult Validate()
         {
             ValidationResult validationResult = new() { Status = ValidationStatus.NoValidation };
-            foreach (var property in typeof(Cuesheet).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var result = Validate(property.Name);
                 if (result.ErrorMessages != null)
                 {
-                    validationResult.ErrorMessages?.AddRange(result.ErrorMessages);
+                    validationResult.ErrorMessages ??= new();
+                    validationResult.ErrorMessages.AddRange(result.ErrorMessages);
+                }
+                switch (validationResult.Status)
+                {
+                    case ValidationStatus.NoValidation:
+                    case ValidationStatus.Success:
+                        validationResult.Status = result.Status;
+                        break;
+                    case ValidationStatus.Error:
+                        //If there was an error, we don't delete it!
+                        break;
                 }
             }
             return validationResult;

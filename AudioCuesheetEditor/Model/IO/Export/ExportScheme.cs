@@ -52,9 +52,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
-        private String? scheme;
-        private Schemetype schemeType;
-
         static Exportscheme()
         {
             SchemeDate = String.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
@@ -105,22 +102,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public Exportscheme() { }
 
-        public String? Scheme 
-        {
-            get { return scheme; }
-            set
-            {
-                scheme = value; //TODOOnValidateablePropertyChanged(); }
-            }
-        }
-        public Schemetype SchemeType 
-        {
-            get { return schemeType; }
-            set
-            {
-                schemeType = value; //TODOOnValidateablePropertyChanged(); }
-            }
-        }
+        public String? Scheme { get; set; }
+        
+        public Schemetype SchemeType { get; set; }
         
         public String? GetExportResult(ICuesheetEntity cuesheetEntity)
         {
@@ -166,54 +150,21 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return result;
         }
 
-        //TODO
         protected override ValidationResult Validate(string property)
         {
-            throw new NotImplementedException();
+            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            List<String>? errors = null;
+            switch (property)
+            {
+                case nameof(SchemeType):
+                    if (SchemeType == Schemetype.Unknown)
+                    {
+                        errors = new() { String.Format("{0} has invalid value!", nameof(SchemeType)) };
+                    }
+                    break;
+            }
+            result.ErrorMessages = errors;
+            return result;
         }
-
-        //TODO
-        //protected override void Validate()
-        //{
-        //    if (String.IsNullOrEmpty(Scheme) == false)
-        //    {
-        //        Boolean addValidationError = false;
-        //        switch (SchemeType)
-        //        {
-        //            case Schemetype.Header:
-        //            case Schemetype.Footer:
-        //                foreach (var availableScheme in AvailableTrackSchemes)
-        //                {
-        //                    if (Scheme.Contains(availableScheme.Value) == true)
-        //                    {
-        //                        addValidationError = true;
-        //                        break;
-        //                    }
-        //                }
-        //                if (addValidationError == true)
-        //                {
-        //                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
-        //                }
-        //                break;
-        //            case Schemetype.Body:
-        //                foreach (var availableScheme in AvailableCuesheetSchemes)
-        //                {
-        //                    if (Scheme.Contains(availableScheme.Value) == true)
-        //                    {
-        //                        addValidationError = true;
-        //                        break;
-        //                    }
-        //                }
-        //                if (addValidationError == true)
-        //                {
-        //                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
-        //                }
-        //                break;
-        //            case Schemetype.Unknown:
-        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "{0} has invalid value!", nameof(SchemeType)));
-        //                break;
-        //        }
-        //    }
-        //}
     }
 }

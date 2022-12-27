@@ -2,8 +2,15 @@
   "culture": "de",
   "translations": {
     "Artist has no value!": "Künstler hat keine Wert!",
+    "Begin has no value!": "Beginn hat keine Wert!",
+    "End has no value!": "Ende hat keine Wert!",
+    "Length has no value!": "Länge hat keine Wert!",
     "Audiofile has no value!": "Audiodatei hat keine Wert!",
     "Value must only contain numbers!": "Wert darf nur Ziffern enthalten!",
-    "Value has an invalid length. Allowed length is 13!": "Wert hat eine ungültige Länge. Erlaubte Länge ist 13!"
+    "Value has an invalid length. Allowed length is 13!": "Wert hat eine ungültige Länge. Erlaubte Länge ist 13!",
+    "SchemeType has invalid value!": "Schematyp ist ungültig!",
+    "Position may not be 0!": "Position darf nicht 0 sein!",
+    "Begin must be equal or greater zero!": "Beginn muss größer oder gleich 0 sein!",
+    "End must be equal or greater zero!": "Ende muss größer oder gleich 0 sein!"
   }
 }

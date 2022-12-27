@@ -16,16 +16,33 @@
 using AudioCuesheetEditorTests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 
 namespace AudioCuesheetEditor.Model.Entity.Tests
 {
     public class ValidateableTestClass : Validateable<ValidateableTestClass>
     {
         public String TestProperty { get; set; }
-        //TODO
         protected override ValidationResult Validate(string property)
         {
-            throw new NotImplementedException();
+            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            List<String>? errors = null;
+            switch (property)
+            {
+                case nameof(TestProperty):
+                    if (String.IsNullOrEmpty(TestProperty))
+                    {
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has no value!", nameof(TestProperty)));
+                    }
+                    else
+                    {
+                        result.Status = ValidationStatus.Success;
+                    }
+                    break;
+            }
+            result.ErrorMessages = errors;
+            return result;
         }
     }
     [TestClass()]
@@ -38,11 +55,9 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
             {
                 TestProperty = String.Empty
             };
-            var testhelper = new TestHelper();
-            //TODO
-            //Assert.IsNull(testObject.GetValidationErrors(testhelper.Localizer, validationErrorFilterType: ValidationErrorFilterType.ErrorOnly));
-            //Assert.IsTrue(testObject.ValidationErrors.Count > 0);
-            //Assert.IsNotNull(testObject.GetValidationErrors(testhelper.Localizer, nameof(ValidateableTestClass.TestProperty)));
+            Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
+            Assert.IsNotNull(testObject.Validate().ErrorMessages);
+            Assert.IsTrue(testObject.Validate().ErrorMessages.Count == 1);
         }
     }
 }

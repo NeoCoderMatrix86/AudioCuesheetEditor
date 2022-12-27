@@ -86,8 +86,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
             set
             {
                 schemeTracks = value;
-                //TODO
-                //OnValidateablePropertyChanged();
                 SchemeChanged?.Invoke(this, nameof(SchemeTracks));
             }
         }
@@ -98,8 +96,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
             set
             {
                 schemeCuesheet = value;
-                //TODO
-                //OnValidateablePropertyChanged();
                 SchemeChanged?.Invoke(this, nameof(SchemeCuesheet));
             }
         }

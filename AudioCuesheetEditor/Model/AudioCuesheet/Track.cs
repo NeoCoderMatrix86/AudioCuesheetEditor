@@ -37,7 +37,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? end;
         private TimeSpan? _length;
         private List<Flag> flags = new();
-        private Track? clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
         private Cuesheet? cuesheet;
         private TimeSpan? preGap;
@@ -153,8 +152,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     _length = value;
                 }
-                //TODO
-                //OnValidateablePropertyChanged();
             }
         }
         [JsonInclude]
@@ -181,29 +178,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Indicates that this track has been cloned from another track and is a transparent proxy
         /// </summary>
         [JsonIgnore]
-        public Boolean IsCloned { get { return clonedFrom != null; } }
+        public Boolean IsCloned { get { return ClonedFrom != null; } }
         /// <summary>
         /// Get the original track that this track has been cloned from. Can be null on original objects
         /// </summary>
-        public Track? ClonedFrom
-        {
-            get => clonedFrom;
-            private set
-            {
-                clonedFrom = value; //TODOOnValidateablePropertyChanged(); }
-            }
-            }
+        public Track? ClonedFrom { get; set; }
         /// <inheritdoc/>
         public TimeSpan? PreGap 
         {
             get => preGap;
-            set { var previousValue = preGap; preGap = value; FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(PreGap)); }
+            set { var previousValue = preGap; preGap = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(PreGap)); }
         }
         /// <inheritdoc/>
         public TimeSpan? PostGap 
         {
             get => postGap;
-            set { var previousValue = postGap; postGap = value; FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(PostGap)); }
+            set { var previousValue = postGap; postGap = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(PostGap)); }
         }
         /// <summary>
         /// Set that this track is linked to the previous track in cuesheet
@@ -211,7 +201,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Boolean IsLinkedToPreviousTrack
         {
             get => isLinkedToPreviousTrack;
-            set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(IsLinkedToPreviousTrack)); }
+            set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(IsLinkedToPreviousTrack)); }
         }
 
         public String? GetDisplayNameLocalized(ITextLocalizer localizer)
@@ -384,8 +374,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
                 }
             }
-            //TODO
-            //OnValidateablePropertyChanged();
         }
 
         ///<inheritdoc/>
@@ -422,53 +410,85 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         //TODO
         protected override ValidationResult Validate(string property)
         {
-            throw new NotImplementedException();
+            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            List<String>? errors = null;
+            switch (property)
+            {
+                case nameof(Position):
+                    if (Position == null)
+                    {
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has no value!", nameof(Position)));
+                    }
+                    else
+                    {
+                        if (Position == 0)
+                        {
+                            errors ??= new();
+                            errors.Add(String.Format("{0} may not be 0!", nameof(Position)));
+                        }
+                        else
+                        {
+                            result.Status = ValidationStatus.Success;
+                        }
+                    }
+                    break;
+                case nameof(Begin):
+                    if (Begin == null)
+                    {
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has no value!", nameof(Begin)));
+                    }
+                    else
+                    {
+                        if (Begin < TimeSpan.Zero)
+                        {
+                            errors ??= new();
+                            errors.Add(String.Format("{0} must be equal or greater zero!", nameof(Begin)));
+                        }
+                        else
+                        {
+                            result.Status = ValidationStatus.Success;
+                        }
+                    }
+                    break;
+                case nameof(End):
+                    if (End == null)
+                    {
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has no value!", nameof(End)));
+                    }
+                    else
+                    {
+                        if (End < TimeSpan.Zero)
+                        {
+                            errors ??= new();
+                            errors.Add(String.Format("{0} must be equal or greater zero!", nameof(End)));
+                        }
+                        else
+                        {
+                            result.Status = ValidationStatus.Success;
+                        }
+                    }
+                    break;
+                case nameof(Length):
+                    if (Length == null)
+                    {
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has no value!", nameof(Length)));
+                    }
+                    else
+                    {
+                        result.Status = ValidationStatus.Success;
+                    }
+                    break;
+            }
+            result.ErrorMessages = errors;
+            return result;
         }
 
         //protected override void Validate()
         //{
-        //    if (Position == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} has no value!", nameof(Position)));
-        //    }
-        //    if ((Position != null) && (Position == 0))
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} has invalid value!", nameof(Position)));
-        //    }
-        //    if (String.IsNullOrEmpty(Artist) == true)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "{0} has no value!", nameof(Artist)));
-        //    }
-        //    if (String.IsNullOrEmpty(Title) == true)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
-        //    }
-        //    if (Begin == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "{0} has no value!", nameof(Begin)));
-        //    }
-        //    else
-        //    {
-        //        if (Begin < TimeSpan.Zero)
-        //        {
-        //            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "{0} has invalid timespan!", nameof(Begin)));
-        //        }
-        //    }
-        //    if (End == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "{0} has no value!", nameof(End)));
-        //    }
-        //    else
-        //    {
-        //        if (End < TimeSpan.Zero)
-        //        {
-        //            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "{0} has invalid timespan!", nameof(End)));
-        //        }
-        //    }
-        //    if (Length == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "{0} has no value! Please check {1} and {2}.", nameof(Length), nameof(Begin), nameof(End)));
-        //    }
         //    //Check track overlapping
         //    if (Cuesheet != null)
         //    {
@@ -577,12 +597,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Method for checking if fire of events should be done
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireRankPropertyValueChanged">Fire RankPropertyValueChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire OnTraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the events</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireRankPropertyValueChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireRankPropertyValueChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -590,11 +609,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var propertyValue = propertyInfo.GetValue(this);
                 if (Equals(propertyValue, previousValue) == false)
                 {
-                    if (fireValidateablePropertyChanged)
-                    {
-                        //TODO
-                        //OnValidateablePropertyChanged();
-                    }
                     if (fireRankPropertyValueChanged)
                     {
                         RankPropertyValueChanged?.Invoke(this, propertyName);
