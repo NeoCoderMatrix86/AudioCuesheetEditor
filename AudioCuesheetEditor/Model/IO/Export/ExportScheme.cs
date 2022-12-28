@@ -159,7 +159,12 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 case nameof(SchemeType):
                     if (SchemeType == Schemetype.Unknown)
                     {
-                        errors = new() { String.Format("{0} has invalid value!", nameof(SchemeType)) };
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has invalid value!", nameof(SchemeType)));
+                    }
+                    else
+                    {
+                        result.Status = ValidationStatus.Success;
                     }
                     break;
             }
