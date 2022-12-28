@@ -31,15 +31,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public void CatalogueNumberTest()
         {
             var catalogueNumber = new Cataloguenumber();
-            //TODO
-            //Assert.IsFalse(catalogueNumber.IsValid);
-            //Assert.IsTrue(catalogueNumber.ValidationErrors.Count == 1);
-            //catalogueNumber.Value = "Testvalue";
-            //Assert.IsFalse(catalogueNumber.IsValid);
-            //catalogueNumber.Value = "01234567891234567890";
-            //Assert.IsFalse(catalogueNumber.IsValid);
-            //catalogueNumber.Value = "1234567890123";
-            //Assert.IsTrue(catalogueNumber.IsValid);
+            Assert.AreEqual(Entity.ValidationStatus.NoValidation, catalogueNumber.Validate().Status);
+            catalogueNumber.Value = "Testvalue";
+            Assert.AreEqual(Entity.ValidationStatus.Error, catalogueNumber.Validate().Status);
+            catalogueNumber.Value = "01234567891234567890";
+            Assert.AreEqual(Entity.ValidationStatus.Error, catalogueNumber.Validate().Status);
+            catalogueNumber.Value = "1234567890123";
+            Assert.AreEqual(Entity.ValidationStatus.Success, catalogueNumber.Validate().Status);
         }
     }
 }
