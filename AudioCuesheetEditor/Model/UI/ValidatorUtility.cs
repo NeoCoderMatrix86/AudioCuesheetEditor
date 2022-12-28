@@ -22,31 +22,34 @@ namespace AudioCuesheetEditor.Model.UI
 {
     public class ValidatorUtility<T> where T : IValidateable<T>
     {
-        public static Task Validate<TProperty>(ValidatorEventArgs args, T entity, Expression<Func<T, TProperty>> expression, ITextLocalizer<IValidateable> textLocalizer, CancellationToken cancellationToken)
+        public static Task Validate<TProperty>(ValidatorEventArgs args, T? entity, Expression<Func<T, TProperty>> expression, ITextLocalizer<IValidateable> textLocalizer, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested)
             {
-                var validationResult = entity.Validate(expression);
-                if (!cancellationToken.IsCancellationRequested)
+                if (entity != null)
                 {
-                    switch (validationResult.Status)
+                    var validationResult = entity.Validate(expression);
+                    if (!cancellationToken.IsCancellationRequested)
                     {
-                        case Entity.ValidationStatus.NoValidation:
-                            args.Status = Blazorise.ValidationStatus.None;
-                            break;
-                        case Entity.ValidationStatus.Success:
-                            args.Status = Blazorise.ValidationStatus.Success;
-                            break;
-                        case Entity.ValidationStatus.Error:
-                            args.Status = Blazorise.ValidationStatus.Error;
-                            if (validationResult.ErrorMessages != null)
-                            {
-                                foreach(var error in validationResult.ErrorMessages)
+                        switch (validationResult.Status)
+                        {
+                            case Entity.ValidationStatus.NoValidation:
+                                args.Status = Blazorise.ValidationStatus.None;
+                                break;
+                            case Entity.ValidationStatus.Success:
+                                args.Status = Blazorise.ValidationStatus.Success;
+                                break;
+                            case Entity.ValidationStatus.Error:
+                                args.Status = Blazorise.ValidationStatus.Error;
+                                if (validationResult.ErrorMessages != null)
                                 {
-                                    args.ErrorText += String.Format("{0}{1}", textLocalizer[error], Environment.NewLine);
+                                    foreach (var error in validationResult.ErrorMessages)
+                                    {
+                                        args.ErrorText += String.Format("{0}{1}", textLocalizer[error], Environment.NewLine);
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                        }
                     }
                 }
             }

@@ -15,7 +15,7 @@
     "Automatically link tracks with previous": "Tracks standardmäßig an den vorherigen Track koppeln",
     "Textimportscheme cuesheet": "Textschema für den Import von Cuesheeteigenschaften",
     "Textimportscheme track": "Textschema für den Import von Trackeigenschaften",
-    "Filename for recorded audio": "Dateiname für aufgenommene Audiodaten",
+    "Filename for recorded audio": "Dateiname für aufgenommenes Audio",
     "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden",
     "Record time sensitivity": "Genauigkeit der Aufnahmezeiten",
     "TimeSensitivityMode.Full": "Alles (inkl. Millisekunden)",

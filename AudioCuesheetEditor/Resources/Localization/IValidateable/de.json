@@ -12,6 +12,8 @@
     "SchemeType has invalid value!": "Schematyp ist ungültig!",
     "Position may not be 0!": "Position darf nicht 0 sein!",
     "Begin must be equal or greater zero!": "Beginn muss größer oder gleich 0 sein!",
-    "End must be equal or greater zero!": "Ende muss größer oder gleich 0 sein!"
+    "End must be equal or greater zero!": "Ende muss größer oder gleich 0 sein!",
+    "Scheme contains no placeholder!": "Schema enthält keine Platzhalter!",
+    "Replace 'ENTER REGULAR EXPRESSION HERE' by a regular expression!": "Ersetzen Sie 'Hier regulären Ausdruck eingeben' durch einen regulären Ausdruck!"
   }
 }

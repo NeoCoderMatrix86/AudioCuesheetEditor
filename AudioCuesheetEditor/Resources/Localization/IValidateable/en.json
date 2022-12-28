@@ -12,6 +12,8 @@
     "SchemeType has invalid value!": "SchemeType has invalid value!",
     "Position may not be 0!": "Position may not be 0!",
     "Begin must be equal or greater zero!": "Begin must be equal or greater zero!",
-    "End must be equal or greater zero!": "End must be equal or greater zero!"
+    "End must be equal or greater zero!": "End must be equal or greater zero!",
+    "Scheme contains no placeholder!": "Scheme contains no placeholder!",
+    "Replace 'ENTER REGULAR EXPRESSION HERE' by a regular expression!": "Replace 'Enter regular expression here' by a regular expression!"
   }
 }
