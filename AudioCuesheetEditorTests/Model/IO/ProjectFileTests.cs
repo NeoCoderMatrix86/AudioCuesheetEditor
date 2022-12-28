@@ -78,25 +78,25 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         {
             var fileContent = Encoding.UTF8.GetBytes("{\"Artist\":\"CuesheetArtist\",\"Title\":\"CuesheetTitle\",\"Audiofile\":{\"FileName\":\"AudioFile.mp3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Artist 1\",\"Title\":\"Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:01:01\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":2,\"Artist\":\"Artist 2\",\"Title\":\"Title 2\",\"Begin\":\"00:01:01\",\"End\":\"00:03:03\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":3,\"Artist\":\"Artist 3\",\"Title\":\"Title 3\",\"Begin\":\"00:03:03\",\"End\":\"00:06:06\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":4,\"Artist\":\"Artist 4\",\"Title\":\"Title 4\",\"Begin\":\"00:06:06\",\"End\":\"00:10:10\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":5,\"Artist\":\"Artist 5\",\"Title\":\"Title 5\",\"Begin\":\"00:10:10\",\"End\":\"00:15:15\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":6,\"Artist\":\"Artist 6\",\"Title\":\"Title 6\",\"Begin\":\"00:15:15\",\"End\":\"00:21:21\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":7,\"Artist\":\"Artist 7\",\"Title\":\"Title 7\",\"Begin\":\"00:21:21\",\"End\":\"00:28:28\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":8,\"Artist\":\"Artist 8\",\"Title\":\"Title 8\",\"Begin\":\"00:28:28\",\"End\":\"00:36:36\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":9,\"Artist\":\"Artist 9\",\"Title\":\"Title 9\",\"Begin\":\"00:36:36\",\"End\":\"00:45:45\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":10,\"Artist\":\"Artist 10\",\"Title\":\"Title 10\",\"Begin\":\"00:45:45\",\"End\":\"00:55:55\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true}],\"CDTextfile\":{\"FileName\":\"CDTextfile.cdt\"},\"Cataloguenumber\":{\"Value\":\"A123\"}}");
             var cuesheet = Projectfile.ImportFile(fileContent);
+            Assert.IsNotNull(cuesheet);
             Assert.IsTrue(cuesheet.Tracks.All(x => x.Cuesheet == cuesheet));
             Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", cuesheet.Title);
-            Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile.FileName);
-            Assert.IsFalse(cuesheet.Audiofile.IsRecorded);
+            Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile?.FileName);
+            Assert.IsFalse(cuesheet.Audiofile?.IsRecorded);
             Assert.AreEqual("A123", cuesheet.Cataloguenumber.Value);
-            //TODO
-            //Assert.IsTrue(cuesheet.Cataloguenumber.ValidationErrors.Count == 2);
-            //Assert.IsTrue(cuesheet.Tracks.Count == 10);
-            //Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.DCP));
-            //Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
-            //Assert.AreEqual("Artist 10", cuesheet.Tracks.Last().Artist);
-            //Assert.AreEqual(new TimeSpan(0, 55, 55), cuesheet.Tracks.Last().End);
-            //Assert.IsTrue(Object.ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
-            //Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
-            //cuesheet.Tracks.First().Position = 3;
-            //Assert.AreEqual("Artist 1", cuesheet.Tracks.ElementAt(2).Artist);
-            //Assert.AreEqual("Artist 3", cuesheet.Tracks.First().Artist);
-            //Assert.AreEqual((uint)10, cuesheet.Tracks.Last().Position.Value);
+            Assert.IsTrue(cuesheet.Cataloguenumber.Validate().ErrorMessages?.Count == 2);
+            Assert.IsTrue(cuesheet.Tracks.Count == 10);
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.DCP));
+            Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
+            Assert.AreEqual("Artist 10", cuesheet.Tracks.Last().Artist);
+            Assert.AreEqual(new TimeSpan(0, 55, 55), cuesheet.Tracks.Last().End);
+            Assert.IsTrue(Object.ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
+            Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
+            cuesheet.Tracks.First().Position = 3;
+            Assert.AreEqual("Artist 1", cuesheet.Tracks.ElementAt(2).Artist);
+            Assert.AreEqual("Artist 3", cuesheet.Tracks.First().Artist);
+            Assert.AreEqual((uint)10, cuesheet.Tracks.Last().Position);
         }
     }
 }
