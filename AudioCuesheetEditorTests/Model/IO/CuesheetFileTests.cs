@@ -68,7 +68,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 Assert.AreEqual(fileContent[i], String.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
                 Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
                 Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
-                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+                var trackBegin = track.Begin;
+                Assert.IsNotNull(trackBegin);
+                Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75));
             }
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
@@ -136,9 +138,15 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title), fileContent[i + 1]);
                 Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist), fileContent[i + 2]);
                 Assert.AreEqual(String.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))), fileContent[i + 3]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds / 75), fileContent[i + 4]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75), fileContent[i + 5]);
-                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds / 75), fileContent[i + 6]);
+                var preGap = track.PreGap;
+                var trackBegin = track.Begin;
+                var postGap = track.PostGap;
+                Assert.IsNotNull(preGap);
+                Assert.IsNotNull(trackBegin);
+                Assert.IsNotNull(postGap);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(preGap.Value.TotalMinutes), preGap.Value.Seconds, preGap.Value.Milliseconds / 75), fileContent[i + 4]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75), fileContent[i + 5]);
+                Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(postGap.Value.TotalMinutes), postGap.Value.Seconds, postGap.Value.Milliseconds / 75), fileContent[i + 6]);
             }
             File.Delete(fileName);
         }
@@ -190,7 +198,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 Assert.AreEqual(fileContent[i + 1], String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
                 Assert.AreEqual(fileContent[i + 2], String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
                 Assert.AreEqual(fileContent[i + 3], String.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
-                Assert.AreEqual(fileContent[i + 4], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75));
+                var trackBegin = track.Begin;
+                Assert.IsNotNull(trackBegin);
+                Assert.AreEqual(fileContent[i + 4], String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75));
             }
             File.Delete(fileName);
         }
@@ -245,7 +255,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             //    Assert.AreEqual(String.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, position, CuesheetConstants.CuesheetTrackAudio), fileContent[i]);
             //    Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title), fileContent[i + 1]);
             //    Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist), fileContent[i + 2]);
-            //    Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, track.Begin.Value.Milliseconds / 75), fileContent[i + 3]);
+            //    var trackBegin = track.Begin;
+            //    Assert.IsNotNull(trackBegin);
+            //    Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75), fileContent[i + 3]);
             //    position++;
             //}
             //File.Delete(fileName);
