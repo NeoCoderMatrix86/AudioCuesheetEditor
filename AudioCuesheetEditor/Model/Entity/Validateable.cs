@@ -45,7 +45,13 @@ namespace AudioCuesheetEditor.Model.Entity
                 {
                     case ValidationStatus.NoValidation:
                     case ValidationStatus.Success:
-                        validationResult.Status = result.Status;
+                        switch (result.Status)
+                        {
+                            case ValidationStatus.Success:
+                            case ValidationStatus.Error:
+                                validationResult.Status = result.Status;
+                                break;
+                        }
                         break;
                     case ValidationStatus.Error:
                         //If there was an error, we don't delete it!

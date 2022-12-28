@@ -23,6 +23,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
     public class ValidateableTestClass : Validateable<ValidateableTestClass>
     {
         public String? TestProperty { get; set; }
+        public int? TestProperty2 { get; set; }
         protected override ValidationResult Validate(string property)
         {
             var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
@@ -49,7 +50,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
     public class ValidateableTests
     {
         [TestMethod()]
-        public void GetValidationErrorsTest()
+        public void ValidateTest()
         {
             var testObject = new ValidateableTestClass
             {
@@ -58,6 +59,8 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
             Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
             Assert.IsNotNull(testObject.Validate().ErrorMessages);
             Assert.IsTrue(testObject.Validate().ErrorMessages?.Count == 1);
+            testObject.TestProperty = "Test";
+            Assert.AreEqual(ValidationStatus.Success, testObject.Validate().Status);
         }
     }
 }
