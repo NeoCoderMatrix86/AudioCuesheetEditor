@@ -144,17 +144,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get => catalogueNumber;
             set
             {
-                //TODO
-                //if (catalogueNumber != null)
-                //{
-                //    catalogueNumber.ValidateablePropertyChanged -= CatalogueNumber_ValidateablePropertyChanged;
-                //}
                 var previousValue = catalogueNumber;
                 catalogueNumber = value;
-                //if (catalogueNumber != null)
-                //{
-                //    catalogueNumber.ValidateablePropertyChanged += CatalogueNumber_ValidateablePropertyChanged;
-                //}
                 FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
             }
         }
@@ -270,8 +261,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = null;
             track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
             track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
-            //TODO
-            //OnValidateablePropertyChanged();
             //If Tracks are linked, we need to set the linked track again
             if (nextTrack != null)
             {
@@ -328,8 +317,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
-            //TODO
-            //OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
@@ -542,12 +529,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         //        validationErrors.AddRange(Cataloguenumber.ValidationErrors);
         //    }
         //}
-
-        private void CatalogueNumber_ValidateablePropertyChanged(object? sender, EventArgs e)
-        {
-            //TODO
-            //OnValidateablePropertyChanged();
-        }
 
         private void ReCalculateTrackProperties(Track trackToCalculate)
         {
