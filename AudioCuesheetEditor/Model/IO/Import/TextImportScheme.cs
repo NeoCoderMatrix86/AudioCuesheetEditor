@@ -99,62 +99,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 SchemeChanged?.Invoke(this, nameof(SchemeCuesheet));
             }
         }
-        //TODO
         protected override ValidationResult Validate(string property)
         {
-            throw new NotImplementedException();
+            //TODO: Check for EnterRegularExpressionHere like in TimeSpanFormat
+            return new ValidationResult() { Status = ValidationStatus.NoValidation };
         }
-        //TODO
-        //protected override void Validate()
-        //{
-        //    if (String.IsNullOrEmpty(SchemeCuesheet))
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "{0} has no value!", nameof(SchemeCuesheet)));
-        //    }
-        //    else
-        //    {
-        //        if (AvailableSchemesTrack != null)
-        //        {
-        //            List<String> schemesFound = new();
-        //            foreach (var availableScheme in AvailableSchemesTrack)
-        //            {
-        //                if (SchemeCuesheet.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
-        //                {
-        //                    var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-        //                    var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(")", startIndex) + 1) - startIndex);
-        //                    schemesFound.Add(realRegularExpression);
-        //                }
-        //            }
-        //            if (schemesFound.Count > 0)
-        //            {
-        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeCuesheet)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
-        //            }
-        //        }
-        //    }
-        //    if (String.IsNullOrEmpty(SchemeTracks))
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "{0} has no value!", nameof(SchemeTracks)));
-        //    }
-        //    else
-        //    {
-        //        if (AvailableSchemeCuesheet != null)
-        //        {
-        //            List<String> schemesFound = new();
-        //            foreach (var availableScheme in AvailableSchemeCuesheet)
-        //            {
-        //                if (SchemeTracks.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
-        //                {
-        //                    var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-        //                    var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(")", startIndex) + 1) - startIndex);
-        //                    schemesFound.Add(realRegularExpression);
-        //                }
-        //            }
-        //            if (schemesFound.Count > 0)
-        //            {
-        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeTracks)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved! Please remove invalid placeholder '{0}'.", String.Join(",", schemesFound)));
-        //            }
-        //        }
-        //    }
-        //}
     }
 }

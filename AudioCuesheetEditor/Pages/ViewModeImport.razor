@@ -26,8 +26,10 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject IJSRuntime _jsRuntime
 @inject HttpClient _httpClient
+@inject ITextLocalizer<IValidateable> _validatableLocalizer
 
-@*<Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
+<Validations>
+    <Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
     <Items>
         <Step Name="selectFiles" Completed="selectFilesCompleted">@_localizer["Select files"]</Step>
         <Step Name="validateData">@_localizer["Validate"]</Step>
@@ -145,93 +147,105 @@ along with Foobar.  If not, see
                                     <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
-                                    <Field Horizontal>
-                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
-                                            <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
-                                                @_localizer["Textimportscheme cuesheet"]
-                                            </Tooltip>
-                                        </FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                            <Addons>
-                                                <Addon AddonType="AddonType.Body">
-                                                    <TextEdit id="TextImportScheme.SchemeCuesheet" Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
-                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeCuesheet))" TriggerTargetId="TextImportScheme.SchemeCuesheet" />
-                                                    </TextEdit>
-                                                </Addon>
-                                                <Addon AddonType="AddonType.End">
-                                                    <Dropdown>
-                                                        <DropdownToggle Color="Color.Secondary">
-                                                            @_localizer["Select placeholder"]
-                                                        </DropdownToggle>
-                                                        <DropdownMenu>
-                                                            @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
-                                                            {
-                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                                            }
-                                                        </DropdownMenu>
-                                                    </Dropdown>
-                                                </Addon>
-                                            </Addons>
-                                        </FieldBody>
-                                    </Field>
-                                    <Field Horizontal>
-                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
-                                            <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
-                                                @_localizer["Textimportscheme track"]
-                                            </Tooltip>
-                                        </FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                            <Addons>
-                                                <Addon AddonType="AddonType.Body">
-                                                    <TextEdit id="TextImportScheme.SchemeTracks" Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
-                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TextImportScheme.GetValidationErrors(validationMessageLocalizer, nameof(TextImportScheme.SchemeTracks))" TriggerTargetId="TextImportScheme.SchemeTracks" />
-                                                    </TextEdit>
-                                                </Addon>
-                                                <Addon AddonType="AddonType.End">
-                                                    <Dropdown>
-                                                        <DropdownToggle Color="Color.Secondary">
-                                                            @_localizer["Select placeholder"]
-                                                        </DropdownToggle>
-                                                        <DropdownMenu>
-                                                            @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
-                                                            {
-                                                                <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                                            }
-                                                        </DropdownMenu>
-                                                    </Dropdown>
-                                                </Addon>
-                                            </Addons>
-                                        </FieldBody>
-                                    </Field>
-                                    <Field Horizontal>
-                                        <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
-                                            <Tooltip Text="@_localizer["Enter custom timespan format here"]">
-                                                @_localizer["Customized timespan format import"]
-                                            </Tooltip>
-                                        </FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                            <Addons>
-                                                <Addon AddonType="AddonType.Body">
-                                                    <TextEdit Id="Timespanformat.Scheme" @bind-Text="_sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme">
-                                                        <Tooltip Text="@_sessionStateContainer.TextImportFile.TimeSpanFormat.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
-                                                    </TextEdit>
-                                                </Addon>
-                                                <Addon AddonType="AddonType.End">
-                                                    <Dropdown>
-                                                        <DropdownToggle Color="Color.Secondary">
-                                                            @_localizer["Select placeholder"]
-                                                        </DropdownToggle>
-                                                        <DropdownMenu>
-                                                            @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
-                                                            {
-                                                                <DropdownItem Value="@availableFormat.Value" Clicked="() => _sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme += availableFormat.Value.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere])">@_localizer[availableFormat.Key]</DropdownItem>
-                                                            }
-                                                        </DropdownMenu>
-                                                    </Dropdown>
-                                                </Addon>
-                                            </Addons>
-                                        </FieldBody>
-                                    </Field>
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeCuesheet, _validatableLocalizer, token)">
+                                        <Field Horizontal>
+                                            <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
+                                                <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
+                                                    @_localizer["Textimportscheme cuesheet"]
+                                                </Tooltip>
+                                            </FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                                                <Addons>
+                                                    <Addon AddonType="AddonType.Body">
+                                                        <TextEdit Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
+                                                            <Feedback>
+                                                                <ValidationError />
+                                                            </Feedback>
+                                                        </TextEdit>
+                                                    </Addon>
+                                                    <Addon AddonType="AddonType.End">
+                                                        <Dropdown>
+                                                            <DropdownToggle Color="Color.Secondary">
+                                                                @_localizer["Select placeholder"]
+                                                            </DropdownToggle>
+                                                            <DropdownMenu>
+                                                                @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
+                                                                {
+                                                                    <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                                }
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </Addon>
+                                                </Addons>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeTracks, _validatableLocalizer, token)">
+                                        <Field Horizontal>
+                                            <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
+                                                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
+                                                    @_localizer["Textimportscheme track"]
+                                                </Tooltip>
+                                            </FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                                                <Addons>
+                                                    <Addon AddonType="AddonType.Body">
+                                                        <TextEdit Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
+                                                            <Feedback>
+                                                                <ValidationError />
+                                                            </Feedback>
+                                                        </TextEdit>
+                                                    </Addon>
+                                                    <Addon AddonType="AddonType.End">
+                                                        <Dropdown>
+                                                            <DropdownToggle Color="Color.Secondary">
+                                                                @_localizer["Select placeholder"]
+                                                            </DropdownToggle>
+                                                            <DropdownMenu>
+                                                                @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
+                                                                {
+                                                                    <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                                                }
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </Addon>
+                                                </Addons>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, _sessionStateContainer.TextImportFile.TimeSpanFormat, x => x.Scheme, _validatableLocalizer, token)">
+                                        <Field Horizontal>
+                                            <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
+                                                <Tooltip Text="@_localizer["Enter custom timespan format here"]">
+                                                    @_localizer["Customized timespan format import"]
+                                                </Tooltip>
+                                            </FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                                                <Addons>
+                                                    <Addon AddonType="AddonType.Body">
+                                                        <TextEdit @bind-Text="_sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme">
+                                                            <Feedback>
+                                                                    <ValidationError Tooltip />
+                                                            </Feedback>
+                                                        </TextEdit>
+                                                    </Addon>
+                                                    <Addon AddonType="AddonType.End">
+                                                        <Dropdown>
+                                                            <DropdownToggle Color="Color.Secondary">
+                                                                @_localizer["Select placeholder"]
+                                                            </DropdownToggle>
+                                                            <DropdownMenu>
+                                                                @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
+                                                                {
+                                                                    <DropdownItem Value="@availableFormat.Value" Clicked="() => _sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme += availableFormat.Value.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere])">@_localizer[availableFormat.Key]</DropdownItem>
+                                                                }
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </Addon>
+                                                </Addons>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
                                     <Field Horizontal>
                                         <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                             @_localizer["Reset import options"]
@@ -277,12 +291,12 @@ along with Foobar.  If not, see
             </Card>
         </StepPanel>
     </Content>
-</Steps>*@
+</Steps>
+</Validations>
 
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    //TODO
     String selectedStep = "selectFiles";
     String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
