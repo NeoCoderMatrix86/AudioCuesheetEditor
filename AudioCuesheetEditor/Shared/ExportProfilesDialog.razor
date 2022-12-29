@@ -25,7 +25,7 @@ along with Foobar.  If not, see
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject HotKeys _hotKeys
 @inject SessionStateContainer _sessionStateContainer
-@inject ITextLocalizer<IValidateable> _validatableLocalizer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 <Validations>
     <Modal @ref="modalExportProfiles" VisibleChanged="ModalExportProfiles_VisibleChanged">
@@ -60,7 +60,7 @@ along with Foobar.  If not, see
                             <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.FileName" />
                         </FieldBody>
                     </Field>
-                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeHead, x => x.Scheme, _validatableLocalizer, token)">
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeHead, x => x.Scheme, _validationMessageLocalizer, token)">
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">
                                 <Tooltip Text="@_localizer["Enter exportschemehead here tooltip"]" Placement="TooltipPlacement.TopEnd">
@@ -93,7 +93,7 @@ along with Foobar.  If not, see
                             </FieldBody>
                         </Field>
                     </Validation>
-                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeTracks, x => x.Scheme, _validatableLocalizer, token)">
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeTracks, x => x.Scheme, _validationMessageLocalizer, token)">
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">
                                 <Tooltip Text="@_localizer["Enter exportscheme track here tooltip"]" Placement="TooltipPlacement.TopEnd">
@@ -126,7 +126,7 @@ along with Foobar.  If not, see
                             </FieldBody>
                         </Field>
                     </Validation>
-                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeFooter, x => x.Scheme, _validatableLocalizer, token)">
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeFooter, x => x.Scheme, _validationMessageLocalizer, token)">
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">
                                 <Tooltip Text="@_localizer["Enter exportscheme footer here tooltip"]" Placement="TooltipPlacement.TopStart">

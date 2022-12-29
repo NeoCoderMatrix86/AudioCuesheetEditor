@@ -36,10 +36,10 @@ namespace AudioCuesheetEditor.Model.Entity
             foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var result = Validate(property.Name);
-                if (result.ErrorMessages != null)
+                if (result.ValidationMessages != null)
                 {
-                    validationResult.ErrorMessages ??= new();
-                    validationResult.ErrorMessages.AddRange(result.ErrorMessages);
+                    validationResult.ValidationMessages ??= new();
+                    validationResult.ValidationMessages.AddRange(result.ValidationMessages);
                 }
                 switch (validationResult.Status)
                 {

@@ -22,7 +22,7 @@ namespace AudioCuesheetEditor.Model.UI
 {
     public class ValidatorUtility<T> where T : IValidateable<T>
     {
-        public static Task Validate<TProperty>(ValidatorEventArgs args, T? entity, Expression<Func<T, TProperty>> expression, ITextLocalizer<IValidateable> textLocalizer, CancellationToken cancellationToken)
+        public static Task Validate<TProperty>(ValidatorEventArgs args, T? entity, Expression<Func<T, TProperty>> expression, ITextLocalizer<ValidationMessage> textLocalizer, CancellationToken cancellationToken)
         {
             if (!cancellationToken.IsCancellationRequested)
             {
@@ -41,11 +41,12 @@ namespace AudioCuesheetEditor.Model.UI
                                 break;
                             case Entity.ValidationStatus.Error:
                                 args.Status = Blazorise.ValidationStatus.Error;
-                                if (validationResult.ErrorMessages != null)
+                                if (validationResult.ValidationMessages != null)
                                 {
-                                    foreach (var error in validationResult.ErrorMessages)
+                                    foreach (var validationMessage in validationResult.ValidationMessages)
                                     {
-                                        args.ErrorText += String.Format("{0}{1}", textLocalizer[error], Environment.NewLine);
+                                        //TODO
+                                        args.ErrorText += String.Format("{0}{1}", validationMessage.GetMessageLocalized(textLocalizer), Environment.NewLine);
                                     }
                                 }
                                 break;

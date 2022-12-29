@@ -26,24 +26,20 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
         public int? TestProperty2 { get; set; }
         protected override ValidationResult Validate(string property)
         {
-            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
-            List<String>? errors = null;
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
                 case nameof(TestProperty):
+                    validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(TestProperty))
                     {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has no value!", nameof(TestProperty)));
-                    }
-                    else
-                    {
-                        result.Status = ValidationStatus.Success;
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(TestProperty)));
                     }
                     break;
             }
-            result.ErrorMessages = errors;
-            return result;
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
     [TestClass()]
@@ -57,8 +53,8 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
                 TestProperty = String.Empty
             };
             Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
-            Assert.IsNotNull(testObject.Validate().ErrorMessages);
-            Assert.IsTrue(testObject.Validate().ErrorMessages?.Count == 1);
+            Assert.IsNotNull(testObject.Validate().ValidationMessages);
+            Assert.IsTrue(testObject.Validate().ValidationMessages?.Count == 1);
             testObject.TestProperty = "Test";
             Assert.AreEqual(ValidationStatus.Success, testObject.Validate().Status);
         }

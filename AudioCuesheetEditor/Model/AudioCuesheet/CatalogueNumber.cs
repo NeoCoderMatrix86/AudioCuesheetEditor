@@ -36,35 +36,37 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         protected override ValidationResult Validate(string property)
         {
-            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
-            List<String>? errors = null;
-            switch (property)
-            {
-                case nameof(Value):
-                    if (String.IsNullOrEmpty(Value) == false)
-                    {
-                        if (Value.All(Char.IsDigit) == false)
-                        {
-                            errors = new() { String.Format("{0} must only contain numbers!", nameof(Value)) };
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
-                        }
-                        if (Value.Length != 13)
-                        {
-                            errors ??= new();
-                            errors.Add(String.Format("{0} has an invalid length. Allowed length is {1}!", nameof(Value), 13));
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
-                        }
-                    }
-                    break;
-            }
-            result.ErrorMessages = errors;
-            return result;
+            //TODO
+            //var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            //List<String>? errors = null;
+            //switch (property)
+            //{
+            //    case nameof(Value):
+            //        if (String.IsNullOrEmpty(Value) == false)
+            //        {
+            //            if (Value.All(Char.IsDigit) == false)
+            //            {
+            //                errors = new() { String.Format("{0} must only contain numbers!", nameof(Value)) };
+            //            }
+            //            else
+            //            {
+            //                result.Status = ValidationStatus.Success;
+            //            }
+            //            if (Value.Length != 13)
+            //            {
+            //                errors ??= new();
+            //                errors.Add(String.Format("{0} has an invalid length. Allowed length is {1}!", nameof(Value), 13));
+            //            }
+            //            else
+            //            {
+            //                result.Status = ValidationStatus.Success;
+            //            }
+            //        }
+            //        break;
+            //}
+            //result.ValidationMessages = errors;
+            //return result;
+            throw new NotImplementedException();
         }
 
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")

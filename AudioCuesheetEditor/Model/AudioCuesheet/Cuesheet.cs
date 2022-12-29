@@ -416,80 +416,83 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         protected override ValidationResult Validate(string property)
         {
-            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
-            List<String>? errors = null;
-            switch (property)
-            {
-                case nameof(Tracks):
-                    if (Tracks.Count <= 0)
-                    {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has invalid Count ({1})!", nameof(Tracks), 0));
-                        result.Status = ValidationStatus.Error;
-                    }
-                    else
-                    {
-                        //Check track overlapping
-                        var tracksWithSamePosition = Tracks.Where(x => x.IsCloned == false)
-                            .GroupBy(x => x.Position)
-                            .Where(grp => grp.Count() > 1);
-                        if (tracksWithSamePosition.Any())
-                        {
-                            errors ??= new();
-                            foreach (var track in tracksWithSamePosition)
-                            {
-                                foreach (var trackWithSamePosition in track)
-                                {
-                                    errors.Add(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key, nameof(Track), trackWithSamePosition.Position, trackWithSamePosition.Artist, trackWithSamePosition.Title, trackWithSamePosition.Begin, trackWithSamePosition.End));
-                                }
-                            }
-                            result.Status = ValidationStatus.Error;
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
-                        }
-                        foreach (var track in Tracks.OrderBy(x => x.Position))
-                        {
-                            var tracksBetween = Tracks.Where(x => ((track.Begin >= x.Begin && track.Begin < x.End) 
-                                                        || (x.Begin < track.End && track.End <= x.End))
-                                                        && (x.Equals(track) == false));
-                            if (tracksBetween.Any())
-                            {
-                                errors ??= new();
-                                foreach (var trackBetween in tracksBetween)
-                                {
-                                    errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position, track.Artist, track.Title, track.Begin, track.End, trackBetween.Position, trackBetween.Artist, trackBetween.Title, trackBetween.Begin, trackBetween.End));
-                                }
-                                result.Status = ValidationStatus.Error;
-                            }
-                            else
-                            {
-                                result.Status = ValidationStatus.Success;
-                            }
-                        }
-                        
-                        result.Status = ValidationStatus.Success;
-                    }
-                    break;
-                case nameof(Audiofile):
-                    if (Audiofile == null)
-                    {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has no value!", nameof(Audiofile)));
-                        result.Status = ValidationStatus.Error;
-                    }
-                    else
-                    {
-                        result.Status = ValidationStatus.Success;
-                    }
-                    break;
-                default:
-                    result.Status = ValidationStatus.NoValidation;
-                    break;
-            }
-            result.ErrorMessages = errors;
-            return result;
+            //TODO
+            throw new NotImplementedException();
+            //var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            //List<String>? errors = null;
+            //switch (property)
+            //{
+            //    case nameof(Tracks):
+            //        if (Tracks.Count <= 0)
+            //        {
+            //            errors ??= new();
+            //            errors.Add(String.Format("{0} has invalid Count ({1})!", nameof(Tracks), 0));
+            //            result.Status = ValidationStatus.Error;
+            //        }
+            //        else
+            //        {
+            //            //Check track overlapping
+            //            var tracksWithSamePosition = Tracks.Where(x => x.IsCloned == false)
+            //                .GroupBy(x => x.Position)
+            //                .Where(grp => grp.Count() > 1);
+            //            if (tracksWithSamePosition.Any())
+            //            {
+            //                errors ??= new();
+            //                foreach (var track in tracksWithSamePosition)
+            //                {
+            //                    foreach (var trackWithSamePosition in track)
+            //                    {
+            //                        errors.Add(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key, nameof(Track), trackWithSamePosition.Position, trackWithSamePosition.Artist, trackWithSamePosition.Title, trackWithSamePosition.Begin, trackWithSamePosition.End));
+            //                    }
+            //                }
+            //                result.Status = ValidationStatus.Error;
+            //            }
+            //            else
+            //            {
+            //                result.Status = ValidationStatus.Success;
+            //            }
+            //            foreach (var track in Tracks.OrderBy(x => x.Position))
+            //            {
+            //                var tracksBetween = Tracks.Where(x => ((track.Begin >= x.Begin && track.Begin < x.End) 
+            //                                            || (x.Begin < track.End && track.End <= x.End))
+            //                                            && (x.Equals(track) == false));
+            //                if (tracksBetween.Any())
+            //                {
+            //                    errors ??= new();
+            //                    foreach (var trackBetween in tracksBetween)
+            //                    {
+            //                        errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position, track.Artist, track.Title, track.Begin, track.End, trackBetween.Position, trackBetween.Artist, trackBetween.Title, trackBetween.Begin, trackBetween.End));
+            //                    }
+            //                    result.Status = ValidationStatus.Error;
+            //                }
+            //                else
+            //                {
+            //                    result.Status = ValidationStatus.Success;
+            //                }
+            //            }
+
+            //            result.Status = ValidationStatus.Success;
+            //        }
+            //        break;
+            //    case nameof(Audiofile):
+            //        if (Audiofile == null)
+            //        {
+            //            errors ??= new();
+            //            errors.Add(String.Format("{0} has no value!", nameof(Audiofile)));
+            //            result.Status = ValidationStatus.Error;
+            //        }
+            //        else
+            //        {
+            //            result.Status = ValidationStatus.Success;
+            //        }
+            //        break;
+            //    default:
+            //        result.Status = ValidationStatus.NoValidation;
+            //        break;
+            //}
+            ////TODO
+            ////result.ValidationMessages = errors;
+            //return result;
         }
 
         private void ReCalculateTrackProperties(Track trackToCalculate)

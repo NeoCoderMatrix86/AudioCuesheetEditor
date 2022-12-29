@@ -405,22 +405,25 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         protected override ValidationResult Validate(string property)
         {
-            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
-            List<String>? errors = null;
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
                 case nameof(Position):
+                    validationStatus = ValidationStatus.Success;
                     if (Position == null)
                     {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has no value!", nameof(Position)));
+                        validationMessages ??= new();
+                        //TODO
+                        //validationMessages.Add(String.Format("{0} has no value!", nameof(Position)));
                     }
                     else
                     {
                         if (Position == 0)
                         {
-                            errors ??= new();
-                            errors.Add(String.Format("{0} may not be 0!", nameof(Position)));
+                            validationMessages ??= new();
+                            //TODO
+                            //validationMessages.Add(String.Format("{0} may not be 0!", nameof(Position)));
                         }
                         else
                         {
@@ -430,73 +433,60 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                                 var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
                                 if (positionTrackShouldHave != Position)
                                 {
-                                    errors ??= new();
-                                    errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), Position, Artist, Title, Begin, End, positionTrackShouldHave));
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
                                 }
-                                else
-                                {
-                                    result.Status = ValidationStatus.Success;
-                                }
-                            }
-                            else
-                            {
-                                result.Status = ValidationStatus.Success;
                             }
                         }
                     }
                     break;
                 case nameof(Begin):
+                    validationStatus = ValidationStatus.Success;
                     if (Begin == null)
                     {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has no value!", nameof(Begin)));
+                        validationMessages ??= new();
+                        //TODO
+                        //validationMessages.Add(String.Format("{0} has no value!", nameof(Begin)));
                     }
                     else
                     {
                         if (Begin < TimeSpan.Zero)
                         {
-                            errors ??= new();
-                            errors.Add(String.Format("{0} must be equal or greater zero!", nameof(Begin)));
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
+                            validationMessages ??= new();
+                            //TODO
+                            //validationMessages.Add(String.Format("{0} must be equal or greater zero!", nameof(Begin)));
                         }
                     }
                     break;
                 case nameof(End):
+                    validationStatus = ValidationStatus.Success;
                     if (End == null)
                     {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has no value!", nameof(End)));
+                        validationMessages ??= new();
+                        //TODO
+                        //validationMessages.Add(String.Format("{0} has no value!", nameof(End)));
                     }
                     else
                     {
                         if (End < TimeSpan.Zero)
                         {
-                            errors ??= new();
-                            errors.Add(String.Format("{0} must be equal or greater zero!", nameof(End)));
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
+                            validationMessages ??= new();
+                            //TODO
+                            //validationMessages.Add(String.Format("{0} must be equal or greater zero!", nameof(End)));
                         }
                     }
                     break;
                 case nameof(Length):
+                    validationStatus = ValidationStatus.Success;
                     if (Length == null)
                     {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has no value!", nameof(Length)));
-                    }
-                    else
-                    {
-                        result.Status = ValidationStatus.Success;
+                        validationMessages ??= new();
+                        //TODO
+                        //validationMessages.Add(String.Format("{0} has no value!", nameof(Length)));
                     }
                     break;
             }
-            result.ErrorMessages = errors;
-            return result;
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
 
         protected void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")

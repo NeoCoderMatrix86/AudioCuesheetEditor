@@ -85,7 +85,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile?.FileName);
             Assert.IsFalse(cuesheet.Audiofile?.IsRecorded);
             Assert.AreEqual("A123", cuesheet.Cataloguenumber.Value);
-            Assert.IsTrue(cuesheet.Cataloguenumber.Validate().ErrorMessages?.Count == 2);
+            Assert.IsTrue(cuesheet.Cataloguenumber.Validate().ValidationMessages?.Count == 2);
             Assert.IsTrue(cuesheet.Tracks.Count == 10);
             Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.DCP));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));

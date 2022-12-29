@@ -49,16 +49,21 @@ namespace AudioCuesheetEditor.Model.Entity
     }
     public class ValidationResult
     {
-        private List<String>? errors;
+        private List<ValidationMessage>? validationMessages;
+
+        public static ValidationResult Create(ValidationStatus validationStatus, IReadOnlyCollection<ValidationMessage>? validationMessages = null)
+        {
+            return new ValidationResult() { Status = validationStatus, ValidationMessages = validationMessages?.ToList() };
+        }
 
         public ValidationStatus Status { get; set; }
-        public List<String>? ErrorMessages 
+        public List<ValidationMessage>? ValidationMessages 
         {
-            get => errors;
+            get => validationMessages;
             set
             {
-                errors = value;
-                if ((errors != null) && errors.Any())
+                validationMessages = value;
+                if ((validationMessages != null) && validationMessages.Any())
                 {
                     Status = ValidationStatus.Error;
                 }

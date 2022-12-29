@@ -152,24 +152,27 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         protected override ValidationResult Validate(string property)
         {
-            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
-            List<String>? errors = null;
-            switch (property)
-            {
-                case nameof(SchemeType):
-                    if (SchemeType == Schemetype.Unknown)
-                    {
-                        errors ??= new();
-                        errors.Add(String.Format("{0} has invalid value!", nameof(SchemeType)));
-                    }
-                    else
-                    {
-                        result.Status = ValidationStatus.Success;
-                    }
-                    break;
-            }
-            result.ErrorMessages = errors;
-            return result;
+            //TODO
+            throw new NotImplementedException();
+            //var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            //List<String>? errors = null;
+            //switch (property)
+            //{
+            //    case nameof(SchemeType):
+            //        if (SchemeType == Schemetype.Unknown)
+            //        {
+            //            errors ??= new();
+            //            errors.Add(String.Format("{0} has invalid value!", nameof(SchemeType)));
+            //        }
+            //        else
+            //        {
+            //            result.Status = ValidationStatus.Success;
+            //        }
+            //        break;
+            //}
+            ////TODO
+            ////result.ValidationMessages = errors;
+            //return result;
         }
     }
 }

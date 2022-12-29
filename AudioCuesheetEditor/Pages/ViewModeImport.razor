@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject IJSRuntime _jsRuntime
 @inject HttpClient _httpClient
-@inject ITextLocalizer<IValidateable> _validatableLocalizer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 <Validations>
     <Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
@@ -147,7 +147,7 @@ along with Foobar.  If not, see
                                     <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
                                 </CollapseHeader>
                                 <CollapseBody>
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeCuesheet, _validatableLocalizer, token)">
+                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeCuesheet, _validationMessageLocalizer, token)">
                                         <Field Horizontal>
                                             <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
                                                 <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
@@ -180,7 +180,7 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Validation>
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeTracks, _validatableLocalizer, token)">
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeTracks, _validationMessageLocalizer, token)">
                                         <Field Horizontal>
                                             <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                                 <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
@@ -213,7 +213,7 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Validation>
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, _sessionStateContainer.TextImportFile.TimeSpanFormat, x => x.Scheme, _validatableLocalizer, token)">
+                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, _sessionStateContainer.TextImportFile.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
                                         <Field Horizontal>
                                             <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                                 <Tooltip Text="@_localizer["Enter custom timespan format here"]">

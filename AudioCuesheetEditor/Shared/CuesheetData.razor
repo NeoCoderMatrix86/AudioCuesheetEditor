@@ -25,12 +25,12 @@ along with Foobar.  If not, see
 @inject HttpClient _httpClient
 @inject ITextLocalizerService _localizationService
 @inject TraceChangeManager _traceChangeManager
-@inject ITextLocalizer<IValidateable> _validatableLocalizer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 @if (Cuesheet != null)
 {
     <Validations>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Artist, _validatableLocalizer, token)">
+        <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Artist, _validationMessageLocalizer, token)">
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -42,7 +42,7 @@ along with Foobar.  If not, see
                 </FieldBody>
             </Field>
         </Validation>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Title, _validatableLocalizer, token)">
+        <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Title, _validationMessageLocalizer, token)">
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -79,7 +79,7 @@ along with Foobar.  If not, see
                 break;
             case ViewMode.ViewModeFull:
             case ViewMode.ViewModeImport:
-                <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Audiofile, _validatableLocalizer, token)">
+                <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Audiofile, _validationMessageLocalizer, token)">
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Audiofile"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -115,7 +115,7 @@ along with Foobar.  If not, see
                         </FieldBody>
                     </Field>
                 </Validation>
-                <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.CDTextfile, _validatableLocalizer, token)">
+                <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.CDTextfile, _validationMessageLocalizer, token)">
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD textfile"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
@@ -141,7 +141,7 @@ along with Foobar.  If not, see
                         </FieldBody>
                     </Field>
                 </Validation>
-                <Validation AsyncValidator="(args, token) => ValidatorUtility<Cataloguenumber>.Validate(args, Cuesheet.Cataloguenumber, x => x.Value, _validatableLocalizer, token)">
+                <Validation AsyncValidator="(args, token) => ValidatorUtility<Cataloguenumber>.Validate(args, Cuesheet.Cataloguenumber, x => x.Value, _validationMessageLocalizer, token)">
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">

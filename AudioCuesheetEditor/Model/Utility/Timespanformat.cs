@@ -108,45 +108,48 @@ namespace AudioCuesheetEditor.Model.Utility
 
         protected override ValidationResult Validate(string property)
         {
-            var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
-            List<String>? errors = null;
-            switch (property)
-            {
-                case nameof(Scheme):
-                    if (String.IsNullOrEmpty(Scheme) == false)
-                    {
-                        if ((Scheme.Contains(Days) == false)
-                            && (Scheme.Contains(Hours) == false)
-                            && (Scheme.Contains(Minutes) == false)
-                            && (Scheme.Contains(Seconds) == false)
-                            && (Scheme.Contains(Milliseconds) == false))
-                        {
-                            errors ??= new();
-                            errors.Add(String.Format("{0} contains no placeholder!", nameof(Scheme)));
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
-                        }
-                        //TODO: This validation never worked, localized string comes here!
-                        if (Scheme.Contains(EnterRegularExpressionHere))
-                        {
-                            errors ??= new();
-                            errors.Add(String.Format("Replace '{0}' by a regular expression!", EnterRegularExpressionHere));
-                        }
-                        else
-                        {
-                            result.Status = ValidationStatus.Success;
-                        }
-                    }
-                    else
-                    {
-                        result.Status = ValidationStatus.Success;
-                    }
-                    break;
-            }
-            result.ErrorMessages = errors;
-            return result;
+            //TODO
+            throw new NotImplementedException();
+            //var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
+            //List<String>? errors = null;
+            //switch (property)
+            //{
+            //    case nameof(Scheme):
+            //        if (String.IsNullOrEmpty(Scheme) == false)
+            //        {
+            //            if ((Scheme.Contains(Days) == false)
+            //                && (Scheme.Contains(Hours) == false)
+            //                && (Scheme.Contains(Minutes) == false)
+            //                && (Scheme.Contains(Seconds) == false)
+            //                && (Scheme.Contains(Milliseconds) == false))
+            //            {
+            //                errors ??= new();
+            //                errors.Add(String.Format("{0} contains no placeholder!", nameof(Scheme)));
+            //            }
+            //            else
+            //            {
+            //                result.Status = ValidationStatus.Success;
+            //            }
+            //            //TODO: This validation never worked, localized string comes here!
+            //            if (Scheme.Contains(EnterRegularExpressionHere))
+            //            {
+            //                errors ??= new();
+            //                errors.Add(String.Format("Replace '{0}' by a regular expression!", EnterRegularExpressionHere));
+            //            }
+            //            else
+            //            {
+            //                result.Status = ValidationStatus.Success;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            result.Status = ValidationStatus.Success;
+            //        }
+            //        break;
+            //}
+            ////TODO
+            ////result.ValidationMessages = errors;
+            //return result;
         }
     }
 }
