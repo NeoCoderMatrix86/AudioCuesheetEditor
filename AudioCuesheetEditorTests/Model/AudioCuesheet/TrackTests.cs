@@ -13,15 +13,12 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditorTests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using AudioCuesheetEditorTests.Utility;
 using System.Linq;
-using Newtonsoft.Json.Linq;
-using System.Linq.Expressions;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -107,11 +104,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 End = new TimeSpan(0, 5, 0)
             };
             cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            //TODO
-            //var validationErrors = track1.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Any(x => x.Message.Message.Contains(" of this track does not match track position in cuesheet. Please correct the")));
-            //track1.Position = 1;
-            //Assert.IsTrue(track1.GetValidationErrorsFiltered(nameof(Track.Position)).Count == 0);
+            var validationErrors = cuesheet.Validate(x => x.Tracks);
+            Assert.IsTrue(validationErrors.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, 1)));
+            track1.Position = 1;
+            validationErrors = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(ValidationStatus.Success, validationErrors.Status);
         }
 
         [TestMethod()]
