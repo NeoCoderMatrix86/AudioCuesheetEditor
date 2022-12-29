@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using ATL;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.UI;
 using Blazorise.Localization;
@@ -423,7 +424,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                         else
                         {
-                            result.Status = ValidationStatus.Success;
+                            // Check correct track position
+                            if (Cuesheet != null)
+                            {
+                                var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
+                                if (positionTrackShouldHave != Position)
+                                {
+                                    errors ??= new();
+                                    errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), Position, Artist, Title, Begin, End, positionTrackShouldHave));
+                                }
+                                else
+                                {
+                                    result.Status = ValidationStatus.Success;
+                                }
+                            }
+                            else
+                            {
+                                result.Status = ValidationStatus.Success;
+                            }
                         }
                     }
                     break;

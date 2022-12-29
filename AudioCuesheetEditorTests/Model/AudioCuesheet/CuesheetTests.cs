@@ -369,10 +369,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track3.End = new TimeSpan(0, 8, 12);
             validationResult = cuesheet.Validate(x => x.Tracks);
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.AreEqual(9, validationResult.ErrorMessages?.Count);
-            //TODO: Can be activated when switching of tracks is disabled!
-            //Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, 2)));
-            //Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End, 3)));
+            Assert.AreEqual(7, validationResult.ErrorMessages?.Count);
             Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track1.Position, nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End)));
             Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track2.Position, nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
             Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track3.Position, nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End)));

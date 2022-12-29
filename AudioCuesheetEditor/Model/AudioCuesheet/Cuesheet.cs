@@ -449,21 +449,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         {
                             result.Status = ValidationStatus.Success;
                         }
-                        uint position = 1;
                         foreach (var track in Tracks.OrderBy(x => x.Position))
                         {
-                            // Check correct track position (1 is 1, 2 is 2, etc.)
-                            if (track.Position != position)
-                            {
-                                errors ??= new();
-                                errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track.Position, track.Artist, track.Title, track.Begin, track.End, position));
-                                result.Status = ValidationStatus.Error;
-                            }
-                            else
-                            {
-                                result.Status = ValidationStatus.Success;
-                            }
-                            position++;
                             var tracksBetween = Tracks.Where(x => ((track.Begin >= x.Begin && track.Begin < x.End) 
                                                         || (x.Begin < track.End && track.End <= x.End))
                                                         && (x.Equals(track) == false));

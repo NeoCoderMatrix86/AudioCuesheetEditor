@@ -29,7 +29,7 @@ along with Foobar.  If not, see
 
 @if (Cuesheet != null)
 {
-    <Validations>
+    <Validations @ref="trackValidations">
         @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
         {
             <Buttons Role="ButtonsRole.Toolbar">
@@ -371,6 +371,7 @@ along with Foobar.  If not, see
     Boolean _trackSelectionVisible = false;
     //Saved locally because of performance (do not load everytime something is edited)
     ApplicationOptions? applicationOptions;
+    Validations? trackValidations;
 
     [Parameter]
     public Boolean TrackSelectionVisible 
@@ -565,11 +566,14 @@ along with Foobar.  If not, see
         await EditTrackModal(copy);
     }
 
-    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
         TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
         setAction(result);
-        return Task.CompletedTask;
+        if (trackValidations != null)
+        {
+            await trackValidations.ValidateAll();
+        }
     }
 
     private async Task OnPlayTrackClicked(Track track)

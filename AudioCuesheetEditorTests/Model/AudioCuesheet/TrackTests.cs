@@ -103,12 +103,27 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 3,
                 End = new TimeSpan(0, 5, 0)
             };
+            var track2 = new Track
+            {
+                Position = 2,
+                Begin = track1.End,
+                End = new TimeSpan(0, 8, 23)
+            };
             cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            var validationErrors = cuesheet.Validate(x => x.Tracks);
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            var validationErrors = track1.Validate(x => x.Position);
             Assert.IsTrue(validationErrors.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, 1)));
             track1.Position = 1;
-            validationErrors = cuesheet.Validate(x => x.Tracks);
+            validationErrors = track1.Validate(x => x.Position);
             Assert.AreEqual(ValidationStatus.Success, validationErrors.Status);
+            validationErrors = track2.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationErrors.Status);
+            track1.Position = 3;
+            track2.Position = 5;
+            validationErrors = track1.Validate(x => x.Position);
+            Assert.IsTrue(validationErrors.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, 1)));
+            validationErrors = track2.Validate(x => x.Position);
+            Assert.IsTrue(validationErrors.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, 2)));
         }
 
         [TestMethod()]
