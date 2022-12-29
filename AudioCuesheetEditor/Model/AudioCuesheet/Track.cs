@@ -402,12 +402,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             this.flags.AddRange(flags);
         }
 
-
-        public override string ToString()
-        {
-            return String.Format("({0} {1},{2} {3},{4} {5},{6} {7},{8} {9},{10} {11})", nameof(Position), Position, nameof(Artist), Artist, nameof(Title), Title, nameof(Begin), Begin, nameof(End), End, nameof(Length), Length);
-        }
-        //TODO
         protected override ValidationResult Validate(string property)
         {
             var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
@@ -487,110 +481,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return result;
         }
 
-        //protected override void Validate()
-        //{
-        //    //Check track overlapping
-        //    if (Cuesheet != null)
-        //    {
-        //        Cuesheet.Tracks.ToList().ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
-        //        List<Track> tracksToAttachEventHandlerTo = new();
-        //        if (Position.HasValue)
-        //        {
-        //            IEnumerable<Track> tracksWithSamePosition;
-        //            if (ClonedFrom != null)
-        //            {
-        //                tracksWithSamePosition = Cuesheet.Tracks.Where(x => x.Position == Position && x.Equals(this) == false && (x.Equals(ClonedFrom) == false));
-        //            }
-        //            else
-        //            {
-        //                tracksWithSamePosition = Cuesheet.Tracks.Where(x => x.Position == Position && x.Equals(this) == false);
-        //            }
-        //            if ((tracksWithSamePosition != null) && (tracksWithSamePosition.Any()))
-        //            {
-        //                tracksToAttachEventHandlerTo.AddRange(tracksWithSamePosition);
-        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track is already in use by track(s) {2}!", nameof(Position), Position, String.Join(", ", tracksWithSamePosition)));
-        //            }
-        //            if (IsCloned == false)
-        //            {
-        //                Boolean addValidationError = false;
-        //                Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
-        //                if (trackAtPosition != null)
-        //                {
-        //                    if (trackAtPosition != this)
-        //                    {
-        //                        addValidationError = true;
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    // Only validate the position if the current track belongs to cuesheet since otherwise it gets validated during AddTrack
-        //                    if ((Cuesheet.Tracks.Contains(this)) && ((Cuesheet.Tracks.ToList().IndexOf(this) + 1) != Position.Value))
-        //                    {
-        //                        addValidationError = true;
-        //                    }
-        //                }
-        //                if (addValidationError)
-        //                {
-        //                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
-        //                }
-        //            }
-        //        }
-        //        if (Begin.HasValue)
-        //        {
-        //            IEnumerable<Track> tracksOverlapping;
-        //            if (ClonedFrom != null)
-        //            {
-        //                tracksOverlapping = Cuesheet.Tracks.Where(x => Begin >= x.Begin && Begin < x.End && (x.Equals(this) == false) && (x.Equals(ClonedFrom) == false));
-        //            }
-        //            else
-        //            {
-        //                tracksOverlapping = Cuesheet.Tracks.Where(x => Begin >= x.Begin && Begin < x.End && (x.Equals(this) == false));
-        //            }
-        //            if ((tracksOverlapping != null) && tracksOverlapping.Any())
-        //            {
-        //                tracksToAttachEventHandlerTo.AddRange(tracksOverlapping);
-        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(Begin), String.Join(", ", tracksOverlapping)));
-        //            }
-        //        }
-        //        if (End.HasValue)
-        //        {
-        //            IEnumerable<Track> tracksOverlapping;
-        //            if (ClonedFrom != null)
-        //            {
-        //                tracksOverlapping = Cuesheet.Tracks.Where(x => x.Begin < End && End <= x.End && (x.Equals(this) == false) && (x.Equals(ClonedFrom) == false));
-        //            }
-        //            else
-        //            {
-        //                tracksOverlapping = Cuesheet.Tracks.Where(x => x.Begin < End && End <= x.End && (x.Equals(this) == false));
-        //            }
-        //            if ((tracksOverlapping != null) && tracksOverlapping.Any())
-        //            {
-        //                tracksToAttachEventHandlerTo.AddRange(tracksOverlapping);
-        //                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(End), String.Join(", ", tracksOverlapping)));
-        //            }
-        //        }
-        //        tracksToAttachEventHandlerTo.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
-        //    }
-        //}
-
         protected void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
-        }
-
-        private void Track_RankPropertyValueChanged(object? sender, string e)
-        {
-            if (sender != null)
-            {
-                Track track = (Track)sender;
-                track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
-                //TODO
-                //OnValidateablePropertyChanged();
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
         }
 
         /// <summary>

@@ -78,7 +78,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
                     track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
                 }
-                FireEvents(previousValue, false, true, false);
             }
         }
         
@@ -231,8 +230,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.Cuesheet = this;
             ReCalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
-            //TODO
-            //OnValidateablePropertyChanged();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             if (IsImporting == false)
             {
@@ -417,8 +414,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             recordingStart = null;
         }
 
-        //TODO
-
         protected override ValidationResult Validate(string property)
         {
             var result = new ValidationResult() { Status = ValidationStatus.NoValidation };
@@ -428,17 +423,74 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 case nameof(Tracks):
                     if (Tracks.Count <= 0)
                     {
-                        errors = new() { String.Format("{0} has invalid Count ({1})!", nameof(Tracks), 0) };
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has invalid Count ({1})!", nameof(Tracks), 0));
+                        result.Status = ValidationStatus.Error;
                     }
                     else
                     {
+                        //Check track overlapping
+                        var tracksWithSamePosition = Tracks.Where(x => x.IsCloned == false)
+                            .GroupBy(x => x.Position)
+                            .Where(grp => grp.Count() > 1);
+                        if (tracksWithSamePosition.Any())
+                        {
+                            errors ??= new();
+                            foreach (var track in tracksWithSamePosition)
+                            {
+                                foreach (var trackWithSamePosition in track)
+                                {
+                                    errors.Add(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key, nameof(Track), trackWithSamePosition.Position, trackWithSamePosition.Artist, trackWithSamePosition.Title, trackWithSamePosition.Begin, trackWithSamePosition.End));
+                                }
+                            }
+                            result.Status = ValidationStatus.Error;
+                        }
+                        else
+                        {
+                            result.Status = ValidationStatus.Success;
+                        }
+                        uint position = 1;
+                        foreach (var track in Tracks.OrderBy(x => x.Position))
+                        {
+                            // Check correct track position (1 is 1, 2 is 2, etc.)
+                            if (track.Position != position)
+                            {
+                                errors ??= new();
+                                errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track.Position, track.Artist, track.Title, track.Begin, track.End, position));
+                                result.Status = ValidationStatus.Error;
+                            }
+                            else
+                            {
+                                result.Status = ValidationStatus.Success;
+                            }
+                            position++;
+                            var tracksBetween = Tracks.Where(x => ((track.Begin >= x.Begin && track.Begin < x.End) 
+                                                        || (x.Begin < track.End && track.End <= x.End))
+                                                        && (x.Equals(track) == false));
+                            if (tracksBetween.Any())
+                            {
+                                errors ??= new();
+                                foreach (var trackBetween in tracksBetween)
+                                {
+                                    errors.Add(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position, track.Artist, track.Title, track.Begin, track.End, trackBetween.Position, trackBetween.Artist, trackBetween.Title, trackBetween.Begin, trackBetween.End));
+                                }
+                                result.Status = ValidationStatus.Error;
+                            }
+                            else
+                            {
+                                result.Status = ValidationStatus.Success;
+                            }
+                        }
+                        
                         result.Status = ValidationStatus.Success;
                     }
                     break;
                 case nameof(Audiofile):
                     if (Audiofile == null)
                     {
-                        errors = new() { String.Format("{0} has no value!", nameof(Audiofile)) };
+                        errors ??= new();
+                        errors.Add(String.Format("{0} has no value!", nameof(Audiofile)));
+                        result.Status = ValidationStatus.Error;
                     }
                     else
                     {
@@ -452,83 +504,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             result.ErrorMessages = errors;
             return result;
         }
-
-        //public override IEnumerable<string> Validate()
-        //{
-        //    var errors = new List<String>();
-        //    var properties = typeof(Cuesheet).GetProperties();
-        //    foreach (var property in properties)
-        //    {
-        //        errors.AddRange(Validate(property.Name));
-        //    }
-
-        //    return errors;
-        //}
-
-        //public override IEnumerable<String> Validate<TProperty>(Expression<Func<Cuesheet, TProperty>> expression)
-        //{
-        //    if (expression.Body is not MemberExpression body)
-        //    {
-        //        throw new ArgumentException("'expression' should be a member expression");
-        //    }
-        //    return Validate(body.Member.Name);
-        //}
-
-        //private IEnumerable<String> Validate(String propertyName)
-        //{
-        //    var errors = new List<String>();
-        //    switch (propertyName)
-        //    {
-        //        //DEBUG
-        //        case nameof(Artist):
-        //            if (String.IsNullOrEmpty(Artist))
-        //            {
-        //                errors.Add("Artist darf nicht leer sein!");
-        //            }
-        //            break;
-        //        //DEBUG
-        //        case nameof(Tracks):
-        //            if (Tracks.Count <= 0)
-        //            {
-        //                errors.Add("Fehler1");
-        //            }
-        //            break;
-        //    }
-        //    return errors;
-        //}
-
-        //protected override void Validate()
-        //{
-        //    if (String.IsNullOrEmpty(Artist) == true)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "{0} has no value!", nameof(Artist)));
-        //    }
-        //    if (String.IsNullOrEmpty(Title) == true)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
-        //    }
-        //    if (Audiofile == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Audiofile)), ValidationErrorType.Error, "{0} has no value!", nameof(Audiofile)));
-        //    }
-        //    if (tracks.Count < 1)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Tracks)), ValidationErrorType.Error, "{0} has invalid Count ({1})!", nameof(Tracks), 0));
-        //    }
-        //    if (CDTextfile == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(CDTextfile)), ValidationErrorType.Warning, "{0} has no value!", nameof(CDTextfile)));
-        //    }
-        //    if (Cataloguenumber == null)
-        //    {
-        //        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Cataloguenumber)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
-        //    }
-        //    else
-        //    {
-        //        _ = Cataloguenumber.IsValid;
-        //        validationErrors.AddRange(Cataloguenumber.ValidationErrors);
-        //    }
-        //}
 
         private void ReCalculateTrackProperties(Track trackToCalculate)
         {
@@ -806,11 +781,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
         /// <param name="fireAudioFileChanged">Fire AudioFileChanged?</param>
-        /// <param name="fireValidateablePropertyChanged">Fire ValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -821,11 +795,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (fireAudioFileChanged)
                     {
                         AudioFileChanged?.Invoke(this, EventArgs.Empty);
-                    }
-                    if (fireValidateablePropertyChanged)
-                    {
-                        //TODO
-                        //OnValidateablePropertyChanged();
                     }
                     if (fireTraceablePropertyChanged)
                     {

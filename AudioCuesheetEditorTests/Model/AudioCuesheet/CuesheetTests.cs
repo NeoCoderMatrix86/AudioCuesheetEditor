@@ -1,5 +1,4 @@
-﻿using AudioCuesheetEditor.Model.AudioCuesheet;
-//This file is part of AudioCuesheetEditor.
+﻿//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -14,17 +13,17 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using AudioCuesheetEditorTests.Utility;
-using System.Linq;
+using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using System.IO;
-using System.Text;
 using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditorTests.Utility;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Collections.Generic;
-using AudioCuesheetEditor.Model.Entity;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -53,12 +52,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.IsNull(cuesheet.Audiofile);
-            //TODO
-            //var validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(Cuesheet), nameof(Cuesheet.Audiofile))).FirstOrDefault();
-            //Assert.IsNotNull(validationErrorAudioFile);
-            //cuesheet.Audiofile = new Audiofile("AudioFile01.ogg");
-            //validationErrorAudioFile = cuesheet.GetValidationErrorsFiltered(nameof(Cuesheet.Audiofile)).FirstOrDefault();
-            //Assert.IsNull(validationErrorAudioFile);
+            var validationErrorAudioFile = cuesheet.Validate(x => x.Audiofile);
+            Assert.AreEqual(ValidationStatus.Error, validationErrorAudioFile.Status);
+            cuesheet.Audiofile = new Audiofile("AudioFile01.ogg");
+            validationErrorAudioFile = cuesheet.Validate(x => x.Audiofile);
+            Assert.AreEqual(ValidationStatus.Success, validationErrorAudioFile.Status);
         }
 
         [TestMethod()]
@@ -359,6 +357,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual((uint)1, track1.Position);
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual((uint)3, track3.Position);
+            var validationResult = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
             track1.Position = 1;
             track2.Position = 1;
             track3.Position = 1;
@@ -367,32 +367,39 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track2.End = new TimeSpan(0, 5, 30);
             track3.Begin = new TimeSpan(0, 4, 54);
             track3.End = new TimeSpan(0, 8, 12);
-            //TODO
-            //var validationErrors = track1.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Count >= 1);
-            //validationErrors = track2.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Count >= 1);
-            //validationErrors = track3.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Count >= 1);
-            //validationErrors = track2.GetValidationErrorsFiltered(nameof(Track.Begin));
-            //Assert.IsTrue(validationErrors.Count >= 1);
-            //validationErrors = track3.GetValidationErrorsFiltered(nameof(Track.Begin));
-            //Assert.IsTrue(validationErrors.Count >= 1);
-            //track2.End = new TimeSpan(0, 5, 15);
-            //validationErrors = track2.GetValidationErrorsFiltered(nameof(Track.End));
-            //Assert.IsTrue(validationErrors.Count >= 1);
-            //track1.Position = 1;
-            //track2.Position = 2;
-            //track3.Position = 3;
-            //var clone = track1.Clone();
-            //validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Count == 0);
-            //clone.Position = 2;
-            //validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Count == 1);
-            //clone.Position = 4;
-            //validationErrors = clone.GetValidationErrorsFiltered(nameof(Track.Position));
-            //Assert.IsTrue(validationErrors.Count == 0);
+            validationResult = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual(9, validationResult.ErrorMessages?.Count);
+            //TODO: Can be activated when switching of tracks is disabled!
+            //Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, 2)));
+            //Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End, 3)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track1.Position, nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track2.Position, nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track3.Position, nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End, track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
+            track2.End = new TimeSpan(0, 5, 15);
+            validationResult = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End, track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
+            track1.Position = 1;
+            track2.Position = 2;
+            track3.Position = 3;
+            validationResult = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual(4, validationResult.ErrorMessages?.Count);
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End)));
+            Assert.IsTrue(validationResult.ErrorMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track3.Position, track3.Artist, track3.Title, track3.Begin, track3.End, track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End)));
+            track2.Begin = new TimeSpan(0, 2, 30);
+            track3.Begin = new TimeSpan(0, 5, 15);
+            validationResult = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+
         }
 
         [TestMethod()]
