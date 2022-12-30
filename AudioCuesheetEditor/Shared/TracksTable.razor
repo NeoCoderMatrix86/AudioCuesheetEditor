@@ -114,246 +114,246 @@ along with Foobar.  If not, see
         }
 
         <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
-        <TableHeader ThemeContrast="ThemeContrast.Light">
-            <TableRow>
-                @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
-                {
-                    <TableHeaderCell>
-                        <Div Class="d-flex align-items-center">
-                            @if (Cuesheet.Tracks.Count > 0)
-                            {
-                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
-                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
-                                </Tooltip>
-                            }
-                            @_localizer["Selection"]
-                        </Div>
-                    </TableHeaderCell>
-                }
-                @switch (_sessionStateContainer.CurrentViewMode)
-                {
-                    case ViewMode.ViewModeFull:
-                    case ViewMode.ViewModeImport:
-                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                        break;
-                    case ViewMode.ViewModeRecord:
-                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                        break;
-                }
-                <TableHeaderCell>#</TableHeaderCell>
-                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
-                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
-                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
-                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            @for (int i = 0; i < Cuesheet.Tracks.Count; i++)
-            {
-                var track = Cuesheet.Tracks.ElementAt(i);
-                @if ((i != 0) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
-                {
-                    <TableRow>
-                        <TableRowCell ColumnSpan="(TrackSelectionVisible == true) ? 9 : 8">
-                            @if (track.IsLinkedToPreviousTrack)
-                            {
-                                <Button Color="Color.Warning" Block="true" Size="Size.ExtraSmall" Clicked="() => track.IsLinkedToPreviousTrack = false">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z" />
-                                    </svg>
-                                    @_localizer["Unlink this track from previous track"]
-                                </Button>
-                            }
-                            else
-                            {
-                                <Button Color="Color.Success" Block="true" Size="Size.ExtraSmall" Clicked="() => track.IsLinkedToPreviousTrack = true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707l-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z" />
-                                    </svg>
-                                    @_localizer["Link this track with previous track"]
-                                </Button>
-                            }
-                        </TableRowCell>
-                    </TableRow>
-                }
-                <TableRow Color="((AudioPlayer != null) && (AudioPlayer.CurrentlyPlayingTrack != null) && (AudioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.Default">
-                    @if (TrackSelectionVisible)
+            <TableHeader ThemeContrast="ThemeContrast.Light">
+                <TableRow>
+                    @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
                     {
+                        <TableHeaderCell>
+                            <Div Class="d-flex align-items-center">
+                                @if (Cuesheet.Tracks.Count > 0)
+                                {
+                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                                        <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
+                                    </Tooltip>
+                                }
+                                @_localizer["Selection"]
+                            </Div>
+                        </TableHeaderCell>
+                    }
+                    @switch (_sessionStateContainer.CurrentViewMode)
+                    {
+                        case ViewMode.ViewModeFull:
+                        case ViewMode.ViewModeImport:
+                            <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                            break;
+                        case ViewMode.ViewModeRecord:
+                            <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                            break;
+                    }
+                    <TableHeaderCell>#</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
+                    <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                @for (int i = 0; i < Cuesheet.Tracks.Count; i++)
+                {
+                    var track = Cuesheet.Tracks.ElementAt(i);
+                    @if ((i != 0) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
+                    {
+                        <TableRow>
+                            <TableRowCell ColumnSpan="(TrackSelectionVisible == true) ? 9 : 8">
+                                @if (track.IsLinkedToPreviousTrack)
+                                {
+                                    <Button Color="Color.Warning" Block="true" Size="Size.ExtraSmall" Clicked="() => track.IsLinkedToPreviousTrack = false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z" />
+                                        </svg>
+                                        @_localizer["Unlink this track from previous track"]
+                                    </Button>
+                                }
+                                else
+                                {
+                                    <Button Color="Color.Success" Block="true" Size="Size.ExtraSmall" Clicked="() => track.IsLinkedToPreviousTrack = true">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707l-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z" />
+                                        </svg>
+                                        @_localizer["Link this track with previous track"]
+                                    </Button>
+                                }
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                    <TableRow Color="((AudioPlayer != null) && (AudioPlayer.CurrentlyPlayingTrack != null) && (AudioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.Default">
+                        @if (TrackSelectionVisible)
+                        {
+                            <TableRowCell>
+                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select this track for multiple track operations"]">
+                                    <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
+                                </Tooltip>
+                            </TableRowCell>
+                        }
+                        @switch (_sessionStateContainer.CurrentViewMode)
+                        {
+                            case ViewMode.ViewModeRecord:
+                                <TableRowCell>
+                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                        </svg>
+                                    </Button>
+                                </TableRowCell>
+                                <TableRowCell>@track.Position</TableRowCell>
+                                break;
+                            case ViewMode.ViewModeFull:
+                            case ViewMode.ViewModeImport:
+                                <TableRowCell>
+                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                        <Buttons Role="ButtonsRole.Toolbar">
+                                            <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
+                                                <Buttons Margin="Margin.Is1.FromEnd">
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Edit track tooltip"]">
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Buttons>
+                                                <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Flex.Row.OnWidescreen">
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Copy track tooltip"]">
+                                                        <Button Size="Size.Small" Color="Color.Success" Clicked="() => CopyTrackClicked(track)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
+                                                                <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                                                <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Buttons>
+                                                <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Flex.Row.OnWidescreen">
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Start playback this track"]">
+                                                        <Button Size="Size.Small" Color="Color.Info" Disabled="(AudioPlayer == null) || ((AudioPlayer != null) && (AudioPlayer.PlaybackPossible == false))" Clicked="() => OnPlayTrackClicked(track)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
+                                                                <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Buttons>
+                                                <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Move track up tooltip"]">
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!Cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => Cuesheet.MoveTrack(track, MoveDirection.Up)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Move track down tooltip"]">
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!Cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => Cuesheet.MoveTrack(track, MoveDirection.Down)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Buttons>
+                                                <Buttons Margin="Margin.Is1.FromEnd">
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete track tooltip"]">
+                                                        <Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteTrackClicked(track)">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </Buttons>
+                                            </Div>
+                                        </Buttons>
+                                    </Tooltip>
+                                </TableRowCell>
+                                <TableRowCell>
+                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Position, _validationMessageLocalizer, token)">
+                                        <NumericEdit TValue="uint?" @bind-Value="track.Position" Immediate="false">
+                                            <Feedback>
+                                                <ValidationError />
+                                            </Feedback>
+                                        </NumericEdit>
+                                    </Validation>
+                                </TableRowCell>
+                                break;
+                        }
                         <TableRowCell>
-                            <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select this track for multiple track operations"]">
-                                <Check TValue="bool" CheckedChanged="(selected) => SelectedTrackChanged(track, selected)" Checked="selectedTracks.Contains(track)" />
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                    <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Artist, _validationMessageLocalizer, token)">
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
                             </Tooltip>
                         </TableRowCell>
-                    }
-                    @switch (_sessionStateContainer.CurrentViewMode)
-                    {
-                        case ViewMode.ViewModeRecord:
-                            <TableRowCell>
-                                <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                    </svg>
-                                </Button>
-                            </TableRowCell>
-                            <TableRowCell>@track.Position</TableRowCell>
-                            break;
-                        case ViewMode.ViewModeFull:
-                        case ViewMode.ViewModeImport:
-                            <TableRowCell>
-                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                    <Buttons Role="ButtonsRole.Toolbar">
-                                        <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
-                                            <Buttons Margin="Margin.Is1.FromEnd">
-                                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Edit track tooltip"]">
-                                                    <Button Size="Size.Small" Color="Color.Secondary" Clicked="() => EditTrackModal(track)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456l-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z" />
-                                                        </svg>
-                                                    </Button>
-                                                </Tooltip>
-                                            </Buttons>
-                                            <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Flex.Row.OnWidescreen">
-                                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Copy track tooltip"]">
-                                                    <Button Size="Size.Small" Color="Color.Success" Clicked="() => CopyTrackClicked(track)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-images" viewBox="0 0 16 16">
-                                                            <path d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
-                                                            <path d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v8a2 2 0 0 1-1.998 2zM14 2H4a1 1 0 0 0-1 1h9.002a2 2 0 0 1 2 2v7A1 1 0 0 0 15 11V3a1 1 0 0 0-1-1zM2.002 4a1 1 0 0 0-1 1v8l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094l1.777 1.947V5a1 1 0 0 0-1-1h-10z" />
-                                                        </svg>
-                                                    </Button>
-                                                </Tooltip>
-                                            </Buttons>
-                                            <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Flex.Row.OnWidescreen">
-                                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Start playback this track"]">
-                                                    <Button Size="Size.Small" Color="Color.Info" Disabled="(AudioPlayer == null) || ((AudioPlayer != null) && (AudioPlayer.PlaybackPossible == false))" Clicked="() => OnPlayTrackClicked(track)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M14 3H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H2z" />
-                                                            <path fill-rule="evenodd" d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z" />
-                                                        </svg>
-                                                    </Button>
-                                                </Tooltip>
-                                            </Buttons>
-                                            <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
-                                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Move track up tooltip"]">
-                                                    <Button Size="Size.Small" Color="Color.Secondary" Disabled="!Cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => Cuesheet.MoveTrack(track, MoveDirection.Up)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
-                                                        </svg>
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Move track down tooltip"]">
-                                                    <Button Size="Size.Small" Color="Color.Secondary" Disabled="!Cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => Cuesheet.MoveTrack(track, MoveDirection.Down)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
-                                                        </svg>
-                                                    </Button>
-                                                </Tooltip>
-                                            </Buttons>
-                                            <Buttons Margin="Margin.Is1.FromEnd">
-                                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete track tooltip"]">
-                                                    <Button Size="Size.Small" Color="Color.Danger" Clicked="() => OnDeleteTrackClicked(track)">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                                                            <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-                                                        </svg>
-                                                    </Button>
-                                                </Tooltip>
-                                            </Buttons>
-                                        </Div>
-                                    </Buttons>
-                                </Tooltip>
-                            </TableRowCell>
-                            <TableRowCell>
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Position, _validationMessageLocalizer, token)">
-                                    <NumericEdit TValue="uint?" @bind-Value="track.Position" Immediate="false">
-                                        <Feedback>
-                                            <ValidationError />
-                                        </Feedback>
-                                    </NumericEdit>
-                                </Validation>
-                            </TableRowCell>
-                            break;
-                    }
-                    <TableRowCell>
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Artist, _validationMessageLocalizer, token)">
-                                <ItemContent>
-                                    @if (context.Item.Disambiguation != null)
-                                    {
-                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
-                                    }
-                                    else
-                                    {
-                                        <Paragraph>@context.Text</Paragraph>
-                                    }
-                                </ItemContent>
-                            </Autocomplete>
-                        </Tooltip>
-                    </TableRowCell>
-                    <TableRowCell>
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Title, _validationMessageLocalizer, token)">
-                                <ItemContent>
-                                    @if (context.Item.Disambiguation != null)
-                                    {
-                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
-                                    }
-                                    else
-                                    {
-                                        <Paragraph>@context.Text</Paragraph>
-                                    }
-                                </ItemContent>
-                            </Autocomplete>
-                        </Tooltip>
-                    </TableRowCell>
-                    @switch (_sessionStateContainer.CurrentViewMode)
-                    {
-                        case ViewMode.ViewModeRecord:
-                            <TableRowCell>@track.Begin</TableRowCell>
-                            <TableRowCell>@track.End</TableRowCell>
-                            <TableRowCell>@track.Length</TableRowCell>
-                            break;
-                        case ViewMode.ViewModeFull:
-                        case ViewMode.ViewModeImport:
-                            <TableRowCell>
-                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
-                                        <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false">
-                                            <Feedback>
-                                                <ValidationError />
-                                            </Feedback>
-                                        </TextEdit>
-                                    </Validation>
-                                </Tooltip>
-                            </TableRowCell>
-                            <TableRowCell>
-                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.End, _validationMessageLocalizer, token)">
-                                        <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false">
-                                            <Feedback>
-                                                <ValidationError />
-                                            </Feedback>
-                                        </TextEdit>
-                                    </Validation>
-                                </Tooltip>
-                            </TableRowCell>
-                            <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Length, _validationMessageLocalizer, token)">
-                                        <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false">
+                        <TableRowCell>
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                    <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Title, _validationMessageLocalizer, token)">
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
+                            </Tooltip>
+                        </TableRowCell>
+                        @switch (_sessionStateContainer.CurrentViewMode)
+                        {
+                            case ViewMode.ViewModeRecord:
+                                <TableRowCell>@track.Begin</TableRowCell>
+                                <TableRowCell>@track.End</TableRowCell>
+                                <TableRowCell>@track.Length</TableRowCell>
+                                break;
+                            case ViewMode.ViewModeFull:
+                            case ViewMode.ViewModeImport:
+                                <TableRowCell>
+                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                            <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
+                                            <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false">
                                                 <Feedback>
                                                     <ValidationError />
                                                 </Feedback>
-                                        </TextEdit>
-                                    </Validation>
-                                </Tooltip>
-                            </TableRowCell>
-                            break;
-                    }
-                </TableRow>
-            }
-        </TableBody>
-    </Table>
+                                            </TextEdit>
+                                        </Validation>
+                                    </Tooltip>
+                                </TableRowCell>
+                                <TableRowCell>
+                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.End, _validationMessageLocalizer, token)">
+                                            <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false">
+                                                <Feedback>
+                                                    <ValidationError />
+                                                </Feedback>
+                                            </TextEdit>
+                                        </Validation>
+                                    </Tooltip>
+                                </TableRowCell>
+                                <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
+                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Length, _validationMessageLocalizer, token)">
+                                            <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false">
+                                                    <Feedback>
+                                                        <ValidationError />
+                                                    </Feedback>
+                                            </TextEdit>
+                                        </Validation>
+                                    </Tooltip>
+                                </TableRowCell>
+                                break;
+                        }
+                    </TableRow>
+                }
+            </TableBody>
+        </Table>
     </Validations>
 }
 
@@ -365,7 +365,6 @@ along with Foobar.  If not, see
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();
-    Track? lastTrack;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
     Boolean _trackSelectionVisible = false;
@@ -413,12 +412,6 @@ along with Foobar.  If not, see
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
         _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
-        _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
-        if (lastTrack != null)
-        {
-            //TODO
-            //lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
-        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -437,8 +430,6 @@ along with Foobar.  If not, see
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
 
         _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
-        _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
-        AttachToLastTrackValidateablePropertyChanged();
     }
 
     Task OnAddTrackClicked()
@@ -595,21 +586,6 @@ along with Foobar.  If not, see
         return result;
     }
 
-    private void AttachToLastTrackValidateablePropertyChanged()
-    {
-        if (lastTrack != null)
-        {
-            //TODO
-            //lastTrack.ValidateablePropertyChanged -= Cuesheet_LastTrack_ValidateablePropertyChanged;
-        }
-        lastTrack = Cuesheet?.Tracks.LastOrDefault();
-        if (lastTrack != null)
-        {
-            //TODO
-            //lastTrack.ValidateablePropertyChanged += Cuesheet_LastTrack_ValidateablePropertyChanged;
-        }
-    }
-
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
         selectedTracks.Clear();
@@ -618,7 +594,6 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
-        AttachToLastTrackValidateablePropertyChanged();
         StateHasChanged();
     }
 
@@ -634,13 +609,7 @@ along with Foobar.  If not, see
 
     private void Cuesheet_TrackAdded(object? sender, EventArgs args)
     {
-        AttachToLastTrackValidateablePropertyChanged();
         StateHasChanged();
-    }
-
-    private void Cuesheet_TrackRemoved(object? sender, EventArgs args)
-    {
-        AttachToLastTrackValidateablePropertyChanged();
     }
 
     private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
