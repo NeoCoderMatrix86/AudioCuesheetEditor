@@ -102,7 +102,38 @@ namespace AudioCuesheetEditor.Model.IO.Import
         protected override ValidationResult Validate(string property)
         {
             //TODO: Check for EnterRegularExpressionHere like in TimeSpanFormat
-            return new ValidationResult() { Status = ValidationStatus.NoValidation };
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
+            {
+                case nameof(SchemeCuesheet):
+                    validationStatus = ValidationStatus.Success;
+                    foreach (var availableScheme in AvailableSchemesTrack)
+                    {
+                        if (SchemeCuesheet?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
+                        {
+                            var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
+                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(")", startIndex) + 1) - startIndex);
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeCuesheet), realRegularExpression));
+                        }
+                    }
+                    break;
+                case nameof(SchemeTracks):
+                    validationStatus = ValidationStatus.Success;
+                    foreach (var availableScheme in AvailableSchemeCuesheet)
+                    {
+                        if (SchemeTracks?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
+                        {
+                            var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
+                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(")", startIndex) + 1) - startIndex);
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeTracks), realRegularExpression));
+                        }
+                    }
+                    break;
+            }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
 }

@@ -14,6 +14,7 @@
     "{0} contains no placeholder!": "{0} enthält keinen Platzhalter!",
     "Replace '{0}' by a regular expression!": "Ersetzen sie '{0}' durch einen regulären Ausdruck!",
     "{0} contains placeholder '{1}' that can not be resolved!": "{0} enthält Platzhalter '{1}' die nicht aufgelöst werden können!",
+    "{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.": "{0} enhält Platzhalter die nicht aufgelöst werden können! Bitte entfernen Sie den ungültigen Platzhalter '{1}'.",
     "Position": "Position",
     "Begin": "Beginn",
     "End": "Ende",
@@ -23,6 +24,8 @@
     "Audiofile": "Audiodatei",
     "SchemeType": "Schematyp",
     "Scheme": "Schema",
-    "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben"
+    "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben",
+    "SchemeCuesheet": "Schema Cuesheet",
+    "SchemeTracks": "Schema Titel"
   }
 }
