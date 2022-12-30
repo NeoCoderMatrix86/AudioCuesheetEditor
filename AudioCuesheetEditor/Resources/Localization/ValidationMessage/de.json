@@ -13,6 +13,7 @@
     "{0} has invalid value!": "{0} hat einen ungültigen Wert!",
     "{0} contains no placeholder!": "{0} enthält keinen Platzhalter!",
     "Replace '{0}' by a regular expression!": "Ersetzen sie '{0}' durch einen regulären Ausdruck!",
+    "{0} contains placeholder '{1}' that can not be resolved!": "{0} enthält Platzhalter '{1}' die nicht aufgelöst werden können!",
     "Position": "Position",
     "Begin": "Beginn",
     "End": "Ende",

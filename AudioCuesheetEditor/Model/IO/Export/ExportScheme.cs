@@ -156,6 +156,35 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
+                case nameof(Scheme):
+                    validationStatus = ValidationStatus.Success;
+                    switch (SchemeType)
+                    {
+                        case Schemetype.Header:
+                        case Schemetype.Footer:
+                            foreach (var availableScheme in AvailableTrackSchemes)
+                            {
+                                if (Scheme?.Contains(availableScheme.Value) == true)
+                                {
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(Scheme), availableScheme.Value));
+                                    break;
+                                }
+                            }
+                            break;
+                        case Schemetype.Body:
+                            foreach (var availableScheme in AvailableCuesheetSchemes)
+                            {
+                                if (Scheme?.Contains(availableScheme.Value) == true)
+                                {
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(Scheme), availableScheme.Value));
+                                    break;
+                                }
+                            }
+                            break;
+                    }
+                    break;
                 case nameof(SchemeType):
                     validationStatus = ValidationStatus.Success;
                     if (SchemeType == Schemetype.Unknown)

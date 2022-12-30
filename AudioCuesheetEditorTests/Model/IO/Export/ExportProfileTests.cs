@@ -93,10 +93,11 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.Delete(tempFile);
 
             exportProfile.SchemeHead.Scheme = "%Track.Position%;%Cuesheet.Artist%;";
-            Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeHead.Validate().Status);
+            var validationResult = exportProfile.SchemeHead.Validate();
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Contains("%Track.Position%")));
 
             //Check multiline export
-
             exportProfile = new Exportprofile();
             exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%";
             Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeHead.Validate().Status);
@@ -232,8 +233,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeFooter.Validate().Status);
             Assert.IsTrue(exportProfile.IsExportable);
             exportProfile.SchemeFooter.Scheme = "Exported %Track.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeFooter.Validate().Status);
-            Assert.IsTrue(exportProfile.IsExportable);
+            Assert.AreEqual(ValidationStatus.Error, exportProfile.SchemeFooter.Validate().Status);
+            Assert.IsFalse(exportProfile.IsExportable);
         }
     }
 }
