@@ -834,6 +834,7 @@ along with Foobar.  If not, see
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
         setAction(result);
+        //TODO: Maybe use a ValidateablePropertyChanged event to fire validation on GUI?!
         if (validations != null)
         {
             await validations.ValidateAll();
