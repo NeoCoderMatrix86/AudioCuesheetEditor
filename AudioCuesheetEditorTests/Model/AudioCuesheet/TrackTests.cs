@@ -19,6 +19,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -111,20 +112,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             };
             cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
             cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            var validationErrors = track1.Validate(x => x.Position);
-            //TODO
-            //Assert.IsTrue(validationErrors.ValidationMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, 1)));
-            //track1.Position = 1;
-            //validationErrors = track1.Validate(x => x.Position);
-            //Assert.AreEqual(ValidationStatus.Success, validationErrors.Status);
-            //validationErrors = track2.Validate(x => x.Position);
-            //Assert.AreEqual(ValidationStatus.Success, validationErrors.Status);
-            //track1.Position = 3;
-            //track2.Position = 5;
-            //validationErrors = track1.Validate(x => x.Position);
-            //Assert.IsTrue(validationErrors.ValidationMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track1.Position, track1.Artist, track1.Title, track1.Begin, track1.End, 1)));
-            //validationErrors = track2.Validate(x => x.Position);
-            //Assert.IsTrue(validationErrors.ValidationMessages?.Contains(String.Format("{0}({1},{2},{3},{4},{5}) does not have the correct position '{6}'!", nameof(Track), track2.Position, track2.Artist, track2.Title, track2.Begin, track2.End, 2)));
+            var validationResult = track1.Validate(x => x.Position);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!" 
+                && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
+            track1.Position = 1;
+            validationResult = track1.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            validationResult = track2.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            track1.Position = 3;
+            track2.Position = 5;
+            validationResult = track1.Validate(x => x.Position);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
+                && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
+            validationResult = track2.Validate(x => x.Position);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
+                && x.Parameter != null && x.Parameter[0].Equals(track2.Position) && x.Parameter[3].Equals(track2.Begin) && x.Parameter[4].Equals(track2.End) && x.Parameter[5].Equals(2)));
         }
 
         [TestMethod()]
