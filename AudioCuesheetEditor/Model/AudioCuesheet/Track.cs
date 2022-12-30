@@ -13,10 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using ATL;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.UI;
-using Blazorise.Localization;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -203,31 +201,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get => isLinkedToPreviousTrack;
             set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(IsLinkedToPreviousTrack)); }
-        }
-
-        public String? GetDisplayNameLocalized(ITextLocalizer localizer)
-        {
-            String? identifierString = null;
-            if (Position != null)
-            {
-                identifierString += String.Format("{0}", Position);
-            }
-            if (identifierString == null)
-            {
-                if (String.IsNullOrEmpty(Artist) == false)
-                {
-                    identifierString += String.Format("{0}", Artist);
-                }
-                if (String.IsNullOrEmpty(Title) == false)
-                {
-                    if (identifierString != null)
-                    {
-                        identifierString += ",";
-                    }
-                    identifierString += String.Format("{0}", Title);
-                }
-            }
-            return String.Format("{0} ({1})", localizer[nameof(Track)], identifierString);
         }
 
         /// <summary>
@@ -425,14 +398,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                         else
                         {
-                            // Check correct track position
-                            if (Cuesheet != null)
+                            if (IsCloned == false)
                             {
-                                var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
-                                if (positionTrackShouldHave != Position)
+                                // Check correct track position
+                                if (Cuesheet != null)
                                 {
-                                    validationMessages ??= new();
-                                    validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
+                                    var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
+                                    if (positionTrackShouldHave != Position)
+                                    {
+                                        validationMessages ??= new();
+                                        validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
+                                    }
                                 }
                             }
                         }

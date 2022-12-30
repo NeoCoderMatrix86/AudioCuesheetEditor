@@ -33,7 +33,7 @@ along with Foobar.  If not, see
             <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
         </ModalHeader>
         <ModalBody>
-            <Validations>
+            <Validations @ref="validations">
                 @if (IsMultipleEdit == false)
                 {
                     <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.IsLinkedToPreviousTrack, _validationMessageLocalizer, token)">
@@ -354,7 +354,7 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    //TODO: When something like length is edited, also end and begin should be validated!
+    Validations? validations;
     public void Dispose()
     {
         hotKeysContext?.Dispose();
@@ -383,6 +383,10 @@ along with Foobar.  If not, see
                 {
                     editedTrack = _tracksToEdit.First().Clone();
                 }
+            }
+            if (validations != null)
+            {
+                validations.ValidateAll();
             }
         }
     }
@@ -826,8 +830,13 @@ along with Foobar.  If not, see
 
     async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
+        //TODO: Optimize and save options once during load!
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
         setAction(result);
+        if (validations != null)
+        {
+            await validations.ValidateAll();
+        }
     }
 }

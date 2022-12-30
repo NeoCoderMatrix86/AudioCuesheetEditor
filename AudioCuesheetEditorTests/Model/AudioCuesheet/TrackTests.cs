@@ -1,4 +1,5 @@
-﻿//This file is part of AudioCuesheetEditor.
+﻿using AudioCuesheetEditor.Model.AudioCuesheet;
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -113,7 +114,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
             cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
             var validationResult = track1.Validate(x => x.Position);
-            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!" 
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
                 && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
             track1.Position = 1;
             validationResult = track1.Validate(x => x.Position);
@@ -167,6 +168,27 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(destinationTracks.All(x => x.End == sourceTrack.End));
             Assert.IsTrue(destinationTracks.All(x => x.PreGap == sourceTrack.PreGap));
             Assert.IsTrue(destinationTracks.All(x => x.PostGap == sourceTrack.PostGap));
+        }
+
+        [TestMethod()]
+        public void CloneTest()
+        {
+            var track = new Track()
+            {
+                Begin = TimeSpan.Zero,
+                Artist = "Testartist",
+                Title = "Testttitle"
+            };
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(track);
+            var validationResult = track.Validate();
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Contains(nameof(Track.End))));
+            var clone = track.Clone();
+            clone.End = new TimeSpan(0, 2, 32);
+            validationResult = clone.Validate();
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            Assert.IsNull(track.End);
         }
     }
 }
