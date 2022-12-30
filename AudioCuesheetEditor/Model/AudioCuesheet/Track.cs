@@ -414,16 +414,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (Position == null)
                     {
                         validationMessages ??= new();
-                        //TODO
-                        //validationMessages.Add(String.Format("{0} has no value!", nameof(Position)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Position)));
                     }
                     else
                     {
                         if (Position == 0)
                         {
                             validationMessages ??= new();
-                            //TODO
-                            //validationMessages.Add(String.Format("{0} may not be 0!", nameof(Position)));
+                            validationMessages.Add(new ValidationMessage("{0} may not be 0!", nameof(Position)));
                         }
                         else
                         {
@@ -445,16 +443,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (Begin == null)
                     {
                         validationMessages ??= new();
-                        //TODO
-                        //validationMessages.Add(String.Format("{0} has no value!", nameof(Begin)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
                     }
                     else
                     {
                         if (Begin < TimeSpan.Zero)
                         {
                             validationMessages ??= new();
-                            //TODO
-                            //validationMessages.Add(String.Format("{0} must be equal or greater zero!", nameof(Begin)));
+                            validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
                         }
                     }
                     break;
@@ -463,16 +459,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (End == null)
                     {
                         validationMessages ??= new();
-                        //TODO
-                        //validationMessages.Add(String.Format("{0} has no value!", nameof(End)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
                     }
                     else
                     {
                         if (End < TimeSpan.Zero)
                         {
                             validationMessages ??= new();
-                            //TODO
-                            //validationMessages.Add(String.Format("{0} must be equal or greater zero!", nameof(End)));
+                            validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(End)));
                         }
                     }
                     break;
@@ -481,8 +475,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (Length == null)
                     {
                         validationMessages ??= new();
-                        //TODO
-                        //validationMessages.Add(String.Format("{0} has no value!", nameof(Length)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Length)));
                     }
                     break;
             }

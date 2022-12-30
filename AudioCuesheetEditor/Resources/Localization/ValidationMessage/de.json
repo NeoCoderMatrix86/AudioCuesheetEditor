@@ -1,6 +1,27 @@
 {
   "culture": "de",
   "translations": {
-    "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!": "Track({0},{1},{2},{3},{4}) hat nicht die korrekte Position '{5}'!"
+    "{0} has no value!": "{0} hat keinen Wert!",
+    "{0} may not be 0!": "{0} darf nicht 0 sein!",
+    "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!": "Track({0},{1},{2},{3},{4}) hat nicht die korrekte Position '{5}'!",
+    "{0} must be equal or greater zero!": "{0} muss größer oder gleich 0 sein!",
+    "{0} must only contain numbers!": "{0} darf nur Ziffern enthalten!",
+    "{0} has an invalid length. Allowed length is {1}!": "{0} hat eine ungültige Länge. Erlaubte Länge ist {1}!",
+    "{0} has invalid Count ({1})!": "{0} hat eine ungültige Anzahl ({1})!",
+    "{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!": "{0} {1} '{2}' wird auch von {3}({4},{5},{6},{7},{8}) benutzt. Positionen müssen eindeutig sein!",
+    "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!": "{0}({1},{2},{3},{4},{5}) überschneidet sich mit {0}({6},{7},{8},{9},{10}). Bitte stellen sie sicher, dass das Zeitinterval nur einmal genutzt wird!",
+    "{0} has invalid value!": "{0} hat einen ungültigen Wert!",
+    "{0} contains no placeholder!": "{0} enthält keinen Platzhalter!",
+    "Replace '{0}' by a regular expression!": "Ersetzen sie '{0}' durch einen regulären Ausdruck!",
+    "Position": "Position",
+    "Begin": "Beginn",
+    "End": "Ende",
+    "Length": "Länge",
+    "Value": "Wert",
+    "Tracks": "Titel",
+    "Audiofile": "Audiodatei",
+    "SchemeType": "Schematyp",
+    "Scheme": "Schema",
+    "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben"
   }
 }

@@ -2,7 +2,7 @@
   "culture": "de",
   "translations": {
     "Audioplayer": "Wiedergabe",
-    "Set playback to begin of previous track": "Wiedergabeposition auf Begin von vorherigen Track setzen",
-    "Set playback to begin of next track": "Wiedergabeposition auf Begin von nächstem Track setzen"
+    "Set playback to begin of previous track": "Wiedergabeposition auf Begin von vorherigen Titel setzen",
+    "Set playback to begin of next track": "Wiedergabeposition auf Begin von nächstem Titel setzen"
   }
 }

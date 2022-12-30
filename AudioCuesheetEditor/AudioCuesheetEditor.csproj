@@ -24,8 +24,6 @@
     <Content Remove="Resources\Localization\EditTrackModal\en.json" />
     <Content Remove="Resources\Localization\ExportProfilesDialog\de.json" />
     <Content Remove="Resources\Localization\ExportProfilesDialog\en.json" />
-    <Content Remove="Resources\Localization\IValidateable\de.json" />
-    <Content Remove="Resources\Localization\IValidateable\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
     <Content Remove="Resources\Localization\MainLayout\en.json" />
     <Content Remove="Resources\Localization\ModalDialog\de.json" />
@@ -63,8 +61,6 @@
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
     <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\en.json" />
-    <EmbeddedResource Include="Resources\Localization\IValidateable\de.json" />
-    <EmbeddedResource Include="Resources\Localization\IValidateable\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />

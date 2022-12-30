@@ -45,7 +45,6 @@ namespace AudioCuesheetEditor.Model.UI
                                 {
                                     foreach (var validationMessage in validationResult.ValidationMessages)
                                     {
-                                        //TODO
                                         args.ErrorText += String.Format("{0}{1}", validationMessage.GetMessageLocalized(textLocalizer), Environment.NewLine);
                                     }
                                 }
