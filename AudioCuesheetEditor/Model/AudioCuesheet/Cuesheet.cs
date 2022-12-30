@@ -44,12 +44,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private readonly object syncLock = new();
 
-        private List<Track> tracks = default!;
+        private List<Track> tracks;
         private String? artist;
         private String? title;
         private Audiofile? audiofile;
         private CDTextfile? cDTextfile;
-        private Cataloguenumber catalogueNumber = default!;
+        private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
 
@@ -60,8 +60,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public Cuesheet()
         {
-            Tracks = new List<Track>();
-            Cataloguenumber = new Cataloguenumber();
+            tracks = new();
+            catalogueNumber = new();
         }
 
         [JsonInclude]
@@ -70,7 +70,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return tracks.AsReadOnly(); }
             private set 
             {
-                var previousValue = tracks;
+                foreach (var track in tracks)
+                {
+                    track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
+                    track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
+                    track.Cuesheet = null;
+                }
                 tracks = value.ToList();
                 foreach (var track in tracks)
                 {
