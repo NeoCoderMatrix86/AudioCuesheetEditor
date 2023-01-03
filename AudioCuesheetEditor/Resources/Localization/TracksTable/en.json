@@ -29,6 +29,7 @@
     "Save changes": "Save changes",
     "Confirmation required": "Confirmation required",
     "Do you really want to delete all tracks?": "Do you really want to delete all tracks?",
-    "Edit selected tracks": "Edit selected tracks"
+    "Edit selected tracks": "Edit selected tracks",
+    "Validation errors": "Validation errors"
   }
 }

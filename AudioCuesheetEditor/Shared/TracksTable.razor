@@ -31,6 +31,19 @@ along with Foobar.  If not, see
 {
     @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
     {
+        var validationResult = Cuesheet.Validate(x => x.Tracks);
+        <Alert Color="Color.Danger" Visible="validationResult.Status == Model.Entity.ValidationStatus.Error">
+            <Heading Size="HeadingSize.Is4">
+                @_localizer["Validation errors"]
+            </Heading>
+            @if (validationResult.ValidationMessages != null)
+            {
+                @foreach(var message in validationResult.ValidationMessages)
+                {
+                    <Paragraph>@message.GetMessageLocalized(_validationMessageLocalizer)</Paragraph>
+                }
+            }
+        </Alert>
         <Buttons Role="ButtonsRole.Toolbar">
             <Buttons Margin="Margin.Is2.FromEnd">
                 <Tooltip Text="@_localizer["Add new track"]">
