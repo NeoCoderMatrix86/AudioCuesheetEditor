@@ -427,6 +427,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 case nameof(Tracks):
                     validationStatus = ValidationStatus.Success;
+                    //TODO: Add display of this validation error!
                     if (Tracks.Count <= 0)
                     {
                         validationMessages ??= new();
