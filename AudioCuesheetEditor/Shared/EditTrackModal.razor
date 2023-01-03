@@ -354,12 +354,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    Validations? validations;
-    public void Dispose()
-    {
-        hotKeysContext?.Dispose();
-    }
-
     enum DynamicEditValue 
     {
         EnteredValueEquals = 0,
@@ -422,16 +416,25 @@ along with Foobar.  If not, see
     DynamicEditValue _editModeTrackPostGap;
 
     HotKeysContext? hotKeysContext;
+    Validations? validations;
+    ApplicationOptions? applicationOptions;
 
-    protected override void OnInitialized()
+    public void Dispose()
     {
-        hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, EditTrackModalSaveClicked)
-            .Add(ModKeys.None, Keys.ESC, () => ControlModalDialog(modalTrackEdit, false));
-
-        base.OnInitialized();
+        hotKeysContext?.Dispose();
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+         hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKeys.None, Keys.Enter, EditTrackModalSaveClicked)
+            .Add(ModKeys.None, Keys.ESC, () => ControlModalDialog(modalTrackEdit, false));
+        
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+
+    }
 
     public Boolean EditTrackIsLinkedToPreviousTrack
     {
@@ -830,12 +833,11 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
-        //TODO: Optimize and save options once during load!
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
         setAction(result);
+        return Task.CompletedTask;
     }
 
     void editedTrack_ValidateablePropertyChanged(object? sender, string property)
@@ -843,6 +845,14 @@ along with Foobar.  If not, see
         if (validations != null)
         {
             validations.ValidateAll().GetAwaiter().GetResult();
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
         }
     }
 }
