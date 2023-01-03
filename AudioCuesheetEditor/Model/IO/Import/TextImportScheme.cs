@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
+using Blazorise.Localization;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
@@ -24,6 +25,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemeCuesheet;
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
+
+        public static ITextLocalizer? TextLocalizer { get; set; }
 
         static TextImportScheme()
         {
@@ -103,9 +106,13 @@ namespace AudioCuesheetEditor.Model.IO.Import
         }
         protected override ValidationResult Validate(string property)
         {
-            //TODO: Check for EnterRegularExpressionHere like in TimeSpanFormat
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
+            String enterRegularExpression = EnterRegularExpressionHere;
+            if (TextLocalizer != null)
+            {
+                enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
+            }
             switch (property)
             {
                 case nameof(SchemeCuesheet):
@@ -120,6 +127,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeCuesheet), realRegularExpression));
                         }
                     }
+                    if (SchemeCuesheet?.Contains(enterRegularExpression) == true)
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
+                    }
                     break;
                 case nameof(SchemeTracks):
                     validationStatus = ValidationStatus.Success;
@@ -132,6 +144,11 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             validationMessages ??= new();
                             validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeTracks), realRegularExpression));
                         }
+                    }
+                    if (SchemeTracks?.Contains(enterRegularExpression) == true)
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
                     }
                     break;
             }

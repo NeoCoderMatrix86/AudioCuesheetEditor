@@ -89,7 +89,7 @@ along with Foobar.  If not, see
                                             <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
                                         </FieldBody>
                                     </Field>
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, applicationOptions?.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
+                                    <Validation @ref="timespanformatValidation" AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, applicationOptions?.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
                                         <Field Horizontal="true">
                                             <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">
                                                 <Tooltip Text="@_localizer["Enter custom timespan format here"]">
@@ -171,6 +171,7 @@ along with Foobar.  If not, see
 
     Modal? modalOptions;
     HotKeysContext? hotKeysContext;
+    Validation? timespanformatValidation;
 
     public void Dispose()
     {
@@ -197,6 +198,7 @@ along with Foobar.  If not, see
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        TimeSpanFormat.TextLocalizer = _localizer;
 
         await base.OnInitializedAsync();
     }
@@ -220,6 +222,7 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+        TimeSpanFormat.TextLocalizer = _localizer;
     }
 
     private Task OnCultureSelectionChanged(String value)
@@ -295,6 +298,7 @@ along with Foobar.  If not, see
             if (applicationOptions.TimeSpanFormat == null)
             {
                 applicationOptions.TimeSpanFormat = new TimeSpanFormat();
+                applicationOptions.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
             }
             applicationOptions.TimeSpanFormat.Scheme = value;
         }
@@ -302,6 +306,10 @@ along with Foobar.  If not, see
         {
             if (applicationOptions != null)
             {
+                if (applicationOptions.TimeSpanFormat != null)
+                {
+                    applicationOptions.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
+                }
                 applicationOptions.TimeSpanFormat = null;
             }
         }
@@ -315,6 +323,7 @@ along with Foobar.  If not, see
             if (applicationOptions.TimeSpanFormat == null)
             {
                 applicationOptions.TimeSpanFormat = new TimeSpanFormat();
+                applicationOptions.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
             }
             applicationOptions.TimeSpanFormat.Scheme += value.ToString()?.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere]);
         }
@@ -322,9 +331,21 @@ along with Foobar.  If not, see
         {
             if (applicationOptions != null)
             {
+                if (applicationOptions.TimeSpanFormat != null)
+                {
+                    applicationOptions.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
+                }
                 applicationOptions.TimeSpanFormat = null;
             }
         }
         return Task.CompletedTask;
+    }
+
+    void Timespanformat_ValidateablePropertyChanged(object? sender, String property)
+    {
+        if (timespanformatValidation != null)
+        {
+            timespanformatValidation.ValidateAsync().GetAwaiter().GetResult();
+        }
     }
 }

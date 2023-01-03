@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using Blazorise.Localization;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.Utility
@@ -26,10 +27,10 @@ namespace AudioCuesheetEditor.Model.Utility
         public const String Seconds = "Seconds";
         public const String Milliseconds = "Milliseconds";
 
-        private string? scheme;
-
         public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
         public static readonly IReadOnlyDictionary<String, String> AvailableTimespanScheme;
+
+        public static ITextLocalizer? TextLocalizer { get; set; }
 
         static TimeSpanFormat()
         {
@@ -50,6 +51,8 @@ namespace AudioCuesheetEditor.Model.Utility
         }
 
         public event EventHandler? SchemeChanged;
+
+        private string? scheme;
 
         public String? Scheme
         {
@@ -111,6 +114,11 @@ namespace AudioCuesheetEditor.Model.Utility
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
+            var enterRegularExpression = EnterRegularExpressionHere;
+            if (TextLocalizer != null)
+            {
+                enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
+            }
             switch (property)
             {
                 case nameof(Scheme):
@@ -126,11 +134,10 @@ namespace AudioCuesheetEditor.Model.Utility
                             validationMessages ??= new();
                             validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(Scheme)));
                         }
-                        //TODO: This validation never worked, localized string comes here!
-                        if (Scheme.Contains(EnterRegularExpressionHere))
+                        if (Scheme.Contains(enterRegularExpression))
                         {
                             validationMessages ??= new();
-                            validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", EnterRegularExpressionHere));
+                            validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
                         }
                     }
                     break;
