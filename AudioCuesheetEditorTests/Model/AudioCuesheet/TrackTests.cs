@@ -190,5 +190,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
             Assert.IsNull(track.End);
         }
+
+        [TestMethod()]
+        public void SetCuesheetTest()
+        {
+            var track = new Track();
+            Assert.IsNull(track.Cuesheet);
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(track);
+            Assert.AreEqual(cuesheet, track.Cuesheet);
+            track.Cuesheet = new Cuesheet();
+            Assert.AreEqual(cuesheet, track.Cuesheet);
+            track.Cuesheet = null;
+            Assert.IsNull(track.Cuesheet);
+        }
     }
 }

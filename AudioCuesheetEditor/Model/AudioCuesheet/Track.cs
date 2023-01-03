@@ -170,7 +170,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Cuesheet? Cuesheet 
         {
             get => cuesheet;
-            set { var previousValue = cuesheet; cuesheet = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Cuesheet)); }
+            set 
+            {
+                var previousValue = cuesheet;
+                Boolean setValue = true;
+                if (value != null)
+                {
+                    setValue = value.Tracks.Contains(this);
+                }
+                if (setValue)
+                {
+                    cuesheet = value;
+                    FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Cuesheet));
+                }
+            }
         }
 
         /// <summary>
