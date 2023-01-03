@@ -10,6 +10,7 @@ using AudioCuesheetEditorTests.Utility;
 using AudioCuesheetEditor.Model.IO.Import;
 using System.IO;
 using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditor.Model.Entity;
 
 namespace AudioCuesheetEditor.Model.UI.Tests
 {
@@ -217,24 +218,28 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             cuesheet.AddTrack(track2, testhelper.ApplicationOptions);
             cuesheet.AddTrack(track3, testhelper.ApplicationOptions);
             cuesheet.AddTrack(track4, testhelper.ApplicationOptions);
-            //TODO
-            //Assert.IsTrue(track1.IsValid);
-            //Assert.IsTrue(track2.IsValid);
-            //Assert.IsTrue(track3.IsValid);
-            //Assert.IsTrue(track4.IsValid);
-            //var tracksToRemove = new List<Track>
-            //{
-            //    track2,
-            //    track4
-            //};
-            //cuesheet.RemoveTracks(tracksToRemove);
-            //Assert.IsTrue(manager.CanUndo);
-            //manager.Undo();
-            //Assert.AreEqual(4, cuesheet.Tracks.Count);
-            //Assert.IsTrue(track1.IsValid);
-            //Assert.IsTrue(track2.IsValid);
-            //Assert.IsTrue(track3.IsValid);
-            //Assert.IsTrue(track4.IsValid);
+            Assert.AreEqual(ValidationStatus.Success, track1.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, track2.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, track3.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, track4.Validate().Status);
+            var tracksToRemove = new List<Track>
+            {
+                track2,
+                track4
+            };
+            cuesheet.RemoveTracks(tracksToRemove);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            Assert.AreEqual(4, cuesheet.Tracks.Count);
+            //We need to set object references back to cuesheet tracks since TraceChangeManager creates new objects
+            track1 = cuesheet.Tracks.ElementAt(0);
+            track2 = cuesheet.Tracks.ElementAt(1);
+            track3 = cuesheet.Tracks.ElementAt(2);
+            track4 = cuesheet.Tracks.ElementAt(3);
+            Assert.AreEqual(ValidationStatus.Success, track1.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, track2.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, track3.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, track4.Validate().Status);
         }
 
         [TestMethod()]
