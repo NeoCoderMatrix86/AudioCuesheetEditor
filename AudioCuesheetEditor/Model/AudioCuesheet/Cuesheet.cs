@@ -753,10 +753,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
         /// <param name="fireAudioFileChanged">Fire AudioFileChanged?</param>
+        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -767,6 +768,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (fireAudioFileChanged)
                     {
                         AudioFileChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                    if (fireValidateablePropertyChanged)
+                    {
+                        OnValidateablePropertyChanged(propertyName);
                     }
                     if (fireTraceablePropertyChanged)
                     {

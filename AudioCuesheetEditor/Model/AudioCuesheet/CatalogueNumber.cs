@@ -69,10 +69,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Method for checking if fire of events should be done
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
+        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -80,6 +81,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var propertyValue = propertyInfo.GetValue(this);
                 if (Equals(propertyValue, previousValue) == false)
                 {
+                    if (fireValidateablePropertyChanged)
+                    {
+                        OnValidateablePropertyChanged(propertyName);
+                    }
                     if (fireTraceablePropertyChanged)
                     {
                         OnTraceablePropertyChanged(previousValue, propertyName);

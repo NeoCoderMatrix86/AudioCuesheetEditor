@@ -52,6 +52,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
+        private String? scheme;
+        private Schemetype schemeType;
+
         static Exportscheme()
         {
             SchemeDate = String.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
@@ -102,9 +105,17 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public Exportscheme() { }
 
-        public String? Scheme { get; set; }
+        public String? Scheme 
+        {
+            get => scheme;
+            set { scheme = value; OnValidateablePropertyChanged(); }
+        }
         
-        public Schemetype SchemeType { get; set; }
+        public Schemetype SchemeType 
+        {
+            get => schemeType;
+            set { schemeType = value; OnValidateablePropertyChanged(); }
+        }
         
         public String? GetExportResult(ICuesheetEntity cuesheetEntity)
         {

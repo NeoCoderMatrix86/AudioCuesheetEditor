@@ -22,8 +22,27 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
 {
     public class ValidateableTestClass : Validateable<ValidateableTestClass>
     {
-        public String? TestProperty { get; set; }
-        public int? TestProperty2 { get; set; }
+        private String? testProperty;
+        private int? testProperty2;
+
+        public String? TestProperty 
+        {
+            get => testProperty;
+            set
+            {
+                testProperty = value;
+                OnValidateablePropertyChanged();
+            }
+        }
+        public int? TestProperty2 
+        {
+            get => testProperty2;
+            set
+            {
+                testProperty2 = value;
+                OnValidateablePropertyChanged();
+            }
+        }
         protected override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;

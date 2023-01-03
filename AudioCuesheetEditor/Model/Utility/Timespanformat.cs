@@ -58,6 +58,7 @@ namespace AudioCuesheetEditor.Model.Utility
             {
                 scheme = value;
                 SchemeChanged?.Invoke(this, EventArgs.Empty);
+                OnValidateablePropertyChanged();
             }
         }
 

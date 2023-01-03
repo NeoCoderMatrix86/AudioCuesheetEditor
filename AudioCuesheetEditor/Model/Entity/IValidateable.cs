@@ -39,6 +39,8 @@ namespace AudioCuesheetEditor.Model.Entity
         /// <param name="expression">Property selector</param>
         /// <returns>Validation result.</returns>
         ValidationResult Validate<TProperty>(Expression<Func<T, TProperty>> expression);
+
+        public event EventHandler<String>? ValidateablePropertyChanged;
     }
 
     public enum ValidationStatus

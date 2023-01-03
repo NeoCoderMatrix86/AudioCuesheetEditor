@@ -21,6 +21,8 @@ namespace AudioCuesheetEditor.Model.Entity
 {
     public abstract class Validateable<T> : IValidateable<T>
     {
+        public event EventHandler<String>? ValidateablePropertyChanged;
+
         public ValidationResult Validate<TProperty>(Expression<Func<T, TProperty>> expression)
         {
             if (expression.Body is not MemberExpression body)
@@ -59,6 +61,11 @@ namespace AudioCuesheetEditor.Model.Entity
                 }
             }
             return validationResult;
+        }
+
+        protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            ValidateablePropertyChanged?.Invoke(this, propertyName);
         }
 
         protected abstract ValidationResult Validate(String property);

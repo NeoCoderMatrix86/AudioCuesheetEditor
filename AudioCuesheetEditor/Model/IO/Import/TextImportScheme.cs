@@ -87,6 +87,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 schemeTracks = value;
                 SchemeChanged?.Invoke(this, nameof(SchemeTracks));
+                OnValidateablePropertyChanged();
             }
         }
 
@@ -97,6 +98,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 schemeCuesheet = value;
                 SchemeChanged?.Invoke(this, nameof(SchemeCuesheet));
+                OnValidateablePropertyChanged();
             }
         }
         protected override ValidationResult Validate(string property)

@@ -372,6 +372,7 @@ along with Foobar.  If not, see
         get => _tracksToEdit;
         set 
         {
+            editedTrack.ValidateablePropertyChanged -= editedTrack_ValidateablePropertyChanged;
             _tracksToEdit = value;
             if (IsMultipleEdit)
             {
@@ -384,6 +385,7 @@ along with Foobar.  If not, see
                     editedTrack = _tracksToEdit.First().Clone();
                 }
             }
+            editedTrack.ValidateablePropertyChanged += editedTrack_ValidateablePropertyChanged;
             if (validations != null)
             {
                 validations.ValidateAll();
@@ -834,10 +836,13 @@ along with Foobar.  If not, see
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
         setAction(result);
-        //TODO: Maybe use a ValidateablePropertyChanged event to fire validation on GUI?!
+    }
+
+    void editedTrack_ValidateablePropertyChanged(object? sender, string property)
+    {
         if (validations != null)
         {
-            await validations.ValidateAll();
+            validations.ValidateAll().GetAwaiter().GetResult();
         }
     }
 }
