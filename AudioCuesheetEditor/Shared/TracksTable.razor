@@ -29,129 +29,129 @@ along with Foobar.  If not, see
 
 @if (Cuesheet != null)
 {
-    <Validations>
-        @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
-        {
-            <Buttons Role="ButtonsRole.Toolbar">
-                <Buttons Margin="Margin.Is2.FromEnd">
-                    <Tooltip Text="@_localizer["Add new track"]">
-                        <Button Color="Color.Primary" Clicked="OnAddTrackClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                            </svg>
-                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
-                                @_localizer["Add new track"]
-                            </Span>
-                        </Button>
-                    </Tooltip>
-                </Buttons>
-                <Buttons Margin="Margin.Is2.FromEnd">
-                    @if (TrackSelectionVisible == false)
-                    {
-                        <Tooltip Text="@_localizer["Display selection of tracks"]">
-                            <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
-                                    <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
-                                </svg>
-                                <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
-                                    @_localizer["Display selection of tracks"]
-                                </Span>
-                            </Button>
-                        </Tooltip>
-                    }
-                    else
-                    {
-                        <Tooltip Text="@_localizer["Hide selection of tracks"]">
-                            <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
-                                    <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
-                                    <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
-                                </svg>
-                                <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
-                                    @_localizer["Hide selection of tracks"]
-                                </Span>
-                            </Button>
-                        </Tooltip>
-                    }
-                </Buttons>
-                <Buttons>
-                    <Tooltip Text="@_localizer["Edit selected tracks"]">
-                        <Button Color="Color.Secondary" Clicked="EditSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stickies" viewBox="0 0 16 16">
-                              <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1H1.5z"/>
-                              <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2h-11zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5v-11zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293L10 14.793z"/>
-                            </svg>
-                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
-                                @_localizer["Edit selected tracks"]
-                            </Span>
-                        </Button>
-                    </Tooltip>
-                    <Tooltip Text="@_localizer["Delete selected tracks"]">
-                        <Button Color="Color.Warning" Clicked="DeleteSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                            </svg>
-                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
-                                @_localizer["Delete selected tracks"]
-                            </Span>
-                        </Button>
-                    </Tooltip>
-                    <Tooltip Text="@_localizer["Delete all tracks"]">
-                        <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                            </svg>
-                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
-                                @_localizer["Delete all tracks"]
-                            </Span>
-                        </Button>
-                    </Tooltip>
-                </Buttons>
+    @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+    {
+        <Buttons Role="ButtonsRole.Toolbar">
+            <Buttons Margin="Margin.Is2.FromEnd">
+                <Tooltip Text="@_localizer["Add new track"]">
+                    <Button Color="Color.Primary" Clicked="OnAddTrackClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
+                            @_localizer["Add new track"]
+                        </Span>
+                    </Button>
+                </Tooltip>
             </Buttons>
-            <br />
-        }
-
-        <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
-            <TableHeader ThemeContrast="ThemeContrast.Light">
-                <TableRow>
-                    @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
-                    {
-                        <TableHeaderCell>
-                            <Div Class="d-flex align-items-center">
-                                @if (Cuesheet.Tracks.Count > 0)
-                                {
-                                    <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
-                                        <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
-                                    </Tooltip>
-                                }
-                                @_localizer["Selection"]
-                            </Div>
-                        </TableHeaderCell>
-                    }
-                    @switch (_sessionStateContainer.CurrentViewMode)
-                    {
-                        case ViewMode.ViewModeFull:
-                        case ViewMode.ViewModeImport:
-                            <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                            break;
-                        case ViewMode.ViewModeRecord:
-                            <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                            break;
-                    }
-                    <TableHeaderCell>#</TableHeaderCell>
-                    <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
-                    <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
-                    <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
-                    <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-                    <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                @for (int i = 0; i < Cuesheet.Tracks.Count; i++)
+            <Buttons Margin="Margin.Is2.FromEnd">
+                @if (TrackSelectionVisible == false)
                 {
-                    var track = Cuesheet.Tracks.ElementAt(i);
+                    <Tooltip Text="@_localizer["Display selection of tracks"]">
+                        <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+                                <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+                            </svg>
+                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                                @_localizer["Display selection of tracks"]
+                            </Span>
+                        </Button>
+                    </Tooltip>
+                }
+                else
+                {
+                    <Tooltip Text="@_localizer["Hide selection of tracks"]">
+                        <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+                                <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+                            </svg>
+                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                                @_localizer["Hide selection of tracks"]
+                            </Span>
+                        </Button>
+                    </Tooltip>
+                }
+            </Buttons>
+            <Buttons>
+                <Tooltip Text="@_localizer["Edit selected tracks"]">
+                    <Button Color="Color.Secondary" Clicked="EditSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stickies" viewBox="0 0 16 16">
+                            <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1H1.5z"/>
+                            <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2h-11zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5v-11zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293L10 14.793z"/>
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
+                            @_localizer["Edit selected tracks"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+                <Tooltip Text="@_localizer["Delete selected tracks"]">
+                    <Button Color="Color.Warning" Clicked="DeleteSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                            @_localizer["Delete selected tracks"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+                <Tooltip Text="@_localizer["Delete all tracks"]">
+                    <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                            @_localizer["Delete all tracks"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+            </Buttons>
+        </Buttons>
+        <br />
+    }
+
+    <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
+        <TableHeader ThemeContrast="ThemeContrast.Light">
+            <TableRow>
+                @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
+                {
+                    <TableHeaderCell>
+                        <Div Class="d-flex align-items-center">
+                            @if (Cuesheet.Tracks.Count > 0)
+                            {
+                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
+                                </Tooltip>
+                            }
+                            @_localizer["Selection"]
+                        </Div>
+                    </TableHeaderCell>
+                }
+                @switch (_sessionStateContainer.CurrentViewMode)
+                {
+                    case ViewMode.ViewModeFull:
+                    case ViewMode.ViewModeImport:
+                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                        break;
+                    case ViewMode.ViewModeRecord:
+                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                        break;
+                }
+                <TableHeaderCell>#</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
+                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            @for (int i = 0; i < Cuesheet.Tracks.Count; i++)
+            {
+                var track = Cuesheet.Tracks.ElementAt(i);
+                <Validations @ref="validations[track]">
                     @if ((i != 0) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
                     {
                         <TableRow>
@@ -351,17 +351,16 @@ along with Foobar.  If not, see
                                 break;
                         }
                     </TableRow>
-                }
-            </TableBody>
-        </Table>
-    </Validations>
+                </Validations>
+            }
+        </TableBody>
+    </Table>
 }
 
 <ModalDialog @ref="modalDialog" />
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: When something like length is edited, also end and begin should be validated!
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();
@@ -370,6 +369,8 @@ along with Foobar.  If not, see
     Boolean _trackSelectionVisible = false;
     //Saved locally because of performance (do not load everytime something is edited)
     ApplicationOptions? applicationOptions;
+    Dictionary<Track, Validations?> validations = new();
+    List<Track> TracksAttachedToValidateablePropertyChanged = new();
 
     [Parameter]
     public Boolean TrackSelectionVisible 
@@ -411,7 +412,9 @@ along with Foobar.  If not, see
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
         _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
+        DetachTrackFromValidateablePropertyChanged();
     }
 
     protected override async Task OnInitializedAsync()
@@ -430,6 +433,9 @@ along with Foobar.  If not, see
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
 
         _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
+
+        AttachTracksToValidateablePropertyChanged();
     }
 
     Task OnAddTrackClicked()
@@ -590,6 +596,7 @@ along with Foobar.  If not, see
     {
         selectedTracks.Clear();
         StateHasChanged();
+        AttachTracksToValidateablePropertyChanged();
     }
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
@@ -607,9 +614,15 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private void Cuesheet_TrackAdded(object? sender, EventArgs args)
+    void Cuesheet_TrackAdded(object? sender, TrackAddRemoveEventArgs args)
     {
         StateHasChanged();
+        AttachTracksToValidateablePropertyChanged();
+    }
+
+    void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
+    {
+        DetachTrackFromValidateablePropertyChanged(args.Track);
     }
 
     private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
@@ -665,6 +678,61 @@ along with Foobar.  If not, see
         if (options is ApplicationOptions)
         {
             applicationOptions = (ApplicationOptions)options;
+        }
+    }
+
+    void AttachTracksToValidateablePropertyChanged()
+    {
+        if (Cuesheet != null)
+        {
+            foreach (var track in Cuesheet.Tracks)
+            {
+                Boolean attach = true;
+                if (TracksAttachedToValidateablePropertyChanged.Contains(track))
+                {
+                    attach = false;
+                }
+                if (attach)
+                {
+                    track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+                    TracksAttachedToValidateablePropertyChanged.Add(track);
+                }
+            }
+        }
+    }
+
+    void DetachTrackFromValidateablePropertyChanged(Track? track = null, Boolean deleteValidationReference = true)
+    {
+        if (track == null)
+        {
+            foreach (var trackCurrentlyAttached in TracksAttachedToValidateablePropertyChanged)
+            {
+                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+                if (deleteValidationReference)
+                {
+                    validations.Remove(trackCurrentlyAttached);
+                }
+            }
+        }
+        else
+        {
+            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+            if (deleteValidationReference)
+            {
+                validations.Remove(track);
+            }
+        }
+    }
+
+    void Track_ValidateablePropertyChanged(object? sender, string property)
+    {
+        var track = sender as Track;
+        if (track != null)
+        {
+            if (validations.TryGetValue(track, out var validation) && validation != null)
+            {
+                validation.ValidateAll().GetAwaiter().GetResult();
+            }
         }
     }
 }
