@@ -416,6 +416,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                                 // Check correct track position
                                 if (Cuesheet != null)
                                 {
+                                    //TODO: Fails when Begin has no value (like 2 track added, having position 2)!
                                     var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
                                     if (positionTrackShouldHave != Position)
                                     {
