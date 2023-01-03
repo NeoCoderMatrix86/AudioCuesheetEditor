@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.Options;
 using Blazorise.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace AudioCuesheetEditorTests.Utility
 {
@@ -39,6 +40,11 @@ namespace AudioCuesheetEditorTests.Utility
                 .BuildServiceProvider();
 
             var factory = serviceProvider.GetService<ILoggerFactory>();
+            
+            if (factory == null)
+            {
+                throw new NullReferenceException();
+            }
 
             return factory.CreateLogger<T>();
         }
