@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -91,19 +91,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.1.4.1" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.1.5" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.10" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.1" PrivateAssets="all" />
 	  <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
-    <PackageReference Include="Blazorise.Components" Version="1.1.4.1" />
+    <PackageReference Include="Blazorise.Components" Version="1.1.5" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
     <PackageReference Include="Markdig" Version="0.30.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys" Version="13.0.0" />
-    <PackageReference Include="z440.atl.core" Version="4.14.0" />
+    <PackageReference Include="z440.atl.core" Version="4.17.0" />
   </ItemGroup>
 
 </Project>
