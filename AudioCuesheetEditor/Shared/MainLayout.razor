@@ -248,12 +248,11 @@ along with Foobar.  If not, see
         _traceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
         _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
-
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.Ctrl, Keys.H, () => _navigationManager.NavigateTo("Help"))
-            .Add(ModKeys.Ctrl, Keys.E, OnStrgEKeyDown)
-            .Add(ModKeys.Ctrl, Keys.S, OnStrgSKeyDown)
-            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
+            .Add(ModKey.Ctrl, Key.h, () => _navigationManager.NavigateTo("Help"))
+            .Add(ModKey.Ctrl, Key.e, OnStrgEKeyDown)
+            .Add(ModKey.Ctrl, Key.s, OnStrgSKeyDown)
+            .Add(Key.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
 
@@ -426,7 +425,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnEnterKeyDown()
+    async ValueTask OnEnterKeyDown()
     {
         if (modalDownloadProjectfileVisible)
         {
@@ -438,7 +437,7 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task OnStrgEKeyDown()
+    async ValueTask OnStrgEKeyDown()
     {
         if (exportProfilesDialog != null)
         {
@@ -446,7 +445,7 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task OnStrgSKeyDown()
+    async ValueTask OnStrgSKeyDown()
     {
         if (modalDownloadProjectfile != null)
         {

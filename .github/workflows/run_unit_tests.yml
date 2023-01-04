@@ -15,9 +15,9 @@ jobs:
     # sets up .NET
     # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/6.0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3.0.1
+      uses: actions/setup-dotnet@v3.0.3
       with:
-        dotnet-version: '6.0.401'
+        dotnet-version: '7.0.101'
       
     # Only publish when unit tests are ok
     - name: Run Unit Tests

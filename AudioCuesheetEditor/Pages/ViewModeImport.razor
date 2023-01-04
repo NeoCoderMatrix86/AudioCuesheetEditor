@@ -344,9 +344,9 @@ along with Foobar.  If not, see
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
-
+        
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
+            .Add(Key.Enter, OnEnterKeyDown);
 
         TimeSpanFormat.TextLocalizer = _localizer;
         TextImportScheme.TextLocalizer = _localizer;
@@ -536,7 +536,7 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task OnEnterKeyDown()
+    async ValueTask OnEnterKeyDown()
     {
         if ((modalDialog != null) && (modalDialog.Visible))
         {
