@@ -521,8 +521,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(track2, cuesheet.Tracks.First());
             Assert.AreEqual(track1, cuesheet.Tracks.Last());
             track1.Position = 1;
-            Assert.AreEqual(track1, cuesheet.Tracks.First());
-            Assert.AreEqual(track2, cuesheet.Tracks.Last());
+            Assert.AreEqual(track2, cuesheet.Tracks.First());
+            Assert.AreEqual(track1, cuesheet.Tracks.Last());
         }
 
         [TestMethod()]

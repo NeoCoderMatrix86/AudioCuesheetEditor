@@ -64,6 +64,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             catalogueNumber = new();
         }
 
+        //TODO: Add Unit test with invalid positions beeing exported!
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
         {
@@ -325,10 +326,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
         {
             Boolean movePossible = false;
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
             lock (syncLock)
             {
                 var index = Tracks.ToList().IndexOf(track);
@@ -352,10 +349,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void MoveTrack(Track track, MoveDirection moveDirection)
         {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
             var index = tracks.IndexOf(track);
             Track? currentTrack = null;
             switch (moveDirection)
@@ -548,30 +541,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void Track_RankPropertyValueChanged(object? sender, string e)
         {
-            if (sender != null)
+            if (sender is Track trackRaisedEvent)
             {
-                Track trackRaisedEvent = (Track)sender;
-                switch (e)
-                {
-                    case nameof(Track.Position):
-                        //Check position and call switchtracks
-                        if (trackRaisedEvent.Position.HasValue)
-                        {
-                            var trackAtPosition = tracks.ElementAtOrDefault((int)trackRaisedEvent.Position.Value - 1);
-                            if ((trackAtPosition != null) && (trackAtPosition != trackRaisedEvent))
-                            {
-                                SwitchTracks(trackRaisedEvent, trackAtPosition);
-                            }
-                        }
-                        break;
-                }
                 var item = KeyValuePair.Create(e, trackRaisedEvent);
                 if (currentlyHandlingLinkedTrackPropertyChange.Contains(item) == false)
                 {
                     currentlyHandlingLinkedTrackPropertyChange.Add(item);
                     var linkedPreviousTrack = GetPreviousLinkedTrack(trackRaisedEvent);
                     //Check if raising track has linked previous track
-                    if ((trackRaisedEvent.IsLinkedToPreviousTrack) && (linkedPreviousTrack != null))
+                    if (trackRaisedEvent.IsLinkedToPreviousTrack && (linkedPreviousTrack != null))
                     {
                         switch (e)
                         {

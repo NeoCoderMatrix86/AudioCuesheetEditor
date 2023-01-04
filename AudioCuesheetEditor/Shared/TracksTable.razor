@@ -161,11 +161,10 @@ along with Foobar.  If not, see
             </TableRow>
         </TableHeader>
         <TableBody>
-            @for (int i = 0; i < Cuesheet.Tracks.Count; i++)
+            @foreach(var track in Cuesheet.Tracks)
             {
-                var track = Cuesheet.Tracks.ElementAt(i);
                 <Validations @ref="validations[track]">
-                    @if ((i != 0) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
+                    @if ((track != Cuesheet.Tracks.FirstOrDefault()) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
                     {
                         <TableRow>
                             <TableRowCell ColumnSpan="(TrackSelectionVisible == true) ? 9 : 8">
