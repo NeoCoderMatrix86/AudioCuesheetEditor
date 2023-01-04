@@ -121,6 +121,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             set
             {
+                var previousValue = Length;
                 if (AutomaticallyCalculateLength)
                 {
                     if ((Begin.HasValue == false) && (End.HasValue == false))
@@ -151,6 +152,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     _length = value;
                 }
+                FireEvents(previousValue, fireRankPropertyValueChanged: false, fireTraceablePropertyChanged: false);
             }
         }
         [JsonInclude]

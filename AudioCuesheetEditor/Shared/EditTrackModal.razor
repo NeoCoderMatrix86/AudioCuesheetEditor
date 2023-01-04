@@ -736,7 +736,7 @@ along with Foobar.  If not, see
                 }
                 else
                 {
-                    track.CopyValues(editedTrack);
+                    track.CopyValues(editedTrack, setCuesheet: false);
                 }
             }
             // We need to fire events for IsLinkedToPreviousTrack to work, if we have done a multiple edit.
