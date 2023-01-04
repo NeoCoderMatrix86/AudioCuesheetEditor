@@ -192,7 +192,7 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown);
+            .Add(Key.Enter, OnEnterKeyDown);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
@@ -203,7 +203,7 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
     }
 
-    private async Task OnEnterKeyDown()
+    async ValueTask OnEnterKeyDown()
     {
         if (modalOptionsVisible)
         {

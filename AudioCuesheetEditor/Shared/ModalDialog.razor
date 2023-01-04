@@ -16,8 +16,6 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
-@using Toolbelt.Blazor.HotKeys
-
 @implements IDisposable
 
 @inject ITextLocalizer<ModalDialog> _localizer
@@ -45,7 +43,7 @@ along with Foobar.  If not, see
                 }
                 @Title
             </ModalTitle>
-            <CloseButton @onclick="HideModal" />
+            <CloseButton Clicked="HideModal" />
         </ModalHeader>
         <ModalBody>
             @Text
@@ -76,8 +74,8 @@ along with Foobar.  If not, see
     protected override Task OnInitializedAsync()
     {
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.Alt, Keys.O, Confirm)
-            .Add(ModKeys.None, Keys.ESC, HideModal);
+            .Add(ModKey.Alt, Key.O, ConfirmedKeyDown)
+            .Add(Key.Escape, HideKeyDown);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
@@ -148,6 +146,16 @@ along with Foobar.  If not, see
         {
             Confirmed(this, args);
         }
+    }
+
+    async ValueTask ConfirmedKeyDown()
+    {
+        await Confirm();
+    }
+
+    async ValueTask HideKeyDown()
+    {
+        await HideModal();
     }
 
     private String? ModalHeaderStyle

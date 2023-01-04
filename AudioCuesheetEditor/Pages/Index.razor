@@ -70,7 +70,7 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    
+
     public void Dispose()
     {
         hotKeysContext?.Dispose();
@@ -97,9 +97,9 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)
-            .Add(ModKeys.Ctrl, Keys.Y, () => _traceChangeManager.Undo())
-            .Add(ModKeys.Ctrl, Keys.Z, () => _traceChangeManager.Redo());
+            .Add(Key.Enter, OnEnterKeyDown)
+            .Add(ModKey.Ctrl, Key.z, () => _traceChangeManager.Undo())
+            .Add(ModKey.Ctrl, Key.y, () => _traceChangeManager.Redo());
 
         _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
 
@@ -116,7 +116,7 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task OnEnterKeyDown()
+    async ValueTask OnEnterKeyDown()
     {
         if ((modalDialog != null) && (modalDialog.Visible))
         {

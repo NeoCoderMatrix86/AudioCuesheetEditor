@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-@using Toolbelt.Blazor.HotKeys
+
 @implements IDisposable
 
 @inject ITextLocalizer<AudioPlayer> _localizer
@@ -194,13 +194,13 @@ along with Foobar.  If not, see
     {
         //Attach shortcuts
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.Ctrl, Keys.P, OnPlayClicked)
-            .Add(ModKeys.Ctrl, Keys.Left, () => OnPlayNextPreviousTrackClicked(true))
-            .Add(ModKeys.Ctrl, Keys.Right, () => OnPlayNextPreviousTrackClicked())
-            .Add(ModKeys.None, Keys.MediaPlayPause, OnPlayClicked)
-            .Add(ModKeys.None, Keys.MediaTrackNext, () => OnPlayNextPreviousTrackClicked())
-            .Add(ModKeys.None, Keys.MediaTrackPrevious, () => OnPlayNextPreviousTrackClicked(true))
-            .Add(ModKeys.None, Keys.MediaStop, () => OnStopClicked());
+            .Add(ModKey.Ctrl, Key.p, OnPlayKeyDown)
+            .Add(ModKey.Ctrl, Key.ArrowLeft, OnPlayNextTrackKeyDown)
+            .Add(ModKey.Ctrl, Key.ArrowRight, OnPlayPreviousTrackKeyDown)
+            .Add(Key.MediaPlayPause, OnPlayKeyDown)
+            .Add(Key.MediaTrackNext, OnPlayNextTrackKeyDown)
+            .Add(Key.MediaTrackPrevious, OnPlayPreviousTrackKeyDown)
+            .Add(Key.MediaStop, OnStopKeyDown);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
@@ -248,18 +248,18 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
     }
 
-    private void HowlOnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs args)
+    void HowlOnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs args)
     {
         paused = false;
         audioUpdateTimer.Start();
     }
 
-    private void HowlOnPause(Howler.Blazor.Components.Events.HowlEventArgs args)
+    void HowlOnPause(Howler.Blazor.Components.Events.HowlEventArgs args)
     {
         paused = true;
     }
 
-    private void HowlOnEnd(Howler.Blazor.Components.Events.HowlEventArgs args)
+    void HowlOnEnd(Howler.Blazor.Components.Events.HowlEventArgs args)
     {
         paused = false;
         audioUpdateTimer.Stop();
@@ -269,7 +269,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private void HowlOnStop(Howler.Blazor.Components.Events.HowlEventArgs args)
+    void HowlOnStop(Howler.Blazor.Components.Events.HowlEventArgs args)
     {
         paused = false;
         audioUpdateTimer.Stop();
@@ -280,7 +280,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private async Task OnSliderValueChanged(Double newvalue)
+    async Task OnSliderValueChanged(Double newvalue)
     {
         if (TotalTime.HasValue)
         {
@@ -293,7 +293,7 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnPlayClicked()
+    async Task OnPlayClicked()
     {
         if (_sessionStateContainer.Cuesheet.Audiofile != audioFile)
         {
@@ -331,7 +331,12 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnPlayNextPreviousTrackClicked(Boolean previous = false)
+    async ValueTask OnPlayKeyDown()
+    {
+        await OnPlayClicked();
+    }
+
+    async Task OnPlayNextPreviousTrackClicked(Boolean previous = false)
     {
         if (CurrentlyPlayingTrack != null)
         {
@@ -349,12 +354,27 @@ along with Foobar.  If not, see
         }
     }
 
-    private async Task OnStopClicked()
+    async ValueTask OnPlayNextTrackKeyDown()
+    {
+        await OnPlayNextPreviousTrackClicked(true);
+    }
+
+    async ValueTask OnPlayPreviousTrackKeyDown()
+    {
+        await OnPlayNextPreviousTrackClicked();
+    }
+
+    async Task OnStopClicked()
     {
         await _howl.Stop(soundId);
     }
 
-    private void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
+    async ValueTask OnStopKeyDown()
+    {
+        await OnStopClicked();
+    }
+
+    void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
     {
         if (_sessionStateContainer.Cuesheet.Audiofile != null)
         {
@@ -363,7 +383,7 @@ along with Foobar.  If not, see
         TotalTime = null;
     }
 
-    private void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)
+    void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)
     {
         if (sender != null)
         {
@@ -373,12 +393,12 @@ along with Foobar.  If not, see
         AnalyseAudioFile();
     }
 
-    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
 
-    private void AnalyseAudioFile()
+    void AnalyseAudioFile()
     {
         if ((_sessionStateContainer.Cuesheet != null) && (_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.Duration.HasValue) && (TotalTime.HasValue == false))
         {

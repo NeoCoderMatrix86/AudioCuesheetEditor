@@ -427,10 +427,10 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
-         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, EditTrackModalSaveClicked)
-            .Add(ModKeys.None, Keys.ESC, () => ControlModalDialog(modalTrackEdit, false));
-        
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(Key.Enter, OnEditTrackModalSaveKeyDown)
+            .Add(Key.Escape, OnHideModalKeyDown);
+
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
@@ -749,6 +749,11 @@ along with Foobar.  If not, see
         await SaveClicked.InvokeAsync();
     }
 
+    async ValueTask OnEditTrackModalSaveKeyDown()
+    {
+        await EditTrackModalSaveClicked();
+    }
+
     async Task ControlModalDialog(Modal? dialog, Boolean show)
     {
         if (dialog != null)
@@ -762,6 +767,11 @@ along with Foobar.  If not, see
                 await dialog.Hide();
             }
         }
+    }
+
+    async ValueTask OnHideModalKeyDown()
+    {
+        await ControlModalDialog(modalTrackEdit, false);
     }
 
     async Task OnReadDataAutocompleteTrackArtistEditDialog(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
