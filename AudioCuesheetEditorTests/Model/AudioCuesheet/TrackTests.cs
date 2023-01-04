@@ -1,5 +1,4 @@
-﻿using AudioCuesheetEditor.Model.AudioCuesheet;
-//This file is part of AudioCuesheetEditor.
+﻿//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -20,7 +19,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -129,6 +127,27 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             validationResult = track2.Validate(x => x.Position);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
                 && x.Parameter != null && x.Parameter[0].Equals(track2.Position) && x.Parameter[3].Equals(track2.Begin) && x.Parameter[4].Equals(track2.End) && x.Parameter[5].Equals(2)));
+            cuesheet = new Cuesheet();
+            track1 = new Track()
+            {
+                Artist = "Testartist 1",
+                Title = "Testtitle 1"
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            track2 = new Track()
+            {
+                Artist = "Testartist 2",
+                Title = "Testtitle 2"
+            };
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            Assert.IsNotNull(track1.Begin);
+            Assert.IsNull(track1.End);
+            Assert.IsNull(track2.Begin);
+            Assert.IsNull(track2.End);
+            validationResult = track1.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            validationResult = track2.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
         }
 
         [TestMethod()]

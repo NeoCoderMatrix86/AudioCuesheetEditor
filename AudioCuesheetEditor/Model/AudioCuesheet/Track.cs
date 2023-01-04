@@ -181,7 +181,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 if (setValue)
                 {
                     cuesheet = value;
-                    FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Cuesheet));
+                    FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(Cuesheet));
                 }
             }
         }
@@ -411,18 +411,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                         else
                         {
-                            if (IsCloned == false)
+                            // Check correct track position
+                            if ((IsCloned == false) && (Cuesheet != null))
                             {
-                                // Check correct track position
-                                if (Cuesheet != null)
+                                var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
+                                if (positionTrackShouldHave != Position)
                                 {
-                                    //TODO: Fails when Begin has no value (like 2 track added, having position 2)!
-                                    var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
-                                    if (positionTrackShouldHave != Position)
-                                    {
-                                        validationMessages ??= new();
-                                        validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
-                                    }
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
                                 }
                             }
                         }
