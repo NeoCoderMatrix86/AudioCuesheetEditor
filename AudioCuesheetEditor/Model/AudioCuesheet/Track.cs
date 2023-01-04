@@ -14,13 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
-using Blazorise.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -31,7 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Remove
     }
 
-    public class Track : Validateable, ICuesheetEntity, ITraceable
+    public class Track : Validateable<Track>, ICuesheetEntity, ITraceable
     {
         public static readonly List<String> AllPropertyNames = new() { nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length) };
 
@@ -42,7 +36,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? end;
         private TimeSpan? _length;
         private List<Flag> flags = new();
-        private Track? clonedFrom = null;
         private Boolean isLinkedToPreviousTrack;
         private Cuesheet? cuesheet;
         private TimeSpan? preGap;
@@ -70,12 +63,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             CopyValues(track, copyCuesheetReference);
         }
-
         public Track()
         {
-            Validate();
+            
         }
-
         public uint? Position 
         {
             get => position;
@@ -90,7 +81,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get => title;
             set { var previousValue = title; title = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Title)); }
-        }        
+        }
         public TimeSpan? Begin 
         {
             get => begin;
@@ -99,7 +90,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public TimeSpan? End 
         {
             get => end;
-            set { var previousValue = end; end = value; FireEvents(previousValue, propertyName: nameof(End)); }
+            set { var previousValue = end; end = value; FireEvents(previousValue,  propertyName: nameof(End)); }
         }
         /// <summary>
         /// If <see cref="Length"/> is set, should it be automatically change begin and end? Defaulting to true, because only during edit dialog this should be set to false. 
@@ -130,6 +121,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             set
             {
+                var previousValue = Length;
                 if (AutomaticallyCalculateLength)
                 {
                     if ((Begin.HasValue == false) && (End.HasValue == false))
@@ -160,7 +152,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     _length = value;
                 }
-                OnValidateablePropertyChanged();
+                FireEvents(previousValue, fireRankPropertyValueChanged: false, fireTraceablePropertyChanged: false);
             }
         }
         [JsonInclude]
@@ -180,22 +172,31 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Cuesheet? Cuesheet 
         {
             get => cuesheet;
-            set { var previousValue = cuesheet; cuesheet = value; FireEvents(previousValue, fireRankPropertyValueChanged:false, propertyName: nameof(Cuesheet)); }
+            set 
+            {
+                var previousValue = cuesheet;
+                Boolean setValue = true;
+                if (value != null)
+                {
+                    setValue = value.Tracks.Contains(this);
+                }
+                if (setValue)
+                {
+                    cuesheet = value;
+                    FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(Cuesheet));
+                }
+            }
         }
 
         /// <summary>
         /// Indicates that this track has been cloned from another track and is a transparent proxy
         /// </summary>
         [JsonIgnore]
-        public Boolean IsCloned { get { return clonedFrom != null; } }
+        public Boolean IsCloned { get { return ClonedFrom != null; } }
         /// <summary>
         /// Get the original track that this track has been cloned from. Can be null on original objects
         /// </summary>
-        public Track? ClonedFrom
-        {
-            get => clonedFrom;
-            private set { clonedFrom = value; OnValidateablePropertyChanged(); }
-        }
+        public Track? ClonedFrom { get; set; }
         /// <inheritdoc/>
         public TimeSpan? PreGap 
         {
@@ -215,31 +216,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             get => isLinkedToPreviousTrack;
             set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(IsLinkedToPreviousTrack)); }
-        }
-
-        public String? GetDisplayNameLocalized(ITextLocalizer localizer)
-        {
-            String? identifierString = null;
-            if (Position != null)
-            {
-                identifierString += String.Format("{0}", Position);
-            }
-            if (identifierString == null)
-            {
-                if (String.IsNullOrEmpty(Artist) == false)
-                {
-                    identifierString += String.Format("{0}", Artist);
-                }
-                if (String.IsNullOrEmpty(Title) == false)
-                {
-                    if (identifierString != null)
-                    {
-                        identifierString += ",";
-                    }
-                    identifierString += String.Format("{0}", Title);
-                }
-            }
-            return String.Format("{0} ({1})", localizer[nameof(Track)], identifierString);
         }
 
         /// <summary>
@@ -387,7 +363,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
                 }
             }
-            OnValidateablePropertyChanged();
         }
 
         ///<inheritdoc/>
@@ -416,157 +391,88 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             this.flags.AddRange(flags);
         }
 
-
-        public override string ToString()
+        protected override ValidationResult Validate(string property)
         {
-            return String.Format("({0} {1},{2} {3},{4} {5},{6} {7},{8} {9},{10} {11})", nameof(Position), Position, nameof(Artist), Artist, nameof(Title), Title, nameof(Begin), Begin, nameof(End), End, nameof(Length), Length);
-        }
-
-        protected override void Validate()
-        {
-            if (Position == null)
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} has no value!", nameof(Position)));
-            }
-            if ((Position != null) && (Position == 0))
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} has invalid value!", nameof(Position)));
-            }
-            if (String.IsNullOrEmpty(Artist) == true)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Artist)), ValidationErrorType.Warning, "{0} has no value!", nameof(Artist)));
-            }
-            if (String.IsNullOrEmpty(Title) == true)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Title)), ValidationErrorType.Warning, "{0} has no value!", nameof(Title)));
-            }
-            if (Begin == null)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "{0} has no value!", nameof(Begin)));
-            }
-            else
-            {
-                if (Begin < TimeSpan.Zero)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Error, "{0} has invalid timespan!", nameof(Begin)));
-                }
-            }
-            if (End == null)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "{0} has no value!", nameof(End)));
-            }
-            else
-            {
-                if (End < TimeSpan.Zero)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Error, "{0} has invalid timespan!", nameof(End)));
-                }
-            }
-            if (Length == null)
-            {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Length)), ValidationErrorType.Error, "{0} has no value! Please check {1} and {2}.", nameof(Length), nameof(Begin), nameof(End)));
-            }
-            //Check track overlapping
-            if (Cuesheet != null)
-            {
-                Cuesheet.Tracks.ToList().ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
-                List<Track> tracksToAttachEventHandlerTo = new();
-                if (Position.HasValue)
-                {
-                    IEnumerable<Track> tracksWithSamePosition;
-                    if (ClonedFrom != null)
+                case nameof(Position):
+                    validationStatus = ValidationStatus.Success;
+                    if (Position == null)
                     {
-                        tracksWithSamePosition = Cuesheet.Tracks.Where(x => x.Position == Position && x.Equals(this) == false && (x.Equals(ClonedFrom) == false));
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Position)));
                     }
                     else
                     {
-                        tracksWithSamePosition = Cuesheet.Tracks.Where(x => x.Position == Position && x.Equals(this) == false);
-                    }
-                    if ((tracksWithSamePosition != null) && (tracksWithSamePosition.Any()))
-                    {
-                        tracksToAttachEventHandlerTo.AddRange(tracksWithSamePosition);
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track is already in use by track(s) {2}!", nameof(Position), Position, String.Join(", ", tracksWithSamePosition)));
-                    }
-                    if (IsCloned == false)
-                    {
-                        Boolean addValidationError = false;
-                        Track? trackAtPosition = Cuesheet.Tracks.ElementAtOrDefault((int)Position.Value - 1);
-                        if (trackAtPosition != null)
+                        if (Position == 0)
                         {
-                            if (trackAtPosition != this)
-                            {
-                                addValidationError = true;
-                            }
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} may not be 0!", nameof(Position)));
                         }
                         else
                         {
-                            // Only validate the position if the current track belongs to cuesheet since otherwise it gets validated during AddTrack
-                            if ((Cuesheet.Tracks.Contains(this)) && ((Cuesheet.Tracks.ToList().IndexOf(this) + 1) != Position.Value))
+                            // Check correct track position
+                            if ((IsCloned == false) && (Cuesheet != null))
                             {
-                                addValidationError = true;
+                                var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
+                                if (positionTrackShouldHave != Position)
+                                {
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
+                                }
                             }
                         }
-                        if (addValidationError)
+                    }
+                    break;
+                case nameof(Begin):
+                    validationStatus = ValidationStatus.Success;
+                    if (Begin == null)
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
+                    }
+                    else
+                    {
+                        if (Begin < TimeSpan.Zero)
                         {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Position)), ValidationErrorType.Error, "{0} {1} of this track does not match track position in cuesheet. Please correct the {2} of this track to {3}!", nameof(Position), Position, nameof(Position), Cuesheet.Tracks.ToList().IndexOf(this) + 1));
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
                         }
                     }
-                }
-                if (Begin.HasValue)
-                {
-                    IEnumerable<Track> tracksOverlapping;
-                    if (ClonedFrom != null)
+                    break;
+                case nameof(End):
+                    validationStatus = ValidationStatus.Success;
+                    if (End == null)
                     {
-                        tracksOverlapping = Cuesheet.Tracks.Where(x => Begin >= x.Begin && Begin < x.End && (x.Equals(this) == false) && (x.Equals(ClonedFrom) == false));
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
                     }
                     else
                     {
-                        tracksOverlapping = Cuesheet.Tracks.Where(x => Begin >= x.Begin && Begin < x.End && (x.Equals(this) == false));
+                        if (End < TimeSpan.Zero)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(End)));
+                        }
                     }
-                    if ((tracksOverlapping != null) && tracksOverlapping.Any())
+                    break;
+                case nameof(Length):
+                    validationStatus = ValidationStatus.Success;
+                    if (Length == null)
                     {
-                        tracksToAttachEventHandlerTo.AddRange(tracksOverlapping);
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Begin)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(Begin), String.Join(", ", tracksOverlapping)));
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Length)));
                     }
-                }
-                if (End.HasValue)
-                {
-                    IEnumerable<Track> tracksOverlapping;
-                    if (ClonedFrom != null)
-                    {
-                        tracksOverlapping = Cuesheet.Tracks.Where(x => x.Begin < End && End <= x.End && (x.Equals(this) == false) && (x.Equals(ClonedFrom) == false));
-                    }
-                    else
-                    {
-                        tracksOverlapping = Cuesheet.Tracks.Where(x => x.Begin < End && End <= x.End && (x.Equals(this) == false));
-                    }
-                    if ((tracksOverlapping != null) && tracksOverlapping.Any())
-                    {
-                        tracksToAttachEventHandlerTo.AddRange(tracksOverlapping);
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(End)), ValidationErrorType.Warning, "{0} is overlapping with other track(s) ({1})!", nameof(End), String.Join(", ", tracksOverlapping)));
-                    }
-                }
-                tracksToAttachEventHandlerTo.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
+                    break;
             }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
 
         protected void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
-        }
-
-        private void Track_RankPropertyValueChanged(object? sender, string e)
-        {
-            if (sender != null)
-            {
-                Track track = (Track)sender;
-                track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
-                OnValidateablePropertyChanged();
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
         }
 
         /// <summary>
@@ -576,8 +482,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireRankPropertyValueChanged">Fire RankPropertyValueChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire OnTraceablePropertyChanged?</param>
-        /// <param name="propertyName">Property firing the events</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
+        /// <param name="propertyName">Property firing the events</param>
         private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireRankPropertyValueChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
@@ -588,7 +494,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     if (fireValidateablePropertyChanged)
                     {
-                        OnValidateablePropertyChanged();
+                        OnValidateablePropertyChanged(propertyName);
                     }
                     if (fireRankPropertyValueChanged)
                     {

@@ -13,12 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditorTests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using AudioCuesheetEditorTests.Utility;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
@@ -104,11 +103,51 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 3,
                 End = new TimeSpan(0, 5, 0)
             };
+            var track2 = new Track
+            {
+                Position = 2,
+                Begin = track1.End,
+                End = new TimeSpan(0, 8, 23)
+            };
             cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            var validationErrors = track1.GetValidationErrorsFiltered(nameof(Track.Position));
-            Assert.IsTrue(validationErrors.Any(x => x.Message.Message.Contains(" of this track does not match track position in cuesheet. Please correct the")));
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            var validationResult = track1.Validate(x => x.Position);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
+                && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
             track1.Position = 1;
-            Assert.IsTrue(track1.GetValidationErrorsFiltered(nameof(Track.Position)).Count == 0);
+            validationResult = track1.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            validationResult = track2.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            track1.Position = 3;
+            track2.Position = 5;
+            validationResult = track1.Validate(x => x.Position);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
+                && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
+            validationResult = track2.Validate(x => x.Position);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
+                && x.Parameter != null && x.Parameter[0].Equals(track2.Position) && x.Parameter[3].Equals(track2.Begin) && x.Parameter[4].Equals(track2.End) && x.Parameter[5].Equals(2)));
+            cuesheet = new Cuesheet();
+            track1 = new Track()
+            {
+                Artist = "Testartist 1",
+                Title = "Testtitle 1"
+            };
+            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            track2 = new Track()
+            {
+                Artist = "Testartist 2",
+                Title = "Testtitle 2"
+            };
+            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            Assert.IsNotNull(track1.Begin);
+            Assert.IsNull(track1.End);
+            Assert.IsNull(track2.Begin);
+            Assert.IsNull(track2.End);
+            validationResult = track1.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            validationResult = track2.Validate(x => x.Position);
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
         }
 
         [TestMethod()]
@@ -148,6 +187,41 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.IsTrue(destinationTracks.All(x => x.End == sourceTrack.End));
             Assert.IsTrue(destinationTracks.All(x => x.PreGap == sourceTrack.PreGap));
             Assert.IsTrue(destinationTracks.All(x => x.PostGap == sourceTrack.PostGap));
+        }
+
+        [TestMethod()]
+        public void CloneTest()
+        {
+            var track = new Track()
+            {
+                Begin = TimeSpan.Zero,
+                Artist = "Testartist",
+                Title = "Testttitle"
+            };
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(track);
+            var validationResult = track.Validate();
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Contains(nameof(Track.End))));
+            var clone = track.Clone();
+            clone.End = new TimeSpan(0, 2, 32);
+            validationResult = clone.Validate();
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            Assert.IsNull(track.End);
+        }
+
+        [TestMethod()]
+        public void SetCuesheetTest()
+        {
+            var track = new Track();
+            Assert.IsNull(track.Cuesheet);
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(track);
+            Assert.AreEqual(cuesheet, track.Cuesheet);
+            track.Cuesheet = new Cuesheet();
+            Assert.AreEqual(cuesheet, track.Cuesheet);
+            track.Cuesheet = null;
+            Assert.IsNull(track.Cuesheet);
         }
     }
 }

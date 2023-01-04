@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Blazorise.Localization;
-using System;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
@@ -31,7 +30,8 @@ namespace AudioCuesheetEditor.Model.Entity
         }
         public String Message { get; private set; }
         public object[]? Parameter { get; private set; }
-        public String GetMessageLocalized(ITextLocalizer localizer)
+        
+        public String GetMessageLocalized(ITextLocalizer<ValidationMessage> localizer)
         {
             object[]? arguments = null;
             if (Parameter != null)
@@ -41,7 +41,7 @@ namespace AudioCuesheetEditor.Model.Entity
             }
             if (arguments != null)
             {
-                for (int i = 0; i < arguments.Length;i++)
+                for (int i = 0; i < arguments.Length; i++)
                 {
                     if ((arguments[i] != null) && (arguments[i].GetType() == typeof(String)))
                     {

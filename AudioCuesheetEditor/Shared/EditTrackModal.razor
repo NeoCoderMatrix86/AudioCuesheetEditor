@@ -19,12 +19,12 @@ along with Foobar.  If not, see
 @implements IDisposable
 
 @inject ITextLocalizer<EditTrackModal> _localizer
-@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject TraceChangeManager _traceChangeManager
 @inject HotKeys _hotKeys
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 <Modal @ref="modalTrackEdit">
     <ModalContent Centered>
@@ -33,29 +33,40 @@ along with Foobar.  If not, see
             <CloseButton Clicked="() => ControlModalDialog(modalTrackEdit, false)" />
         </ModalHeader>
         <ModalBody>
-            @if (IsMultipleEdit == false)
-            {
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["IsLinkedToPreviousTrack"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.IsLinkedToPreviousTrack)))">
-                            <Switch TValue="bool" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch>
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))">
-                            <NumericEdit TValue="uint?" Min="1" Max="99" Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.Position)))" @bind-Value="editedTrack.Position" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Artist"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Artist)))">
-                            <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Artist" ReadData="OnReadDataAutocompleteTrackArtistEditDialog">
+            <Validations @ref="validations">
+                @if (IsMultipleEdit == false)
+                {
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.IsLinkedToPreviousTrack, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["IsLinkedToPreviousTrack"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <Switch TValue="bool" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">
+                                    <ChildContent>
+                                        @_localizer["IsLinkedToPreviousTrackValue"]
+                                    </ChildContent>
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </Switch>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.Position, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Position"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <NumericEdit TValue="uint?" Min="1" Max="99" @bind-Value="editedTrack.Position">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </NumericEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Artist"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Artist" ReadData="OnReadDataAutocompleteTrackArtistEditDialog" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.Artist, _validationMessageLocalizer, token)">
                                 <ItemContent>
                                     @if (context.Item.Disambiguation != null)
                                     {
@@ -67,14 +78,12 @@ along with Foobar.  If not, see
                                     }
                                 </ItemContent>
                             </Autocomplete>
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Title"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Title)))">
-                            <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editedTrack)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editedTrack)">
+                        </FieldBody>
+                    </Field>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Title"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editedTrack)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editedTrack)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.Title, _validationMessageLocalizer, token)">
                                 <ItemContent>
                                     @if (context.Item.Disambiguation != null)
                                     {
@@ -86,118 +95,119 @@ along with Foobar.  If not, see
                                     }
                                 </ItemContent>
                             </Autocomplete>
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Begin"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.Begin)))" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["End"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.End)))" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Length"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.Length)))" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Flags"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        @foreach (var flag in Flag.AvailableFlags)
-                        {
-                            <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
-                                <Switch TValue="bool" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
-                            </Tooltip>
-                        }
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PreGap"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.PreGap)))" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PostGap"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <Tooltip Placement="TooltipPlacement.Bottom" Text="@editedTrack.GetValidationErrors(_validationMessageLocalizer, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))">
-                            <TextEdit Class="@BootstrapUtility.GetCSSClassAlert(editedTrack, String.Format("{0}.{1}", nameof(Track), nameof(Track.PostGap)))" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Immediate="false" />
-                        </Tooltip>
-                    </FieldBody>
-                </Field>
-            }
-            else
-            {
-                <Table Borderless>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHeaderCell>@_localizer["Change"]</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["Property"]</TableHeaderCell>
-                            <TableHeaderCell>@_localizer["Value"]</TableHeaderCell>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackIsLinkedToPreviousTrack"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["IsLinkedToPreviousTrack"]</TableRowCell>
-                            <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch></TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPosition"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["Position"]</TableRowCell>
-                            <TableRowCell>
-                                <Addons>
-                                    <Addon AddonType="AddonType.Start">
-                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPosition" @bind-SelectedValue="_editModeTrackPosition">
-                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
-                                        </Select>
-                                    </Addon>
-                                    <Addon AddonType="AddonType.Body">
-                                        <NumericEdit TValue="uint?" Min="1" Max="99" ReadOnly="!EditTrackPosition" @bind-Value="editedTrack.Position" Style="width: 65%" />
-                                    </Addon>
-                                </Addons>
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackArtist"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["Artist"]</TableRowCell>
-                            <TableRowCell>
-                                <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" ReadData="OnReadDataAutocompleteTrackArtistEditDialog" Disabled="!EditTrackArtist" @bind-SelectedText="editedTrack.Artist">
-                                    <ItemContent>
-                                        @if (context.Item.Disambiguation != null)
-                                        {
-                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
-                                        }
-                                        else
-                                        {
-                                            <Paragraph>@context.Text</Paragraph>
-                                        }
-                                    </ItemContent>
-                                </Autocomplete>
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackTitle"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["Title"]</TableRowCell>
+                        </FieldBody>
+                    </Field>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.Begin, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Begin"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.End, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["End"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.Length, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Length"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Field Horizontal="true">
+                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Flags"]</FieldLabel>
+                        <FieldBody ColumnSize="ColumnSize.Is9">
+                            @foreach (var flag in Flag.AvailableFlags)
+                            {
+                                <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
+                                    <Switch TValue="bool" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
+                                </Tooltip>
+                            }
+                        </FieldBody>
+                    </Field>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.PreGap, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PreGap"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, editedTrack, x => x.PostGap, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PostGap"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                }
+                else
+                {
+                    <Table Borderless>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHeaderCell>@_localizer["Change"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Property"]</TableHeaderCell>
+                                <TableHeaderCell>@_localizer["Value"]</TableHeaderCell>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackIsLinkedToPreviousTrack"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["IsLinkedToPreviousTrack"]</TableRowCell>
+                                <TableRowCell><Switch TValue="bool" ReadOnly="!EditTrackIsLinkedToPreviousTrack" @bind-Checked="editedTrack.IsLinkedToPreviousTrack">@_localizer["IsLinkedToPreviousTrackValue"]</Switch></TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPosition"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["Position"]</TableRowCell>
                                 <TableRowCell>
-                                    <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Title" Disabled="!EditTrackTitle" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editedTrack)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editedTrack)">
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Start">
+                                            <Select TValue="DynamicEditValue" Disabled="!EditTrackPosition" @bind-SelectedValue="_editModeTrackPosition">
+                                                <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                            </Select>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.Body">
+                                            <NumericEdit TValue="uint?" Min="1" Max="99" ReadOnly="!EditTrackPosition" @bind-Value="editedTrack.Position" Style="width: 65%" />
+                                        </Addon>
+                                    </Addons>
+                                </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackArtist"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["Artist"]</TableRowCell>
+                                <TableRowCell>
+                                    <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtistsEditDialog" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" ReadData="OnReadDataAutocompleteTrackArtistEditDialog" Disabled="!EditTrackArtist" @bind-SelectedText="editedTrack.Artist">
                                         <ItemContent>
                                             @if (context.Item.Disambiguation != null)
                                             {
@@ -210,112 +220,131 @@ along with Foobar.  If not, see
                                         </ItemContent>
                                     </Autocomplete>
                                 </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackBegin"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["Begin"]</TableRowCell>
-                            <TableRowCell>
-                                <Addons>
-                                    <Addon AddonType="AddonType.Start">
-                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackBegin" @bind-SelectedValue="_editModeTrackBegin">
-                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
-                                        </Select>
-                                    </Addon>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Style="width: 65%" />
-                                    </Addon>
-                                </Addons>
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackEnd"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["End"]</TableRowCell>
-                            <TableRowCell>
-                                <Addons>
-                                    <Addon AddonType="AddonType.Start">
-                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackEnd" @bind-SelectedValue="_editModeTrackEnd">
-                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
-                                        </Select>
-                                    </Addon>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Style="width: 65%"/>
-                                    </Addon>
-                                </Addons>
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackLength"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["Length"]</TableRowCell>
-                            <TableRowCell>
-                                <Addons>
-                                    <Addon AddonType="AddonType.Start">
-                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackLength" @bind-SelectedValue="_editModeTrackLength">
-                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
-                                        </Select>
-                                    </Addon>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Style="width: 65%" />
-                                    </Addon>
-                                </Addons>
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackFlags"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["Flags"]</TableRowCell>
-                            <TableRowCell>
-                            @foreach (var flag in Flag.AvailableFlags)
-                            {
-                                <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
-                                    <Switch TValue="bool" ReadOnly="!EditTrackFlags" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
-                                </Tooltip>
-                            }
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPreGap"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["PreGap"]</TableRowCell>
-                            <TableRowCell>
-                                <Addons>
-                                    <Addon AddonType="AddonType.Start">
-                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPreGap" @bind-SelectedValue="_editModeTrackPreGap">
-                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
-                                        </Select>
-                                    </Addon>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Style="width: 65%"/>
-                                    </Addon>
-                                </Addons>
-                            </TableRowCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPostGap"></Switch></TableRowCell>
-                            <TableRowCell>@_localizer["PostGap"]</TableRowCell>
-                            <TableRowCell>
-                                <Addons>
-                                    <Addon AddonType="AddonType.Start">
-                                        <Select TValue="DynamicEditValue" Disabled="!EditTrackPostGap" @bind-SelectedValue="_editModeTrackPostGap">
-                                            <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
-                                            <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
-                                        </Select>
-                                    </Addon>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Style="width: 65%"/>
-                                    </Addon>
-                                </Addons>
-                            </TableRowCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            }
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackTitle"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["Title"]</TableRowCell>
+                                    <TableRowCell>
+                                        <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitlesEditDialog" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="editedTrack.Title" Disabled="!EditTrackTitle" ReadData="(args) => OnReadDataAutocompleteTrackTitleEditDialog(args, editedTrack)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, editedTrack)">
+                                            <ItemContent>
+                                                @if (context.Item.Disambiguation != null)
+                                                {
+                                                    <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                                }
+                                                else
+                                                {
+                                                    <Paragraph>@context.Text</Paragraph>
+                                                }
+                                            </ItemContent>
+                                        </Autocomplete>
+                                    </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackBegin"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["Begin"]</TableRowCell>
+                                <TableRowCell>
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Start">
+                                            <Select TValue="DynamicEditValue" Disabled="!EditTrackBegin" @bind-SelectedValue="_editModeTrackBegin">
+                                                <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                            </Select>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.Body">
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Style="width: 65%" />
+                                        </Addon>
+                                    </Addons>
+                                </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackEnd"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["End"]</TableRowCell>
+                                <TableRowCell>
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Start">
+                                            <Select TValue="DynamicEditValue" Disabled="!EditTrackEnd" @bind-SelectedValue="_editModeTrackEnd">
+                                                <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                            </Select>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.Body">
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Style="width: 65%"/>
+                                        </Addon>
+                                    </Addons>
+                                </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackLength"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["Length"]</TableRowCell>
+                                <TableRowCell>
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Start">
+                                            <Select TValue="DynamicEditValue" Disabled="!EditTrackLength" @bind-SelectedValue="_editModeTrackLength">
+                                                <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                            </Select>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.Body">
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Style="width: 65%" />
+                                        </Addon>
+                                    </Addons>
+                                </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackFlags"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["Flags"]</TableRowCell>
+                                <TableRowCell>
+                                @foreach (var flag in Flag.AvailableFlags)
+                                {
+                                    <Tooltip Placement="TooltipPlacement.Bottom" Text="@_localizer[String.Format("Flag{0}Tooltip", flag.Name)]">
+                                        <Switch TValue="bool" ReadOnly="!EditTrackFlags" Checked="editedTrack.Flags.Contains(flag)" CheckedChanged="(value) => editedTrack.SetFlag(flag, value == true ? SetFlagMode.Add : SetFlagMode.Remove)">@flag.Name</Switch>
+                                    </Tooltip>
+                                }
+                                </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPreGap"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["PreGap"]</TableRowCell>
+                                <TableRowCell>
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Start">
+                                            <Select TValue="DynamicEditValue" Disabled="!EditTrackPreGap" @bind-SelectedValue="_editModeTrackPreGap">
+                                                <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                            </Select>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.Body">
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Style="width: 65%"/>
+                                        </Addon>
+                                    </Addons>
+                                </TableRowCell>
+                            </TableRow>
+                            <TableRow>
+                                <TableRowCell><Switch TValue="bool" @bind-Checked="EditTrackPostGap"></Switch></TableRowCell>
+                                <TableRowCell>@_localizer["PostGap"]</TableRowCell>
+                                <TableRowCell>
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Start">
+                                            <Select TValue="DynamicEditValue" Disabled="!EditTrackPostGap" @bind-SelectedValue="_editModeTrackPostGap">
+                                                <SelectItem Value="DynamicEditValue.EnteredValueEquals">=</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueAdd">+</SelectItem>
+                                                <SelectItem Value="DynamicEditValue.EnteredValueSubstract">-</SelectItem>
+                                            </Select>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.Body">
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Style="width: 65%"/>
+                                        </Addon>
+                                    </Addons>
+                                </TableRowCell>
+                            </TableRow>
+                        </TableBody>
+                    </Table>
+                }
+            </Validations>
         </ModalBody>
         <ModalFooter>
             <Button Color="Color.Primary" Clicked="EditTrackModalSaveClicked">@_localizer["Save changes"]</Button>
@@ -325,12 +354,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-
-    public void Dispose()
-    {
-        hotKeysContext?.Dispose();
-    }
-
     enum DynamicEditValue 
     {
         EnteredValueEquals = 0,
@@ -343,6 +366,7 @@ along with Foobar.  If not, see
         get => _tracksToEdit;
         set 
         {
+            editedTrack.ValidateablePropertyChanged -= editedTrack_ValidateablePropertyChanged;
             _tracksToEdit = value;
             if (IsMultipleEdit)
             {
@@ -354,6 +378,11 @@ along with Foobar.  If not, see
                 {
                     editedTrack = _tracksToEdit.First().Clone();
                 }
+            }
+            editedTrack.ValidateablePropertyChanged += editedTrack_ValidateablePropertyChanged;
+            if (validations != null)
+            {
+                validations.ValidateAll();
             }
         }
     }
@@ -387,16 +416,25 @@ along with Foobar.  If not, see
     DynamicEditValue _editModeTrackPostGap;
 
     HotKeysContext? hotKeysContext;
+    Validations? validations;
+    ApplicationOptions? applicationOptions;
 
-    protected override void OnInitialized()
+    public void Dispose()
     {
-        hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKeys.None, Keys.Enter, EditTrackModalSaveClicked)
-            .Add(ModKeys.None, Keys.ESC, () => ControlModalDialog(modalTrackEdit, false));
-
-        base.OnInitialized();
+        hotKeysContext?.Dispose();
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+         hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKeys.None, Keys.Enter, EditTrackModalSaveClicked)
+            .Add(ModKeys.None, Keys.ESC, () => ControlModalDialog(modalTrackEdit, false));
+        
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+
+    }
 
     public Boolean EditTrackIsLinkedToPreviousTrack
     {
@@ -698,7 +736,7 @@ along with Foobar.  If not, see
                 }
                 else
                 {
-                    track.CopyValues(editedTrack);
+                    track.CopyValues(editedTrack, setCuesheet: false);
                 }
             }
             // We need to fire events for IsLinkedToPreviousTrack to work, if we have done a multiple edit.
@@ -795,10 +833,26 @@ along with Foobar.  If not, see
         return resultString;
     }
 
-    async Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
+    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
     {
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, options?.TimeSpanFormat);
+        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
         setAction(result);
+        return Task.CompletedTask;
+    }
+
+    void editedTrack_ValidateablePropertyChanged(object? sender, string property)
+    {
+        if (validations != null)
+        {
+            validations.ValidateAll().GetAwaiter().GetResult();
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
     }
 }

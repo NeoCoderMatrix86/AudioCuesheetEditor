@@ -13,48 +13,69 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditorTests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.Entity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AudioCuesheetEditor.Model.Reflection;
-using AudioCuesheetEditorTests.Utility;
 
 namespace AudioCuesheetEditor.Model.Entity.Tests
 {
-    public class ValidateableTestClass : Validateable
+    public class ValidateableTestClass : Validateable<ValidateableTestClass>
     {
-        private String testProperty;
-        public String TestProperty
+        private String? testProperty;
+        private int? testProperty2;
+
+        public String? TestProperty 
         {
-            get { return testProperty; }
-            set { testProperty = value; OnValidateablePropertyChanged(); }
-        }
-        protected override void Validate()
-        {
-            if (String.IsNullOrEmpty(TestProperty))
+            get => testProperty;
+            set
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(TestProperty)), ValidationErrorType.Warning, "Testmessage"));
+                testProperty = value;
+                OnValidateablePropertyChanged();
             }
+        }
+        public int? TestProperty2 
+        {
+            get => testProperty2;
+            set
+            {
+                testProperty2 = value;
+                OnValidateablePropertyChanged();
+            }
+        }
+        protected override ValidationResult Validate(string property)
+        {
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
+            {
+                case nameof(TestProperty):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(TestProperty))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(TestProperty)));
+                    }
+                    break;
+            }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
     [TestClass()]
     public class ValidateableTests
     {
         [TestMethod()]
-        public void GetValidationErrorsTest()
+        public void ValidateTest()
         {
             var testObject = new ValidateableTestClass
             {
                 TestProperty = String.Empty
             };
-            var testhelper = new TestHelper();
-            Assert.IsNull(testObject.GetValidationErrors(testhelper.Localizer, validationErrorFilterType: ValidationErrorFilterType.ErrorOnly));
-            Assert.IsTrue(testObject.ValidationErrors.Count > 0);
-            Assert.IsNotNull(testObject.GetValidationErrors(testhelper.Localizer, nameof(ValidateableTestClass.TestProperty)));
+            Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
+            Assert.IsNotNull(testObject.Validate().ValidationMessages);
+            Assert.IsTrue(testObject.Validate().ValidationMessages?.Count == 1);
+            testObject.TestProperty = "Test";
+            Assert.AreEqual(ValidationStatus.Success, testObject.Validate().Status);
         }
     }
 }

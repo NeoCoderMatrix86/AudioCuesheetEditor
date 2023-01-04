@@ -151,14 +151,6 @@ along with Foobar.  If not, see
                 <TracksTable />
             </CollapseBody>
         </Collapse>
-        <Collapse Visible="processingHintsVisible">
-            <CollapseHeader>
-                <Button Clicked="(() => processingHintsVisible = !processingHintsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Hints"]</Heading></Button>
-            </CollapseHeader>
-            <CollapseBody>
-                <ProcessingHints Header="@_localizer["Here all validation messages will be displayed. For details switch to full edit mode."]" ActivateLinksToFields="false" />
-            </CollapseBody>
-        </Collapse>
     </Accordion>
     <br />
 
@@ -211,7 +203,6 @@ along with Foobar.  If not, see
     Boolean recordControlVisible = true;
     Boolean enterNewTrackVisible = true;
     Boolean cuesheetTracksVisible = true;
-    Boolean processingHintsVisible = false;
 
     IEnumerable<MusicBrainzArtist>? autocompleteArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTitles;
@@ -306,8 +297,6 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _sessionStateContainer.Cuesheet.StopRecording(options);
-        //Open processing hints
-        processingHintsVisible = true;
     }
 
     async Task OnKeyDownRecordArtist(KeyboardEventArgs args)

@@ -13,17 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Options;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO
 {
@@ -47,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();
-                if ((Cuesheet.Cataloguenumber != null) && (Cuesheet.Cataloguenumber.IsValid == true))
+                if ((Cuesheet.Cataloguenumber != null) && (String.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false) && (Cuesheet.Cataloguenumber.Validate().Status != Entity.ValidationStatus.Error))
                 {
                     builder.AppendLine(String.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, Cuesheet.Cataloguenumber.Value));
                 }
@@ -92,12 +83,16 @@ namespace AudioCuesheetEditor.Model.IO
         {
             get
             {
-                if (Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0)
+                if (Cuesheet.Validate().Status == Entity.ValidationStatus.Error)
                 {
                     return false;
                 }
-                if (Cuesheet.Tracks.Any(x => x.GetValidationErrorsFiltered(validationErrorFilterType: Entity.ValidationErrorFilterType.ErrorOnly).Count > 0) == true)
-                { 
+                if (Cuesheet.Cataloguenumber.Validate().Status == Entity.ValidationStatus.Error)
+                {
+                    return false;
+                }
+                if (Cuesheet.Tracks.Any(x => x.Validate().Status == Entity.ValidationStatus.Error))
+                {
                     return false;
                 }
                 return true;

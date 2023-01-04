@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Import;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -34,18 +35,20 @@ namespace AudioCuesheetEditorTests.Model.IO.Import
                 SchemeTracks = String.Empty,
                 SchemeCuesheet = String.Empty
             };
-            Assert.IsFalse(importScheme.IsValid);
+            Assert.AreEqual(ValidationStatus.Success, importScheme.Validate().Status);
             importScheme.SchemeCuesheet = "(?'Track.Begin'\\w{1,}) - (?'Cuesheet.Artist'\\w{1})";
-            var validationErrors = importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeCuesheet)));
-            Assert.IsTrue(validationErrors.Count == 1);
-            Assert.IsTrue(validationErrors.First().Message.Parameter.First().ToString() == "(?'Track.Begin'\\w{1,})");
+            var validationResult = importScheme.Validate(x => x.SchemeCuesheet);
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Begin'\\w{1,})")));
             importScheme.SchemeCuesheet = "(?'Track.Begin'\\w{1,}) - (?'Cuesheet.Artist'\\w{1}) - (?'Track.Artist'[A-z0-9]{1,})";
-            validationErrors = importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeCuesheet)));
-            Assert.IsTrue(validationErrors.Count == 1);
-            Assert.AreEqual("(?'Track.Artist'[A-z0-9]{1,}),(?'Track.Begin'\\w{1,})", validationErrors.First().Message.Parameter.First().ToString());
+            validationResult = importScheme.Validate(x => x.SchemeCuesheet);
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ValidationMessages?.Count == 2);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Begin'\\w{1,})")));
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Artist'[A-z0-9]{1,})")));
             Boolean eventFiredCorrect = false;
-            importScheme.SchemeChanged += delegate (object sender, String property) 
-            { 
+            importScheme.SchemeChanged += delegate (object? sender, String property)
+            {
                 if (property == nameof(TextImportScheme.SchemeTracks))
                 {
                     eventFiredCorrect = true;
@@ -53,12 +56,12 @@ namespace AudioCuesheetEditorTests.Model.IO.Import
             };
             importScheme.SchemeTracks = "(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,}) - (?'Track.End'\\w{1,})";
             Assert.AreEqual(true, eventFiredCorrect);
-            validationErrors = importScheme.GetValidationErrorsFiltered(String.Format("{0}.{1}", nameof(TextImportScheme), nameof(TextImportScheme.SchemeTracks)));
-            Assert.IsTrue(validationErrors.Count == 1);
-            Assert.AreEqual("(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,})", validationErrors.First().Message.Parameter.First().ToString());
+            validationResult = importScheme.Validate(x => x.SchemeTracks);
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,})")));
             importScheme.SchemeCuesheet = "(?'Cuesheet.Artist'\\w{1,}) - (?'Cuesheet.AudioFile'[a-zA-Z0-9_. ;äöü&:,\\]{1,})";
             importScheme.SchemeTracks = "(?'Track.Artist'[A-z0-9]{1,}) - (?'Track.Title'.{1,})";
-            Assert.IsTrue(importScheme.IsValid);
+            Assert.AreEqual(ValidationStatus.Success, importScheme.Validate().Status);
         }
     }
 }

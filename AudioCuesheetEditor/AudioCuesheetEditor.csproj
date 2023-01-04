@@ -30,11 +30,8 @@
     <Content Remove="Resources\Localization\ModalDialog\en.json" />
     <Content Remove="Resources\Localization\OptionsDialog\de.json" />
     <Content Remove="Resources\Localization\OptionsDialog\en.json" />
-    <Content Remove="Resources\Localization\ProcessingHints\de.json" />
-    <Content Remove="Resources\Localization\ProcessingHints\en.json" />
     <Content Remove="Resources\Localization\TracksTable\de.json" />
     <Content Remove="Resources\Localization\TracksTable\en.json" />
-    <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
     <Content Remove="Resources\Localization\FileEdit\de.json" />
@@ -43,6 +40,7 @@
     <Content Remove="Resources\Localization\Help\en.json" />
     <Content Remove="Resources\Localization\Index\de.json" />
     <Content Remove="Resources\Localization\Index\en.json" />
+    <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\ValidationMessage\en.json" />
     <Content Remove="Resources\Localization\ViewModeImport\de.json" />
     <Content Remove="Resources\Localization\ViewModeImport\en.json" />
@@ -69,12 +67,8 @@
     <EmbeddedResource Include="Resources\Localization\ModalDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ProcessingHints\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ProcessingHints\de.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\en.json" />
     <EmbeddedResource Include="Resources\Localization\FileEdit\de.json" />
@@ -83,6 +77,8 @@
     <EmbeddedResource Include="Resources\Localization\Help\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeImport\de.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeImport\en.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeRecord\de.json" />

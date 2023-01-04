@@ -13,78 +13,61 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using Blazorise.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
-    public abstract class Validateable : IValidateable
+    public abstract class Validateable<T> : IValidateable<T>
     {
-        protected List<ValidationError> validationErrors = new();
-        
-        [JsonIgnore]
-        public bool IsValid
-        {
-            get { return validationErrors.Count == 0; }
-        }
+        public event EventHandler<String>? ValidateablePropertyChanged;
 
-        [JsonIgnore]
-        public IReadOnlyCollection<ValidationError> ValidationErrors
+        public ValidationResult Validate<TProperty>(Expression<Func<T, TProperty>> expression)
         {
-            get { return validationErrors.AsReadOnly(); }
-        }
-
-        public IReadOnlyCollection<ValidationError> GetValidationErrorsFiltered(String? property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All)
-        {
-            IReadOnlyCollection<ValidationError> returnValue = ValidationErrors;
-            if (String.IsNullOrEmpty(property) == false)
+            if (expression.Body is not MemberExpression body)
             {
-                if (property.Contains('.') == true)
+                throw new ArgumentException("'expression' should be a member expression");
+            }
+            return Validate(body.Member.Name);
+        }
+
+        public ValidationResult Validate()
+        {
+            ValidationResult validationResult = new() { Status = ValidationStatus.NoValidation };
+            foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                var result = Validate(property.Name);
+                if (result.ValidationMessages != null)
                 {
-                    returnValue = ValidationErrors.Where(x => x.FieldReference.CompleteName == property).ToList().AsReadOnly();
+                    validationResult.ValidationMessages ??= new();
+                    validationResult.ValidationMessages.AddRange(result.ValidationMessages);
                 }
-                else
+                switch (validationResult.Status)
                 {
-                    returnValue = ValidationErrors.Where(x => x.FieldReference.Property == property).ToList().AsReadOnly();
+                    case ValidationStatus.NoValidation:
+                    case ValidationStatus.Success:
+                        switch (result.Status)
+                        {
+                            case ValidationStatus.Success:
+                            case ValidationStatus.Error:
+                                validationResult.Status = result.Status;
+                                break;
+                        }
+                        break;
+                    case ValidationStatus.Error:
+                        //If there was an error, we don't delete it!
+                        break;
                 }
             }
-            switch (validationErrorFilterType)
-            {
-                case ValidationErrorFilterType.ErrorOnly:
-                    returnValue = returnValue.Where(x => x.Type == ValidationErrorType.Error).ToList().AsReadOnly();
-                    break;
-                case ValidationErrorFilterType.WarningOnly:
-                    returnValue = returnValue.Where(x => x.Type == ValidationErrorType.Warning).ToList().AsReadOnly();
-                    break;
-                case ValidationErrorFilterType.All:
-                default:
-                    break;
-            }
-            return returnValue;
+            return validationResult;
         }
 
-        public String? GetValidationErrors(ITextLocalizer localizer, String? property = null, ValidationErrorFilterType validationErrorFilterType = ValidationErrorFilterType.All, String seperator = "<br />")
+        protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
-            var errorsFiltered = GetValidationErrorsFiltered(property, validationErrorFilterType);
-            if (errorsFiltered.Any())
-            {
-                return String.Join(seperator, errorsFiltered.OrderBy(y => y.Type).Select(x => x.Message.GetMessageLocalized(localizer)));
-            }
-            return null;
+            ValidateablePropertyChanged?.Invoke(this, propertyName);
         }
 
-        public event EventHandler? ValidateablePropertyChanged;
-
-        protected void OnValidateablePropertyChanged()
-        {
-            validationErrors.Clear();
-            Validate();
-            ValidateablePropertyChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected abstract void Validate();
+        protected abstract ValidationResult Validate(String property);
     }
 }

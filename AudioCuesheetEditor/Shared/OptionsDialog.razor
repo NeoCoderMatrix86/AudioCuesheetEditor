@@ -25,144 +25,142 @@ along with Foobar.  If not, see
 @inject NavigationManager _navigationManager
 @inject HotKeys _hotKeys
 @inject ITextLocalizerService _localizationService
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 @if (applicationOptions != null)
 {
     <Modal @ref="modalOptions" Closed="OnModalClosed" VisibleChanged="ModalOptions_VisibleChanged">
-        <ModalContent Centered="true" Size="ModalSize.Large">
+        <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
             <ModalHeader>
                 <ModalTitle>@_localizer["Options"]</ModalTitle>
                 <CloseButton Clicked="OnCloseClicked" />
             </ModalHeader>
             <ModalBody>
-                <Card>
-                    <CardHeader>
-                        <Tabs @bind-SelectedTab="@selectedOptionsTab">
-                            <Items>
-                                <Tab Name="common">@_localizer["Common settings"]</Tab>
-                                <Tab Name="recording">@_localizer["Record settings"]</Tab>
-                            </Items>
-                        </Tabs>
-                    </CardHeader>
-                    <CardBody>
-                        <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
-                            <TabPanel Name="common" Padding="Padding.Is3.OnY">
-                                <Field Horizontal="true">
-                                    <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Culture setting"]</FieldLabel>
-                                    <FieldBody ColumnSize="ColumnSize.Is7">
-                                        <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_localizationService.SelectedCulture.Name">
-                                            @foreach (var culture in ApplicationOptions.AvailableCultures)
-                                            {
-                                                <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
-                                            }
-                                    </Select>
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Default viewmode"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" @bind-SelectedValue="@applicationOptions.ViewModeName">
-                                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
-                                        {
-                                            <SelectItem Value="@name">@_localizer[name]</SelectItem>
-                                        }
-                                    </Select>
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Cuesheet filename"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="applicationOptions.CuesheetFileName" Immediate="false" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Project filename"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="applicationOptions.ProjectFileName" Immediate="false" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Automatically link tracks"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">
-                                    <Tooltip Text="@_localizer["Enter custom timespan format here"]">
-                                        @_localizer["Customized timespan format"]
-                                    </Tooltip>
-                                </FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Addons>
-                                        <Addon AddonType="AddonType.Body">
-                                            @if ((applicationOptions != null) && (applicationOptions.TimeSpanFormat != null))
-                                            {
-                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme" Class="@BootstrapUtility.GetCSSClassAlert(applicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))">
-                                                    <Tooltip Text="@applicationOptions?.TimeSpanFormat?.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
-                                                </TextEdit>
-                                            }
-                                            else
-                                            {
-                                                <TextEdit Id="Timespanformat.Scheme" Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme">
-                                                    <Tooltip Text="@applicationOptions?.TimeSpanFormat?.GetValidationErrors(validationMessageLocalizer, nameof(TimeSpanFormat.Scheme))" TriggerTargetId="Timespanformat.Scheme" />
-                                                </TextEdit>
-                                            }
-                                        </Addon>
-                                        <Addon AddonType="AddonType.End">
-                                            <Dropdown>
-                                                <DropdownToggle Color="Color.Secondary">
-                                                    @_localizer["Select placeholder"]
-                                                </DropdownToggle>
-                                                <DropdownMenu>
-                                                    @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
-                                                    {
-                                                        <DropdownItem Value="@availableFormat.Value" Clicked="OnCustomizedTimeSpanFormatDropdownClicked">@_localizer[availableFormat.Key]</DropdownItem>
-                                                    }
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                        </Addon>
-                                    </Addons>
-                                </FieldBody>
-                            </Field>
-                        </TabPanel>
-                        <TabPanel Name="recording" Padding="Padding.Is3.OnY">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Filename for recorded audio"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <TextEdit @bind-Text="applicationOptions.AudioFileNameRecording" Immediate="false" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Record countdown timer in seconds"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <NumericEdit TValue="int?" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
-                                </FieldBody>
-                            </Field>
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is5">@_localizer["Record time sensitivity"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is7">
-                                    <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityName">
-                                        @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
-                                        {
-                                            <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
-                                        }
-                                    </Select>
-                                </FieldBody>
-                            </Field>
-                        </TabPanel>
-                    </TabsContent>
-                </CardBody>
-            </Card>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@_localizer["Save"]</Button>
-            <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@_localizer["Reload options"]</Button>
-            <Button Color="Color.Danger" Clicked="OnResetOptionsClicked">@_localizer["Reset"]</Button>
-            <Button Color="Color.Secondary" Clicked="OnCloseClicked">@_localizer["Close"]</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+                <Validations>
+                    <Card>
+                        <CardHeader>
+                            <Tabs @bind-SelectedTab="@selectedOptionsTab">
+                                <Items>
+                                    <Tab Name="common">@_localizer["Common settings"]</Tab>
+                                    <Tab Name="recording">@_localizer["Record settings"]</Tab>
+                                </Items>
+                            </Tabs>
+                        </CardHeader>
+                        <CardBody>
+                            <TabsContent @bind-SelectedPanel="@selectedOptionsTab">
+                                <TabPanel Name="common" Padding="Padding.Is3.OnY">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Culture setting"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                            <Select TValue="String" SelectedValueChanged="OnCultureSelectionChanged" SelectedValue="@_localizationService.SelectedCulture.Name">
+                                                @foreach (var culture in ApplicationOptions.AvailableCultures)
+                                                {
+                                                    <SelectItem Value="@culture">@culture.DisplayName</SelectItem>
+                                                }
+                                            </Select>
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Default viewmode"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.ViewModeName">
+                                                @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                                                {
+                                                    <SelectItem Value="@name">@_localizer[name]</SelectItem>
+                                                }
+                                            </Select>
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Cuesheet filename"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                            <TextEdit @bind-Text="applicationOptions.CuesheetFileName" Immediate="false" />
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Project filename"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                            <TextEdit @bind-Text="applicationOptions.ProjectFileName" Immediate="false" />
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Automatically link tracks"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                            <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
+                                        </FieldBody>
+                                    </Field>
+                                    <Validation @ref="timespanformatValidation" AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, applicationOptions?.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">
+                                                <Tooltip Text="@_localizer["Enter custom timespan format here"]">
+                                                    @_localizer["Customized timespan format"]
+                                                </Tooltip>
+                                            </FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                                <Addons>
+                                                    <Addon AddonType="AddonType.Body">
+                                                        <TextEdit Immediate="false" TextChanged="OnTimespanformatChanged" Text="@applicationOptions?.TimeSpanFormat?.Scheme">
+                                                            <Feedback>
+                                                                <ValidationError Tooltip />
+                                                            </Feedback>
+                                                        </TextEdit>
+                                                    </Addon>
+                                                    <Addon AddonType="AddonType.End">
+                                                        <Dropdown>
+                                                            <DropdownToggle Color="Color.Secondary">
+                                                                @_localizer["Select placeholder"]
+                                                            </DropdownToggle>
+                                                            <DropdownMenu>
+                                                                @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
+                                                                {
+                                                                    <DropdownItem Value="@availableFormat.Value" Clicked="OnCustomizedTimeSpanFormatDropdownClicked">@_localizer[availableFormat.Key]</DropdownItem>
+                                                                }
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    </Addon>
+                                                </Addons>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                </TabPanel>
+                                <TabPanel Name="recording" Padding="Padding.Is3.OnY">
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+                                            <TextEdit @bind-Text="applicationOptions.AudioFileNameRecording" Immediate="false" />
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record countdown timer in seconds"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+                                            <NumericEdit TValue="int?" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
+                                        </FieldBody>
+                                    </Field>
+                                    <Field Horizontal="true">
+                                        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record time sensitivity"]</FieldLabel>
+                                        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityName">
+                                                @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
+                                                {
+                                                    <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
+                                                }
+                                            </Select>
+                                        </FieldBody>
+                                    </Field>
+                                </TabPanel>
+                            </TabsContent>
+                        </CardBody>
+                    </Card>
+                </Validations>
+            </ModalBody>
+            <ModalFooter>
+                <Button Color="Color.Primary" Clicked="OnSaveOptionsClicked">@_localizer["Save"]</Button>
+                <Button Color="Color.Warning" Clicked="OnReloadOptionsClicked">@_localizer["Reload options"]</Button>
+                <Button Color="Color.Danger" Clicked="OnResetOptionsClicked">@_localizer["Reset"]</Button>
+                <Button Color="Color.Secondary" Clicked="OnCloseClicked">@_localizer["Close"]</Button>
+            </ModalFooter>
+        </ModalContent>
+    </Modal>
 }
 
 @code {
@@ -173,7 +171,7 @@ along with Foobar.  If not, see
 
     Modal? modalOptions;
     HotKeysContext? hotKeysContext;
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
+    Validation? timespanformatValidation;
 
     public void Dispose()
     {
@@ -200,7 +198,7 @@ along with Foobar.  If not, see
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
+        TimeSpanFormat.TextLocalizer = _localizer;
 
         await base.OnInitializedAsync();
     }
@@ -224,6 +222,7 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+        TimeSpanFormat.TextLocalizer = _localizer;
     }
 
     private Task OnCultureSelectionChanged(String value)
@@ -299,6 +298,7 @@ along with Foobar.  If not, see
             if (applicationOptions.TimeSpanFormat == null)
             {
                 applicationOptions.TimeSpanFormat = new TimeSpanFormat();
+                applicationOptions.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
             }
             applicationOptions.TimeSpanFormat.Scheme = value;
         }
@@ -306,6 +306,10 @@ along with Foobar.  If not, see
         {
             if (applicationOptions != null)
             {
+                if (applicationOptions.TimeSpanFormat != null)
+                {
+                    applicationOptions.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
+                }
                 applicationOptions.TimeSpanFormat = null;
             }
         }
@@ -319,6 +323,7 @@ along with Foobar.  If not, see
             if (applicationOptions.TimeSpanFormat == null)
             {
                 applicationOptions.TimeSpanFormat = new TimeSpanFormat();
+                applicationOptions.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
             }
             applicationOptions.TimeSpanFormat.Scheme += value.ToString()?.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere]);
         }
@@ -326,9 +331,21 @@ along with Foobar.  If not, see
         {
             if (applicationOptions != null)
             {
+                if (applicationOptions.TimeSpanFormat != null)
+                {
+                    applicationOptions.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
+                }
                 applicationOptions.TimeSpanFormat = null;
             }
         }
         return Task.CompletedTask;
+    }
+
+    void Timespanformat_ValidateablePropertyChanged(object? sender, String property)
+    {
+        if (timespanformatValidation != null)
+        {
+            timespanformatValidation.ValidateAsync().GetAwaiter().GetResult();
+        }
     }
 }

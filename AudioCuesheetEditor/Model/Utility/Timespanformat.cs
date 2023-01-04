@@ -14,12 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
+using Blazorise.Localization;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.Utility
 {
-    public class TimeSpanFormat : Validateable
+    public class TimeSpanFormat : Validateable<TimeSpanFormat>
     {
         public const String Days = "Days";
         public const String Hours = "Hours";
@@ -27,10 +27,10 @@ namespace AudioCuesheetEditor.Model.Utility
         public const String Seconds = "Seconds";
         public const String Milliseconds = "Milliseconds";
 
-        private string? scheme;
-
         public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
         public static readonly IReadOnlyDictionary<String, String> AvailableTimespanScheme;
+
+        public static ITextLocalizer? TextLocalizer { get; set; }
 
         static TimeSpanFormat()
         {
@@ -52,14 +52,16 @@ namespace AudioCuesheetEditor.Model.Utility
 
         public event EventHandler? SchemeChanged;
 
+        private string? scheme;
+
         public String? Scheme
         {
             get => scheme;
             set
             {
                 scheme = value;
-                OnValidateablePropertyChanged();
                 SchemeChanged?.Invoke(this, EventArgs.Empty);
+                OnValidateablePropertyChanged();
             }
         }
 
@@ -108,27 +110,39 @@ namespace AudioCuesheetEditor.Model.Utility
             return timespan;
         }
 
-        protected override void Validate()
+        protected override ValidationResult Validate(string property)
         {
-            if (String.IsNullOrEmpty(Scheme))
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            var enterRegularExpression = EnterRegularExpressionHere;
+            if (TextLocalizer != null)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} has no value!", nameof(Scheme)));
+                enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
             }
-            else
+            switch (property)
             {
-                if ((Scheme.Contains(Days) == false)
-                    && (Scheme.Contains(Hours) == false)
-                    && (Scheme.Contains(Minutes) == false)
-                    && (Scheme.Contains(Seconds) == false)
-                    && (Scheme.Contains(Milliseconds) == false))
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "{0} contains no placeholder!", nameof(Scheme)));
-                }
-                if (Scheme.Contains(EnterRegularExpressionHere))
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Replace {0} by a regular expression!", EnterRegularExpressionHere));
-                }
+                case nameof(Scheme):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Scheme) == false)
+                    {
+                        if ((Scheme.Contains(Days) == false)
+                            && (Scheme.Contains(Hours) == false)
+                            && (Scheme.Contains(Minutes) == false)
+                            && (Scheme.Contains(Seconds) == false)
+                            && (Scheme.Contains(Milliseconds) == false))
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(Scheme)));
+                        }
+                        if (Scheme.Contains(enterRegularExpression))
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
+                        }
+                    }
+                    break;
             }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
 }

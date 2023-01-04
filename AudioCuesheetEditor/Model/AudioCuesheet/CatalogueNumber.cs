@@ -14,22 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
 using AudioCuesheetEditor.Model.UI;
-using Blazorise.Localization;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Cataloguenumber : Validateable, IEntityDisplayName, ITraceable
+    public class Cataloguenumber : Validateable<Cataloguenumber>, ITraceable
     {
-        public Cataloguenumber()
-        {
-            Validate();
-        }
-
         private String? value;
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
@@ -44,29 +34,30 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 FireEvents(oldValue, propertyName: nameof(Value));
             }
         }
-
-        public String GetDisplayNameLocalized(ITextLocalizer localizer)
+        protected override ValidationResult Validate(string property)
         {
-            return localizer[nameof(Cuesheet)];
-        }
-
-        protected override void Validate()
-        {
-            if (String.IsNullOrEmpty(Value))
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
             {
-                validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Warning, "{0} has no value!", nameof(Cataloguenumber)));
+                case nameof(Value):
+                    if (String.IsNullOrEmpty(Value) == false)
+                    {
+                        validationStatus = ValidationStatus.Success;
+                        if (Value.All(Char.IsDigit) == false)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must only contain numbers!", nameof(Value)));
+                        }
+                        if (Value.Length != 13)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} has an invalid length. Allowed length is {1}!", nameof(Value), 13));
+                        }
+                    }
+                    break;
             }
-            else
-            {
-                if (Value.All(Char.IsDigit) == false)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} does not only contain numbers.", nameof(Cataloguenumber)));
-                }
-                if (Value.Length != 13)
-                {
-                    validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Value)), ValidationErrorType.Error, "{0} has invalid length ({1})!", nameof(Cataloguenumber), 13));
-                }
-            }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
 
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
@@ -78,7 +69,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Method for checking if fire of events should be done
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireValidateablePropertyChanged">Fire ValidateablePropertyChanged?</param>
+        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
@@ -92,7 +83,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     if (fireValidateablePropertyChanged)
                     {
-                        OnValidateablePropertyChanged();
+                        OnValidateablePropertyChanged(propertyName);
                     }
                     if (fireTraceablePropertyChanged)
                     {

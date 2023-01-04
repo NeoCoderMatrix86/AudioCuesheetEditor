@@ -21,7 +21,6 @@ along with Foobar.  If not, see
 @page "/"
 @inject IJSRuntime _jsRuntime
 @inject ITextLocalizer<Index> _localizer
-@inject CuesheetController _cuesheetController
 @inject NavigationManager _navigationManager
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ILogger<Index> _logger
@@ -61,16 +60,6 @@ along with Foobar.  If not, see
                 <AudioPlayer @ref="audioPlayer" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
                 <br />
             </Column>
-            <Column ColumnSize="ColumnSize.IsQuarter.OnDesktop.IsFull.OnTablet" Display="@DisplayProcessingHints">
-                <Card>
-                    <CardHeader>
-                        <CardTitle Size="3">@_localizer["Processinghints"]</CardTitle>
-                    </CardHeader>
-                    <CardBody>
-                        <ProcessingHints Header="@_localizer["Here all validation messages are displayed. Each message contains a reference to the corresponding field and can clicked to enter the field."]" ActivateLinksToFields="true" />
-                    </CardBody>
-                </Card>
-            </Column>
             break;
         case ViewMode.ViewModeImport:
             <ViewModeImport />
@@ -89,21 +78,6 @@ along with Foobar.  If not, see
         _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
     }
 
-    public IFluentDisplay DisplayProcessingHints
-    {
-        get
-        {
-            if (_sessionStateContainer.Cuesheet.GetValidationErrorsFiltered(validationErrorFilterType: ValidationErrorFilterType.All).Count > 0)
-            {
-                return Display.Always;
-            }
-            else
-            {
-                return Display.None;
-            }
-        }
-    }
-
     [CascadingParameter]
     public MainLayout? mainLayout { get; set; }
 
@@ -114,7 +88,6 @@ along with Foobar.  If not, see
 
     ModalDialog? modalDialog;
     AudioPlayer? audioPlayer;
-    ITextLocalizer<ValidationMessage> validationMessageLocalizer = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -122,7 +95,6 @@ along with Foobar.  If not, see
         _logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-        validationMessageLocalizer = new TextLocalizer<ValidationMessage>(_localizationService);
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKeys.None, Keys.Enter, OnEnterKeyDown)

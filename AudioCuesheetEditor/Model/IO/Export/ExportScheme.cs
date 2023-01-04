@@ -15,10 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.Reflection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
@@ -31,7 +27,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         Body,
         Footer
     }
-    public class Exportscheme : Validateable
+    public class Exportscheme : Validateable<Exportscheme>
     {
         public const String SchemeCharacter = "%";
 
@@ -111,12 +107,13 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public String? Scheme 
         {
-            get { return scheme; }
+            get => scheme;
             set { scheme = value; OnValidateablePropertyChanged(); }
         }
+        
         public Schemetype SchemeType 
         {
-            get { return schemeType; }
+            get => schemeType;
             set { schemeType = value; OnValidateablePropertyChanged(); }
         }
         
@@ -164,47 +161,51 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return result;
         }
 
-        protected override void Validate()
+        protected override ValidationResult Validate(string property)
         {
-            if (String.IsNullOrEmpty(Scheme) == false)
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
             {
-                Boolean addValidationError = false;
-                switch (SchemeType)
-                {
-                    case Schemetype.Header:
-                    case Schemetype.Footer:
-                        foreach (var availableScheme in AvailableTrackSchemes)
-                        {
-                            if (Scheme.Contains(availableScheme.Value) == true)
+                case nameof(Scheme):
+                    validationStatus = ValidationStatus.Success;
+                    switch (SchemeType)
+                    {
+                        case Schemetype.Header:
+                        case Schemetype.Footer:
+                            foreach (var availableScheme in AvailableTrackSchemes)
                             {
-                                addValidationError = true;
-                                break;
+                                if (Scheme?.Contains(availableScheme.Value) == true)
+                                {
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(Scheme), availableScheme.Value));
+                                    break;
+                                }
                             }
-                        }
-                        if (addValidationError == true)
-                        {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
-                        }
-                        break;
-                    case Schemetype.Body:
-                        foreach (var availableScheme in AvailableCuesheetSchemes)
-                        {
-                            if (Scheme.Contains(availableScheme.Value) == true)
+                            break;
+                        case Schemetype.Body:
+                            foreach (var availableScheme in AvailableCuesheetSchemes)
                             {
-                                addValidationError = true;
-                                break;
+                                if (Scheme?.Contains(availableScheme.Value) == true)
+                                {
+                                    validationMessages ??= new();
+                                    validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(Scheme), availableScheme.Value));
+                                    break;
+                                }
                             }
-                        }
-                        if (addValidationError == true)
-                        {
-                            validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(Scheme)), ValidationErrorType.Warning, "Scheme contains placeholders that can not be solved!"));
-                        }
-                        break;
-                    case Schemetype.Unknown:
-                        validationErrors.Add(new ValidationError(FieldReference.Create(this, nameof(SchemeType)), ValidationErrorType.Error, "{0} has invalid value!", nameof(SchemeType)));
-                        break;
-                }
+                            break;
+                    }
+                    break;
+                case nameof(SchemeType):
+                    validationStatus = ValidationStatus.Success;
+                    if (SchemeType == Schemetype.Unknown)
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has invalid value!", nameof(SchemeType)));
+                    }
+                    break;
             }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
 }

@@ -1,5 +1,4 @@
 using AudioCuesheetEditor;
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
@@ -31,7 +30,6 @@ builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 builder.Services.AddBlazorDownloadFile();
 
-builder.Services.AddScoped<CuesheetController>();
 builder.Services.AddScoped<LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
 

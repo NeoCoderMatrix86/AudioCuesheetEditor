@@ -13,12 +13,12 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Controller;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
 using Blazorise.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace AudioCuesheetEditorTests.Utility
 {
@@ -26,17 +26,12 @@ namespace AudioCuesheetEditorTests.Utility
     {
         public TestHelper()
         {
-            var localizerService = new TextLocalizerService();
-            Localizer = new TextLocalizer<ValidationMessage>(localizerService);
-            CuesheetController = new CuesheetController();
             ApplicationOptions = new ApplicationOptions
             {
                 LinkTracksWithPreviousOne = false
             };
         }
 
-        public ITextLocalizer Localizer { get; private set; }
-        public CuesheetController CuesheetController { get; private set; }
         public ApplicationOptions ApplicationOptions { get; private set; }
         public static ILogger<T> CreateLogger<T>()
         {
@@ -45,6 +40,11 @@ namespace AudioCuesheetEditorTests.Utility
                 .BuildServiceProvider();
 
             var factory = serviceProvider.GetService<ILoggerFactory>();
+            
+            if (factory == null)
+            {
+                throw new NullReferenceException();
+            }
 
             return factory.CreateLogger<T>();
         }
