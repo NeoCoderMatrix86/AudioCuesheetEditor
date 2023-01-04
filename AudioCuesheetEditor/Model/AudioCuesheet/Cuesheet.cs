@@ -64,7 +64,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             catalogueNumber = new();
         }
 
-        //TODO: Add Unit test with invalid positions beeing exported!
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
         {
