@@ -276,7 +276,7 @@ along with Foobar.  If not, see
                                     </Tooltip>
                                 </TableRowCell>
                                 <TableRowCell>
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Position, _validationMessageLocalizer, token)">
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Position, _validationMessageLocalizer, token)">
                                         <NumericEdit TValue="uint?" @bind-Value="track.Position" Immediate="false">
                                             <Feedback>
                                                 <ValidationError />
@@ -288,7 +288,7 @@ along with Foobar.  If not, see
                         }
                         <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                    <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Artist, _validationMessageLocalizer, token)">
+                                <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Artist, _validationMessageLocalizer, token)">
                                     <ItemContent>
                                         @if (context.Item.Disambiguation != null)
                                         {
@@ -304,7 +304,7 @@ along with Foobar.  If not, see
                         </TableRowCell>
                         <TableRowCell>
                             <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                    <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Title, _validationMessageLocalizer, token)">
+                                <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Title, _validationMessageLocalizer, token)">
                                     <ItemContent>
                                         @if (context.Item.Disambiguation != null)
                                         {
@@ -385,17 +385,6 @@ along with Foobar.  If not, see
     List<Track> TracksAttachedToValidateablePropertyChanged = new();
 
     [Parameter]
-    public Boolean TrackSelectionVisible 
-    { 
-        get => _trackSelectionVisible; 
-        set
-        {
-            _trackSelectionVisible = value;
-            selectedTracks = new();
-        } 
-    }
-
-    [Parameter]
     public AudioPlayer? AudioPlayer { get; set; }
 
     public Cuesheet? Cuesheet
@@ -414,6 +403,16 @@ along with Foobar.  If not, see
             }
             return cuesheet;
         }
+    }
+
+    public Boolean TrackSelectionVisible 
+    { 
+        get => _trackSelectionVisible; 
+        set
+        {
+            _trackSelectionVisible = value;
+            selectedTracks = new();
+        } 
     }
 
     public void Dispose()
