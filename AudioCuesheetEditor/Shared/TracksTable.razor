@@ -161,8 +161,7 @@ along with Foobar.  If not, see
             </TableRow>
         </TableHeader>
         <TableBody>
-            @foreach(var track in Cuesheet.Tracks)
-            {
+            <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
                 <Validations @ref="validations[track]">
                     @if ((track != Cuesheet.Tracks.FirstOrDefault()) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
                     {
@@ -364,7 +363,7 @@ along with Foobar.  If not, see
                         }
                     </TableRow>
                 </Validations>
-            }
+            </Virtualize>
         </TableBody>
     </Table>
 }
