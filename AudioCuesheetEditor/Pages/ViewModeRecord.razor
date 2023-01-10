@@ -104,17 +104,17 @@ along with Foobar.  If not, see
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@_localizer["Artist"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
                                 <Autocomplete @ref="autocompleteArtist" TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="currentRecordingTrack.Artist" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" ReadData="OnReadDataAutocompleteArtist" @onkeydown="OnKeyDownRecordArtist">
-                                <ItemContent>
-                                    @if (context.Item.Disambiguation != null)
-                                    {
-                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
-                                    }
-                                    else
-                                    {
-                                        <Paragraph>@context.Text</Paragraph>
-                                    }
-                                </ItemContent>
-                            </Autocomplete>
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
                             </FieldBody>
                         </Field>
                     </Column>
@@ -123,17 +123,17 @@ along with Foobar.  If not, see
                             <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is6.OnMobile">@_localizer["Title"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnMobile">
                                 <Autocomplete @ref="autocompleteTitle" TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="currentRecordingTrack.Title" Disabled="!_sessionStateContainer.Cuesheet.IsRecording" ReadData="OnReadDataAutocompleteTitle" SelectedValueChanged="OnSelectedValueChangedTrackTitle" @onkeydown="OnKeyDownRecordTitle">
-                                <ItemContent>
-                                    @if (context.Item.Disambiguation != null)
-                                    {
-                                        <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
-                                    }
-                                    else
-                                    {
-                                        <Paragraph>@context.Text</Paragraph>
-                                    }
-                                </ItemContent>
-                            </Autocomplete>
+                                    <ItemContent>
+                                        @if (context.Item.Disambiguation != null)
+                                        {
+                                            <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                        }
+                                        else
+                                        {
+                                            <Paragraph>@context.Text</Paragraph>
+                                        }
+                                    </ItemContent>
+                                </Autocomplete>
                             </FieldBody>
                         </Field>
                     </Column>
@@ -145,7 +145,7 @@ along with Foobar.  If not, see
         </Collapse>
         <Collapse Visible="cuesheetTracksVisible">
             <CollapseHeader>
-                <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet tracks"]</Heading></Button>
+                <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Tracks"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
                 <TracksTable />

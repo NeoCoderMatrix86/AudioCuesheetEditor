@@ -18,7 +18,7 @@
     "Please validate the following data recognized by import assistant. Once you have validated all input, you can confirm import of data.": "Please validate the following data recognized by import assistant. Once you have validated all input, you can confirm import of data.",
     "Import the displayed data": "Import the displayed data",
     "Cuesheet data": "Cuesheet Data",
-    "Cuesheet tracks": "Cuesheet Tracks",
+    "Tracks": "Tracks",
     "Textimport assistant": "Import textfile assistant",
     "Filecontent": "Filecontent",
     "Enter textimportscheme cuesheet tooltip": "Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions.",

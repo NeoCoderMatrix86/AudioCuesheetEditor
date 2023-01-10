@@ -18,7 +18,7 @@
     "Please validate the following data recognized by import assistant. Once you have validated all input, you can confirm import of data.": "Bitte validieren sie die analysierten und angezeigten Dateien. Anschließend können Sie die Daten bestätigen und den Import durchführen.",
     "Import the displayed data": "Angezeigte Daten importieren",
     "Cuesheet data": "Cuesheet Daten",
-    "Cuesheet tracks": "Cuesheet Titel",
+    "Tracks": "Titel",
     "Textimport assistant": "Importassistent für Textdateien",
     "Filecontent": "Dateiinhalt",
     "Enter textimportscheme cuesheet tooltip": "Textschema für den Import von Cuesheeteigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.",
