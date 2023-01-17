@@ -59,7 +59,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 4)
             {
@@ -128,7 +128,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 7)
             {
@@ -188,7 +188,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 5)
             {
@@ -246,7 +246,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.FileName, cuesheet.Audiofile.AudioFileType));
+            Assert.AreEqual(fileContent[2], String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
             var position = 1;
             for (int i = 3; i < fileContent.Length; i += 4)
             {

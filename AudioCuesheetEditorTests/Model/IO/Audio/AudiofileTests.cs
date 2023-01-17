@@ -31,22 +31,22 @@ namespace AudioCuesheetEditor.Model.IO.Audio.Tests
             var audioFile = new Audiofile("test.mp3");
             Assert.IsNull(audioFile.ContentStream);
             Assert.IsFalse(audioFile.IsContentStreamLoaded);
-            Assert.IsNotNull(audioFile.FileName);
+            Assert.IsNotNull(audioFile.Name);
             Assert.AreEqual(audioFile.AudioFileType, "MP3");
             audioFile = new Audiofile("Test");
             Assert.AreEqual(audioFile.AudioFileType, String.Empty);
-            Assert.IsNotNull(audioFile.FileName);
+            Assert.IsNotNull(audioFile.Name);
             var codec = Audiofile.AudioCodecs.Single(x => x.FileExtension == ".ogg");
             var httpClient = new System.Net.Http.HttpClient();
             audioFile = new Audiofile("test", "TestobjectURL", codec, httpClient);
-            Assert.IsNotNull(audioFile.FileName);
-            Assert.AreEqual("test.ogg", audioFile.FileName);
+            Assert.IsNotNull(audioFile.Name);
+            Assert.AreEqual("test.ogg", audioFile.Name);
             Assert.AreEqual(audioFile.AudioFileType, "OGG");
             Assert.IsNotNull(audioFile.ObjectURL);
             Assert.IsTrue(audioFile.PlaybackPossible);
             codec = Audiofile.AudioCodecs.Single(x => x.FileExtension == ".mp3");
-            var audioFile2 = new Audiofile(audioFile.FileName, "TestObjectURL2", codec, httpClient);
-            Assert.AreEqual("test.mp3", audioFile2.FileName);
+            var audioFile2 = new Audiofile(audioFile.Name, "TestObjectURL2", codec, httpClient);
+            Assert.AreEqual("test.mp3", audioFile2.Name);
         }
     }
 }

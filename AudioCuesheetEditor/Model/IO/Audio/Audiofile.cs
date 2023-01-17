@@ -13,12 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
@@ -45,13 +40,13 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         public event EventHandler? ContentStreamLoaded;
         
         [JsonConstructor]
-        public Audiofile(String fileName, Boolean isRecorded = false)
+        public Audiofile(String name, Boolean isRecorded = false)
         {
-            FileName = fileName;
+            Name = name;
             IsRecorded = isRecorded;
         }
 
-        public Audiofile(String fileName, String objectURL, AudioCodec audioCodec, System.Net.Http.HttpClient httpClient, Boolean isRecorded = false) : this(fileName, isRecorded)
+        public Audiofile(String name, String objectURL, AudioCodec audioCodec, HttpClient httpClient, Boolean isRecorded = false) : this(name, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
@@ -71,7 +66,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             _ = LoadContentStream(httpClient);
         }
 
-        public String FileName { get; private set; }
+        public String Name { get; private set; }
         [JsonIgnore]
         public String? ObjectURL { get; private set; }
         /// <summary>
@@ -100,10 +95,10 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             private set
             {
                 audioCodec = value;
-                if ((audioCodec != null) && (FileName.EndsWith(audioCodec.FileExtension) == false))
+                if ((audioCodec != null) && (Name.EndsWith(audioCodec.FileExtension) == false))
                 {
                     //Replace file ending
-                    FileName = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(FileName), audioCodec.FileExtension);
+                    Name = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), audioCodec.FileExtension);
                 }
             }
         }
@@ -118,11 +113,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 {
                     audioFileType = AudioCodec.FileExtension.Replace(".", "").ToUpper();
                 }
-                if (audioFileType == null)
-                {
-                    //Try to find by file name
-                    audioFileType = Path.GetExtension(FileName).Replace(".", "").ToUpper();
-                }
+                //Try to find by file name
+                audioFileType ??= Path.GetExtension(Name).Replace(".", "").ToUpper();
                 return audioFileType;
             }
         }
@@ -133,7 +125,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             get
             {
                 Boolean playbackPossible = false;
-                if ((String.IsNullOrEmpty(FileName) == false) && (String.IsNullOrEmpty(ObjectURL) == false) && (String.IsNullOrEmpty(AudioFileType) == false) && (AudioCodec != null))
+                if ((String.IsNullOrEmpty(Name) == false) && (String.IsNullOrEmpty(ObjectURL) == false) && (String.IsNullOrEmpty(AudioFileType) == false) && (AudioCodec != null))
                 {
                     playbackPossible = true;
                 }

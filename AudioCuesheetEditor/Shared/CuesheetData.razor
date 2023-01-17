@@ -66,11 +66,11 @@ along with Foobar.  If not, see
                                 @if (Cuesheet.Audiofile.IsRecorded)
                                 {
                                     <Addon AddonType="AddonType.Start">
-                                        <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
+                                        <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.Audiofile.Name">@_localizer["Download recorded audio"]</Button>
                                     </Addon>
                                 }
                                 <Addon AddonType="AddonType.Body">
-                                    <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.FileName" />
+                                    <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.Name" />
                                 </Addon>
                             </Addons>
                         </FieldBody>
@@ -97,11 +97,11 @@ along with Foobar.  If not, see
                                     @if (Cuesheet.Audiofile.IsRecorded)
                                     {
                                         <Addon AddonType="AddonType.Start">
-                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
+                                            <Button Color="Color.Primary" Type="ButtonType.Link" To="@Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@Cuesheet.Audiofile.Name">@_localizer["Download recorded audio"]</Button>
                                         </Addon>
                                     }
                                     <Addon AddonType="AddonType.Body">
-                                        <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.FileName">
+                                        <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.Name">
                                             <Feedback>
                                                 <ValidationError />
                                             </Feedback>

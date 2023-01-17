@@ -130,7 +130,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         result = Scheme
                             .Replace(SchemeCuesheetArtist, cuesheet.Artist)
                             .Replace(SchemeCuesheetTitle, cuesheet.Title)
-                            .Replace(SchemeCuesheetAudiofile, cuesheet.Audiofile?.FileName)
+                            .Replace(SchemeCuesheetAudiofile, cuesheet.Audiofile?.Name)
                             .Replace(SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
                             .Replace(SchemeCuesheetCatalogueNumber, cuesheet.Cataloguenumber?.Value)
                             .Replace(SchemeDate, DateTime.Now.ToShortDateString())

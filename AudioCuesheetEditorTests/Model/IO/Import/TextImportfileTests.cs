@@ -59,7 +59,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
             Assert.IsNotNull(textImportFile.Cuesheet);
             Assert.AreEqual("CuesheetArtist", textImportFile.Cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", textImportFile.Cuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\Testfile.mp3", textImportFile.Cuesheet.Audiofile?.FileName);
+            Assert.AreEqual("c:\\tmp\\Testfile.mp3", textImportFile.Cuesheet.Audiofile?.Name);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
             Assert.AreEqual(textImportFile.Cuesheet.Tracks.ToArray()[0].Artist, "Sample Artist 1");
             Assert.AreEqual(textImportFile.Cuesheet.Tracks.ToArray()[0].Title, "Sample Title 1");
@@ -307,7 +307,7 @@ namespace AudioCuesheetEditor.Model.IO.Import.Tests
                 String.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), textImportFile.FileContentRecognized.First());
             Assert.AreEqual("CuesheetArtist", textImportFile.Cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", textImportFile.Cuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\Testfile.mp3", textImportFile.Cuesheet.Audiofile?.FileName);
+            Assert.AreEqual("c:\\tmp\\Testfile.mp3", textImportFile.Cuesheet.Audiofile?.Name);
             Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 0);
             Assert.AreEqual("Sample Artist 1 - Sample Title 1				00:05:00", textImportFile.FileContentRecognized.ElementAt(1));
             Assert.AreEqual("Sample Artist 2 - Sample Title 2				00:09:23", textImportFile.FileContentRecognized.ElementAt(2));

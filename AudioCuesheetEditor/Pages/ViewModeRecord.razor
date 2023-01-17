@@ -162,7 +162,7 @@ along with Foobar.  If not, see
             @if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
             {
                 <CardBody>
-                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
+                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.Name">@_localizer["Download recorded audio"]</Button>
                 </CardBody>
             }
         </Card>
