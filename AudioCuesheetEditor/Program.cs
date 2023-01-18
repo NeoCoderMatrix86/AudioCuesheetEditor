@@ -47,8 +47,8 @@ builder.Services.AddBlazorDownloadFile();
 builder.Services.AddScoped<LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
 
-builder.Services.AddSingleton<SessionStateContainer>();
-builder.Services.AddSingleton<TraceChangeManager>();
+builder.Services.AddScoped<SessionStateContainer>();
+builder.Services.AddScoped<TraceChangeManager>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
