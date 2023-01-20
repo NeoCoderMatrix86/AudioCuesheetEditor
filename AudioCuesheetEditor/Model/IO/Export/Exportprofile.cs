@@ -60,6 +60,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         }
         public byte[]? GenerateExport(Cuesheet cuesheet)
         {
+            //TODO: React to SplitPoints
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();
