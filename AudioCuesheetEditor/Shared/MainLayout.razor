@@ -52,7 +52,7 @@ along with Foobar.  If not, see
                                 </Row>
                             </BarLink>
                         </BarBrand>
-                        @if(displayMenuBar)
+                        @if (displayMenuBar)
                         {
                             <BarToggler />
                             <BarMenu>
@@ -118,6 +118,18 @@ along with Foobar.  If not, see
                                     </BarItem>
                                     <BarItem Padding="Padding.Is1.OnX">
                                         <BarDropdown>
+                                            <BarDropdownToggle Class="btn btn-secondary">
+                                                @_localizer["Tools"]
+                                            </BarDropdownToggle>
+                                            <BarDropdownMenu Background="Background.Dark">
+                                                <BarDropdownItem>
+                                                    <Button Color="Color.Secondary" Clicked="EditSplitPointsClicked">@_localizer["Split points"]</Button>
+                                                </BarDropdownItem>
+                                            </BarDropdownMenu>
+                                        </BarDropdown>
+                                    </BarItem>
+                                    <BarItem Padding="Padding.Is1.OnX">
+                                        <BarDropdown>
                                             <BarDropdownToggle Class="btn btn-danger">
                                                 @_localizer["Reset"]
                                             </BarDropdownToggle>
@@ -177,6 +189,7 @@ along with Foobar.  If not, see
 <OptionsDialog @ref="optionsDialog" />
 <ModalDialog @ref="modalDialog" />
 <ExportProfilesDialog @ref="exportProfilesDialog" />
+<EditSplitpoints @ref="editSplitpointsDialog" />
 
 @if (applicationOptions != null)
 {
@@ -237,6 +250,7 @@ along with Foobar.  If not, see
     OptionsDialog? optionsDialog;
     ModalDialog? modalDialog;
     ExportProfilesDialog? exportProfilesDialog;
+    EditSplitpoints? editSplitpointsDialog;
     Modal? modalDownloadProjectfile;
     Modal? modalDownloadCuesheet;
 
@@ -507,6 +521,14 @@ along with Foobar.  If not, see
         if (dialog != null)
         {
             await dialog.Show();
+        }
+    }
+
+    async Task EditSplitPointsClicked()
+    {
+        if (editSplitpointsDialog != null)
+        {
+            await editSplitpointsDialog.Show();
         }
     }
 }

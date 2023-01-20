@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
@@ -187,6 +188,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         [JsonIgnore]
         public Boolean IsImporting { get; private set; }
+
+        public List<SplitPoint>? SplitPoints { get; set; }
 
         /// <summary>
         /// Get the previous linked track of a track object

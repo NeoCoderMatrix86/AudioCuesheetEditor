@@ -26,6 +26,7 @@
     "Scheme": "Schema",
     "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben",
     "SchemeCuesheet": "Schema Cuesheet",
-    "SchemeTracks": "Schema Titel"
+    "SchemeTracks": "Schema Titel",
+    "Moment": "Zeitpunkt"
   }
 }

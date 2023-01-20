@@ -1,0 +1,12 @@
+{
+  "culture": "de",
+  "translations": {
+    "Cuesheet split": "Cuesheet Aufteilung",
+    "Add new split": "Neue Aufteilung hinzufügen",
+    "Controls": "Steuerung",
+    "Moment": "Zeitpunkt",
+    "Delete split tooltip": "Löscht diesen Aufteilungspunkt",
+    "Save": "Speichern",
+    "Abort": "Abbrechen"
+  }
+}

@@ -26,6 +26,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizerService _localizationService
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject DateTimeUtility _dateTimeUtility
 
 @if (Cuesheet != null)
 {
@@ -329,7 +330,7 @@ along with Foobar.  If not, see
                                 <TableRowCell>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                         <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false">
+                                            <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Begin, value)" Immediate="false">
                                                 <Feedback>
                                                     <ValidationError />
                                                 </Feedback>
@@ -340,7 +341,7 @@ along with Foobar.  If not, see
                                 <TableRowCell>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                         <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.End, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false">
+                                            <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.End, value)" Immediate="false">
                                                 <Feedback>
                                                     <ValidationError />
                                                 </Feedback>
@@ -351,7 +352,7 @@ along with Foobar.  If not, see
                                 <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                         <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Length, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false">
+                                            <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Length, value)" Immediate="false">
                                                 <Feedback>
                                                     <ValidationError />
                                                 </Feedback>
@@ -570,13 +571,6 @@ along with Foobar.  If not, see
         Cuesheet?.AddTrack(copy, applicationOptions);
         _traceChangeManager.TraceChanges(copy);
         await EditTrackModal(copy);
-    }
-
-    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
-    {
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
-        setAction(result);
-        return Task.CompletedTask;
     }
 
     private async Task OnPlayTrackClicked(Track track)

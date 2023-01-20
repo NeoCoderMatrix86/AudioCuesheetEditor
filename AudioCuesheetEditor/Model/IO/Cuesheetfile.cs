@@ -35,6 +35,7 @@ namespace AudioCuesheetEditor.Model.IO
 
         public byte[]? GenerateCuesheetFile()
         {
+            //TODO: React to SplitPoints
             if (IsExportable == true)
             {
                 var builder = new StringBuilder();

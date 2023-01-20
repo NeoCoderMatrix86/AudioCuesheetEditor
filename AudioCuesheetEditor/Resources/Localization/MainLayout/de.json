@@ -30,6 +30,8 @@
     "ViewModeRecord": "Aufnahmemodus",
     "ViewModeImport": "Import Assistent",
     "Undo": "Rückgängig",
-    "Redo": "Wiederherstellen"
+    "Redo": "Wiederherstellen",
+    "Tools": "Werkzeuge",
+    "Split points": "Aufteilungspunkte"
   }
 }

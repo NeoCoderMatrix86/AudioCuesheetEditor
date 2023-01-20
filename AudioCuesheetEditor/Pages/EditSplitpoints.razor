@@ -1,0 +1,154 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inject ITextLocalizer<EditSplitpoints> _localizer
+@inject SessionStateContainer _sessionStateContainer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject DateTimeUtility _dateTimeUtility
+
+<Modal @ref="modalEditSplitpoints">
+    <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
+        <ModalHeader>
+            <ModalTitle>
+                @_localizer["Cuesheet split"]
+            </ModalTitle>
+            <CloseButton Clicked="() => ControlModalDialog(modalEditSplitpoints, false)" />
+        </ModalHeader>
+        <ModalBody>
+            <Buttons Role="ButtonsRole.Toolbar">
+                <Buttons Margin="Margin.Is2.FromEnd">
+                    <Button Color="Color.Primary" Clicked="AddSplitPointClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
+                            @_localizer["Add new split"]
+                        </Span>
+                    </Button>
+                </Buttons>
+            </Buttons>
+            <br />
+            <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                        <TableHeaderCell>@_localizer["Moment"]</TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var splitPoint in SplitPoints)
+                    {
+                        <TableRow>
+                            <TableRowCell>
+                                <Buttons Role="ButtonsRole.Toolbar">
+                                    <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
+                                        <Buttons Margin="Margin.Is1.FromEnd">
+                                            <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete split tooltip"]">
+                                                <Button Size="Size.Small" Color="Color.Danger" Clicked="() => DeleteSplitPointClicked(splitPoint)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                                                        <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                                                    </svg>
+                                                </Button>
+                                            </Tooltip>
+                                        </Buttons>
+                                    </Div>
+                                </Buttons>
+                            </TableRowCell>
+                            <TableRowCell>
+                                <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Moment, _validationMessageLocalizer, token)">
+                                    <TextEdit Text="@splitPoint.Moment?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<SplitPoint, TimeSpan?>(splitPoint, x => x.Moment, value)" Immediate="false">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </Validation>
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                </TableBody>
+            </Table>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="SaveOptionsClicked">@_localizer["Save"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalEditSplitpoints, false)">@_localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    Modal? modalEditSplitpoints;
+    List<SplitPoint> splitPoints = new();
+
+    public async Task Show()
+    {
+        Init();
+        if (modalEditSplitpoints != null)
+        {
+            await modalEditSplitpoints.Show();
+        }
+    }
+
+    public List<SplitPoint> SplitPoints => splitPoints;
+
+    void Init()
+    {
+        if (_sessionStateContainer.Cuesheet.SplitPoints != null)
+        {
+            splitPoints = _sessionStateContainer.Cuesheet.SplitPoints;
+        }
+        else
+        {
+            splitPoints.Clear();
+        }
+    }
+
+    Task AddSplitPointClicked()
+    {
+        var splitPoint = new SplitPoint();
+        SplitPoints.Add(splitPoint);
+        return Task.CompletedTask;
+    }
+
+    Task DeleteSplitPointClicked(SplitPoint splitPoint)
+    {
+        SplitPoints.Remove(splitPoint);
+        return Task.CompletedTask;
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
+        }
+    }
+
+    async Task SaveOptionsClicked()
+    {
+        _sessionStateContainer.Cuesheet.SplitPoints = splitPoints;
+        await ControlModalDialog(modalEditSplitpoints, false);
+    }
+}

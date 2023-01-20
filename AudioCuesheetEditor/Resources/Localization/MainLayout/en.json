@@ -30,6 +30,8 @@
     "ViewModeRecord": "Live record mode",
     "ViewModeImport": "Import assistant mode",
     "Undo": "Undo",
-    "Redo": "Redo"
+    "Redo": "Redo",
+    "Tools": "Tools",
+    "Split points": "Split points"
   }
 }

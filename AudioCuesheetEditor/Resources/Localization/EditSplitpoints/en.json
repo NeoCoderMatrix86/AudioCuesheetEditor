@@ -1,0 +1,12 @@
+{
+  "culture": "en",
+  "translations": {
+    "Cuesheet split": "Cuesheet split",
+    "Add new split": "Add new split",
+    "Controls": "Controls",
+    "Moment": "Moment",
+    "Delete split tooltip": "Deletes this split point",
+    "Save": "Save",
+    "Abort": "Abort"
+  }
+}
