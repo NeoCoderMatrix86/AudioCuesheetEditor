@@ -22,31 +22,11 @@ namespace AudioCuesheetEditor.Model.Utility
 {
     public class DateTimeUtility : IDisposable
     {
-        private readonly LocalStorageOptionsProvider _localStorageOptionsProvider;
+        private readonly LocalStorageOptionsProvider? _localStorageOptionsProvider;
+        private readonly TimeSpanFormat? _timeFormat;
 
         private ApplicationOptions? applicationOptions;
         private bool disposedValue;
-
-        //TODO: Move to a non static method!
-        public static TimeSpan? ParseTimeSpan(String input, TimeSpanFormat? timespanformat = null)
-        {
-            TimeSpan? result = null;
-            if (String.IsNullOrEmpty(input) == false)
-            {
-                if (timespanformat == null)
-                {
-                    if (TimeSpan.TryParse(input, out var parsed))
-                    {
-                        result = parsed;
-                    }
-                }
-                else
-                {
-                    result = timespanformat.ParseTimeSpan(input);
-                }
-            }
-            return result;
-        }
 
         public DateTimeUtility(LocalStorageOptionsProvider localStorageOptionsProvider)
         {
@@ -55,11 +35,36 @@ namespace AudioCuesheetEditor.Model.Utility
             Task.Run(InitAsync);
         }
 
+        public DateTimeUtility(TimeSpanFormat timeSpanFormat)
+        {
+            _timeFormat = timeSpanFormat;
+        }
+
         public void Dispose()
         {
             // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        public TimeSpan? ParseTimeSpan(String input)
+        {
+            TimeSpan? result = null;
+            if (String.IsNullOrEmpty(input) == false)
+            {
+                if (TimeSpanFormat?.Scheme == null)
+                {
+                    if (TimeSpan.TryParse(input, out var parsed))
+                    {
+                        result = parsed;
+                    }
+                }
+                else
+                {
+                    result = TimeSpanFormat.ParseTimeSpan(input);
+                }
+            }
+            return result;
         }
 
         public async Task TimespanTextChanged<T, TProperty>(T entity, Expression<Func<T, TProperty>> expression, String value)
@@ -72,7 +77,7 @@ namespace AudioCuesheetEditor.Model.Utility
             {
                 await InitAsync();
             }
-            TimeSpan? result = ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+            TimeSpan? result = ParseTimeSpan(value);
             switch (memberExpression.Member.MemberType)
             {
                 case MemberTypes.Property:
@@ -83,9 +88,28 @@ namespace AudioCuesheetEditor.Model.Utility
             }
         }
 
+        TimeSpanFormat? TimeSpanFormat
+        {
+            get
+            {
+                if (applicationOptions != null)
+                {
+                    return applicationOptions.TimeSpanFormat;
+                }
+                if (_timeFormat != null)
+                {
+                    return _timeFormat;
+                }
+                return null;
+            }
+        }
+
         private async Task InitAsync()
         {
-            applicationOptions ??= await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            if (_localStorageOptionsProvider != null)
+            {
+                applicationOptions ??= await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            }
         }
 
         private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
@@ -103,7 +127,10 @@ namespace AudioCuesheetEditor.Model.Utility
                 if (disposing)
                 {
                     // Verwalteten Zustand (verwaltete Objekte) bereinigen
-                    _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+                    if (_localStorageOptionsProvider != null)
+                    {
+                        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+                    }
                 }
 
                 disposedValue = true;
