@@ -53,6 +53,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
+        private List<SplitPoint>? splitPoints;
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
@@ -189,7 +190,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public Boolean IsImporting { get; private set; }
 
-        public List<SplitPoint>? SplitPoints { get; set; }
+        public List<SplitPoint>? SplitPoints 
+        {
+            get => splitPoints;
+            set
+            {
+                var previousValue = splitPoints;
+                splitPoints = value;
+                FireEvents(previousValue);
+            }
+        }
 
         /// <summary>
         /// Get the previous linked track of a track object
