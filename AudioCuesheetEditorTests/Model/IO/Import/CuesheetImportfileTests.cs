@@ -29,7 +29,7 @@ using AudioCuesheetEditor.Model.Entity;
 namespace AudioCuesheetEditor.Model.IO.Import.Tests
 {
     [TestClass()]
-    public class CuesheetImportFileTests
+    public class CuesheetImportfileTests
     {
         [TestMethod()]
         public void CuesheetImportFileTest()
