@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject TraceChangeManager _traceChangeManager
 @inject HotKeys _hotKeys
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject DateTimeUtility _dateTimeUtility
 
 <Modal @ref="modalTrackEdit">
     <ModalContent Centered>
@@ -101,7 +102,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Begin"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is9">
-                                <TextEdit Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Immediate="false">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.Begin, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -113,7 +114,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["End"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is9">
-                                <TextEdit Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Immediate="false">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.End, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -125,7 +126,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Length"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is9">
-                                <TextEdit Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Immediate="false">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.Length, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -148,7 +149,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PreGap"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is9">
-                                <TextEdit Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Immediate="false">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.PreGap, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -160,7 +161,7 @@ along with Foobar.  If not, see
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["PostGap"]</FieldLabel>
                             <FieldBody ColumnSize="ColumnSize.Is9">
-                                <TextEdit Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Immediate="false">
+                                <TextEdit Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.PostGap, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -252,7 +253,7 @@ along with Foobar.  If not, see
                                             </Select>
                                         </Addon>
                                         <Addon AddonType="AddonType.Body">
-                                            <TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Begin = x, value)" Style="width: 65%" />
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackBegin" Text="@GetTimespanAsString(editedTrack.Begin)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.Begin, value)" Style="width: 65%" />
                                         </Addon>
                                     </Addons>
                                 </TableRowCell>
@@ -270,7 +271,7 @@ along with Foobar.  If not, see
                                             </Select>
                                         </Addon>
                                         <Addon AddonType="AddonType.Body">
-                                            <TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.End = x, value)" Style="width: 65%"/>
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackEnd" Text="@GetTimespanAsString(editedTrack.End)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.End, value)" Style="width: 65%"/>
                                         </Addon>
                                     </Addons>
                                 </TableRowCell>
@@ -288,7 +289,7 @@ along with Foobar.  If not, see
                                             </Select>
                                         </Addon>
                                         <Addon AddonType="AddonType.Body">
-                                            <TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.Length = x, value)" Style="width: 65%" />
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackLength" Text="@GetTimespanAsString(editedTrack.Length)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.Length, value)" Style="width: 65%" />
                                         </Addon>
                                     </Addons>
                                 </TableRowCell>
@@ -318,7 +319,7 @@ along with Foobar.  If not, see
                                             </Select>
                                         </Addon>
                                         <Addon AddonType="AddonType.Body">
-                                            <TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PreGap = x, value)" Style="width: 65%"/>
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackPreGap" Text="@GetTimespanAsString(editedTrack.PreGap)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.PreGap, value)" Style="width: 65%"/>
                                         </Addon>
                                     </Addons>
                                 </TableRowCell>
@@ -336,7 +337,7 @@ along with Foobar.  If not, see
                                             </Select>
                                         </Addon>
                                         <Addon AddonType="AddonType.Body">
-                                            <TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => OnTimespanTextChanged(x => editedTrack.PostGap = x, value)" Style="width: 65%"/>
+                                            <TextEdit Immediate="false" ReadOnly="!EditTrackPostGap" Text="@GetTimespanAsString(editedTrack.PostGap)" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(editedTrack, x => x.PostGap, value)" Style="width: 65%"/>
                                         </Addon>
                                     </Addons>
                                 </TableRowCell>
@@ -841,13 +842,6 @@ along with Foobar.  If not, see
             }
         }
         return resultString;
-    }
-
-    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
-    {
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
-        setAction(result);
-        return Task.CompletedTask;
     }
 
     void editedTrack_ValidateablePropertyChanged(object? sender, string property)
