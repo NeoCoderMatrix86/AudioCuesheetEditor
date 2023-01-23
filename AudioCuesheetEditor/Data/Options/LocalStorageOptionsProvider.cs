@@ -35,7 +35,7 @@ namespace AudioCuesheetEditor.Data.Options
             _jsRuntime = jsRuntime;
         }
 
-        public async ValueTask<T> GetOptions<T>() where T : IOptions
+        public async Task<T> GetOptions<T>() where T : IOptions
         {
             var type = typeof(T);
             IOptions? options = (IOptions?)Activator.CreateInstance(type);
