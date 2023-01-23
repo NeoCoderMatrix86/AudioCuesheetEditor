@@ -110,7 +110,7 @@ along with Foobar.  If not, see
     {
         if (_sessionStateContainer.Cuesheet.SplitPoints != null)
         {
-            splitPoints = _sessionStateContainer.Cuesheet.SplitPoints;
+            splitPoints = new(_sessionStateContainer.Cuesheet.SplitPoints);
         }
         else
         {
