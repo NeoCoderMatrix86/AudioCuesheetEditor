@@ -70,9 +70,9 @@ namespace AudioCuesheetEditor.Model.Options
         public void SetDefaultValues()
         {
             //Declare defaults
-            if (String.IsNullOrEmpty(CuesheetFileName) == true)
+            if (String.IsNullOrEmpty(CuesheetFilename) == true)
             {
-                CuesheetFileName = Cuesheetfile.DefaultFileName;
+                CuesheetFilename = Cuesheetfile.DefaultFilename;
             }
             if (String.IsNullOrEmpty(CultureName) == true)
             {
@@ -96,7 +96,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
             
         }
-        public String? CuesheetFileName 
+        public String? CuesheetFilename 
         {
             get => cuesheetFilename;
             set

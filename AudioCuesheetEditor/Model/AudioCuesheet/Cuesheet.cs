@@ -157,16 +157,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         [JsonIgnore]
-        public Boolean CanWriteCuesheetFile
-        {
-            get
-            {
-                var cuesheetFile = new Cuesheetfile(this);
-                return cuesheetFile.IsExportable;
-            }
-        }
-
-        [JsonIgnore]
         public bool IsRecording
         {
             get { return RecordingTime.HasValue; }

@@ -51,11 +51,13 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new Cuesheetfile(cuesheet);
-            var generatedFile = cuesheetFile.GenerateCuesheetFile();
-            Assert.IsNotNull(generatedFile);
+            var generator = new CuesheetfileGenerator(cuesheet);
+            var generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(1, generatedFiles.Count);
+            var content = generatedFiles.First().Content;
+            Assert.IsNotNull(content);
             var fileName = Path.GetTempFileName();
-            File.WriteAllBytes(fileName, generatedFile);
+            File.WriteAllBytes(fileName, content);
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
@@ -75,18 +77,21 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "0123456789123";
-            generatedFile = cuesheetFile.GenerateCuesheetFile();
-            Assert.IsNotNull(generatedFile);
+            generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(1, generatedFiles.Count);
+            content = generatedFiles.First().Content;
+            Assert.IsNotNull(content);
             fileName = Path.GetTempFileName();
-            File.WriteAllBytes(fileName, generatedFile);
+            File.WriteAllBytes(fileName, content);
             fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, cuesheet.Cataloguenumber.Value));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "Testvalue";
-            generatedFile = cuesheetFile.GenerateCuesheetFile();
-            Assert.IsNull(generatedFile);
+            Assert.IsFalse(generator.CanWrite);
+            generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(0, generatedFiles.Count);
         }
 
         [TestMethod()]
@@ -120,11 +125,13 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.PreGap = new TimeSpan(0, 0, 3);
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new Cuesheetfile(cuesheet);
-            var generatedFile = cuesheetFile.GenerateCuesheetFile();
-            Assert.IsNotNull(generatedFile);
+            var generator = new CuesheetfileGenerator(cuesheet);
+            var generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(1, generatedFiles.Count);
+            var content = generatedFiles.First().Content;
+            Assert.IsNotNull(content);
             var fileName = Path.GetTempFileName();
-            File.WriteAllBytes(fileName, generatedFile);
+            File.WriteAllBytes(fileName, content);
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
@@ -180,11 +187,13 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 }
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new Cuesheetfile(cuesheet);
-            var generatedFile = cuesheetFile.GenerateCuesheetFile();
-            Assert.IsNotNull(generatedFile);
+            var generator = new CuesheetfileGenerator(cuesheet);
+            var generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(1, generatedFiles.Count);
+            var content = generatedFiles.First().Content;
+            Assert.IsNotNull(content);
             var fileName = Path.GetTempFileName();
-            File.WriteAllBytes(fileName, generatedFile);
+            File.WriteAllBytes(fileName, content);
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
@@ -230,19 +239,21 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var cuesheetFile = new Cuesheetfile(cuesheet);
-            Assert.IsFalse(cuesheetFile.IsExportable);
+            var generator = new CuesheetfileGenerator(cuesheet);
+            Assert.IsFalse(generator.CanWrite);
             //Rearrange positions
             cuesheet.Tracks.ElementAt(0).Position = 1;
             cuesheet.Tracks.ElementAt(1).Position = 2;
             cuesheet.Tracks.ElementAt(2).Position = 3;
             cuesheet.Tracks.ElementAt(3).Position = 4;
             cuesheet.Tracks.ElementAt(4).Position = 5;
-            Assert.IsTrue(cuesheetFile.IsExportable);
-            var generatedFile = cuesheetFile.GenerateCuesheetFile();
-            Assert.IsNotNull(generatedFile);
+            Assert.IsTrue(generator.CanWrite);
+            var generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(1, generatedFiles.Count);
+            var content = generatedFiles.First().Content;
+            Assert.IsNotNull(content);
             var fileName = Path.GetTempFileName();
-            File.WriteAllBytes(fileName, generatedFile);
+            File.WriteAllBytes(fileName, content);
             var fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
             Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));

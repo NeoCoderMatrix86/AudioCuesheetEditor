@@ -13,91 +13,15 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using System.Text;
 
 namespace AudioCuesheetEditor.Model.IO
 {
     public class Cuesheetfile
     {
-        public static readonly String DefaultFileName = "Cuesheet.cue";
+        public static readonly String DefaultFilename = "Cuesheet.cue";
 
-        public Cuesheetfile(Cuesheet cuesheet)
-        {
-            if (cuesheet == null)
-            {
-                throw new ArgumentNullException(nameof(cuesheet));
-            }
-            Cuesheet = cuesheet;
-        }
-
-        public Cuesheet Cuesheet { get; private set; }
-
-        public byte[]? GenerateCuesheetFile()
-        {
-            //TODO: React to SplitPoints
-            if (IsExportable == true)
-            {
-                var builder = new StringBuilder();
-                if ((Cuesheet.Cataloguenumber != null) && (String.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false) && (Cuesheet.Cataloguenumber.Validate().Status != Entity.ValidationStatus.Error))
-                {
-                    builder.AppendLine(String.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, Cuesheet.Cataloguenumber.Value));
-                }
-                if (Cuesheet.CDTextfile != null)
-                {
-                    builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, Cuesheet.CDTextfile.FileName));
-                }
-                builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, Cuesheet.Title));
-                builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, Cuesheet.Artist));
-                builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, Cuesheet.Audiofile?.Name, Cuesheet.Audiofile?.AudioFileType));
-                foreach (var track in Cuesheet.Tracks)
-                {
-                    builder.AppendLine(String.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
-                    builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
-                    builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
-                    if (track.Flags.Count > 0)
-                    {
-                        builder.AppendLine(String.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
-                    }
-                    if (track.PreGap.HasValue)
-                    {
-                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, (track.PreGap.Value.Milliseconds * 75) / 1000));
-                    }
-                    if (track.Begin.HasValue)
-                    {
-                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(track.Begin.Value.TotalMinutes), track.Begin.Value.Seconds, (track.Begin.Value.Milliseconds * 75) / 1000));
-                    }
-                    if (track.PostGap.HasValue)
-                    {
-                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, (track.PostGap.Value.Milliseconds * 75) / 1000));
-                    }
-                }
-                return Encoding.UTF8.GetBytes(builder.ToString());
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public Boolean IsExportable
-        {
-            get
-            {
-                if (Cuesheet.Validate().Status == Entity.ValidationStatus.Error)
-                {
-                    return false;
-                }
-                if (Cuesheet.Cataloguenumber.Validate().Status == Entity.ValidationStatus.Error)
-                {
-                    return false;
-                }
-                if (Cuesheet.Tracks.Any(x => x.Validate().Status == Entity.ValidationStatus.Error))
-                {
-                    return false;
-                }
-                return true;
-            }
-        }
+        //TODO: Maybe have a validatable?
+        public String Filename { get; set; } = DefaultFilename;
+        public byte[]? Content { get; set; }
     }
 }

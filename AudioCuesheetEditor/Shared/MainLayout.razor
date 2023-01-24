@@ -88,8 +88,8 @@ along with Foobar.  If not, see
                                             </BarDropdownToggle>
                                             <BarDropdownMenu Background="Background.Dark">
                                                 <BarDropdownItem>
-                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@GetLocalizedString(_sessionStateContainer.Cuesheet.CanWriteCuesheetFile == false, "Please check processinghints for errors, otherwise the file is not exportable")">
-                                                        <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, true)" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
+                                                        <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, true)" Disabled="!IsCuesheetExporable">@_localizer["Download cuesheet"]</Button>
                                                     </Tooltip>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
@@ -228,12 +228,12 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.CuesheetFileName" Immediate="false" />
+                        <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false" />
                     </FieldBody>
                 </Field>
             </ModalBody>
             <ModalFooter>
-                <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
+                <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!IsCuesheetExporable">@_localizer["Download cuesheet"]</Button>
                 <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)">@_localizer["Abort"]</Button>
             </ModalFooter>
         </ModalContent>
@@ -254,6 +254,28 @@ along with Foobar.  If not, see
     EditSplitpoints? editSplitpointsDialog;
     Modal? modalDownloadProjectfile;
     Modal? modalDownloadCuesheet;
+
+    String? IsCuesheetExportableTooltip
+    {
+        get
+        {
+            String? text = null;
+            if (IsCuesheetExporable == false)
+            {
+                text = _localizer["Please check processinghints for errors, otherwise the file is not exportable"];
+            }
+            return text;
+        }
+    }
+
+    Boolean IsCuesheetExporable
+    {
+        get
+        {
+            var generator = new CuesheetfileGenerator(_sessionStateContainer.Cuesheet);
+            return generator.CanWrite;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -289,18 +311,6 @@ along with Foobar.  If not, see
         {
             displayMenuBar = display;
             StateHasChanged();
-        }
-    }
-
-    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
-    {
-        if (expressionToCheck == true)
-        {
-            return _localizer[localizedStringName];
-        }
-        else
-        {
-            return null;
         }
     }
 
@@ -428,10 +438,11 @@ along with Foobar.  If not, see
         {
             applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
-        var cuesheetFile = new Cuesheetfile(_sessionStateContainer.Cuesheet);
-        var fileData = cuesheetFile.GenerateCuesheetFile();
-        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-        await _blazorDownloadFileService.DownloadFile(applicationOptions.CuesheetFileName, fileData, "text/plain");
+        var generator = new CuesheetfileGenerator(_sessionStateContainer.Cuesheet);
+        foreach (var result in generator.GenerateCuesheetFiles())
+        {
+            await _blazorDownloadFileService.DownloadFile(result.Filename, result.Content, "text/plain");
+        }
         if (modalDownloadCuesheet != null)
         {
             await modalDownloadCuesheet.Hide();
