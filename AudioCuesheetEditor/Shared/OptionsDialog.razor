@@ -63,7 +63,7 @@ along with Foobar.  If not, see
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Default viewmode"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
-                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.ViewModeName">
+                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.ViewModename">
                                                 @foreach (var name in Enum.GetNames(typeof(ViewMode)))
                                                 {
                                                     <SelectItem Value="@name">@_localizer[name]</SelectItem>
@@ -80,7 +80,7 @@ along with Foobar.  If not, see
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Project filename"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
-                                            <TextEdit @bind-Text="applicationOptions.ProjectFileName" Immediate="false" />
+                                            <TextEdit @bind-Text="applicationOptions.ProjectFilename" Immediate="false" />
                                         </FieldBody>
                                     </Field>
                                     <Field Horizontal="true">
@@ -127,7 +127,7 @@ along with Foobar.  If not, see
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                            <TextEdit @bind-Text="applicationOptions.AudioFileNameRecording" Immediate="false" />
+                                            <TextEdit @bind-Text="applicationOptions.RecordedAudiofilename" Immediate="false" />
                                         </FieldBody>
                                     </Field>
                                     <Field Horizontal="true">
@@ -139,7 +139,7 @@ along with Foobar.  If not, see
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record time sensitivity"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityName">
+                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityname">
                                                 @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
                                                 {
                                                     <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>

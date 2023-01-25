@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Model.Options
     {
         public const String DefaultCultureName = "en-US";
 
-        private String audioFileNameRecording;
+        private String recordedAudiofilename;
         private String? projectFilename;
         private String? cuesheetFilename;
 
@@ -60,42 +60,16 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
 
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         public ApplicationOptions()
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
         {
-            SetDefaultValues();
+            cuesheetFilename = Cuesheetfile.DefaultFilename;
+            CultureName = DefaultCultureName;
+            recordedAudiofilename = Audiofile.RecordingFileName;
+            LinkTracksWithPreviousOne = true;
+            projectFilename = Projectfile.DefaultFilename;
+            RecordCountdownTimer = 5;
         }
 
-        public void SetDefaultValues()
-        {
-            //Declare defaults
-            if (String.IsNullOrEmpty(CuesheetFilename) == true)
-            {
-                CuesheetFilename = Cuesheetfile.DefaultFilename;
-            }
-            if (String.IsNullOrEmpty(CultureName) == true)
-            {
-                CultureName = DefaultCultureName;
-            }
-            if (String.IsNullOrEmpty(AudioFileNameRecording) == true)
-            {
-                AudioFileNameRecording = Audiofile.RecordingFileName;
-            }
-            if (LinkTracksWithPreviousOne.HasValue == false)
-            {
-                LinkTracksWithPreviousOne = true;
-            }
-            if (String.IsNullOrEmpty(ProjectFileName))
-            {
-                ProjectFileName = Projectfile.DefaultFileName;
-            }
-            if (RecordCountdownTimer.HasValue == false)
-            {
-                RecordCountdownTimer = 5;
-            }
-            
-        }
         public String? CuesheetFilename 
         {
             get => cuesheetFilename;
@@ -137,7 +111,7 @@ namespace AudioCuesheetEditor.Model.Options
         }
         [JsonIgnore]
         public ViewMode ViewMode { get; set; }
-        public String? ViewModeName 
+        public String? ViewModename 
         {
             get { return Enum.GetName(typeof(ViewMode), ViewMode); }
             set 
@@ -152,31 +126,31 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public String AudioFileNameRecording 
+        public String RecordedAudiofilename 
         {
-            get { return audioFileNameRecording; }
+            get { return recordedAudiofilename; }
             set
             {
                 if (String.IsNullOrEmpty(value) == false)
                 {
                     var extension = Path.GetExtension(value);
-                    if ((String.IsNullOrEmpty(extension)) || (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
+                    if (String.IsNullOrEmpty(extension) || (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
                     {
-                        audioFileNameRecording = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Audiofile.AudioCodecWEBM.FileExtension);
+                        recordedAudiofilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Audiofile.AudioCodecWEBM.FileExtension);
                     }
                     else
                     {
-                        audioFileNameRecording = value;
+                        recordedAudiofilename = value;
                     }
                 }
                 else
                 {
-                    audioFileNameRecording = String.Empty;
+                    recordedAudiofilename = String.Empty;
                 }
             }
         }
         public Boolean? LinkTracksWithPreviousOne { get; set; }
-        public String? ProjectFileName 
+        public String? ProjectFilename 
         {
             get { return projectFilename; }
             set
@@ -200,10 +174,9 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public int? RecordCountdownTimer { get; set; }
-
         [JsonIgnore]
         public TimeSensitivityMode RecordTimeSensitivity { get; set; }
-        public String? RecordTimeSensitivityName
+        public String? RecordTimeSensitivityname
         {
             get { return Enum.GetName(typeof(TimeSensitivityMode), RecordTimeSensitivity); }
             set 
@@ -218,7 +191,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-
         public TimeSpanFormat? TimeSpanFormat { get; set; }
     }
 }

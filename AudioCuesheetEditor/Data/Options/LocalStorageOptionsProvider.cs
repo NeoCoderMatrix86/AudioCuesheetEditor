@@ -45,14 +45,7 @@ namespace AudioCuesheetEditor.Data.Options
                 try
                 {
                     options = (IOptions?)JsonSerializer.Deserialize(optionsJson, typeof(T));
-                    if (options != null)
-                    {
-                        options.SetDefaultValues();
-                    }
-                    else
-                    {
-                        options = (IOptions?)Activator.CreateInstance(typeof(T));
-                    }
+                    options ??= (IOptions?)Activator.CreateInstance(typeof(T));
                 }
                 catch (JsonException)
                 {

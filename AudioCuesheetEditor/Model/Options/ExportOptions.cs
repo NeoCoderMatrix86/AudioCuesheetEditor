@@ -19,59 +19,36 @@ namespace AudioCuesheetEditor.Model.Options
 {
     public class ExportOptions : IOptions
     {
-        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; }
-
-#pragma warning disable CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        public ExportOptions()
-#pragma warning restore CS8618 // Ein Non-Nullable-Feld muss beim Beenden des Konstruktors einen Wert ungleich NULL enthalten. Erwägen Sie die Deklaration als Nullable.
-        {
-            SetDefaultValues();
-        }
-
-        public void SetDefaultValues()
-        {
-            //Declare defaults
-            if (ExportProfiles == null)
+        public static readonly List<Exportprofile> DefaultExportProfiles = new() 
+        { 
+            new Exportprofile()
             {
-                var list = new List<Exportprofile>();
-                var exportProfile = new Exportprofile()
-                {
-                    FileName = "YouTube.txt",
-                    Name = "YouTube"
-                };
-                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%";
-                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Mixcloud.txt",
-                    Name = "Mixcloud"
-                };
-                exportProfile.SchemeHead.Scheme = String.Empty;
-                exportProfile.SchemeTracks.Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Export.csv",
-                    Name = "CSV Export"
-                };
-                exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;";
-                exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%";
-                exportProfile.SchemeFooter.Scheme = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)";
-                list.Add(exportProfile);
-                exportProfile = new Exportprofile()
-                {
-                    FileName = "Tracks.txt",
-                    Name = "Tracks only"
-                };
-                exportProfile.SchemeHead.Scheme = String.Empty;
-                exportProfile.SchemeTracks.Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%";
-                exportProfile.SchemeFooter.Scheme = String.Empty;
-                list.Add(exportProfile);
-                ExportProfiles = list.AsReadOnly();
+                FileName = "YouTube.txt",
+                Name = "YouTube",
+                SchemeHead = new Exportscheme() { Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%" },
+                SchemeTracks = new Exportscheme() { Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%" }
+            },
+            new Exportprofile()
+            {
+                FileName = "Mixcloud.txt",
+                Name = "Mixcloud",
+                SchemeTracks = new Exportscheme() { Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%" }
+            },
+            new Exportprofile()
+            {
+                FileName = "Export.csv",
+                Name = "CSV Export",
+                SchemeHead = new Exportscheme() { Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;" },
+                SchemeTracks = new Exportscheme() { Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%" },
+                SchemeFooter = new Exportscheme() { Scheme = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)" }
+            },
+            new Exportprofile()
+            {
+                FileName = "Tracks.txt",
+                Name = "Tracks only",
+                SchemeTracks = new Exportscheme() { Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%" },
             }
-        }
+        };
+        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
     }
 }
