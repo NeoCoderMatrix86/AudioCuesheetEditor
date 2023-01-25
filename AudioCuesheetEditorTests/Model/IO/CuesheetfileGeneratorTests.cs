@@ -1,4 +1,4 @@
-//This file is part of AudioCuesheetEditor.
+﻿//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -13,23 +13,26 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditorTests.Properties;
-using AudioCuesheetEditorTests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using AudioCuesheetEditor.Model.IO;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Model.IO.Export;
+using System.IO;
 
 namespace AudioCuesheetEditor.Model.IO.Tests
 {
     [TestClass()]
-    public class CuesheetfileTests
+    public class CuesheetfileGeneratorTests
     {
         [TestMethod()]
-        public void GenerateCuesheetFileTest()
+        public void GenerateCuesheetFilesTest()
         {
             var testHelper = new TestHelper();
             Cuesheet cuesheet = new()
@@ -271,6 +274,79 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 position++;
             }
             File.Delete(fileName);
+        }
+
+        [TestMethod()]
+        public void GenerateCuesheetFilesWithSplitPointsTest()
+        {
+            
+            var testHelper = new TestHelper();
+            Cuesheet cuesheet = new()
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                Audiofile = new Audiofile("Testfile.mp3")
+            };
+            var begin = TimeSpan.Zero;
+            for (int i = 1; i < 25; i++)
+            {
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
+                begin = begin.Add(new TimeSpan(0, i, i));
+                track.End = begin;
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
+            }
+            var splitPoints = new List<SplitPoint>()
+            {
+                new SplitPoint() { Moment = new TimeSpan(2, 0, 0) },
+                new SplitPoint() { Moment = new TimeSpan(0, 30, 0) },
+                new SplitPoint() { Moment = new TimeSpan(1, 0, 0) }
+            };
+            cuesheet.SplitPoints = splitPoints;
+            var generator = new CuesheetfileGenerator(cuesheet);
+            Assert.IsTrue(generator.CanWrite);
+            var generatedFiles = generator.GenerateCuesheetFiles();
+            Assert.AreEqual(4, generatedFiles.Count);
+            var position = 1;
+            foreach (var generatedFile in generatedFiles)
+            {
+                //TODO: Check for begin and end according to splitpoints
+                var content = generatedFile.Content;
+                Assert.IsNotNull(content);
+                var fileName = Path.GetTempFileName();
+                File.WriteAllBytes(fileName, content);
+                var fileContent = File.ReadAllLines(fileName);
+                File.Delete(fileName);
+                int positionDifference = 1 - position;
+                //Check for start from position 1 and begin = 00:00:00
+                for (int i = 3; i < fileContent.Length; i += 4)
+                {
+                    var track = cuesheet.Tracks.Single(x => x.Position == position);
+                    position++;
+                    Assert.AreEqual(String.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position + positionDifference, CuesheetConstants.CuesheetTrackAudio), fileContent[i]);
+                    Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title), fileContent[i + 1]);
+                    Assert.AreEqual(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist), fileContent[i + 2]);
+                    var trackBegin = track.Begin;
+                    if (generatedFile.Begin != null)
+                    {
+                        if (generatedFile.Begin >= track.Begin)
+                        {
+                            trackBegin = TimeSpan.Zero;
+                        }
+                        else
+                        {
+                            trackBegin = track.Begin - generatedFile.Begin;
+                        }
+                    }
+                    Assert.IsNotNull(trackBegin);
+                    Assert.AreEqual(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75), fileContent[i + 3]);
+                }
+                position--;
+            }
         }
     }
 }

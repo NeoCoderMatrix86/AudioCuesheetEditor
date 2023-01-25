@@ -23,5 +23,7 @@ namespace AudioCuesheetEditor.Model.IO
         //TODO: Maybe have a validatable?
         public String Filename { get; set; } = DefaultFilename;
         public byte[]? Content { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
     }
 }
