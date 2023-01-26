@@ -229,10 +229,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
                 }                
-                if (applicationOptions.LinkTracksWithPreviousOne.HasValue)
-                {
-                    track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
-                }
+                track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne;
             }
             tracks.Add(track);
             track.Cuesheet = this;

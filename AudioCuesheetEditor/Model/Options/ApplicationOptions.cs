@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Utility;
@@ -39,13 +40,9 @@ namespace AudioCuesheetEditor.Model.Options
         Minutes = 2
     }
 
-    public class ApplicationOptions : IOptions
+    public class ApplicationOptions : Validateable<ApplicationOptions>, IOptions
     {
         public const String DefaultCultureName = "en-US";
-
-        private String recordedAudiofilename;
-        private String? projectFilename;
-        private String? cuesheetFilename;
 
         public static IReadOnlyCollection<CultureInfo> AvailableCultures
         {
@@ -59,41 +56,8 @@ namespace AudioCuesheetEditor.Model.Options
                 return cultures.AsReadOnly();
             }
         }
-
-        public ApplicationOptions()
-        {
-            cuesheetFilename = Cuesheetfile.DefaultFilename;
-            CultureName = DefaultCultureName;
-            recordedAudiofilename = Audiofile.RecordingFileName;
-            LinkTracksWithPreviousOne = true;
-            projectFilename = Projectfile.DefaultFilename;
-            RecordCountdownTimer = 5;
-        }
-
-        public String? CuesheetFilename 
-        {
-            get => cuesheetFilename;
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (extension.Equals(Cuesheet.FileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        cuesheetFilename = value;
-                    }
-                    else
-                    {
-                        cuesheetFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Cuesheet.FileExtension);
-                    }
-                }
-                else
-                {
-                    cuesheetFilename = null;
-                }
-            }
-        }
-        public String? CultureName { get; set; }
+        public String? CuesheetFilename { get; set; } = Cuesheetfile.DefaultFilename;
+        public String? CultureName { get; set; } = DefaultCultureName;
         [JsonIgnore]
         public CultureInfo Culture
         {
@@ -126,54 +90,10 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public String RecordedAudiofilename 
-        {
-            get { return recordedAudiofilename; }
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (String.IsNullOrEmpty(extension) || (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false))
-                    {
-                        recordedAudiofilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Audiofile.AudioCodecWEBM.FileExtension);
-                    }
-                    else
-                    {
-                        recordedAudiofilename = value;
-                    }
-                }
-                else
-                {
-                    recordedAudiofilename = String.Empty;
-                }
-            }
-        }
-        public Boolean? LinkTracksWithPreviousOne { get; set; }
-        public String? ProjectFilename 
-        {
-            get { return projectFilename; }
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (extension.Equals(Projectfile.FileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        projectFilename = value;
-                    }
-                    else
-                    {
-                        projectFilename = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(value), Projectfile.FileExtension);
-                    }
-                }
-                else
-                {
-                    projectFilename = null;
-                }
-            }
-        }
-        public int? RecordCountdownTimer { get; set; }
+        public String RecordedAudiofilename { get; set; } = Audiofile.RecordingFileName;
+        public Boolean LinkTracksWithPreviousOne { get; set; } = true;
+        public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
+        public uint RecordCountdownTimer { get; set; } = 5;
         [JsonIgnore]
         public TimeSensitivityMode RecordTimeSensitivity { get; set; }
         public String? RecordTimeSensitivityname
@@ -192,5 +112,63 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
+
+        protected override ValidationResult Validate(string property)
+        {
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
+            {
+                case nameof(CuesheetFilename):
+                    return Cuesheetfile.ValidateFilename(CuesheetFilename);
+                case nameof(RecordedAudiofilename):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(RecordedAudiofilename))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(RecordedAudiofilename)));
+                    }
+                    else
+                    {
+                        var extension = Path.GetExtension(RecordedAudiofilename);
+                        if (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(RecordedAudiofilename), Audiofile.AudioCodecWEBM.FileExtension));
+                        }
+                        var filename = Path.GetFileNameWithoutExtension(RecordedAudiofilename);
+                        if (String.IsNullOrEmpty(filename))
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(RecordedAudiofilename)));
+                        }
+                    }
+                    break;
+                case nameof(ProjectFilename):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(ProjectFilename))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ProjectFilename)));
+                    }
+                    else
+                    {
+                        var extension = Path.GetExtension(ProjectFilename);
+                        if (extension.Equals(Projectfile.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), Projectfile.FileExtension));
+                        }
+                        var filename = Path.GetFileNameWithoutExtension(ProjectFilename);
+                        if (String.IsNullOrEmpty(filename))
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ProjectFilename)));
+                        }
+                    }
+                    break;
+            }
+            return ValidationResult.Create(validationStatus, validationMessages);
+        }
     }
 }

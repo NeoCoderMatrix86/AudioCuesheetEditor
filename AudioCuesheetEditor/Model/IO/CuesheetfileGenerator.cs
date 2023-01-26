@@ -53,11 +53,15 @@ namespace AudioCuesheetEditor.Model.IO
             Cuesheet = cuesheet;
         }
 
-        public IReadOnlyCollection<Cuesheetfile> GenerateCuesheetFiles() 
+        public IReadOnlyCollection<Cuesheetfile> GenerateCuesheetFiles(String? filename) 
         {
             List<Cuesheetfile> cuesheetfiles = new();
             if (CanWrite == true)
             {
+                if (String.IsNullOrEmpty(filename) || (Cuesheetfile.ValidateFilename(filename).Status != ValidationStatus.Success))
+                {
+                    filename = Cuesheetfile.DefaultFilename;
+                }
                 if (Cuesheet.SplitPoints != null)
                 {
                     TimeSpan? previousSplitPointMoment = null;
@@ -76,8 +80,7 @@ namespace AudioCuesheetEditor.Model.IO
                 else
                 {
                     var content = WriteCuesheet();
-                    //TODO: Filename
-                    cuesheetfiles.Add(new Cuesheetfile() { Content = Encoding.UTF8.GetBytes(content) });
+                    cuesheetfiles.Add(new Cuesheetfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content) }); ;
                 }
             }
             return cuesheetfiles;

@@ -439,7 +439,7 @@ along with Foobar.  If not, see
             applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
         var generator = new CuesheetfileGenerator(_sessionStateContainer.Cuesheet);
-        foreach (var result in generator.GenerateCuesheetFiles())
+        foreach (var result in generator.GenerateCuesheetFiles(applicationOptions.CuesheetFilename))
         {
             await _blazorDownloadFileService.DownloadFile(result.Filename, result.Content, "text/plain");
         }

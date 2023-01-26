@@ -27,6 +27,11 @@
     "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here",
     "SchemeCuesheet": "Scheme cuesheet",
     "SchemeTracks": "Scheme tracks",
-    "Moment": "Moment"
+    "Moment": "Moment",
+    "{0} must end with '{1}'!": "{0} must end with '{1}'!",
+    "{0} must have a filename!": "{0} must have a filename!",
+    "CuesheetFilename": "Cuesheet filename",
+    "RecordedAudiofilename": "Filename for recorded audio",
+    "ProjectFilename": "Project filename"
   }
 }

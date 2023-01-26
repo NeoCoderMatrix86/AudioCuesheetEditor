@@ -55,8 +55,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var generator = new CuesheetfileGenerator(cuesheet);
-            var generatedFiles = generator.GenerateCuesheetFiles();
+            var generatedFiles = generator.GenerateCuesheetFiles("Cuesheet");
             Assert.AreEqual(1, generatedFiles.Count);
+            Assert.AreEqual(Cuesheetfile.DefaultFilename, generatedFiles.First().Filename);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
             var fileName = Path.GetTempFileName();
@@ -80,7 +81,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "0123456789123";
-            generatedFiles = generator.GenerateCuesheetFiles();
+            generatedFiles = generator.GenerateCuesheetFiles(Cuesheetfile.DefaultFilename);
             Assert.AreEqual(1, generatedFiles.Count);
             content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -93,7 +94,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "Testvalue";
             Assert.IsFalse(generator.CanWrite);
-            generatedFiles = generator.GenerateCuesheetFiles();
+            generatedFiles = generator.GenerateCuesheetFiles(Cuesheetfile.DefaultFilename);
             Assert.AreEqual(0, generatedFiles.Count);
         }
 
@@ -129,7 +130,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var generator = new CuesheetfileGenerator(cuesheet);
-            var generatedFiles = generator.GenerateCuesheetFiles();
+            var generatedFiles = generator.GenerateCuesheetFiles(Cuesheetfile.DefaultFilename);
             Assert.AreEqual(1, generatedFiles.Count);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -191,7 +192,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var generator = new CuesheetfileGenerator(cuesheet);
-            var generatedFiles = generator.GenerateCuesheetFiles();
+            var generatedFiles = generator.GenerateCuesheetFiles(Cuesheetfile.DefaultFilename);
             Assert.AreEqual(1, generatedFiles.Count);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -251,7 +252,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             cuesheet.Tracks.ElementAt(3).Position = 4;
             cuesheet.Tracks.ElementAt(4).Position = 5;
             Assert.IsTrue(generator.CanWrite);
-            var generatedFiles = generator.GenerateCuesheetFiles();
+            var generatedFiles = generator.GenerateCuesheetFiles(Cuesheetfile.DefaultFilename);
             Assert.AreEqual(1, generatedFiles.Count);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -279,7 +280,6 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         [TestMethod()]
         public void GenerateCuesheetFilesWithSplitPointsTest()
         {
-            
             var testHelper = new TestHelper();
             Cuesheet cuesheet = new()
             {
@@ -309,12 +309,13 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             cuesheet.SplitPoints = splitPoints;
             var generator = new CuesheetfileGenerator(cuesheet);
             Assert.IsTrue(generator.CanWrite);
-            var generatedFiles = generator.GenerateCuesheetFiles();
+            var generatedFiles = generator.GenerateCuesheetFiles("Cuesheet");
             Assert.AreEqual(4, generatedFiles.Count);
             var position = 1;
             foreach (var generatedFile in generatedFiles)
             {
                 //TODO: Check for begin and end according to splitpoints
+                //TODO: Test names!
                 var content = generatedFile.Content;
                 Assert.IsNotNull(content);
                 var fileName = Path.GetTempFileName();

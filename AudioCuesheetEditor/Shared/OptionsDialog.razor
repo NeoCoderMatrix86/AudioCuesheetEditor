@@ -71,22 +71,34 @@ along with Foobar.  If not, see
                                             </Select>
                                         </FieldBody>
                                     </Field>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Cuesheet filename"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
-                                            <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false" />
-                                        </FieldBody>
-                                    </Field>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Project filename"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
-                                            <TextEdit @bind-Text="applicationOptions.ProjectFilename" Immediate="false" />
-                                        </FieldBody>
-                                    </Field>
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Cuesheet filename"]</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                                <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
+                                                    <Feedback>
+                                                        <ValidationError Tooltip />
+                                                    </Feedback>
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.ProjectFilename, _validationMessageLocalizer, token)">
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Project filename"]</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
+                                                <TextEdit @bind-Text="applicationOptions.ProjectFilename" Immediate="false">
+                                                    <Feedback>
+                                                        <ValidationError Tooltip />
+                                                    </Feedback>
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is4.OnWidescreen.Is12.OnDesktop">@_localizer["Automatically link tracks"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is8.OnWidescreen.Is12.OnDesktop">
-                                            <Check TValue="Boolean?" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
+                                            <Check TValue="Boolean" @bind-Checked="applicationOptions.LinkTracksWithPreviousOne">@_localizer["Automatically link tracks with previous"]</Check>
                                         </FieldBody>
                                     </Field>
                                     <Validation @ref="timespanformatValidation" AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, applicationOptions?.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
@@ -124,16 +136,22 @@ along with Foobar.  If not, see
                                     </Validation>
                                 </TabPanel>
                                 <TabPanel Name="recording" Padding="Padding.Is3.OnY">
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                            <TextEdit @bind-Text="applicationOptions.RecordedAudiofilename" Immediate="false" />
-                                        </FieldBody>
-                                    </Field>
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.RecordedAudiofilename, _validationMessageLocalizer, token)">
+                                        <Field Horizontal="true">
+                                            <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
+                                            <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+                                                <TextEdit @bind-Text="applicationOptions.RecordedAudiofilename" Immediate="false">
+                                                    <Feedback>
+                                                        <ValidationError Tooltip />
+                                                    </Feedback>
+                                                </TextEdit>
+                                            </FieldBody>
+                                        </Field>
+                                    </Validation>
                                     <Field Horizontal="true">
                                         <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record countdown timer in seconds"]</FieldLabel>
                                         <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                            <NumericEdit TValue="int?" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
+                                            <NumericEdit TValue="uint" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
                                         </FieldBody>
                                     </Field>
                                     <Field Horizontal="true">

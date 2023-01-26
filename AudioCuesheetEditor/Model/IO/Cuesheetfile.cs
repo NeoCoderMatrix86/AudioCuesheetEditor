@@ -14,6 +14,11 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.Options;
+using Microsoft.AspNetCore.Components.Forms;
+
 namespace AudioCuesheetEditor.Model.IO
 {
     public class Cuesheetfile
@@ -25,5 +30,32 @@ namespace AudioCuesheetEditor.Model.IO
         public byte[]? Content { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
+
+        public static ValidationResult ValidateFilename(String? filename)
+        {
+            ValidationStatus validationStatus = ValidationStatus.Success;
+            List<ValidationMessage>? validationMessages = null;
+            if (String.IsNullOrEmpty(filename))
+            {
+                validationMessages ??= new();
+                validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ApplicationOptions.CuesheetFilename)));
+            }
+            else
+            {
+                var extension = Path.GetExtension(filename);
+                if (extension.Equals(Cuesheet.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
+                {
+                    validationMessages ??= new();
+                    validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ApplicationOptions.CuesheetFilename), Cuesheet.FileExtension));
+                }
+                var filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+                if (String.IsNullOrEmpty(filenameWithoutExtension))
+                {
+                    validationMessages ??= new();
+                    validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ApplicationOptions.CuesheetFilename)));
+                }
+            }
+            return ValidationResult.Create(validationStatus, validationMessages);
+        }
     }
 }

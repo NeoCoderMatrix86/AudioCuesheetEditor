@@ -232,16 +232,12 @@ along with Foobar.  If not, see
             }
         };
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-
-        if (options.RecordCountdownTimer.HasValue)
+        startRecordTimer = new Timer(options.RecordCountdownTimer * 1000);
+        startRecordTimer.Elapsed += async delegate
         {
-            startRecordTimer = new Timer(options.RecordCountdownTimer.Value * 1000);
-            startRecordTimer.Elapsed += async delegate
-            {
-                await StartRecordingClicked();
-                startRecordTimer.Stop();
-            };
-        }
+            await StartRecordingClicked();
+            startRecordTimer.Stop();
+        };
     }
 
     private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
