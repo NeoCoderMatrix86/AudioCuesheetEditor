@@ -25,7 +25,6 @@ namespace AudioCuesheetEditor.Model.IO
     {
         public static readonly String DefaultFilename = "Cuesheet.cue";
 
-        //TODO: Maybe have a validatable?
         public String Filename { get; set; } = DefaultFilename;
         public byte[]? Content { get; set; }
         public TimeSpan? Begin { get; set; }
