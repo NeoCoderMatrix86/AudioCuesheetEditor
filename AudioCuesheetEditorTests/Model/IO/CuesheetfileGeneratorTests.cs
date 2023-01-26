@@ -309,13 +309,15 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             cuesheet.SplitPoints = splitPoints;
             var generator = new CuesheetfileGenerator(cuesheet);
             Assert.IsTrue(generator.CanWrite);
-            var generatedFiles = generator.GenerateCuesheetFiles("Cuesheet");
+            var generatedFiles = generator.GenerateCuesheetFiles("Unit test.cue");
             Assert.AreEqual(4, generatedFiles.Count);
             var position = 1;
+            var counter = 1;
             foreach (var generatedFile in generatedFiles)
             {
                 //TODO: Check for begin and end according to splitpoints
-                //TODO: Test names!
+                Assert.AreEqual(String.Format("Unit test({0}).cue", counter), generatedFile.Filename);
+                counter++;
                 var content = generatedFile.Content;
                 Assert.IsNotNull(content);
                 var fileName = Path.GetTempFileName();

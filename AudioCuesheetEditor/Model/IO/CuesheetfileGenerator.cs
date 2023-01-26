@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Shared;
 using System.Text;
+using System.Xml.Linq;
 
 namespace AudioCuesheetEditor.Model.IO
 {
@@ -65,17 +66,19 @@ namespace AudioCuesheetEditor.Model.IO
                 if (Cuesheet.SplitPoints != null)
                 {
                     TimeSpan? previousSplitPointMoment = null;
+                    var counter = 1;
                     foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
                     {
                         var content = WriteCuesheet(previousSplitPointMoment, splitPoint.Moment);
-                        //TODO: Filename
-                        cuesheetfiles.Add(new Cuesheetfile() { Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
+                        var name = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, Cuesheet.FileExtension);
+                        cuesheetfiles.Add(new Cuesheetfile() { Filename = name, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
                         previousSplitPointMoment = splitPoint.Moment;
+                        counter++;
                     }
+                    var lastName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, Cuesheet.FileExtension);
                     //Attach the last part after the SplitPoint
                     var lastContent = WriteCuesheet(previousSplitPointMoment);
-                    //TODO: Filename
-                    cuesheetfiles.Add(new Cuesheetfile() { Content = Encoding.UTF8.GetBytes(lastContent), Begin = previousSplitPointMoment });
+                    cuesheetfiles.Add(new Cuesheetfile() { Filename = lastName, Content = Encoding.UTF8.GetBytes(lastContent), Begin = previousSplitPointMoment });
                 }
                 else
                 {
