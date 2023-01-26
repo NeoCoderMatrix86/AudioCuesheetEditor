@@ -25,11 +25,6 @@ namespace AudioCuesheetEditor.Model.IO
     {
         public static readonly String DefaultFilename = "Cuesheet.cue";
 
-        public String Filename { get; set; } = DefaultFilename;
-        public byte[]? Content { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
-
         public static ValidationResult ValidateFilename(String? filename)
         {
             ValidationStatus validationStatus = ValidationStatus.Success;
@@ -56,5 +51,11 @@ namespace AudioCuesheetEditor.Model.IO
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }
+
+        public String Filename { get; set; } = DefaultFilename;
+        public byte[]? Content { get; set; }
+        public TimeSpan? Begin { get; set; }
+        public TimeSpan? End { get; set; }
+
     }
 }
