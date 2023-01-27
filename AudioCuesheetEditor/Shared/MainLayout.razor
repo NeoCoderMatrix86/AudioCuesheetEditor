@@ -30,6 +30,7 @@ along with Foobar.  If not, see
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 <ErrorBoundary>
     <ChildContent>
@@ -118,18 +119,6 @@ along with Foobar.  If not, see
                                     </BarItem>
                                     <BarItem Padding="Padding.Is1.OnX">
                                         <BarDropdown>
-                                            <BarDropdownToggle Class="btn btn-secondary">
-                                                @_localizer["Tools"]
-                                            </BarDropdownToggle>
-                                            <BarDropdownMenu Background="Background.Dark">
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Secondary" Clicked="EditSplitPointsClicked">@_localizer["Split points"]</Button>
-                                                </BarDropdownItem>
-                                            </BarDropdownMenu>
-                                        </BarDropdown>
-                                    </BarItem>
-                                    <BarItem Padding="Padding.Is1.OnX">
-                                        <BarDropdown>
                                             <BarDropdownToggle Class="btn btn-danger">
                                                 @_localizer["Reset"]
                                             </BarDropdownToggle>
@@ -189,7 +178,6 @@ along with Foobar.  If not, see
 <OptionsDialog @ref="optionsDialog" />
 <ModalDialog @ref="modalDialog" />
 <ExportProfilesDialog @ref="exportProfilesDialog" />
-<EditSplitpoints @ref="editSplitpointsDialog" />
 
 @if (applicationOptions != null)
 {
@@ -225,12 +213,20 @@ along with Foobar.  If not, see
                 <CloseButton Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)" />
             </ModalHeader>
             <ModalBody>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false" />
-                    </FieldBody>
-                </Field>
+                <Validations>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                </Validations>
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!IsCuesheetExporable">@_localizer["Download cuesheet"]</Button>
@@ -251,7 +247,6 @@ along with Foobar.  If not, see
     OptionsDialog? optionsDialog;
     ModalDialog? modalDialog;
     ExportProfilesDialog? exportProfilesDialog;
-    EditSplitpoints? editSplitpointsDialog;
     Modal? modalDownloadProjectfile;
     Modal? modalDownloadCuesheet;
 
@@ -272,8 +267,15 @@ along with Foobar.  If not, see
     {
         get
         {
-            var generator = new CuesheetfileGenerator(_sessionStateContainer.Cuesheet);
-            return generator.CanWrite;
+            if (applicationOptions?.Validate(x => x.CuesheetFilename).Status != Model.Entity.ValidationStatus.Error)
+            {
+                var generator = new CuesheetfileGenerator(_sessionStateContainer.Cuesheet);
+                return generator.CanWrite;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
@@ -533,14 +535,6 @@ along with Foobar.  If not, see
         if (dialog != null)
         {
             await dialog.Show();
-        }
-    }
-
-    async Task EditSplitPointsClicked()
-    {
-        if (editSplitpointsDialog != null)
-        {
-            await editSplitpointsDialog.Show();
         }
     }
 }
