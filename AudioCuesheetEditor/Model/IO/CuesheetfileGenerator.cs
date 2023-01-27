@@ -65,6 +65,7 @@ namespace AudioCuesheetEditor.Model.IO
                 }
                 if (Cuesheet.SplitPoints != null)
                 {
+                    //TODO: Validate splitpoints before using them!
                     TimeSpan? previousSplitPointMoment = null;
                     var counter = 1;
                     foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
