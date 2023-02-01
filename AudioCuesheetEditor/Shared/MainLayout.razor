@@ -190,12 +190,20 @@ along with Foobar.  If not, see
                 <CloseButton Clicked="() => ControlModalDialog(modalDownloadProjectfile, false)" />
             </ModalHeader>
             <ModalBody>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.ProjectFilename" Immediate="false" />
-                    </FieldBody>
-                </Field>
+                <Validations>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.ProjectFilename, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit @bind-Text="applicationOptions.ProjectFilename" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                </Validations>
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@_localizer["Download projectfile"]</Button>
@@ -239,7 +247,6 @@ along with Foobar.  If not, see
 @code {
     Boolean displayMenuBar = false;
     HotKeysContext? hotKeysContext;
-    //TODO: applicationOptions are loaded once, but when saved they are not replaced!
     ApplicationOptions? applicationOptions;
     Boolean modalDownloadCuesheetVisible = false;
     Boolean modalDownloadProjectfileVisible = false;
@@ -292,6 +299,7 @@ along with Foobar.  If not, see
             .Add(Key.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         _sessionStateContainer.CurrentViewMode = applicationOptions.ViewMode;
 
@@ -302,6 +310,7 @@ along with Foobar.  If not, see
     {
         hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
         _traceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
@@ -422,9 +431,10 @@ along with Foobar.  If not, see
         {
             applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
+        //Save ApplicationOptions with information from modal popup!
+        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         var projectFile = new Projectfile(_sessionStateContainer.Cuesheet);
         var fileData = projectFile.GenerateFile();
-        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         await _blazorDownloadFileService.DownloadFile(applicationOptions.ProjectFilename, fileData, "text/plain");
         if (modalDownloadProjectfile != null)
         {
@@ -440,6 +450,8 @@ along with Foobar.  If not, see
         {
             applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
+        //Save ApplicationOptions with information from modal popup!
+        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         var generator = new CuesheetfileGenerator(_sessionStateContainer.Cuesheet);
         foreach (var result in generator.GenerateCuesheetFiles(applicationOptions.CuesheetFilename))
         {
@@ -535,6 +547,14 @@ along with Foobar.  If not, see
         if (dialog != null)
         {
             await dialog.Show();
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
         }
     }
 }
