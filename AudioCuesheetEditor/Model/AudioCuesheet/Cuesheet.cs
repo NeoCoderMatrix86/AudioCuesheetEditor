@@ -195,6 +195,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        public SplitPoint? GetSplitPointAtTrack(Track track)
+        {
+            SplitPoint? splitPointAtTrack = SplitPoints?.FirstOrDefault(x => track.Begin < x.Moment && track.End >= x.Moment);
+            return splitPointAtTrack;
+        }
+
         /// <summary>
         /// Get the previous linked track of a track object
         /// </summary>

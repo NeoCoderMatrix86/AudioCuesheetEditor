@@ -328,15 +328,27 @@ along with Foobar.  If not, see
                             case ViewMode.ViewModeFull:
                             case ViewMode.ViewModeImport:
                                 <TableRowCell>
-                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Begin, value)" Immediate="false">
-                                                <Feedback>
-                                                    <ValidationError />
-                                                </Feedback>
-                                            </TextEdit>
-                                        </Validation>
-                                    </Tooltip>
+                                    <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
+                                        @if (Cuesheet.GetSplitPointAtTrack(track) != null)
+                                        {
+                                            <Tooltip Text="@_localizer["A split point is currently set at the time of this track"]">
+                                                <Badge Color="Color.Info" Pill>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-signpost-split" viewBox="0 0 16 16">
+                                                        <path d="M7 7V1.414a1 1 0 0 1 2 0V2h5a1 1 0 0 1 .8.4l.975 1.3a.5.5 0 0 1 0 .6L14.8 5.6a1 1 0 0 1-.8.4H9v10H7v-5H2a1 1 0 0 1-.8-.4L.225 9.3a.5.5 0 0 1 0-.6L1.2 7.4A1 1 0 0 1 2 7h5zm1 3V8H2l-.75 1L2 10h6zm0-5h6l.75-1L14 3H8v2z" />
+                                                    </svg>
+                                                </Badge>
+                                            </Tooltip>
+                                        }
+                                        <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                            <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
+                                                <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Begin, value)" Immediate="false">
+                                                    <Feedback>
+                                                        <ValidationError />
+                                                    </Feedback>
+                                                </TextEdit>
+                                            </Validation>
+                                        </Tooltip>
+                                    </Div>
                                 </TableRowCell>
                                 <TableRowCell>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
@@ -373,7 +385,7 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Display SplitPoints if present
+    //TODO: Refresh if a splitpoint is set
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();
