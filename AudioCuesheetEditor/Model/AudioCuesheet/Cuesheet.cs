@@ -185,6 +185,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get => splitPoints;
             set
             {
+                if ((value != null) && (value.Any(x => x.Cuesheet != this)))
+                {
+                    throw new ArgumentException(nameof(SplitPoints));
+                }
                 var previousValue = splitPoints;
                 splitPoints = value;
                 FireEvents(previousValue);

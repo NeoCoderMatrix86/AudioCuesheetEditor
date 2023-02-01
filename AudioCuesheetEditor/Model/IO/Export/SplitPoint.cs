@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 
 namespace AudioCuesheetEditor.Model.IO.Export
@@ -21,6 +22,13 @@ namespace AudioCuesheetEditor.Model.IO.Export
     {
         //TODO: more details like artist, title and audiofile
         private TimeSpan? moment;
+
+        public SplitPoint(Cuesheet cuesheet)
+        {
+            Cuesheet = cuesheet;
+        }
+
+        public Cuesheet Cuesheet { get; }
 
         public TimeSpan? Moment 
         { 
@@ -45,7 +53,15 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         validationMessages ??= new();
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Moment)));
                     }
-                    //TODO: Limit input cuesheet end
+                    else
+                    {
+                        var maxEnd = Cuesheet.Tracks.Max(x => x.End);
+                        if (Moment > maxEnd)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} should be equal or less to '{1}'!", nameof(Moment), maxEnd));
+                        }
+                    }
                     break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);

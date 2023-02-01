@@ -302,9 +302,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             }
             var splitPoints = new List<SplitPoint>()
             {
-                new SplitPoint() { Moment = new TimeSpan(2, 0, 0) },
-                new SplitPoint() { Moment = new TimeSpan(0, 30, 0) },
-                new SplitPoint() { Moment = new TimeSpan(1, 0, 0) }
+                new SplitPoint(cuesheet) { Moment = new TimeSpan(2, 0, 0) },
+                new SplitPoint(cuesheet) { Moment = new TimeSpan(0, 30, 0) },
+                new SplitPoint(cuesheet) { Moment = new TimeSpan(1, 0, 0) }
             };
             cuesheet.SplitPoints = splitPoints;
             var generator = new CuesheetfileGenerator(cuesheet);

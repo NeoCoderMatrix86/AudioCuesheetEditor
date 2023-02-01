@@ -102,7 +102,7 @@ along with Foobar.  If not, see
 
     Task AddSplitPointClicked()
     {
-        var splitPoint = new SplitPoint();
+        var splitPoint = new SplitPoint(_sessionStateContainer.Cuesheet);
         _sessionStateContainer.Cuesheet.SplitPoints ??= new();
         _sessionStateContainer.Cuesheet.SplitPoints.Add(splitPoint);
         return Task.CompletedTask;

@@ -32,6 +32,7 @@
     "{0} must have a filename!": "{0} muss einen Dateinamen haben!",
     "CuesheetFilename": "Cuesheet Dateiname",
     "RecordedAudiofilename": "Dateiname für aufgenommenes Audio",
-    "ProjectFilename": "Projektdateiname"
+    "ProjectFilename": "Projektdateiname",
+    "{0} should be equal or less to '{1}'!": "{0} sollte kleiner oder gleich '{1}' sein!"
   }
 }
