@@ -65,16 +65,18 @@ namespace AudioCuesheetEditor.Model.IO
                 }
                 if (Cuesheet.SplitPoints != null)
                 {
-                    //TODO: Validate splitpoints before using them!
                     TimeSpan? previousSplitPointMoment = null;
                     var counter = 1;
                     foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
                     {
-                        var content = WriteCuesheet(previousSplitPointMoment, splitPoint.Moment);
-                        var name = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, Cuesheet.FileExtension);
-                        cuesheetfiles.Add(new Cuesheetfile() { Filename = name, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
-                        previousSplitPointMoment = splitPoint.Moment;
-                        counter++;
+                        if (splitPoint.Validate().Status == ValidationStatus.Success)
+                        {
+                            var content = WriteCuesheet(previousSplitPointMoment, splitPoint.Moment);
+                            var name = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, Cuesheet.FileExtension);
+                            cuesheetfiles.Add(new Cuesheetfile() { Filename = name, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
+                            previousSplitPointMoment = splitPoint.Moment;
+                            counter++;
+                        }
                     }
                     var lastName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, Cuesheet.FileExtension);
                     //Attach the last part after the SplitPoint
