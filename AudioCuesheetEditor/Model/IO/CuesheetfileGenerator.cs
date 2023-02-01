@@ -123,44 +123,47 @@ namespace AudioCuesheetEditor.Model.IO
                     tracks = Cuesheet.Tracks.Where(x => x.Begin <= to).OrderBy(x => x.Position);
                 }
             }
-            //Position and begin should always start from 0 even with splitpoints
-            int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);            
-            foreach (var track in tracks)
+            if (tracks.Any())
             {
-                builder.AppendLine(String.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position + positionDifference, CuesheetConstants.CuesheetTrackAudio));
-                builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
-                builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
-                if (track.Flags.Count > 0)
+                //Position and begin should always start from 0 even with splitpoints
+                int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);
+                foreach (var track in tracks)
                 {
-                    builder.AppendLine(String.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
-                }
-                if (track.PreGap.HasValue)
-                {
-                    builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, (track.PreGap.Value.Milliseconds * 75) / 1000));
-                }
-                if (track.Begin.HasValue)
-                {
-                    var begin = track.Begin.Value;
-                    if (from != null)
+                    builder.AppendLine(String.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position + positionDifference, CuesheetConstants.CuesheetTrackAudio));
+                    builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
+                    builder.AppendLine(String.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
+                    if (track.Flags.Count > 0)
                     {
-                        if (from >= track.Begin)
-                        {
-                            begin = TimeSpan.Zero;
-                        }
-                        else
-                        {
-                            begin = track.Begin.Value - from.Value;
-                        }
+                        builder.AppendLine(String.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
                     }
-                    builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(begin.TotalMinutes), begin.Seconds, begin.Milliseconds * 75 / 1000));
-                }
-                else
-                {
-                    throw new NullReferenceException(String.Format("{0} may not be null!", nameof(Track.Begin)));
-                }
-                if (track.PostGap.HasValue)
-                {
-                    builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, (track.PostGap.Value.Milliseconds * 75) / 1000));
+                    if (track.PreGap.HasValue)
+                    {
+                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, (track.PreGap.Value.Milliseconds * 75) / 1000));
+                    }
+                    if (track.Begin.HasValue)
+                    {
+                        var begin = track.Begin.Value;
+                        if (from != null)
+                        {
+                            if (from >= track.Begin)
+                            {
+                                begin = TimeSpan.Zero;
+                            }
+                            else
+                            {
+                                begin = track.Begin.Value - from.Value;
+                            }
+                        }
+                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(begin.TotalMinutes), begin.Seconds, begin.Milliseconds * 75 / 1000));
+                    }
+                    else
+                    {
+                        throw new NullReferenceException(String.Format("{0} may not be null!", nameof(Track.Begin)));
+                    }
+                    if (track.PostGap.HasValue)
+                    {
+                        builder.AppendLine(String.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, (track.PostGap.Value.Milliseconds * 75) / 1000));
+                    }
                 }
             }
             return builder.ToString();
