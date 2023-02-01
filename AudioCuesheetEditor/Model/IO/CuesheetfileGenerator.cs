@@ -105,6 +105,7 @@ namespace AudioCuesheetEditor.Model.IO
             }
             builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, Cuesheet.Title));
             builder.AppendLine(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, Cuesheet.Artist));
+            //TODO: Split Audiofile!
             builder.AppendLine(String.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, Cuesheet.Audiofile?.Name, Cuesheet.Audiofile?.AudioFileType));
             IEnumerable<Track> tracks = Cuesheet.Tracks.OrderBy(x => x.Position);
             if ((from != null) && (to != null))
