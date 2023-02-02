@@ -63,7 +63,7 @@ namespace AudioCuesheetEditor.Model.IO
                 {
                     filename = Cuesheetfile.DefaultFilename;
                 }
-                if (Cuesheet.SplitPoints != null)
+                if (Cuesheet.SplitPoints.Count != 0)
                 {
                     TimeSpan? previousSplitPointMoment = null;
                     var counter = 1;

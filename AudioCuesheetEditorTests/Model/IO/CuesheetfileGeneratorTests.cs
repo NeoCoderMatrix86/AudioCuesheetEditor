@@ -300,13 +300,12 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var splitPoints = new List<SplitPoint>()
-            {
-                new SplitPoint(cuesheet) { Moment = new TimeSpan(2, 0, 0) },
-                new SplitPoint(cuesheet) { Moment = new TimeSpan(0, 30, 0) },
-                new SplitPoint(cuesheet) { Moment = new TimeSpan(1, 0, 0) }
-            };
-            cuesheet.SplitPoints = splitPoints;
+            var splitPoint = cuesheet.AddSplitPoint();
+            splitPoint.Moment = new TimeSpan(2, 0, 0);
+            splitPoint = cuesheet.AddSplitPoint();
+            splitPoint.Moment = new TimeSpan(0, 30, 0);
+            splitPoint = cuesheet.AddSplitPoint();
+            splitPoint.Moment = new TimeSpan(1, 0, 0);
             var generator = new CuesheetfileGenerator(cuesheet);
             Assert.IsTrue(generator.CanWrite);
             var generatedFiles = generator.GenerateCuesheetFiles("Unit test.cue");
