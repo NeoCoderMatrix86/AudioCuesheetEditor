@@ -385,7 +385,6 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Refresh if a splitpoint is set
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();
@@ -439,6 +438,7 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
         _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
         DetachTrackFromValidateablePropertyChanged();
+        DetachCuesheetFromSplitPointsAddedRemoved();
     }
 
     protected override async Task OnInitializedAsync()
@@ -460,6 +460,7 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
 
         AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
     }
 
     Task OnAddTrackClicked()
@@ -614,6 +615,7 @@ along with Foobar.  If not, see
         selectedTracks.Clear();
         StateHasChanged();
         AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
     }
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
@@ -750,6 +752,44 @@ along with Foobar.  If not, see
             {
                 validation.ValidateAll().GetAwaiter().GetResult();
             }
+        }
+    }
+
+    void AttachCuesheetToSplitPointsAddedRemoved()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.SplitPointAdded += Cuesheet_SplitPointAdded;
+            Cuesheet.SplitPointRemoved += Cuesheet_SplitPointRemoved;
+        }
+    }
+
+    void DetachCuesheetFromSplitPointsAddedRemoved()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.SplitPointAdded -= Cuesheet_SplitPointAdded;
+            Cuesheet.SplitPointRemoved -= Cuesheet_SplitPointRemoved;
+        }
+    }
+
+    void Cuesheet_SplitPointAdded(object? sender, SplitPointAddRemoveEventArgs args)
+    {
+        args.SplitPoint.ValidateablePropertyChanged += SplitPoint_ValidateablePropertyChanged;
+    }
+
+    void Cuesheet_SplitPointRemoved(object? sender, SplitPointAddRemoveEventArgs args)
+    {
+        args.SplitPoint.ValidateablePropertyChanged -= SplitPoint_ValidateablePropertyChanged;
+    }
+
+    void SplitPoint_ValidateablePropertyChanged(object? sender, string property)
+    {
+        switch (property)
+        {
+            case nameof(SplitPoint.Moment):
+                StateHasChanged();
+                break;
         }
     }
 }

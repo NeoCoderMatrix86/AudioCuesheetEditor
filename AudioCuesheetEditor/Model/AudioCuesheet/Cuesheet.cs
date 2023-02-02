@@ -36,8 +36,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Track = track;
         }
 
-        public Track Track { get; private set; }
+        public Track Track { get; }
     }
+
+    public class SplitPointAddRemoveEventArgs : EventArgs
+    {
+        public SplitPointAddRemoveEventArgs(SplitPoint splitPoint)
+        {
+            SplitPoint = splitPoint;
+        }
+
+        public SplitPoint SplitPoint { get; }
+    }
+
     public class Cuesheet : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
     {
         public const String MimeType = "text/*";
@@ -53,17 +64,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
-        private List<SplitPoint>? splitPoints;
+        private List<SplitPoint> splitPoints;
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
+        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointAdded;
+        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointRemoved;
 
         public Cuesheet()
         {
             tracks = new();
             catalogueNumber = new();
+            splitPoints = new();
         }
 
         [JsonInclude]
@@ -180,18 +194,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public Boolean IsImporting { get; private set; }
 
-        public List<SplitPoint>? SplitPoints 
+        public IReadOnlyCollection<SplitPoint> SplitPoints 
         {
             get => splitPoints;
-            set
+            private set
             {
-                if ((value != null) && (value.Any(x => x.Cuesheet != this)))
+                if (value.Any(x => x.Cuesheet != this))
                 {
                     throw new ArgumentException(nameof(SplitPoints));
                 }
-                var previousValue = splitPoints;
-                splitPoints = value;
-                FireEvents(previousValue);
+                splitPoints = value.ToList();
+            }
+        }
+
+        public SplitPoint AddSplitPoint()
+        {
+            var previousValue = splitPoints;
+            var splitPoint = new SplitPoint(this);
+            splitPoints.Add(splitPoint);
+            SplitPointAdded?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
+            OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
+            return splitPoint;
+        }
+
+        public void RemoveSplitPoint(SplitPoint splitPoint)
+        {
+            var previousValue = splitPoints;
+            if (splitPoints.Remove(splitPoint))
+            {
+                OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
+                SplitPointRemoved?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
             }
         }
 
