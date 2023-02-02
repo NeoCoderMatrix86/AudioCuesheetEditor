@@ -312,9 +312,17 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.AreEqual(4, generatedFiles.Count);
             var position = 1;
             var counter = 1;
+            //Check split according to split points
+            Assert.IsNull(generatedFiles.First().Begin);
+            Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
+            Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.ElementAt(1).Begin);
+            Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
+            Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(2).Begin);
+            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(2).End);
+            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(3).Begin);
+            Assert.IsNull(generatedFiles.Last().End);
             foreach (var generatedFile in generatedFiles)
             {
-                //TODO: Check for begin and end according to splitpoints
                 Assert.AreEqual(String.Format("Unit test({0}).cue", counter), generatedFile.Filename);
                 counter++;
                 var content = generatedFile.Content;
