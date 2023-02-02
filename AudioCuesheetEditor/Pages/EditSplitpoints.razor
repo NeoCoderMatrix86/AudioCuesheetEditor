@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 @inject DateTimeUtility _dateTimeUtility
 @inject ITextLocalizerService _localizationService
 
-<Validations>
+<Validations @ref="validations">
     <Buttons Role="ButtonsRole.Toolbar">
         <Buttons Margin="Margin.Is2.FromEnd">
             <Button Color="Color.Primary" Clicked="AddSplitPointClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
@@ -80,16 +80,25 @@ along with Foobar.  If not, see
 </Validations>
 
 @code {
-    //TODO: Refresh if end of track is edited (validation muss be done again)
+    Validations? validations;
+
     public void Dispose()
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        foreach (var track in _sessionStateContainer.Cuesheet.Tracks)
+        {
+            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+        }
+        _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
     }
 
     void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
@@ -107,5 +116,28 @@ along with Foobar.  If not, see
     {
         _sessionStateContainer.Cuesheet.RemoveSplitPoint(splitPoint);
         return Task.CompletedTask;
+    }
+
+    void Cuesheet_TrackAdded(object? sender, TrackAddRemoveEventArgs args)
+    {
+        args.Track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+        validations?.ValidateAll().GetAwaiter().GetResult();
+    }
+
+    void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
+    {
+        args.Track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+        validations?.ValidateAll().GetAwaiter().GetResult();
+    }
+
+    void Track_ValidateablePropertyChanged(object? sender, string property)
+    {
+        switch (property)
+        {
+            case nameof(Track.Begin):
+            case nameof(Track.End):
+                validations?.ValidateAll().GetAwaiter().GetResult();
+                break;
+        }
     }
 }
