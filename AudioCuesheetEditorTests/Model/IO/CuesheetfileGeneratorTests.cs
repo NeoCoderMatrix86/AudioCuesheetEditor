@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

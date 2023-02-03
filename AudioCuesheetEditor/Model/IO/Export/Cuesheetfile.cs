@@ -19,17 +19,17 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
 using Microsoft.AspNetCore.Components.Forms;
 
-namespace AudioCuesheetEditor.Model.IO
+namespace AudioCuesheetEditor.Model.IO.Export
 {
     public class Cuesheetfile
     {
-        public static readonly String DefaultFilename = "Cuesheet.cue";
+        public static readonly string DefaultFilename = "Cuesheet.cue";
 
-        public static ValidationResult ValidateFilename(String? filename)
+        public static ValidationResult ValidateFilename(string? filename)
         {
             ValidationStatus validationStatus = ValidationStatus.Success;
             List<ValidationMessage>? validationMessages = null;
-            if (String.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(filename))
             {
                 validationMessages ??= new();
                 validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ApplicationOptions.CuesheetFilename)));
@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Model.IO
                     validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ApplicationOptions.CuesheetFilename), Cuesheet.FileExtension));
                 }
                 var filenameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
-                if (String.IsNullOrEmpty(filenameWithoutExtension))
+                if (string.IsNullOrEmpty(filenameWithoutExtension))
                 {
                     validationMessages ??= new();
                     validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ApplicationOptions.CuesheetFilename)));
@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.Model.IO
             return ValidationResult.Create(validationStatus, validationMessages);
         }
 
-        public String Filename { get; set; } = DefaultFilename;
+        public string Filename { get; set; } = DefaultFilename;
         public byte[]? Content { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
