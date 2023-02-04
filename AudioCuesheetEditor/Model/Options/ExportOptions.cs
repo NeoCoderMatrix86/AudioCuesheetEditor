@@ -23,20 +23,20 @@ namespace AudioCuesheetEditor.Model.Options
         { 
             new Exportprofile()
             {
-                FileName = "YouTube.txt",
+                Filename = "YouTube.txt",
                 Name = "YouTube",
                 SchemeHead = new Exportscheme() { Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%" },
                 SchemeTracks = new Exportscheme() { Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%" }
             },
             new Exportprofile()
             {
-                FileName = "Mixcloud.txt",
+                Filename = "Mixcloud.txt",
                 Name = "Mixcloud",
                 SchemeTracks = new Exportscheme() { Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%" }
             },
             new Exportprofile()
             {
-                FileName = "Export.csv",
+                Filename = "Export.csv",
                 Name = "CSV Export",
                 SchemeHead = new Exportscheme() { Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;" },
                 SchemeTracks = new Exportscheme() { Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%" },
@@ -44,7 +44,7 @@ namespace AudioCuesheetEditor.Model.Options
             },
             new Exportprofile()
             {
-                FileName = "Tracks.txt",
+                Filename = "Tracks.txt",
                 Name = "Tracks only",
                 SchemeTracks = new Exportscheme() { Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%" },
             }

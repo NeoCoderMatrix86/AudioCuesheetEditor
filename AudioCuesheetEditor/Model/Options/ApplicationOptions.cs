@@ -57,7 +57,7 @@ namespace AudioCuesheetEditor.Model.Options
                 return cultures.AsReadOnly();
             }
         }
-        public String? CuesheetFilename { get; set; } = Cuesheetfile.DefaultFilename;
+        public String? CuesheetFilename { get; set; } = Exportfile.DefaultCuesheetFilename;
         public String? CultureName { get; set; } = DefaultCultureName;
         [JsonIgnore]
         public CultureInfo Culture
@@ -121,7 +121,28 @@ namespace AudioCuesheetEditor.Model.Options
             switch (property)
             {
                 case nameof(CuesheetFilename):
-                    return Cuesheetfile.ValidateFilename(CuesheetFilename);
+                    validationStatus = ValidationStatus.Success;
+                    if (string.IsNullOrEmpty(CuesheetFilename))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(CuesheetFilename)));
+                    }
+                    else
+                    {
+                        var extension = Path.GetExtension(CuesheetFilename);
+                        if (extension.Equals(Cuesheet.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(CuesheetFilename), Cuesheet.FileExtension));
+                        }
+                        var filenameWithoutExtension = Path.GetFileNameWithoutExtension(CuesheetFilename);
+                        if (string.IsNullOrEmpty(filenameWithoutExtension))
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(CuesheetFilename)));
+                        }
+                    }
+                    break;
                 case nameof(RecordedAudiofilename):
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(RecordedAudiofilename))

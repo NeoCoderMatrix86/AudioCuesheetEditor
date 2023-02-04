@@ -117,50 +117,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
             set { schemeType = value; OnValidateablePropertyChanged(); }
         }
         
-        public String? GetExportResult(ICuesheetEntity cuesheetEntity)
-        {
-            String? result = null;
-            if (String.IsNullOrEmpty(Scheme) == false)
-            {
-                switch (SchemeType)
-                {
-                    case Schemetype.Header:
-                    case Schemetype.Footer:
-                        var cuesheet = (Cuesheet)cuesheetEntity;
-                        result = Scheme
-                            .Replace(SchemeCuesheetArtist, cuesheet.Artist)
-                            .Replace(SchemeCuesheetTitle, cuesheet.Title)
-                            .Replace(SchemeCuesheetAudiofile, cuesheet.Audiofile?.Name)
-                            .Replace(SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
-                            .Replace(SchemeCuesheetCatalogueNumber, cuesheet.Cataloguenumber?.Value)
-                            .Replace(SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(SchemeTime, DateTime.Now.ToLongTimeString());
-                        break;
-                    case Schemetype.Body:
-                        var track = (Track)cuesheetEntity;
-                        result = Scheme
-                            .Replace(SchemeTrackArtist, track.Artist)
-                            .Replace(SchemeTrackTitle, track.Title)
-                            .Replace(SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
-                            .Replace(SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : String.Empty)
-                            .Replace(SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(SchemeTime, DateTime.Now.ToLongTimeString());
-                        break;
-                    default:
-                        //Nothing to do
-                        break;
-                }
-            }
-            return result;
-        }
-
         protected override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;

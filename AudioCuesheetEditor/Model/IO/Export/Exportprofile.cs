@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             {
                 SchemeType = Schemetype.Footer
             };
-            FileName = DefaultFileName;
+            Filename = DefaultFileName;
             var random = new Random();
             Name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
@@ -46,44 +46,16 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public Exportscheme SchemeHead { get; set; }
         public Exportscheme SchemeTracks { get; set; }
         public Exportscheme SchemeFooter { get; set; }
-        public String FileName { get; set; }
+        //TODO: Filename should be validated!
+        public String Filename { get; set; }
         [JsonIgnore]
-        public Boolean IsExportable
+        public Boolean CanWrite
         {
             get
             {
                 return (SchemeHead.Validate().Status == Entity.ValidationStatus.Success)
                     && (SchemeTracks.Validate().Status == Entity.ValidationStatus.Success)
                     && (SchemeFooter.Validate().Status == Entity.ValidationStatus.Success);
-                
-            }
-        }
-        public byte[]? GenerateExport(Cuesheet cuesheet)
-        {
-            //TODO: React to SplitPoints
-            if (IsExportable == true)
-            {
-                var builder = new StringBuilder();
-                if (SchemeHead != null)
-                {
-                    builder.AppendLine(SchemeHead.GetExportResult(cuesheet));
-                }
-                if (SchemeTracks != null)
-                {
-                    foreach (var track in cuesheet.Tracks)
-                    {
-                        builder.AppendLine(SchemeTracks.GetExportResult(track));
-                    }
-                }
-                if (SchemeFooter != null)
-                {
-                    builder.AppendLine(SchemeFooter.GetExportResult(cuesheet));
-                }
-                return Encoding.UTF8.GetBytes(builder.ToString());
-            }
-            else
-            {
-                return null;
             }
         }
     }

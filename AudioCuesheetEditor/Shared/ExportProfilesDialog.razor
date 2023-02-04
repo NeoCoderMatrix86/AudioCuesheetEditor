@@ -57,7 +57,7 @@ along with Foobar.  If not, see
                     <Field Horizontal="true">
                         <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is9">
-                            <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.FileName" />
+                            <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.Filename" />
                         </FieldBody>
                     </Field>
                     <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeHead, x => x.Scheme, _validationMessageLocalizer, token)">
@@ -162,8 +162,8 @@ along with Foobar.  If not, see
                 }
             </ModalBody>
             <ModalFooter>
-                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true)), "Exportprofile is not exportable. Please check validationerrors and solve errors in order to download export.")">
-                    <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))" Clicked="OnDownloadExportProfileClicked">@_localizer["Download export"]</Button>
+                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!((SelectedExportProfile != null) && ExportPossible), "Exportprofile is not exportable. Please check validationerrors and solve errors in order to download export.")">
+                    <Button Color="Color.Primary" Disabled="!((SelectedExportProfile != null) && ExportPossible)" Clicked="OnDownloadExportProfileClicked">@_localizer["Download export"]</Button>
                 </Tooltip>
                 <Button Color="Color.Secondary" Clicked="ModalExportProfilesCloseClicked">@_localizer["Close"]</Button>
             </ModalFooter>
@@ -177,6 +177,7 @@ along with Foobar.  If not, see
     Guid? selectedExportProfileId;
     HotKeysContext? hotKeysContext;
     Boolean modalExportProfilesVisible = false;
+    ExportfileGenerator? exportfileGenerator;
 
     public class SelectExportProfileModel
     {
@@ -234,12 +235,28 @@ along with Foobar.  If not, see
             var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
             exportProfileModels = options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
             selectedExportProfileId = exportProfileModels.First().Id;
+            UpdateExportfileGenerator();
         }
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
+        exportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
+
         await base.OnInitializedAsync();
+    }
+
+    Boolean ExportPossible
+    {
+        get
+        {
+            Boolean exportPossible = false;
+            if (exportfileGenerator != null)
+            {
+                exportPossible = exportfileGenerator.CanWrite(ExportType.Exportprofile);
+            }
+            return exportPossible;
+        }
     }
 
     async ValueTask OnEnterKeyDown()
@@ -267,6 +284,7 @@ along with Foobar.  If not, see
         list.Add(new SelectExportProfileModel(new Exportprofile()));
         exportProfileModels = list.AsReadOnly();
         selectedExportProfileId = list.Last().Id;
+        UpdateExportfileGenerator();
     }
 
     private void OnDeleteExportProfileClicked()
@@ -278,6 +296,7 @@ along with Foobar.  If not, see
         if (exportProfileModels.Count > 0)
         {
             selectedExportProfileId = exportProfileModels.First().Id;
+            UpdateExportfileGenerator();
         }
     }
 
@@ -295,10 +314,16 @@ along with Foobar.  If not, see
     async Task OnDownloadExportProfileClicked()
     {
         _logger.LogInformation("OnDownloadExportProfileClicked with SelectedExportProfile = {0}", SelectedExportProfile);
-        if ((SelectedExportProfile != null) && (SelectedExportProfile.IsExportable == true))
+        if ((SelectedExportProfile != null) && ExportPossible)
         {
             await SaveExportProfiles();
-            await _blazorDownloadFileService.DownloadFile(SelectedExportProfile.FileName, SelectedExportProfile.GenerateExport(_sessionStateContainer.Cuesheet), contentType: "application/octet-stream");
+            if (exportfileGenerator != null)
+            {
+                foreach (var result in exportfileGenerator.GenerateExportfiles(ExportType.Exportprofile))
+                {
+                    await _blazorDownloadFileService.DownloadFile(result.Filename, result.Content, "application/octet-stream");
+                }
+            }
             if (modalExportProfiles != null)
             {
                 await modalExportProfiles.Hide();
@@ -310,6 +335,7 @@ along with Foobar.  If not, see
     {
         _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
         selectedExportProfileId = newValue;
+        UpdateExportfileGenerator();
         StateHasChanged();
     }
 
@@ -333,5 +359,13 @@ along with Foobar.  If not, see
     private void ModalExportProfiles_VisibleChanged(Boolean visible)
     {
         modalExportProfilesVisible = visible;
+    }
+
+    void UpdateExportfileGenerator()
+    {
+        if (exportfileGenerator != null)
+        {
+            exportfileGenerator.Exportprofile = SelectedExportProfile;
+        }
     }
 }
