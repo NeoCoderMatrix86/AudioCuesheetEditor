@@ -507,7 +507,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Audiofile)));
                     }
                     break;
-                //TODO: Validate SplitPoints
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }
