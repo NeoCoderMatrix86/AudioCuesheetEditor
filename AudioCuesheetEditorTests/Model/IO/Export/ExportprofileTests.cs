@@ -34,27 +34,21 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
         [TestMethod()]
         public void ValidateTest()
         {
-            var exportprofile = new Exportprofile();
-            exportprofile.Filename = String.Empty;
+            var exportprofile = new Exportprofile
+            {
+                Filename = String.Empty
+            };
             Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(x => x.Filename).Status);
             exportprofile.Filename = "Test123";
             Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.Filename).Status);
-        }
-
-        [TestMethod()]
-        public void CanWriteTest()
-        {
-            var exportProfile = new Exportprofile();
-            exportProfile.SchemeHead.Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
-            Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeHead.Validate().Status);
-            exportProfile.SchemeTracks.Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
-            Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeTracks.Validate().Status);
-            exportProfile.SchemeFooter.Scheme = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Success, exportProfile.SchemeFooter.Validate().Status);
-            Assert.IsTrue(exportProfile.CanWrite);
-            exportProfile.SchemeFooter.Scheme = "Exported %Track.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Error, exportProfile.SchemeFooter.Validate().Status);
-            Assert.IsFalse(exportProfile.CanWrite);
+            exportprofile.SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.SchemeHead).Status);
+            exportprofile.SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.SchemeTracks).Status);
+            exportprofile.SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.SchemeFooter).Status);
+            exportprofile.SchemeFooter = "Exported %Track.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
+            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(x => x.SchemeFooter).Status);
         }
     }
 }

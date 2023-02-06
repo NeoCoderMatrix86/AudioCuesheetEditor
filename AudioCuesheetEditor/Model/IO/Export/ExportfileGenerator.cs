@@ -65,7 +65,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             && (Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
                             && Cuesheet.Tracks.All(x => x.Validate().Status != ValidationStatus.Error)
                             && (ApplicationOptions?.Validate(x => x.CuesheetFilename).Status != ValidationStatus.Error)
-                            && Exportprofile.CanWrite;
+                            && (Exportprofile.Validate().Status != ValidationStatus.Error);
                     }
                     break;
             }
@@ -246,7 +246,17 @@ namespace AudioCuesheetEditor.Model.IO.Export
             var builder = new StringBuilder();
             if (Exportprofile != null)
             {
-                builder.AppendLine(WriteExportscheme(Exportprofile.SchemeHead, Cuesheet));
+                //TODO: Split Audiofile!
+                var header = Exportprofile.SchemeHead
+                    .Replace(Exportprofile.SchemeCuesheetArtist, Cuesheet.Artist)
+                    .Replace(Exportprofile.SchemeCuesheetTitle, Cuesheet.Title)
+                    .Replace(Exportprofile.SchemeCuesheetAudiofile, Cuesheet.Audiofile?.Name)
+                    .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.FileName)
+                    .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
+                    .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
+                    .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                    .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
+                builder.AppendLine(header);
                 IEnumerable<Track> tracks = Cuesheet.Tracks.OrderBy(x => x.Position);
                 if (from != null && to != null)
                 {
@@ -268,57 +278,35 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     //TODO Position and begin should always start from 0 even with splitpoints
                     foreach (var track in tracks)
                     {
-                        builder.AppendLine(WriteExportscheme(Exportprofile.SchemeTracks, track));
+                        var trackLine = Exportprofile.SchemeTracks
+                            .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
+                            .Replace(Exportprofile.SchemeTrackTitle, track.Title)
+                            .Replace(Exportprofile.SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
+                            .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
+                            .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                            .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
+                        builder.AppendLine(trackLine);
                     }
                 }
-                builder.AppendLine(WriteExportscheme(Exportprofile.SchemeFooter, Cuesheet));
+                //TODO: Split Audiofile!
+                var footer = Exportprofile.SchemeFooter
+                    .Replace(Exportprofile.SchemeCuesheetArtist, Cuesheet.Artist)
+                    .Replace(Exportprofile.SchemeCuesheetTitle, Cuesheet.Title)
+                    .Replace(Exportprofile.SchemeCuesheetAudiofile, Cuesheet.Audiofile?.Name)
+                    .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.FileName)
+                    .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
+                    .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
+                    .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                    .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
+                builder.AppendLine(footer);
             }
             return builder.ToString();
-        }
-
-        private static String WriteExportscheme(Exportscheme exportscheme, ICuesheetEntity cuesheetEntity)
-        {
-            var result = String.Empty;
-            if (String.IsNullOrEmpty(exportscheme.Scheme) == false)
-            {
-                switch (exportscheme.SchemeType)
-                {
-                    case Schemetype.Header:
-                    case Schemetype.Footer:
-                        var cuesheet = (Cuesheet)cuesheetEntity;
-                        //TODO: Split Audiofile!
-                        result = exportscheme.Scheme
-                            .Replace(Exportscheme.SchemeCuesheetArtist, cuesheet.Artist)
-                            .Replace(Exportscheme.SchemeCuesheetTitle, cuesheet.Title)
-                            .Replace(Exportscheme.SchemeCuesheetAudiofile, cuesheet.Audiofile?.Name)
-                            .Replace(Exportscheme.SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
-                            .Replace(Exportscheme.SchemeCuesheetCatalogueNumber, cuesheet.Cataloguenumber?.Value)
-                            .Replace(Exportscheme.SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(Exportscheme.SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(Exportscheme.SchemeTime, DateTime.Now.ToLongTimeString());
-                        break;
-                    case Schemetype.Body:
-                        var track = (Track)cuesheetEntity;
-                        result = exportscheme.Scheme
-                            .Replace(Exportscheme.SchemeTrackArtist, track.Artist)
-                            .Replace(Exportscheme.SchemeTrackTitle, track.Title)
-                            .Replace(Exportscheme.SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
-                            .Replace(Exportscheme.SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
-                            .Replace(Exportscheme.SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
-                            .Replace(Exportscheme.SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
-                            .Replace(Exportscheme.SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
-                            .Replace(Exportscheme.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
-                            .Replace(Exportscheme.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : String.Empty)
-                            .Replace(Exportscheme.SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(Exportscheme.SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(Exportscheme.SchemeTime, DateTime.Now.ToLongTimeString());
-                        break;
-                    default:
-                        //Nothing to do
-                        break;
-                }
-            }
-            return result;
         }
     }
 }

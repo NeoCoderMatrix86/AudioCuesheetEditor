@@ -25,28 +25,28 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 Filename = "YouTube.txt",
                 Name = "YouTube",
-                SchemeHead = new Exportscheme() { Scheme = "%Cuesheet.Artist% - %Cuesheet.Title%" },
-                SchemeTracks = new Exportscheme() { Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%" }
+                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
             },
             new Exportprofile()
             {
                 Filename = "Mixcloud.txt",
                 Name = "Mixcloud",
-                SchemeTracks = new Exportscheme() { Scheme = "%Track.Artist% - %Track.Title% %Track.Begin%" }
+                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
             },
             new Exportprofile()
             {
                 Filename = "Export.csv",
                 Name = "CSV Export",
-                SchemeHead = new Exportscheme() { Scheme = "%Cuesheet.Artist%;%Cuesheet.Title%;" },
-                SchemeTracks = new Exportscheme() { Scheme = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%" },
-                SchemeFooter = new Exportscheme() { Scheme = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)" }
+                SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;",
+                SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
+                SchemeFooter = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)"
             },
             new Exportprofile()
             {
                 Filename = "Tracks.txt",
                 Name = "Tracks only",
-                SchemeTracks = new Exportscheme() { Scheme = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%" },
+                SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
             }
         };
         public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
