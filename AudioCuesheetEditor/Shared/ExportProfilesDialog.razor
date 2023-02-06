@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
-<Validations>
+<Validations @ref="validations">
     <Modal @ref="modalExportProfiles" VisibleChanged="ModalExportProfiles_VisibleChanged">
         <ModalContent Centered="true" Size="ModalSize.ExtraLarge">
             <ModalHeader>
@@ -54,12 +54,18 @@ along with Foobar.  If not, see
                             <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name" />
                         </FieldBody>
                     </Field>
-                    <Field Horizontal="true">
-                        <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                        <FieldBody ColumnSize="ColumnSize.Is9">
-                            <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.Filename" />
-                        </FieldBody>
-                    </Field>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.Filename">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
                     <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportscheme>.Validate(args, SelectedExportProfile.SchemeHead, x => x.Scheme, _validationMessageLocalizer, token)">
                         <Field Horizontal="true">
                             <FieldLabel ColumnSize="ColumnSize.Is3">
@@ -178,6 +184,7 @@ along with Foobar.  If not, see
     HotKeysContext? hotKeysContext;
     Boolean modalExportProfilesVisible = false;
     ExportfileGenerator? exportfileGenerator;
+    Validations? validations;
 
     public class SelectExportProfileModel
     {
@@ -336,6 +343,7 @@ along with Foobar.  If not, see
         _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
         selectedExportProfileId = newValue;
         UpdateExportfileGenerator();
+        validations?.ValidateAll().GetAwaiter().GetResult();
         StateHasChanged();
     }
 

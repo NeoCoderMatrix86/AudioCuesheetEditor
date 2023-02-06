@@ -14,13 +14,15 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Audio;
 using System;
 using System.Text;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    public class Exportprofile
+    public class Exportprofile : Validateable<Exportprofile>
     {
         public static readonly String DefaultFileName = "Export.txt";
 
@@ -43,20 +45,38 @@ namespace AudioCuesheetEditor.Model.IO.Export
             Name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
         public String Name { get; set; }
+        //TODO: SchemeType should be saved here and not inside the exportscheme, since otherwise you can add a footer scheme as a tracks scheme, etc.
         public Exportscheme SchemeHead { get; set; }
         public Exportscheme SchemeTracks { get; set; }
         public Exportscheme SchemeFooter { get; set; }
-        //TODO: Filename should be validated!
         public String Filename { get; set; }
         [JsonIgnore]
         public Boolean CanWrite
         {
             get
             {
-                return (SchemeHead.Validate().Status == Entity.ValidationStatus.Success)
-                    && (SchemeTracks.Validate().Status == Entity.ValidationStatus.Success)
-                    && (SchemeFooter.Validate().Status == Entity.ValidationStatus.Success);
+                return (SchemeHead.Validate().Status == ValidationStatus.Success)
+                    && (SchemeTracks.Validate().Status == ValidationStatus.Success)
+                    && (SchemeFooter.Validate().Status == ValidationStatus.Success);
             }
+        }
+
+        protected override ValidationResult Validate(string property)
+        {
+            ValidationStatus validationStatus = ValidationStatus.NoValidation;
+            List<ValidationMessage>? validationMessages = null;
+            switch (property)
+            {
+                case nameof(Filename):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Filename))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Filename)));
+                    }
+                    break;
+            }
+            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
 }
