@@ -275,16 +275,39 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 }
                 if (tracks.Any())
                 {
-                    //TODO Position and begin should always start from 0 even with splitpoints
+                    //Position, Begin and End should always start from 0 even with splitpoints
+                    int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);
                     foreach (var track in tracks)
                     {
+                        TimeSpan begin;
+                        var end = track.End;
+                        if (track.Begin.HasValue)
+                        {
+                            begin = track.Begin.Value;
+                            if (from != null)
+                            {
+                                if (from >= track.Begin)
+                                {
+                                    begin = TimeSpan.Zero;
+                                }
+                                else
+                                {
+                                    begin = track.Begin.Value - from.Value;
+                                }
+                                end = track.End - from.Value;
+                            }
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(string.Format("{0} may not be null!", nameof(Track.Begin)));
+                        }
                         var trackLine = Exportprofile.SchemeTracks
                             .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
                             .Replace(Exportprofile.SchemeTrackTitle, track.Title)
-                            .Replace(Exportprofile.SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
-                            .Replace(Exportprofile.SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
-                            .Replace(Exportprofile.SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
-                            .Replace(Exportprofile.SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
+                            .Replace(Exportprofile.SchemeTrackPosition, (track.Position + positionDifference).ToString())
+                            .Replace(Exportprofile.SchemeTrackBegin, begin.ToString())
+                            .Replace(Exportprofile.SchemeTrackEnd, end.ToString())
+                            .Replace(Exportprofile.SchemeTrackLength, (end - begin).ToString())
                             .Replace(Exportprofile.SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
                             .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
                             .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : String.Empty)

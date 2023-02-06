@@ -25,6 +25,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using System.IO;
 using AudioCuesheetEditor.Model.Entity;
+using System.Diagnostics.Metrics;
 
 namespace AudioCuesheetEditor.Model.IO.Export.Tests
 {
@@ -564,6 +565,108 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.Delete(tempFile);
         }
 
-        //TODO: Add a test with export profiles and split points!
+        [TestMethod()]
+        public void GenerateExportfilesWithSplitPointsTest()
+        {
+            var testHelper = new TestHelper();
+            //Prepare cuesheet
+            Cuesheet cuesheet = new()
+            {
+                Artist = "Demo Artist",
+                Title = "Demo Title",
+                Audiofile = new Audiofile("Testfile.mp3")
+            };
+            var begin = TimeSpan.Zero;
+            for (int i = 1; i < 25; i++)
+            {
+                var track = new Track
+                {
+                    Artist = String.Format("Demo Track Artist {0}", i),
+                    Title = String.Format("Demo Track Title {0}", i),
+                    Begin = begin
+                };
+                begin = begin.Add(new TimeSpan(0, i, i));
+                track.End = begin;
+                cuesheet.AddTrack(track, testHelper.ApplicationOptions);
+                var rand = new Random();
+                var flagsToAdd = rand.Next(0, 3);
+                if (flagsToAdd > 0)
+                {
+                    for (int x = 0; x < flagsToAdd; x++)
+                    {
+                        track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
+                    }
+                }
+            }
+
+            cuesheet.Cataloguenumber.Value = "0123456789123";
+            cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+
+            var splitPoint = cuesheet.AddSplitPoint();
+            splitPoint.Moment = new TimeSpan(0, 30, 0);
+            splitPoint = cuesheet.AddSplitPoint();
+            splitPoint.Moment = new TimeSpan(2, 0, 0);
+            splitPoint = cuesheet.AddSplitPoint();
+            splitPoint.Moment = new TimeSpan(1, 0, 0);
+            //Test export
+            var exportProfile = new Exportprofile
+            {
+                SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%",
+                SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
+                SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
+            };
+            var generator = new ExportfileGenerator(cuesheet, exportProfile);
+            Assert.IsTrue(generator.CanWrite(ExportType.Exportprofile));
+            var generatedFiles = generator.GenerateExportfiles(ExportType.Exportprofile);
+            Assert.AreEqual(4, generatedFiles.Count);
+
+            //Check split according to split points
+            Assert.IsNull(generatedFiles.First().Begin);
+            Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
+            Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.ElementAt(1).Begin);
+            Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
+            Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(2).Begin);
+            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(2).End);
+            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(3).Begin);
+            Assert.IsNull(generatedFiles.Last().End);
+            var counter = 1;
+            var position = 1;
+            foreach (var generatedFile in generatedFiles)
+            {
+                Assert.AreEqual(String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(exportProfile.Filename), counter, Path.GetExtension(exportProfile.Filename)), generatedFile.Filename);
+                counter++;
+                var content = generatedFile.Content;
+                Assert.IsNotNull(content);
+                var fileName = Path.GetTempFileName();
+                File.WriteAllBytes(fileName, content);
+                var fileContent = File.ReadAllLines(fileName);
+                File.Delete(fileName);
+                int positionDifference = 1 - position;
+                //Check for start from position 1 and begin = 00:00:00
+                Assert.AreEqual("Demo Artist;Demo Title;0123456789123;Testfile.cdt", fileContent[0]);
+                for (int i = 1; i < fileContent.Length - 1; i++)
+                {
+                    var track = cuesheet.Tracks.Single(x => x.Position == position);
+                    position++;
+                    var trackBegin = track.Begin;
+                    var trackEnd = track.End;
+                    if (generatedFile.Begin != null)
+                    {
+                        if (generatedFile.Begin >= track.Begin)
+                        {
+                            trackBegin = TimeSpan.Zero;
+                        }
+                        else
+                        {
+                            trackBegin = track.Begin - generatedFile.Begin;
+                        }
+                        trackEnd = track.End - generatedFile.Begin;
+                    }
+                    Assert.AreEqual(String.Format("{0};{1};{2};{3};{4};{5}", track.Position + positionDifference, track.Artist, track.Title, trackBegin, trackEnd, trackEnd - trackBegin), fileContent[i]);
+                }
+                Assert.AreEqual("Exported Demo Title from Demo Artist using AudioCuesheetEditor", fileContent.Last());
+                position--;
+            }
+        }
     }
 }
