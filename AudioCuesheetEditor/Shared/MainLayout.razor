@@ -276,11 +276,7 @@ along with Foobar.  If not, see
         {
             if (applicationOptions?.Validate(x => x.CuesheetFilename).Status != Model.Entity.ValidationStatus.Error)
             {
-                var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
-                if (applicationOptions != null)
-                {
-                    generator.ApplicationOptions = applicationOptions;
-                }
+                var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions);
                 return generator.CanWrite(ExportType.Cuesheet);
             }
             else
@@ -456,8 +452,7 @@ along with Foobar.  If not, see
         }
         //Save ApplicationOptions with information from modal popup!
         await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-        var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
-        generator.ApplicationOptions = applicationOptions;
+        var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions);
         foreach (var result in generator.GenerateExportfiles(ExportType.Cuesheet))
         {
             await _blazorDownloadFileService.DownloadFile(result.Filename, result.Content, "text/plain");

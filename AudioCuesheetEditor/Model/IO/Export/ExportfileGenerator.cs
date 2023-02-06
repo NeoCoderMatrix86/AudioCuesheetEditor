@@ -35,9 +35,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public Exportprofile? Exportprofile { get; set; }
         public ApplicationOptions? ApplicationOptions { get; set; }
 
-        public ExportfileGenerator(Cuesheet cuesheet)
+        public ExportfileGenerator(Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null)
         {
             Cuesheet = cuesheet;
+            Exportprofile = exportprofile;
+            ApplicationOptions = applicationOptions;
         }
 
         /// <summary>
