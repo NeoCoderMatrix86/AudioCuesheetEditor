@@ -644,11 +644,6 @@ along with Foobar.  If not, see
         DetachTrackFromValidateablePropertyChanged(args.Track);
     }
 
-    private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
     async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
     {
         if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
