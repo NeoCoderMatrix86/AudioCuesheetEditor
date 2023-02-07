@@ -209,7 +209,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public SplitPoint AddSplitPoint()
         {
-            var previousValue = splitPoints;
+            var previousValue = new List<SplitPoint>(splitPoints);
             var splitPoint = new SplitPoint(this);
             splitPoints.Add(splitPoint);
             SplitPointAdded?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
@@ -219,7 +219,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void RemoveSplitPoint(SplitPoint splitPoint)
         {
-            var previousValue = splitPoints;
+            var previousValue = new List<SplitPoint>(splitPoints);
             if (splitPoints.Remove(splitPoint))
             {
                 OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
@@ -286,10 +286,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void RemoveTrack(Track track)
         {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
             var index = tracks.IndexOf(track);
             Track? nextTrack = null;
             if ((index + 1) < tracks.Count)
@@ -333,10 +329,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
         public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
-            if (tracksToRemove == null)
-            {
-                throw new ArgumentNullException(nameof(tracksToRemove));
-            }
             var previousValue = new List<Track>();
             tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
