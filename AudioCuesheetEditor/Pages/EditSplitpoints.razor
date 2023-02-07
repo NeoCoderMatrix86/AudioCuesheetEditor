@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject DateTimeUtility _dateTimeUtility
 @inject ITextLocalizerService _localizationService
+@inject TraceChangeManager _traceChangeManager
 
 <Validations @ref="validations">
     <Buttons Role="ButtonsRole.Toolbar">
@@ -73,6 +74,24 @@ along with Foobar.  If not, see
                             </TextEdit>
                         </Validation>
                     </TableRowCell>
+                    <TableRowCell>
+                        <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Artist, _validationMessageLocalizer, token)">
+                            <TextEdit @bind-Text="splitPoint.Artist" Immediate="false">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Validation>
+                    </TableRowCell>
+                    <TableRowCell>
+                        <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Title, _validationMessageLocalizer, token)">
+                            <TextEdit @bind-Text="splitPoint.Title" Immediate="false">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Validation>
+                    </TableRowCell>
                 </TableRow>
             }
         </TableBody>
@@ -80,6 +99,8 @@ along with Foobar.  If not, see
 </Validations>
 
 @code {
+    //TODO: Undo of add splitpoint doesn't work!
+
     Validations? validations;
 
     public void Dispose()
@@ -91,6 +112,8 @@ along with Foobar.  If not, see
         }
         _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
         _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
+        _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
     }
 
     protected override void OnInitialized()
@@ -99,6 +122,8 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
         _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
+        _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
     }
 
     void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
@@ -108,7 +133,8 @@ along with Foobar.  If not, see
 
     Task AddSplitPointClicked()
     {
-        _sessionStateContainer.Cuesheet.AddSplitPoint();
+        var splitPoint = _sessionStateContainer.Cuesheet.AddSplitPoint();
+        _traceChangeManager.TraceChanges(splitPoint);
         return Task.CompletedTask;
     }
 
@@ -139,5 +165,17 @@ along with Foobar.  If not, see
                 validations?.ValidateAll().GetAwaiter().GetResult();
                 break;
         }
+    }
+
+    void TraceChangeManager_UndoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+        validations?.ValidateAll().GetAwaiter().GetResult();
+    }
+
+    void TraceChangeManager_RedoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+        validations?.ValidateAll().GetAwaiter().GetResult();
     }
 }

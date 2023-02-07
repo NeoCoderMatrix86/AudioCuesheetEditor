@@ -29,7 +29,7 @@ along with Foobar.  If not, see
 
 @if (Cuesheet != null)
 {
-    <Validations>
+    <Validations @ref="validations">
         <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Artist, _validationMessageLocalizer, token)">
             <Field Horizontal="true">
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
@@ -164,6 +164,7 @@ along with Foobar.  If not, see
     Guid fileEditCDTextFileId = Guid.NewGuid();
     Guid fileEditAudiofileId = Guid.NewGuid();
     Validation? audiofileValidation;
+    Validations? validations;
 
     public Cuesheet? Cuesheet
     {
@@ -328,10 +329,12 @@ along with Foobar.  If not, see
     private void TraceChangeManager_UndoDone(object? sender, EventArgs args)
     {
         StateHasChanged();
+        validations?.ValidateAll().GetAwaiter().GetResult();
     }
 
     private void TraceChangeManager_RedoDone(object? sender, EventArgs args)
     {
         StateHasChanged();
+        validations?.ValidateAll().GetAwaiter().GetResult();
     }
 }

@@ -15,28 +15,60 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    public class SplitPoint : Validateable<SplitPoint>
+    public class SplitPoint : Validateable<SplitPoint>, ITraceable
     {
-        //TODO: more details like artist, title and audiofile
         private TimeSpan? moment;
+        private String? artist;
+        private String? title;
+
+        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
         public SplitPoint(Cuesheet cuesheet)
         {
             Cuesheet = cuesheet;
+            artist = Cuesheet.Artist;
+            title = Cuesheet.Title;
         }
 
         public Cuesheet Cuesheet { get; }
+
+        public String? Artist
+        {
+            get => artist;
+            set
+            {
+                var previousValue = artist;
+                artist = value;
+                OnValidateablePropertyChanged(nameof(Artist));
+                OnTraceablePropertyChanged(previousValue, nameof(Artist));
+            }
+        }
+
+        public String? Title
+        {
+            get => title;
+            set
+            {
+                var previousValue = title;
+                title = value;
+                OnValidateablePropertyChanged(nameof(Title));
+                OnTraceablePropertyChanged(previousValue, nameof(Title));
+            }
+        }
 
         public TimeSpan? Moment 
         { 
             get => moment;
             set
             {
+                var previousValue = moment;
                 moment = value;
                 OnValidateablePropertyChanged(nameof(Moment));
+                OnTraceablePropertyChanged(previousValue, nameof(Moment));
             }
         }
 
@@ -63,8 +95,29 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                     }
                     break;
+                case nameof(Artist):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Artist))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
+                    }
+                    break;
+                case nameof(Title):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Title))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
+                    }
+                    break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
+        }
+
+        private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        {
+            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
         }
     }
 }
