@@ -34,6 +34,8 @@
     "RecordedAudiofilename": "Dateiname für aufgenommenes Audio",
     "ProjectFilename": "Projektdateiname",
     "{0} should be equal or less to '{1}'!": "{0} sollte kleiner oder gleich '{1}' sein!",
-    "Filename": "Dateiname"
+    "Filename": "Dateiname",
+    "Artist": "Künstler",
+    "Title": "Titel"
   }
 }

@@ -591,5 +591,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(8, cuesheet.Tracks.Count);
             Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
         }
+
+        [TestMethod()]
+        public void ValidateTest()
+        {
+            var cuesheet = new Cuesheet();
+            Assert.AreEqual(ValidationStatus.Error, cuesheet.Validate(x => x.Artist).Status);
+            cuesheet.Artist = "Testartist";
+            Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(x => x.Artist).Status);
+            Assert.AreEqual(ValidationStatus.Error, cuesheet.Validate(x => x.Title).Status);
+            cuesheet.Title = "Testtitle";
+            Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(x => x.Title).Status);
+        }
     }
 }

@@ -155,7 +155,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 var previousValue = cDTextfile;
                 cDTextfile = value;
-                FireEvents(previousValue, propertyName: nameof(CDTextfile));
+                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(CDTextfile));
             }
         }
 
@@ -166,7 +166,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 var previousValue = catalogueNumber;
                 catalogueNumber = value;
-                FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
+                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(Cataloguenumber));
             }
         }
 
@@ -505,6 +505,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         validationMessages ??= new();
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Audiofile)));
+                    }
+                    break;
+                case nameof(Artist):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Artist))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
+                    }
+                    break;
+                case nameof(Title):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Title))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
                     }
                     break;
             }
