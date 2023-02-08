@@ -11,7 +11,7 @@ popd
 ## Install wasm-tools
 dotnet workload install wasm-tools
 
-## Run Unit Tests
+## Run Unit Test
 dotnet test
 
 ## publish project to known location for subsequent deployment by Netlify
