@@ -1,0 +1,30 @@
+﻿@page "/test"
+
+@inject AudioConverterService _audioConverterService
+@inject IJSRuntime _jsRuntime
+@inject HttpClient _httpClient
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+
+<FileEdit id="@fileEditAudiofileId" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="OnAudioFileChanged" AutoReset="false">
+    <Feedback>
+        <ValidationError />
+    </Feedback>
+</FileEdit>
+
+@code {
+    Guid fileEditAudiofileId = Guid.NewGuid();
+
+    async Task OnAudioFileChanged(FileChangedEventArgs e)
+    {
+        if (e.Files.FirstOrDefault() != null)
+        {
+            var file = e.Files.First();
+            //TODO
+            var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", fileEditAudiofileId);
+            var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
+            var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+            var result = await _audioConverterService.SplitAudiofileAsync(audiofile, new TimeSpan(0, 0, 30), new TimeSpan(0,0, 0, 44, 123));
+            await _blazorDownloadFileService.DownloadFile("result.mp3", result, "application/octet/stream");
+        }
+    }
+}

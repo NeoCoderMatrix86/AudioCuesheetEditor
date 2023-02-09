@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using System.Data;
 using System.Diagnostics.Metrics;
