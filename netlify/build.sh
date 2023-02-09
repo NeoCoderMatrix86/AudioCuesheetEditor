@@ -15,4 +15,4 @@ dotnet workload install wasm-tools
 dotnet test
 
 ## publish project to known location for subsequent deployment by Netlify
-dotnet publish ./../AudioCuesheetEditor.sln -c Release -o release
+dotnet publish ../AudioCuesheetEditor.sln -c Release -o release
