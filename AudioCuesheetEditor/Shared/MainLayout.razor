@@ -90,7 +90,7 @@ along with Foobar.  If not, see
                                             <BarDropdownMenu Background="Background.Dark">
                                                 <BarDropdownItem>
                                                     <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
-                                                        <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, true)" Disabled="!IsCuesheetExportable">@_localizer["Download cuesheet"]</Button>
+                                                        <Button Color="Color.Primary" Clicked="() => OnDisplayExportDialogClicked()" Disabled="!IsCuesheetExportable">@_localizer["Download cuesheet"]</Button>
                                                     </Tooltip>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
@@ -211,51 +211,40 @@ along with Foobar.  If not, see
             </ModalFooter>
         </ModalContent>
     </Modal>
-
-    <Modal @ref="modalDownloadCuesheet" VisibleChanged="ModalDownloadCuesheet_VisibleChanged">
-        <ModalContent Centered="true">
-            <ModalHeader>
-                <ModalTitle>
-                    @_localizer["Download cuesheet"]
-                </ModalTitle>
-                <CloseButton Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations>
-                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
-                        <Field Horizontal="true">
-                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                            <FieldBody ColumnSize="ColumnSize.Is9">
-                                <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
-                                    <Feedback>
-                                        <ValidationError />
-                                    </Feedback>
-                                </TextEdit>
-                            </FieldBody>
-                        </Field>
-                    </Validation>
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!IsCuesheetExportable">@_localizer["Download cuesheet"]</Button>
-                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)">@_localizer["Abort"]</Button>
-            </ModalFooter>
-        </ModalContent>
-    </Modal>
 }
 
+<ModalExportdialog @ref="modalExportdialogCuesheet" Title="@_localizer["Download cuesheet"]" ExportType="ExportType.Cuesheet">
+    <PrepareExportStepContent>
+        <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
+            <Field Horizontal="true">
+                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is9">
+                    @if (applicationOptions != null)
+                    {
+                        <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    }
+                </FieldBody>
+            </Field>
+        </Validation>
+    </PrepareExportStepContent>
+</ModalExportdialog>
+
 @code {
+    //TODO: Attach to modalExportdialogCuesheet event for generation to save the applicationOptions.CuesheetFilename
     Boolean displayMenuBar = false;
     HotKeysContext? hotKeysContext;
     ApplicationOptions? applicationOptions;
-    Boolean modalDownloadCuesheetVisible = false;
     Boolean modalDownloadProjectfileVisible = false;
 
     OptionsDialog? optionsDialog;
     ModalDialog? modalDialog;
     ExportProfilesDialog? exportProfilesDialog;
     Modal? modalDownloadProjectfile;
-    Modal? modalDownloadCuesheet;
+    ModalExportdialog? modalExportdialogCuesheet;
 
     String? IsCuesheetExportableTooltip
     {
@@ -417,6 +406,14 @@ along with Foobar.  If not, see
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 
+    async Task OnDisplayExportDialogClicked()
+    {
+        if (modalExportdialogCuesheet != null)
+        {
+            await modalExportdialogCuesheet.Show();
+        }
+    }
+
     private async Task OnDisplayExportProfilesClicked()
     {
         if (exportProfilesDialog != null)
@@ -442,36 +439,11 @@ along with Foobar.  If not, see
         }
     }
 
-
-    private async Task DownloadCuesheetFileClicked()
-    {
-        _logger.LogInformation("DownloadCuesheetFileClicked");
-        if (applicationOptions == null)
-        {
-            applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        }
-        //Save ApplicationOptions with information from modal popup!
-        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-        var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions);
-        foreach (var result in generator.GenerateExportfiles(ExportType.Cuesheet))
-        {
-            await _blazorDownloadFileService.DownloadFile(result.Filename, result.Content, "text/plain");
-        }
-        if (modalDownloadCuesheet != null)
-        {
-            await modalDownloadCuesheet.Hide();
-        }
-    }
-
     async ValueTask OnEnterKeyDown()
     {
         if (modalDownloadProjectfileVisible)
         {
             await DownloadProjectfileClicked();
-        }
-        if (modalDownloadCuesheetVisible)
-        {
-            await DownloadCuesheetFileClicked();
         }
     }
 
@@ -515,11 +487,6 @@ along with Foobar.  If not, see
     void TraceChangeManager_RedoDone(object? sender, EventArgs args)
     {
         StateHasChanged();
-    }
-
-    private void ModalDownloadCuesheet_VisibleChanged(Boolean visible)
-    {
-        modalDownloadCuesheetVisible = visible;
     }
 
     private void ModalDownloadProjectfile_VisibleChanged(Boolean visible)

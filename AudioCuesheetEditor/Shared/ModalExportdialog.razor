@@ -1,0 +1,212 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@implements IDisposable
+
+@inject ITextLocalizer<ModalExportdialog> _localizer
+@inject ILogger<ModalExportdialog> _logger
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject SessionStateContainer _sessionStateContainer
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject HotKeys _hotKeys
+
+<Modal @ref="modalExportdialog" VisibleChanged="ModalExportdialog_VisibleChanged">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>
+                @Title
+            </ModalTitle>
+            <CloseButton Clicked="() => ControlModalDialog(modalExportdialog, false)" />
+        </ModalHeader>
+        <ModalBody>
+            <Steps @bind-SelectedStep="selectedStep" NavigationAllowed="NavigationAllowed">
+                <Items>
+                    <Step Name="prepareExport" Completed="prepareExportCompleted">@_localizer["Prepare export"]</Step>
+                    <Step Name="displayExportResult">@_localizer["Result"]</Step>
+                </Items>
+                <Content>
+                    <StepPanel Name="prepareExport">
+                        <Validations @ref="validations">
+                            @PrepareExportStepContent
+                        </Validations>
+                    </StepPanel>
+                    <StepPanel Name="displayExportResult">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.Filename)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.Begin)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.End)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.Content)]</TableHeaderCell>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                @if (exportfiles != null)
+                                {
+                                    foreach (var exportfile in exportfiles)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell>@exportfile.Filename</TableRowCell>
+                                            <TableRowCell>@exportfile.Begin</TableRowCell>
+                                            <TableRowCell>@exportfile.End</TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Text="@_localizer["Download this file"]">
+                                                    <Button Color="Color.Success" Clicked='() => _blazorDownloadFileService.DownloadFile(exportfile.Filename, exportfile.Content, "text/plain")'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                                            <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
+                                                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                                        </svg>
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                        </TableRow>
+                                    }
+                                }
+                                </TableBody>
+                            </Table>
+                        </StepPanel>
+                </Content>
+            </Steps>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked">@_localizer["Generate export files"]</Button>
+            <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    //TODO: Localize
+    //TODO: Use this dialog for request (Cuesheet and ExportProfiles) and displaying the Exportfiles
+    //TODO: Add customizable content for request (Cuesheet and ExportProfiles are different)
+    //TODO: prepareExport is currently for cuesheets only!
+
+    public event EventHandler? GenerateExportfilesClicked;
+
+    [Parameter]
+    [EditorRequired]
+    public String? Title { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment? PrepareExportStepContent { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public ExportType ExportType { get; set; }
+
+    public Boolean IsVisible { get; set; }
+
+    Modal? modalExportdialog;
+    String selectedStep = "prepareExport";
+    IReadOnlyCollection<Exportfile>? exportfiles;
+    ApplicationOptions? applicationOptions;
+    Validations? validations;
+    Boolean prepareExportCompleted = false;
+    HotKeysContext? hotKeysContext;
+
+    Boolean StepNavigationAllowed
+    {
+        get
+        {
+            Boolean navigationAllowed = true;
+            if (validations != null)
+            {
+                navigationAllowed = validations.ValidateAll().GetAwaiter().GetResult();
+            }
+            return navigationAllowed;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(Key.Enter, OnEnterKeyDown);
+
+        await base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        hotKeysContext?.Dispose();
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    public async Task Show()
+    {
+        await ControlModalDialog(modalExportdialog, true);
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
+        }
+    }
+
+    void GenerateExportfiles_Clicked()
+    {
+        _logger.LogDebug("GenerateExportfiles_Clicked called");
+        if (StepNavigationAllowed)
+        {
+            GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
+            //TODO: Display progress bar?
+            var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions);
+            exportfiles = generator.GenerateExportfiles(ExportType);
+            selectedStep = "displayExportResult";
+            prepareExportCompleted = true;
+        }
+    }
+
+    bool NavigationAllowed(StepNavigationContext context)
+    {
+        return StepNavigationAllowed;
+    }
+
+    void ModalExportdialog_VisibleChanged(Boolean visible)
+    {
+        IsVisible = visible;
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
+    }
+
+    ValueTask OnEnterKeyDown()
+    {
+        if (IsVisible)
+        {
+            GenerateExportfiles_Clicked();
+        }
+        return ValueTask.CompletedTask;
+    }
+}
