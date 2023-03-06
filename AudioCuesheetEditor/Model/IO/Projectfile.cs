@@ -59,7 +59,8 @@ namespace AudioCuesheetEditor.Model.IO
         /// <returns>Byte array with project file content</returns>
         public byte[] GenerateFile()
         {
-            var json = JsonSerializer.Serialize<Cuesheet>(Cuesheet, Options);    
+            //TODO: Fails with splitpoints in cuesheet set!
+            var json = JsonSerializer.Serialize<Cuesheet>(Cuesheet, Options);
             return Encoding.UTF8.GetBytes(json);        
         }
     }
