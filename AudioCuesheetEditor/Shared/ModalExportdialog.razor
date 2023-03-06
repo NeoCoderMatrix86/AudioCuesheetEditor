@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 
 <Modal @ref="modalExportdialog" VisibleChanged="ModalExportdialog_VisibleChanged">
-    <ModalContent Centered>
+    <ModalContent Centered Size="ModalSize.ExtraLarge">
         <ModalHeader>
             <ModalTitle>
                 @Title
@@ -41,7 +41,7 @@ along with Foobar.  If not, see
                 </Items>
                 <Content>
                     <StepPanel Name="prepareExport">
-                        <Validations @ref="validations">
+                        <Validations @ref="Validations">
                             @PrepareExportStepContent
                         </Validations>
                     </StepPanel>
@@ -92,9 +92,7 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Localize
-    //TODO: Use this dialog for request (Cuesheet and ExportProfiles) and displaying the Exportfiles
-    //TODO: Add customizable content for request (Cuesheet and ExportProfiles are different)
-    //TODO: prepareExport is currently for cuesheets only!
+    //TODO: Lock GenerateExportfiles button when validation fails or the ExportfileGenerator.CanWrite is false
 
     public event EventHandler? GenerateExportfilesClicked;
 
@@ -110,26 +108,40 @@ along with Foobar.  If not, see
     [EditorRequired]
     public ExportType ExportType { get; set; }
 
-    public Boolean IsVisible { get; set; }
+    public Boolean IsVisible { get; private set; }
+    public Validations? Validations { get; private set; }
 
     Modal? modalExportdialog;
     String selectedStep = "prepareExport";
     IReadOnlyCollection<Exportfile>? exportfiles;
     ApplicationOptions? applicationOptions;
-    Validations? validations;
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
+    ExportfileGenerator? exportfileGenerator;
 
     Boolean StepNavigationAllowed
     {
         get
         {
             Boolean navigationAllowed = true;
-            if (validations != null)
+            if (Validations != null)
             {
-                navigationAllowed = validations.ValidateAll().GetAwaiter().GetResult();
+                navigationAllowed = Validations.ValidateAll().GetAwaiter().GetResult();
             }
             return navigationAllowed;
+        }
+    }
+
+    Boolean ExportPossible
+    {
+        get
+        {
+            Boolean exportPossible = false;
+            if (exportfileGenerator != null)
+            {
+                exportPossible = exportfileGenerator.CanWrite(ExportType);
+            }
+            return exportPossible;
         }
     }
 
@@ -139,6 +151,8 @@ along with Foobar.  If not, see
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
+
+        exportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
 
         await base.OnInitializedAsync();
     }
