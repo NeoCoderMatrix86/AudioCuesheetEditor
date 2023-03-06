@@ -52,14 +52,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             {
                 throw new ArgumentNullException(nameof(objectURL));
             }
-            if (audioCodec == null)
-            {
-                throw new ArgumentNullException(nameof(audioCodec));
-            }
-            if (httpClient == null)
-            {
-                throw new ArgumentNullException(nameof(httpClient));
-            }
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
             //Read stream asynchronously in order to be prepared (using large files)
