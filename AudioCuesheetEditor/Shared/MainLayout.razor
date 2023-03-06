@@ -214,21 +214,21 @@ along with Foobar.  If not, see
 
 <ModalExportdialog @ref="modalExportdialogCuesheet" Title="@_localizer["Download cuesheet"]" ExportType="ExportType.Cuesheet">
     <PrepareExportStepContent>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    @if (applicationOptions != null)
-                    {
-                        <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
-                            <Feedback>
-                                <ValidationError />
-                            </Feedback>
-                        </TextEdit>
-                    }
-                </FieldBody>
-            </Field>
-        </Validation>
+        @if (applicationOptions != null)
+        {
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                            <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                    </FieldBody>
+                </Field>
+            </Validation>
+        }
     </PrepareExportStepContent>
 </ModalExportdialog>
 

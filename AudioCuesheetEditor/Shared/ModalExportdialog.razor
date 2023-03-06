@@ -84,7 +84,7 @@ along with Foobar.  If not, see
             </Steps>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked">@_localizer["Generate export files"]</Button>
+            <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!(StepNavigationAllowed && ExportPossible)">@_localizer["Generate export files"]</Button>
             <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
@@ -92,7 +92,6 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Localize
-    //TODO: Lock GenerateExportfiles button when validation fails or the ExportfileGenerator.CanWrite is false
 
     public event EventHandler? GenerateExportfilesClicked;
 
@@ -127,6 +126,10 @@ along with Foobar.  If not, see
             if (Validations != null)
             {
                 navigationAllowed = Validations.ValidateAll().GetAwaiter().GetResult();
+                if (navigationAllowed)
+                {
+                    navigationAllowed = ExportPossible;
+                }
             }
             return navigationAllowed;
         }
