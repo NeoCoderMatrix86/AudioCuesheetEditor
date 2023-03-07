@@ -90,6 +90,13 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
         }
 
+        public void CopyValues(SplitPoint splitPoint)
+        {
+            Artist = splitPoint.Artist;
+            Title = splitPoint.Title;
+            Moment = splitPoint.Moment;
+        }
+
         protected override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;

@@ -587,7 +587,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
-            //TODO: Copy splitpoints
+            // Copy splitpoints
+            foreach (var splitPoint in cuesheet.SplitPoints)
+            {
+                var newSplitPoint = AddSplitPoint();
+                newSplitPoint.CopyValues(splitPoint);
+            }
         }
 
         private void Track_RankPropertyValueChanged(object? sender, string e)
