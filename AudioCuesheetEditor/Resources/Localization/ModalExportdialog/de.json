@@ -1,0 +1,14 @@
+{
+  "culture": "de",
+  "translations": {
+    "Prepare export": "Export vorbereiten",
+    "Result": "Ergebnis",
+    "Filename": "Dateiname",
+    "Begin": "Anfang",
+    "End": "Ende",
+    "Content": "Inhalt",
+    "Download this file": "Diese Datei herunterladen",
+    "Generate export files": "Exportdateien generieren",
+    "Abort": "Abbrechen"
+  }
+}

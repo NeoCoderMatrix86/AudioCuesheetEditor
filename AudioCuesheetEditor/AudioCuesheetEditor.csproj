@@ -31,6 +31,8 @@
     <Content Remove="Resources\Localization\MainLayout\en.json" />
     <Content Remove="Resources\Localization\ModalDialog\de.json" />
     <Content Remove="Resources\Localization\ModalDialog\en.json" />
+    <Content Remove="Resources\Localization\ModalExportdialog\de.json" />
+    <Content Remove="Resources\Localization\ModalExportdialog\en.json" />
     <Content Remove="Resources\Localization\OptionsDialog\de.json" />
     <Content Remove="Resources\Localization\OptionsDialog\en.json" />
     <Content Remove="Resources\Localization\TracksTable\de.json" />
@@ -70,6 +72,8 @@
     <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ModalExportdialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ModalExportdialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
