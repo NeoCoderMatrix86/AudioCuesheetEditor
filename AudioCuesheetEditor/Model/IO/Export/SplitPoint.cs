@@ -105,7 +105,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     else
                     {
-                        var maxEnd = Cuesheet.Tracks.Max(x => x.End);
+                        var maxEnd = Cuesheet?.Tracks.Max(x => x.End);
                         if (Moment > maxEnd)
                         {
                             validationMessages ??= new();
