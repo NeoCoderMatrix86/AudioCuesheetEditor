@@ -13,14 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO
 {
@@ -33,7 +29,8 @@ namespace AudioCuesheetEditor.Model.IO
 
         public static readonly JsonSerializerOptions Options = new()
         {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
         public static Cuesheet? ImportFile(byte[] fileContent)
@@ -60,7 +57,7 @@ namespace AudioCuesheetEditor.Model.IO
         public byte[] GenerateFile()
         {
             //TODO: Fails with splitpoints in cuesheet set!
-            var json = JsonSerializer.Serialize<Cuesheet>(Cuesheet, Options);
+            var json = JsonSerializer.Serialize(Cuesheet, Options);
             return Encoding.UTF8.GetBytes(json);        
         }
     }

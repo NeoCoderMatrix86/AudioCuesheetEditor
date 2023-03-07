@@ -16,11 +16,13 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.UI;
+using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
     public class SplitPoint : Validateable<SplitPoint>, ITraceable
     {
+        private Cuesheet? cuesheet;
         private TimeSpan? moment;
         private String? artist;
         private String? title;
@@ -34,7 +36,23 @@ namespace AudioCuesheetEditor.Model.IO.Export
             title = Cuesheet.Title;
         }
 
-        public Cuesheet Cuesheet { get; }
+        [JsonConstructor]
+        public SplitPoint() { }
+        public Cuesheet? Cuesheet 
+        {
+            get => cuesheet;
+            set
+            {
+                if (cuesheet == null)
+                {
+                    cuesheet = value;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
 
         public String? Artist
         {

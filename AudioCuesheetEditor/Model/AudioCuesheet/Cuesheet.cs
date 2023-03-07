@@ -193,15 +193,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         [JsonIgnore]
         public Boolean IsImporting { get; private set; }
-
+        
+        [JsonInclude]
         public IReadOnlyCollection<SplitPoint> SplitPoints 
         {
             get => splitPoints;
             private set
             {
-                if (value.Any(x => x.Cuesheet != this))
+                foreach(var splitpoint in value.Where(x => x.Cuesheet != this))
                 {
-                    throw new ArgumentException(nameof(SplitPoints));
+                    splitpoint.Cuesheet = this;
                 }
                 splitPoints = value.ToList();
             }
@@ -586,6 +587,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
+            //TODO: Copy splitpoints
         }
 
         private void Track_RankPropertyValueChanged(object? sender, string e)
