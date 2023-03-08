@@ -10,6 +10,7 @@
     "Download this file": "Diese Datei herunterladen",
     "Generate export files": "Exportdateien generieren",
     "Abort": "Abbrechen",
-    "Export files can not be generated. Please check validationerrors and solve errors in order to download export.": "Exportdateien können nicht generiert werden. Bitte prüfen Sie die Validierungsfehler und beheben Sie diese, um die Exportdateien herunterladen zu können."
+    "Export files can not be generated. Please check validationerrors and solve errors in order to download export.": "Exportdateien können nicht generiert werden. Bitte prüfen Sie die Validierungsfehler und beheben Sie diese, um die Exportdateien herunterladen zu können.",
+    "Close": "Schließen"
   }
 }

@@ -222,11 +222,11 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                            <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
+                        <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
                     </FieldBody>
                 </Field>
             </Validation>
@@ -375,6 +375,7 @@ along with Foobar.  If not, see
 </ModalExportdialog>
 
 @code {
+    //TODO: When modalExportdialogCuesheet or modalExportdialogExportprofile input changes, the exportedFiles of ModalExportdialog should be reset!
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }

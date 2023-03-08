@@ -86,17 +86,20 @@ along with Foobar.  If not, see
         <ModalFooter>
             @if (selectedStep != "displayExportResult")
             {
-                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!(StepNavigationAllowed && ExportPossible), "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
-                    <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!(StepNavigationAllowed && ExportPossible)">@_localizer["Generate export files"]</Button>
+                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!ExportPossible, "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
+                    <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
                 </Tooltip>
+                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
             }
-            <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
+            else
+            {
+                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Close"]</Button>
+            }
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 @code {
-    //TODO: Allow switching to step displayExportResult only when generation has been done!
     public event EventHandler? GenerateExportfilesClicked;
 
     [Parameter]
@@ -133,6 +136,10 @@ along with Foobar.  If not, see
                 {
                     navigationAllowed = ExportPossible;
                 }
+                if (navigationAllowed)
+                {
+                    navigationAllowed = exportfiles != null;
+                }
             }
             return navigationAllowed;
         }
@@ -143,7 +150,11 @@ along with Foobar.  If not, see
         get
         {
             Boolean exportPossible = false;
-            if (ExportfileGenerator != null)
+            if (Validations != null)
+            {
+                exportPossible = Validations.ValidateAll().GetAwaiter().GetResult();
+            }
+            if ((exportPossible == false) && (ExportfileGenerator != null))
             {
                 exportPossible = ExportfileGenerator.CanWrite(ExportType);
             }
@@ -189,7 +200,7 @@ along with Foobar.  If not, see
     void GenerateExportfiles_Clicked()
     {
         _logger.LogDebug("GenerateExportfiles_Clicked called");
-        if (StepNavigationAllowed)
+        if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
             //TODO: Display progress bar?
