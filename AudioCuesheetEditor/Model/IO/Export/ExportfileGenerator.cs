@@ -35,12 +35,14 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public Cuesheet Cuesheet { get; }
         public Exportprofile? Exportprofile { get; set; }
         public ApplicationOptions? ApplicationOptions { get; set; }
+        public AudioConverterService? AudioConverterService { get; set; }
 
-        public ExportfileGenerator(Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null)
+        public ExportfileGenerator(Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null, AudioConverterService? audioConverterService = null)
         {
             Cuesheet = cuesheet;
             Exportprofile = exportprofile;
             ApplicationOptions = applicationOptions;
+            AudioConverterService = audioConverterService;
         }
 
         /// <summary>
@@ -54,21 +56,29 @@ namespace AudioCuesheetEditor.Model.IO.Export
             switch (exportType)
             {
                 case ExportType.Cuesheet:
-                    canWrite = (Cuesheet.Validate().Status != ValidationStatus.Error) 
-                        && (Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
-                        && Cuesheet.Tracks.All(x => x.Validate().Status != ValidationStatus.Error)
-                        && (ApplicationOptions?.Validate(x => x.CuesheetFilename).Status != ValidationStatus.Error);
+                    canWrite = (Cuesheet.Validate().Status != ValidationStatus.Error)
+                            && (Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
+                            && Cuesheet.Tracks.All(x => x.Validate().Status != ValidationStatus.Error)
+                            && (ApplicationOptions?.Validate(x => x.CuesheetFilename).Status != ValidationStatus.Error);
                     break;
                 case ExportType.Exportprofile:
                     if (Exportprofile != null)
                     {
                         canWrite = (Cuesheet.Validate().Status != ValidationStatus.Error)
-                            && (Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
-                            && Cuesheet.Tracks.All(x => x.Validate().Status != ValidationStatus.Error)
-                            && (ApplicationOptions?.Validate(x => x.CuesheetFilename).Status != ValidationStatus.Error)
-                            && (Exportprofile.Validate().Status != ValidationStatus.Error);
+                                && (Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
+                                && Cuesheet.Tracks.All(x => x.Validate().Status != ValidationStatus.Error)
+                                && (ApplicationOptions?.Validate(x => x.CuesheetFilename).Status != ValidationStatus.Error)
+                                && (Exportprofile.Validate().Status != ValidationStatus.Error);
                     }
                     break;
+            }
+            var hasSplitPoints = Cuesheet.SplitPoints.Any();
+            if (hasSplitPoints)
+            {
+                canWrite = canWrite
+                    && AudioConverterService != null
+                    && Cuesheet.Audiofile != null
+                    && Cuesheet.Audiofile.IsContentStreamLoaded;
             }
             return canWrite;
         }
@@ -165,7 +175,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return exportfiles;
         }
 
-        private String WriteCuesheet(TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private string WriteCuesheet(TimeSpan? from = null, SplitPoint? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Cuesheet.Cataloguenumber != null && string.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false && Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
