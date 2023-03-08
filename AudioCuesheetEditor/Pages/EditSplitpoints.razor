@@ -27,20 +27,23 @@ along with Foobar.  If not, see
 <Validations @ref="validations">
     @if (Cuesheet != null)
     {
-        <Buttons Role="ButtonsRole.Toolbar">
-            <Buttons Margin="Margin.Is2.FromEnd">
-                <Button Color="Color.Primary" Clicked="AddSplitPointClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                    </svg>
-                    <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
-                        @_localizer["Add new split point"]
-                    </Span>
-                </Button>
+        @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+        {
+            <Buttons Role="ButtonsRole.Toolbar">
+                <Buttons Margin="Margin.Is2.FromEnd">
+                    <Button Color="Color.Primary" Clicked="AddSplitPointClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
+                            @_localizer["Add new split point"]
+                        </Span>
+                    </Button>
+                </Buttons>
             </Buttons>
-        </Buttons>
-        <br />
+            <br />
+        }
         <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
             <TableHeader>
                 <TableRow>
@@ -102,7 +105,6 @@ along with Foobar.  If not, see
 </Validations>
 
 @code {
-    //TODO: when adding a split point no undo/Redo is possible
     Validations? validations;
 
     public Cuesheet? Cuesheet
@@ -137,6 +139,8 @@ along with Foobar.  If not, see
         }
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override void OnInitialized()
@@ -150,6 +154,8 @@ along with Foobar.  If not, see
         }
         _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
@@ -209,5 +215,15 @@ along with Foobar.  If not, see
     {
         StateHasChanged();
         validations?.ValidateAll().GetAwaiter().GetResult();
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
