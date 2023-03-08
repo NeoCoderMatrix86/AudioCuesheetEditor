@@ -24,6 +24,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject HotKeys _hotKeys
+@inject AudioConverterService _audioConverterService
 
 <Modal @ref="modalExportdialog" VisibleChanged="ModalExportdialog_VisibleChanged">
     <ModalContent Centered Size="ModalSize.ExtraLarge">
@@ -167,7 +168,7 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
-        ExportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
+        ExportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, audioConverterService: _audioConverterService);
 
         await base.OnInitializedAsync();
     }
