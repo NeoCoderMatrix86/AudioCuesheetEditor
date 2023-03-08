@@ -378,10 +378,6 @@ along with Foobar.  If not, see
 
         public SelectExportProfileModel(Exportprofile exportProfile)
         {
-            if (exportProfile == null)
-            {
-                throw new ArgumentNullException(nameof(exportProfile));
-            }
             Id = Guid.NewGuid();
             ExportProfile = exportProfile;
         }
@@ -467,6 +463,11 @@ along with Foobar.  If not, see
             selectedExportProfileId = exportProfileModels.First().Id;
         }
 
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.GenerateExportfilesClicked += ModalExportdialogExportprofile_GenerateExportfilesClicked;
+        }
+
         _sessionStateContainer.CurrentViewMode = applicationOptions.ViewMode;
 
         await base.OnInitializedAsync();
@@ -480,6 +481,10 @@ along with Foobar.  If not, see
         _traceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.GenerateExportfilesClicked -= ModalExportdialogExportprofile_GenerateExportfilesClicked;
+        }
     }
 
     public void SetDisplayMenuBar(Boolean display)
@@ -732,5 +737,10 @@ along with Foobar.  If not, see
         selectedExportProfileId = newValue;
         modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
         StateHasChanged();
+    }
+
+    void ModalExportdialogExportprofile_GenerateExportfilesClicked(object? sender, EventArgs args)
+    {
+        //TODO
     }
 }
