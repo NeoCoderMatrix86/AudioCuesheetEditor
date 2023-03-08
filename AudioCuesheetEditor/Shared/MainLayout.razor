@@ -97,7 +97,9 @@ along with Foobar.  If not, see
                                                     <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, true)">@_localizer["Save project"]</Button>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
-                                                    <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked">@_localizer["Open exportprofiles"]</Button>
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
+                                                        <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked" Disabled="!IsExportprofileExportable">@_localizer["Open exportprofiles"]</Button>
+                                                    </Tooltip>
                                                 </BarDropdownItem>
                                             </BarDropdownMenu>
                                         </BarDropdown>
@@ -367,14 +369,12 @@ along with Foobar.  If not, see
 </ModalExportdialog>
 
 @code {
-    //TODO: Attach to modalExportdialogCuesheet event for generation to save the applicationOptions.CuesheetFilename
-    //TODO: Attach to modalExportdialogExportprofile event for generation to save the export profiles
     //TODO: Localize modalExportdialogCuesheet and modalExportdialogExportprofile
 
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
-        public Exportprofile ExportProfile { get; set; }
+        public Exportprofile ExportProfile { get; private set; }
 
         public SelectExportProfileModel(Exportprofile exportProfile)
         {
@@ -441,6 +441,15 @@ along with Foobar.  If not, see
         }
     }
 
+    Boolean IsExportprofileExportable
+    {
+        get
+        {
+            var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, SelectedExportProfile);
+            return generator.CanWrite(ExportType.Exportprofile);
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
@@ -461,11 +470,16 @@ along with Foobar.  If not, see
             var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
             exportProfileModels = options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
             selectedExportProfileId = exportProfileModels.First().Id;
+            SelectedExportProfileChanged(selectedExportProfileId);
         }
 
         if (modalExportdialogExportprofile != null)
         {
             modalExportdialogExportprofile.GenerateExportfilesClicked += ModalExportdialogExportprofile_GenerateExportfilesClicked;
+        }
+        if (modalExportdialogCuesheet != null)
+        {
+            modalExportdialogCuesheet.GenerateExportfilesClicked += ModalExportdialogCuesheet_GenerateExportfilesClicked;
         }
 
         _sessionStateContainer.CurrentViewMode = applicationOptions.ViewMode;
@@ -484,6 +498,10 @@ along with Foobar.  If not, see
         if (modalExportdialogExportprofile != null)
         {
             modalExportdialogExportprofile.GenerateExportfilesClicked -= ModalExportdialogExportprofile_GenerateExportfilesClicked;
+        }
+        if (modalExportdialogCuesheet != null)
+        {
+            modalExportdialogCuesheet.GenerateExportfilesClicked -= ModalExportdialogCuesheet_GenerateExportfilesClicked;
         }
     }
 
@@ -736,11 +754,48 @@ along with Foobar.  If not, see
         _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
         selectedExportProfileId = newValue;
         modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
+        if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
+        {
+            modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
+        }
         StateHasChanged();
+    }
+
+    async Task SaveExportProfiles()
+    {
+        _logger.LogInformation("SaveExportProfiles");
+        if (exportProfileModels != null)
+        {
+            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
+            options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
+            await _localStorageOptionsProvider.SaveOptions(options);
+        }
+    }
+
+    async Task SaveApplicationOptions()
+    {
+        _logger.LogDebug("SaveApplicationOptions");
+        if (applicationOptions != null)
+        {
+            await _localStorageOptionsProvider.SaveOptions(applicationOptions);
+        }
     }
 
     void ModalExportdialogExportprofile_GenerateExportfilesClicked(object? sender, EventArgs args)
     {
-        //TODO
+        Task.Run(SaveExportProfiles);
+        if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
+        {
+            modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
+        }
+    }
+
+    void ModalExportdialogCuesheet_GenerateExportfilesClicked(object? sender, EventArgs args)
+    {
+        Task.Run(SaveApplicationOptions);
+        if ((modalExportdialogCuesheet != null) && (modalExportdialogCuesheet.ExportfileGenerator != null))
+        {
+            modalExportdialogCuesheet.ExportfileGenerator.ApplicationOptions = applicationOptions;
+        }
     }
 }

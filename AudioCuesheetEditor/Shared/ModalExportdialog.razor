@@ -84,7 +84,12 @@ along with Foobar.  If not, see
             </Steps>
         </ModalBody>
         <ModalFooter>
-            <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!(StepNavigationAllowed && ExportPossible)">@_localizer["Generate export files"]</Button>
+            @if (selectedStep != "displayExportResult")
+            {
+                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!(StepNavigationAllowed && ExportPossible), "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
+                    <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!(StepNavigationAllowed && ExportPossible)">@_localizer["Generate export files"]</Button>
+                </Tooltip>
+            }
             <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
         </ModalFooter>
     </ModalContent>
@@ -107,14 +112,13 @@ along with Foobar.  If not, see
 
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
+    public ExportfileGenerator? ExportfileGenerator { get; private set; }
 
     Modal? modalExportdialog;
     String selectedStep = "prepareExport";
     IReadOnlyCollection<Exportfile>? exportfiles;
-    ApplicationOptions? applicationOptions;
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
-    ExportfileGenerator? exportfileGenerator;
 
     Boolean StepNavigationAllowed
     {
@@ -138,9 +142,9 @@ along with Foobar.  If not, see
         get
         {
             Boolean exportPossible = false;
-            if (exportfileGenerator != null)
+            if (ExportfileGenerator != null)
             {
-                exportPossible = exportfileGenerator.CanWrite(ExportType);
+                exportPossible = ExportfileGenerator.CanWrite(ExportType);
             }
             return exportPossible;
         }
@@ -148,12 +152,10 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
-        exportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
+        ExportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet);
 
         await base.OnInitializedAsync();
     }
@@ -161,7 +163,6 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext?.Dispose();
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     public async Task Show()
@@ -191,8 +192,7 @@ along with Foobar.  If not, see
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
             //TODO: Display progress bar?
-            var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions);
-            exportfiles = generator.GenerateExportfiles(ExportType);
+            exportfiles = ExportfileGenerator?.GenerateExportfiles(ExportType);
             selectedStep = "displayExportResult";
             prepareExportCompleted = true;
         }
@@ -208,14 +208,6 @@ along with Foobar.  If not, see
         IsVisible = visible;
     }
 
-    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
-    {
-        if (options is ApplicationOptions)
-        {
-            applicationOptions = (ApplicationOptions)options;
-        }
-    }
-
     ValueTask OnEnterKeyDown()
     {
         if (IsVisible)
@@ -223,5 +215,17 @@ along with Foobar.  If not, see
             GenerateExportfiles_Clicked();
         }
         return ValueTask.CompletedTask;
+    }
+
+    String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    {
+        if (expressionToCheck == true)
+        {
+            return _localizer[localizedStringName];
+        }
+        else
+        {
+            return null;
+        }
     }
 }
