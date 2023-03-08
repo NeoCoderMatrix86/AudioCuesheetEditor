@@ -247,12 +247,18 @@ along with Foobar.  If not, see
         <Divider />
         @if (SelectedExportProfile != null)
         {
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name" />
-                </FieldBody>
-            </Field>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Name, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </FieldBody>
+                </Field>
+            </Validation>
             <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>

@@ -53,6 +53,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         private String schemeTracks;
         private String schemeFooter;
         private String filename;
+        private String name;
 
         static Exportprofile()
         {
@@ -109,9 +110,13 @@ namespace AudioCuesheetEditor.Model.IO.Export
             schemeFooter = String.Empty;
             filename = DefaultFileName;
             var random = new Random();
-            Name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
+            name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
-        public String Name { get; set; }
+        public String Name 
+        {
+            get => name;
+            set { name = value; OnValidateablePropertyChanged(); }
+        }
         public String SchemeHead 
         {
             get => schemeHead;
@@ -181,6 +186,14 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         validationMessages ??= new();
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Filename)));
+                    }
+                    break;
+                case nameof(Name):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Name))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
                     }
                     break;
             }
