@@ -15,16 +15,13 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Audio;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditorTests.Utility
 {
     internal class AudioConverterServiceUnitTest : IAudioConverterService
     {
-        public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan to)
+        public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan? to = null)
         {
             // This implementation does nothing with audio processing, so we only return some fake data
             return Task.FromResult<byte[]?>(null);
