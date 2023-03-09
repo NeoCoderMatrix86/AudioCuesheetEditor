@@ -82,7 +82,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return canWrite;
         }
 
-        public IReadOnlyCollection<Exportfile> GenerateExportfiles(ExportType exportType)
+        public async Task<IReadOnlyCollection<Exportfile>> GenerateExportfilesAsync(ExportType exportType)
         {
             List<Exportfile> exportfiles = new();
             if (CanWrite(exportType))
@@ -97,7 +97,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     String audioFileName = String.Empty;
                     foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
                     {
-                        audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Cuesheet.Audiofile?.Name);
+                        audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Path.GetExtension(Cuesheet.Audiofile?.Name));
                         if (splitPoint.Validate().Status == ValidationStatus.Success)
                         {
                             switch (exportType)
@@ -116,15 +116,15 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             }
                             if (content != null)
                             {
-                                //TODO: Create ExportAudiofile via AudioConverterService
-                                exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
+                                var exportAudiofile = await GetAudiofileContentAsync(audioFileName, previousSplitPointMoment, splitPoint);
+                                exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment, ExportAudiofile = exportAudiofile });
                             }
                             previousSplitPointMoment = splitPoint.Moment;
                             counter++;
                         }
                     }
                     //After a split point attach the last part
-                    audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Cuesheet.Audiofile?.Name);
+                    audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Path.GetExtension(Cuesheet.Audiofile?.Name));
                     switch (exportType)
                     {
                         case ExportType.Cuesheet:
@@ -141,8 +141,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (content != null)
                     {
-                        //TODO: Create ExportAudiofile via AudioConverterService
-                        exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment});
+                        var exportAudiofile = await GetAudiofileContentAsync(audioFileName, previousSplitPointMoment);
+                        exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, ExportAudiofile = exportAudiofile });
                     }
                 }
                 else
@@ -179,7 +179,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (content != null)
                     {
-                        //TODO: Create ExportAudiofile via AudioConverterService
                         exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content) });
                     }
                 }
@@ -352,10 +351,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return builder.ToString();
         }
 
-        private async Task<byte[]?> GetAudiofileContentAsync(TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private async Task<ExportAudiofile?> GetAudiofileContentAsync(String audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
         {
-            //TODO: set default to Audiofile.content
-            byte[]? content = null;
+            ExportAudiofile? exportAudiofile = null;
             if ((from != null) || (splitPoint != null))
             {
                 TimeSpan start = TimeSpan.Zero;
@@ -379,9 +377,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 {
                     throw new NullReferenceException();
                 }
-                content = await AudioConverterService.SplitAudiofileAsync(Cuesheet.Audiofile, start, splitPoint?.Moment);
+                var content = await AudioConverterService.SplitAudiofileAsync(Cuesheet.Audiofile, start, splitPoint?.Moment);
+                exportAudiofile = new() { Name = audiofileName, Content = content };
             }
-            return content;
+            return exportAudiofile;
         }
     }
 }

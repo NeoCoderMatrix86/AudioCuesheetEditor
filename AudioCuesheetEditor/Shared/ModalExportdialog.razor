@@ -54,6 +54,7 @@ along with Foobar.  If not, see
                                     <TableHeaderCell>@_localizer[nameof(Exportfile.Begin)]</TableHeaderCell>
                                     <TableHeaderCell>@_localizer[nameof(Exportfile.End)]</TableHeaderCell>
                                     <TableHeaderCell>@_localizer[nameof(Exportfile.Content)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.ExportAudiofile)]</TableHeaderCell>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -72,6 +73,13 @@ along with Foobar.  If not, see
                                                             <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
                                                             <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                                                         </svg>
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Text="@_localizer["Download split audio file"]">
+                                                    <Button Color="Color.Success" Clicked='() => _blazorDownloadFileService.DownloadFile(exportfile.ExportAudiofile?.Name, exportfile.ExportAudiofile?.Content, "application/octet-stream")'>
+                                                        TODO: Icon
                                                     </Button>
                                                 </Tooltip>
                                             </TableRowCell>
@@ -101,6 +109,7 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
+    //TODO: Icon for download of audio file
     public event EventHandler? GenerateExportfilesClicked;
 
     [Parameter]
@@ -198,16 +207,19 @@ along with Foobar.  If not, see
         }
     }
 
-    void GenerateExportfiles_Clicked()
+    async Task GenerateExportfiles_Clicked()
     {
         _logger.LogDebug("GenerateExportfiles_Clicked called");
         if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
             //TODO: Display progress bar?
-            exportfiles = ExportfileGenerator?.GenerateExportfiles(ExportType);
-            selectedStep = "displayExportResult";
-            prepareExportCompleted = true;
+            if (ExportfileGenerator != null)
+            {
+                exportfiles = await ExportfileGenerator.GenerateExportfilesAsync(ExportType);
+                selectedStep = "displayExportResult";
+                prepareExportCompleted = true;
+            }
         }
     }
 
@@ -221,13 +233,12 @@ along with Foobar.  If not, see
         IsVisible = visible;
     }
 
-    ValueTask OnEnterKeyDown()
+    async ValueTask OnEnterKeyDown()
     {
         if (IsVisible)
         {
-            GenerateExportfiles_Clicked();
+            await GenerateExportfiles_Clicked();
         }
-        return ValueTask.CompletedTask;
     }
 
     String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
