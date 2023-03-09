@@ -42,13 +42,7 @@ namespace AudioCuesheetEditorTests.Utility
                 .AddLogging()
                 .BuildServiceProvider();
 
-            var factory = serviceProvider.GetService<ILoggerFactory>();
-            
-            if (factory == null)
-            {
-                throw new NullReferenceException();
-            }
-
+            var factory = serviceProvider.GetService<ILoggerFactory>() ?? throw new NullReferenceException();
             return factory.CreateLogger<T>();
         }
     }
