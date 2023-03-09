@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             FileName = fileName;
         }
-
+        //TODO: Rename to Name!
         public String FileName { get; private set; }
     }
 }

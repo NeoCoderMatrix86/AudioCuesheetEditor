@@ -94,26 +94,29 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     var counter = 1;
                     String? content = null;
                     String filename = String.Empty;
+                    String audioFileName = String.Empty;
                     foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
                     {
+                        audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Cuesheet.Audiofile?.Name);
                         if (splitPoint.Validate().Status == ValidationStatus.Success)
                         {
                             switch (exportType)
                             {
                                 case ExportType.Cuesheet:
-                                    content = WriteCuesheet(previousSplitPointMoment, splitPoint);
+                                    content = WriteCuesheet(audioFileName, previousSplitPointMoment, splitPoint);
                                     filename = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(ApplicationOptions?.CuesheetFilename), counter, Cuesheet.FileExtension);
                                     break;
                                 case ExportType.Exportprofile:
                                     if (Exportprofile != null)
                                     {
-                                        content = WriteExport(previousSplitPointMoment, splitPoint);
+                                        content = WriteExport(audioFileName, previousSplitPointMoment, splitPoint);
                                         filename = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Exportprofile.Filename), counter, Path.GetExtension(Exportprofile.Filename));
                                     }
                                     break;
                             }
                             if (content != null)
                             {
+                                //TODO: Create ExportAudiofile via AudioConverterService
                                 exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
                             }
                             previousSplitPointMoment = splitPoint.Moment;
@@ -121,22 +124,24 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                     }
                     //After a split point attach the last part
+                    audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Cuesheet.Audiofile?.Name);
                     switch (exportType)
                     {
                         case ExportType.Cuesheet:
-                            content = WriteCuesheet(previousSplitPointMoment);
+                            content = WriteCuesheet(audioFileName, previousSplitPointMoment);
                             filename = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(ApplicationOptions?.CuesheetFilename), counter, Cuesheet.FileExtension);
                             break;
                         case ExportType.Exportprofile:
                             if (Exportprofile != null)
                             {
-                                content = WriteExport(previousSplitPointMoment);
+                                content = WriteExport(audioFileName, previousSplitPointMoment);
                                 filename = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Exportprofile.Filename), counter, Path.GetExtension(Exportprofile.Filename));
                             }
                             break;
                     }
                     if (content != null)
                     {
+                        //TODO: Create ExportAudiofile via AudioConverterService
                         exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment});
                     }
                 }
@@ -156,18 +161,25 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             {
                                 filename = Exportfile.DefaultCuesheetFilename;
                             }
-                            content = WriteCuesheet();
+                            if (Cuesheet.Audiofile != null)
+                            {
+                                content = WriteCuesheet(Cuesheet.Audiofile.Name);
+                            }
                             break;
                         case ExportType.Exportprofile:
                             if (Exportprofile != null)
                             {
                                 filename = Exportprofile.Filename;
-                                content = WriteExport();
+                                if (Cuesheet.Audiofile != null)
+                                {
+                                    content = WriteExport(Cuesheet.Audiofile.Name);
+                                }
                             }
                             break;
                     }
                     if (content != null)
                     {
+                        //TODO: Create ExportAudiofile via AudioConverterService
                         exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content) });
                     }
                 }
@@ -175,7 +187,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return exportfiles;
         }
 
-        private string WriteCuesheet(TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private string WriteCuesheet(String audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Cuesheet.Cataloguenumber != null && string.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false && Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
@@ -188,8 +200,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, splitPoint != null ? splitPoint.Title : Cuesheet.Title));
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, splitPoint != null ? splitPoint.Artist : Cuesheet.Artist));
-            //TODO: Split Audiofile!
-            builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, Cuesheet.Audiofile?.Name, Cuesheet.Audiofile?.AudioFileType));
+            builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofileName, Cuesheet.Audiofile?.AudioFileType));
             IEnumerable<Track> tracks = Cuesheet.Tracks.OrderBy(x => x.Position);
             if (from != null && splitPoint != null)
             {
@@ -252,16 +263,15 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return builder.ToString();
         }
 
-        private String WriteExport(TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private String WriteExport(String audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Exportprofile != null)
             {
-                //TODO: Split Audiofile!
                 var header = Exportprofile.SchemeHead
                     .Replace(Exportprofile.SchemeCuesheetArtist, splitPoint != null ? splitPoint.Artist : Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, splitPoint != null ? splitPoint.Title : Cuesheet.Title)
-                    .Replace(Exportprofile.SchemeCuesheetAudiofile, Cuesheet.Audiofile?.Name)
+                    .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.FileName)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
@@ -328,11 +338,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         builder.AppendLine(trackLine);
                     }
                 }
-                //TODO: Split Audiofile!
                 var footer = Exportprofile.SchemeFooter
                     .Replace(Exportprofile.SchemeCuesheetArtist, splitPoint != null ? splitPoint.Artist : Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, splitPoint != null ? splitPoint.Title : Cuesheet.Title)
-                    .Replace(Exportprofile.SchemeCuesheetAudiofile, Cuesheet.Audiofile?.Name)
+                    .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.FileName)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
@@ -341,6 +350,38 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 builder.AppendLine(footer);
             }
             return builder.ToString();
+        }
+
+        private async Task<byte[]?> GetAudiofileContentAsync(TimeSpan? from = null, SplitPoint? splitPoint = null)
+        {
+            //TODO: set default to Audiofile.content
+            byte[]? content = null;
+            if ((from != null) || (splitPoint != null))
+            {
+                TimeSpan start = TimeSpan.Zero;
+                if (from != null)
+                {
+                    start = from.Value;
+                }
+                else
+                {
+                    var minBegin = Cuesheet.Tracks.Min(x => x.Begin);
+                    if (minBegin != null)
+                    {
+                        start = minBegin.Value;
+                    }
+                }
+                if (AudioConverterService == null)
+                {
+                    throw new NullReferenceException();
+                }
+                if (Cuesheet.Audiofile == null)
+                {
+                    throw new NullReferenceException();
+                }
+                content = await AudioConverterService.SplitAudiofileAsync(Cuesheet.Audiofile, start, splitPoint?.Moment);
+            }
+            return content;
         }
     }
 }
