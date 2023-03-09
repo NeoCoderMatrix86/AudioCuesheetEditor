@@ -75,6 +75,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             var hasSplitPoints = Cuesheet.SplitPoints.Any();
             if (hasSplitPoints)
             {
+                //TODO: Maybe move the contentstreamloaded to a wait in GenerateExportfiles
                 canWrite = canWrite
                     && AudioConverterService != null
                     && Cuesheet.Audiofile != null
