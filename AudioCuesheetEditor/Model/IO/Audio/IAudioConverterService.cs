@@ -17,6 +17,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 {
     public interface IAudioConverterService
     {
-        public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan to);
+        public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan? to = null);
     }
 }

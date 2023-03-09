@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 
         public Boolean IsReady => (ffMPEGInstance != null) && ffMPEGInstance.IsLoaded;
 
-        public async Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan to)
+        public async Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan? to = null)
         {
             if (IsReady == false)
             {
@@ -52,7 +52,14 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 await audiofile.ContentStream.ReadAsync(buffer);
                 ffMPEGInstance.WriteFile(audiofile.Name, buffer);
                 var splitAudiofilename = String.Format("output-{0}{1}", Guid.NewGuid(), audiofile.AudioCodec?.FileExtension);
-                await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-t", to.ToString("hh\\:mm\\:ss\\.fff"), "-c", "copy", splitAudiofilename);
+                if (to == null)
+                {
+                    await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-c", "copy", splitAudiofilename);
+                }
+                else
+                {
+                    await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-to", to.Value.ToString("hh\\:mm\\:ss\\.fff"), "-c", "copy", splitAudiofilename);
+                }
                 ffMPEGInstance.UnlinkFile(audiofile.Name);
                 var res = await ffMPEGInstance.ReadFile(splitAudiofilename);
                 return res;
