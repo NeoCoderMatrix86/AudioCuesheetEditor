@@ -35,9 +35,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public Cuesheet Cuesheet { get; }
         public Exportprofile? Exportprofile { get; set; }
         public ApplicationOptions? ApplicationOptions { get; set; }
-        public AudioConverterService? AudioConverterService { get; set; }
+        public IAudioConverterService? AudioConverterService { get; set; }
 
-        public ExportfileGenerator(Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null, AudioConverterService? audioConverterService = null)
+        public ExportfileGenerator(Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null, IAudioConverterService? audioConverterService = null)
         {
             Cuesheet = cuesheet;
             Exportprofile = exportprofile;
@@ -75,11 +75,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
             var hasSplitPoints = Cuesheet.SplitPoints.Any();
             if (hasSplitPoints)
             {
-                //TODO: Maybe move the contentstreamloaded to a wait in GenerateExportfiles
                 canWrite = canWrite
                     && AudioConverterService != null
-                    && Cuesheet.Audiofile != null
-                    && Cuesheet.Audiofile.IsContentStreamLoaded;
+                    && Cuesheet.Audiofile != null;
             }
             return canWrite;
         }
@@ -89,6 +87,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<Exportfile> exportfiles = new();
             if (CanWrite(exportType))
             {
+                //TODO: Wait for the Audiofile.ContentStream to be loaded!
                 if (Cuesheet.SplitPoints.Count != 0)
                 {
                     TimeSpan? previousSplitPointMoment = null;

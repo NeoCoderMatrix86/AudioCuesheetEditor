@@ -315,7 +315,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             splitPoint.Title = "Title 3";
             splitPoint.Moment = new TimeSpan(1, 30, 0);
             testHelper.ApplicationOptions.CuesheetFilename = "Unit test.cue";
-            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions);
+            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions, audioConverterService:testHelper.AudioConverterService);
             Assert.IsTrue(generator.CanWrite(ExportType.Cuesheet));
             var generatedFiles = generator.GenerateExportfiles(ExportType.Cuesheet);
             Assert.AreEqual(5, generatedFiles.Count);
@@ -641,7 +641,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
                 SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
             };
-            var generator = new ExportfileGenerator(cuesheet, exportProfile);
+            var generator = new ExportfileGenerator(cuesheet, exportProfile, audioConverterService: testHelper.AudioConverterService);
             Assert.IsTrue(generator.CanWrite(ExportType.Exportprofile));
             var generatedFiles = generator.GenerateExportfiles(ExportType.Exportprofile);
             Assert.AreEqual(5, generatedFiles.Count);

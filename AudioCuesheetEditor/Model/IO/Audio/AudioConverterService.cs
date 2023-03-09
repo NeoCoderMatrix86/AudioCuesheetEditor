@@ -18,7 +18,7 @@ using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
-    public class AudioConverterService : IDisposable
+    public class AudioConverterService : IAudioConverterService, IDisposable
     {
         private readonly IJSRuntime _jSRuntime;
         private FFMPEG? ffMPEGInstance;

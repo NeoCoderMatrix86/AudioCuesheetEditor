@@ -31,6 +31,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject IAudioConverterService _audioConverterService
 
 <ErrorBoundary>
     <ChildContent>
@@ -436,7 +437,7 @@ along with Foobar.  If not, see
         {
             if (applicationOptions?.Validate(x => x.CuesheetFilename).Status != Model.Entity.ValidationStatus.Error)
             {
-                var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions);
+                var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions, audioConverterService: _audioConverterService);
                 return generator.CanWrite(ExportType.Cuesheet);
             }
             else
@@ -450,7 +451,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, SelectedExportProfile);
+            var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, SelectedExportProfile, audioConverterService: _audioConverterService);
             return generator.CanWrite(ExportType.Exportprofile);
         }
     }
