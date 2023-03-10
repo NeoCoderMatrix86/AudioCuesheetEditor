@@ -117,7 +117,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             if (content != null)
                             {
                                 var exportAudiofile = await GetAudiofileContentAsync(audioFileName, previousSplitPointMoment, splitPoint);
-                                exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment, ExportAudiofile = exportAudiofile });
+                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment, ExportAudiofile = exportAudiofile });
                             }
                             previousSplitPointMoment = splitPoint.Moment;
                             counter++;
@@ -142,7 +142,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     if (content != null)
                     {
                         var exportAudiofile = await GetAudiofileContentAsync(audioFileName, previousSplitPointMoment);
-                        exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, ExportAudiofile = exportAudiofile });
+                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, ExportAudiofile = exportAudiofile });
                     }
                 }
                 else
@@ -179,7 +179,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (content != null)
                     {
-                        exportfiles.Add(new Exportfile() { Filename = filename, Content = Encoding.UTF8.GetBytes(content) });
+                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content) });
                     }
                 }
             }

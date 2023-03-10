@@ -59,7 +59,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions);
             var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
             Assert.AreEqual(1, generatedFiles.Count);
-            Assert.AreEqual(Exportfile.DefaultCuesheetFilename, generatedFiles.First().Filename);
+            Assert.AreEqual(Exportfile.DefaultCuesheetFilename, generatedFiles.First().Name);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
             var fileName = Path.GetTempFileName();
@@ -334,7 +334,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.IsNull(generatedFiles.Last().End);
             foreach (var generatedFile in generatedFiles)
             {
-                Assert.AreEqual(String.Format("Unit test({0}).cue", counter), generatedFile.Filename);
+                Assert.AreEqual(String.Format("Unit test({0}).cue", counter), generatedFile.Name);
                 counter++;
                 var content = generatedFile.Content;
                 Assert.IsNotNull(content);
@@ -430,7 +430,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var generator = new ExportfileGenerator(cuesheet, exportprofile: exportProfile);
             var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
             Assert.AreEqual(1, generatedFiles.Count);
-            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Filename);
+            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             var fileContent = generatedFiles.First().Content;
             Assert.IsNotNull(fileContent);
             var tempFile = Path.GetTempFileName();
@@ -463,7 +463,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             generator.Exportprofile = exportProfile;
             generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
             Assert.AreEqual(1, generatedFiles.Count);
-            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Filename);
+            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             fileContent = generatedFiles.First().Content;
             Assert.IsNotNull(fileContent);
             tempFile = Path.GetTempFileName();
@@ -497,7 +497,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             generator.Exportprofile = exportProfile;
             generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
             Assert.AreEqual(1, generatedFiles.Count);
-            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Filename);
+            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             fileContent = generatedFiles.First().Content;
             Assert.IsNotNull(fileContent);
             tempFile = Path.GetTempFileName();
@@ -568,7 +568,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var generator = new ExportfileGenerator(cuesheet, exportprofile: exportProfile);
             var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
             Assert.AreEqual(1, generatedFiles.Count);
-            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Filename);
+            Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             var fileContent = generatedFiles.First().Content;
             Assert.IsNotNull(fileContent);
             var tempFile = Path.GetTempFileName();
@@ -661,7 +661,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var position = 1;
             foreach (var generatedFile in generatedFiles)
             {
-                Assert.AreEqual(String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(exportProfile.Filename), counter, Path.GetExtension(exportProfile.Filename)), generatedFile.Filename);
+                Assert.AreEqual(String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(exportProfile.Filename), counter, Path.GetExtension(exportProfile.Filename)), generatedFile.Name);
                 counter++;
                 var content = generatedFile.Content;
                 Assert.IsNotNull(content);
