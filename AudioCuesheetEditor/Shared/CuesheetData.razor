@@ -263,7 +263,9 @@ along with Foobar.  If not, see
             {
                 var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", fileEditAudiofileId);
                 var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
-                Cuesheet.Audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+                var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+                _ = audiofile.LoadContentStream();
+                Cuesheet.Audiofile = audiofile;
             }
             else
             {

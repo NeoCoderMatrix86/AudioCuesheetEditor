@@ -87,7 +87,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<Exportfile> exportfiles = new();
             if (CanWrite(exportType))
             {
-                //TODO: Wait for the Audiofile.ContentStream to be loaded!
                 if (Cuesheet.SplitPoints.Count != 0)
                 {
                     TimeSpan? previousSplitPointMoment = null;

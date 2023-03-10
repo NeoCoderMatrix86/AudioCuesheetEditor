@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using ATL.CatalogDataReaders.BinaryLogic;
 using FFmpegBlazor;
 using Microsoft.JSInterop;
 
@@ -46,23 +47,31 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             {
                 await InitAsync();
             }
-            if ((ffMPEGInstance != null) && (audiofile.ContentStream != null))
+            if (ffMPEGInstance != null)
             {
-                byte[] buffer = new byte[audiofile.ContentStream.Length];
-                await audiofile.ContentStream.ReadAsync(buffer);
-                ffMPEGInstance.WriteFile(audiofile.Name, buffer);
-                var splitAudiofilename = String.Format("output-{0}{1}", Guid.NewGuid(), audiofile.AudioCodec?.FileExtension);
-                if (to == null)
+                await audiofile.LoadContentStream();
+                if (audiofile.ContentStream != null)
                 {
-                    await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-c", "copy", splitAudiofilename);
+                    byte[] buffer = new byte[audiofile.ContentStream.Length];
+                    await audiofile.ContentStream.ReadAsync(buffer);
+                    ffMPEGInstance.WriteFile(audiofile.Name, buffer);
+                    var splitAudiofilename = String.Format("output-{0}{1}", Guid.NewGuid(), audiofile.AudioCodec?.FileExtension);
+                    if (to == null)
+                    {
+                        await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-c", "copy", splitAudiofilename);
+                    }
+                    else
+                    {
+                        await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-to", to.Value.ToString("hh\\:mm\\:ss\\.fff"), "-c", "copy", splitAudiofilename);
+                    }
+                    ffMPEGInstance.UnlinkFile(audiofile.Name);
+                    var res = await ffMPEGInstance.ReadFile(splitAudiofilename);
+                    return res;
                 }
                 else
                 {
-                    await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-to", to.Value.ToString("hh\\:mm\\:ss\\.fff"), "-c", "copy", splitAudiofilename);
+                    throw new Exception("ContentStream wasn't loaded!");
                 }
-                ffMPEGInstance.UnlinkFile(audiofile.Name);
-                var res = await ffMPEGInstance.ReadFile(splitAudiofilename);
-                return res;
             }
             return null;
         }

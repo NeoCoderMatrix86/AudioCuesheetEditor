@@ -54,8 +54,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
-            //Read stream asynchronously in order to be prepared (using large files)
-            _ = LoadContentStream(httpClient);
+            HttpClient = httpClient;
         }
 
         public String Name { get; private set; }
@@ -80,6 +79,8 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// Duration of the audio file
         /// </summary>
         public TimeSpan? Duration { get; private set; }
+        [JsonIgnore]
+        public HttpClient? HttpClient { get; set; }
 
         public AudioCodec? AudioCodec 
         {
@@ -125,11 +126,11 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
         }
 
-        private async Task LoadContentStream(System.Net.Http.HttpClient httpClient)
+        public async Task LoadContentStream()
         {
-            if ((String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null))
+            if ((ContentStream == null) && (String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null) && (HttpClient != null))
             {
-                ContentStream = await httpClient.GetStreamAsync(ObjectURL);
+                ContentStream = await HttpClient.GetStreamAsync(ObjectURL);
                 var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
                 Duration = new TimeSpan(0, 0, track.Duration);
                 ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
