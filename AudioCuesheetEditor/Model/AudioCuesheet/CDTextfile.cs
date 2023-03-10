@@ -25,13 +25,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public const String MimeType = "text/*";
         public const String FileExtension = ".cdt";
 
-        public CDTextfile(String fileName)
+        public CDTextfile(String name)
         {
-            if (String.IsNullOrEmpty(fileName))
+            if (String.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException(nameof(fileName));
+                throw new ArgumentNullException(nameof(name));
             }
-            Name = fileName;
+            Name = name;
         }
         public String Name { get; private set; }
     }
