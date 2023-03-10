@@ -195,7 +195,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
             if (Cuesheet.CDTextfile != null)
             {
-                builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, Cuesheet.CDTextfile.FileName));
+                builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, Cuesheet.CDTextfile.Name));
             }
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, splitPoint != null ? splitPoint.Title : Cuesheet.Title));
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, splitPoint != null ? splitPoint.Artist : Cuesheet.Artist));
@@ -271,7 +271,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     .Replace(Exportprofile.SchemeCuesheetArtist, splitPoint != null ? splitPoint.Artist : Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, splitPoint != null ? splitPoint.Title : Cuesheet.Title)
                     .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
-                    .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.FileName)
+                    .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                     .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
@@ -341,7 +341,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     .Replace(Exportprofile.SchemeCuesheetArtist, splitPoint != null ? splitPoint.Artist : Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, splitPoint != null ? splitPoint.Title : Cuesheet.Title)
                     .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
-                    .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.FileName)
+                    .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                     .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())

@@ -91,7 +91,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.WriteAllBytes(fileName, content);
             fileContent = File.ReadAllLines(fileName);
             Assert.AreEqual(fileContent[0], String.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, cuesheet.Cataloguenumber.Value));
-            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, cuesheet.CDTextfile.FileName));
+            Assert.AreEqual(fileContent[1], String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, cuesheet.CDTextfile.Name));
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "Testvalue";

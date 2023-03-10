@@ -31,9 +31,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 throw new ArgumentNullException(nameof(fileName));
             }
-            FileName = fileName;
+            Name = fileName;
         }
-        //TODO: Rename to Name!
-        public String FileName { get; private set; }
+        public String Name { get; private set; }
     }
 }
