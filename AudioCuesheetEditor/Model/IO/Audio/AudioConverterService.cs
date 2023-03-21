@@ -51,8 +51,10 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 await audiofile.LoadContentStream();
                 if (audiofile.ContentStream != null)
                 {
-                    byte[] buffer = new byte[audiofile.ContentStream.Length];
-                    await audiofile.ContentStream.ReadAsync(buffer);
+                    using var memoryStream = new MemoryStream();
+                    audiofile.ContentStream.Seek(0, SeekOrigin.Begin);
+                    audiofile.ContentStream.CopyTo(memoryStream);
+                    var buffer = memoryStream.ToArray();
                     ffMPEGInstance.WriteFile(audiofile.Name, buffer);
                     var splitAudiofilename = String.Format("output-{0}{1}", Guid.NewGuid(), audiofile.AudioCodec?.FileExtension);
                     if (to == null)
@@ -61,7 +63,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                     }
                     else
                     {
-                        //TODO: Seems to have a bug when using large mp3 files because of searching the duration!
                         await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-to", to.Value.ToString("hh\\:mm\\:ss\\.fff"), "-c", "copy", splitAudiofilename);
                     }
                     ffMPEGInstance.UnlinkFile(audiofile.Name);
