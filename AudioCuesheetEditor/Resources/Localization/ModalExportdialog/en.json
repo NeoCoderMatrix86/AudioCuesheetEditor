@@ -13,6 +13,7 @@
     "Abort": "Abort",
     "Export files can not be generated. Please check validationerrors and solve errors in order to download export.": "Export files can not be generated. Please check validationerrors and solve errors in order to download export.",
     "Close": "Close",
-    "Download split audio file": "Download split audio file"
+    "Download split audio file": "Download split audio file",
+    "Generation in progress, please stand by ...": "Generation in progress, please stand by ..."
   }
 }

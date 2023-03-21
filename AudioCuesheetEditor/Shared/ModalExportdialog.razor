@@ -102,22 +102,33 @@ along with Foobar.  If not, see
             </Steps>
         </ModalBody>
         <ModalFooter>
-            @if (selectedStep != "displayExportResult")
+            @if (exportProgress != null)
             {
-                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!ExportPossible, "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
-                    <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
-                </Tooltip>
-                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
+                <Paragraph Width="Width.Is100">
+                    @_localizer["Generation in progress, please stand by ..."]
+                </Paragraph>
+                <Progress Value="@exportProgress" Width="Width.Is100" Striped />
             }
             else
             {
-                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Close"]</Button>
+                @if (selectedStep != "displayExportResult")
+                {
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!ExportPossible, "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
+                        <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
+                    </Tooltip>
+                    <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
+                }
+                else
+                {
+                    <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Close"]</Button>
+                }
             }
         </ModalFooter>
     </ModalContent>
 </Modal>
 
 @code {
+    //TODO: Lock PrepareExportStepContent during generation!
     public event EventHandler? GenerateExportfilesClicked;
 
     [Parameter]
@@ -141,6 +152,7 @@ along with Foobar.  If not, see
     IReadOnlyCollection<Exportfile>? exportfiles;
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
+    int? exportProgress;
 
     Boolean StepNavigationAllowed
     {
@@ -185,6 +197,7 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
+        _audioConverterService.ProgressChanged += IAudioConverterService_ProgressChanged;
         ExportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, audioConverterService: _audioConverterService);
 
         await base.OnInitializedAsync();
@@ -192,6 +205,7 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
+        _audioConverterService.ProgressChanged -= IAudioConverterService_ProgressChanged;
         hotKeysContext?.Dispose();
     }
 
@@ -221,13 +235,14 @@ along with Foobar.  If not, see
         if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
-            //TODO: Display progress bar?
+            exportProgress = 0;
             if (ExportfileGenerator != null)
             {
                 exportfiles = await ExportfileGenerator.GenerateExportfilesAsync(ExportType);
                 selectedStep = "displayExportResult";
                 prepareExportCompleted = true;
             }
+            exportProgress = null;
         }
     }
 
@@ -259,5 +274,11 @@ along with Foobar.  If not, see
         {
             return null;
         }
+    }
+
+    void IAudioConverterService_ProgressChanged(object? sender, int progress)
+    {
+        exportProgress = progress;
+        InvokeAsync(StateHasChanged);
     }
 }

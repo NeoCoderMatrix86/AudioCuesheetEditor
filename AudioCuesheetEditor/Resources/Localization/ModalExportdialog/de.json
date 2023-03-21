@@ -13,6 +13,7 @@
     "Abort": "Abbrechen",
     "Export files can not be generated. Please check validationerrors and solve errors in order to download export.": "Exportdateien können nicht generiert werden. Bitte prüfen Sie die Validierungsfehler und beheben Sie diese, um die Exportdateien herunterladen zu können.",
     "Close": "Schließen",
-    "Download split audio file": "Verarbeitete Audiodatei herunterladen"
+    "Download split audio file": "Verarbeitete Audiodatei herunterladen",
+    "Generation in progress, please stand by ...": "Export wird durchgeführt, bitte warten Sie ...."
   }
 }

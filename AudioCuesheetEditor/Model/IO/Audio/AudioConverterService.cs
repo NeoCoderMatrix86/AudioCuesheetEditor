@@ -24,7 +24,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         private FFMPEG? ffMPEGInstance;
         private bool disposedValue;
 
-        public event EventHandler<double>? ProgressChanged;
+        public event EventHandler<int>? ProgressChanged;
 
         public AudioConverterService(IJSRuntime jSRuntime)
         {
@@ -61,6 +61,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                     }
                     else
                     {
+                        //TODO: Seems to have a bug when using large mp3 files because of searching the duration!
                         await ffMPEGInstance.Run("-ss", from.ToString("hh\\:mm\\:ss\\.fff"), "-i", audiofile.Name, "-to", to.Value.ToString("hh\\:mm\\:ss\\.fff"), "-c", "copy", splitAudiofilename);
                     }
                     ffMPEGInstance.UnlinkFile(audiofile.Name);
@@ -110,7 +111,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 
         private void FFMPEGInstance_Progress(Progress p)
         {
-            ProgressChanged?.Invoke(this, p.Ratio);
+            ProgressChanged?.Invoke(this, Convert.ToInt32(p.Ratio * 100));
         }
     }
 }
