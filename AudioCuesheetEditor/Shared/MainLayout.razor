@@ -223,7 +223,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.CuesheetFilename" Immediate="false" Disabled="ModalExportdialogCuesheetLockUserInput">
+                        <TextEdit Text="@applicationOptions.CuesheetFilename" Immediate="false" Disabled="ModalExportdialogCuesheetLockUserInput" TextChanged="OnApplicationOptionsCuesheetFilenameChanged">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -264,7 +264,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" @bind-Text="SelectedExportProfile.Filename" Disabled="ModalExportdialogExportprofileLockUserInput">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@SelectedExportProfile.Filename" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileFilenameChanged">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -282,7 +282,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" @bind-Text="SelectedExportProfile.SchemeHead" Disabled="ModalExportdialogExportprofileLockUserInput">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@SelectedExportProfile.SchemeHead" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeHeadChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
@@ -296,7 +296,7 @@ along with Foobar.  If not, see
                                     <DropdownMenu>
                                         @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
                                         {
-                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeHead += availableScheme.Value">@_localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeHeadChanged(SelectedExportProfile.SchemeHead += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -315,7 +315,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" @bind-Text="@SelectedExportProfile.SchemeTracks" Disabled="ModalExportdialogExportprofileLockUserInput">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@SelectedExportProfile.SchemeTracks" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeTracksChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
@@ -329,7 +329,7 @@ along with Foobar.  If not, see
                                     <DropdownMenu>
                                         @foreach (var availableScheme in Exportprofile.AvailableTrackSchemes)
                                         {
-                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeTracks += availableScheme.Value">@_localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeTracksChanged(SelectedExportProfile.SchemeTracks += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -348,7 +348,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" @bind-Text="SelectedExportProfile.SchemeFooter" Disabled="ModalExportdialogExportprofileLockUserInput">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@SelectedExportProfile.SchemeFooter" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeFooterChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
@@ -362,7 +362,7 @@ along with Foobar.  If not, see
                                     <DropdownMenu>
                                         @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
                                         {
-                                            <DropdownItem Clicked="() => SelectedExportProfile.SchemeFooter += availableScheme.Value">@_localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeFooterChanged(SelectedExportProfile.SchemeFooter += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -376,7 +376,6 @@ along with Foobar.  If not, see
 </ModalExportdialog>
 
 @code {
-    //TODO: When modalExportdialogCuesheet or modalExportdialogExportprofile input changes, the exportedFiles of ModalExportdialog should be reset!
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
@@ -787,6 +786,7 @@ along with Foobar.  If not, see
         if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
         {
             modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
+            modalExportdialogExportprofile.Reset();
         }
         StateHasChanged();
     }
@@ -827,5 +827,70 @@ along with Foobar.  If not, see
         {
             modalExportdialogCuesheet.ExportfileGenerator.ApplicationOptions = applicationOptions;
         }
+    }
+
+    Task OnApplicationOptionsCuesheetFilenameChanged(string value)
+    {
+        if (applicationOptions != null)
+        {
+            applicationOptions.CuesheetFilename = value;
+        }
+        if (modalExportdialogCuesheet != null)
+        {
+            modalExportdialogCuesheet.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileFilenameChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.Filename = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileSchemeHeadChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.SchemeHead = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileSchemeTracksChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.SchemeTracks = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileSchemeFooterChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.SchemeFooter = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
     }
 }
