@@ -128,7 +128,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    //TODO: Lock PrepareExportStepContent during generation!
     public event EventHandler? GenerateExportfilesClicked;
 
     [Parameter]
@@ -146,6 +145,7 @@ along with Foobar.  If not, see
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
     public ExportfileGenerator? ExportfileGenerator { get; private set; }
+    public Boolean LockUserInputs { get => exportProgress != null; }
 
     Modal? modalExportdialog;
     String selectedStep = "prepareExport";
