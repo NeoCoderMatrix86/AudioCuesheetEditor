@@ -17,6 +17,6 @@ namespace AudioCuesheetEditor.Model.Options
 {
     public interface IOptions
     {
-        public void SetDefaultValues();
+        
     }
 }

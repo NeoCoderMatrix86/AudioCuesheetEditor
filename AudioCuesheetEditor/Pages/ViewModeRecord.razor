@@ -162,7 +162,7 @@ along with Foobar.  If not, see
             @if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
             {
                 <CardBody>
-                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.FileName">@_localizer["Download recorded audio"]</Button>
+                    <Button Color="Color.Primary" Type="ButtonType.Link" To="@_sessionStateContainer.Cuesheet.Audiofile.ObjectURL" Target="Target.Blank" Download="@_sessionStateContainer.Cuesheet.Audiofile.Name">@_localizer["Download recorded audio"]</Button>
                 </CardBody>
             }
         </Card>
@@ -183,7 +183,9 @@ along with Foobar.  If not, see
     public async Task AudioRecordingFinished(String url)
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        _sessionStateContainer.Cuesheet.Audiofile = new Audiofile(options.AudioFileNameRecording, url, Audiofile.AudioCodecWEBM, _httpClient, true);
+        var audiofile = new Audiofile(options.RecordedAudiofilename, url, Audiofile.AudioCodecWEBM, _httpClient, true);
+        _ = audiofile.LoadContentStream();
+        _sessionStateContainer.Cuesheet.Audiofile = audiofile;
         StateHasChanged();
     }
 
@@ -232,16 +234,12 @@ along with Foobar.  If not, see
             }
         };
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-
-        if (options.RecordCountdownTimer.HasValue)
+        startRecordTimer = new Timer(options.RecordCountdownTimer * 1000);
+        startRecordTimer.Elapsed += async delegate
         {
-            startRecordTimer = new Timer(options.RecordCountdownTimer.Value * 1000);
-            startRecordTimer.Elapsed += async delegate
-            {
-                await StartRecordingClicked();
-                startRecordTimer.Stop();
-            };
-        }
+            await StartRecordingClicked();
+            startRecordTimer.Stop();
+        };
     }
 
     private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)

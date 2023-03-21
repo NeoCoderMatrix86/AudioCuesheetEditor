@@ -39,6 +39,14 @@ along with Foobar.  If not, see
         case ViewMode.ViewModeFull:
             <Column>
                 <Accordion>
+                    <Collapse Visible="cuesheetSplitPointsVisible">
+                        <CollapseHeader>
+                            <Button Clicked="(() => cuesheetSplitPointsVisible = !cuesheetSplitPointsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet split points"]</Heading></Button>
+                        </CollapseHeader>
+                        <CollapseBody>
+                            <EditSplitpoints />
+                        </CollapseBody>
+                    </Collapse>
                     <Collapse Visible="cuesheetDataVisible">
                         <CollapseHeader>
                             <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
@@ -70,7 +78,7 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-
+    
     public void Dispose()
     {
         hotKeysContext?.Dispose();
@@ -81,6 +89,7 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public MainLayout? mainLayout { get; set; }
 
+    Boolean cuesheetSplitPointsVisible = false;
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
 

@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -15,21 +15,16 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Audio;
+using System;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum Schemetype
+    public class Exportprofile : Validateable<Exportprofile>
     {
-        Unknown,
-        Header,
-        Body,
-        Footer
-    }
-    public class Exportscheme : Validateable<Exportscheme>
-    {
-        public const String SchemeCharacter = "%";
+        public static readonly String DefaultFileName = "Export.txt";
 
         public static readonly String SchemeCuesheetArtist;
         public static readonly String SchemeCuesheetTitle;
@@ -52,10 +47,15 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public static readonly Dictionary<String, String> AvailableCuesheetSchemes;
         public static readonly Dictionary<String, String> AvailableTrackSchemes;
 
-        private String? scheme;
-        private Schemetype schemeType;
+        public const String SchemeCharacter = "%";
 
-        static Exportscheme()
+        private String schemeHead;
+        private String schemeTracks;
+        private String schemeFooter;
+        private String filename;
+        private String name;
+
+        static Exportprofile()
         {
             SchemeDate = String.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
             SchemeDateTime = String.Format("{0}DateTime{1}", SchemeCharacter, SchemeCharacter);
@@ -89,7 +89,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             SchemeTrackPreGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
             SchemeTrackPostGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
 
-            AvailableTrackSchemes = new Dictionary<string, string>() 
+            AvailableTrackSchemes = new Dictionary<string, string>()
             {
                 { nameof(Track.Position), SchemeTrackPosition },
                 { nameof(Track.Artist), SchemeTrackArtist },
@@ -103,62 +103,39 @@ namespace AudioCuesheetEditor.Model.IO.Export
             };
         }
 
-        public Exportscheme() { }
-
-        public String? Scheme 
+        public Exportprofile()
         {
-            get => scheme;
-            set { scheme = value; OnValidateablePropertyChanged(); }
+            schemeHead = String.Empty;
+            schemeTracks = String.Empty;
+            schemeFooter = String.Empty;
+            filename = DefaultFileName;
+            var random = new Random();
+            name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
-        
-        public Schemetype SchemeType 
+        public String Name 
         {
-            get => schemeType;
-            set { schemeType = value; OnValidateablePropertyChanged(); }
+            get => name;
+            set { name = value; OnValidateablePropertyChanged(); }
         }
-        
-        public String? GetExportResult(ICuesheetEntity cuesheetEntity)
+        public String SchemeHead 
         {
-            String? result = null;
-            if (String.IsNullOrEmpty(Scheme) == false)
-            {
-                switch (SchemeType)
-                {
-                    case Schemetype.Header:
-                    case Schemetype.Footer:
-                        var cuesheet = (Cuesheet)cuesheetEntity;
-                        result = Scheme
-                            .Replace(SchemeCuesheetArtist, cuesheet.Artist)
-                            .Replace(SchemeCuesheetTitle, cuesheet.Title)
-                            .Replace(SchemeCuesheetAudiofile, cuesheet.Audiofile?.FileName)
-                            .Replace(SchemeCuesheetCDTextfile, cuesheet.CDTextfile?.FileName)
-                            .Replace(SchemeCuesheetCatalogueNumber, cuesheet.Cataloguenumber?.Value)
-                            .Replace(SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(SchemeTime, DateTime.Now.ToLongTimeString());
-                        break;
-                    case Schemetype.Body:
-                        var track = (Track)cuesheetEntity;
-                        result = Scheme
-                            .Replace(SchemeTrackArtist, track.Artist)
-                            .Replace(SchemeTrackTitle, track.Title)
-                            .Replace(SchemeTrackPosition, track.Position != null ? track.Position.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackBegin, track.Begin != null ? track.Begin.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackEnd, track.End != null ? track.End.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackLength, track.Length != null ? track.Length.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackFlags, String.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
-                            .Replace(SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : String.Empty)
-                            .Replace(SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : String.Empty)
-                            .Replace(SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(SchemeTime, DateTime.Now.ToLongTimeString());
-                        break;
-                    default:
-                        //Nothing to do
-                        break;
-                }
-            }
-            return result;
+            get => schemeHead;
+            set { schemeHead = value; OnValidateablePropertyChanged(); }
+        }
+        public String SchemeTracks 
+        {
+            get => schemeTracks;
+            set { schemeTracks = value; OnValidateablePropertyChanged(); }
+        }
+        public String SchemeFooter 
+        {
+            get => schemeFooter;
+            set { schemeFooter = value; OnValidateablePropertyChanged(); }
+        }
+        public String Filename 
+        {
+            get => filename;
+            set { filename = value; OnValidateablePropertyChanged(); }
         }
 
         protected override ValidationResult Validate(string property)
@@ -167,41 +144,56 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
-                case nameof(Scheme):
+                case nameof(SchemeHead):
                     validationStatus = ValidationStatus.Success;
-                    switch (SchemeType)
+                    foreach (var availableScheme in AvailableTrackSchemes)
                     {
-                        case Schemetype.Header:
-                        case Schemetype.Footer:
-                            foreach (var availableScheme in AvailableTrackSchemes)
-                            {
-                                if (Scheme?.Contains(availableScheme.Value) == true)
-                                {
-                                    validationMessages ??= new();
-                                    validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(Scheme), availableScheme.Value));
-                                    break;
-                                }
-                            }
+                        if (SchemeHead.Contains(availableScheme.Value) == true)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeHead), availableScheme.Value));
                             break;
-                        case Schemetype.Body:
-                            foreach (var availableScheme in AvailableCuesheetSchemes)
-                            {
-                                if (Scheme?.Contains(availableScheme.Value) == true)
-                                {
-                                    validationMessages ??= new();
-                                    validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(Scheme), availableScheme.Value));
-                                    break;
-                                }
-                            }
-                            break;
+                        }
                     }
                     break;
-                case nameof(SchemeType):
+                case nameof(SchemeTracks):
                     validationStatus = ValidationStatus.Success;
-                    if (SchemeType == Schemetype.Unknown)
+                    foreach (var availableScheme in AvailableCuesheetSchemes)
+                    {
+                        if (SchemeTracks.Contains(availableScheme.Value) == true)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeTracks), availableScheme.Value));
+                            break;
+                        }
+                    }
+                    break;
+                case nameof(SchemeFooter):
+                    validationStatus = ValidationStatus.Success;
+                    foreach (var availableScheme in AvailableTrackSchemes)
+                    {
+                        if (SchemeFooter.Contains(availableScheme.Value) == true)
+                        {
+                            validationMessages ??= new();
+                            validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeFooter), availableScheme.Value));
+                            break;
+                        }
+                    }
+                    break;
+                case nameof(Filename):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Filename))
                     {
                         validationMessages ??= new();
-                        validationMessages.Add(new ValidationMessage("{0} has invalid value!", nameof(SchemeType)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Filename)));
+                    }
+                    break;
+                case nameof(Name):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Name))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
                     }
                     break;
             }

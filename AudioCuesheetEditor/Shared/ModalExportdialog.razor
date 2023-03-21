@@ -1,0 +1,290 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@implements IDisposable
+
+@inject ITextLocalizer<ModalExportdialog> _localizer
+@inject ILogger<ModalExportdialog> _logger
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject SessionStateContainer _sessionStateContainer
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject HotKeys _hotKeys
+@inject IAudioConverterService _audioConverterService
+
+<Modal @ref="modalExportdialog" VisibleChanged="ModalExportdialog_VisibleChanged">
+    <ModalContent Centered Size="ModalSize.ExtraLarge">
+        <ModalHeader>
+            <ModalTitle>
+                @Title
+            </ModalTitle>
+            <CloseButton Clicked="() => ControlModalDialog(modalExportdialog, false)" />
+        </ModalHeader>
+        <ModalBody>
+            <Steps @bind-SelectedStep="selectedStep" NavigationAllowed="NavigationAllowed">
+                <Items>
+                    <Step Name="prepareExport" Completed="prepareExportCompleted">@_localizer["Prepare export"]</Step>
+                    <Step Name="displayExportResult">@_localizer["Result"]</Step>
+                </Items>
+                <Content>
+                    <StepPanel Name="prepareExport">
+                        <Validations @ref="Validations">
+                            @PrepareExportStepContent
+                        </Validations>
+                    </StepPanel>
+                    <StepPanel Name="displayExportResult">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.Name)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.Begin)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.End)]</TableHeaderCell>
+                                    <TableHeaderCell>@_localizer[nameof(Exportfile.Content)]</TableHeaderCell>
+                                    @if ((exportfiles != null) && (exportfiles.Any(x => x.ExportAudiofile != null)))
+                                    {
+                                        <TableHeaderCell>@_localizer[nameof(Exportfile.ExportAudiofile)]</TableHeaderCell>
+                                    }
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                @if (exportfiles != null)
+                                {
+                                    foreach (var exportfile in exportfiles)
+                                    {
+                                        <TableRow>
+                                            <TableRowCell>@exportfile.Name</TableRowCell>
+                                            <TableRowCell>@exportfile.Begin</TableRowCell>
+                                            <TableRowCell>@exportfile.End</TableRowCell>
+                                            <TableRowCell>
+                                                <Tooltip Text="@_localizer["Download this file"]">
+                                                    <Button Color="Color.Success" Clicked='() => _blazorDownloadFileService.DownloadFile(exportfile.Name, exportfile.Content, "text/plain")'>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                                            <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
+                                                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                                        </svg>
+                                                    </Button>
+                                                </Tooltip>
+                                            </TableRowCell>
+                                            @if (exportfile.ExportAudiofile != null)
+                                            {
+                                                <TableRowCell>
+                                                    <Tooltip Text="@_localizer["Download split audio file"]">
+                                                        <Button Color="Color.Success" Clicked='() => _blazorDownloadFileService.DownloadFile(exportfile.ExportAudiofile?.Name, exportfile.ExportAudiofile?.Content, "application/octet-stream")'>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-music" viewBox="0 0 16 16">
+                                                                <path d="M11 6.64a1 1 0 0 0-1.243-.97l-1 .25A1 1 0 0 0 8 6.89v4.306A2.572 2.572 0 0 0 7 11c-.5 0-.974.134-1.338.377-.36.24-.662.628-.662 1.123s.301.883.662 1.123c.364.243.839.377 1.338.377.5 0 .974-.134 1.338-.377.36-.24.662-.628.662-1.123V8.89l2-.5V6.64z" />
+                                                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                                            </svg>
+                                                        </Button>
+                                                    </Tooltip>
+                                                </TableRowCell>
+                                            }
+                                        </TableRow>
+                                    }
+                                }
+                                </TableBody>
+                            </Table>
+                        </StepPanel>
+                </Content>
+            </Steps>
+        </ModalBody>
+        <ModalFooter>
+            @if (exportProgress != null)
+            {
+                <Paragraph Width="Width.Is100">
+                    @_localizer["Generation in progress, please stand by ..."]
+                </Paragraph>
+                <Progress Value="@exportProgress" Width="Width.Is100" Striped />
+            }
+            else
+            {
+                @if (selectedStep != "displayExportResult")
+                {
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!ExportPossible, "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
+                        <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
+                    </Tooltip>
+                    <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
+                }
+                else
+                {
+                    <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Close"]</Button>
+                }
+            }
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    public event EventHandler? GenerateExportfilesClicked;
+
+    [Parameter]
+    [EditorRequired]
+    public String? Title { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public RenderFragment? PrepareExportStepContent { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public ExportType ExportType { get; set; }
+
+    public Boolean IsVisible { get; private set; }
+    public Validations? Validations { get; private set; }
+    public ExportfileGenerator? ExportfileGenerator { get; private set; }
+    public Boolean LockUserInputs { get => exportProgress != null; }
+
+    Modal? modalExportdialog;
+    String selectedStep = "prepareExport";
+    IReadOnlyCollection<Exportfile>? exportfiles;
+    Boolean prepareExportCompleted = false;
+    HotKeysContext? hotKeysContext;
+    int? exportProgress;
+
+    Boolean StepNavigationAllowed
+    {
+        get
+        {
+            Boolean navigationAllowed = true;
+            if (Validations != null)
+            {
+                navigationAllowed = Validations.ValidateAll().GetAwaiter().GetResult();
+                if (navigationAllowed)
+                {
+                    navigationAllowed = ExportPossible;
+                }
+                if (navigationAllowed)
+                {
+                    navigationAllowed = exportfiles != null;
+                }
+            }
+            return navigationAllowed;
+        }
+    }
+
+    Boolean ExportPossible
+    {
+        get
+        {
+            Boolean exportPossible = false;
+            if (Validations != null)
+            {
+                exportPossible = Validations.ValidateAll().GetAwaiter().GetResult();
+            }
+            if ((exportPossible == false) && (ExportfileGenerator != null))
+            {
+                exportPossible = ExportfileGenerator.CanWrite(ExportType);
+            }
+            return exportPossible;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(Key.Enter, OnEnterKeyDown);
+
+        _audioConverterService.ProgressChanged += IAudioConverterService_ProgressChanged;
+        ExportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, audioConverterService: _audioConverterService);
+
+        await base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        _audioConverterService.ProgressChanged -= IAudioConverterService_ProgressChanged;
+        hotKeysContext?.Dispose();
+    }
+
+    public async Task Show()
+    {
+        await ControlModalDialog(modalExportdialog, true);
+    }
+
+    public void Reset()
+    {
+        selectedStep = "prepareExport";
+        exportfiles = null;
+    }
+
+    async Task ControlModalDialog(Modal? dialog, Boolean show)
+    {
+        if (dialog != null)
+        {
+            if (show)
+            {
+                await dialog.Show();
+            }
+            else
+            {
+                await dialog.Hide();
+            }
+        }
+    }
+
+    async Task GenerateExportfiles_Clicked()
+    {
+        _logger.LogDebug("GenerateExportfiles_Clicked called");
+        if (ExportPossible)
+        {
+            GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
+            exportProgress = 0;
+            if (ExportfileGenerator != null)
+            {
+                exportfiles = await ExportfileGenerator.GenerateExportfilesAsync(ExportType);
+                selectedStep = "displayExportResult";
+                prepareExportCompleted = true;
+            }
+            exportProgress = null;
+        }
+    }
+
+    bool NavigationAllowed(StepNavigationContext context)
+    {
+        return StepNavigationAllowed;
+    }
+
+    void ModalExportdialog_VisibleChanged(Boolean visible)
+    {
+        IsVisible = visible;
+    }
+
+    async ValueTask OnEnterKeyDown()
+    {
+        if (IsVisible)
+        {
+            await GenerateExportfiles_Clicked();
+        }
+    }
+
+    String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    {
+        if (expressionToCheck == true)
+        {
+            return _localizer[localizedStringName];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    void IAudioConverterService_ProgressChanged(object? sender, int progress)
+    {
+        exportProgress = progress;
+        InvokeAsync(StateHasChanged);
+    }
+}

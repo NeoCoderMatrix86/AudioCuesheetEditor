@@ -26,6 +26,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizerService _localizationService
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject DateTimeUtility _dateTimeUtility
 
 @if (Cuesheet != null)
 {
@@ -327,20 +328,32 @@ along with Foobar.  If not, see
                             case ViewMode.ViewModeFull:
                             case ViewMode.ViewModeImport:
                                 <TableRowCell>
-                                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Begin = x, value)" Immediate="false">
-                                                <Feedback>
-                                                    <ValidationError />
-                                                </Feedback>
-                                            </TextEdit>
-                                        </Validation>
-                                    </Tooltip>
+                                    <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
+                                        @if (Cuesheet.GetSplitPointAtTrack(track) != null)
+                                        {
+                                            <Tooltip Text="@_localizer["A split point is currently set at the time of this track"]">
+                                                <Badge Color="Color.Info" Pill>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-signpost-split" viewBox="0 0 16 16">
+                                                        <path d="M7 7V1.414a1 1 0 0 1 2 0V2h5a1 1 0 0 1 .8.4l.975 1.3a.5.5 0 0 1 0 .6L14.8 5.6a1 1 0 0 1-.8.4H9v10H7v-5H2a1 1 0 0 1-.8-.4L.225 9.3a.5.5 0 0 1 0-.6L1.2 7.4A1 1 0 0 1 2 7h5zm1 3V8H2l-.75 1L2 10h6zm0-5h6l.75-1L14 3H8v2z" />
+                                                    </svg>
+                                                </Badge>
+                                            </Tooltip>
+                                        }
+                                        <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                            <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
+                                                <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Begin, value)" Immediate="false">
+                                                    <Feedback>
+                                                        <ValidationError />
+                                                    </Feedback>
+                                                </TextEdit>
+                                            </Validation>
+                                        </Tooltip>
+                                    </Div>
                                 </TableRowCell>
                                 <TableRowCell>
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                         <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.End, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.End = x, value)" Immediate="false">
+                                            <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.End, value)" Immediate="false">
                                                 <Feedback>
                                                     <ValidationError />
                                                 </Feedback>
@@ -351,7 +364,7 @@ along with Foobar.  If not, see
                                 <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
                                     <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                         <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Length, _validationMessageLocalizer, token)">
-                                            <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => OnTimespanTextChanged(x => track.Length = x, value)" Immediate="false">
+                                            <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Length, value)" Immediate="false">
                                                 <Feedback>
                                                     <ValidationError />
                                                 </Feedback>
@@ -425,6 +438,7 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
         _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
         DetachTrackFromValidateablePropertyChanged();
+        DetachCuesheetFromSplitPointsAddedRemoved();
     }
 
     protected override async Task OnInitializedAsync()
@@ -446,6 +460,7 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
 
         AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
     }
 
     Task OnAddTrackClicked()
@@ -572,13 +587,6 @@ along with Foobar.  If not, see
         await EditTrackModal(copy);
     }
 
-    Task OnTimespanTextChanged(Action<TimeSpan?> setAction, String value)
-    {
-        TimeSpan? result = DateTimeUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
-        setAction(result);
-        return Task.CompletedTask;
-    }
-
     private async Task OnPlayTrackClicked(Track track)
     {
         if (AudioPlayer != null)
@@ -607,6 +615,7 @@ along with Foobar.  If not, see
         selectedTracks.Clear();
         StateHasChanged();
         AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
     }
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
@@ -633,11 +642,6 @@ along with Foobar.  If not, see
     void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
     {
         DetachTrackFromValidateablePropertyChanged(args.Track);
-    }
-
-    private void Cuesheet_LastTrack_ValidateablePropertyChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
     }
 
     async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
@@ -743,6 +747,44 @@ along with Foobar.  If not, see
             {
                 validation.ValidateAll().GetAwaiter().GetResult();
             }
+        }
+    }
+
+    void AttachCuesheetToSplitPointsAddedRemoved()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.SplitPointAdded += Cuesheet_SplitPointAdded;
+            Cuesheet.SplitPointRemoved += Cuesheet_SplitPointRemoved;
+        }
+    }
+
+    void DetachCuesheetFromSplitPointsAddedRemoved()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.SplitPointAdded -= Cuesheet_SplitPointAdded;
+            Cuesheet.SplitPointRemoved -= Cuesheet_SplitPointRemoved;
+        }
+    }
+
+    void Cuesheet_SplitPointAdded(object? sender, SplitPointAddRemoveEventArgs args)
+    {
+        args.SplitPoint.ValidateablePropertyChanged += SplitPoint_ValidateablePropertyChanged;
+    }
+
+    void Cuesheet_SplitPointRemoved(object? sender, SplitPointAddRemoveEventArgs args)
+    {
+        args.SplitPoint.ValidateablePropertyChanged -= SplitPoint_ValidateablePropertyChanged;
+    }
+
+    void SplitPoint_ValidateablePropertyChanged(object? sender, string property)
+    {
+        switch (property)
+        {
+            case nameof(SplitPoint.Moment):
+                StateHasChanged();
+                break;
         }
     }
 }

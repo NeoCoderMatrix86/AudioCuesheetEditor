@@ -1,0 +1,9 @@
+{
+  "culture": "de",
+  "translations": {
+    "Add new split point": "Neuen Aufteilungspunkt hinzufügen",
+    "Controls": "Steuerung",
+    "Moment": "Zeitpunkt",
+    "Delete split tooltip": "Löscht diesen Aufteilungspunkt"
+  }
+}

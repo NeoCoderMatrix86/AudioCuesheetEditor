@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -239,14 +239,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             if (property.PropertyType == typeof(TimeSpan?))
             {
-                if (String.IsNullOrEmpty(TimeSpanFormat.Scheme))
-                {
-                    property.SetValue(entity, DateTimeUtility.ParseTimeSpan(value));
-                }
-                else
-                {
-                    property.SetValue(entity, DateTimeUtility.ParseTimeSpan(value, TimeSpanFormat));
-                }
+                var utility = new DateTimeUtility(TimeSpanFormat);
+                property.SetValue(entity, utility.ParseTimeSpan(value));
             }
             if (property.PropertyType == typeof(uint?))
             {

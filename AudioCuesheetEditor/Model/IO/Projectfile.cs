@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -13,14 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO
 {
@@ -29,11 +25,12 @@ namespace AudioCuesheetEditor.Model.IO
         public const String MimeType = "text/*";
         public const String FileExtension = ".ace";
 
-        public static readonly String DefaultFileName = "Project.ace";
+        public static readonly String DefaultFilename = "Project.ace";
 
         public static readonly JsonSerializerOptions Options = new()
         {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
         public static Cuesheet? ImportFile(byte[] fileContent)
@@ -59,7 +56,7 @@ namespace AudioCuesheetEditor.Model.IO
         /// <returns>Byte array with project file content</returns>
         public byte[] GenerateFile()
         {
-            var json = JsonSerializer.Serialize<Cuesheet>(Cuesheet, Options);    
+            var json = JsonSerializer.Serialize(Cuesheet, Options);
             return Encoding.UTF8.GetBytes(json);        
         }
     }

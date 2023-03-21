@@ -26,6 +26,16 @@
     "Scheme": "Schema",
     "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben",
     "SchemeCuesheet": "Schema Cuesheet",
-    "SchemeTracks": "Schema Titel"
+    "SchemeTracks": "Schema Titel",
+    "Moment": "Zeitpunkt",
+    "{0} must end with '{1}'!": "{0} musss mit '{1}' enden!",
+    "{0} must have a filename!": "{0} muss einen Dateinamen haben!",
+    "CuesheetFilename": "Cuesheet Dateiname",
+    "RecordedAudiofilename": "Dateiname für aufgenommenes Audio",
+    "ProjectFilename": "Projektdateiname",
+    "{0} should be equal or less to '{1}'!": "{0} sollte kleiner oder gleich '{1}' sein!",
+    "Filename": "Dateiname",
+    "Artist": "Künstler",
+    "Title": "Titel"
   }
 }

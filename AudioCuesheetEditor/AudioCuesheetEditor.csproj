@@ -21,14 +21,16 @@
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
     <Content Remove="Resources\Localization\CuesheetData\de.json" />
     <Content Remove="Resources\Localization\CuesheetData\en.json" />
+    <Content Remove="Resources\Localization\EditSplitpoints\de.json" />
+    <Content Remove="Resources\Localization\EditSplitpoints\en.json" />
     <Content Remove="Resources\Localization\EditTrackModal\de.json" />
     <Content Remove="Resources\Localization\EditTrackModal\en.json" />
-    <Content Remove="Resources\Localization\ExportProfilesDialog\de.json" />
-    <Content Remove="Resources\Localization\ExportProfilesDialog\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
     <Content Remove="Resources\Localization\MainLayout\en.json" />
     <Content Remove="Resources\Localization\ModalDialog\de.json" />
     <Content Remove="Resources\Localization\ModalDialog\en.json" />
+    <Content Remove="Resources\Localization\ModalExportdialog\de.json" />
+    <Content Remove="Resources\Localization\ModalExportdialog\en.json" />
     <Content Remove="Resources\Localization\OptionsDialog\de.json" />
     <Content Remove="Resources\Localization\OptionsDialog\en.json" />
     <Content Remove="Resources\Localization\TracksTable\de.json" />
@@ -58,14 +60,16 @@
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
     <EmbeddedResource Include="Resources\Localization\CuesheetData\de.json" />
     <EmbeddedResource Include="Resources\Localization\CuesheetData\en.json" />
+    <EmbeddedResource Include="Resources\Localization\EditSplitpoints\de.json" />
+    <EmbeddedResource Include="Resources\Localization\EditSplitpoints\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\de.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ExportProfilesDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ModalExportdialog\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ModalExportdialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\de.json" />
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
@@ -93,6 +97,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.1.5" />
+    <PackageReference Include="FFmpegBlazor" Version="1.0.0.7" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.1" PrivateAssets="all" />

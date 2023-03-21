@@ -30,6 +30,8 @@ along with Foobar.  If not, see
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject IAudioConverterService _audioConverterService
 
 <ErrorBoundary>
     <ChildContent>
@@ -52,7 +54,7 @@ along with Foobar.  If not, see
                                 </Row>
                             </BarLink>
                         </BarBrand>
-                        @if(displayMenuBar)
+                        @if (displayMenuBar)
                         {
                             <BarToggler />
                             <BarMenu>
@@ -88,15 +90,17 @@ along with Foobar.  If not, see
                                             </BarDropdownToggle>
                                             <BarDropdownMenu Background="Background.Dark">
                                                 <BarDropdownItem>
-                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@GetLocalizedString(_sessionStateContainer.Cuesheet.CanWriteCuesheetFile == false, "Please check processinghints for errors, otherwise the file is not exportable")">
-                                                        <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, true)" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
+                                                        <Button Color="Color.Primary" Clicked="() => OnDisplayExportDialogClicked()" Disabled="!IsCuesheetExportable">@_localizer["Download cuesheet"]</Button>
                                                     </Tooltip>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
                                                     <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, true)">@_localizer["Save project"]</Button>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
-                                                    <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked">@_localizer["Open exportprofiles"]</Button>
+                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
+                                                        <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked" Disabled="!IsExportprofileExportable">@_localizer["Open exportprofiles"]</Button>
+                                                    </Tooltip>
                                                 </BarDropdownItem>
                                             </BarDropdownMenu>
                                         </BarDropdown>
@@ -176,7 +180,6 @@ along with Foobar.  If not, see
 
 <OptionsDialog @ref="optionsDialog" />
 <ModalDialog @ref="modalDialog" />
-<ExportProfilesDialog @ref="exportProfilesDialog" />
 
 @if (applicationOptions != null)
 {
@@ -189,12 +192,20 @@ along with Foobar.  If not, see
                 <CloseButton Clicked="() => ControlModalDialog(modalDownloadProjectfile, false)" />
             </ModalHeader>
             <ModalBody>
-                <Field Horizontal="true">
-                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                    <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.ProjectFileName" Immediate="false" />
-                    </FieldBody>
-                </Field>
+                <Validations>
+                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.ProjectFilename, _validationMessageLocalizer, token)">
+                        <Field Horizontal="true">
+                            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                            <FieldBody ColumnSize="ColumnSize.Is9">
+                                <TextEdit @bind-Text="applicationOptions.ProjectFilename" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </FieldBody>
+                        </Field>
+                    </Validation>
+                </Validations>
             </ModalBody>
             <ModalFooter>
                 <Button Color="Color.Primary" Clicked="DownloadProjectfileClicked">@_localizer["Download projectfile"]</Button>
@@ -202,43 +213,271 @@ along with Foobar.  If not, see
             </ModalFooter>
         </ModalContent>
     </Modal>
+}
 
-    <Modal @ref="modalDownloadCuesheet" VisibleChanged="ModalDownloadCuesheet_VisibleChanged">
-        <ModalContent Centered="true">
-            <ModalHeader>
-                <ModalTitle>
-                    @_localizer["Download cuesheet"]
-                </ModalTitle>
-                <CloseButton Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)" />
-            </ModalHeader>
-            <ModalBody>
+<ModalExportdialog @ref="modalExportdialogCuesheet" Title="@_localizer["Download cuesheet"]" ExportType="ExportType.Cuesheet">
+    <PrepareExportStepContent>
+        @if (applicationOptions != null)
+        {
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.CuesheetFilename, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit @bind-Text="applicationOptions.CuesheetFileName" Immediate="false" />
+                        <TextEdit Text="@applicationOptions.CuesheetFilename" Immediate="false" Disabled="ModalExportdialogCuesheetLockUserInput" TextChanged="OnApplicationOptionsCuesheetFilenameChanged">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
                     </FieldBody>
                 </Field>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Primary" Clicked="DownloadCuesheetFileClicked" Disabled="!_sessionStateContainer.Cuesheet.CanWriteCuesheetFile">@_localizer["Download cuesheet"]</Button>
-                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalDownloadCuesheet, false)">@_localizer["Abort"]</Button>
-            </ModalFooter>
-        </ModalContent>
-    </Modal>
-}
+            </Validation>
+        }
+    </PrepareExportStepContent>
+</ModalExportdialog>
+
+<ModalExportdialog @ref="modalExportdialogExportprofile" Title="@_localizer["Exportprofiles"]" ExportType="ExportType.Exportprofile">
+    <PrepareExportStepContent>
+        <Field Horizontal="true" JustifyContent="JustifyContent.End">
+            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9">
+                <SelectList TItem="SelectExportProfileModel" TValue="Guid?" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" Disabled="ModalExportdialogExportprofileLockUserInput" />
+            </FieldBody>
+        </Field>
+        <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked" Disabled="ModalExportdialogExportprofileLockUserInput">@_localizer["Add new exportprofile"]</Button>
+        <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked" Disabled="ModalExportdialogExportprofileLockUserInput">@_localizer["Delete selected exportprofile"]</Button>
+        <Divider />
+        @if (SelectedExportProfile != null)
+        {
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Name, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name" Disabled="ModalExportdialogExportprofileLockUserInput">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@SelectedExportProfile.Filename" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileFilenameChanged">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.SchemeHead, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Text="@_localizer["Enter exportschemehead here tooltip"]" Placement="TooltipPlacement.TopEnd">
+                            @_localizer["Exportprofilescheme head"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@SelectedExportProfile.SchemeHead" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeHeadChanged">
+                                    <Feedback>
+                                        <ValidationError Tooltip />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown Disabled="ModalExportdialogExportprofileLockUserInput">
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @_localizer["Select placeholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeHeadChanged(SelectedExportProfile.SchemeHead += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.SchemeTracks, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Text="@_localizer["Enter exportscheme track here tooltip"]" Placement="TooltipPlacement.TopEnd">
+                            @_localizer["Exportprofilescheme track"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@SelectedExportProfile.SchemeTracks" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeTracksChanged">
+                                    <Feedback>
+                                        <ValidationError Tooltip />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown Disabled="ModalExportdialogExportprofileLockUserInput">
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @_localizer["Select placeholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in Exportprofile.AvailableTrackSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeTracksChanged(SelectedExportProfile.SchemeTracks += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.SchemeFooter, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Text="@_localizer["Enter exportscheme footer here tooltip"]" Placement="TooltipPlacement.TopStart">
+                            @_localizer["Exportprofilescheme footer"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@SelectedExportProfile.SchemeFooter" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeFooterChanged">
+                                    <Feedback>
+                                        <ValidationError Tooltip />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown Disabled="ModalExportdialogExportprofileLockUserInput">
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @_localizer["Select placeholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeFooterChanged(SelectedExportProfile.SchemeFooter += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+            </Validation>
+        }
+    </PrepareExportStepContent>
+</ModalExportdialog>
 
 @code {
+    public class SelectExportProfileModel
+    {
+        public Guid Id { get; private set; }
+        public Exportprofile ExportProfile { get; private set; }
+
+        public SelectExportProfileModel(Exportprofile exportProfile)
+        {
+            Id = Guid.NewGuid();
+            ExportProfile = exportProfile;
+        }
+    }
+
+    public Exportprofile? SelectedExportProfile
+    {
+        get
+        {
+            if ((exportProfileModels != null) && (selectedExportProfileId != Guid.Empty))
+            {
+                var exportProfile = exportProfileModels.FirstOrDefault(x => x.Id == selectedExportProfileId);
+                if (exportProfile != null)
+                {
+                    return exportProfile.ExportProfile;
+                }
+            }
+            return null;
+        }
+    }
+
     Boolean displayMenuBar = false;
     HotKeysContext? hotKeysContext;
     ApplicationOptions? applicationOptions;
-    Boolean modalDownloadCuesheetVisible = false;
     Boolean modalDownloadProjectfileVisible = false;
 
     OptionsDialog? optionsDialog;
     ModalDialog? modalDialog;
-    ExportProfilesDialog? exportProfilesDialog;
     Modal? modalDownloadProjectfile;
-    Modal? modalDownloadCuesheet;
+    ModalExportdialog? modalExportdialogCuesheet;
+    ModalExportdialog? modalExportdialogExportprofile;
+    IReadOnlyCollection<SelectExportProfileModel>? exportProfileModels;
+    Guid? selectedExportProfileId;
+
+    String? IsCuesheetExportableTooltip
+    {
+        get
+        {
+            String? text = null;
+            if (IsCuesheetExportable == false)
+            {
+                text = _localizer["Please check processinghints for errors, otherwise the file is not exportable"];
+            }
+            return text;
+        }
+    }
+
+    Boolean IsCuesheetExportable
+    {
+        get
+        {
+            if (applicationOptions?.Validate(x => x.CuesheetFilename).Status != Model.Entity.ValidationStatus.Error)
+            {
+                var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, applicationOptions: applicationOptions, audioConverterService: _audioConverterService);
+                return generator.CanWrite(ExportType.Cuesheet);
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    Boolean IsExportprofileExportable
+    {
+        get
+        {
+            var generator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, SelectedExportProfile, audioConverterService: _audioConverterService);
+            return generator.CanWrite(ExportType.Exportprofile);
+        }
+    }
+
+    Boolean ModalExportdialogCuesheetLockUserInput
+    {
+        get
+        {
+            if (modalExportdialogCuesheet != null)
+            {
+                return modalExportdialogCuesheet.LockUserInputs;
+            }
+            return false;
+        }
+    }
+
+    Boolean ModalExportdialogExportprofileLockUserInput
+    {
+        get
+        {
+            if (modalExportdialogExportprofile != null)
+            {
+                return modalExportdialogExportprofile.LockUserInputs;
+            }
+            return false;
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -253,6 +492,24 @@ along with Foobar.  If not, see
             .Add(Key.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+
+        if (exportProfileModels == null)
+        {
+            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
+            exportProfileModels = options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
+            selectedExportProfileId = exportProfileModels.First().Id;
+            SelectedExportProfileChanged(selectedExportProfileId);
+        }
+
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.GenerateExportfilesClicked += ModalExportdialogExportprofile_GenerateExportfilesClicked;
+        }
+        if (modalExportdialogCuesheet != null)
+        {
+            modalExportdialogCuesheet.GenerateExportfilesClicked += ModalExportdialogCuesheet_GenerateExportfilesClicked;
+        }
 
         _sessionStateContainer.CurrentViewMode = applicationOptions.ViewMode;
 
@@ -263,9 +520,18 @@ along with Foobar.  If not, see
     {
         hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
         _traceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.GenerateExportfilesClicked -= ModalExportdialogExportprofile_GenerateExportfilesClicked;
+        }
+        if (modalExportdialogCuesheet != null)
+        {
+            modalExportdialogCuesheet.GenerateExportfilesClicked -= ModalExportdialogCuesheet_GenerateExportfilesClicked;
+        }
     }
 
     public void SetDisplayMenuBar(Boolean display)
@@ -274,18 +540,6 @@ along with Foobar.  If not, see
         {
             displayMenuBar = display;
             StateHasChanged();
-        }
-    }
-
-    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
-    {
-        if (expressionToCheck == true)
-        {
-            return _localizer[localizedStringName];
-        }
-        else
-        {
-            return null;
         }
     }
 
@@ -381,11 +635,19 @@ along with Foobar.  If not, see
         _navigationManager.NavigateTo(_navigationManager.Uri, true);
     }
 
-    private async Task OnDisplayExportProfilesClicked()
+    async Task OnDisplayExportDialogClicked()
     {
-        if (exportProfilesDialog != null)
+        if (modalExportdialogCuesheet != null)
         {
-            await exportProfilesDialog.Show();
+            await modalExportdialogCuesheet.Show();
+        }
+    }
+
+    async Task OnDisplayExportProfilesClicked()
+    {
+        if (modalExportdialogExportprofile != null)
+        {
+            await modalExportdialogExportprofile.Show();
         }
     }
 
@@ -395,31 +657,14 @@ along with Foobar.  If not, see
         {
             applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         }
+        //Save ApplicationOptions with information from modal popup!
+        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
         var projectFile = new Projectfile(_sessionStateContainer.Cuesheet);
         var fileData = projectFile.GenerateFile();
-        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-        await _blazorDownloadFileService.DownloadFile(applicationOptions.ProjectFileName, fileData, "text/plain");
+        await _blazorDownloadFileService.DownloadFile(applicationOptions.ProjectFilename, fileData, "text/plain");
         if (modalDownloadProjectfile != null)
         {
             await modalDownloadProjectfile.Hide();
-        }
-    }
-
-
-    private async Task DownloadCuesheetFileClicked()
-    {
-        _logger.LogInformation("DownloadCuesheetFileClicked");
-        if (applicationOptions == null)
-        {
-            applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        }
-        var cuesheetFile = new Cuesheetfile(_sessionStateContainer.Cuesheet);
-        var fileData = cuesheetFile.GenerateCuesheetFile();
-        await _localStorageOptionsProvider.SaveOptions(applicationOptions);
-        await _blazorDownloadFileService.DownloadFile(applicationOptions.CuesheetFileName, fileData, "text/plain");
-        if (modalDownloadCuesheet != null)
-        {
-            await modalDownloadCuesheet.Hide();
         }
     }
 
@@ -429,18 +674,11 @@ along with Foobar.  If not, see
         {
             await DownloadProjectfileClicked();
         }
-        if (modalDownloadCuesheetVisible)
-        {
-            await DownloadCuesheetFileClicked();
-        }
     }
 
     async ValueTask OnStrgEKeyDown()
     {
-        if (exportProfilesDialog != null)
-        {
-            await exportProfilesDialog.Show();
-        }
+        await OnDisplayExportProfilesClicked();
     }
 
     async ValueTask OnStrgSKeyDown()
@@ -477,11 +715,6 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    private void ModalDownloadCuesheet_VisibleChanged(Boolean visible)
-    {
-        modalDownloadCuesheetVisible = visible;
-    }
-
     private void ModalDownloadProjectfile_VisibleChanged(Boolean visible)
     {
         modalDownloadProjectfileVisible = visible;
@@ -508,5 +741,156 @@ along with Foobar.  If not, see
         {
             await dialog.Show();
         }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
+    }
+
+    void OnAddNewExportProfileClicked()
+    {
+        _logger.LogInformation("OnAddNewExportProfileClicked");
+        if (exportProfileModels != null)
+        {
+            var list = exportProfileModels.ToList();
+            list.Add(new SelectExportProfileModel(new Exportprofile()));
+            exportProfileModels = list.AsReadOnly();
+            selectedExportProfileId = list.Last().Id;
+        }
+    }
+
+    void OnDeleteExportProfileClicked()
+    {
+        _logger.LogInformation("OnDeleteExportProfileClicked");
+        if (exportProfileModels != null)
+        {
+            var list = exportProfileModels.ToList();
+            list.RemoveAll(x => x.Id == selectedExportProfileId);
+            exportProfileModels = list.AsReadOnly();
+            if (exportProfileModels.Count > 0)
+            {
+                selectedExportProfileId = exportProfileModels.First().Id;
+            }
+        }
+    }
+
+    void SelectedExportProfileChanged(Guid? newValue)
+    {
+        _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
+        selectedExportProfileId = newValue;
+        modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
+        if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
+        {
+            modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
+            modalExportdialogExportprofile.Reset();
+        }
+        StateHasChanged();
+    }
+
+    async Task SaveExportProfiles()
+    {
+        _logger.LogInformation("SaveExportProfiles");
+        if (exportProfileModels != null)
+        {
+            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
+            options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
+            await _localStorageOptionsProvider.SaveOptions(options);
+        }
+    }
+
+    async Task SaveApplicationOptions()
+    {
+        _logger.LogDebug("SaveApplicationOptions");
+        if (applicationOptions != null)
+        {
+            await _localStorageOptionsProvider.SaveOptions(applicationOptions);
+        }
+    }
+
+    void ModalExportdialogExportprofile_GenerateExportfilesClicked(object? sender, EventArgs args)
+    {
+        Task.Run(SaveExportProfiles);
+        if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
+        {
+            modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
+        }
+    }
+
+    void ModalExportdialogCuesheet_GenerateExportfilesClicked(object? sender, EventArgs args)
+    {
+        Task.Run(SaveApplicationOptions);
+        if ((modalExportdialogCuesheet != null) && (modalExportdialogCuesheet.ExportfileGenerator != null))
+        {
+            modalExportdialogCuesheet.ExportfileGenerator.ApplicationOptions = applicationOptions;
+        }
+    }
+
+    Task OnApplicationOptionsCuesheetFilenameChanged(string value)
+    {
+        if (applicationOptions != null)
+        {
+            applicationOptions.CuesheetFilename = value;
+        }
+        if (modalExportdialogCuesheet != null)
+        {
+            modalExportdialogCuesheet.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileFilenameChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.Filename = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileSchemeHeadChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.SchemeHead = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileSchemeTracksChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.SchemeTracks = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
+    }
+
+    Task OnSelectedExportProfileSchemeFooterChanged(string value)
+    {
+        if (SelectedExportProfile != null)
+        {
+            SelectedExportProfile.SchemeFooter = value;
+        }
+        if (modalExportdialogExportprofile != null)
+        {
+            modalExportdialogExportprofile.Reset();
+        }
+        return Task.CompletedTask;
     }
 }

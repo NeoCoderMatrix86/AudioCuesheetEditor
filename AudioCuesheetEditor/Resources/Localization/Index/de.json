@@ -43,6 +43,7 @@
     "Date": "Datum",
     "DateTime": "Datum und Uhrzeit",
     "Time": "Uhrzeit",
-    "Save changes": "Änderungen speichern"
+    "Save changes": "Änderungen speichern",
+    "Cuesheet split points": "Cuesheet Aufteilungspunkte"
   }
 }

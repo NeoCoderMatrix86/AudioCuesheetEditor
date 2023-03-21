@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
@@ -35,8 +36,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Track = track;
         }
 
-        public Track Track { get; private set; }
+        public Track Track { get; }
     }
+
+    public class SplitPointAddRemoveEventArgs : EventArgs
+    {
+        public SplitPointAddRemoveEventArgs(SplitPoint splitPoint)
+        {
+            SplitPoint = splitPoint;
+        }
+
+        public SplitPoint SplitPoint { get; }
+    }
+
     public class Cuesheet : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
     {
         public const String MimeType = "text/*";
@@ -52,16 +64,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
+        private List<SplitPoint> splitPoints;
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
+        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointAdded;
+        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointRemoved;
 
         public Cuesheet()
         {
             tracks = new();
             catalogueNumber = new();
+            splitPoints = new();
         }
 
         [JsonInclude]
@@ -139,7 +155,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 var previousValue = cDTextfile;
                 cDTextfile = value;
-                FireEvents(previousValue, propertyName: nameof(CDTextfile));
+                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(CDTextfile));
             }
         }
 
@@ -150,17 +166,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 var previousValue = catalogueNumber;
                 catalogueNumber = value;
-                FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
-            }
-        }
-
-        [JsonIgnore]
-        public Boolean CanWriteCuesheetFile
-        {
-            get
-            {
-                var cuesheetFile = new Cuesheetfile(this);
-                return cuesheetFile.IsExportable;
+                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(Cataloguenumber));
             }
         }
 
@@ -187,6 +193,46 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         [JsonIgnore]
         public Boolean IsImporting { get; private set; }
+        
+        [JsonInclude]
+        public IReadOnlyCollection<SplitPoint> SplitPoints 
+        {
+            get => splitPoints;
+            private set
+            {
+                foreach(var splitpoint in value.Where(x => x.Cuesheet != this))
+                {
+                    splitpoint.Cuesheet = this;
+                }
+                splitPoints = value.ToList();
+            }
+        }
+
+        public SplitPoint AddSplitPoint()
+        {
+            var previousValue = new List<SplitPoint>(splitPoints);
+            var splitPoint = new SplitPoint(this);
+            splitPoints.Add(splitPoint);
+            SplitPointAdded?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
+            OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
+            return splitPoint;
+        }
+
+        public void RemoveSplitPoint(SplitPoint splitPoint)
+        {
+            var previousValue = new List<SplitPoint>(splitPoints);
+            if (splitPoints.Remove(splitPoint))
+            {
+                OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
+                SplitPointRemoved?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
+            }
+        }
+
+        public SplitPoint? GetSplitPointAtTrack(Track track)
+        {
+            SplitPoint? splitPointAtTrack = SplitPoints?.FirstOrDefault(x => track.Begin < x.Moment && track.End >= x.Moment);
+            return splitPointAtTrack;
+        }
 
         /// <summary>
         /// Get the previous linked track of a track object
@@ -226,10 +272,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
                 }                
-                if (applicationOptions.LinkTracksWithPreviousOne.HasValue)
-                {
-                    track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne.Value;
-                }
+                track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne;
             }
             tracks.Add(track);
             track.Cuesheet = this;
@@ -244,10 +287,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void RemoveTrack(Track track)
         {
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
             var index = tracks.IndexOf(track);
             Track? nextTrack = null;
             if ((index + 1) < tracks.Count)
@@ -291,10 +330,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
         public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
-            if (tracksToRemove == null)
-            {
-                throw new ArgumentNullException(nameof(tracksToRemove));
-            }
             var previousValue = new List<Track>();
             tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
@@ -465,6 +500,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Audiofile)));
                     }
                     break;
+                case nameof(Artist):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Artist))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
+                    }
+                    break;
+                case nameof(Title):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Title))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
+                    }
+                    break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }
@@ -535,6 +586,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
                 var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
+            }
+            // Copy splitpoints
+            foreach (var splitPoint in cuesheet.SplitPoints)
+            {
+                var newSplitPoint = AddSplitPoint();
+                newSplitPoint.CopyValues(splitPoint);
             }
         }
 

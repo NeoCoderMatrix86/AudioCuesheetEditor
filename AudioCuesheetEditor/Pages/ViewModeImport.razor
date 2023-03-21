@@ -270,6 +270,17 @@ along with Foobar.  If not, see
                                     </Alert>
                                 }
                             }
+                            @if (displaySplitPoints)
+                            {
+                                <Collapse Visible="cuesheetSplitPointsVisible">
+                                    <CollapseHeader>
+                                        <Button Clicked="(() => cuesheetSplitPointsVisible = !cuesheetSplitPointsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet split points"]</Heading></Button>
+                                    </CollapseHeader>
+                                    <CollapseBody>
+                                        <EditSplitpoints />
+                                    </CollapseBody>
+                                </Collapse>
+                            }
                             <Collapse Visible="cuesheetDataVisible">
                                 <CollapseHeader>
                                     <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
@@ -301,10 +312,12 @@ along with Foobar.  If not, see
     String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
+    Boolean cuesheetSplitPointsVisible = true;
     Boolean importFileContentVisible = true;
     Boolean importOptionsVisible = true;
     Boolean selectFilesCompleted = false;
     Boolean userChangedSelectedStep = false;
+    Boolean displaySplitPoints = false;
     Alert? alertInvalidFile;
     ModalDialog? modalDialog;
     List<String> invalidTextImportFileNames = new();
@@ -344,7 +357,7 @@ along with Foobar.  If not, see
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
-        
+
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
@@ -473,6 +486,7 @@ along with Foobar.  If not, see
     private async Task OnFileChanged(IReadOnlyCollection<IFileEntry> files)
     {
         _sessionStateContainer.ResetImport();
+        displaySplitPoints = false;
         foreach (var file in files)
         {
             if (IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
@@ -487,6 +501,7 @@ along with Foobar.  If not, see
                 {
                     _sessionStateContainer.ImportCuesheet = cuesheet;
                 }
+                displaySplitPoints = true;
             }
             if (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == true)
             {
@@ -517,7 +532,9 @@ along with Foobar.  If not, see
             {
                 var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
                 var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
-                _sessionStateContainer.ImportAudioFile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+                var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+                _ = audiofile.LoadContentStream();
+                _sessionStateContainer.ImportAudioFile = audiofile;
             }
         }
         await OnSelectedStepChanged("validateData");

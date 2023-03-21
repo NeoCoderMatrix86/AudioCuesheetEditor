@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using Blazorise.Localization;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,22 +31,18 @@ namespace AudioCuesheetEditorTests.Utility
             {
                 LinkTracksWithPreviousOne = false
             };
+            AudioConverterService = new AudioConverterServiceUnitTest();
         }
 
         public ApplicationOptions ApplicationOptions { get; private set; }
+        public IAudioConverterService AudioConverterService { get; private set; }
         public static ILogger<T> CreateLogger<T>()
         {
             var serviceProvider = new ServiceCollection()
                 .AddLogging()
                 .BuildServiceProvider();
 
-            var factory = serviceProvider.GetService<ILoggerFactory>();
-            
-            if (factory == null)
-            {
-                throw new NullReferenceException();
-            }
-
+            var factory = serviceProvider.GetService<ILoggerFactory>() ?? throw new NullReferenceException();
             return factory.CreateLogger<T>();
         }
     }

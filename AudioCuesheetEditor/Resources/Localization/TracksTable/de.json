@@ -30,6 +30,7 @@
     "Confirmation required": "Bestätigung erforderlich",
     "Do you really want to delete all tracks?": "Möchten Sie wirklich alle Titel löschen?",
     "Edit selected tracks": "Ausgewählte Titel bearbeiten",
-    "Validation errors": "Validierungsfehler"
+    "Validation errors": "Validierungsfehler",
+    "A split point is currently set at the time of this track": "Ein Aufteilungspunkt ist aktuell in dem Zeitfenster dieses Titels gesetzt"
   }
 }

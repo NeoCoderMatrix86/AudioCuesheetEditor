@@ -13,27 +13,20 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.IO.Audio;
+using System;
+using System.Threading.Tasks;
 
-using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Utility;
-
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditorTests.Utility
 {
-    public class ImportOptions : IOptions
+    internal class AudioConverterServiceUnitTest : IAudioConverterService
     {
-        public TextImportScheme TextImportScheme { get; set; }
-        public TimeSpanFormat? TimeSpanFormat { get; set; }
+        public event EventHandler<int>? ProgressChanged;
 
-        public ImportOptions()
+        public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan? to = null)
         {
-            TextImportScheme = TextImportScheme.DefaultTextImportScheme;
-            //SetDefaultValues();
-        }
-
-        public ImportOptions(TextImportfile textImportfile)
-        {
-            TextImportScheme = textImportfile.TextImportScheme;
-            TimeSpanFormat = textImportfile.TimeSpanFormat;
+            // This implementation does nothing with audio processing, so we only return some fake data
+            return Task.FromResult<byte[]?>(null);
         }
     }
 }
