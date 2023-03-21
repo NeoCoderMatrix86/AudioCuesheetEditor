@@ -21,6 +21,8 @@ namespace AudioCuesheetEditorTests.Utility
 {
     internal class AudioConverterServiceUnitTest : IAudioConverterService
     {
+        public event EventHandler<int>? ProgressChanged;
+
         public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan? to = null)
         {
             // This implementation does nothing with audio processing, so we only return some fake data
