@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Extensions
         private Cuesheet? importCuesheet;
         private TextImportfile? textImportFile;
         private CuesheetImportfile? cuesheetImportFile;
-        private Audiofile? importAudioFile;
+        private Audiofile? importAudiofile;
 
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
@@ -60,9 +60,9 @@ namespace AudioCuesheetEditor.Extensions
                 var previousValue = importCuesheet;
                 importCuesheet = value;
                 //When there is an audiofile from import, we use this file because it has an object url and gets duration, etc.
-                if ((importCuesheet != null) && (ImportAudioFile != null))
+                if ((importCuesheet != null) && (ImportAudiofile != null))
                 {
-                    importCuesheet.Audiofile = ImportAudioFile;
+                    importCuesheet.Audiofile = ImportAudiofile;
                 }
                 if (Object.Equals(previousValue, importCuesheet) == false)
                 {
@@ -110,15 +110,15 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public Audiofile? ImportAudioFile
+        public Audiofile? ImportAudiofile
         {
-            get => importAudioFile;
+            get => importAudiofile;
             set
             {
-                importAudioFile = value;
-                if ((ImportCuesheet != null) && (ImportAudioFile != null))
+                importAudiofile = value;
+                if ((ImportCuesheet != null) && (ImportAudiofile != null))
                 {
-                    ImportCuesheet.Audiofile = ImportAudioFile;
+                    ImportCuesheet.Audiofile = ImportAudiofile;
                     ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
@@ -150,7 +150,7 @@ namespace AudioCuesheetEditor.Extensions
         {
             TextImportFile = null;
             CuesheetImportFile = null;
-            ImportAudioFile = null;
+            ImportAudiofile = null;
         }
 
         public void StartImportCuesheet(ApplicationOptions applicationOptions)
