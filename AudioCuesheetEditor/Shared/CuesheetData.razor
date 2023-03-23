@@ -31,7 +31,7 @@ along with Foobar.  If not, see
 {
     <Validations @ref="validations">
         <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Artist, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
+            <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD artist"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                     <TextEdit Placeholder="@_localizer["Enter cd artist here"]" @bind-Text="Cuesheet.Artist" Immediate="false">
@@ -43,7 +43,7 @@ along with Foobar.  If not, see
             </Field>
         </Validation>
         <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Title, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
+            <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD title"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                     <TextEdit Placeholder="@_localizer["Enter cd title here"]" @bind-Text="Cuesheet.Title" Immediate="false">
@@ -59,7 +59,7 @@ along with Foobar.  If not, see
             case ViewMode.ViewModeRecord:
                 @if (Cuesheet.Audiofile != null)
                 {
-                    <Field Horizontal="true">
+                    <Field Horizontal>
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Audiofile"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                             <Addons>
@@ -70,7 +70,7 @@ along with Foobar.  If not, see
                                     </Addon>
                                 }
                                 <Addon AddonType="AddonType.Body">
-                                    <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.Name" />
+                                    <TextEdit Disabled Text="@Cuesheet.Audiofile.Name" />
                                 </Addon>
                             </Addons>
                         </FieldBody>
@@ -80,7 +80,7 @@ along with Foobar.  If not, see
             case ViewMode.ViewModeFull:
             case ViewMode.ViewModeImport:
                 <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.Audiofile, _validationMessageLocalizer, token)">
-                    <Field Horizontal="true">
+                    <Field Horizontal>
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Audiofile"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                             @if (Cuesheet.Audiofile == null)
@@ -101,14 +101,14 @@ along with Foobar.  If not, see
                                         </Addon>
                                     }
                                     <Addon AddonType="AddonType.Body">
-                                        <TextEdit Disabled="true" Text="@Cuesheet.Audiofile.Name">
+                                        <TextEdit Disabled Text="@Cuesheet.Audiofile.Name">
                                             <Feedback>
                                                 <ValidationError />
                                             </Feedback>
                                         </TextEdit>
                                     </Addon>
                                     <Addon AddonType="AddonType.End">
-                                        <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeAudioFileClicked">@_localizer["Change"]</Button>
+                                        <Button Color="Color.Secondary" Outline Clicked="OnChangeAudioFileClicked">@_localizer["Change"]</Button>
                                     </Addon>
                                 </Addons>
                             }
@@ -116,12 +116,12 @@ along with Foobar.  If not, see
                     </Field>
                 </Validation>
                 <Validation AsyncValidator="(args, token) => ValidatorUtility<Cuesheet>.Validate(args, Cuesheet, x => x.CDTextfile, _validationMessageLocalizer, token)">
-                    <Field Horizontal="true">
+                    <Field Horizontal>
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["CD textfile"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                             @if (Cuesheet.CDTextfile == null)
                             {
-                                <FileEdit id="@fileEditCDTextFileId" accept="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged">
+                                <FileEdit id="@fileEditCDTextFileId" Filter="@CDTextfile.FileExtension" Changed="OnCDTextfileChanged">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -131,10 +131,10 @@ along with Foobar.  If not, see
                             {
                                 <Addons>
                                     <Addon AddonType="AddonType.Body">
-                                        <TextEdit Disabled="true" Text="@Cuesheet.CDTextfile.Name" />
+                                        <TextEdit Disabled Text="@Cuesheet.CDTextfile.Name" />
                                     </Addon>
                                     <Addon AddonType="AddonType.End">
-                                        <Button Color="Color.Secondary" Outline="true" Clicked="OnChangeCDTextfileClicked">@_localizer["Change"]</Button>
+                                        <Button Color="Color.Secondary" Outline Clicked="OnChangeCDTextfileClicked">@_localizer["Change"]</Button>
                                     </Addon>
                                 </Addons>
                             }
@@ -142,7 +142,7 @@ along with Foobar.  If not, see
                     </Field>
                 </Validation>
                 <Validation AsyncValidator="(args, token) => ValidatorUtility<Cataloguenumber>.Validate(args, Cuesheet.Cataloguenumber, x => x.Value, _validationMessageLocalizer, token)">
-                    <Field Horizontal="true">
+                    <Field Horizontal>
                         <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cataloguenumber"]</FieldLabel>
                         <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
                             <TextEdit Placeholder="@_localizer["Enter cataloguenumber here"]" @bind-Text="Cuesheet.Cataloguenumber.Value" Immediate="false">
