@@ -70,7 +70,7 @@ along with Foobar.  If not, see
                                     </Addon>
                                 }
                                 <Addon AddonType="AddonType.Body">
-                                    <TextEdit Disabled Text="@Cuesheet.Audiofile.Name" />
+                                    <TextEdit ReadOnly Text="@Cuesheet.Audiofile.Name" />
                                 </Addon>
                             </Addons>
                         </FieldBody>
@@ -101,7 +101,7 @@ along with Foobar.  If not, see
                                         </Addon>
                                     }
                                     <Addon AddonType="AddonType.Body">
-                                        <TextEdit Disabled Text="@Cuesheet.Audiofile.Name">
+                                        <TextEdit ReadOnly Text="@Cuesheet.Audiofile.Name">
                                             <Feedback>
                                                 <ValidationError Tooltip />
                                             </Feedback>
@@ -131,7 +131,7 @@ along with Foobar.  If not, see
                             {
                                 <Addons>
                                     <Addon AddonType="AddonType.Body">
-                                        <TextEdit Disabled Text="@Cuesheet.CDTextfile.Name" />
+                                        <TextEdit ReadOnly Text="@Cuesheet.CDTextfile.Name" />
                                     </Addon>
                                     <Addon AddonType="AddonType.End">
                                         <Button Color="Color.Secondary" Outline Clicked="OnChangeCDTextfileClicked">@_localizer["Change"]</Button>
