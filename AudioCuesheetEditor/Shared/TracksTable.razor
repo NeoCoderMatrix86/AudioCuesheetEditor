@@ -701,12 +701,7 @@ along with Foobar.  If not, see
         {
             foreach (var track in Cuesheet.Tracks)
             {
-                Boolean attach = true;
-                if (TracksAttachedToValidateablePropertyChanged.Contains(track))
-                {
-                    attach = false;
-                }
-                if (attach)
+                if (TracksAttachedToValidateablePropertyChanged.Contains(track) == false)
                 {
                     track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
                     TracksAttachedToValidateablePropertyChanged.Add(track);
