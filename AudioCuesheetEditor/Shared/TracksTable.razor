@@ -612,6 +612,8 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
+        DetachTrackFromValidateablePropertyChanged();
+        DetachCuesheetFromSplitPointsAddedRemoved();
         selectedTracks.Clear();
         StateHasChanged();
         AttachTracksToValidateablePropertyChanged();
@@ -620,7 +622,11 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
+        //TODO: Unsubscribe to previous attached events
         StateHasChanged();
+        AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
+        //TODO: Here we should revalidate everything and clear previous!
     }
 
     private void TraceChangeManager_UndoDone(object? sender, EventArgs args)
@@ -637,11 +643,13 @@ along with Foobar.  If not, see
     {
         StateHasChanged();
         AttachTracksToValidateablePropertyChanged();
+        //TODO: we need to force a validation of all tracks (or the track beeing raised)!
     }
 
     void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
     {
         DetachTrackFromValidateablePropertyChanged(args.Track);
+        //TODO: we need to force a validation of all tracks (or the track beeing raised)!
     }
 
     async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
