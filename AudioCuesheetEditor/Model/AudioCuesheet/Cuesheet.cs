@@ -72,6 +72,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
         public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointAdded;
         public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointRemoved;
+        public event EventHandler? CuesheetImported;
 
         public Cuesheet()
         {
@@ -428,6 +429,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 IsImporting = false;
             }
+            CuesheetImported?.Invoke(this, EventArgs.Empty);
         }
 
         public void StartRecording()

@@ -30,5 +30,21 @@ namespace AudioCuesheetEditor.Extensions.Tests
             container.ImportCuesheet = new Cuesheet();
             Assert.IsTrue(importCuesheetChangedFired);
         }
+
+        [TestMethod()]
+        public void SessionStateContainerFireCuesheetChangedTest()
+        {
+            var helper = new TestHelper();
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var container = new SessionStateContainer(manager);
+            var cuesheetChangedFired = false;
+            container.CuesheetChanged += delegate
+            {
+                cuesheetChangedFired = true;
+            };
+            Assert.IsFalse(cuesheetChangedFired);
+            container.Cuesheet.Import(new Cuesheet(), helper.ApplicationOptions);
+            Assert.IsTrue(cuesheetChangedFired);
+        }
     }
 }

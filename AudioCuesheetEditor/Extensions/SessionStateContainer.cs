@@ -37,20 +37,14 @@ namespace AudioCuesheetEditor.Extensions
 
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
-            _traceChangeManager = traceChangeManager ?? throw new ArgumentNullException(nameof(traceChangeManager));
+            _traceChangeManager = traceChangeManager;
             cuesheet = new Cuesheet();
-            _traceChangeManager.TraceChanges(Cuesheet);
+            SetCuesheetReference(cuesheet);
         }
         public Cuesheet Cuesheet 
         {
             get { return cuesheet; }
-            set
-            {
-                cuesheet = value;
-                _traceChangeManager.Reset();
-                _traceChangeManager.TraceChanges(Cuesheet);
-                CuesheetChanged?.Invoke(this, EventArgs.Empty);
-            }
+            set { SetCuesheetReference(value); }
         }
         public Cuesheet? ImportCuesheet
         {
@@ -161,6 +155,21 @@ namespace AudioCuesheetEditor.Extensions
                 ImportCuesheet = null;
             }
             ResetImport();
+        }
+
+        private void SetCuesheetReference(Cuesheet value)
+        {
+            cuesheet.CuesheetImported -= Cuesheet_CuesheetImported;
+            cuesheet = value;
+            cuesheet.CuesheetImported += Cuesheet_CuesheetImported;
+            _traceChangeManager.Reset();
+            _traceChangeManager.TraceChanges(Cuesheet);
+            CuesheetChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Cuesheet_CuesheetImported(object? sender, EventArgs e)
+        {
+            CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }
