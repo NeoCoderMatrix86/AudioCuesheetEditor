@@ -28,16 +28,15 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject DateTimeUtility _dateTimeUtility
 
-@if (Cuesheet != null)
-{
+<Validations @ref="validations">
     @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
     {
-        var validationResult = Cuesheet.Validate(x => x.Tracks);
-        <Alert Color="Color.Danger" Visible="validationResult.Status == Model.Entity.ValidationStatus.Error">
+        var validationResult = Cuesheet?.Validate(x => x.Tracks);
+        <Alert Color="Color.Danger" Visible="validationResult?.Status == Model.Entity.ValidationStatus.Error">
             <Heading Size="HeadingSize.Is4">
                 @_localizer["Validation errors"]
             </Heading>
-            @if (validationResult.ValidationMessages != null)
+            @if (validationResult?.ValidationMessages != null)
             {
                 @foreach(var message in validationResult.ValidationMessages)
                 {
@@ -133,7 +132,7 @@ along with Foobar.  If not, see
                 {
                     <TableHeaderCell>
                         <Div Class="d-flex align-items-center">
-                            @if (Cuesheet.Tracks.Count > 0)
+                            @if (Cuesheet?.Tracks.Count > 0)
                             {
                                 <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
                                     <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
@@ -162,9 +161,10 @@ along with Foobar.  If not, see
             </TableRow>
         </TableHeader>
         <TableBody>
-            <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
-                <Validations @ref="validations[track]">
-                    @if ((track != Cuesheet.Tracks.FirstOrDefault()) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
+            @if (Cuesheet != null)
+            {
+                <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
+                    @if ((track != Cuesheet?.Tracks.FirstOrDefault()) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
                     {
                         <TableRow>
                             <TableRowCell ColumnSpan="(TrackSelectionVisible == true) ? 9 : 8">
@@ -202,7 +202,7 @@ along with Foobar.  If not, see
                         {
                             case ViewMode.ViewModeRecord:
                                 <TableRowCell>
-                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet.RemoveTrack(track)">
+                                    <Button Size="Size.Small" Color="Color.Warning" Clicked="() => Cuesheet?.RemoveTrack(track)">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                         </svg>
@@ -248,14 +248,14 @@ along with Foobar.  If not, see
                                                 </Buttons>
                                                 <Buttons Margin="Margin.Is1.FromEnd" Display="Display.None.OnMobile.None.OnTablet.Flex.Row.OnDesktop">
                                                     <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Move track up tooltip"]">
-                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!Cuesheet.MoveTrackPossible(track, MoveDirection.Up)" Clicked="() => Cuesheet.MoveTrack(track, MoveDirection.Up)">
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!(Cuesheet != null && Cuesheet.MoveTrackPossible(track, MoveDirection.Up))" Clicked="() => Cuesheet?.MoveTrack(track, MoveDirection.Up)">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-up" viewBox="0 0 16 16">
                                                                 <path fill-rule="evenodd" d="M8 10a.5.5 0 0 0 .5-.5V3.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 3.707V9.5a.5.5 0 0 0 .5.5zm-7 2.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5z" />
                                                             </svg>
                                                         </Button>
                                                     </Tooltip>
                                                     <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Move track down tooltip"]">
-                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!Cuesheet.MoveTrackPossible(track, MoveDirection.Down)" Clicked="() => Cuesheet.MoveTrack(track, MoveDirection.Down)">
+                                                        <Button Size="Size.Small" Color="Color.Secondary" Disabled="!(Cuesheet != null && Cuesheet.MoveTrackPossible(track, MoveDirection.Down))" Clicked="() => Cuesheet?.MoveTrack(track, MoveDirection.Down)">
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down" viewBox="0 0 16 16">
                                                                 <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
                                                             </svg>
@@ -329,7 +329,7 @@ along with Foobar.  If not, see
                             case ViewMode.ViewModeImport:
                                 <TableRowCell>
                                     <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
-                                        @if (Cuesheet.GetSplitPointAtTrack(track) != null)
+                                        @if (Cuesheet?.GetSplitPointAtTrack(track) != null)
                                         {
                                             <Tooltip Text="@_localizer["A split point is currently set at the time of this track"]">
                                                 <Badge Color="Color.Info" Pill>
@@ -375,11 +375,11 @@ along with Foobar.  If not, see
                                 break;
                         }
                     </TableRow>
-                </Validations>
-            </Virtualize>
+                </Virtualize>
+            }
         </TableBody>
     </Table>
-}
+</Validations>
 
 <ModalDialog @ref="modalDialog" />
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
@@ -393,7 +393,8 @@ along with Foobar.  If not, see
     Boolean _trackSelectionVisible = false;
     //Saved locally because of performance (do not load everytime something is edited)
     ApplicationOptions? applicationOptions;
-    Dictionary<Track, Validations?> validations = new();
+    Validations? validations;
+    Boolean revalidate = false;
     List<Track> TracksAttachedToValidateablePropertyChanged = new();
 
     [Parameter]
@@ -461,6 +462,17 @@ along with Foobar.  If not, see
 
         AttachTracksToValidateablePropertyChanged();
         AttachCuesheetToSplitPointsAddedRemoved();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        _logger.LogDebug("OnAfterRenderAsync({firstRender})", firstRender);
+        if ((revalidate) && (validations != null))
+        {
+            await validations.ValidateAll();
+            revalidate = false;
+        }
     }
 
     Task OnAddTrackClicked()
@@ -622,11 +634,20 @@ along with Foobar.  If not, see
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
-        //TODO: Unsubscribe to previous attached events
-        StateHasChanged();
+        // Unsubscribe to previous attached events
+        DetachCuesheetFromSplitPointsAddedRemoved();
+        var tracks = TracksAttachedToValidateablePropertyChanged.Except(_sessionStateContainer.Cuesheet.Tracks);
+        for (int i = tracks.Count() - 1; i >= 0; i--)
+        {
+            var track = tracks.ElementAt(i);
+            DetachTrackFromValidateablePropertyChanged(track);
+            TracksAttachedToValidateablePropertyChanged.Remove(track);
+        }
+        // Reattach if needed
         AttachTracksToValidateablePropertyChanged();
         AttachCuesheetToSplitPointsAddedRemoved();
-        //TODO: Here we should revalidate everything and clear previous!
+        revalidate = true;
+        StateHasChanged();
     }
 
     private void TraceChangeManager_UndoDone(object? sender, EventArgs args)
@@ -718,38 +739,25 @@ along with Foobar.  If not, see
         }
     }
 
-    void DetachTrackFromValidateablePropertyChanged(Track? track = null, Boolean deleteValidationReference = true)
+    void DetachTrackFromValidateablePropertyChanged(Track? track = null)
     {
         if (track == null)
         {
             foreach (var trackCurrentlyAttached in TracksAttachedToValidateablePropertyChanged)
             {
-                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
-                if (deleteValidationReference)
-                {
-                    validations.Remove(trackCurrentlyAttached);
-                }
-            }
+                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;            }
         }
         else
         {
             track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
-            if (deleteValidationReference)
-            {
-                validations.Remove(track);
-            }
         }
     }
 
     void Track_ValidateablePropertyChanged(object? sender, string property)
     {
-        var track = sender as Track;
-        if (track != null)
+        if (validations != null)
         {
-            if (validations.TryGetValue(track, out var validation) && validation != null)
-            {
-                validation.ValidateAll().GetAwaiter().GetResult();
-            }
+            validations.ValidateAll().GetAwaiter().GetResult();
         }
     }
 
