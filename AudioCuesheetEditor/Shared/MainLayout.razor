@@ -578,7 +578,7 @@ along with Foobar.  If not, see
             void newCuesheetDelegate(object? sender, EventArgs args)
             {
                 _logger.LogInformation("newCuesheetDelegate");
-                _sessionStateContainer.Cuesheet = new Cuesheet();
+                _sessionStateContainer.Cuesheet = new Cuesheet(_traceChangeManager);
                 modalDialog.Confirmed -= newCuesheetDelegate;
                 StateHasChanged();
             };

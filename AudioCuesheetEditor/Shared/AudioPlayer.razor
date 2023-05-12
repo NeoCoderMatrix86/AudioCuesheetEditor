@@ -378,9 +378,20 @@ along with Foobar.  If not, see
     {
         if (_sessionStateContainer.Cuesheet.Audiofile != null)
         {
-            _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+            if (_sessionStateContainer.Cuesheet.Audiofile.IsContentStreamLoaded)
+            {
+                AnalyseAudioFile();
+            }
+            else
+            {
+                TotalTime = null;
+                _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+            }
         }
-        TotalTime = null;
+        else
+        {
+            TotalTime = null;
+        }
     }
 
     void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)

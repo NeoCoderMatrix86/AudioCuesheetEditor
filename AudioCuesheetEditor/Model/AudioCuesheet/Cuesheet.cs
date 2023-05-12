@@ -74,11 +74,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointRemoved;
         public event EventHandler? CuesheetImported;
 
-        public Cuesheet()
+        public Cuesheet(TraceChangeManager? traceChangeManager = null)
         {
             tracks = new();
             catalogueNumber = new();
             splitPoints = new();
+            TraceChangeManager = traceChangeManager;
         }
 
         [JsonInclude]
@@ -208,6 +209,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 splitPoints = value.ToList();
             }
         }
+
+        [JsonIgnore]
+        public TraceChangeManager? TraceChangeManager { get; }
 
         public SplitPoint AddSplitPoint()
         {
@@ -527,6 +531,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
             {
                 trackToCalculate.End = Audiofile.Duration;
+                TraceChangeManager?.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == this && y.TraceableChange.PropertyName == nameof(Audiofile)));
             }
             if (Tracks.Count > 1)
             {
@@ -568,7 +573,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     trackToCalculate.Begin = TimeSpan.Zero;
                 }
-            }
+            }            
         }
 
         /// <summary>
