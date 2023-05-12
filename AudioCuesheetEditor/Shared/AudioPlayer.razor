@@ -83,6 +83,7 @@ along with Foobar.  If not, see
     HotKeysContext? hotKeysContext;
     Boolean paused;
     Audiofile? audioFile;
+    Cuesheet? cuesheetAttachedToAudiofileChangedEvent;
 
     [Parameter]
     public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
@@ -104,6 +105,7 @@ along with Foobar.  If not, see
             _sessionStateContainer.Cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
         }
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
     public Boolean PlaybackPossible
@@ -203,21 +205,10 @@ along with Foobar.  If not, see
             .Add(Key.MediaStop, OnStopKeyDown);
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-
-        //Also reset the duration, since audio file will change also
-        TotalTime = null;
-        _sessionStateContainer.Cuesheet.AudioFileChanged += Cuesheet_AudioFileChanged;
-        if (_sessionStateContainer.Cuesheet.Audiofile != null)
-        {
-            if (_sessionStateContainer.Cuesheet.Audiofile.IsContentStreamLoaded == false)
-            {
-                _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
-            }
-            else
-            {
-                AnalyseAudioFile();
-            }
-        }
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        cuesheetAttachedToAudiofileChangedEvent = _sessionStateContainer.Cuesheet;
+        cuesheetAttachedToAudiofileChangedEvent.AudioFileChanged += Cuesheet_AudioFileChanged;
+        AnalyseCuesheet();
 
         //Setup audio timer
         audioUpdateTimer = new Timer(500);
@@ -376,22 +367,7 @@ along with Foobar.  If not, see
 
     void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
     {
-        if (_sessionStateContainer.Cuesheet.Audiofile != null)
-        {
-            if (_sessionStateContainer.Cuesheet.Audiofile.IsContentStreamLoaded)
-            {
-                AnalyseAudioFile();
-            }
-            else
-            {
-                TotalTime = null;
-                _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
-            }
-        }
-        else
-        {
-            TotalTime = null;
-        }
+        AnalyseCuesheet();
     }
 
     void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)
@@ -415,6 +391,37 @@ along with Foobar.  If not, see
         {
             TotalTime = _sessionStateContainer.Cuesheet.Audiofile.Duration.Value;
             StateHasChanged();
+        }
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        if (cuesheetAttachedToAudiofileChangedEvent != null)
+        {
+            cuesheetAttachedToAudiofileChangedEvent.AudioFileChanged -= Cuesheet_AudioFileChanged;
+        }
+        AnalyseCuesheet();
+        cuesheetAttachedToAudiofileChangedEvent = _sessionStateContainer.Cuesheet;
+        cuesheetAttachedToAudiofileChangedEvent.AudioFileChanged += Cuesheet_AudioFileChanged;
+    }
+
+    void AnalyseCuesheet()
+    {
+        if (_sessionStateContainer.Cuesheet.Audiofile != null)
+        {
+            if (_sessionStateContainer.Cuesheet.Audiofile.IsContentStreamLoaded)
+            {
+                AnalyseAudioFile();
+            }
+            else
+            {
+                TotalTime = null;
+                _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
+            }
+        }
+        else
+        {
+            TotalTime = null;
         }
     }
 }
