@@ -14,6 +14,8 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Pages;
+using Markdig.Extensions.Yaml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,14 +52,12 @@ namespace AudioCuesheetEditor.Model.UI
 
     public class TracedChanges
     {
-        private readonly Stack<TracedChange> _tracedChanges;
-
         public TracedChanges(IEnumerable<TracedChange> changes)
         {
-            _tracedChanges = new(changes);
+            Changes = new(changes);
         }
 
-        public Stack<TracedChange> Changes => _tracedChanges;
+        public List<TracedChange> Changes { get; }
         public Boolean HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
     }
 
@@ -135,9 +135,9 @@ namespace AudioCuesheetEditor.Model.UI
                 if ((changes != null) && changes.HasTraceableObject)
                 {
                     var redoChanges = new List<TracedChange>();
-                    do
+                    for (int i = changes.Changes.Count - 1; i >= 0; i--)
                     {
-                        var change = changes.Changes.Pop();
+                        var change = changes.Changes.ElementAt(i);
                         var tracedObject = change?.TraceableObject;
                         var traceAbleChange = change?.TraceableChange;
                         _logger.LogDebug("tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}", tracedObject, traceAbleChange);
@@ -156,8 +156,11 @@ namespace AudioCuesheetEditor.Model.UI
                                 throw new NullReferenceException(String.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
                             }
                         }
+                        if (change != null)
+                        {
+                            changes.Changes.Remove(change);
+                        }
                     }
-                    while (changes.Changes.Count > 0);
                     //Push the old value to redo stack
                     redoStack.Push(new TracedChanges(redoChanges));
                 }
@@ -184,9 +187,9 @@ namespace AudioCuesheetEditor.Model.UI
                 if ((changes != null) && changes.HasTraceableObject)
                 {
                     var undoChanges = new List<TracedChange>();
-                    do
+                    for (int i = changes.Changes.Count - 1;i >= 0; i--) 
                     {
-                        var change = changes.Changes.Pop();
+                        var change = changes.Changes.ElementAt(i);
                         var tracedObject = change?.TraceableObject;
                         var traceAbleChange = change?.TraceableChange;
                         _logger.LogDebug("tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}", tracedObject, traceAbleChange);
@@ -205,8 +208,11 @@ namespace AudioCuesheetEditor.Model.UI
                                 throw new NullReferenceException(String.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
                             }
                         }
+                        if (change != null)
+                        {
+                            changes.Changes.Remove(change);
+                        }
                     }
-                    while (changes.Changes.Count > 0);
                     //Push the old value to redo stack
                     undoStack.Push(new TracedChanges(undoChanges));
                 }
@@ -237,14 +243,35 @@ namespace AudioCuesheetEditor.Model.UI
             }
         }
 
+        public TracedChanges? LastEdit
+        {
+            get
+            {
+                return undoStack.Peek();
+            }
+        }
+
+        public void MergeLastEditWithEdit(Func<TracedChanges, bool> targetEdit)
+        {
+            var edit = undoStack.FirstOrDefault(targetEdit);
+            if (edit != null)
+            {
+                if (undoStack.Count > 0)
+                {
+                    var lastEdits = undoStack.Pop();
+                    edit.Changes.AddRange(lastEdits.Changes);
+                    UndoDone?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
         private void ResetStack(Stack<TracedChanges> stack)
         {
             while (stack.Count > 0)
             {
                 var tracedChange = stack.Pop();
-                while (tracedChange.Changes.Count > 0)
+                foreach (var change in tracedChange.Changes)
                 {
-                    var change = tracedChange.Changes.Pop();
                     if (change.TraceableObject != null)
                     {
                         change.TraceableObject.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;

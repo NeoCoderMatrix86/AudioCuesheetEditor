@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Extensions
         public SessionStateContainer(TraceChangeManager traceChangeManager)
         {
             _traceChangeManager = traceChangeManager;
-            cuesheet = new Cuesheet();
+            cuesheet = new Cuesheet(_traceChangeManager);
             SetCuesheetReference(cuesheet);
         }
         public Cuesheet Cuesheet 

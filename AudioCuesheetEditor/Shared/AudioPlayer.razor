@@ -376,6 +376,7 @@ along with Foobar.  If not, see
 
     void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
     {
+        //TODO: Maybe we get an already analysed file (Undo/Redo)?
         if (_sessionStateContainer.Cuesheet.Audiofile != null)
         {
             _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
