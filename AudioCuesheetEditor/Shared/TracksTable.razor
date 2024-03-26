@@ -745,7 +745,8 @@ along with Foobar.  If not, see
         {
             foreach (var trackCurrentlyAttached in TracksAttachedToValidateablePropertyChanged)
             {
-                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;            }
+                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;            
+            }
         }
         else
         {
@@ -759,6 +760,7 @@ along with Foobar.  If not, see
         {
             validations.ValidateAll().GetAwaiter().GetResult();
         }
+        StateHasChanged();
     }
 
     void AttachCuesheetToSplitPointsAddedRemoved()
