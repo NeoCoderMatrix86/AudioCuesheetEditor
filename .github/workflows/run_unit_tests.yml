@@ -20,7 +20,7 @@ jobs:
         dotnet-version: '7.0.101'
     
     - name: Install wasm-tools
-      run: dotnet workload install wasm-tools
+      run: dotnet workload install wasm-tools-net7
       
     # Only publish when unit tests are ok
     - name: Run Unit Tests
