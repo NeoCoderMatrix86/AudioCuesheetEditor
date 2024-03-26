@@ -316,6 +316,7 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+        validations?.ValidateAll();
     }
 
     private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)

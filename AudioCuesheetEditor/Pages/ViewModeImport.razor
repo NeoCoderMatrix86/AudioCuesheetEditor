@@ -586,6 +586,7 @@ along with Foobar.  If not, see
         StateHasChanged();
         TimeSpanFormat.TextLocalizer = _localizer;
         TextImportScheme.TextLocalizer = _localizer;
+        validations?.ValidateAll();
     }
 
     private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
