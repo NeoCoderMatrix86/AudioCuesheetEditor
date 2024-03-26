@@ -46,7 +46,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             IsRecorded = isRecorded;
         }
 
-        public Audiofile(String name, String objectURL, AudioCodec audioCodec, HttpClient httpClient, Boolean isRecorded = false) : this(name, isRecorded)
+        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, HttpClient httpClient, Boolean isRecorded = false) : this(name, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {

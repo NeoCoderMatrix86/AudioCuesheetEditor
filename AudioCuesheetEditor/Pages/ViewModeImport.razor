@@ -471,7 +471,7 @@ along with Foobar.  If not, see
             if ((IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
                 && (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
                 && (IOUtility.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
-                && (IOUtility.CheckFileMimeType(file, Audiofile.AudioCodecs) == false))
+                && (IOUtility.CheckFileMimeTypeForAudioCodec(file) == false))
             {
                 invalidDropFileNames.Add(file.Name);
             }
@@ -528,10 +528,10 @@ along with Foobar.  If not, see
                 _sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
                 _sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged += TextImportScheme_ValidateablePropertyChanged;
             }
-            if (IOUtility.CheckFileMimeType(file, Audiofile.AudioCodecs) == true)
+            if (IOUtility.CheckFileMimeTypeForAudioCodec(file) == true)
             {
                 var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
-                var codec = Audiofile.AudioCodecs.Single(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase));
+                var codec = IOUtility.GetAudioCodec(file);
                 var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
                 _ = audiofile.LoadContentStream();
                 _sessionStateContainer.ImportAudiofile = audiofile;

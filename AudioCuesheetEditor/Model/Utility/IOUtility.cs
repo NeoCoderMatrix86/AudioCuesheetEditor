@@ -39,16 +39,28 @@ namespace AudioCuesheetEditor.Model.Utility
             return fileMimeTypeMatches;
         }
 
-        public static Boolean CheckFileMimeType(IFileEntry file, IReadOnlyCollection<AudioCodec> audioCodecs)
+        public static Boolean CheckFileMimeTypeForAudioCodec(IFileEntry file)
         {
-            Boolean fileMimeTypeMatches = false;
-            if ((file != null) && (audioCodecs != null))
+            return GetAudioCodec(file) != null;
+        }
+
+        public static AudioCodec? GetAudioCodec(IFileEntry fileEntry)
+        {
+            AudioCodec? foundAudioCodec = null;
+            var extension = Path.GetExtension(fileEntry.Name).ToLower();
+            // First search with mime type and file extension
+            var audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(fileEntry.Type, StringComparison.OrdinalIgnoreCase) && x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
+            if (audioCodecsFound.Count() <= 1)
             {
-                var extension = Path.GetExtension(file.Name).ToLower();
-                var audioCodecsFound = audioCodecs.Where(x => x.MimeType.Equals(file.Type, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
-                fileMimeTypeMatches = (audioCodecsFound != null) && (audioCodecsFound.Any());
+                foundAudioCodec = audioCodecsFound.FirstOrDefault();
             }
-            return fileMimeTypeMatches;
+            else
+            {
+                // Second search with mime type or file extension
+                audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(fileEntry.Type, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
+                foundAudioCodec = audioCodecsFound.FirstOrDefault();
+            }
+            return foundAudioCodec;
         }
     }
 }
