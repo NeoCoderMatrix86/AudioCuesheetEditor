@@ -293,7 +293,7 @@ namespace AudioCuesheetEditor.Model.UI
                     if (BulkEdit == false)
                     {
                         //Single change
-                        var changes = new TracedChanges(new List<TracedChange>() { new TracedChange((ITraceable)sender, e.TraceableChange) });
+                        var changes = new TracedChanges(new List<TracedChange>() { new((ITraceable)sender, e.TraceableChange) });
                         undoStack.Push(changes);
                         redoStack.Clear();
                         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
