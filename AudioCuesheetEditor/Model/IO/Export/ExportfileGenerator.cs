@@ -35,20 +35,19 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public Cuesheet Cuesheet { get; }
         public Exportprofile? Exportprofile { get; set; }
         public ApplicationOptions? ApplicationOptions { get; set; }
-        public IAudioConverterService? AudioConverterService { get; set; }
         public ExportType ExportType { get; set; }
 
-        public ExportfileGenerator(ExportType exportType, Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null, IAudioConverterService? audioConverterService = null)
+        public ExportfileGenerator(ExportType exportType, Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null)
         {
             ExportType = exportType;
             Cuesheet = cuesheet;
             Exportprofile = exportprofile;
             ApplicationOptions = applicationOptions;
-            AudioConverterService = audioConverterService;
         }
 
-        public async Task<IReadOnlyCollection<Exportfile>> GenerateExportfilesAsync()
+        public IReadOnlyCollection<Exportfile> GenerateExportfiles()
         {
+            //TODO: Generate export files with start 00:00:00 and each end set correctly!
             List<Exportfile> exportfiles = new();
             if (Validate().Status != ValidationStatus.Error)
             {
@@ -80,8 +79,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             }
                             if (content != null)
                             {
-                                var exportAudiofile = await GetAudiofileContentAsync(audioFileName, previousSplitPointMoment, splitPoint);
-                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment, ExportAudiofile = exportAudiofile });
+                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
                             }
                             previousSplitPointMoment = splitPoint.Moment;
                             counter++;
@@ -105,8 +103,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (content != null)
                     {
-                        var exportAudiofile = await GetAudiofileContentAsync(audioFileName, previousSplitPointMoment);
-                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, ExportAudiofile = exportAudiofile });
+                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment });
                     }
                 }
                 else
@@ -315,38 +312,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return builder.ToString();
         }
 
-        private async Task<ExportAudiofile?> GetAudiofileContentAsync(String audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
-        {
-            ExportAudiofile? exportAudiofile = null;
-            if ((from != null) || (splitPoint != null))
-            {
-                TimeSpan start = TimeSpan.Zero;
-                if (from != null)
-                {
-                    start = from.Value;
-                }
-                else
-                {
-                    var minBegin = Cuesheet.Tracks.Min(x => x.Begin);
-                    if (minBegin != null)
-                    {
-                        start = minBegin.Value;
-                    }
-                }
-                if (AudioConverterService == null)
-                {
-                    throw new NullReferenceException();
-                }
-                if (Cuesheet.Audiofile == null)
-                {
-                    throw new NullReferenceException();
-                }
-                var content = await AudioConverterService.SplitAudiofileAsync(Cuesheet.Audiofile, start, splitPoint?.Moment);
-                exportAudiofile = new() { Name = audiofileName, Content = content };
-            }
-            return exportAudiofile;
-        }
-
         protected override ValidationResult Validate(string property)
         {
             ValidationResult validationResult;
@@ -407,27 +372,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
                                 new("{0} has no value!", nameof(Exportprofile))
                             };
                             validationResult = ValidationResult.Create(ValidationStatus.Error, validationMessages);
-                        }
-                    }
-                    else
-                    {
-                        validationResult = ValidationResult.Create(ValidationStatus.NoValidation);
-                    }
-                    break;
-                case nameof(AudioConverterService):
-                    if (Cuesheet.SplitPoints.Any())
-                    {
-                        if (AudioConverterService == null)
-                        {
-                            var validationMessages = new List<ValidationMessage>()
-                            {
-                                new("{0} has no value!", nameof(Exportprofile))
-                            };
-                            validationResult = ValidationResult.Create(ValidationStatus.Error, validationMessages);
-                        }
-                        else
-                        {
-                            validationResult = ValidationResult.Create(ValidationStatus.Success);
                         }
                     }
                     else

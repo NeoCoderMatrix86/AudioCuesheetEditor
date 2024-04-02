@@ -22,6 +22,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
 {
     public class SplitPoint : Validateable<SplitPoint>, ITraceable
     {
+        //TODO: Add audio file name as property to be set by user
         private Cuesheet? cuesheet;
         private TimeSpan? moment;
         private String? artist;

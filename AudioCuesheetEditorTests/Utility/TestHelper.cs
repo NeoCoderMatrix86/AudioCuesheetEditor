@@ -31,11 +31,9 @@ namespace AudioCuesheetEditorTests.Utility
             {
                 LinkTracksWithPreviousOne = false
             };
-            AudioConverterService = new AudioConverterServiceUnitTest();
         }
 
         public ApplicationOptions ApplicationOptions { get; private set; }
-        public IAudioConverterService AudioConverterService { get; private set; }
         public static ILogger<T> CreateLogger<T>()
         {
             var serviceProvider = new ServiceCollection()
