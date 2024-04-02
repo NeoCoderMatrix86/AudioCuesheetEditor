@@ -56,8 +56,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions);
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             Assert.AreEqual(Exportfile.DefaultCuesheetFilename, generatedFiles.First().Name);
             var content = generatedFiles.First().Content;
@@ -83,7 +83,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "0123456789123";
-            generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -95,8 +95,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             File.Delete(fileName);
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             cuesheet.Cataloguenumber.Value = "Testvalue";
-            Assert.IsFalse(generator.CanWrite(ExportType.Cuesheet));
-            generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            Assert.AreEqual(ValidationStatus.Error, generator.Validate().Status);
+            generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(0, generatedFiles.Count);
         }
 
@@ -131,8 +131,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 track.PreGap = new TimeSpan(0, 0, 3);
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions);
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -193,8 +193,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 }
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions);
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -245,16 +245,16 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
-            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions);
-            Assert.IsFalse(generator.CanWrite(ExportType.Cuesheet));
+            var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
+            Assert.AreEqual(ValidationStatus.Error, generator.Validate().Status);
             //Rearrange positions
             cuesheet.Tracks.ElementAt(0).Position = 1;
             cuesheet.Tracks.ElementAt(1).Position = 2;
             cuesheet.Tracks.ElementAt(2).Position = 3;
             cuesheet.Tracks.ElementAt(3).Position = 4;
             cuesheet.Tracks.ElementAt(4).Position = 5;
-            Assert.IsTrue(generator.CanWrite(ExportType.Cuesheet));
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             var content = generatedFiles.First().Content;
             Assert.IsNotNull(content);
@@ -315,9 +315,9 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             splitPoint.Title = "Title 3";
             splitPoint.Moment = new TimeSpan(1, 30, 0);
             testHelper.ApplicationOptions.CuesheetFilename = "Unit test.cue";
-            var generator = new ExportfileGenerator(cuesheet, applicationOptions: testHelper.ApplicationOptions, audioConverterService:testHelper.AudioConverterService);
-            Assert.IsTrue(generator.CanWrite(ExportType.Cuesheet));
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Cuesheet);
+            var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions, audioConverterService:testHelper.AudioConverterService);
+            Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(5, generatedFiles.Count);
             var position = 1;
             var counter = 1;
@@ -427,8 +427,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
             };
             Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
-            var generator = new ExportfileGenerator(cuesheet, exportprofile: exportProfile);
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
+            var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportprofile: exportProfile);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             var fileContent = generatedFiles.First().Content;
@@ -461,7 +461,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             };
             Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
             generator.Exportprofile = exportProfile;
-            generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
+            generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             fileContent = generatedFiles.First().Content;
@@ -495,7 +495,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             };
             Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
             generator.Exportprofile = exportProfile;
-            generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
+            generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             fileContent = generatedFiles.First().Content;
@@ -565,8 +565,8 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%"
             };
             Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
-            var generator = new ExportfileGenerator(cuesheet, exportprofile: exportProfile);
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
+            var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportprofile: exportProfile);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(1, generatedFiles.Count);
             Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
             var fileContent = generatedFiles.First().Content;
@@ -641,9 +641,9 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
                 SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
             };
-            var generator = new ExportfileGenerator(cuesheet, exportProfile, audioConverterService: testHelper.AudioConverterService);
-            Assert.IsTrue(generator.CanWrite(ExportType.Exportprofile));
-            var generatedFiles = await generator.GenerateExportfilesAsync(ExportType.Exportprofile);
+            var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportProfile, audioConverterService: testHelper.AudioConverterService);
+            Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
+            var generatedFiles = await generator.GenerateExportfilesAsync();
             Assert.AreEqual(5, generatedFiles.Count);
 
             //Check split according to split points

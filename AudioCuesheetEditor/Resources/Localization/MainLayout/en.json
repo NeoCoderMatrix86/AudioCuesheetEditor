@@ -8,7 +8,7 @@
     "Undo last change": "Undo last change",
     "Redo last change": "Redo last change",
     "Export": "Export",
-    "Please check processinghints for errors, otherwise the file is not exportable": "Please check processing hints for errors. Otherwise the file is not exportable.",
+    "Please check processinghints for errors, otherwise the file is not exportable: {0}": "Please check processinghints for errors, otherwise the file is not exportable: {0}",
     "Download cuesheet": "Download cuesheet",
     "Save project": "Save project",
     "Open exportprofiles": "Display Export Profiles",

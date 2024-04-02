@@ -113,7 +113,7 @@ along with Foobar.  If not, see
             {
                 @if (selectedStep != "displayExportResult")
                 {
-                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString(!ExportPossible, "Export files can not be generated. Please check validationerrors and solve errors in order to download export.")">
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@ExportPossibleTooltip">
                         <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
                     </Tooltip>
                     <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
@@ -175,6 +175,27 @@ along with Foobar.  If not, see
         }
     }
 
+    String? ExportPossibleTooltip
+    {
+        get
+        {
+            var validationResult = ExportfileGenerator?.Validate();
+            if (validationResult?.Status == Model.Entity.ValidationStatus.Error)
+            {
+                string? detailText = null;
+                if (validationResult.ValidationMessages != null)
+                {
+                    foreach (var validationMessage in validationResult.ValidationMessages)
+                    {
+                        detailText += String.Format("{0}{1}", validationMessage.GetMessageLocalized(_validationMessageLocalizer), Environment.NewLine);
+                    }
+                }
+                return _localizer["Export files can not be generated. Please check validationerrors and solve errors in order to download export: {0}", detailText];
+            }
+            return null;
+        }
+    }
+
     Boolean ExportPossible
     {
         get
@@ -184,11 +205,7 @@ along with Foobar.  If not, see
             {
                 exportPossible = Validations.ValidateAll().GetAwaiter().GetResult();
             }
-            if ((exportPossible == false) && (ExportfileGenerator != null))
-            {
-                exportPossible = ExportfileGenerator.CanWrite(ExportType);
-            }
-            return exportPossible;
+            return exportPossible && ExportPossibleTooltip == null;
         }
     }
 
@@ -198,7 +215,7 @@ along with Foobar.  If not, see
             .Add(Key.Enter, OnEnterKeyDown);
 
         _audioConverterService.ProgressChanged += IAudioConverterService_ProgressChanged;
-        ExportfileGenerator = new ExportfileGenerator(_sessionStateContainer.Cuesheet, audioConverterService: _audioConverterService);
+        ExportfileGenerator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, audioConverterService: _audioConverterService);
 
         await base.OnInitializedAsync();
     }
@@ -244,7 +261,7 @@ along with Foobar.  If not, see
             exportProgress = 0;
             if (ExportfileGenerator != null)
             {
-                exportfiles = await ExportfileGenerator.GenerateExportfilesAsync(ExportType);
+                exportfiles = await ExportfileGenerator.GenerateExportfilesAsync();
                 selectedStep = "displayExportResult";
                 prepareExportCompleted = true;
             }
