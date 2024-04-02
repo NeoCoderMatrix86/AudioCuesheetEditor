@@ -51,8 +51,8 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 var cultures = new List<CultureInfo>
                 {
-                    new CultureInfo("en-US"),
-                    new CultureInfo("de-DE")
+                    new("en-US"),
+                    new("de-DE")
                 };
                 return cultures.AsReadOnly();
             }
