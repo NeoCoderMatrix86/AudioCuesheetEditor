@@ -374,17 +374,24 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     break;
                 case nameof(ApplicationOptions):
-                    if (ApplicationOptions == null)
+                    if (ExportType == ExportType.Cuesheet)
                     {
-                        var validationMessages = new List<ValidationMessage>()
+                        if (ApplicationOptions == null)
                         {
-                            new("{0} has no value!", nameof(ApplicationOptions))
-                        };
-                        validationResult = ValidationResult.Create(ValidationStatus.Error, validationMessages);
+                            var validationMessages = new List<ValidationMessage>()
+                            {
+                                new("{0} has no value!", nameof(ApplicationOptions))
+                            };
+                            validationResult = ValidationResult.Create(ValidationStatus.Error, validationMessages);
+                        }
+                        else
+                        {
+                            validationResult = ValidationResult.Create(ValidationStatus.Success);
+                        }
                     }
                     else
                     {
-                        validationResult = ValidationResult.Create(ValidationStatus.Success);
+                        validationResult = ValidationResult.Create(ValidationStatus.NoValidation);
                     }
                     break;
                 case nameof(Exportprofile):
