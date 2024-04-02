@@ -53,7 +53,7 @@ namespace AudioCuesheetEditor.Model.Entity
     {
         private List<ValidationMessage>? validationMessages;
 
-        public static ValidationResult Create(ValidationStatus validationStatus, IReadOnlyCollection<ValidationMessage>? validationMessages = null)
+        public static ValidationResult Create(ValidationStatus validationStatus, IEnumerable<ValidationMessage>? validationMessages = null)
         {
             return new ValidationResult() { Status = validationStatus, ValidationMessages = validationMessages?.ToList() };
         }
