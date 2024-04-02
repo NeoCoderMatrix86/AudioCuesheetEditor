@@ -350,7 +350,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         else
                         {
-                            validationResult = ValidationResult.Create(ValidationStatus.Success);
+                            validationResult = ApplicationOptions.Validate(x => x.CuesheetFilename);
                         }
                     }
                     else
