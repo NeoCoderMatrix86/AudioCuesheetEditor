@@ -364,7 +364,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (validationResults.Any(x => x.Value.Status == ValidationStatus.Error))
                     {
-                        //TODO: Für jedes Objekt eine Nachricht erstellen und den Objektnamen voranstellen!
                         var messages = validationResults.Values.Where(x => x.ValidationMessages != null).SelectMany(x => x.ValidationMessages!);
                         validationResult = ValidationResult.Create(ValidationStatus.Error, messages);
                     }

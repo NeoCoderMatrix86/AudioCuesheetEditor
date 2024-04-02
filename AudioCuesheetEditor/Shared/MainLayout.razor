@@ -98,9 +98,7 @@ along with Foobar.  If not, see
                                                     <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, true)">@_localizer["Save project"]</Button>
                                                 </BarDropdownItem>
                                                 <BarDropdownItem>
-                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@IsExportprofileExportableTooltip">
-                                                        <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked" Disabled="!IsExportprofileExportable">@_localizer["Open exportprofiles"]</Button>
-                                                    </Tooltip>
+                                                    <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked">@_localizer["Open exportprofiles"]</Button>
                                                 </BarDropdownItem>
                                             </BarDropdownMenu>
                                         </BarDropdown>
@@ -430,7 +428,7 @@ along with Foobar.  If not, see
                 {
                     foreach (var validationMessage in validationResult.ValidationMessages)
                     {
-                        detailText += String.Format("{0}{1}", _validationMessageLocalizer[validationMessage.Message, validationMessage.Parameter], Environment.NewLine);
+                        detailText += String.Format("{0}{1}", validationMessage.GetMessageLocalized(_validationMessageLocalizer), Environment.NewLine);
                     }
                 }
                 return _localizer["Please check processinghints for errors, otherwise the file is not exportable: {0}", detailText];
@@ -440,30 +438,6 @@ along with Foobar.  If not, see
     }
 
     Boolean IsCuesheetExportable => IsCuesheetExportableTooltip == null;
-
-    string? IsExportprofileExportableTooltip
-    {
-        get
-        {
-            var generator = new ExportfileGenerator(ExportType.Exportprofile, _sessionStateContainer.Cuesheet, SelectedExportProfile, audioConverterService: _audioConverterService);
-            var validationResult = generator.Validate();
-            if (validationResult.Status == Model.Entity.ValidationStatus.Error)
-            {
-                string? detailText = null;
-                if (validationResult.ValidationMessages != null)
-                {
-                    foreach (var validationMessage in validationResult.ValidationMessages)
-                    {
-                        detailText += String.Format("{0}{1}", _validationMessageLocalizer[validationMessage.Message, validationMessage.Parameter], Environment.NewLine);
-                    }
-                }
-                return _localizer["Please check processinghints for errors, otherwise the file is not exportable: {0}", detailText];
-            }
-            return null;
-        }
-    }
-
-    Boolean IsExportprofileExportable => IsExportprofileExportableTooltip == null;
 
     Boolean ModalExportdialogCuesheetLockUserInput
     {

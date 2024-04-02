@@ -187,7 +187,7 @@ along with Foobar.  If not, see
                 {
                     foreach (var validationMessage in validationResult.ValidationMessages)
                     {
-                        detailText += String.Format("{0}{1}", _validationMessageLocalizer[validationMessage.Message, validationMessage.Parameter], Environment.NewLine);
+                        detailText += String.Format("{0}{1}", validationMessage.GetMessageLocalized(_validationMessageLocalizer), Environment.NewLine);
                     }
                 }
                 return _localizer["Export files can not be generated. Please check validationerrors and solve errors in order to download export: {0}", detailText];
@@ -205,12 +205,7 @@ along with Foobar.  If not, see
             {
                 exportPossible = Validations.ValidateAll().GetAwaiter().GetResult();
             }
-            //TODO: Warum nur bei exportPossible == false?
-            if (exportPossible == false)
-            {
-                exportPossible = ExportPossibleTooltip == null;
-            }
-            return exportPossible;
+            return exportPossible && ExportPossibleTooltip == null;
         }
     }
 
