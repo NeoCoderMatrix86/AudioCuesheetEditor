@@ -38,6 +38,7 @@
     "Filename": "Dateiname",
     "Artist": "Künstler",
     "Title": "Titel",
-    "Exportprofile": "Exportprofil"
+    "Exportprofile": "Exportprofil",
+    "ApplicationOptions": "Applikationsoptionen"
   }
 }
