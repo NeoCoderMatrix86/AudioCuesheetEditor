@@ -25,6 +25,7 @@ namespace AudioCuesheetEditorTests.Utility
 
         public Task<byte[]?> SplitAudiofileAsync(Audiofile audiofile, TimeSpan from, TimeSpan? to = null)
         {
+            ProgressChanged?.Invoke(this, 100);
             // This implementation does nothing with audio processing, so we only return some fake data
             return Task.FromResult<byte[]?>(null);
         }
