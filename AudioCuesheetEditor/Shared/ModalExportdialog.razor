@@ -110,7 +110,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    //TODO: Export of cuesheet doesn't work (ApplicationOptions missing in ExportfileGenerator)
     public event EventHandler? GenerateExportfilesClicked;
 
     [Parameter]
@@ -125,9 +124,10 @@ along with Foobar.  If not, see
     [EditorRequired]
     public ExportType ExportType { get; set; }
 
+    public Exportprofile? SelectedExportProfile{ get; set; }
+
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
-    public ExportfileGenerator? ExportfileGenerator { get; private set; }
     public Boolean LockUserInputs { get => exportProgress != null; }
 
     Modal? modalExportdialog;
@@ -136,6 +136,7 @@ along with Foobar.  If not, see
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
     int? exportProgress;
+    ApplicationOptions? applicationOptions;
 
     Boolean StepNavigationAllowed
     {
@@ -162,7 +163,8 @@ along with Foobar.  If not, see
     {
         get
         {
-            var validationResult = ExportfileGenerator?.Validate();
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            var validationResult = generator.Validate();
             if (validationResult?.Status == Model.Entity.ValidationStatus.Error)
             {
                 string? detailText = null;
@@ -197,7 +199,8 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
-        ExportfileGenerator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet);
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         await base.OnInitializedAsync();
     }
@@ -205,6 +208,7 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         hotKeysContext?.Dispose();
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     public async Task Show()
@@ -240,12 +244,10 @@ along with Foobar.  If not, see
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
             exportProgress = 0;
-            if (ExportfileGenerator != null)
-            {
-                exportfiles = ExportfileGenerator.GenerateExportfiles();
-                selectedStep = "displayExportResult";
-                prepareExportCompleted = true;
-            }
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            exportfiles = generator.GenerateExportfiles();
+            selectedStep = "displayExportResult";
+            prepareExportCompleted = true;
             exportProgress = null;
         }
         return Task.CompletedTask;
@@ -281,9 +283,11 @@ along with Foobar.  If not, see
         }
     }
 
-    void IAudioConverterService_ProgressChanged(object? sender, int progress)
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
     {
-        exportProgress = progress;
-        InvokeAsync(StateHasChanged);
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
     }
 }

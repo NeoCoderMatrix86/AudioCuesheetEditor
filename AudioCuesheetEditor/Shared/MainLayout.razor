@@ -766,9 +766,9 @@ along with Foobar.  If not, see
         _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
         selectedExportProfileId = newValue;
         modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
-        if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
+        if (modalExportdialogExportprofile != null)
         {
-            modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
+            modalExportdialogExportprofile.SelectedExportProfile = SelectedExportProfile;
             modalExportdialogExportprofile.Reset();
         }
         StateHasChanged();
@@ -797,19 +797,11 @@ along with Foobar.  If not, see
     void ModalExportdialogExportprofile_GenerateExportfilesClicked(object? sender, EventArgs args)
     {
         Task.Run(SaveExportProfiles);
-        if ((modalExportdialogExportprofile != null) && (modalExportdialogExportprofile.ExportfileGenerator != null))
-        {
-            modalExportdialogExportprofile.ExportfileGenerator.Exportprofile = SelectedExportProfile;
-        }
     }
 
     void ModalExportdialogCuesheet_GenerateExportfilesClicked(object? sender, EventArgs args)
     {
         Task.Run(SaveApplicationOptions);
-        if ((modalExportdialogCuesheet != null) && (modalExportdialogCuesheet.ExportfileGenerator != null))
-        {
-            modalExportdialogCuesheet.ExportfileGenerator.ApplicationOptions = applicationOptions;
-        }
     }
 
     Task OnApplicationOptionsCuesheetFilenameChanged(string value)
