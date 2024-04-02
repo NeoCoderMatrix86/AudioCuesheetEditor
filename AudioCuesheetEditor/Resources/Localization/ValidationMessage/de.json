@@ -37,6 +37,7 @@
     "{0} should be equal or less to '{1}'!": "{0} sollte kleiner oder gleich '{1}' sein!",
     "Filename": "Dateiname",
     "Artist": "Künstler",
-    "Title": "Titel"
+    "Title": "Titel",
+    "Exportprofile": "Exportprofil"
   }
 }
