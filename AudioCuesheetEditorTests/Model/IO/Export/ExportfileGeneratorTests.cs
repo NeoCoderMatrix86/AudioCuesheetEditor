@@ -322,7 +322,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var position = 1;
             var counter = 1;
             //Check split according to split points
-            Assert.IsNull(generatedFiles.First().Begin);
+            Assert.AreEqual(cuesheet.Tracks.Min(x => x.Begin), generatedFiles.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
             Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.ElementAt(1).Begin);
             Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
@@ -331,7 +331,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(3).Begin);
             Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(3).End);
             Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(4).Begin);
-            Assert.IsNull(generatedFiles.Last().End);
+            Assert.AreEqual(cuesheet.Tracks.Max(x => x.End), generatedFiles.Last().End);
             foreach (var generatedFile in generatedFiles)
             {
                 Assert.AreEqual(String.Format("Unit test({0}).cue", counter), generatedFile.Name);
@@ -647,7 +647,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.AreEqual(5, generatedFiles.Count);
 
             //Check split according to split points
-            Assert.IsNull(generatedFiles.First().Begin);
+            Assert.AreEqual(cuesheet.Tracks.Min(x => x.Begin), generatedFiles.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
             Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.ElementAt(1).Begin);
             Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
@@ -656,7 +656,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(3).Begin);
             Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(3).End);
             Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(4).Begin);
-            Assert.IsNull(generatedFiles.Last().End);
+            Assert.AreEqual(cuesheet.Tracks.Max(x => x.End), generatedFiles.Last().End);
             var counter = 1;
             var position = 1;
             foreach (var generatedFile in generatedFiles)

@@ -47,13 +47,13 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public IReadOnlyCollection<Exportfile> GenerateExportfiles()
         {
-            //TODO: Generate export files with start 00:00:00 and each end set correctly!
             List<Exportfile> exportfiles = new();
             if (Validate().Status != ValidationStatus.Error)
             {
                 if (Cuesheet.SplitPoints.Count != 0)
                 {
                     TimeSpan? previousSplitPointMoment = null;
+                    var begin = Cuesheet.Tracks.Min(x => x.Begin);
                     var counter = 1;
                     String? content = null;
                     String filename = String.Empty;
@@ -79,7 +79,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             }
                             if (content != null)
                             {
-                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = splitPoint.Moment });
+                                if (previousSplitPointMoment != null)
+                                {
+                                    begin = previousSplitPointMoment;
+                                }
+                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = splitPoint.Moment });
                             }
                             previousSplitPointMoment = splitPoint.Moment;
                             counter++;
@@ -103,7 +107,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (content != null)
                     {
-                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment });
+                        var end = Cuesheet.Tracks.Max(x => x.End);
+                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = previousSplitPointMoment, End = end });
                     }
                 }
                 else
@@ -140,7 +145,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (content != null)
                     {
-                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content) });
+                        var begin = Cuesheet.Tracks.Min(x => x.Begin);
+                        var end = Cuesheet.Tracks.Max(x => x.End);
+                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = end });
                     }
                 }
             }
