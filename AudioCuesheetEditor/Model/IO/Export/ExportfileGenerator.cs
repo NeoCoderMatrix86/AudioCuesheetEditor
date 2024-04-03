@@ -57,11 +57,10 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     var counter = 1;
                     String? content = null;
                     String filename = String.Empty;
-                    //TODO
-                    String audioFileName = String.Empty;
+                    String? audioFileName = null;
                     foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
                     {
-                        audioFileName = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(Cuesheet.Audiofile?.Name), counter, Path.GetExtension(Cuesheet.Audiofile?.Name));
+                        audioFileName = splitPoint.AudiofileName;
                         if (splitPoint.Validate().Status == ValidationStatus.Success)
                         {
                             switch (ExportType)
@@ -155,7 +154,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return exportfiles;
         }
 
-        private string WriteCuesheet(String audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private string WriteCuesheet(String? audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Cuesheet.Cataloguenumber != null && string.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false && Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
@@ -231,7 +230,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return builder.ToString();
         }
 
-        private String WriteExport(String audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private String WriteExport(String? audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Exportprofile != null)
