@@ -220,7 +220,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Text="@applicationOptions.CuesheetFilename" Immediate="false" Disabled="ModalExportdialogCuesheetLockUserInput" TextChanged="OnApplicationOptionsCuesheetFilenameChanged">
+                        <TextEdit Text="@applicationOptions.CuesheetFilename" Immediate="false" TextChanged="OnApplicationOptionsCuesheetFilenameChanged">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -237,11 +237,11 @@ along with Foobar.  If not, see
         <Field Horizontal="true" JustifyContent="JustifyContent.End">
             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <SelectList TItem="SelectExportProfileModel" TValue="Guid?" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" Disabled="ModalExportdialogExportprofileLockUserInput" />
+                <SelectList TItem="SelectExportProfileModel" TValue="Guid?" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
             </FieldBody>
         </Field>
-        <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked" Disabled="ModalExportdialogExportprofileLockUserInput">@_localizer["Add new exportprofile"]</Button>
-        <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked" Disabled="ModalExportdialogExportprofileLockUserInput">@_localizer["Delete selected exportprofile"]</Button>
+        <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@_localizer["Add new exportprofile"]</Button>
+        <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@_localizer["Delete selected exportprofile"]</Button>
         <Divider />
         @if (SelectedExportProfile != null)
         {
@@ -249,7 +249,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name" Disabled="ModalExportdialogExportprofileLockUserInput">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -261,7 +261,7 @@ along with Foobar.  If not, see
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@SelectedExportProfile.Filename" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileFilenameChanged">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@SelectedExportProfile.Filename" TextChanged="OnSelectedExportProfileFilenameChanged">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -279,14 +279,14 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@SelectedExportProfile.SchemeHead" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeHeadChanged">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@SelectedExportProfile.SchemeHead" TextChanged="OnSelectedExportProfileSchemeHeadChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
                                 </TextEdit>
                             </Addon>
                             <Addon AddonType="AddonType.End">
-                                <Dropdown Disabled="ModalExportdialogExportprofileLockUserInput">
+                                <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
                                         @_localizer["Select placeholder"]
                                     </DropdownToggle>
@@ -312,14 +312,14 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@SelectedExportProfile.SchemeTracks" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeTracksChanged">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@SelectedExportProfile.SchemeTracks" TextChanged="OnSelectedExportProfileSchemeTracksChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
                                 </TextEdit>
                             </Addon>
                             <Addon AddonType="AddonType.End">
-                                <Dropdown Disabled="ModalExportdialogExportprofileLockUserInput">
+                                <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
                                         @_localizer["Select placeholder"]
                                     </DropdownToggle>
@@ -345,14 +345,14 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@SelectedExportProfile.SchemeFooter" Disabled="ModalExportdialogExportprofileLockUserInput" TextChanged="OnSelectedExportProfileSchemeFooterChanged">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@SelectedExportProfile.SchemeFooter" TextChanged="OnSelectedExportProfileSchemeFooterChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
                                 </TextEdit>
                             </Addon>
                             <Addon AddonType="AddonType.End">
-                                <Dropdown Disabled="ModalExportdialogExportprofileLockUserInput">
+                                <Dropdown>
                                     <DropdownToggle Color="Color.Secondary">
                                         @_localizer["Select placeholder"]
                                     </DropdownToggle>
@@ -437,30 +437,6 @@ along with Foobar.  If not, see
     }
 
     Boolean IsCuesheetExportable => IsCuesheetExportableTooltip == null;
-
-    Boolean ModalExportdialogCuesheetLockUserInput
-    {
-        get
-        {
-            if (modalExportdialogCuesheet != null)
-            {
-                return modalExportdialogCuesheet.LockUserInputs;
-            }
-            return false;
-        }
-    }
-
-    Boolean ModalExportdialogExportprofileLockUserInput
-    {
-        get
-        {
-            if (modalExportdialogExportprofile != null)
-            {
-                return modalExportdialogExportprofile.LockUserInputs;
-            }
-            return false;
-        }
-    }
 
     protected override async Task OnInitializedAsync()
     {

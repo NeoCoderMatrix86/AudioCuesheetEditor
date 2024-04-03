@@ -34,7 +34,7 @@ along with Foobar.  If not, see
             <CloseButton Clicked="() => ControlModalDialog(modalExportdialog, false)" />
         </ModalHeader>
         <ModalBody>
-            <Steps @bind-SelectedStep="selectedStep" NavigationAllowed="NavigationAllowed">
+            <Steps @ref="stepsRef" @bind-SelectedStep="selectedStep" NavigationAllowed="NavigationAllowed">
                 <Items>
                     <Step Name="prepareExport" Completed="prepareExportCompleted">@_localizer["Prepare export"]</Step>
                     <Step Name="displayExportResult">@_localizer["Result"]</Step>
@@ -84,26 +84,16 @@ along with Foobar.  If not, see
             </Steps>
         </ModalBody>
         <ModalFooter>
-            @if (exportProgress != null)
+            @if (selectedStep != "displayExportResult")
             {
-                <Paragraph Width="Width.Is100">
-                    @_localizer["Generation in progress, please stand by ..."]
-                </Paragraph>
-                <Progress Value="@exportProgress" Width="Width.Is100" Striped />
+                <Tooltip Placement="TooltipPlacement.Top" Text="@ExportPossibleTooltip">
+                    <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
+                </Tooltip>
+                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
             }
             else
             {
-                @if (selectedStep != "displayExportResult")
-                {
-                    <Tooltip Placement="TooltipPlacement.Top" Text="@ExportPossibleTooltip">
-                        <Button Color="Color.Primary" Clicked="GenerateExportfiles_Clicked" Disabled="!ExportPossible">@_localizer["Generate export files"]</Button>
-                    </Tooltip>
-                    <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Abort"]</Button>
-                }
-                else
-                {
-                    <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Close"]</Button>
-                }
+                <Button Color="Color.Secondary" Clicked="() => ControlModalDialog(modalExportdialog, false)">@_localizer["Close"]</Button>
             }
         </ModalFooter>
     </ModalContent>
@@ -128,15 +118,14 @@ along with Foobar.  If not, see
 
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
-    public Boolean LockUserInputs { get => exportProgress != null; }
 
     Modal? modalExportdialog;
     String selectedStep = "prepareExport";
     IReadOnlyCollection<Exportfile>? exportfiles;
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
-    int? exportProgress;
     ApplicationOptions? applicationOptions;
+    Steps? stepsRef;
 
     Boolean StepNavigationAllowed
     {
@@ -213,13 +202,17 @@ along with Foobar.  If not, see
 
     public async Task Show()
     {
+        Reset();
         await ControlModalDialog(modalExportdialog, true);
     }
 
     public void Reset()
     {
         prepareExportCompleted = false;
-        selectedStep = "prepareExport";
+        if (stepsRef != null)
+        {
+            stepsRef.SelectStep("prepareExport");
+        }
         exportfiles = null;
     }
 
@@ -244,12 +237,10 @@ along with Foobar.  If not, see
         if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
-            exportProgress = 0;
             var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
             exportfiles = generator.GenerateExportfiles();
             selectedStep = "displayExportResult";
             prepareExportCompleted = true;
-            exportProgress = null;
         }
         return Task.CompletedTask;
     }
