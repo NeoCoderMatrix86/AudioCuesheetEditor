@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/HEAD)
+## [v4.0.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v4.0.0) (03.04.2024)
 
-[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.3.0...HEAD)
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.3.0...v4.0.0)
 
 **Implemented enhancements:**
 
