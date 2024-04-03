@@ -51,6 +51,8 @@ along with Foobar.  If not, see
         <br />
         <Blazorise.Link To="#headingExportOfData">@_localizer["Export of data"]</Blazorise.Link>
         <br />
+        <Blazorise.Link To="#splitPoints">@_localizer["Splitpoints"]</Blazorise.Link>
+        <br />
         <Blazorise.Link To="#headingRecordMode">@_localizer["Recordmode"]</Blazorise.Link>
         <br />
         <Blazorise.Link To="#headingOptions">@_localizer["Options"]</Blazorise.Link>
@@ -113,6 +115,11 @@ along with Foobar.  If not, see
             <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Export of data helptext"])
+        <Row>
+            <Column><Heading id="splitPoints" Size="HeadingSize.Is2">@_localizer["Splitpoints"]</Heading></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+        </Row>
+        @((MarkupString)_localizer["Splitpoints helptext"])
         <Row>
             <Column><Heading id="headingRecordMode" Size="HeadingSize.Is2">@_localizer["Recordmode"]</Heading></Column>
             <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
