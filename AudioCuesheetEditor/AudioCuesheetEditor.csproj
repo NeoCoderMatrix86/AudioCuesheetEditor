@@ -96,12 +96,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.1.5" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.5.1" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.3" PrivateAssets="all" />
 	  <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
-    <PackageReference Include="Blazorise.Components" Version="1.1.5" />
+    <PackageReference Include="Blazorise.Components" Version="1.5.1" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
     <PackageReference Include="Markdig" Version="0.36.2" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
