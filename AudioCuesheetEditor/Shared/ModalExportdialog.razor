@@ -24,7 +24,6 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject HotKeys _hotKeys
-@inject IAudioConverterService _audioConverterService
 
 <Modal @ref="modalExportdialog" VisibleChanged="ModalExportdialog_VisibleChanged">
     <ModalContent Centered Size="ModalSize.ExtraLarge">
@@ -54,10 +53,6 @@ along with Foobar.  If not, see
                                     <TableHeaderCell>@_localizer[nameof(Exportfile.Begin)]</TableHeaderCell>
                                     <TableHeaderCell>@_localizer[nameof(Exportfile.End)]</TableHeaderCell>
                                     <TableHeaderCell>@_localizer[nameof(Exportfile.Content)]</TableHeaderCell>
-                                    @if ((exportfiles != null) && (exportfiles.Any(x => x.ExportAudiofile != null)))
-                                    {
-                                        <TableHeaderCell>@_localizer[nameof(Exportfile.ExportAudiofile)]</TableHeaderCell>
-                                    }
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -79,19 +74,6 @@ along with Foobar.  If not, see
                                                     </Button>
                                                 </Tooltip>
                                             </TableRowCell>
-                                            @if (exportfile.ExportAudiofile != null)
-                                            {
-                                                <TableRowCell>
-                                                    <Tooltip Text="@_localizer["Download split audio file"]">
-                                                        <Button Color="Color.Success" Clicked='() => _blazorDownloadFileService.DownloadFile(exportfile.ExportAudiofile?.Name, exportfile.ExportAudiofile?.Content, "application/octet-stream")'>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-music" viewBox="0 0 16 16">
-                                                                <path d="M11 6.64a1 1 0 0 0-1.243-.97l-1 .25A1 1 0 0 0 8 6.89v4.306A2.572 2.572 0 0 0 7 11c-.5 0-.974.134-1.338.377-.36.24-.662.628-.662 1.123s.301.883.662 1.123c.364.243.839.377 1.338.377.5 0 .974-.134 1.338-.377.36-.24.662-.628.662-1.123V8.89l2-.5V6.64z" />
-                                                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                                                            </svg>
-                                                        </Button>
-                                                    </Tooltip>
-                                                </TableRowCell>
-                                            }
                                         </TableRow>
                                     }
                                 }
@@ -142,9 +124,10 @@ along with Foobar.  If not, see
     [EditorRequired]
     public ExportType ExportType { get; set; }
 
+    public Exportprofile? SelectedExportProfile{ get; set; }
+
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
-    public ExportfileGenerator? ExportfileGenerator { get; private set; }
     public Boolean LockUserInputs { get => exportProgress != null; }
 
     Modal? modalExportdialog;
@@ -153,6 +136,7 @@ along with Foobar.  If not, see
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
     int? exportProgress;
+    ApplicationOptions? applicationOptions;
 
     Boolean StepNavigationAllowed
     {
@@ -179,7 +163,8 @@ along with Foobar.  If not, see
     {
         get
         {
-            var validationResult = ExportfileGenerator?.Validate();
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            var validationResult = generator.Validate();
             if (validationResult?.Status == Model.Entity.ValidationStatus.Error)
             {
                 string? detailText = null;
@@ -214,16 +199,16 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
-        _audioConverterService.ProgressChanged += IAudioConverterService_ProgressChanged;
-        ExportfileGenerator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, audioConverterService: _audioConverterService);
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         await base.OnInitializedAsync();
     }
 
     public void Dispose()
     {
-        _audioConverterService.ProgressChanged -= IAudioConverterService_ProgressChanged;
         hotKeysContext?.Dispose();
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     public async Task Show()
@@ -252,21 +237,20 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task GenerateExportfiles_Clicked()
+    Task GenerateExportfiles_Clicked()
     {
         _logger.LogDebug("GenerateExportfiles_Clicked called");
         if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
             exportProgress = 0;
-            if (ExportfileGenerator != null)
-            {
-                exportfiles = await ExportfileGenerator.GenerateExportfilesAsync();
-                selectedStep = "displayExportResult";
-                prepareExportCompleted = true;
-            }
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            exportfiles = generator.GenerateExportfiles();
+            selectedStep = "displayExportResult";
+            prepareExportCompleted = true;
             exportProgress = null;
         }
+        return Task.CompletedTask;
     }
 
     bool NavigationAllowed(StepNavigationContext context)
@@ -299,9 +283,11 @@ along with Foobar.  If not, see
         }
     }
 
-    void IAudioConverterService_ProgressChanged(object? sender, int progress)
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
     {
-        exportProgress = progress;
-        InvokeAsync(StateHasChanged);
+        if (options is ApplicationOptions)
+        {
+            applicationOptions = (ApplicationOptions)options;
+        }
     }
 }

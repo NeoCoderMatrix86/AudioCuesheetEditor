@@ -23,6 +23,5 @@ namespace AudioCuesheetEditor.Model.IO.Export
         public byte[]? Content { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
-        public ExportAudiofile? ExportAudiofile { get; set; }
     }
 }

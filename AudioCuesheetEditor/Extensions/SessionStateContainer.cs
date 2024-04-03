@@ -118,18 +118,6 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        private void TextImportScheme_AnalysisFinished(object? sender, EventArgs eventArgs)
-        {
-            if (textImportFile != null)
-            {
-                ImportCuesheet = textImportFile.Cuesheet;
-            }
-            else
-            {
-                ImportCuesheet = null;
-            }
-        }
-
         public ViewMode CurrentViewMode 
         {
             get { return currentViewMode; }
@@ -166,7 +154,17 @@ namespace AudioCuesheetEditor.Extensions
             _traceChangeManager.TraceChanges(Cuesheet);
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
-
+        private void TextImportScheme_AnalysisFinished(object? sender, EventArgs eventArgs)
+        {
+            if (textImportFile != null)
+            {
+                ImportCuesheet = textImportFile.Cuesheet;
+            }
+            else
+            {
+                ImportCuesheet = null;
+            }
+        }
         private void Cuesheet_CuesheetImported(object? sender, EventArgs e)
         {
             CuesheetChanged?.Invoke(this, EventArgs.Empty);

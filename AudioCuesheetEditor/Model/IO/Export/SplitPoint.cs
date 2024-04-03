@@ -26,6 +26,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         private TimeSpan? moment;
         private String? artist;
         private String? title;
+        private String? audiofileName;
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
@@ -34,6 +35,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             Cuesheet = cuesheet;
             artist = Cuesheet.Artist;
             title = Cuesheet.Title;
+            audiofileName = Cuesheet.Audiofile?.Name;
         }
 
         [JsonConstructor]
@@ -90,6 +92,18 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
         }
 
+        public String? AudiofileName
+        {
+            get => audiofileName;
+            set
+            {
+                var previousValue = audiofileName;
+                audiofileName = value;
+                OnValidateablePropertyChanged(nameof(AudiofileName));
+                OnTraceablePropertyChanged(previousValue, nameof(AudiofileName));
+            }
+        }
+
         public void CopyValues(SplitPoint splitPoint)
         {
             Artist = splitPoint.Artist;
@@ -134,6 +148,14 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         validationMessages ??= new();
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
+                    }
+                    break;
+                case nameof(AudiofileName):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(AudiofileName))
+                    {
+                        validationMessages ??= new();
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(AudiofileName)));
                     }
                     break;
             }

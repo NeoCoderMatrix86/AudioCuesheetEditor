@@ -37,6 +37,9 @@
     "{0} should be equal or less to '{1}'!": "{0} should be equal or less to '{1}'!",
     "Filename": "Filename",
     "Artist": "Artist",
-    "Title": "Title"
+    "Title": "Title",
+    "Exportprofile": "Exportprofile",
+    "ApplicationOptions": "Application options",
+    "AudiofileName": "Audiofile"
   }
 }

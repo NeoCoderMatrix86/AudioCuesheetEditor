@@ -6,6 +6,11 @@
     "Moment": "Moment",
     "Delete split tooltip": "Deletes this split point",
     "CD artist": "CD artist",
-    "CD title": "CD title"
+    "CD title": "CD title",
+    "Audiofile name": "Audiofile",
+    "Error": "Error",
+    "The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!": "The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!",
+    "Audiofile": "Audiofile",
+    "Change": "Change"
   }
 }

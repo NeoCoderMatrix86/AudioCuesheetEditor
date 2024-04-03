@@ -52,7 +52,6 @@ builder.Services.AddScoped<MusicBrainzDataProvider>();
 builder.Services.AddScoped<SessionStateContainer>();
 builder.Services.AddScoped<TraceChangeManager>();
 builder.Services.AddScoped<DateTimeUtility>();
-builder.Services.AddScoped<IAudioConverterService, AudioConverterService>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
