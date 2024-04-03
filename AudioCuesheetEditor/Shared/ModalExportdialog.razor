@@ -218,6 +218,7 @@ along with Foobar.  If not, see
 
     public void Reset()
     {
+        prepareExportCompleted = false;
         selectedStep = "prepareExport";
         exportfiles = null;
     }
@@ -268,18 +269,6 @@ along with Foobar.  If not, see
         if (IsVisible)
         {
             await GenerateExportfiles_Clicked();
-        }
-    }
-
-    String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
-    {
-        if (expressionToCheck == true)
-        {
-            return _localizer[localizedStringName];
-        }
-        else
-        {
-            return null;
         }
     }
 
