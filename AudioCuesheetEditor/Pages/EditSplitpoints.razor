@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject DateTimeUtility _dateTimeUtility
 @inject ITextLocalizerService _localizationService
 @inject TraceChangeManager _traceChangeManager
+@inject IJSRuntime _jsRuntime
 
 <Validations @ref="validations">
     @if (Cuesheet != null)
@@ -51,6 +52,7 @@ along with Foobar.  If not, see
                     <TableHeaderCell>@_localizer["Moment"]</TableHeaderCell>
                     <TableHeaderCell>@_localizer["CD artist"]</TableHeaderCell>
                     <TableHeaderCell>@_localizer["CD title"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Audiofile name"]</TableHeaderCell>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -99,6 +101,33 @@ along with Foobar.  If not, see
                                 </TextEdit>
                             </Validation>
                         </TableRowCell>
+                        <TableRowCell>
+                            <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.AudiofileName, _validationMessageLocalizer, token)">
+                                @if (String.IsNullOrEmpty(splitPoint.AudiofileName))
+                                {
+                                    <FileEdit id="@fileEditAudiofileIds[splitPoint]" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="(args) => OnSplitpointAudiofileChanged(args, splitPoint)" AutoReset="false">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </FileEdit>
+                                }
+                                else
+                                {
+                                    <Addons>
+                                        <Addon AddonType="AddonType.Body">
+                                            <TextEdit ReadOnly Text="@splitPoint.AudiofileName">
+                                                <Feedback>
+                                                    <ValidationError Tooltip />
+                                                </Feedback>
+                                            </TextEdit>
+                                        </Addon>
+                                        <Addon AddonType="AddonType.End">
+                                            <Button Color="Color.Secondary" Outline Clicked="(args) => OnSplitpointAudiofileChangedCliccked(splitPoint)">@_localizer["Change"]</Button>
+                                        </Addon>
+                                    </Addons>
+                                }
+                            </Validation>
+                        </TableRowCell>
                     </TableRow>
                 }
             </TableBody>
@@ -106,8 +135,13 @@ along with Foobar.  If not, see
     }
 </Validations>
 
+<ModalDialog @ref="modalDialog" />
+
 @code {
     Validations? validations;
+    ModalDialog? modalDialog;
+    Validation? audiofileValidation;
+    Dictionary<SplitPoint, Guid> fileEditAudiofileIds = new();
 
     public Cuesheet? Cuesheet
     {
@@ -172,6 +206,7 @@ along with Foobar.  If not, see
         {
             var splitPoint = Cuesheet.AddSplitPoint();
             _traceChangeManager.TraceChanges(splitPoint);
+            fileEditAudiofileIds.Add(splitPoint, Guid.NewGuid());
         }
         return Task.CompletedTask;
     }
@@ -228,5 +263,43 @@ along with Foobar.  If not, see
     void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    async Task OnSplitpointAudiofileChangedCliccked(SplitPoint splitPoint)
+    {
+        splitPoint.AudiofileName = null;
+        StateHasChanged();
+        await Task.Delay(1);
+        await _jsRuntime.InvokeVoidAsync("triggerClick", fileEditAudiofileIds[splitPoint]);
+    }
+
+    async Task OnSplitpointAudiofileChanged(FileChangedEventArgs e, SplitPoint splitPoint)
+    {
+        if (e.Files.FirstOrDefault() != null)
+        {
+            if (Cuesheet != null)
+            {
+                var file = e.Files.First();
+                if (IOUtility.CheckFileMimeTypeForAudioCodec(file) == true)
+                {
+                    splitPoint.AudiofileName = file.Name;
+                }
+                else
+                {
+                    if (modalDialog != null)
+                    {
+                        modalDialog.Title = _localizer["Error"];
+                        modalDialog.Text = String.Format(_localizer["The file {0} can not be used for operation: {1}. The file is invalid, please use a valid file!"], file.Name, _localizer["Audiofile"]);
+                        modalDialog.ModalSize = ModalSize.Small;
+                        modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                        await modalDialog.ShowModal();
+                    }
+                }
+            }
+        }
+        if (audiofileValidation != null)
+        {
+            await audiofileValidation.ValidateAsync();
+        }
     }
 }

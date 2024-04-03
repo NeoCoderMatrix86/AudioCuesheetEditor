@@ -39,6 +39,7 @@
     "Artist": "Künstler",
     "Title": "Titel",
     "Exportprofile": "Exportprofil",
-    "ApplicationOptions": "Applikationsoptionen"
+    "ApplicationOptions": "Applikationsoptionen",
+    "AudiofileName": "Audiodatei"
   }
 }
