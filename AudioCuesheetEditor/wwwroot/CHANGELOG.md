@@ -1,5 +1,58 @@
 # Changelog
 
+## [Unreleased](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/HEAD)
+
+[Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.3.0...HEAD)
+
+**Implemented enhancements:**
+
+- Add detailed message why an export can not be done [\#313](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/313)
+- Change Undo/Redo icon to filled [\#293](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/293)
+- Remove processing hints and include the validation into GUI [\#250](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/250)
+- Add possibility to automatically split audio file [\#63](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/63)
+
+**Fixed bugs:**
+
+- Modal export \(Cuesheet and ExportProfile\) opens with the last generated files [\#327](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/327)
+- Out of memory exception when using large mp3 files [\#323](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/323)
+- Splitpoints doesn't work with imported cuesheet [\#320](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/320)
+- Last track length not calculated automatically during import [\#312](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/312)
+- Validation messages are not relocalized after switching language [\#303](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/303)
+- Revalidation after Textimport scheme change not displayed [\#302](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/302)
+- Audio file not recognized during import [\#301](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/301)
+- Undo doesn't work if using Audiofile [\#299](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/299)
+- Ogg audiofile can not be used [\#298](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/298)
+- Reset of cuesheet doesn't reset the audio player [\#291](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/291)
+- Increase rendering performance with much tracks.  [\#277](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/277)
+
+**Closed issues:**
+
+- Describe Shortcuts in Help [\#288](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/288)
+- Update Documentation for v4.0 [\#251](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/251)
+
+**Merged pull requests:**
+
+- Added splitpoints help [\#331](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/331) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Modal export cuesheet and exportprofile opens with the last generated files [\#330](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/330) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Out of memory exception when using large mp3 files [\#329](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/329) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Add detailed message why an export can not be done [\#325](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/325) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update documentation for v40 [\#324](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/324) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Delete .github/workflows/deploy\_github\_pages.yml [\#319](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/319) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Added shortcuts to help [\#318](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/318) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Bugfix for localizing validation messages [\#317](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/317) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Ogg audiofile can not be used [\#316](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/316) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Last track length not calculated automatically during import [\#315](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/315) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update AudioPlayer.razor [\#311](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/311) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Initial correction for setting track end after audio file analysis [\#310](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/310) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 302 revalidation after textimport scheme change not displayed [\#309](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/309) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 301 audio file not recognized during import [\#307](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/307) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 63 add possibility to automatically split audio file [\#304](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/304) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update from master [\#295](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/295) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Changed undo/redo icons to filled counterparts [\#294](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/294) ([RadekKocka](https://github.com/RadekKocka))
+- 277 increase rendering performance with much tracks [\#290](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/290) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- Update version [\#287](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/287) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+- 250 remove processing hints and include the validation into gui [\#286](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/286) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
+
 ## [v3.3.0](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/tree/v3.3.0) (2022-11-29)
 
 [Full Changelog](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/compare/v3.2.0...v3.3.0)
@@ -17,6 +70,7 @@
 
 **Merged pull requests:**
 
+- Updated Changelog [\#282](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/282) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
 - 279 import mode overwrites current changes before committed [\#281](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/281) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
 - Hotkey redesigned [\#280](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/280) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
 - 269 increase performance [\#278](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/pull/278) ([NeoCoderMatrix86](https://github.com/NeoCoderMatrix86))
