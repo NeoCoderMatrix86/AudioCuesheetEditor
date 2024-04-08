@@ -3,7 +3,7 @@
   "translations": {
     "About": "About",
     "An error occured": "An error has occured!",
-    "An error has occured in this application. Please report this error with as much details as possible here: <a href=\"https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=bug&template=bug_report.md&title=\" target=\"_blank\">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=</a>.": "An error has occured in this application. Please report this error with as much details as possible here: <a href=\"https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=bug&template=bug_report.md&title=\" target=\"_blank\">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=</a>.",
+    "An error has occured in this applciation. Please report this error with as much details as possible here. Afterwards you can reload the application.": "An error has occured in this applciation. Please report this error with as much details as possible here: <a href=\"https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=\" target=\"_blank\">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?assignees=&labels=unreviewed+bug&template=bug_report.md&title=</a>. Afterwards you can <a href=\"\" class=\"reload\">reload</a> the application.",
     "Help": "Help",
     "Undo last change": "Undo last change",
     "Redo last change": "Redo last change",
@@ -69,8 +69,6 @@
     "Length": "Length",
     "Flags": "Flags",
     "PreGap": "Pregap",
-    "PostGap": "Postgap",
-    "Error details": "Error details",
-    "Reload application": "Reload application"
+    "PostGap": "Postgap"
   }
 }

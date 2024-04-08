@@ -13,14 +13,14 @@ jobs:
     - uses: actions/checkout@v4.1.2
     
     # sets up .NET
-    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/8.0
+    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/7.0
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.203'
+        dotnet-version: '7.0.101'
     
     - name: Install wasm-tools
-      run: dotnet workload install wasm-tools
+      run: dotnet workload install wasm-tools-net7
       
     # Only publish when unit tests are ok
     - name: Run Unit Tests
