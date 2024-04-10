@@ -59,35 +59,32 @@ along with Foobar.  If not, see
                         </BarBrand>
                         @if (displayMenuBar)
                         {
-                            <BarToggler />
-                            <BarMenu>
-                                <BarStart>
-                                    <BarItem Padding="Padding.Is1.OnX">
-                                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Undo last change"]">
-                                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => _traceChangeManager.Undo()" Class="nav-link">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="White" class="bi bi-backspace-fill" viewBox="0 0 16 16">
-                                                    <path d="M15.683 3a2 2 0 0 0-2-2h-7.08a2 2 0 0 0-1.519.698L.241 7.35a1 1 0 0 0 0 1.302l4.843 5.65A2 2 0 0 0 6.603 15h7.08a2 2 0 0 0 2-2V3zM5.829 5.854a.5.5 0 1 1 .707-.708l2.147 2.147 2.146-2.147a.5.5 0 1 1 .707.708L9.39 8l2.146 2.146a.5.5 0 0 1-.707.708L8.683 8.707l-2.147 2.147a.5.5 0 0 1-.707-.708L7.976 8 5.829 5.854z" />
-                                                </svg>
-                                                <Text Display="Display.Block.OnMobile.None.OnDesktop">
-                                                    @_localizer["Undo"]
-                                                </Text>
-                                            </Button>
-                                        </Tooltip>
-                                    </BarItem>
-                                    <BarItem Padding="Padding.Is1.OnX">
-                                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Redo last change"]">
-                                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => _traceChangeManager.Redo()" Class="nav-link">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="White" class="bi bi-backspace-reverse-fill" viewBox="0 0 16 16">
-                                                    <path d="M0 3a2 2 0 0 1 2-2h7.08a2 2 0 0 1 1.519.698l4.843 5.651a1 1 0 0 1 0 1.302L10.6 14.3a2 2 0 0 1-1.52.7H2a2 2 0 0 1-2-2V3zm9.854 2.854a.5.5 0 0 0-.708-.708L7 7.293 4.854 5.146a.5.5 0 1 0-.708.708L6.293 8l-2.147 2.146a.5.5 0 0 0 .708.708L7 8.707l2.146 2.147a.5.5 0 0 0 .708-.708L7.707 8l2.147-2.146z" />
-                                                </svg>
-                                                <Text Display="Display.Block.OnMobile.None.OnDesktop">
-                                                    @_localizer["Redo"]
-                                                </Text>
-                                            </Button>
-                                        </Tooltip>
-                                    </BarItem>
-                                </BarStart>
-                            </BarMenu>
+                            <BarItem Padding="Padding.Is1.OnX">
+                                <Tooltip Text="@_localizer["Undo last change"]">
+                                    <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => _traceChangeManager.Undo()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                            <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                        </svg>
+                                        <Text>
+                                            @_localizer["Undo"]
+                                        </Text>
+                                    </Button>
+                                </Tooltip>
+                            </BarItem>
+                            <BarItem Padding="Padding.Is1.OnX">
+                                <Tooltip Text="@_localizer["Redo last change"]">
+                                    <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => _traceChangeManager.Redo()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
+                                        </svg>
+                                        <Text>
+                                            @_localizer["Redo"]
+                                        </Text>
+                                    </Button>
+                                </Tooltip>
+                            </BarItem>
                         }
                         <BarItem Display="Display.Block.OnFullHD.None.OnDesktop.None.OnTablet.None.OnMobile">
                             <CultureSelector />
@@ -414,6 +411,7 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Top Menu
+    //TODO: Make text of undo/redo display only when space is available
     Bar? sidebar;
 
     public class SelectExportProfileModel
