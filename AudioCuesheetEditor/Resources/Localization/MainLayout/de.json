@@ -11,8 +11,8 @@
     "Please check processinghints for errors, otherwise the file is not exportable: {0}": "Bitte prüfen sie die Bearbeitungshinweise auf Fehler. Andernfalls ist Datei nicht exportierbar: {0}",
     "Download cuesheet": "Cuesheet herunterladen",
     "Save project": "Projekt speichern",
-    "Open exportprofiles": "Export Profile anzeigen",
-    "Select ViewMode": "Anzeigemodus auswählen",
+    "Open exportprofiles": "Exportprofile anzeigen",
+    "ViewMode": "Anzeigemodus",
     "Reset": "Zurücksetzen",
     "Delete all tracks": "Alle Titel löschen",
     "Reset cuesheet": "Cuesheet zurücksetzen",
@@ -26,7 +26,7 @@
     "Do you really want to delete all tracks? This can not be reversed.": "Möchten Sie wirklich alle Titel löschen? Dies kann nicht rückgängig gemacht werden.",
     "Confirm restart of application. All unsaved changes are lost!": "Bitte Bestätigen Sie, dass die komplette Anwendung neugestartet werden soll. Alle ungespeicherten Änderungen werden dadurch verloren!",
     "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Bitte Bestätigen Sie, dass die komplette Anwendung auf Werkseinstellungen zurückgesetzt werden soll. Alle Daten werden gelöscht und die Anwedung neu geladen. Alle nicht gespeicherten Daten sind gelöscht!",
-    "ViewModeFull": "Komplette Bearbeitung",
+    "ViewModeFull": "Detailbearbeitung",
     "ViewModeRecord": "Aufnahmemodus",
     "ViewModeImport": "Import Assistent",
     "Undo": "Rückgängig",
@@ -71,6 +71,7 @@
     "PreGap": "Vorlücke",
     "PostGap": "Nachlücke",
     "Error details": "Fehlerdetails",
-    "Reload application": "Applikation neu laden"
+    "Reload application": "Applikation neu laden",
+    "Options": "Optionen"
   }
 }

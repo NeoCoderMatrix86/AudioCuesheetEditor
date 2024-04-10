@@ -11,8 +11,8 @@
     "Please check processinghints for errors, otherwise the file is not exportable: {0}": "Please check processinghints for errors, otherwise the file is not exportable: {0}",
     "Download cuesheet": "Download cuesheet",
     "Save project": "Save project",
-    "Open exportprofiles": "Display Export Profiles",
-    "Select ViewMode": "Select viewmode",
+    "Open exportprofiles": "Display Exportprofiles",
+    "ViewMode": "Viewmode",
     "Reset": "Reset",
     "Delete all tracks": "Delete all tracks",
     "Reset cuesheet": "Reset cuesheet",
@@ -28,7 +28,7 @@
     "Confirm reset of application. All unsaved changes are lost and the application is reloaded!": "Please confirm, that you want to reset the whole application. All data will be reset and the application will be reloaded. Every unchanged data will be lost!",
     "ViewModeFull": "Full edit mode",
     "ViewModeRecord": "Live record mode",
-    "ViewModeImport": "Import assistant mode",
+    "ViewModeImport": "Import assistant",
     "Undo": "Undo",
     "Redo": "Redo",
     "Tools": "Tools",
@@ -71,6 +71,7 @@
     "PreGap": "Pregap",
     "PostGap": "Postgap",
     "Error details": "Error details",
-    "Reload application": "Reload application"
+    "Reload application": "Reload application",
+    "Options": "Options"
   }
 }
