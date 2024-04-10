@@ -37,135 +37,179 @@ along with Foobar.  If not, see
         <CascadingValue Value="@this">
             <Layout>
                 <LayoutHeader Fixed Position="Position.Sticky">
-                    <Bar Background="Background.Dark" ThemeContrast="ThemeContrast.Dark" Breakpoint="Breakpoint.Desktop">
+                    <Bar Background="Background.Dark" ThemeContrast="ThemeContrast.Dark" Breakpoint="Breakpoint.Medium">
+                        @if ((displayMenuBar) && (sidebar != null))
+                        {
+                            //Just a little a hack for displaying a toggler for the sidebar always and independent from the breakpoint of the top bar
+                            <BarItem Padding="Padding.Is1.OnX">
+                                <Button Color="Color.Secondary" Outline Clicked="() => sidebar.OnBreakpoint(sidebar.Visible)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-menu-button-wide" viewBox="0 0 16 16">
+                                        <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v2A1.5 1.5 0 0 1 14.5 5h-13A1.5 1.5 0 0 1 0 3.5zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5z" />
+                                        <path d="M2 2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m10.823.323-.396-.396A.25.25 0 0 1 12.604 2h.792a.25.25 0 0 1 .177.427l-.396.396a.25.25 0 0 1-.354 0M0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5" />
+                                    </svg>
+                                </Button>
+                            </BarItem>
+                        }
                         <BarBrand>
-                            <BarLink To="@_navigationManager.BaseUri">
-                                <Row TextColor="TextColor.White">
-                                    <Column ColumnSize="ColumnSize.Is2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
-                                            <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
-                                        </svg>
-                                    </Column>
-                                    <Column Display="Display.Block.OnTablet.None.OnMobile">
-                                        AudioCuesheetEditor
-                                    </Column>
-                                </Row>
+                            <BarLink To="@_navigationManager.BaseUri" TextColor="TextColor.White">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+                                    <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
+                                </svg>
+                                AudioCuesheetEditor
                             </BarLink>
                         </BarBrand>
-                        @if (displayMenuBar)
-                        {
-                            <BarToggler />
-                            <BarMenu>
+                        <BarToggler />
+                        <BarMenu>
+                            @if (displayMenuBar)
+                            {
                                 <BarStart>
                                     <BarItem Padding="Padding.Is1.OnX">
-                                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Undo last change"]">
-                                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => _traceChangeManager.Undo()" Class="nav-link">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="White" class="bi bi-backspace-fill" viewBox="0 0 16 16">
-                                                    <path d="M15.683 3a2 2 0 0 0-2-2h-7.08a2 2 0 0 0-1.519.698L.241 7.35a1 1 0 0 0 0 1.302l4.843 5.65A2 2 0 0 0 6.603 15h7.08a2 2 0 0 0 2-2V3zM5.829 5.854a.5.5 0 1 1 .707-.708l2.147 2.147 2.146-2.147a.5.5 0 1 1 .707.708L9.39 8l2.146 2.146a.5.5 0 0 1-.707.708L8.683 8.707l-2.147 2.147a.5.5 0 0 1-.707-.708L7.976 8 5.829 5.854z" />
+                                        <Tooltip Text="@_localizer["Undo last change"]">
+                                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanUndo" Clicked="() => _traceChangeManager.Undo()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                                    <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
                                                 </svg>
-                                                <Text Display="Display.Block.OnMobile.None.OnDesktop">
-                                                    @_localizer["Undo"]
-                                                </Text>
+                                                @_localizer["Undo"]
                                             </Button>
                                         </Tooltip>
                                     </BarItem>
                                     <BarItem Padding="Padding.Is1.OnX">
-                                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Redo last change"]">
-                                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => _traceChangeManager.Redo()" Class="nav-link">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="White" class="bi bi-backspace-reverse-fill" viewBox="0 0 16 16">
-                                                    <path d="M0 3a2 2 0 0 1 2-2h7.08a2 2 0 0 1 1.519.698l4.843 5.651a1 1 0 0 1 0 1.302L10.6 14.3a2 2 0 0 1-1.52.7H2a2 2 0 0 1-2-2V3zm9.854 2.854a.5.5 0 0 0-.708-.708L7 7.293 4.854 5.146a.5.5 0 1 0-.708.708L6.293 8l-2.147 2.146a.5.5 0 0 0 .708.708L7 8.707l2.146 2.147a.5.5 0 0 0 .708-.708L7.707 8l2.147-2.146z" />
+                                        <Tooltip Text="@_localizer["Redo last change"]">
+                                            <Button Color="Color.Primary" Disabled="!_traceChangeManager.CanRedo" Clicked="() => _traceChangeManager.Redo()">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                                                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z" />
+                                                    <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466" />
                                                 </svg>
-                                                <Text Display="Display.Block.OnMobile.None.OnDesktop">
-                                                    @_localizer["Redo"]
-                                                </Text>
+                                                @_localizer["Redo"]
                                             </Button>
                                         </Tooltip>
-                                    </BarItem>
-                                    <BarItem Padding="Padding.Is1.OnX">
-                                        <BarDropdown>
-                                            <BarDropdownToggle Class="btn btn-primary">
-                                                @_localizer["Export"]
-                                            </BarDropdownToggle>
-                                            <BarDropdownMenu Background="Background.Dark">
-                                                <BarDropdownItem>
-                                                    <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
-                                                        <Button Color="Color.Primary" Clicked="() => OnDisplayExportDialogClicked()" Disabled="!IsCuesheetExportable">@_localizer["Download cuesheet"]</Button>
-                                                    </Tooltip>
-                                                </BarDropdownItem>
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, true)">@_localizer["Save project"]</Button>
-                                                </BarDropdownItem>
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked">@_localizer["Open exportprofiles"]</Button>
-                                                </BarDropdownItem>
-                                            </BarDropdownMenu>
-                                        </BarDropdown>
-                                    </BarItem>
-                                    <BarItem Padding="Padding.Is1.OnX">
-                                        <BarDropdown>
-                                            <BarDropdownToggle Class="btn btn-success">
-                                                @_localizer["Select ViewMode"]
-                                            </BarDropdownToggle>
-                                            <BarDropdownMenu Background="Background.Dark">
-                                                @foreach (var name in Enum.GetNames(typeof(ViewMode)))
-                                                {
-                                                    <BarDropdownItem>
-                                                        <Button Color="Color.Secondary" Clicked="() => OnViewModeSelected((ViewMode)Enum.Parse(typeof(ViewMode), name))">@_localizer[name]</Button>
-                                                    </BarDropdownItem>
-                                                }
-                                            </BarDropdownMenu>
-                                        </BarDropdown>
-                                    </BarItem>
-                                    <BarItem Padding="Padding.Is1.OnX">
-                                        <BarDropdown>
-                                            <BarDropdownToggle Class="btn btn-danger">
-                                                @_localizer["Reset"]
-                                            </BarDropdownToggle>
-                                            <BarDropdownMenu Background="Background.Dark">
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked">@_localizer["Delete all tracks"]</Button>
-                                                </BarDropdownItem>
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Danger" Clicked="RestartCuesheetClicked">@_localizer["Reset cuesheet"]</Button>
-                                                </BarDropdownItem>
-                                                <Divider />
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Danger" Clicked="OnRestartCompleteApplicationClicked">@_localizer["Restart complete application"]</Button>
-                                                </BarDropdownItem>
-                                                <BarDropdownItem>
-                                                    <Button Color="Color.Danger" Clicked="OnResetCompleteApplicationClicked">@_localizer["Reset complete application"]</Button>
-                                                </BarDropdownItem>
-                                            </BarDropdownMenu>
-                                        </BarDropdown>
                                     </BarItem>
                                 </BarStart>
-                            </BarMenu>
-                        }
-                        <BarItem Display="Display.Block.OnFullHD.None.OnDesktop.None.OnTablet.None.OnMobile">
-                            <CultureSelector />
-                        </BarItem>
-                        <BarItem Padding="Padding.Is3.OnX">
-                            <Button Color="Color.Light" Clicked="() => OpenOptionsDialog(optionsDialog)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
-                                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
-                                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
-                                </svg>
-                            </Button>
-                        </BarItem>
-                        <BarEnd>
-                            <BarItem>
-                                <BarLink To="help" TextColor="TextColor.White">@_localizer["Help"]</BarLink>
-                            </BarItem>
-                            <BarItem>
-                                <BarLink To="about" TextColor="TextColor.White">@_localizer["About"]</BarLink>
-                            </BarItem>
-                        </BarEnd>
+                            }
+                            <BarEnd>
+                                <BarItem Padding="Padding.Is1.OnX" Display="Display.None.Block.OnWidescreen">
+                                    <CultureSelector />
+                                </BarItem>
+                                <BarItem Padding="Padding.Is1.OnX">
+                                    <BarDropdown RightAligned>
+                                        <BarDropdownToggle>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle" viewBox="0 0 16 16">
+                                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                                <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94" />
+                                            </svg>
+                                        </BarDropdownToggle>
+                                        <BarDropdownMenu Background="Background.Dark">
+                                            <BarDropdownItem To="help" TextColor="TextColor.White">@_localizer["Help"]</BarDropdownItem>
+                                            <BarDropdownItem To="about" TextColor="TextColor.White">@_localizer["About"]</BarDropdownItem>
+                                        </BarDropdownMenu>
+                                    </BarDropdown>
+                                </BarItem>
+                            </BarEnd>
+                        </BarMenu>
                     </Bar>
                 </LayoutHeader>
-                <LayoutContent>
-                    @Body
-                </LayoutContent>
+                <Layout Sider="displayMenuBar">
+                    @if (displayMenuBar)
+                    {
+                        <LayoutSider>
+                            <LayoutSiderContent>
+                                <Bar @ref="sidebar" Background="Background.Dark" ThemeContrast="ThemeContrast.Dark" Mode="BarMode.VerticalInline">
+                                    <BarMenu>
+                                        <BarStart>
+                                            <BarItem Padding="Padding.Is1.OnY">
+                                                <BarDropdown>
+                                                    <BarDropdownToggle Class="btn btn-success" TextAlignment="TextAlignment.Start">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-menu-button" viewBox="0 0 16 16">
+                                                            <path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h8A1.5 1.5 0 0 1 11 1.5v2A1.5 1.5 0 0 1 9.5 5h-8A1.5 1.5 0 0 1 0 3.5zM1.5 1a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5z" />
+                                                            <path d="m7.823 2.823-.396-.396A.25.25 0 0 1 7.604 2h.792a.25.25 0 0 1 .177.427l-.396.396a.25.25 0 0 1-.354 0M0 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm1 3v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2zm14-1V8a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v2zM2 8.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5m0 4a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5" />
+                                                        </svg>
+                                                        @_localizer["ViewMode"]
+                                                    </BarDropdownToggle>
+                                                    <BarDropdownMenu Background="Background.Dark">
+                                                        @foreach (var name in Enum.GetNames(typeof(ViewMode)))
+                                                        {
+                                                            <BarDropdownItem>
+                                                                <Button Color="Color.Secondary" Clicked="() => OnViewModeSelected((ViewMode)Enum.Parse(typeof(ViewMode), name))">@_localizer[name]</Button>
+                                                            </BarDropdownItem>
+                                                        }
+                                                    </BarDropdownMenu>
+                                                </BarDropdown>
+                                            </BarItem>
+                                            <BarItem Padding="Padding.Is1.OnY">
+                                                <BarDropdown>
+                                                    <BarDropdownToggle Class="btn btn-primary" TextAlignment="TextAlignment.Start">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cloud-download" viewBox="0 0 16 16">
+                                                            <path d="M4.406 1.342A5.53 5.53 0 0 1 8 0c2.69 0 4.923 2 5.166 4.579C14.758 4.804 16 6.137 16 7.773 16 9.569 14.502 11 12.687 11H10a.5.5 0 0 1 0-1h2.688C13.979 10 15 8.988 15 7.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 2.825 10.328 1 8 1a4.53 4.53 0 0 0-2.941 1.1c-.757.652-1.153 1.438-1.153 2.055v.448l-.445.049C2.064 4.805 1 5.952 1 7.318 1 8.785 2.23 10 3.781 10H6a.5.5 0 0 1 0 1H3.781C1.708 11 0 9.366 0 7.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383" />
+                                                            <path d="M7.646 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V5.5a.5.5 0 0 0-1 0v8.793l-2.146-2.147a.5.5 0 0 0-.708.708z" />
+                                                        </svg>
+                                                        @_localizer["Export"]
+                                                    </BarDropdownToggle>
+                                                    <BarDropdownMenu Background="Background.Dark">
+                                                        <BarDropdownItem>
+                                                            <Tooltip Placement="TooltipPlacement.Right" Text="@IsCuesheetExportableTooltip">
+                                                                <Button Color="Color.Primary" Clicked="() => OnDisplayExportDialogClicked()" Disabled="!IsCuesheetExportable">@_localizer["Download cuesheet"]</Button>
+                                                            </Tooltip>
+                                                        </BarDropdownItem>
+                                                        <BarDropdownItem>
+                                                            <Button Color="Color.Primary" Clicked="() => ControlModalDialog(modalDownloadProjectfile, true)">@_localizer["Save project"]</Button>
+                                                        </BarDropdownItem>
+                                                        <BarDropdownItem>
+                                                            <Button Color="Color.Primary" Clicked="OnDisplayExportProfilesClicked">@_localizer["Open exportprofiles"]</Button>
+                                                        </BarDropdownItem>
+                                                    </BarDropdownMenu>
+                                                </BarDropdown>
+                                            </BarItem>
+                                        </BarStart>
+                                        <BarEnd>
+                                            <BarItem Padding="Padding.Is1.OnY">
+                                                <BarDropdown>
+                                                    <BarDropdownToggle Class="btn btn-danger" TextAlignment="TextAlignment.Start">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                                                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z" />
+                                                            <path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                                                        </svg>
+                                                        @_localizer["Reset"]
+                                                    </BarDropdownToggle>
+                                                    <BarDropdownMenu Background="Background.Dark">
+                                                        <BarDropdownItem>
+                                                            <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked">@_localizer["Delete all tracks"]</Button>
+                                                        </BarDropdownItem>
+                                                        <BarDropdownItem>
+                                                            <Button Color="Color.Danger" Clicked="RestartCuesheetClicked">@_localizer["Reset cuesheet"]</Button>
+                                                        </BarDropdownItem>
+                                                        <Divider />
+                                                        <BarDropdownItem>
+                                                            <Button Color="Color.Danger" Clicked="OnRestartCompleteApplicationClicked">@_localizer["Restart complete application"]</Button>
+                                                        </BarDropdownItem>
+                                                        <BarDropdownItem>
+                                                            <Button Color="Color.Danger" Clicked="OnResetCompleteApplicationClicked">@_localizer["Reset complete application"]</Button>
+                                                        </BarDropdownItem>
+                                                    </BarDropdownMenu>
+                                                </BarDropdown>
+                                            </BarItem>
+                                            <BarItem Padding="Padding.Is1.OnY">
+                                                <Button Color="Color.Light" Clicked="() => OpenOptionsDialog(optionsDialog)" Width="Width.Is100" TextAlignment="TextAlignment.Start">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                                                        <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                                                        <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                                                    </svg>
+                                                    @_localizer["Options"]
+                                                </Button>
+                                            </BarItem>
+                                        </BarEnd>
+                                    </BarMenu>
+                                </Bar>
+                            </LayoutSiderContent>
+                        </LayoutSider>
+                    }
+                    <Layout>
+                        <LayoutContent>
+                            @Body
+                        </LayoutContent>
+                    </Layout>
+                </Layout>
             </Layout>
         </CascadingValue>
     </ChildContent>
@@ -376,6 +420,8 @@ along with Foobar.  If not, see
 </ModalExportdialog>
 
 @code {
+    Bar? sidebar;
+
     public class SelectExportProfileModel
     {
         public Guid Id { get; private set; }
