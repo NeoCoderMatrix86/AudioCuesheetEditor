@@ -89,6 +89,9 @@ along with Foobar.  If not, see
                                 </BarStart>
                             }
                             <BarEnd>
+                                <BarItem Padding="Padding.Is1.OnX" Display="Display.None.Block.OnWidescreen">
+                                    <CultureSelector />
+                                </BarItem>
                                 <BarItem Padding="Padding.Is1.OnX">
                                     <BarDropdown RightAligned>
                                         <BarDropdownToggle>
@@ -417,7 +420,6 @@ along with Foobar.  If not, see
 </ModalExportdialog>
 
 @code {
-    //TODO: Language selection in top menu
     Bar? sidebar;
 
     public class SelectExportProfileModel
