@@ -121,7 +121,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (Moment == null)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Moment)));
                     }
                     else
@@ -129,7 +129,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         var maxEnd = Cuesheet?.Tracks.Max(x => x.End);
                         if (Moment > maxEnd)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} should be equal or less to '{1}'!", nameof(Moment), maxEnd));
                         }
                     }
@@ -138,7 +138,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Artist))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
                     }
                     break;
@@ -146,7 +146,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Title))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
                     }
                     break;
@@ -154,7 +154,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(AudiofileName))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(AudiofileName)));
                     }
                     break;

@@ -30,24 +30,16 @@ namespace AudioCuesheetEditor.Model.IO.Export
         Exportprofile
     }
 
-    public class ExportfileGenerator : Validateable<ExportfileGenerator>
+    public class ExportfileGenerator(ExportType exportType, Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null) : Validateable<ExportfileGenerator>
     {
-        public Cuesheet Cuesheet { get; }
-        public Exportprofile? Exportprofile { get; set; }
-        public ApplicationOptions? ApplicationOptions { get; set; }
-        public ExportType ExportType { get; set; }
-
-        public ExportfileGenerator(ExportType exportType, Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null)
-        {
-            ExportType = exportType;
-            Cuesheet = cuesheet;
-            Exportprofile = exportprofile;
-            ApplicationOptions = applicationOptions;
-        }
+        public Cuesheet Cuesheet { get; } = cuesheet;
+        public Exportprofile? Exportprofile { get; set; } = exportprofile;
+        public ApplicationOptions? ApplicationOptions { get; set; } = applicationOptions;
+        public ExportType ExportType { get; set; } = exportType;
 
         public IReadOnlyCollection<Exportfile> GenerateExportfiles()
         {
-            List<Exportfile> exportfiles = new();
+            List<Exportfile> exportfiles = [];
             if (Validate().Status != ValidationStatus.Error)
             {
                 if (Cuesheet.SplitPoints.Count != 0)
