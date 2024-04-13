@@ -20,17 +20,18 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    public class SplitPoint : Validateable<SplitPoint>, ITraceable
+    public class CuesheetSection : Validateable<CuesheetSection>, ITraceable
     {
         private Cuesheet? cuesheet;
-        private TimeSpan? moment;
+        private TimeSpan? begin;
+        private TimeSpan? end;
         private String? artist;
         private String? title;
         private String? audiofileName;
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
-        public SplitPoint(Cuesheet cuesheet)
+        public CuesheetSection(Cuesheet cuesheet)
         {
             Cuesheet = cuesheet;
             artist = Cuesheet.Artist;
@@ -39,7 +40,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         }
 
         [JsonConstructor]
-        public SplitPoint() { }
+        public CuesheetSection() { }
         public Cuesheet? Cuesheet 
         {
             get => cuesheet;
@@ -80,15 +81,27 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
         }
 
-        public TimeSpan? Moment 
+        public TimeSpan? Begin 
         { 
-            get => moment;
+            get => begin;
             set
             {
-                var previousValue = moment;
-                moment = value;
-                OnValidateablePropertyChanged(nameof(Moment));
-                OnTraceablePropertyChanged(previousValue, nameof(Moment));
+                var previousValue = begin;
+                begin = value;
+                OnValidateablePropertyChanged(nameof(Begin));
+                OnTraceablePropertyChanged(previousValue, nameof(Begin));
+            }
+        }
+
+        public TimeSpan? End
+        {
+            get => end;
+            set
+            {
+                var previousValue = end;
+                end = value;
+                OnValidateablePropertyChanged(nameof(End));
+                OnTraceablePropertyChanged(previousValue, nameof(End));
             }
         }
 
@@ -104,11 +117,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
         }
 
-        public void CopyValues(SplitPoint splitPoint)
+        public void CopyValues(CuesheetSection splitPoint)
         {
             Artist = splitPoint.Artist;
             Title = splitPoint.Title;
-            Moment = splitPoint.Moment;
+            Begin = splitPoint.Begin;
         }
 
         protected override ValidationResult Validate(string property)
@@ -117,20 +130,20 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
-                case nameof(Moment):
+                case nameof(Begin):
                     validationStatus = ValidationStatus.Success;
-                    if (Moment == null)
+                    if (Begin == null)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Moment)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
                     }
                     else
                     {
                         var maxEnd = Cuesheet?.Tracks.Max(x => x.End);
-                        if (Moment > maxEnd)
+                        if (Begin > maxEnd)
                         {
                             validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} should be equal or less to '{1}'!", nameof(Moment), maxEnd));
+                            validationMessages.Add(new ValidationMessage("{0} should be equal or less to '{1}'!", nameof(Begin), maxEnd));
                         }
                     }
                     break;

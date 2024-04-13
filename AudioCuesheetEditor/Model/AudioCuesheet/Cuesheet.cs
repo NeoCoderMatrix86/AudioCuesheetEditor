@@ -39,14 +39,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Track Track { get; }
     }
 
-    public class SplitPointAddRemoveEventArgs : EventArgs
+    public class CuesheetSectionAddRemoveEventArgs : EventArgs
     {
-        public SplitPointAddRemoveEventArgs(SplitPoint splitPoint)
+        public CuesheetSectionAddRemoveEventArgs(CuesheetSection section)
         {
-            SplitPoint = splitPoint;
+            Section = section;
         }
 
-        public SplitPoint SplitPoint { get; }
+        public CuesheetSection Section { get; }
     }
 
     public class Cuesheet : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
@@ -64,21 +64,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private Cataloguenumber catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
-        private List<SplitPoint> splitPoints;
+        private List<CuesheetSection> sections;
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
-        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointAdded;
-        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointRemoved;
+        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionAdded;
+        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionRemoved;
         public event EventHandler? CuesheetImported;
 
         public Cuesheet(TraceChangeManager? traceChangeManager = null)
         {
             tracks = new();
             catalogueNumber = new();
-            splitPoints = new();
+            sections = new();
             TraceChangeManager = traceChangeManager;
         }
 
@@ -197,46 +197,45 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Boolean IsImporting { get; private set; }
         
         [JsonInclude]
-        public IReadOnlyCollection<SplitPoint> SplitPoints 
+        public IReadOnlyCollection<CuesheetSection> Sections 
         {
-            get => splitPoints;
+            get => sections;
             private set
             {
-                foreach(var splitpoint in value.Where(x => x.Cuesheet != this))
+                foreach(var section in value.Where(x => x.Cuesheet != this))
                 {
-                    splitpoint.Cuesheet = this;
+                    section.Cuesheet = this;
                 }
-                splitPoints = value.ToList();
+                sections = value.ToList();
             }
         }
 
         [JsonIgnore]
         public TraceChangeManager? TraceChangeManager { get; }
 
-        public SplitPoint AddSplitPoint()
+        public CuesheetSection AddSection()
         {
-            var previousValue = new List<SplitPoint>(splitPoints);
-            var splitPoint = new SplitPoint(this);
-            splitPoints.Add(splitPoint);
-            SplitPointAdded?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
-            OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
-            return splitPoint;
+            var previousValue = new List<CuesheetSection>(sections);
+            var section = new CuesheetSection(this);
+            sections.Add(section);
+            SectionAdded?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
+            OnTraceablePropertyChanged(previousValue, nameof(Sections));
+            return section;
         }
 
-        public void RemoveSplitPoint(SplitPoint splitPoint)
+        public void RemoveSection(CuesheetSection section)
         {
-            var previousValue = new List<SplitPoint>(splitPoints);
-            if (splitPoints.Remove(splitPoint))
+            var previousValue = new List<CuesheetSection>(sections);
+            if (sections.Remove(section))
             {
-                OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
-                SplitPointRemoved?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
+                OnTraceablePropertyChanged(previousValue, nameof(Sections));
+                SectionRemoved?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
             }
         }
 
-        public SplitPoint? GetSplitPointAtTrack(Track track)
+        public CuesheetSection? GetSectionAtTrack(Track track)
         {
-            SplitPoint? splitPointAtTrack = SplitPoints?.FirstOrDefault(x => track.Begin < x.Moment && track.End >= x.Moment);
-            return splitPointAtTrack;
+            return Sections?.FirstOrDefault(x => track.Begin < x.Begin && track.End >= x.Begin);
         }
 
         /// <summary>
@@ -594,11 +593,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
-            // Copy splitpoints
-            foreach (var splitPoint in cuesheet.SplitPoints)
+            // Copy sections
+            foreach (var sections in cuesheet.Sections)
             {
-                var newSplitPoint = AddSplitPoint();
-                newSplitPoint.CopyValues(splitPoint);
+                var newSection = AddSection();
+                newSection.CopyValues(sections);
             }
         }
 
