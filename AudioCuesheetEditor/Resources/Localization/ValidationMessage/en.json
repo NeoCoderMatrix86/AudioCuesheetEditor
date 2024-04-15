@@ -34,12 +34,13 @@
     "CuesheetFilename": "Cuesheet filename",
     "RecordedAudiofilename": "Filename for recorded audio",
     "ProjectFilename": "Project filename",
-    "{0} should be equal or less to '{1}'!": "{0} should be equal or less to '{1}'!",
     "Filename": "Filename",
     "Artist": "Artist",
     "Title": "Title",
     "Exportprofile": "Exportprofile",
     "ApplicationOptions": "Application options",
-    "AudiofileName": "Audiofile"
+    "AudiofileName": "Audiofile",
+    "{0} should be greater than or equal '{1}'!": "{0} should be greater than or equal '{1}'!",
+    "{0} should be less than or equal '{1}'!": "{0} should be less than or equal '{1}'!"
   }
 }

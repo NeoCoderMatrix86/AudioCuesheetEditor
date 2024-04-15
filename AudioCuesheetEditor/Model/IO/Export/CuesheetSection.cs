@@ -128,8 +128,6 @@ namespace AudioCuesheetEditor.Model.IO.Export
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
-            //TODO: Validate end also
-            //TODO: Change validation of begin to this entitys
             switch (property)
             {
                 case nameof(Begin):
@@ -141,11 +139,38 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     else
                     {
-                        var maxEnd = Cuesheet?.Tracks.Max(x => x.End);
-                        if (Begin > maxEnd)
+                        var minBegin = Cuesheet?.Tracks.Min(x => x.Begin);
+                        if (Begin < minBegin)
                         {
                             validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} should be equal or less to '{1}'!", nameof(Begin), maxEnd));
+                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(Begin), minBegin));
+                        }
+                        if (Begin > End)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), End));
+                        }
+                    }
+                    break;
+                case nameof(End):
+                    validationStatus = ValidationStatus.Success;
+                    if (End == null)
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
+                    }
+                    else
+                    {
+                        var maxEnd = Cuesheet?.Tracks.Max(x => x.End);
+                        if (End > maxEnd)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(End), maxEnd));
+                        }
+                        if (End < Begin)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(End), Begin));
                         }
                     }
                     break;
