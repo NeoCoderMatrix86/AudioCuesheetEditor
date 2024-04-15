@@ -70,7 +70,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         }
 
         [TestMethod()]
-        public void GenerateFileWithSplitPointsTest()
+        public void GenerateFileWithSectionsTest()
         {
             var cuesheet = new Cuesheet
             {
@@ -100,10 +100,10 @@ namespace AudioCuesheetEditor.Model.IO.Tests
                 track.End = begin;
                 cuesheet.AddTrack(track, new Options.ApplicationOptions() { LinkTracksWithPreviousOne = true });
             }
-            var splitPoint = cuesheet.AddSplitPoint();
-            splitPoint.Moment = new TimeSpan(0, 30, 0);
-            splitPoint = cuesheet.AddSplitPoint();
-            splitPoint.Moment = new TimeSpan(1, 0, 0);
+            var section = cuesheet.AddSection();
+            section.Begin = new TimeSpan(0, 30, 0);
+            section = cuesheet.AddSection();
+            section.Begin = new TimeSpan(1, 0, 0);
             var projectFile = new Projectfile(cuesheet);
             var generatedFile = projectFile.GenerateFile();
             Assert.IsNotNull(generatedFile);
@@ -139,7 +139,7 @@ namespace AudioCuesheetEditor.Model.IO.Tests
         }
 
         [TestMethod()]
-        public void ImportFileWithSplitPointsTest()
+        public void ImportFileWithSectionsTest()
         {
             var fileContent = Encoding.UTF8.GetBytes("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Artist 1\",\"Title\":\"Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:01:01\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":2,\"Artist\":\"Artist 2\",\"Title\":\"Title 2\",\"Begin\":\"00:01:01\",\"End\":\"00:03:03\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":3,\"Artist\":\"Artist 3\",\"Title\":\"Title 3\",\"Begin\":\"00:03:03\",\"End\":\"00:06:06\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":4,\"Artist\":\"Artist 4\",\"Title\":\"Title 4\",\"Begin\":\"00:06:06\",\"End\":\"00:10:10\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":5,\"Artist\":\"Artist 5\",\"Title\":\"Title 5\",\"Begin\":\"00:10:10\",\"End\":\"00:15:15\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":6,\"Artist\":\"Artist 6\",\"Title\":\"Title 6\",\"Begin\":\"00:15:15\",\"End\":\"00:21:21\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":7,\"Artist\":\"Artist 7\",\"Title\":\"Title 7\",\"Begin\":\"00:21:21\",\"End\":\"00:28:28\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":8,\"Artist\":\"Artist 8\",\"Title\":\"Title 8\",\"Begin\":\"00:28:28\",\"End\":\"00:36:36\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":9,\"Artist\":\"Artist 9\",\"Title\":\"Title 9\",\"Begin\":\"00:36:36\",\"End\":\"00:45:45\",\"Flags\":[\"4CH\"],\"IsLinkedToPreviousTrack\":true},{\"Position\":10,\"Artist\":\"Artist 10\",\"Title\":\"Title 10\",\"Begin\":\"00:45:45\",\"End\":\"00:55:55\",\"Flags\":[\"4CH\",\"DCP\"],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"CuesheetArtist\",\"Title\":\"CuesheetTitle\",\"Audiofile\":{\"Name\":\"AudioFile.mp3\"},\"CDTextfile\":{\"Name\":\"CDTextfile.cdt\"},\"Cataloguenumber\":{\"Value\":\"A123\"},\"SplitPoints\":[{\"Artist\":\"CuesheetArtist\",\"Title\":\"CuesheetTitle\",\"Moment\":\"00:30:00\"},{\"Artist\":\"CuesheetArtist\",\"Title\":\"CuesheetTitle\",\"Moment\":\"01:00:00\"}]}");
             var cuesheet = Projectfile.ImportFile(fileContent);
@@ -159,9 +159,9 @@ namespace AudioCuesheetEditor.Model.IO.Tests
             Assert.IsTrue(Object.ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
             Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
             Assert.AreEqual((uint)10, cuesheet.Tracks.Last().Position);
-            Assert.AreEqual(2, cuesheet.SplitPoints.Count);
-            Assert.AreEqual(new TimeSpan(0, 30, 0), cuesheet.SplitPoints.First().Moment);
-            Assert.AreEqual(new TimeSpan(1, 0, 0), cuesheet.SplitPoints.Last().Moment);
+            Assert.AreEqual(2, cuesheet.Sections.Count);
+            Assert.AreEqual(new TimeSpan(0, 30, 0), cuesheet.Sections.First().Begin);
+            Assert.AreEqual(new TimeSpan(1, 0, 0), cuesheet.Sections.Last().Begin);
         }
     }
 }

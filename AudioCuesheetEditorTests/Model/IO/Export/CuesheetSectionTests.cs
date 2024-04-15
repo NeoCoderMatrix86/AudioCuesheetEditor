@@ -11,25 +11,25 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 namespace AudioCuesheetEditor.Model.IO.Export.Tests
 {
     [TestClass()]
-    public class SplitPointTests
+    public class CuesheetSectionTests
     {
         [TestMethod()]
         public void ValidationTest()
         {
             var cuesheet = new Cuesheet();
-            var splitPoint = new SplitPoint(cuesheet);
-            Assert.IsNull(splitPoint.Moment);
-            var validationResult = splitPoint.Validate(x => x.Moment);
+            var section = new CuesheetSection(cuesheet);
+            Assert.IsNull(section.Begin);
+            var validationResult = section.Validate(x => x.Begin);
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            splitPoint.Moment = new TimeSpan(0, 30, 0);
-            validationResult = splitPoint.Validate(x => x.Moment);
+            section.Begin = new TimeSpan(0, 30, 0);
+            validationResult = section.Validate(x => x.Begin);
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
             cuesheet.AddTrack(new Track() { Position = 1});
             cuesheet.AddTrack(new Track() { Position = 2, Begin = new TimeSpan(0, 8, 43), End = new TimeSpan(0, 15, 43) });
-            validationResult = splitPoint.Validate(x => x.Moment);
+            validationResult = section.Validate(x => x.Begin);
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            splitPoint.Moment = new TimeSpan(0, 15, 43);
-            validationResult = splitPoint.Validate(x => x.Moment);
+            section.Begin = new TimeSpan(0, 15, 43);
+            validationResult = section.Validate(x => x.Begin);
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
         }
     }

@@ -25,7 +25,7 @@ along with Foobar.  If not, see
 @inject TraceChangeManager _traceChangeManager
 @inject IJSRuntime _jsRuntime
 
-<Validations @ref="validations">
+@* <Validations @ref="validations">
     @if (Cuesheet != null)
     {
         @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
@@ -56,7 +56,7 @@ along with Foobar.  If not, see
                 </TableRow>
             </TableHeader>
             <TableBody>
-                @foreach (var splitPoint in Cuesheet.SplitPoints)
+                @foreach (var splitPoint in Cuesheet.Sections)
                 {
                     <TableRow>
                         <TableRowCell>
@@ -75,8 +75,8 @@ along with Foobar.  If not, see
                             </Buttons>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Moment, _validationMessageLocalizer, token)">
-                                <TextEdit Text="@splitPoint.Moment?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<SplitPoint, TimeSpan?>(splitPoint, x => x.Moment, value)" Immediate="false">
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, splitPoint, x => x.Begin, _validationMessageLocalizer, token)">
+                                <TextEdit Text="@splitPoint.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<CuesheetSection, TimeSpan?>(splitPoint, x => x.Begin, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -84,7 +84,7 @@ along with Foobar.  If not, see
                             </Validation>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Artist, _validationMessageLocalizer, token)">
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, splitPoint, x => x.Artist, _validationMessageLocalizer, token)">
                                 <TextEdit @bind-Text="splitPoint.Artist" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
@@ -93,7 +93,7 @@ along with Foobar.  If not, see
                             </Validation>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Title, _validationMessageLocalizer, token)">
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, splitPoint, x => x.Title, _validationMessageLocalizer, token)">
                                 <TextEdit @bind-Text="splitPoint.Title" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
@@ -102,7 +102,7 @@ along with Foobar.  If not, see
                             </Validation>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.AudiofileName, _validationMessageLocalizer, token)">
+                            <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, splitPoint, x => x.AudiofileName, _validationMessageLocalizer, token)">
                                 @if (String.IsNullOrEmpty(splitPoint.AudiofileName))
                                 {
                                     <FileEdit id="@fileEditAudiofileIds[splitPoint]" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="(args) => OnSplitpointAudiofileChanged(args, splitPoint)" AutoReset="false">
@@ -133,15 +133,16 @@ along with Foobar.  If not, see
             </TableBody>
         </Table>
     }
-</Validations>
+</Validations> *@
 
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    //TODO: Rename component!
     Validations? validations;
     ModalDialog? modalDialog;
     Validation? audiofileValidation;
-    Dictionary<SplitPoint, Guid> fileEditAudiofileIds = new();
+    Dictionary<CuesheetSection, Guid> fileEditAudiofileIds = new();
 
     public Cuesheet? Cuesheet
     {
@@ -204,18 +205,18 @@ along with Foobar.  If not, see
     {
         if (Cuesheet != null)
         {
-            var splitPoint = Cuesheet.AddSplitPoint();
+            var splitPoint = Cuesheet.AddSection();
             _traceChangeManager.TraceChanges(splitPoint);
             fileEditAudiofileIds.Add(splitPoint, Guid.NewGuid());
         }
         return Task.CompletedTask;
     }
 
-    Task DeleteSplitPointClicked(SplitPoint splitPoint)
+    Task DeleteSplitPointClicked(CuesheetSection splitPoint)
     {
         if (Cuesheet != null)
         {
-            Cuesheet.RemoveSplitPoint(splitPoint);
+            Cuesheet.RemoveSection(splitPoint);
         }
         return Task.CompletedTask;
     }
@@ -265,7 +266,7 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    async Task OnSplitpointAudiofileChangedCliccked(SplitPoint splitPoint)
+    async Task OnSplitpointAudiofileChangedCliccked(CuesheetSection splitPoint)
     {
         splitPoint.AudiofileName = null;
         StateHasChanged();
@@ -273,7 +274,7 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("triggerClick", fileEditAudiofileIds[splitPoint]);
     }
 
-    async Task OnSplitpointAudiofileChanged(FileChangedEventArgs e, SplitPoint splitPoint)
+    async Task OnSplitpointAudiofileChanged(FileChangedEventArgs e, CuesheetSection splitPoint)
     {
         if (e.Files.FirstOrDefault() != null)
         {

@@ -329,7 +329,7 @@ along with Foobar.  If not, see
                             case ViewMode.ViewModeImport:
                                 <TableRowCell>
                                     <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
-                                        @if (Cuesheet?.GetSplitPointAtTrack(track) != null)
+                                        @if (Cuesheet?.GetSectionAtTrack(track) != null)
                                         {
                                             <Tooltip Text="@_localizer["A split point is currently set at the time of this track"]">
                                                 <Badge Color="Color.Info" Pill>
@@ -768,8 +768,8 @@ along with Foobar.  If not, see
     {
         if (Cuesheet != null)
         {
-            Cuesheet.SplitPointAdded += Cuesheet_SplitPointAdded;
-            Cuesheet.SplitPointRemoved += Cuesheet_SplitPointRemoved;
+            Cuesheet.SectionAdded += Cuesheet_SectionAdded;
+            Cuesheet.SectionRemoved += Cuesheet_SectionRemoved;
         }
     }
 
@@ -777,26 +777,27 @@ along with Foobar.  If not, see
     {
         if (Cuesheet != null)
         {
-            Cuesheet.SplitPointAdded -= Cuesheet_SplitPointAdded;
-            Cuesheet.SplitPointRemoved -= Cuesheet_SplitPointRemoved;
+            Cuesheet.SectionAdded -= Cuesheet_SectionAdded;
+            Cuesheet.SectionRemoved -= Cuesheet_SectionRemoved;
         }
     }
 
-    void Cuesheet_SplitPointAdded(object? sender, SplitPointAddRemoveEventArgs args)
+    void Cuesheet_SectionAdded(object? sender, CuesheetSectionAddRemoveEventArgs args)
     {
-        args.SplitPoint.ValidateablePropertyChanged += SplitPoint_ValidateablePropertyChanged;
+        args.Section.ValidateablePropertyChanged += Section_ValidateablePropertyChanged;
     }
 
-    void Cuesheet_SplitPointRemoved(object? sender, SplitPointAddRemoveEventArgs args)
+    void Cuesheet_SectionRemoved(object? sender, CuesheetSectionAddRemoveEventArgs args)
     {
-        args.SplitPoint.ValidateablePropertyChanged -= SplitPoint_ValidateablePropertyChanged;
+        args.Section.ValidateablePropertyChanged -= Section_ValidateablePropertyChanged;
     }
 
-    void SplitPoint_ValidateablePropertyChanged(object? sender, string property)
+    void Section_ValidateablePropertyChanged(object? sender, string property)
     {
         switch (property)
         {
-            case nameof(SplitPoint.Moment):
+            case nameof(CuesheetSection.Begin):
+            case nameof(CuesheetSection.End):
                 StateHasChanged();
                 break;
         }

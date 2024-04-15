@@ -42,15 +42,16 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<Exportfile> exportfiles = [];
             if (Validate().Status != ValidationStatus.Error)
             {
-                if (Cuesheet.SplitPoints.Count != 0)
+                if (Cuesheet.Sections.Count != 0)
                 {
+                    //TODO: Generate only splitpoint content (starting from begin to end)
                     TimeSpan? previousSplitPointMoment = null;
                     var begin = Cuesheet.Tracks.Min(x => x.Begin);
                     var counter = 1;
                     String? content = null;
                     String filename = String.Empty;
                     String? audioFileName = null;
-                    foreach (var splitPoint in Cuesheet.SplitPoints.OrderBy(x => x.Moment))
+                    foreach (var splitPoint in Cuesheet.Sections.OrderBy(x => x.Begin))
                     {
                         audioFileName = splitPoint.AudiofileName;
                         if (splitPoint.Validate().Status == ValidationStatus.Success)
@@ -75,9 +76,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
                                 {
                                     begin = previousSplitPointMoment;
                                 }
-                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = splitPoint.Moment });
+                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = splitPoint.Begin });
                             }
-                            previousSplitPointMoment = splitPoint.Moment;
+                            previousSplitPointMoment = splitPoint.Begin;
                             counter++;
                         }
                     }
@@ -146,7 +147,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return exportfiles;
         }
 
-        private string WriteCuesheet(String? audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private string WriteCuesheet(String? audiofileName, TimeSpan? from = null, CuesheetSection? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Cuesheet.Cataloguenumber != null && string.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false && Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
@@ -163,7 +164,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             IEnumerable<Track> tracks = Cuesheet.Tracks.OrderBy(x => x.Position);
             if (from != null && splitPoint != null)
             {
-                tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Moment && x.End >= from).OrderBy(x => x.Position);
+                tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Begin && x.End >= from).OrderBy(x => x.Position);
             }
             else
             {
@@ -173,7 +174,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 }
                 if (splitPoint != null)
                 {
-                    tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Moment).OrderBy(x => x.Position);
+                    tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Begin).OrderBy(x => x.Position);
                 }
             }
             if (tracks.Any())
@@ -222,7 +223,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return builder.ToString();
         }
 
-        private String WriteExport(String? audiofileName, TimeSpan? from = null, SplitPoint? splitPoint = null)
+        private String WriteExport(String? audiofileName, TimeSpan? from = null, CuesheetSection? splitPoint = null)
         {
             var builder = new StringBuilder();
             if (Exportprofile != null)
@@ -240,7 +241,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 IEnumerable<Track> tracks = Cuesheet.Tracks.OrderBy(x => x.Position);
                 if (from != null && splitPoint != null)
                 {
-                    tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Moment && x.End >= from).OrderBy(x => x.Position);
+                    tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Begin && x.End >= from).OrderBy(x => x.Position);
                 }
                 else
                 {
@@ -250,7 +251,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     }
                     if (splitPoint != null)
                     {
-                        tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Moment).OrderBy(x => x.Position);
+                        tracks = Cuesheet.Tracks.Where(x => x.Begin <= splitPoint.Begin).OrderBy(x => x.Position);
                     }
                 }
                 if (tracks.Any())
