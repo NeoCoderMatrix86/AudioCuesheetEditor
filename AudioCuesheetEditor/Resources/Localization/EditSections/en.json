@@ -1,10 +1,11 @@
 {
   "culture": "en",
   "translations": {
-    "Add new split point": "Add new split point",
+    "Add new section": "Add new section",
     "Controls": "Controls",
-    "Moment": "Moment",
-    "Delete split tooltip": "Deletes this split point",
+    "Begin": "Begin",
+    "End": "End",
+    "Delete section tooltip": "Deletes this section",
     "CD artist": "CD artist",
     "CD title": "CD title",
     "Audiofile name": "Audiofile",

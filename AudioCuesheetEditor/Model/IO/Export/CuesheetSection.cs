@@ -128,6 +128,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
+            //TODO: Validate end also
+            //TODO: Change validation of begin to this entitys
             switch (property)
             {
                 case nameof(Begin):
