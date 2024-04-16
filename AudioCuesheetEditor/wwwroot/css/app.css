@@ -80,7 +80,7 @@ a, .btn-link {
         cursor: move;
     }
 
-.hideInput {
+.hideInput, .dragNDropFile div:has(> .hideInput) {
     width: 0.1px;
     height: 0.1px;
     opacity: 0;
