@@ -89,7 +89,7 @@ a, .btn-link {
     z-index: -1;
 }
 
-    .hideInput + label {
+.dragNDropFile > .form-label {
         max-width: 80%;
         text-overflow: ellipsis;
         white-space: nowrap;
