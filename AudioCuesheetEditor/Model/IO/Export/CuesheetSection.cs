@@ -20,26 +20,34 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    public class SplitPoint : Validateable<SplitPoint>, ITraceable
+    public class CuesheetSection : Validateable<CuesheetSection>, ITraceable
     {
         private Cuesheet? cuesheet;
-        private TimeSpan? moment;
+        private TimeSpan? begin;
+        private TimeSpan? end;
         private String? artist;
         private String? title;
         private String? audiofileName;
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
-        public SplitPoint(Cuesheet cuesheet)
+        public CuesheetSection(Cuesheet cuesheet)
         {
             Cuesheet = cuesheet;
             artist = Cuesheet.Artist;
             title = Cuesheet.Title;
             audiofileName = Cuesheet.Audiofile?.Name;
+            //Try to set begin
+            begin = Cuesheet.Sections?.FirstOrDefault()?.End;
+            if (Begin.HasValue == false)
+            {
+                begin = Cuesheet.Tracks.Min(x => x.Begin);
+            }
+            end = Cuesheet.Tracks.Max(x => x.End);
         }
 
         [JsonConstructor]
-        public SplitPoint() { }
+        public CuesheetSection() { }
         public Cuesheet? Cuesheet 
         {
             get => cuesheet;
@@ -80,15 +88,27 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
         }
 
-        public TimeSpan? Moment 
+        public TimeSpan? Begin 
         { 
-            get => moment;
+            get => begin;
             set
             {
-                var previousValue = moment;
-                moment = value;
-                OnValidateablePropertyChanged(nameof(Moment));
-                OnTraceablePropertyChanged(previousValue, nameof(Moment));
+                var previousValue = begin;
+                begin = value;
+                OnValidateablePropertyChanged(nameof(Begin));
+                OnTraceablePropertyChanged(previousValue, nameof(Begin));
+            }
+        }
+
+        public TimeSpan? End
+        {
+            get => end;
+            set
+            {
+                var previousValue = end;
+                end = value;
+                OnValidateablePropertyChanged(nameof(End));
+                OnTraceablePropertyChanged(previousValue, nameof(End));
             }
         }
 
@@ -104,11 +124,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
             }
         }
 
-        public void CopyValues(SplitPoint splitPoint)
+        public void CopyValues(CuesheetSection splitPoint)
         {
             Artist = splitPoint.Artist;
             Title = splitPoint.Title;
-            Moment = splitPoint.Moment;
+            Begin = splitPoint.Begin;
         }
 
         protected override ValidationResult Validate(string property)
@@ -117,20 +137,47 @@ namespace AudioCuesheetEditor.Model.IO.Export
             List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
-                case nameof(Moment):
+                case nameof(Begin):
                     validationStatus = ValidationStatus.Success;
-                    if (Moment == null)
+                    if (Begin == null)
                     {
-                        validationMessages ??= new();
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Moment)));
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
+                    }
+                    else
+                    {
+                        var minBegin = Cuesheet?.Tracks.Min(x => x.Begin);
+                        if (Begin < minBegin)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(Begin), minBegin));
+                        }
+                        if (Begin > End)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), End));
+                        }
+                    }
+                    break;
+                case nameof(End):
+                    validationStatus = ValidationStatus.Success;
+                    if (End == null)
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
                     }
                     else
                     {
                         var maxEnd = Cuesheet?.Tracks.Max(x => x.End);
-                        if (Moment > maxEnd)
+                        if (End > maxEnd)
                         {
-                            validationMessages ??= new();
-                            validationMessages.Add(new ValidationMessage("{0} should be equal or less to '{1}'!", nameof(Moment), maxEnd));
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(End), maxEnd));
+                        }
+                        if (End < Begin)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(End), Begin));
                         }
                     }
                     break;
@@ -138,7 +185,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Artist))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
                     }
                     break;
@@ -146,7 +193,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Title))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
                     }
                     break;
@@ -154,7 +201,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(AudiofileName))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(AudiofileName)));
                     }
                     break;

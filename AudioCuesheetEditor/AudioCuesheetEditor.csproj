@@ -22,8 +22,8 @@
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
     <Content Remove="Resources\Localization\CuesheetData\de.json" />
     <Content Remove="Resources\Localization\CuesheetData\en.json" />
-    <Content Remove="Resources\Localization\EditSplitpoints\de.json" />
-    <Content Remove="Resources\Localization\EditSplitpoints\en.json" />
+    <Content Remove="Resources\Localization\EditSections\de.json" />
+    <Content Remove="Resources\Localization\EditSections\en.json" />
     <Content Remove="Resources\Localization\EditTrackModal\de.json" />
     <Content Remove="Resources\Localization\EditTrackModal\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
@@ -61,8 +61,8 @@
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
     <EmbeddedResource Include="Resources\Localization\CuesheetData\de.json" />
     <EmbeddedResource Include="Resources\Localization\CuesheetData\en.json" />
-    <EmbeddedResource Include="Resources\Localization\EditSplitpoints\de.json" />
-    <EmbeddedResource Include="Resources\Localization\EditSplitpoints\en.json" />
+    <EmbeddedResource Include="Resources\Localization\EditSections\de.json" />
+    <EmbeddedResource Include="Resources\Localization\EditSections\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\de.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />

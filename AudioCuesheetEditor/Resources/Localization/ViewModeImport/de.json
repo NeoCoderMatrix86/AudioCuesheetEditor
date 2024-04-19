@@ -61,6 +61,6 @@
     "Please confirm": "Bestätigung erforderlich",
     "Do you really want to reset the import options to default? This can not be undone!": "Möchten Sie wirklich die Import Optionen zurücksetzen? Dies kann nicht rückgängig gemacht werden!",
     "Abort import of displayed data": "Import der angezeigten Daten abbrechen",
-    "Cuesheet split points": "Cuesheet Aufteilungspunkte"
+    "Cuesheet sections": "Cuesheet Abschnitte"
   }
 }

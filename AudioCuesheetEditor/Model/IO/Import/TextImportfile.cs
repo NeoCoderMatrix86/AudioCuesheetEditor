@@ -44,7 +44,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             textImportScheme = new TextImportScheme();
             fileContent.Position = 0;
             using var reader = new StreamReader(fileContent);
-            List<String?> lines = new();
+            List<String?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -132,7 +132,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 FileContentRecognized = null;
                 AnalyseException = null;
                 Boolean cuesheetRecognized = false;
-                List<String?> recognizedFileContent = new();
+                List<String?> recognizedFileContent = [];
                 foreach (var line in FileContent)
                 {
                     var recognizedLine = line;

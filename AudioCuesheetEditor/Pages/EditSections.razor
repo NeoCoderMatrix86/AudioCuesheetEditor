@@ -17,7 +17,7 @@ along with Foobar.  If not, see
 -->
 @implements IDisposable
 
-@inject ITextLocalizer<EditSplitpoints> _localizer
+@inject ITextLocalizer<EditSections> _localizer
 @inject SessionStateContainer _sessionStateContainer
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject DateTimeUtility _dateTimeUtility
@@ -32,13 +32,13 @@ along with Foobar.  If not, see
         {
             <Buttons Role="ButtonsRole.Toolbar">
                 <Buttons Margin="Margin.Is2.FromEnd">
-                    <Button Color="Color.Primary" Clicked="AddSplitPointClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                    <Button Color="Color.Primary" Clicked="AddSectionClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                             <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                         </svg>
                         <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
-                            @_localizer["Add new split point"]
+                            @_localizer["Add new section"]
                         </Span>
                     </Button>
                 </Buttons>
@@ -49,22 +49,23 @@ along with Foobar.  If not, see
             <TableHeader>
                 <TableRow>
                     <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                    <TableHeaderCell>@_localizer["Moment"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+                    <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
                     <TableHeaderCell>@_localizer["CD artist"]</TableHeaderCell>
                     <TableHeaderCell>@_localizer["CD title"]</TableHeaderCell>
                     <TableHeaderCell>@_localizer["Audiofile name"]</TableHeaderCell>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                @foreach (var splitPoint in Cuesheet.SplitPoints)
+                @foreach (var cuesheetSection in Cuesheet.Sections)
                 {
                     <TableRow>
                         <TableRowCell>
                             <Buttons Role="ButtonsRole.Toolbar">
                                 <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
                                     <Buttons Margin="Margin.Is1.FromEnd">
-                                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete split tooltip"]">
-                                            <Button Size="Size.Small" Color="Color.Danger" Clicked="() => DeleteSplitPointClicked(splitPoint)">
+                                        <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Delete section tooltip"]">
+                                            <Button Size="Size.Small" Color="Color.Danger" Clicked="() => DeleteSectionClicked(cuesheetSection)">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                                                     <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
                                                 </svg>
@@ -75,8 +76,8 @@ along with Foobar.  If not, see
                             </Buttons>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Moment, _validationMessageLocalizer, token)">
-                                <TextEdit Text="@splitPoint.Moment?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<SplitPoint, TimeSpan?>(splitPoint, x => x.Moment, value)" Immediate="false">
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.Begin, _validationMessageLocalizer, token)">
+                                <TextEdit Text="@cuesheetSection.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<CuesheetSection, TimeSpan?>(cuesheetSection, x => x.Begin, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -84,8 +85,8 @@ along with Foobar.  If not, see
                             </Validation>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Artist, _validationMessageLocalizer, token)">
-                                <TextEdit @bind-Text="splitPoint.Artist" Immediate="false">
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.End, _validationMessageLocalizer, token)">
+                                <TextEdit Text="@cuesheetSection.End?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<CuesheetSection, TimeSpan?>(cuesheetSection, x => x.End, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -93,8 +94,8 @@ along with Foobar.  If not, see
                             </Validation>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.Title, _validationMessageLocalizer, token)">
-                                <TextEdit @bind-Text="splitPoint.Title" Immediate="false">
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.Artist, _validationMessageLocalizer, token)">
+                                <TextEdit @bind-Text="cuesheetSection.Artist" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -102,10 +103,19 @@ along with Foobar.  If not, see
                             </Validation>
                         </TableRowCell>
                         <TableRowCell>
-                            <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<SplitPoint>.Validate(args, splitPoint, x => x.AudiofileName, _validationMessageLocalizer, token)">
-                                @if (String.IsNullOrEmpty(splitPoint.AudiofileName))
+                            <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.Title, _validationMessageLocalizer, token)">
+                                <TextEdit @bind-Text="cuesheetSection.Title" Immediate="false">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Validation>
+                        </TableRowCell>
+                        <TableRowCell>
+                            <Validation @ref="audiofileValidation" AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.AudiofileName, _validationMessageLocalizer, token)">
+                                @if (String.IsNullOrEmpty(cuesheetSection.AudiofileName))
                                 {
-                                    <FileEdit id="@fileEditAudiofileIds[splitPoint]" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="(args) => OnSplitpointAudiofileChanged(args, splitPoint)" AutoReset="false">
+                                    <FileEdit id="@fileEditAudiofileIds[cuesheetSection]" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" Changed="(args) => OnSectionAudiofileChanged(args, cuesheetSection)" AutoReset="false">
                                         <Feedback>
                                             <ValidationError />
                                         </Feedback>
@@ -115,14 +125,14 @@ along with Foobar.  If not, see
                                 {
                                     <Addons>
                                         <Addon AddonType="AddonType.Body">
-                                            <TextEdit ReadOnly Text="@splitPoint.AudiofileName">
+                                            <TextEdit ReadOnly Text="@cuesheetSection.AudiofileName">
                                                 <Feedback>
                                                     <ValidationError Tooltip />
                                                 </Feedback>
                                             </TextEdit>
                                         </Addon>
                                         <Addon AddonType="AddonType.End">
-                                            <Button Color="Color.Secondary" Outline Clicked="(args) => OnSplitpointAudiofileChangedCliccked(splitPoint)">@_localizer["Change"]</Button>
+                                            <Button Color="Color.Secondary" Outline Clicked="(args) => OnSectionAudiofileChangedClicked(cuesheetSection)">@_localizer["Change"]</Button>
                                         </Addon>
                                     </Addons>
                                 }
@@ -141,7 +151,7 @@ along with Foobar.  If not, see
     Validations? validations;
     ModalDialog? modalDialog;
     Validation? audiofileValidation;
-    Dictionary<SplitPoint, Guid> fileEditAudiofileIds = new();
+    Dictionary<CuesheetSection, Guid> fileEditAudiofileIds = new();
 
     public Cuesheet? Cuesheet
     {
@@ -200,22 +210,22 @@ along with Foobar.  If not, see
         validations?.ValidateAll();
     }
 
-    Task AddSplitPointClicked()
+    Task AddSectionClicked()
     {
         if (Cuesheet != null)
         {
-            var splitPoint = Cuesheet.AddSplitPoint();
-            _traceChangeManager.TraceChanges(splitPoint);
-            fileEditAudiofileIds.Add(splitPoint, Guid.NewGuid());
+            var section = Cuesheet.AddSection();
+            _traceChangeManager.TraceChanges(section);
+            fileEditAudiofileIds.Add(section, Guid.NewGuid());
         }
         return Task.CompletedTask;
     }
 
-    Task DeleteSplitPointClicked(SplitPoint splitPoint)
+    Task DeleteSectionClicked(CuesheetSection section)
     {
         if (Cuesheet != null)
         {
-            Cuesheet.RemoveSplitPoint(splitPoint);
+            Cuesheet.RemoveSection(section);
         }
         return Task.CompletedTask;
     }
@@ -265,15 +275,15 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    async Task OnSplitpointAudiofileChangedCliccked(SplitPoint splitPoint)
+    async Task OnSectionAudiofileChangedClicked(CuesheetSection section)
     {
-        splitPoint.AudiofileName = null;
+        section.AudiofileName = null;
         StateHasChanged();
         await Task.Delay(1);
-        await _jsRuntime.InvokeVoidAsync("triggerClick", fileEditAudiofileIds[splitPoint]);
+        await _jsRuntime.InvokeVoidAsync("triggerClick", fileEditAudiofileIds[section]);
     }
 
-    async Task OnSplitpointAudiofileChanged(FileChangedEventArgs e, SplitPoint splitPoint)
+    async Task OnSectionAudiofileChanged(FileChangedEventArgs e, CuesheetSection section)
     {
         if (e.Files.FirstOrDefault() != null)
         {
@@ -282,7 +292,7 @@ along with Foobar.  If not, see
                 var file = e.Files.First();
                 if (IOUtility.CheckFileMimeTypeForAudioCodec(file) == true)
                 {
-                    splitPoint.AudiofileName = file.Name;
+                    section.AudiofileName = file.Name;
                 }
                 else
                 {
