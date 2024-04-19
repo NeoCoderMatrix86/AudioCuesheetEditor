@@ -37,6 +37,13 @@ namespace AudioCuesheetEditor.Model.IO.Export
             artist = Cuesheet.Artist;
             title = Cuesheet.Title;
             audiofileName = Cuesheet.Audiofile?.Name;
+            //Try to set begin
+            begin = Cuesheet.Sections?.FirstOrDefault()?.End;
+            if (Begin.HasValue == false)
+            {
+                begin = Cuesheet.Tracks.Min(x => x.Begin);
+            }
+            end = Cuesheet.Tracks.Max(x => x.End);
         }
 
         [JsonConstructor]
