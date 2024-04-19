@@ -303,38 +303,39 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 cuesheet.AddTrack(track, testHelper.ApplicationOptions);
             }
             var section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(2, 0, 0);
+            section.Begin = new TimeSpan(1, 30, 0);
+            section.End = new TimeSpan(2, 0, 0);
             section.Title = "Last part";
             section.AudiofileName = "Last part.mp3";
             section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(0, 30, 0);
+            section.Begin = new TimeSpan(0, 0, 0);
+            section.End = new TimeSpan(0, 30, 0);
             section.AudiofileName = "First part.mp3";
             section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(1, 0, 0);
+            section.Begin = new TimeSpan(0, 30, 0);
+            section.End = new TimeSpan(1, 0, 0);
             section.Artist = "Demo Artist Part2";
             section = cuesheet.AddSection();
             section.Artist = "Artist 3";
             section.Title = "Title 3";
             section.AudiofileName = "Part 3.mp3";
-            section.Begin = new TimeSpan(1, 30, 0);
+            section.Begin = new TimeSpan(1, 0, 0);
+            section.End = new TimeSpan(1, 30, 0);
             testHelper.ApplicationOptions.CuesheetFilename = "Unit test.cue";
             var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
             Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
             var generatedFiles = generator.GenerateExportfiles();
-            Assert.AreEqual(5, generatedFiles.Count);
+            Assert.AreEqual(4, generatedFiles.Count);
             var position = 1;
             var counter = 1;
             //Check split according to sections
-            Assert.AreEqual(cuesheet.Tracks.Min(x => x.Begin), generatedFiles.First().Begin);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), generatedFiles.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
-            Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.ElementAt(1).Begin);
             Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
             Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(2).Begin);
             Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(2).End);
-            Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(3).Begin);
-            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(3).End);
-            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(4).Begin);
-            Assert.AreEqual(cuesheet.Tracks.Max(x => x.End), generatedFiles.Last().End);
+            Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.Last().Begin);
+            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.Last().End);
             foreach (var generatedFile in generatedFiles)
             {
                 Assert.AreEqual(String.Format("Unit test({0}).cue", counter), generatedFile.Name);
@@ -347,7 +348,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 File.Delete(fileName);
                 int positionDifference = 1 - position;
                 // Check cuesheet header for artist and title
-                var sectionForThisFile = cuesheet.Sections.FirstOrDefault(x => x.Begin == generatedFile.End);
+                var sectionForThisFile = cuesheet.Sections.FirstOrDefault(x => x.Begin == generatedFile.Begin);
                 if (sectionForThisFile != null)
                 {
                     Assert.AreEqual(String.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, sectionForThisFile.Title), fileContent.First());
@@ -628,20 +629,24 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             cuesheet.Cataloguenumber.Value = "0123456789123";
             cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
             var section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(2, 0, 0);
+            section.Begin = new TimeSpan(1, 30, 0);
+            section.End = new TimeSpan(2, 0, 0);
             section.Title = "Last part";
             section.AudiofileName = "Last part.mp3";
             section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(0, 30, 0);
+            section.Begin = new TimeSpan(0, 0, 0);
+            section.End = new TimeSpan(0, 30, 0);
             section.AudiofileName = "First part.mp3";
             section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(1, 0, 0);
+            section.Begin = new TimeSpan(0, 30, 0);
+            section.End = new TimeSpan(1, 0, 0);
             section.Artist = "Demo Artist Part2";
             section = cuesheet.AddSection();
             section.Artist = "Artist 3";
             section.Title = "Title 3";
             section.AudiofileName = "Part 3.mp3";
-            section.Begin = new TimeSpan(1, 30, 0);
+            section.Begin = new TimeSpan(1, 0, 0);
+            section.End = new TimeSpan(1, 30, 0);
             //Test export
             var exportProfile = new Exportprofile
             {
@@ -652,19 +657,16 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportProfile);
             Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
             var generatedFiles = generator.GenerateExportfiles();
-            Assert.AreEqual(5, generatedFiles.Count);
+            Assert.AreEqual(4, generatedFiles.Count);
 
             //Check split according to sections
-            Assert.AreEqual(cuesheet.Tracks.Min(x => x.Begin), generatedFiles.First().Begin);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), generatedFiles.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
-            Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.ElementAt(1).Begin);
             Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
             Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(2).Begin);
             Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(2).End);
-            Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(3).Begin);
-            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(3).End);
-            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.ElementAt(4).Begin);
-            Assert.AreEqual(cuesheet.Tracks.Max(x => x.End), generatedFiles.Last().End);
+            Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.Last().Begin);
+            Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.Last().End);
             var counter = 1;
             var position = 1;
             foreach (var generatedFile in generatedFiles)
@@ -679,7 +681,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
                 File.Delete(fileName);
                 int positionDifference = 1 - position;
                 //Check cuesheet header for artist and title
-                var sectionForThisFile = cuesheet.Sections.FirstOrDefault(x => x.Begin == generatedFile.End);
+                var sectionForThisFile = cuesheet.Sections.FirstOrDefault(x => x.Begin == generatedFile.Begin);
                 if (sectionForThisFile != null)
                 {
                     Assert.AreEqual(String.Format("{0};{1};{2};0123456789123;Testfile.cdt", sectionForThisFile.Artist, sectionForThisFile.Title, sectionForThisFile.AudiofileName), fileContent[0]);
