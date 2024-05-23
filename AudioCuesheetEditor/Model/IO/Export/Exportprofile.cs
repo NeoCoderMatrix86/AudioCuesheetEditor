@@ -150,7 +150,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         if (SchemeHead.Contains(availableScheme.Value) == true)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeHead), availableScheme.Value));
                             break;
                         }
@@ -162,7 +162,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         if (SchemeTracks.Contains(availableScheme.Value) == true)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeTracks), availableScheme.Value));
                             break;
                         }
@@ -174,7 +174,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         if (SchemeFooter.Contains(availableScheme.Value) == true)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeFooter), availableScheme.Value));
                             break;
                         }
@@ -184,7 +184,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Filename))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Filename)));
                     }
                     break;
@@ -192,7 +192,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Name))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
                     }
                     break;

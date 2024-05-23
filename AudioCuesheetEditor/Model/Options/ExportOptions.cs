@@ -19,8 +19,8 @@ namespace AudioCuesheetEditor.Model.Options
 {
     public class ExportOptions : IOptions
     {
-        public static readonly List<Exportprofile> DefaultExportProfiles = new() 
-        { 
+        public static readonly List<Exportprofile> DefaultExportProfiles =
+        [
             new Exportprofile()
             {
                 Filename = "YouTube.txt",
@@ -48,7 +48,7 @@ namespace AudioCuesheetEditor.Model.Options
                 Name = "Tracks only",
                 SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
             }
-        };
+        ];
         public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
     }
 }
