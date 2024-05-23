@@ -24,10 +24,10 @@ namespace AudioCuesheetEditor.Model.Options
             new Exportprofile()
             {
                 Id = Guid.NewGuid(),
-            Filename = "YouTube.txt",
-            Name = "YouTube",
-            SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
-            SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+                Filename = "YouTube.txt",
+                Name = "YouTube",
+                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
             },
             new Exportprofile()
             {
