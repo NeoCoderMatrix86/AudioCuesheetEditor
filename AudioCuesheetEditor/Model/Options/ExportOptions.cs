@@ -19,23 +19,26 @@ namespace AudioCuesheetEditor.Model.Options
 {
     public class ExportOptions : IOptions
     {
-        public static readonly List<Exportprofile> DefaultExportProfiles =
+        public static readonly ICollection<Exportprofile> DefaultExportProfiles =
         [
             new Exportprofile()
             {
-                Filename = "YouTube.txt",
-                Name = "YouTube",
-                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
-                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+                Id = Guid.NewGuid(),
+            Filename = "YouTube.txt",
+            Name = "YouTube",
+            SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+            SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
             },
             new Exportprofile()
             {
+                Id = Guid.NewGuid(),
                 Filename = "Mixcloud.txt",
                 Name = "Mixcloud",
                 SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
             },
             new Exportprofile()
             {
+                Id = Guid.NewGuid(),
                 Filename = "Export.csv",
                 Name = "CSV Export",
                 SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;",
@@ -44,11 +47,20 @@ namespace AudioCuesheetEditor.Model.Options
             },
             new Exportprofile()
             {
+                Id = Guid.NewGuid(),
                 Filename = "Tracks.txt",
                 Name = "Tracks only",
                 SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
             }
         ];
-        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
+        public ICollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
+        //TODO: Save selected profile
+        //[JsonIgnore]
+        //public Exportprofile SelectedExportProfile
+        //{
+        //    get => ExportProfiles.First(x => x.Id == SelectedProfileId);
+        //    set => SelectedProfileId = value.Id;
+        //}
+        //public Guid SelectedProfileId { get; private set; } = DefaultSelectedExportProfile.Id;
     }
 }

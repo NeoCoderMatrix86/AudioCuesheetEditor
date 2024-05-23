@@ -15,10 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO.Audio;
-using System;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
@@ -105,6 +101,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public Exportprofile()
         {
+            Id = Guid.NewGuid();
             schemeHead = String.Empty;
             schemeTracks = String.Empty;
             schemeFooter = String.Empty;
@@ -112,6 +109,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             var random = new Random();
             name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
+        public Guid Id { get; init; }
         public String Name 
         {
             get => name;

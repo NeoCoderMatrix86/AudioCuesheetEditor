@@ -285,19 +285,19 @@ along with Foobar.  If not, see
         <Field Horizontal="true" JustifyContent="JustifyContent.End">
             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is9">
-                <SelectList TItem="SelectExportProfileModel" TValue="Guid?" Data="@exportProfileModels" TextField="@((item)=>item.ExportProfile.Name)" ValueField="@((item)=>item.Id)" SelectedValue="selectedExportProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
+                <SelectList TItem="Exportprofile" TValue="Guid?" Data="@exportOptions?.ExportProfiles" TextField="@((item) => item.Name)" ValueField="@((item)=>item.Id)" SelectedValue="exportOptions?.SelectedProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
             </FieldBody>
         </Field>
         <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@_localizer["Add new exportprofile"]</Button>
         <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@_localizer["Delete selected exportprofile"]</Button>
         <Divider />
-        @if (SelectedExportProfile != null)
+        @if (exportOptions != null)
         {
-            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Name, _validationMessageLocalizer, token)">
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions.SelectedExportProfile, x => x.Name, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="SelectedExportProfile.Name">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" @bind-Text="exportOptions.SelectedExportProfile.Name">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -305,11 +305,11 @@ along with Foobar.  If not, see
                     </FieldBody>
                 </Field>
             </Validation>
-            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions.SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
                     <FieldBody ColumnSize="ColumnSize.Is9">
-                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@SelectedExportProfile.Filename" TextChanged="OnSelectedExportProfileFilenameChanged">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@exportOptions.SelectedExportProfile.Filename" TextChanged="OnSelectedExportProfileFilenameChanged">
                             <Feedback>
                                 <ValidationError />
                             </Feedback>
@@ -317,7 +317,7 @@ along with Foobar.  If not, see
                     </FieldBody>
                 </Field>
             </Validation>
-            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.SchemeHead, _validationMessageLocalizer, token)">
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions.SelectedExportProfile, x => x.SchemeHead, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
                         <Tooltip Text="@_localizer["Enter exportschemehead here tooltip"]" Placement="TooltipPlacement.TopEnd">
@@ -327,7 +327,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@SelectedExportProfile.SchemeHead" TextChanged="OnSelectedExportProfileSchemeHeadChanged">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@exportOptions.SelectedExportProfile.SchemeHead" TextChanged="OnSelectedExportProfileSchemeHeadChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
@@ -341,7 +341,7 @@ along with Foobar.  If not, see
                                     <DropdownMenu>
                                         @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
                                         {
-                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeHeadChanged(SelectedExportProfile.SchemeHead += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeHeadChanged(exportOptions.SelectedExportProfile.SchemeHead += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -350,7 +350,7 @@ along with Foobar.  If not, see
                     </FieldBody>
                 </Field>
             </Validation>
-            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.SchemeTracks, _validationMessageLocalizer, token)">
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions.SelectedExportProfile, x => x.SchemeTracks, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
                         <Tooltip Text="@_localizer["Enter exportscheme track here tooltip"]" Placement="TooltipPlacement.TopEnd">
@@ -360,7 +360,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@SelectedExportProfile.SchemeTracks" TextChanged="OnSelectedExportProfileSchemeTracksChanged">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@exportOptions.SelectedExportProfile.SchemeTracks" TextChanged="OnSelectedExportProfileSchemeTracksChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
@@ -374,7 +374,7 @@ along with Foobar.  If not, see
                                     <DropdownMenu>
                                         @foreach (var availableScheme in Exportprofile.AvailableTrackSchemes)
                                         {
-                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeTracksChanged(SelectedExportProfile.SchemeTracks += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeTracksChanged(exportOptions.SelectedExportProfile.SchemeTracks += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -383,7 +383,7 @@ along with Foobar.  If not, see
                     </FieldBody>
                 </Field>
             </Validation>
-            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, SelectedExportProfile, x => x.SchemeFooter, _validationMessageLocalizer, token)">
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions.SelectedExportProfile, x => x.SchemeFooter, _validationMessageLocalizer, token)">
                 <Field Horizontal="true">
                     <FieldLabel ColumnSize="ColumnSize.Is3">
                         <Tooltip Text="@_localizer["Enter exportscheme footer here tooltip"]" Placement="TooltipPlacement.TopStart">
@@ -393,7 +393,7 @@ along with Foobar.  If not, see
                     <FieldBody ColumnSize="ColumnSize.Is9">
                         <Addons>
                             <Addon AddonType="AddonType.Body">
-                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@SelectedExportProfile.SchemeFooter" TextChanged="OnSelectedExportProfileSchemeFooterChanged">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@exportOptions.SelectedExportProfile.SchemeFooter" TextChanged="OnSelectedExportProfileSchemeFooterChanged">
                                     <Feedback>
                                         <ValidationError Tooltip />
                                     </Feedback>
@@ -407,7 +407,7 @@ along with Foobar.  If not, see
                                     <DropdownMenu>
                                         @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
                                         {
-                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeFooterChanged(SelectedExportProfile.SchemeFooter += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
+                                            <DropdownItem Clicked="() => OnSelectedExportProfileSchemeFooterChanged(exportOptions.SelectedExportProfile.SchemeFooter += availableScheme.Value)">@_localizer[availableScheme.Key]</DropdownItem>
                                         }
                                     </DropdownMenu>
                                 </Dropdown>
@@ -422,35 +422,6 @@ along with Foobar.  If not, see
 
 @code {
     Bar? sidebar;
-
-    public class SelectExportProfileModel
-    {
-        public Guid Id { get; private set; }
-        public Exportprofile ExportProfile { get; private set; }
-
-        public SelectExportProfileModel(Exportprofile exportProfile)
-        {
-            Id = Guid.NewGuid();
-            ExportProfile = exportProfile;
-        }
-    }
-
-    public Exportprofile? SelectedExportProfile
-    {
-        get
-        {
-            if ((exportProfileModels != null) && (selectedExportProfileId != Guid.Empty))
-            {
-                var exportProfile = exportProfileModels.FirstOrDefault(x => x.Id == selectedExportProfileId);
-                if (exportProfile != null)
-                {
-                    return exportProfile.ExportProfile;
-                }
-            }
-            return null;
-        }
-    }
-
     Boolean displayMenuBar = false;
     HotKeysContext? hotKeysContext;
     ApplicationOptions? applicationOptions;
@@ -461,8 +432,7 @@ along with Foobar.  If not, see
     Modal? modalDownloadProjectfile;
     ModalExportdialog? modalExportdialogCuesheet;
     ModalExportdialog? modalExportdialogExportprofile;
-    IReadOnlyCollection<SelectExportProfileModel>? exportProfileModels;
-    Guid? selectedExportProfileId;
+    ExportOptions? exportOptions;
 
     String? IsCuesheetExportableTooltip
     {
@@ -501,15 +471,8 @@ along with Foobar.  If not, see
             .Add(Key.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        exportOptions = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-
-        if (exportProfileModels == null)
-        {
-            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
-            exportProfileModels = options.ExportProfiles.Select(x => new SelectExportProfileModel(x)).ToList().AsReadOnly();
-            selectedExportProfileId = exportProfileModels.First().Id;
-            SelectedExportProfileChanged(selectedExportProfileId);
-        }
 
         if (modalExportdialogExportprofile != null)
         {
@@ -757,56 +720,51 @@ along with Foobar.  If not, see
         {
             applicationOptions = (ApplicationOptions)options;
         }
+        if (options is ExportOptions)
+        {
+            exportOptions = (ExportOptions)options;
+        }
     }
 
     void OnAddNewExportProfileClicked()
     {
         _logger.LogInformation("OnAddNewExportProfileClicked");
-        if (exportProfileModels != null)
+        if (exportOptions != null)
         {
-            var list = exportProfileModels.ToList();
-            list.Add(new SelectExportProfileModel(new Exportprofile()));
-            exportProfileModels = list.AsReadOnly();
-            selectedExportProfileId = list.Last().Id;
+            var newProfile = new Exportprofile();
+            exportOptions.ExportProfiles.Add(newProfile);
+            exportOptions.SelectedExportProfile = newProfile;
         }
     }
 
     void OnDeleteExportProfileClicked()
     {
         _logger.LogInformation("OnDeleteExportProfileClicked");
-        if (exportProfileModels != null)
+        if (exportOptions != null)
         {
-            var list = exportProfileModels.ToList();
-            list.RemoveAll(x => x.Id == selectedExportProfileId);
-            exportProfileModels = list.AsReadOnly();
-            if (exportProfileModels.Count > 0)
-            {
-                selectedExportProfileId = exportProfileModels.First().Id;
-            }
+            exportOptions.ExportProfiles.Remove(exportOptions.SelectedExportProfile);
         }
     }
 
     void SelectedExportProfileChanged(Guid? newValue)
     {
         _logger.LogInformation("SelectedExportProfileChanged with {0}", newValue);
-        selectedExportProfileId = newValue;
-        modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
-        if (modalExportdialogExportprofile != null)
+        if (exportOptions != null)
         {
-            modalExportdialogExportprofile.SelectedExportProfile = SelectedExportProfile;
-            modalExportdialogExportprofile.Reset();
+            var selectedProfile = exportOptions.ExportProfiles.First(x => x.Id == newValue);
+            exportOptions.SelectedExportProfile = selectedProfile;
         }
+        modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
+        modalExportdialogExportprofile?.Reset();
         StateHasChanged();
     }
 
-    async Task SaveExportProfiles()
+    async Task SaveExportOptions()
     {
-        _logger.LogInformation("SaveExportProfiles");
-        if (exportProfileModels != null)
+        _logger.LogDebug("SaveExportOptions");
+        if (exportOptions != null)
         {
-            var options = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
-            options.ExportProfiles = exportProfileModels.Select(x => x.ExportProfile).ToList().AsReadOnly();
-            await _localStorageOptionsProvider.SaveOptions(options);
+            await _localStorageOptionsProvider.SaveOptions(exportOptions);
         }
     }
 
@@ -821,7 +779,7 @@ along with Foobar.  If not, see
 
     void ModalExportdialogExportprofile_GenerateExportfilesClicked(object? sender, EventArgs args)
     {
-        Task.Run(SaveExportProfiles);
+        Task.Run(SaveExportOptions);
     }
 
     void ModalExportdialogCuesheet_GenerateExportfilesClicked(object? sender, EventArgs args)
@@ -844,53 +802,41 @@ along with Foobar.  If not, see
 
     Task OnSelectedExportProfileFilenameChanged(string value)
     {
-        if (SelectedExportProfile != null)
+        if (exportOptions != null)
         {
-            SelectedExportProfile.Filename = value;
+            exportOptions.SelectedExportProfile.Filename = value;
         }
-        if (modalExportdialogExportprofile != null)
-        {
-            modalExportdialogExportprofile.Reset();
-        }
+        modalExportdialogExportprofile?.Reset();
         return Task.CompletedTask;
     }
 
     Task OnSelectedExportProfileSchemeHeadChanged(string value)
     {
-        if (SelectedExportProfile != null)
+        if (exportOptions != null)
         {
-            SelectedExportProfile.SchemeHead = value;
+            exportOptions.SelectedExportProfile.SchemeHead = value;
         }
-        if (modalExportdialogExportprofile != null)
-        {
-            modalExportdialogExportprofile.Reset();
-        }
+        modalExportdialogExportprofile?.Reset();
         return Task.CompletedTask;
     }
 
     Task OnSelectedExportProfileSchemeTracksChanged(string value)
     {
-        if (SelectedExportProfile != null)
+        if (exportOptions != null)
         {
-            SelectedExportProfile.SchemeTracks = value;
+            exportOptions.SelectedExportProfile.SchemeTracks = value;
         }
-        if (modalExportdialogExportprofile != null)
-        {
-            modalExportdialogExportprofile.Reset();
-        }
+        modalExportdialogExportprofile?.Reset();
         return Task.CompletedTask;
     }
 
     Task OnSelectedExportProfileSchemeFooterChanged(string value)
     {
-        if (SelectedExportProfile != null)
+        if (exportOptions != null)
         {
-            SelectedExportProfile.SchemeFooter = value;
+            exportOptions.SelectedExportProfile.SchemeFooter = value;
         }
-        if (modalExportdialogExportprofile != null)
-        {
-            modalExportdialogExportprofile.Reset();
-        }
+        modalExportdialogExportprofile?.Reset();
         return Task.CompletedTask;
     }
 

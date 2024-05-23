@@ -114,8 +114,6 @@ along with Foobar.  If not, see
     [EditorRequired]
     public ExportType ExportType { get; set; }
 
-    public Exportprofile? SelectedExportProfile { get; set; }
-
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
 
@@ -125,6 +123,7 @@ along with Foobar.  If not, see
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
     ApplicationOptions? applicationOptions;
+    ExportOptions? exportOptions;
     Steps? stepsRef;
 
     Boolean StepNavigationAllowed
@@ -152,7 +151,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, exportOptions?.SelectedExportProfile, applicationOptions);
             var validationResult = generator.Validate();
             if (validationResult?.Status == Model.Entity.ValidationStatus.Error)
             {
@@ -189,6 +188,7 @@ along with Foobar.  If not, see
             .Add(Key.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        exportOptions = await _localStorageOptionsProvider.GetOptions<ExportOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         await base.OnInitializedAsync();
@@ -237,7 +237,7 @@ along with Foobar.  If not, see
         if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
-            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, exportOptions?.SelectedExportProfile, applicationOptions);
             exportfiles = generator.GenerateExportfiles();
             selectedStep = "displayExportResult";
             prepareExportCompleted = true;
@@ -268,6 +268,10 @@ along with Foobar.  If not, see
         if (options is ApplicationOptions)
         {
             applicationOptions = (ApplicationOptions)options;
+        }
+        if (options is ExportOptions)
+        {
+            exportOptions = (ExportOptions)options;
         }
     }
 }
