@@ -14,21 +14,23 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Export;
+using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
     public class ExportOptions : IOptions
     {
+        public static readonly Exportprofile DefaultSelectedExportProfile = new() 
+        {
+            Id = Guid.NewGuid(),
+            Filename = "YouTube.txt",
+            Name = "YouTube",
+            SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+            SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+        };
         public static readonly ICollection<Exportprofile> DefaultExportProfiles =
         [
-            new Exportprofile()
-            {
-                Id = Guid.NewGuid(),
-                Filename = "YouTube.txt",
-                Name = "YouTube",
-                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
-                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
-            },
+            DefaultSelectedExportProfile,
             new Exportprofile()
             {
                 Id = Guid.NewGuid(),
@@ -54,13 +56,13 @@ namespace AudioCuesheetEditor.Model.Options
             }
         ];
         public ICollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
-        //TODO: Save selected profile
-        //[JsonIgnore]
-        //public Exportprofile SelectedExportProfile
-        //{
-        //    get => ExportProfiles.First(x => x.Id == SelectedProfileId);
-        //    set => SelectedProfileId = value.Id;
-        //}
-        //public Guid SelectedProfileId { get; private set; } = DefaultSelectedExportProfile.Id;
+        [JsonIgnore]
+        public Exportprofile SelectedExportProfile
+        {
+            //TODO: We need to make the selected profile optional because of backward compability
+            get => ExportProfiles.First(x => x.Id == SelectedProfileId);
+            set => SelectedProfileId = value.Id;
+        }
+        public Guid SelectedProfileId { get; private set; } = DefaultSelectedExportProfile.Id;
     }
 }
