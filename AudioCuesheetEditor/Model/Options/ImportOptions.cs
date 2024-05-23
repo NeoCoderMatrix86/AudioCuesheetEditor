@@ -27,7 +27,6 @@ namespace AudioCuesheetEditor.Model.Options
         public ImportOptions()
         {
             TextImportScheme = TextImportScheme.DefaultTextImportScheme;
-            //SetDefaultValues();
         }
 
         public ImportOptions(TextImportfile textImportfile)
