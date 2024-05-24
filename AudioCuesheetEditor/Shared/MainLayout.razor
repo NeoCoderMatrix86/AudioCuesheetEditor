@@ -260,7 +260,7 @@ along with Foobar.  If not, see
     </Modal>
 }
 
-<ModalExportdialog @ref="modalExportdialogCuesheet" Title="@_localizer["Download cuesheet"]" ExportType="ExportType.Cuesheet">
+<ModalExportdialog @ref="modalExportdialogCuesheet" Title="@_localizer["Download cuesheet"]" ExportType="ExportType.Cuesheet" ApplicationOptions="applicationOptions" ExportOptions="exportOptions">
     <PrepareExportStepContent>
         @if (applicationOptions != null)
         {
@@ -280,7 +280,7 @@ along with Foobar.  If not, see
     </PrepareExportStepContent>
 </ModalExportdialog>
 
-<ModalExportdialog @ref="modalExportdialogExportprofile" Title="@_localizer["Exportprofiles"]" ExportType="ExportType.Exportprofile">
+<ModalExportdialog @ref="modalExportdialogExportprofile" Title="@_localizer["Exportprofiles"]" ExportType="ExportType.Exportprofile" ApplicationOptions="applicationOptions" ExportOptions="exportOptions">
     <PrepareExportStepContent>
         <Field Horizontal="true" JustifyContent="JustifyContent.End">
             <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
@@ -743,6 +743,7 @@ along with Foobar.  If not, see
         if (exportOptions != null)
         {
             exportOptions.ExportProfiles.Remove(exportOptions.SelectedExportProfile);
+            //TODO: Set selected profile correctly
         }
     }
 
