@@ -22,7 +22,6 @@ namespace AudioCuesheetEditor.Model.Options
     {
         public static readonly Exportprofile DefaultSelectedExportProfile = new() 
         {
-            Id = Guid.NewGuid(),
             Filename = "YouTube.txt",
             Name = "YouTube",
             SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
@@ -33,14 +32,12 @@ namespace AudioCuesheetEditor.Model.Options
             DefaultSelectedExportProfile,
             new Exportprofile()
             {
-                Id = Guid.NewGuid(),
                 Filename = "Mixcloud.txt",
                 Name = "Mixcloud",
                 SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
             },
             new Exportprofile()
             {
-                Id = Guid.NewGuid(),
                 Filename = "Export.csv",
                 Name = "CSV Export",
                 SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;",
@@ -49,20 +46,29 @@ namespace AudioCuesheetEditor.Model.Options
             },
             new Exportprofile()
             {
-                Id = Guid.NewGuid(),
                 Filename = "Tracks.txt",
                 Name = "Tracks only",
                 SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
             }
         ];
-        public ICollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
+        public ExportOptions() 
+        {
+            ExportProfiles = DefaultExportProfiles;
+            SelectedProfileId = ExportProfiles.First().Id;
+        }
+        [JsonConstructor]
+        public ExportOptions(ICollection<Exportprofile> exportProfiles, Guid? selectedProfileId = null)
+        {
+            ExportProfiles = exportProfiles;
+            SelectedProfileId = selectedProfileId ?? ExportProfiles.First().Id;
+        }
+        public ICollection<Exportprofile> ExportProfiles { get; set; }
         [JsonIgnore]
         public Exportprofile SelectedExportProfile
         {
-            //TODO: We need to make the selected profile optional because of backward compability
             get => ExportProfiles.First(x => x.Id == SelectedProfileId);
             set => SelectedProfileId = value.Id;
         }
-        public Guid SelectedProfileId { get; private set; } = DefaultSelectedExportProfile.Id;
+        public Guid? SelectedProfileId { get; private set; }
     }
 }
