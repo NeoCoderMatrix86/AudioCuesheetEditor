@@ -112,9 +112,15 @@ along with Foobar.  If not, see
 
     [Parameter]
     [EditorRequired]
-    public ExportType ExportType { get; set; }
+    public ExportOptions? ExportOptions { get; set; }
 
-    public Exportprofile? SelectedExportProfile { get; set; }
+    [Parameter]
+    [EditorRequired]
+    public ApplicationOptions? ApplicationOptions { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public ExportType ExportType { get; set; }
 
     public Boolean IsVisible { get; private set; }
     public Validations? Validations { get; private set; }
@@ -124,7 +130,6 @@ along with Foobar.  If not, see
     IReadOnlyCollection<Exportfile>? exportfiles;
     Boolean prepareExportCompleted = false;
     HotKeysContext? hotKeysContext;
-    ApplicationOptions? applicationOptions;
     Steps? stepsRef;
 
     Boolean StepNavigationAllowed
@@ -152,7 +157,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, ExportOptions?.SelectedExportProfile, ApplicationOptions);
             var validationResult = generator.Validate();
             if (validationResult?.Status == Model.Entity.ValidationStatus.Error)
             {
@@ -188,7 +193,6 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
 
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
 
         await base.OnInitializedAsync();
@@ -237,7 +241,7 @@ along with Foobar.  If not, see
         if (ExportPossible)
         {
             GenerateExportfilesClicked?.Invoke(this, EventArgs.Empty);
-            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, SelectedExportProfile, applicationOptions);
+            var generator = new ExportfileGenerator(ExportType, _sessionStateContainer.Cuesheet, ExportOptions?.SelectedExportProfile, ApplicationOptions);
             exportfiles = generator.GenerateExportfiles();
             selectedStep = "displayExportResult";
             prepareExportCompleted = true;
@@ -267,7 +271,11 @@ along with Foobar.  If not, see
     {
         if (options is ApplicationOptions)
         {
-            applicationOptions = (ApplicationOptions)options;
+            ApplicationOptions = (ApplicationOptions)options;
+        }
+        if (options is ExportOptions)
+        {
+            ExportOptions = (ExportOptions)options;
         }
     }
 }
