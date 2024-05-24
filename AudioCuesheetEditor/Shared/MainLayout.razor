@@ -732,6 +732,7 @@ along with Foobar.  If not, see
             exportOptions.ExportProfiles.Add(newProfile);
             exportOptions.SelectedExportProfile = newProfile;
         }
+        Task.Run(SaveExportOptions);
     }
 
     void OnDeleteExportProfileClicked()
@@ -742,6 +743,7 @@ along with Foobar.  If not, see
             exportOptions.ExportProfiles.Remove(exportOptions.SelectedExportProfile);
             exportOptions.SelectedExportProfile = exportOptions.ExportProfiles.LastOrDefault();
         }
+        Task.Run(SaveExportOptions);
     }
 
     void SelectedExportProfileChanged(Guid? newValue)
@@ -754,6 +756,7 @@ along with Foobar.  If not, see
         }
         modalExportdialogExportprofile?.Validations?.ValidateAll().GetAwaiter().GetResult();
         modalExportdialogExportprofile?.Reset();
+        Task.Run(SaveExportOptions);
         StateHasChanged();
     }
 
@@ -798,75 +801,74 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    Task OnSelectedProfileNameChanged(string value)
+    async Task OnSelectedProfileNameChanged(string value)
     {
         if (exportOptions?.SelectedExportProfile != null)
         {
             exportOptions.SelectedExportProfile.Name = value;
         }
         modalExportdialogExportprofile?.Reset();
-        return Task.CompletedTask;
+        await SaveExportOptions();
     }
 
-    Task OnSelectedExportProfileFilenameChanged(string value)
+    async Task OnSelectedExportProfileFilenameChanged(string value)
     {
         if (exportOptions?.SelectedExportProfile != null)
         {
             exportOptions.SelectedExportProfile.Filename = value;
         }
         modalExportdialogExportprofile?.Reset();
-        return Task.CompletedTask;
+        await SaveExportOptions();
     }
 
-    Task OnSelectedExportProfileSchemeHeadChanged(string value)
+    async Task OnSelectedExportProfileSchemeHeadChanged(string value)
     {
         if (exportOptions?.SelectedExportProfile != null)
         {
             exportOptions.SelectedExportProfile.SchemeHead = value;
         }
         modalExportdialogExportprofile?.Reset();
-        return Task.CompletedTask;
+        await SaveExportOptions();
     }
 
-    Task OnSelectedExportProfileSchemeTracksChanged(string value)
+    async Task OnSelectedExportProfileSchemeTracksChanged(string value)
     {
         if (exportOptions?.SelectedExportProfile != null)
         {
             exportOptions.SelectedExportProfile.SchemeTracks = value;
         }
         modalExportdialogExportprofile?.Reset();
-        return Task.CompletedTask;
+        await SaveExportOptions();
     }
 
-    Task OnSelectedExportProfileSchemeFooterChanged(string value)
+    async Task OnSelectedExportProfileSchemeFooterChanged(string value)
     {
         if (exportOptions?.SelectedExportProfile != null)
         {
             exportOptions.SelectedExportProfile.SchemeFooter = value;
         }
         modalExportdialogExportprofile?.Reset();
-        return Task.CompletedTask;
+        await SaveExportOptions();
     }
 
-    Task DropDownItemSelected(string schemeName, string value)
+    async Task DropDownItemSelected(string schemeName, string value)
     {
         if (exportOptions?.SelectedExportProfile != null)
         {
             switch (schemeName)
             {
                 case nameof(Exportprofile.SchemeHead):
-                    OnSelectedExportProfileSchemeHeadChanged(exportOptions.SelectedExportProfile.SchemeHead += value);
+                    await OnSelectedExportProfileSchemeHeadChanged(exportOptions.SelectedExportProfile.SchemeHead += value);
                     break;
                 case nameof(Exportprofile.SchemeTracks):
-                    OnSelectedExportProfileSchemeTracksChanged(exportOptions.SelectedExportProfile.SchemeTracks += value);
+                    await OnSelectedExportProfileSchemeTracksChanged(exportOptions.SelectedExportProfile.SchemeTracks += value);
                     break;
                 case nameof(Exportprofile.SchemeFooter):
-                    OnSelectedExportProfileSchemeFooterChanged(exportOptions.SelectedExportProfile.SchemeFooter += value);
+                    await OnSelectedExportProfileSchemeFooterChanged(exportOptions.SelectedExportProfile.SchemeFooter += value);
                     break;
             }
             
         }
-        return Task.CompletedTask;
     }
 
     async Task ReloadApplication()
