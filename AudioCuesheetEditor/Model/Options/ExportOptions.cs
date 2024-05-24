@@ -64,10 +64,10 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public ICollection<Exportprofile> ExportProfiles { get; set; }
         [JsonIgnore]
-        public Exportprofile SelectedExportProfile
+        public Exportprofile? SelectedExportProfile
         {
-            get => ExportProfiles.First(x => x.Id == SelectedProfileId);
-            set => SelectedProfileId = value.Id;
+            get => SelectedProfileId.HasValue ? ExportProfiles.FirstOrDefault(x => x.Id == SelectedProfileId) : null;
+            set => SelectedProfileId = value?.Id;
         }
         public Guid? SelectedProfileId { get; private set; }
     }
