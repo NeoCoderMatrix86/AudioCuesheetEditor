@@ -740,8 +740,7 @@ along with Foobar.  If not, see
         if (exportOptions?.SelectedExportProfile != null)
         {
             exportOptions.ExportProfiles.Remove(exportOptions.SelectedExportProfile);
-            //TODO: Set selected export profile to last one above?!
-            exportOptions.SelectedExportProfile = null;
+            exportOptions.SelectedExportProfile = exportOptions.ExportProfiles.LastOrDefault();
         }
     }
 
