@@ -176,7 +176,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(sourceTrack.End, destinyTrack.End);
             Assert.AreEqual(sourceTrack.PreGap, destinyTrack.PreGap);
             Assert.AreEqual(sourceTrack.PostGap, destinyTrack.PostGap);
-            var destinationTracks = new List<Track>() { new Track(), new Track(), new Track() };
+            var destinationTracks = new List<Track>() { new(), new(), new() };
             destinationTracks.ForEach(x => x.CopyValues(sourceTrack, useInternalSetters: Track.AllPropertyNames));
             Assert.IsTrue(destinationTracks.All(x => x.IsLinkedToPreviousTrack == sourceTrack.IsLinkedToPreviousTrack));
             Assert.IsTrue(destinationTracks.All(x => x.Cuesheet == sourceTrack.Cuesheet));
@@ -222,6 +222,36 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(cuesheet, track.Cuesheet);
             track.Cuesheet = null;
             Assert.IsNull(track.Cuesheet);
+        }
+
+        [TestMethod()]
+        public void Validate_InvalidEnd_ReturnsValidationStatusError()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Begin = new TimeSpan(0, 2, 32),
+                End = new TimeSpan(0, 1, 15)
+            };
+            // Act
+            var endValidationResult = track.Validate(x => x.End);
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+        }
+
+        [TestMethod()]
+        public void Validate_InvalidBegin_ReturnsValidationStatusError()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Begin = new TimeSpan(0, 4, 53),
+                End = new TimeSpan(0, 3, 15)
+            };
+            // Act
+            var endValidationResult = track.Validate(x => x.Begin);
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
         }
     }
 }

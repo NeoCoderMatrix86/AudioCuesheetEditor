@@ -432,6 +432,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
                         }
+                        if (Begin > End)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), nameof(End)));
+                        }
                     }
                     break;
                 case nameof(End):
@@ -447,6 +452,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         {
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(End)));
+                        }
+                        if (End < Begin)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(End), nameof(Begin)));
                         }
                     }
                     break;
