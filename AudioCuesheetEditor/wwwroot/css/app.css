@@ -80,7 +80,7 @@ a, .btn-link {
         cursor: move;
     }
 
-.hideInput {
+.dragNDropFile > .input-group {
     width: 0.1px;
     height: 0.1px;
     opacity: 0;
@@ -89,7 +89,7 @@ a, .btn-link {
     z-index: -1;
 }
 
-    .hideInput + label {
+.dragNDropFile > .form-label {
         max-width: 80%;
         text-overflow: ellipsis;
         white-space: nowrap;

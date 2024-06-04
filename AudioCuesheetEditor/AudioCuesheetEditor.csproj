@@ -1,13 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-	<TargetFramework>net7.0</TargetFramework>
+	<TargetFramework>net8.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
 	<RazorLangVersion>3.0</RazorLangVersion>
-	<Version>4.0.0</Version>
+	<Version>5.0.0</Version>
+	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	<PublishTrimmed>true</PublishTrimmed>
 	<RunAOTCompilation>true</RunAOTCompilation>
   </PropertyGroup>
@@ -21,8 +22,8 @@
     <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
     <Content Remove="Resources\Localization\CuesheetData\de.json" />
     <Content Remove="Resources\Localization\CuesheetData\en.json" />
-    <Content Remove="Resources\Localization\EditSplitpoints\de.json" />
-    <Content Remove="Resources\Localization\EditSplitpoints\en.json" />
+    <Content Remove="Resources\Localization\EditSections\de.json" />
+    <Content Remove="Resources\Localization\EditSections\en.json" />
     <Content Remove="Resources\Localization\EditTrackModal\de.json" />
     <Content Remove="Resources\Localization\EditTrackModal\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
@@ -60,8 +61,8 @@
     <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
     <EmbeddedResource Include="Resources\Localization\CuesheetData\de.json" />
     <EmbeddedResource Include="Resources\Localization\CuesheetData\en.json" />
-    <EmbeddedResource Include="Resources\Localization\EditSplitpoints\de.json" />
-    <EmbeddedResource Include="Resources\Localization\EditSplitpoints\en.json" />
+    <EmbeddedResource Include="Resources\Localization\EditSections\de.json" />
+    <EmbeddedResource Include="Resources\Localization\EditSections\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\de.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
@@ -96,19 +97,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.1.5" />
-    <PackageReference Include="MetaBrainz.MusicBrainz" Version="5.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.1" PrivateAssets="all" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.5.2" />
+    <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" PrivateAssets="all" />
 	  <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
-    <PackageReference Include="Blazorise.Components" Version="1.1.5" />
+    <PackageReference Include="Blazorise.Components" Version="1.5.2" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
-    <PackageReference Include="Markdig" Version="0.30.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="1.0.0" />
-    <PackageReference Include="z440.atl.core" Version="4.17.0" />
+    <PackageReference Include="Markdig" Version="0.37.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="4.1.0.1" />
+    <PackageReference Include="z440.atl.core" Version="5.22.0" />
   </ItemGroup>
 
 </Project>

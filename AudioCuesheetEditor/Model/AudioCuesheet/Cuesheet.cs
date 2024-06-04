@@ -29,64 +29,46 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class TrackAddRemoveEventArgs : EventArgs
+    public class TrackAddRemoveEventArgs(Track track) : EventArgs
     {
-        public TrackAddRemoveEventArgs(Track track)
-        {
-            Track = track;
-        }
-
-        public Track Track { get; }
+        public Track Track { get; } = track;
     }
 
-    public class SplitPointAddRemoveEventArgs : EventArgs
+    public class CuesheetSectionAddRemoveEventArgs(CuesheetSection section) : EventArgs
     {
-        public SplitPointAddRemoveEventArgs(SplitPoint splitPoint)
-        {
-            SplitPoint = splitPoint;
-        }
-
-        public SplitPoint SplitPoint { get; }
+        public CuesheetSection Section { get; } = section;
     }
 
-    public class Cuesheet : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
+    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
     {
         public const String MimeType = "text/*";
         public const String FileExtension = ".cue";
 
         private readonly object syncLock = new();
 
-        private List<Track> tracks;
+        private List<Track> tracks = [];
         private String? artist;
         private String? title;
         private Audiofile? audiofile;
         private CDTextfile? cDTextfile;
-        private Cataloguenumber catalogueNumber;
+        private Cataloguenumber catalogueNumber = new();
         private DateTime? recordingStart;
-        private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = new();
-        private List<SplitPoint> splitPoints;
+        private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
+        private List<CuesheetSection> sections = [];
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
         public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
-        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointAdded;
-        public event EventHandler<SplitPointAddRemoveEventArgs>? SplitPointRemoved;
+        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionAdded;
+        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionRemoved;
         public event EventHandler? CuesheetImported;
-
-        public Cuesheet(TraceChangeManager? traceChangeManager = null)
-        {
-            tracks = new();
-            catalogueNumber = new();
-            splitPoints = new();
-            TraceChangeManager = traceChangeManager;
-        }
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
         {
-            get { return tracks.AsReadOnly(); }
-            private set 
+            get => tracks.AsReadOnly();
+            private set
             {
                 foreach (var track in tracks)
                 {
@@ -94,7 +76,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
                     track.Cuesheet = null;
                 }
-                tracks = value.ToList();
+                tracks = [.. value];
                 foreach (var track in tracks)
                 {
                     track.Cuesheet = this;
@@ -103,7 +85,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
         }
-        
+
         public String? Artist 
         {
             get => artist;
@@ -197,46 +179,45 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Boolean IsImporting { get; private set; }
         
         [JsonInclude]
-        public IReadOnlyCollection<SplitPoint> SplitPoints 
+        public IReadOnlyCollection<CuesheetSection> Sections 
         {
-            get => splitPoints;
+            get => sections;
             private set
             {
-                foreach(var splitpoint in value.Where(x => x.Cuesheet != this))
+                foreach(var section in value.Where(x => x.Cuesheet != this))
                 {
-                    splitpoint.Cuesheet = this;
+                    section.Cuesheet = this;
                 }
-                splitPoints = value.ToList();
+                sections = [.. value];
             }
         }
 
         [JsonIgnore]
-        public TraceChangeManager? TraceChangeManager { get; }
+        public TraceChangeManager? TraceChangeManager { get; } = traceChangeManager;
 
-        public SplitPoint AddSplitPoint()
+        public CuesheetSection AddSection()
         {
-            var previousValue = new List<SplitPoint>(splitPoints);
-            var splitPoint = new SplitPoint(this);
-            splitPoints.Add(splitPoint);
-            SplitPointAdded?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
-            OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
-            return splitPoint;
+            var previousValue = new List<CuesheetSection>(sections);
+            var section = new CuesheetSection(this);
+            sections.Add(section);
+            SectionAdded?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
+            OnTraceablePropertyChanged(previousValue, nameof(Sections));
+            return section;
         }
 
-        public void RemoveSplitPoint(SplitPoint splitPoint)
+        public void RemoveSection(CuesheetSection section)
         {
-            var previousValue = new List<SplitPoint>(splitPoints);
-            if (splitPoints.Remove(splitPoint))
+            var previousValue = new List<CuesheetSection>(sections);
+            if (sections.Remove(section))
             {
-                OnTraceablePropertyChanged(previousValue, nameof(SplitPoints));
-                SplitPointRemoved?.Invoke(this, new SplitPointAddRemoveEventArgs(splitPoint));
+                OnTraceablePropertyChanged(previousValue, nameof(Sections));
+                SectionRemoved?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
             }
         }
 
-        public SplitPoint? GetSplitPointAtTrack(Track track)
+        public CuesheetSection? GetSectionAtTrack(Track track)
         {
-            SplitPoint? splitPointAtTrack = SplitPoints?.FirstOrDefault(x => track.Begin < x.Moment && track.End >= x.Moment);
-            return splitPointAtTrack;
+            return Sections?.FirstOrDefault(x => track.Begin < x.Begin && track.End >= x.Begin);
         }
 
         /// <summary>
@@ -247,10 +228,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public Track? GetPreviousLinkedTrack(Track track)
         {
             Track? previousLinkedTrack = null;
-            if (track == null)
-            {
-                throw new ArgumentNullException(nameof(track));
-            }
             if (track.IsLinkedToPreviousTrack)
             {
                 var index = tracks.IndexOf(track);
@@ -462,7 +439,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (Tracks.Count <= 0)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has invalid Count ({1})!", nameof(Tracks), 0));
                     }
                     else
@@ -473,7 +450,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                             .Where(grp => grp.Count() > 1);
                         if (tracksWithSamePosition.Any())
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             foreach (var track in tracksWithSamePosition)
                             {
                                 foreach (var trackWithSamePosition in track)
@@ -489,7 +466,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                                                         && (x.Equals(track) == false));
                             if (tracksBetween.Any())
                             {
-                                validationMessages ??= new();
+                                validationMessages ??= [];
                                 foreach (var trackBetween in tracksBetween)
                                 {
                                     validationMessages.Add(new ValidationMessage("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position != null ? track.Position : String.Empty, track.Artist ?? String.Empty, track.Title ?? String.Empty, track.Begin != null ? track.Begin : String.Empty, track.End != null ? track.End : String.Empty, trackBetween.Position != null ? trackBetween.Position : String.Empty, trackBetween.Artist ?? String.Empty, trackBetween.Title ?? String.Empty, trackBetween.Begin != null ? trackBetween.Begin : String.Empty, trackBetween.End != null ? trackBetween.End : String.Empty));
@@ -502,7 +479,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (Audiofile == null)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Audiofile)));
                     }
                     break;
@@ -510,7 +487,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Artist))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
                     }
                     break;
@@ -518,7 +495,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Title))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
                     }
                     break;
@@ -594,10 +571,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
-            // Copy splitpoints
-            foreach (var splitPoint in cuesheet.SplitPoints)
+            // Copy sections
+            foreach (var splitPoint in cuesheet.Sections)
             {
-                var newSplitPoint = AddSplitPoint();
+                var newSplitPoint = AddSection();
                 newSplitPoint.CopyValues(splitPoint);
             }
         }
@@ -701,14 +678,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void SwitchTracks(Track track1, Track track2)
         {
-            if (track1 == null)
-            {
-                throw new ArgumentNullException(nameof(track1));
-            }
-            if (track2 == null)
-            {
-                throw new ArgumentNullException(nameof(track2));
-            }
             var indexTrack1 = tracks.IndexOf(track1);
             var indexTrack2 = tracks.IndexOf(track2);
             //Switch track positions in array

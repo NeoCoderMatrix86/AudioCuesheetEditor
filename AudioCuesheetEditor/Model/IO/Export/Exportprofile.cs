@@ -15,10 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO.Audio;
-using System;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
@@ -105,6 +101,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
         public Exportprofile()
         {
+            Id = Guid.NewGuid();
             schemeHead = String.Empty;
             schemeTracks = String.Empty;
             schemeFooter = String.Empty;
@@ -112,6 +109,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             var random = new Random();
             name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
         }
+        public Guid Id { get; init; }
         public String Name 
         {
             get => name;
@@ -150,7 +148,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         if (SchemeHead.Contains(availableScheme.Value) == true)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeHead), availableScheme.Value));
                             break;
                         }
@@ -162,7 +160,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         if (SchemeTracks.Contains(availableScheme.Value) == true)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeTracks), availableScheme.Value));
                             break;
                         }
@@ -174,7 +172,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     {
                         if (SchemeFooter.Contains(availableScheme.Value) == true)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholder '{1}' that can not be resolved!", nameof(SchemeFooter), availableScheme.Value));
                             break;
                         }
@@ -184,7 +182,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Filename))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Filename)));
                     }
                     break;
@@ -192,7 +190,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(Name))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
                     }
                     break;

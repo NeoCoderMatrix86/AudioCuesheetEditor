@@ -124,7 +124,7 @@ namespace AudioCuesheetEditor.Model.Options
                     validationStatus = ValidationStatus.Success;
                     if (string.IsNullOrEmpty(CuesheetFilename))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(CuesheetFilename)));
                     }
                     else
@@ -132,13 +132,13 @@ namespace AudioCuesheetEditor.Model.Options
                         var extension = Path.GetExtension(CuesheetFilename);
                         if (extension.Equals(Cuesheet.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(CuesheetFilename), Cuesheet.FileExtension));
                         }
                         var filenameWithoutExtension = Path.GetFileNameWithoutExtension(CuesheetFilename);
                         if (string.IsNullOrEmpty(filenameWithoutExtension))
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(CuesheetFilename)));
                         }
                     }
@@ -147,7 +147,7 @@ namespace AudioCuesheetEditor.Model.Options
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(RecordedAudiofilename))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(RecordedAudiofilename)));
                     }
                     else
@@ -155,13 +155,13 @@ namespace AudioCuesheetEditor.Model.Options
                         var extension = Path.GetExtension(RecordedAudiofilename);
                         if (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(RecordedAudiofilename), Audiofile.AudioCodecWEBM.FileExtension));
                         }
                         var filename = Path.GetFileNameWithoutExtension(RecordedAudiofilename);
                         if (String.IsNullOrEmpty(filename))
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(RecordedAudiofilename)));
                         }
                     }
@@ -170,7 +170,7 @@ namespace AudioCuesheetEditor.Model.Options
                     validationStatus = ValidationStatus.Success;
                     if (String.IsNullOrEmpty(ProjectFilename))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ProjectFilename)));
                     }
                     else
@@ -178,13 +178,13 @@ namespace AudioCuesheetEditor.Model.Options
                         var extension = Path.GetExtension(ProjectFilename);
                         if (extension.Equals(Projectfile.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), Projectfile.FileExtension));
                         }
                         var filename = Path.GetFileNameWithoutExtension(ProjectFilename);
                         if (String.IsNullOrEmpty(filename))
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ProjectFilename)));
                         }
                     }

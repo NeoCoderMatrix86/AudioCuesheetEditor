@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public class Track : Validateable<Track>, ICuesheetEntity, ITraceable
     {
-        public static readonly List<String> AllPropertyNames = new() { nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length) };
+        public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 
         private uint? position;
         private String? artist;
@@ -35,7 +35,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? begin;
         private TimeSpan? end;
         private TimeSpan? _length;
-        private List<Flag> flags = new();
+        private List<Flag> flags = [];
         private Boolean isLinkedToPreviousTrack;
         private Cuesheet? cuesheet;
         private TimeSpan? preGap;
@@ -161,11 +161,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get { return flags.AsReadOnly(); }
             private set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException(nameof(Flags));
-                }
-                flags = value.ToList();
+                flags = [.. value];
             }
         }
         [JsonIgnore]
@@ -368,16 +364,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         ///<inheritdoc/>
         public void SetFlag(Flag flag, SetFlagMode flagMode)
         {
-            if (flag == null)
-            {
-                throw new ArgumentNullException(nameof(flag));
-            }
             var previousValue = flags;
             if ((flagMode == SetFlagMode.Add) && (Flags.Contains(flag) == false))
             {
                 flags.Add(flag);
             }
-            if ((flagMode == SetFlagMode.Remove) && (Flags.Contains(flag)))
+            if ((flagMode == SetFlagMode.Remove) && Flags.Contains(flag))
             {
                 flags.Remove(flag);
             }
@@ -401,14 +393,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (Position == null)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Position)));
                     }
                     else
                     {
                         if (Position == 0)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} may not be 0!", nameof(Position)));
                         }
                         else
@@ -419,7 +411,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                                 var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
                                 if (positionTrackShouldHave != Position)
                                 {
-                                    validationMessages ??= new();
+                                    validationMessages ??= [];
                                     validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
                                 }
                             }
@@ -430,15 +422,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (Begin == null)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
                     }
                     else
                     {
                         if (Begin < TimeSpan.Zero)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
+                        }
+                        if (Begin > End)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), nameof(End)));
                         }
                     }
                     break;
@@ -446,15 +443,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (End == null)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
                     }
                     else
                     {
                         if (End < TimeSpan.Zero)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(End)));
+                        }
+                        if (End < Begin)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(End), nameof(Begin)));
                         }
                     }
                     break;
@@ -462,7 +464,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     validationStatus = ValidationStatus.Success;
                     if (Length == null)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Length)));
                     }
                     break;

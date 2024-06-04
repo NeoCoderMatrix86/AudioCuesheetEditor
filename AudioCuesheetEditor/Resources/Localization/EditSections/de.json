@@ -1,10 +1,11 @@
 {
   "culture": "de",
   "translations": {
-    "Add new split point": "Neuen Aufteilungspunkt hinzufügen",
+    "Add new section": "Neuen Abschnitt hinzufügen",
     "Controls": "Steuerung",
-    "Moment": "Zeitpunkt",
-    "Delete split tooltip": "Löscht diesen Aufteilungspunkt",
+    "Begin": "Anfang",
+    "End": "Ende",
+    "Delete section tooltip": "Löscht diesen Abschnitt",
     "CD artist": "CD Künstler",
     "CD title": "CD Titel",
     "Audiofile name": "Audiodatei",

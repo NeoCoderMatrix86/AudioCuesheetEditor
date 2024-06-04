@@ -23,13 +23,10 @@ along with Foobar.  If not, see
 <Layout>
     <LayoutContent Margin="Margin.Is2">
         <Heading Size="HeadingSize.Is1">@_localizer["About AudioCuesheetEditor"]</Heading>
-        <Heading Size="HeadingSize.Is3">@_localizer["Version"] : @VersionString</Heading>
-        <Paragraph>@((MarkupString)changelog)</Paragraph>
-        <Paragraph>@((MarkupString)_localizer["WrittenBy"])</Paragraph>
-        <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@_localizer["DonateForThisProject"]</Blazorise.Link>
-        <br />
-        <br />
-        <Blazorise.Link To="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor" Target="Target.Blank">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</Blazorise.Link>
+        <Heading Size="HeadingSize.Is5">@_localizer["Version"]: @VersionString</Heading>
+        <Heading Size="HeadingSize.Is5">@_localizer["Project url"]: <Blazorise.Link To="https://www.github.com/NeoCoderMatrix86/AudioCuesheetEditor" Target="Target.Blank">https://www.github.com/NeoCoderMatrix86/AudioCuesheetEditor</Blazorise.Link></Heading>
+        <Heading Size="HeadingSize.Is5">@_localizer["Preview environment"]: <Blazorise.Link To="https://preview-audiocuesheeteditor.netlify.app/" Target="Target.Blank">https://preview-audiocuesheeteditor.netlify.app/</Blazorise.Link></Heading>
+        <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@_localizer["Donate for this project"]</Blazorise.Link>
         <br />
         <br />
         <Heading Size="HeadingSize.Is3">@_localizer["Licence"]</Heading>
@@ -38,19 +35,15 @@ along with Foobar.  If not, see
 </Layout>
 
 @code {
-
     [CascadingParameter]
     public MainLayout? mainLayout { get; set; }
 
     String licence = default!;
-    String changelog = default!;
 
     protected override async Task OnInitializedAsync()
     {
         var licenceContent = await _httpClient.GetStringAsync("Licence.txt");
         licence = Markdown.ToHtml(licenceContent);
-        var changelogContent = await _httpClient.GetStringAsync("CHANGELOG.md");
-        changelog = Markdown.ToHtml(changelogContent);
     }
 
     protected override async Task OnParametersSetAsync()

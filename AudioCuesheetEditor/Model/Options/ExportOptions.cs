@@ -14,20 +14,22 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Export;
+using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
     public class ExportOptions : IOptions
     {
-        public static readonly List<Exportprofile> DefaultExportProfiles = new() 
-        { 
-            new Exportprofile()
-            {
-                Filename = "YouTube.txt",
-                Name = "YouTube",
-                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
-                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
-            },
+        public static readonly Exportprofile DefaultSelectedExportProfile = new() 
+        {
+            Filename = "YouTube.txt",
+            Name = "YouTube",
+            SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+            SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+        };
+        public static readonly ICollection<Exportprofile> DefaultExportProfiles =
+        [
+            DefaultSelectedExportProfile,
             new Exportprofile()
             {
                 Filename = "Mixcloud.txt",
@@ -48,7 +50,25 @@ namespace AudioCuesheetEditor.Model.Options
                 Name = "Tracks only",
                 SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
             }
-        };
-        public IReadOnlyCollection<Exportprofile> ExportProfiles { get; set; } = DefaultExportProfiles;
+        ];
+        public ExportOptions() 
+        {
+            ExportProfiles = DefaultExportProfiles;
+            SelectedProfileId = ExportProfiles.First().Id;
+        }
+        [JsonConstructor]
+        public ExportOptions(ICollection<Exportprofile> exportProfiles, Guid? selectedProfileId = null)
+        {
+            ExportProfiles = exportProfiles;
+            SelectedProfileId = selectedProfileId ?? ExportProfiles.First().Id;
+        }
+        public ICollection<Exportprofile> ExportProfiles { get; set; }
+        [JsonIgnore]
+        public Exportprofile? SelectedExportProfile
+        {
+            get => SelectedProfileId.HasValue ? ExportProfiles.FirstOrDefault(x => x.Id == SelectedProfileId) : null;
+            set => SelectedProfileId = value?.Id;
+        }
+        public Guid? SelectedProfileId { get; private set; }
     }
 }
