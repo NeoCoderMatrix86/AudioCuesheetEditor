@@ -176,7 +176,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(sourceTrack.End, destinyTrack.End);
             Assert.AreEqual(sourceTrack.PreGap, destinyTrack.PreGap);
             Assert.AreEqual(sourceTrack.PostGap, destinyTrack.PostGap);
-            var destinationTracks = new List<Track>() { new Track(), new Track(), new Track() };
+            var destinationTracks = new List<Track>() { new(), new(), new() };
             destinationTracks.ForEach(x => x.CopyValues(sourceTrack, useInternalSetters: Track.AllPropertyNames));
             Assert.IsTrue(destinationTracks.All(x => x.IsLinkedToPreviousTrack == sourceTrack.IsLinkedToPreviousTrack));
             Assert.IsTrue(destinationTracks.All(x => x.Cuesheet == sourceTrack.Cuesheet));
