@@ -65,7 +65,7 @@ namespace AudioCuesheetEditor.Model.Entity
             set
             {
                 validationMessages = value;
-                if ((validationMessages != null) && validationMessages.Any())
+                if ((validationMessages != null) && validationMessages.Count != 0)
                 {
                     Status = ValidationStatus.Error;
                 }
