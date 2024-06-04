@@ -223,5 +223,35 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track.Cuesheet = null;
             Assert.IsNull(track.Cuesheet);
         }
+
+        [TestMethod()]
+        public void Validate_InvalidEnd_ReturnsValidationStatusError()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Begin = new TimeSpan(0, 2, 32),
+                End = new TimeSpan(0, 1, 15)
+            };
+            // Act
+            var endValidationResult = track.Validate(x => x.End);
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+        }
+
+        [TestMethod()]
+        public void Validate_InvalidBegin_ReturnsValidationStatusError()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Begin = new TimeSpan(0, 4, 53),
+                End = new TimeSpan(0, 3, 15)
+            };
+            // Act
+            var endValidationResult = track.Validate(x => x.Begin);
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+        }
     }
 }
