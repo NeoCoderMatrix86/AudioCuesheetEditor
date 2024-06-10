@@ -1,12 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.IO.Export;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.AudioCuesheet;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace AudioCuesheetEditor.Model.IO.Export.Tests
 {
@@ -51,6 +46,129 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
             endValidationResult = section.Validate(x => x.End);
             Assert.AreEqual(ValidationStatus.Success, beginValidationResult.Status);
             Assert.AreEqual(ValidationStatus.Success, endValidationResult.Status);
+        }
+
+        [TestMethod()]
+        public void Begin_FirstSection_ReturnsTimespanZero()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 4, 43)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 9, 23)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 14, 12)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 18, 53)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 22, 01)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 25, 56)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 31, 12)
+            });
+            // Act
+            var section = cuesheet.AddSection();
+            // Assert
+            Assert.AreEqual(TimeSpan.Zero, section.Begin);
+        }
+
+        [TestMethod()]
+        public void Begin_SecondSection_ReturnsFirstSectionEnd()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 4, 43)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 9, 23)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 14, 12)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 18, 53)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 22, 01)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 25, 56)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 31, 12)
+            });
+            var section1 = cuesheet.AddSection();
+            section1.End = new TimeSpan(0, 30, 0);
+            // Act
+            var section2 = cuesheet.AddSection();
+            // Assert
+            Assert.AreEqual(section1.End, section2.Begin);
+        }
+
+        [TestMethod()]
+        public void Begin_ThirdSection_ReturnsSecondSectionEnd()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 4, 43)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 9, 23)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 14, 12)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 18, 53)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 22, 01)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 25, 56)
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                End = new TimeSpan(0, 31, 12)
+            });
+            var section1 = cuesheet.AddSection();
+            section1.End = new TimeSpan(0, 15, 0);
+            var section2 = cuesheet.AddSection();
+            section2.End = new TimeSpan(0, 30, 0);
+            // Act
+            var section3 = cuesheet.AddSection();
+            // Assert
+            Assert.AreEqual(section2.End, section3.Begin);
         }
     }
 }

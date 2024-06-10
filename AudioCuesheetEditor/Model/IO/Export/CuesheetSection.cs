@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             title = Cuesheet.Title;
             audiofileName = Cuesheet.Audiofile?.Name;
             //Try to set begin
-            begin = Cuesheet.Sections?.FirstOrDefault()?.End;
+            begin = Cuesheet.Sections?.LastOrDefault()?.End;
             if (Begin.HasValue == false)
             {
                 begin = Cuesheet.Tracks.Min(x => x.Begin);
