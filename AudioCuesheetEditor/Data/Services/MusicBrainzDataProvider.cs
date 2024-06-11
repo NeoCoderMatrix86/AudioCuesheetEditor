@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.Data.Services
 
         public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String searchString)
         {
-            List<MusicBrainzArtist> artistSearchResult = new();
+            List<MusicBrainzArtist> artistSearchResult = [];
             if (String.IsNullOrEmpty(searchString) == false)
             {
                 using var query = new Query(Application, ApplicationVersion, ProjectUrl);
@@ -57,7 +57,7 @@ namespace AudioCuesheetEditor.Data.Services
 
         public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String searchString, String? artist = null)
         {
-            List<MusicBrainzTrack> titleSearchResult = new();
+            List<MusicBrainzTrack> titleSearchResult = [];
             if (String.IsNullOrEmpty(searchString) == false)
             {
                 using var query = new Query(Application, ApplicationVersion, ProjectUrl);

@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>AudioCuesheetEditor</title>
     <base href="/" />
+    <link href="manifest.webmanifest" rel="manifest" />
+    <!--Icons taken from open_icon_library-full\icons\png\256x256\mimetypes\tango-style\application-x-cue.png-->
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
@@ -52,6 +56,7 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="scripts/bootstrap.bundle.min.js"></script>
     <script src="scripts/fix-webm-duration.js"></script>
     <script src="scripts/library.js"></script>
