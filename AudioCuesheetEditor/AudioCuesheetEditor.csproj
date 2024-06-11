@@ -11,6 +11,7 @@
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	<PublishTrimmed>true</PublishTrimmed>
 	<RunAOTCompilation>true</RunAOTCompilation>
+	<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
   
   <ItemGroup>
@@ -110,6 +111,10 @@
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="4.1.0.1" />
     <PackageReference Include="z440.atl.core" Version="5.25.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+	<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
   </ItemGroup>
 
 </Project>
