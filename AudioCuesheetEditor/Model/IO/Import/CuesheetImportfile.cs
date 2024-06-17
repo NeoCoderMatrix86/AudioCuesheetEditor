@@ -22,25 +22,48 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class CuesheetImportfile
     {
+        private IEnumerable<String?> fileContent;
+
         /// <summary>
         /// File content (each element is a file line)
         /// </summary>
-        public IReadOnlyCollection<String?>? FileContent { get; private set; }
+        public IEnumerable<String?> FileContent 
+        {
+            get => fileContent;
+            set
+            {
+                fileContent = value;
+                Analyse();
+            }
+        }
 
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        public IReadOnlyCollection<String?>? FileContentRecognized { get; private set; }
+        public IEnumerable<String?>? FileContentRecognized { get; private set; }
         public Exception? AnalyseException { get; private set; }
         public Cuesheet? Cuesheet { get; private set; }
+        public ApplicationOptions ApplicationOptions { get; private set; }
 
-        public CuesheetImportfile(MemoryStream fileContent, ApplicationOptions applicationOptions)
+        public CuesheetImportfile(MemoryStream fileContentStream, ApplicationOptions applicationOptions)
+        {
+            fileContentStream.Position = 0;
+            using var reader = new StreamReader(fileContentStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            fileContent = lines.AsReadOnly();
+            ApplicationOptions = applicationOptions;
+            Analyse();
+        }
+
+        private void Analyse()
         {
             try
             {
                 Cuesheet = new Cuesheet();
-                fileContent.Position = 0;
-                using var reader = new StreamReader(fileContent);
                 var cuesheetArtistGroupName = "CuesheetArtist";
                 var cuesheetTitleGroupName = "CuesheetTitle";
                 var cuesheetFileNameGroupName = "CuesheetFileName";
@@ -67,9 +90,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 Track? track = null;
                 List<String?> lines = [];
                 List<String?>? recognizedLines = [];
-                while (reader.EndOfStream == false)
+                foreach (var line in FileContent)
                 {
-                    var line = reader.ReadLine();
                     lines.Add(line);
                     String? recognizedLine = line;
                     if (String.IsNullOrEmpty(line) == false)
@@ -256,7 +278,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             }
                             if (track != null)
                             {
-                                Cuesheet.AddTrack(track, applicationOptions);
+                                Cuesheet.AddTrack(track, ApplicationOptions);
                             }
                             else
                             {
@@ -290,10 +312,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     recognizedLines.Add(recognizedLine);
                 }
-                FileContent = lines.AsReadOnly();
+                fileContent = lines.AsReadOnly();
                 FileContentRecognized = recognizedLines.AsReadOnly();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AnalyseException = ex;
                 Cuesheet = null;

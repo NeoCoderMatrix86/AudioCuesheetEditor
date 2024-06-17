@@ -69,7 +69,10 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         _sessionStateContainer.TextImportFile.FileContent = fileContentValue;
                     }
-                    //TODO: cuesheet!
+                    if (_sessionStateContainer.CuesheetImportFile != null)
+                    {
+                        _sessionStateContainer.CuesheetImportFile.FileContent = fileContentValue;
+                    }
                 }
             }
         }
