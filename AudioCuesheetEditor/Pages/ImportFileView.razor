@@ -24,8 +24,8 @@ along with Foobar.  If not, see
     <CardHeader>
         <Tabs @bind-SelectedTab="selectedTab">
             <Items>
-                <Tab Name="recognizedFilecontent">@_localizer["Recognized filecontent"]</Tab>
-                <Tab Name="editFilecontent">@_localizer["Edit filecontent"]</Tab>
+                <Tab Name="recognizedFilecontent">@_localizer["Preview"]</Tab>
+                <Tab Name="editFilecontent">@_localizer["Edit"]</Tab>
             </Items>
         </Tabs>
     </CardHeader>
@@ -48,14 +48,14 @@ along with Foobar.  If not, see
                 </Text>
             </TabPanel>
             <TabPanel Name="editFilecontent">
-                <TextEdit />
+                <MemoEdit Text="@FileContent" TextChanged="FileContent_TextChanged" />
             </TabPanel>
         </TabsContent>
     </CardBody>
 </Card>
 
 @code {
-    //TODO: Edit file
+    //TODO: FileContent height
     String selectedTab = "recognizedFilecontent";
 
     public void Dispose()
@@ -79,14 +79,35 @@ along with Foobar.  If not, see
         }
     }
 
+    public String? FileContent
+    {
+        get
+        {
+            if (_sessionStateContainer.TextImportFile?.FileContent != null)
+            {
+                return String.Join(Environment.NewLine, _sessionStateContainer.TextImportFile.FileContent);
+            }
+            if (_sessionStateContainer.CuesheetImportFile?.FileContent != null)
+            {
+                return String.Join(Environment.NewLine, _sessionStateContainer.CuesheetImportFile.FileContent);
+            }
+            return null;
+        }
+    }
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
-    
+
     void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    void FileContent_TextChanged(string text)
+    {
+        //TODO: Set the text to TextImportFile (or CuesheetImportFile) and Reanalyse
     }
 }

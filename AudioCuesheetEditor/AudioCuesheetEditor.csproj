@@ -27,6 +27,8 @@
     <Content Remove="Resources\Localization\EditSections\en.json" />
     <Content Remove="Resources\Localization\EditTrackModal\de.json" />
     <Content Remove="Resources\Localization\EditTrackModal\en.json" />
+    <Content Remove="Resources\Localization\ImportFileView\de.json" />
+    <Content Remove="Resources\Localization\ImportFileView\en.json" />
     <Content Remove="Resources\Localization\MainLayout\de.json" />
     <Content Remove="Resources\Localization\MainLayout\en.json" />
     <Content Remove="Resources\Localization\ModalDialog\de.json" />
@@ -66,6 +68,8 @@
     <EmbeddedResource Include="Resources\Localization\EditSections\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\de.json" />
     <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
+    <EmbeddedResource Include="Resources\Localization\ImportFileView\de.json" />
+    <EmbeddedResource Include="Resources\Localization\ImportFileView\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
     <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
     <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
