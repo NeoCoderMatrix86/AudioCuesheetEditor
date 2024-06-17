@@ -76,6 +76,6 @@ along with Foobar.  If not, see
 
     void FileContent_TextChanged(string text)
     {
-        //TODO: Set the text to TextImportFile (or CuesheetImportFile) and Reanalyse
+        _importManager.FileContent = text;
     }
 }

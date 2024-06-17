@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
         }
 
-        public IReadOnlyCollection<String?>? FileContentRecognized
+        public IEnumerable<String?>? FileContentRecognized
         {
             get
             {
@@ -59,6 +59,18 @@ namespace AudioCuesheetEditor.Services.IO
                     return String.Join(Environment.NewLine, _sessionStateContainer.CuesheetImportFile.FileContent);
                 }
                 return null;
+            }
+            set
+            {
+                var fileContentValue = value?.Split(Environment.NewLine);
+                if (fileContentValue != null)
+                {
+                    if (_sessionStateContainer.TextImportFile != null)
+                    {
+                        _sessionStateContainer.TextImportFile.FileContent = fileContentValue;
+                    }
+                    //TODO: cuesheet!
+                }
             }
         }
 

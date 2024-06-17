@@ -17,14 +17,8 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
@@ -38,12 +32,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
         private TextImportScheme textImportScheme;
         private TimeSpanFormat? timeSpanFormat;
         private bool disposedValue;
+        private IEnumerable<String?> fileContent;
 
-        public TextImportfile(MemoryStream fileContent, ImportOptions? importOptions = null)
+        public TextImportfile(MemoryStream fileContentStream, ImportOptions? importOptions = null)
         {
             textImportScheme = new TextImportScheme();
-            fileContent.Position = 0;
-            using var reader = new StreamReader(fileContent);
+            fileContent = [];
+            fileContentStream.Position = 0;
+            using var reader = new StreamReader(fileContentStream);
             List<String?> lines = [];
             while (reader.EndOfStream == false)
             {
@@ -68,12 +64,20 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <summary>
         /// File content (each element is a file line)
         /// </summary>
-        public IReadOnlyCollection<String?> FileContent { get; private set; }
+        public IEnumerable<String?> FileContent 
+        {
+            get => fileContent;
+            set
+            {
+                fileContent = value;
+                Analyse();
+            }
+        }
 
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        public IReadOnlyCollection<String?>? FileContentRecognized { get; private set; }
+        public IEnumerable<String?>? FileContentRecognized { get; private set; }
 
         public TextImportScheme TextImportScheme 
         {
