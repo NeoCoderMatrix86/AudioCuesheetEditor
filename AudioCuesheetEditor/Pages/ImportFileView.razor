@@ -18,7 +18,7 @@ along with Foobar.  If not, see
 @implements IDisposable
 
 @inject ITextLocalizer<ImportFileView> _localizer
-@inject SessionStateContainer _sessionStateContainer
+@inject ImportManager _importManager
 
 <Card>
     <CardHeader>
@@ -33,10 +33,10 @@ along with Foobar.  If not, see
         <TabsContent @bind-SelectedPanel="selectedTab">
             <TabPanel Name="recognizedFilecontent">
                 <Text>
-                    @if (FileContentRecognized != null)
+                    @if (_importManager.FileContentRecognized != null)
                     {
                         <pre>
-                            @foreach (var line in FileContentRecognized)
+                            @foreach (var line in _importManager.FileContentRecognized)
                             {
                                 if (line != null)
                                 {
@@ -48,7 +48,7 @@ along with Foobar.  If not, see
                 </Text>
             </TabPanel>
             <TabPanel Name="editFilecontent">
-                <MemoEdit Text="@FileContent" TextChanged="FileContent_TextChanged" />
+                <MemoEdit Text="@_importManager.FileContent" TextChanged="FileContent_TextChanged" />
             </TabPanel>
         </TabsContent>
     </CardBody>
@@ -60,48 +60,16 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
-    }
-
-    public IReadOnlyCollection<String?>? FileContentRecognized
-    {
-        get
-        {
-            if (_sessionStateContainer.TextImportFile != null)
-            {
-                return _sessionStateContainer.TextImportFile.FileContentRecognized;
-            }
-            if (_sessionStateContainer.CuesheetImportFile != null)
-            {
-                return _sessionStateContainer.CuesheetImportFile.FileContentRecognized;
-            }
-            return null;
-        }
-    }
-
-    public String? FileContent
-    {
-        get
-        {
-            if (_sessionStateContainer.TextImportFile?.FileContent != null)
-            {
-                return String.Join(Environment.NewLine, _sessionStateContainer.TextImportFile.FileContent);
-            }
-            if (_sessionStateContainer.CuesheetImportFile?.FileContent != null)
-            {
-                return String.Join(Environment.NewLine, _sessionStateContainer.CuesheetImportFile.FileContent);
-            }
-            return null;
-        }
+        _importManager.FileContentChanged -= ImportManager_FileContentChanged;
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
+        _importManager.FileContentChanged += ImportManager_FileContentChanged;
     }
 
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    void ImportManager_FileContentChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
