@@ -65,8 +65,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
                 Track? track = null;
-                List<String?> lines = new();
-                List<String?>? recognizedLines = new();
+                List<String?> lines = [];
+                List<String?>? recognizedLines = [];
                 while (reader.EndOfStream == false)
                 {
                     var line = reader.ReadLine();
@@ -214,9 +214,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(trackPreGapGroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(":")));
-                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(":") + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(":") + 1));
+                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
+                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
                                 if (track != null)
                                 {
                                     track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
@@ -238,9 +238,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(trackIndex01GroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(":")));
-                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(":") + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(":") + 1));
+                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
+                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
                                 if (track != null)
                                 {
                                     track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
@@ -270,9 +270,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(trackPostGapGroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(":")));
-                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(":") + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(":") + 1));
+                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
+                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
                                 if (track != null)
                                 {
                                     track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
