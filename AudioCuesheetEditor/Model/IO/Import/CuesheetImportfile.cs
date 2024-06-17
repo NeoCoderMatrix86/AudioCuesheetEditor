@@ -24,6 +24,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
     {
         private IEnumerable<String?> fileContent;
 
+        public EventHandler? AnalysisFinished;
+
         /// <summary>
         /// File content (each element is a file line)
         /// </summary>
@@ -321,6 +323,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 Cuesheet = null;
                 FileContentRecognized = null;
             }
+            AnalysisFinished?.Invoke(this, EventArgs.Empty);
         }
     }
 }
