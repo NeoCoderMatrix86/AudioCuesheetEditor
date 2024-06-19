@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class TextImportfile : IDisposable
+    public class TextImportfile : IImportfile, IDisposable
     {
         public const String MimeType = "text/plain";
         public const String FileExtension = ".txt";
@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
 
         public TextImportfile(MemoryStream fileContentStream, ImportOptions? importOptions = null)
         {
+            FileContentRecognized = [];
             textImportScheme = new TextImportScheme();
             fileContent = [];
             fileContentStream.Position = 0;
@@ -61,9 +62,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
         }
 
-        /// <summary>
-        /// File content (each element is a file line)
-        /// </summary>
+        /// <inheritdoc />
         public IEnumerable<String?> FileContent 
         {
             get => fileContent;
@@ -74,10 +73,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
         }
 
-        /// <summary>
-        /// File content with marking which passages has been reconized by scheme
-        /// </summary>
-        public IEnumerable<String?>? FileContentRecognized { get; private set; }
+        /// <inheritdoc />
+        public IEnumerable<String?> FileContentRecognized { get; private set; }
 
         public TextImportScheme TextImportScheme 
         {
@@ -133,7 +130,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             try
             {
                 Cuesheet = new Cuesheet();
-                FileContentRecognized = null;
+                FileContentRecognized = [];
                 AnalyseException = null;
                 Boolean cuesheetRecognized = false;
                 List<String?> recognizedFileContent = [];

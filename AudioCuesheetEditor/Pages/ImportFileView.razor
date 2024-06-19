@@ -18,11 +18,11 @@ along with Foobar.  If not, see
 @implements IDisposable
 
 @inject ITextLocalizer<ImportFileView> _localizer
-@inject ImportManager _importManager
+@inject SessionStateContainer _sessionStateContainer
 
 <Card>
     <CardHeader>
-        <Tabs @bind-SelectedTab="selectedTab">
+        <Tabs SelectedTab="@selectedTab" SelectedTabChanged="SelectedTabChanged">
             <Items>
                 <Tab Name="recognizedFilecontent">@_localizer["Preview"]</Tab>
                 <Tab Name="editFilecontent">@_localizer["Edit"]</Tab>
@@ -33,10 +33,10 @@ along with Foobar.  If not, see
         <TabsContent @bind-SelectedPanel="selectedTab">
             <TabPanel Name="recognizedFilecontent">
                 <Text>
-                    @if (_importManager.FileContentRecognized != null)
+                    @if (FileContentRecognized != null)
                     {
                         <pre>
-                            @foreach (var line in _importManager.FileContentRecognized)
+                            @foreach (var line in FileContentRecognized)
                             {
                                 if (line != null)
                                 {
@@ -48,36 +48,54 @@ along with Foobar.  If not, see
                 </Text>
             </TabPanel>
             <TabPanel Name="editFilecontent">
-                <MemoEdit Text="@_importManager.FileContent" TextChanged="FileContent_TextChanged" />
+                <MemoEdit Text="@fileContent" TextChanged="FileContent_TextChanged" AutoSize />
             </TabPanel>
         </TabsContent>
     </CardBody>
 </Card>
 
 @code {
-    //TODO: FileContent height
-    //TODO: Enable input of tabs
-
     String selectedTab = "recognizedFilecontent";
+    String? fileContent;
+
+    public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
 
     public void Dispose()
     {
-        _importManager.FileContentChanged -= ImportManager_FileContentChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        _importManager.FileContentChanged += ImportManager_FileContentChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
-    void ImportManager_FileContentChanged(object? sender, EventArgs args)
+    void SelectedTabChanged(string newTabName)
+    {
+        selectedTab = newTabName;
+        fileContent = null;
+        if (newTabName == "editFilecontent")
+        {
+            //Set fileContent just when component is visible in order to autosize the MemoEdit
+            if (_sessionStateContainer.Importfile != null)
+            {
+                fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContent);
+            }
+        }
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs e)
     {
         StateHasChanged();
     }
 
     void FileContent_TextChanged(string text)
     {
-        _importManager.FileContent = text;
+        var fileContentValue = text?.Split(Environment.NewLine);
+        if ((fileContentValue != null) && (_sessionStateContainer.Importfile != null))
+        {
+            _sessionStateContainer.Importfile.FileContent = fileContentValue;
+        }
     }
 }

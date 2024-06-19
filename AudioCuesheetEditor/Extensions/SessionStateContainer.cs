@@ -133,6 +133,22 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
+        public IImportfile? Importfile
+        {
+            get
+            {
+                if (TextImportFile != null)
+                {
+                    return TextImportFile;
+                }
+                if (CuesheetImportFile != null)
+                {
+                    return CuesheetImportFile;
+                }
+                return null;
+            }
+        }
+
         public void ResetImport()
         {
             TextImportFile = null;

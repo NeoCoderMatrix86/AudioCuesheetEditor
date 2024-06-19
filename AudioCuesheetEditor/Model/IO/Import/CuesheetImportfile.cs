@@ -20,15 +20,13 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class CuesheetImportfile
+    public class CuesheetImportfile : IImportfile
     {
         private IEnumerable<String?> fileContent;
 
         public EventHandler? AnalysisFinished;
 
-        /// <summary>
-        /// File content (each element is a file line)
-        /// </summary>
+        /// <inheritdoc />
         public IEnumerable<String?> FileContent 
         {
             get => fileContent;
@@ -39,16 +37,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
             }
         }
 
-        /// <summary>
-        /// File content with marking which passages has been reconized by scheme
-        /// </summary>
-        public IEnumerable<String?>? FileContentRecognized { get; private set; }
+        /// <inheritdoc />
+        public IEnumerable<String?> FileContentRecognized { get; private set; }
         public Exception? AnalyseException { get; private set; }
         public Cuesheet? Cuesheet { get; private set; }
         public ApplicationOptions ApplicationOptions { get; private set; }
 
         public CuesheetImportfile(MemoryStream fileContentStream, ApplicationOptions applicationOptions)
         {
+            FileContentRecognized = [];
             fileContentStream.Position = 0;
             using var reader = new StreamReader(fileContentStream);
             List<String?> lines = [];
@@ -321,7 +318,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 AnalyseException = ex;
                 Cuesheet = null;
-                FileContentRecognized = null;
+                FileContentRecognized = FileContent;
             }
             AnalysisFinished?.Invoke(this, EventArgs.Empty);
         }
