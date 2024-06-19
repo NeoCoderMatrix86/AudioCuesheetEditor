@@ -17,7 +17,6 @@ using AudioCuesheetEditor;
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
 using BlazorDownloadFile;
