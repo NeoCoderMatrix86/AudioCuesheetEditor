@@ -461,9 +461,9 @@ along with Foobar.  If not, see
         _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
         hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKey.Ctrl, Key.h, () => _navigationManager.NavigateTo("Help"))
-            .Add(ModKey.Ctrl, Key.e, OnStrgEKeyDown)
-            .Add(ModKey.Ctrl, Key.s, OnStrgSKeyDown)
+            .Add(ModKey.Ctrl, Key.h, OnCtrlHKeyDown)
+            .Add(ModKey.Ctrl, Key.e, OnCtrlEKeyDown)
+            .Add(ModKey.Ctrl, Key.s, OnCtrlSKeyDown)
             .Add(Key.Enter, OnEnterKeyDown);
 
         applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
@@ -643,14 +643,26 @@ along with Foobar.  If not, see
         }
     }
 
-    async ValueTask OnStrgEKeyDown()
+    ValueTask OnCtrlHKeyDown()
     {
-        await OnDisplayExportProfilesClicked();
+        if (ShortCutsEnabled)
+        {
+            _navigationManager.NavigateTo("Help");
+        }
+        return ValueTask.CompletedTask;
     }
 
-    async ValueTask OnStrgSKeyDown()
+    async ValueTask OnCtrlEKeyDown()
     {
-        if (modalDownloadProjectfile != null)
+        if (ShortCutsEnabled)
+        {
+            await OnDisplayExportProfilesClicked();
+        }
+    }
+
+    async ValueTask OnCtrlSKeyDown()
+    {
+        if ((ShortCutsEnabled) && (modalDownloadProjectfile != null))
         {
             await modalDownloadProjectfile.Show();
         }
@@ -884,5 +896,13 @@ along with Foobar.  If not, see
             sidebar.OnBreakpoint(sidebarVisible);
         }
         return Task.CompletedTask;
+    }
+
+    Boolean ShortCutsEnabled
+    {
+        get
+        {
+            return !(_navigationManager.Uri.EndsWith("/help", StringComparison.InvariantCultureIgnoreCase)) && !(_navigationManager.Uri.EndsWith("/about", StringComparison.InvariantCultureIgnoreCase));
+        }
     }
 }
