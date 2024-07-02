@@ -38,16 +38,16 @@ along with Foobar.  If not, see
 <Row>
     <Column>
         <Dropdown Direction="Direction.End">
-            <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="_sessionStateContainer.Cuesheet.IsRecording">
+            <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
                     <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
                 </svg>
                 @_localizer["Start recording"]
             </Button>
-            <DropdownToggle Color="Color.Danger" Split="true"></DropdownToggle>
+            <DropdownToggle Color="Color.Danger" Split Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true"></DropdownToggle>
             <DropdownMenu>
-                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="startRecordTimer == null || _sessionStateContainer.Cuesheet.IsRecording">@_localizer["Start record timer"]</DropdownItem>
+                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">@_localizer["Start record timer"]</DropdownItem>
             </DropdownMenu>
         </Dropdown>
     </Column>
@@ -75,10 +75,9 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    //TODO: During countdown the StartRecord button is enabled, which allows the user to manually start the record
     //TODO: Display the current value of the RecordCountdownTimer
     //TODO: Allow the user to edit the default RecordCountdownTimer
-    Timer updateGUITimer = new Timer(500);
+    Timer updateGUITimer = new Timer(300);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
     ApplicationOptions? applicationOptions;
@@ -106,6 +105,19 @@ along with Foobar.  If not, see
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
 
+        InitializeUIUpdate();
+
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        startRecordTimer = new Timer(applicationOptions.RecordCountdownTimer * 1000);
+        startRecordTimer.Elapsed += async delegate
+        {
+            await StartRecordingClicked();
+            startRecordTimer.Stop();
+        };
+    }
+
+    void InitializeUIUpdate()
+    {
         updateGUITimer.AutoReset = true;
         updateGUITimer.Elapsed += delegate
         {
@@ -119,14 +131,6 @@ along with Foobar.  If not, see
             {
                 updateGUITimer.Stop();
             }
-        };
-
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        startRecordTimer = new Timer(applicationOptions.RecordCountdownTimer * 1000);
-        startRecordTimer.Elapsed += async delegate
-        {
-            await StartRecordingClicked();
-            startRecordTimer.Stop();
         };
     }
 
@@ -182,10 +186,7 @@ along with Foobar.  If not, see
     void StartRecordCountdownTimer()
     {
         recordTimerStarted = DateTime.Now;
-        if (startRecordTimer != null)
-        {
-            startRecordTimer.Start();
-        }
+        startRecordTimer?.Start();
         updateGUITimer.Start();
     }
 
