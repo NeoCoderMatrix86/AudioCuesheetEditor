@@ -34,55 +34,7 @@ along with Foobar.  If not, see
                 <Button Clicked="(() => recordControlVisible = !recordControlVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Recordcontrol"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                @if (_sessionStateContainer.Cuesheet.IsRecording == true)
-                {
-                    var backgroundCSS = _sessionStateContainer.Cuesheet.IsRecording ? "BackgroundBlink rounded" : "rounded";
-                    <div class="@backgroundCSS">
-                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@_localizer["Record running!"]</Heading>
-                    </div>
-                }
-                @if ((startRecordTimer != null) && (startRecordTimer.Enabled))
-                {
-                    <div class="BackgroundBlink rounded">
-                        <Heading Size="HeadingSize.Is4" TextAlignment="TextAlignment.Center">@_localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]</Heading>
-                    </div>
-                }
-                <Row>
-                    <Column>
-                        <Dropdown Direction="Direction.End">
-                            <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="_sessionStateContainer.Cuesheet.IsRecording">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
-                                    <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
-                                    <path d="M10 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
-                                </svg>
-                                @_localizer["Start recording"]
-                            </Button>
-                            <DropdownToggle Color="Color.Danger" Split="true"></DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="startRecordTimer == null || _sessionStateContainer.Cuesheet.IsRecording">@_localizer["Start record timer"]</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </Column>
-                    <Column>
-                        @if (_sessionStateContainer.Cuesheet.RecordingTime.HasValue == true)
-                        {
-                            <Heading Size="HeadingSize.Is4">@GetTimespanAsString(_sessionStateContainer.Cuesheet.RecordingTime, true)</Heading>
-                        }
-                        else
-                        {
-                            <Heading Size="HeadingSize.Is4">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</Heading>
-                        }
-                    </Column>
-                    <Column>
-                        <Button Color="Color.Warning" Clicked="StopRecordingClicked" Disabled="!_sessionStateContainer.Cuesheet.IsRecording">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
-                                <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
-                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                            </svg>
-                            @_localizer["Stop recording"]
-                        </Button>
-                    </Column>
-                </Row>
+                <RecordControl />
             </CollapseBody>
         </Collapse>
         <Collapse Visible="cuesheetDataVisible">
@@ -172,6 +124,7 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    //TODO: Interaction with RecordControl component
     public void Dispose()
     {
         _jsRuntime.InvokeVoidAsync("closeAudioRecording");
@@ -188,9 +141,6 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.Audiofile = audiofile;
         StateHasChanged();
     }
-
-    Timer updateGUITimer = default!;
-    Timer? startRecordTimer;
 
     DateTime recordTimerStarted;
 
@@ -217,84 +167,6 @@ along with Foobar.  If not, see
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-
-        updateGUITimer = new Timer(500);
-        updateGUITimer.AutoReset = true;
-        updateGUITimer.Elapsed += delegate
-        {
-            StateHasChanged();
-            Boolean startRecordTimeEnabled = false;
-            if (startRecordTimer != null)
-            {
-                startRecordTimeEnabled = startRecordTimer.Enabled;
-            }
-            if ((startRecordTimeEnabled == false) && (_sessionStateContainer.Cuesheet.IsRecording == false))
-            {
-                updateGUITimer.Stop();
-            }
-        };
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        startRecordTimer = new Timer(options.RecordCountdownTimer * 1000);
-        startRecordTimer.Elapsed += async delegate
-        {
-            await StartRecordingClicked();
-            startRecordTimer.Stop();
-        };
-    }
-
-    private String GetTimespanAsString(TimeSpan? timeSpan, Boolean removeMilliseconds = false)
-    {
-        String resultString = String.Empty;
-        if ((timeSpan != null) && (timeSpan.HasValue))
-        {
-            if (removeMilliseconds == true)
-            {
-                resultString = timeSpan.Value.Subtract(new TimeSpan(0, 0, 0, 0, timeSpan.Value.Milliseconds)).ToString();
-            }
-            else
-            {
-                resultString = timeSpan.Value.ToString();
-            }
-        }
-        return resultString;
-    }
-
-    async Task StartRecordingClicked()
-    {
-        //Check for empty cuesheet and warn!
-        if (_sessionStateContainer.Cuesheet.Tracks.Count > 0)
-        {
-            if (modalDialog != null)
-            {
-                modalDialog.Title = _localizer["Error"];
-                modalDialog.Text = _localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
-                modalDialog.ModalSize = ModalSize.Small;
-                modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                await modalDialog.ShowModal();
-            }
-        }
-        else
-        {
-            _sessionStateContainer.Cuesheet.StartRecording();
-            updateGUITimer.Start();
-            await _jsRuntime.InvokeVoidAsync("startAudioRecording");
-            if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
-            {
-                await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
-            }
-            _sessionStateContainer.Cuesheet.Audiofile = null;
-            if (autocompleteArtist != null)
-            {
-                await autocompleteArtist.Focus();
-            }
-        }
-    }
-
-    private async Task StopRecordingClicked()
-    {
-        await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        _sessionStateContainer.Cuesheet.StopRecording(options);
     }
 
     async Task OnKeyDownRecordArtist(KeyboardEventArgs args)
@@ -345,16 +217,6 @@ along with Foobar.  If not, see
                 await autocompleteArtist.Focus();
             }
         }
-    }
-
-    private void StartRecordCountdownTimer()
-    {
-        recordTimerStarted = DateTime.Now;
-        if (startRecordTimer != null)
-        {
-            startRecordTimer.Start();
-        }
-        updateGUITimer.Start();
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)

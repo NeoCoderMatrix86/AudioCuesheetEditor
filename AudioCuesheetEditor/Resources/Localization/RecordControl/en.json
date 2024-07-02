@@ -1,0 +1,10 @@
+{
+  "culture": "en",
+  "translations": {
+    "Record running!": "Record is running!",
+    "Start recording": "Start recording",
+    "Stop recording": "Stop recording",
+    "Start record timer": "Start record countdown timer",
+    "Record will start in {0} seconds!": "Record will start in {0} seconds!"
+  }
+}
