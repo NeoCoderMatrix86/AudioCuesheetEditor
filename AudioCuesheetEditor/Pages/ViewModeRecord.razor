@@ -34,7 +34,7 @@ along with Foobar.  If not, see
                 <Button Clicked="(() => recordControlVisible = !recordControlVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Recordcontrol"]</Heading></Button>
             </CollapseHeader>
             <CollapseBody>
-                <RecordControl />
+                <RecordControl StartRecordClicked="RecordingStarted" StopRecordClicked="RecordingStopped" />
             </CollapseBody>
         </Collapse>
         <Collapse Visible="cuesheetDataVisible">
@@ -121,10 +121,7 @@ along with Foobar.  If not, see
     }
 </Column>
 
-<ModalDialog @ref="modalDialog" />
-
 @code {
-    //TODO: Interaction with RecordControl component
     public void Dispose()
     {
         _jsRuntime.InvokeVoidAsync("closeAudioRecording");
@@ -141,10 +138,6 @@ along with Foobar.  If not, see
         _sessionStateContainer.Cuesheet.Audiofile = audiofile;
         StateHasChanged();
     }
-
-    DateTime recordTimerStarted;
-
-    ModalDialog? modalDialog;
 
     Autocomplete<MusicBrainzArtist, Guid>? autocompleteArtist;
     Autocomplete<MusicBrainzTrack, Guid>? autocompleteTitle;
@@ -263,5 +256,24 @@ along with Foobar.  If not, see
                 currentRecordingTrack.Artist = trackDetails.Artist;
             }
         }
+    }
+
+    async Task RecordingStarted()
+    {
+        await _jsRuntime.InvokeVoidAsync("startAudioRecording");
+        if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
+        {
+            await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
+        }
+        _sessionStateContainer.Cuesheet.Audiofile = null;
+        if (autocompleteArtist != null)
+        {
+            await autocompleteArtist.Focus();
+        }
+    }
+
+    async Task RecordingStopped()
+    {
+        await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
     }
 }

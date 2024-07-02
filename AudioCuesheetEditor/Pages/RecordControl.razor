@@ -72,11 +72,22 @@ along with Foobar.  If not, see
     </Column>
 </Row>
 
+<ModalDialog @ref="modalDialog" />
+
 @code {
     //TODO: During countdown the StartRecord button is enabled, which allows the user to manually start the record
+    //TODO: Allow the user to edit the default RecordCountdownTimer
     Timer updateGUITimer = new Timer(500);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
+
+    ModalDialog? modalDialog;
+
+    [Parameter]
+    public EventCallback StartRecordClicked { get; set; }
+
+    [Parameter]
+    public EventCallback StopRecordClicked { get; set; }
 
     public void Dispose()
     {
@@ -106,7 +117,7 @@ along with Foobar.  If not, see
             }
         };
 
-        //TODO: Attach to saved event and save the RecordCountdownTimer
+        //TODO: Attach to saved event and save the RecordCountdownTimer to adjust the timer when a new value was saved
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         startRecordTimer = new Timer(options.RecordCountdownTimer * 1000);
         startRecordTimer.Elapsed += async delegate
@@ -148,31 +159,20 @@ along with Foobar.  If not, see
         //Check for empty cuesheet and warn!
         if (_sessionStateContainer.Cuesheet.Tracks.Count > 0)
         {
-            //TODO
-            // if (modalDialog != null)
-            // {
-            //     modalDialog.Title = _localizer["Error"];
-            //     modalDialog.Text = _localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
-            //     modalDialog.ModalSize = ModalSize.Small;
-            //     modalDialog.Mode = ModalDialog.DialogMode.Alert;
-            //     await modalDialog.ShowModal();
-            // }
+            if (modalDialog != null)
+            {
+                modalDialog.Title = _localizer["Error"];
+                modalDialog.Text = _localizer["Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."];
+                modalDialog.ModalSize = ModalSize.Small;
+                modalDialog.Mode = ModalDialog.DialogMode.Alert;
+                await modalDialog.ShowModal();
+            }
         }
         else
         {
             _sessionStateContainer.Cuesheet.StartRecording();
-            //TODO
             updateGUITimer.Start();
-            // await _jsRuntime.InvokeVoidAsync("startAudioRecording");
-            // if ((_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.IsRecorded))
-            // {
-            //     await _jsRuntime.InvokeVoidAsync("URL.revokeObjectURL", _sessionStateContainer.Cuesheet.Audiofile.ObjectURL);
-            // }
-            // _sessionStateContainer.Cuesheet.Audiofile = null;
-            // if (autocompleteArtist != null)
-            // {
-            //     await autocompleteArtist.Focus();
-            // }
+            await StartRecordClicked.InvokeAsync();
         }
     }
 
@@ -188,9 +188,8 @@ along with Foobar.  If not, see
 
     async Task StopRecordingClicked()
     {
-        //TODO
-        // await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _sessionStateContainer.Cuesheet.StopRecording(options);
+        await StopRecordClicked.InvokeAsync();
     }
 }
