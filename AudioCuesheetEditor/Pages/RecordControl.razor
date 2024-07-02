@@ -76,10 +76,12 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: During countdown the StartRecord button is enabled, which allows the user to manually start the record
+    //TODO: Display the current value of the RecordCountdownTimer
     //TODO: Allow the user to edit the default RecordCountdownTimer
     Timer updateGUITimer = new Timer(500);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
+    ApplicationOptions? applicationOptions;
 
     ModalDialog? modalDialog;
 
@@ -93,6 +95,7 @@ along with Foobar.  If not, see
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
     }
 
     protected override async Task OnInitializedAsync()
@@ -101,6 +104,7 @@ along with Foobar.  If not, see
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
 
         updateGUITimer.AutoReset = true;
         updateGUITimer.Elapsed += delegate
@@ -117,9 +121,8 @@ along with Foobar.  If not, see
             }
         };
 
-        //TODO: Attach to saved event and save the RecordCountdownTimer to adjust the timer when a new value was saved
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        startRecordTimer = new Timer(options.RecordCountdownTimer * 1000);
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        startRecordTimer = new Timer(applicationOptions.RecordCountdownTimer * 1000);
         startRecordTimer.Elapsed += async delegate
         {
             await StartRecordingClicked();
@@ -191,5 +194,17 @@ along with Foobar.  If not, see
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         _sessionStateContainer.Cuesheet.StopRecording(options);
         await StopRecordClicked.InvokeAsync();
+    }
+
+    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
+            if (startRecordTimer != null)
+            {
+                startRecordTimer.Interval = applicationOptions.RecordCountdownTimer * 1000;
+            }
+        }
     }
 }
