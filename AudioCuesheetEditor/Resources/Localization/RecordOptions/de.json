@@ -1,0 +1,11 @@
+{
+  "culture": "de",
+  "translations": {
+    "Filename for recorded audio": "Dateiname für aufgenommenes Audio",
+    "Record countdown timer in seconds": "Aufnahmecountdown in Sekunden",
+    "Record time sensitivity": "Genauigkeit der Aufnahmezeiten",
+    "TimeSensitivityMode.Full": "Alles (inkl. Millisekunden)",
+    "TimeSensitivityMode.Seconds": "Nur Sekunden",
+    "TimeSensitivityMode.Minutes": "Nur Minuten"
+  }
+}

@@ -29,6 +29,14 @@ along with Foobar.  If not, see
 
 <Column>
     <Accordion>
+        <Collapse Visible="recordOptionsVisible">
+            <CollapseHeader>
+                <Button Clicked="(() => recordOptionsVisible = !recordOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Record options"]</Heading></Button>
+            </CollapseHeader>
+            <CollapseBody>
+                <RecordOptions />
+            </CollapseBody>
+        </Collapse>
         <Collapse Visible="recordControlVisible">
             <CollapseHeader>
                 <Button Clicked="(() => recordControlVisible = !recordControlVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Recordcontrol"]</Heading></Button>
@@ -148,6 +156,7 @@ along with Foobar.  If not, see
     Boolean recordControlVisible = true;
     Boolean enterNewTrackVisible = true;
     Boolean cuesheetTracksVisible = true;
+    Boolean recordOptionsVisible = false;
 
     IEnumerable<MusicBrainzArtist>? autocompleteArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTitles;

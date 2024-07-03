@@ -1,0 +1,10 @@
+{
+  "culture": "en",
+  "translations": {
+    "Filename for recorded audio": "Filename for recorded audio",
+    "Record time sensitivity": "Recordtime sensitivity",
+    "TimeSensitivityMode.Full": "Everything (incl. milliseconds)",
+    "TimeSensitivityMode.Seconds": "Only seconds",
+    "TimeSensitivityMode.Minutes": "Only minutes"
+  }
+}

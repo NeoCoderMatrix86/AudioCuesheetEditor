@@ -39,6 +39,8 @@
     <Content Remove="Resources\Localization\OptionsDialog\en.json" />
     <Content Remove="Resources\Localization\RecordControl\de.json" />
     <Content Remove="Resources\Localization\RecordControl\en.json" />
+    <Content Remove="Resources\Localization\RecordOptions\de.json" />
+    <Content Remove="Resources\Localization\RecordOptions\en.json" />
     <Content Remove="Resources\Localization\TracksTable\de.json" />
     <Content Remove="Resources\Localization\TracksTable\en.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
@@ -82,6 +84,8 @@
     <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
     <EmbeddedResource Include="Resources\Localization\RecordControl\de.json" />
     <EmbeddedResource Include="Resources\Localization\RecordControl\en.json" />
+    <EmbeddedResource Include="Resources\Localization\RecordOptions\de.json" />
+    <EmbeddedResource Include="Resources\Localization\RecordOptions\en.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
     <EmbeddedResource Include="Resources\Localization\TracksTable\en.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
@@ -123,6 +127,14 @@
   
   <ItemGroup>
 	<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Shared\RecordOptions.razor" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Shared\RecordOptions.razor" />
   </ItemGroup>
 
 </Project>
