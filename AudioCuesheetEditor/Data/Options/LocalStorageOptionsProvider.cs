@@ -19,21 +19,16 @@ using System.Text.Json;
 
 namespace AudioCuesheetEditor.Data.Options
 {
-    public class LocalStorageOptionsProvider
+    public class LocalStorageOptionsProvider(IJSRuntime jsRuntime)
     {
         public event EventHandler<IOptions>? OptionSaved;
 
-        private readonly IJSRuntime _jsRuntime;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
-        public LocalStorageOptionsProvider(IJSRuntime jsRuntime)
+        private readonly JsonSerializerOptions SerializerOptions = new()
         {
-            if (jsRuntime is null)
-            {
-                throw new ArgumentNullException(nameof(jsRuntime));
-            }
-
-            _jsRuntime = jsRuntime;
-        }
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
 
         public async Task<T> GetOptions<T>() where T : IOptions
         {
@@ -65,15 +60,7 @@ namespace AudioCuesheetEditor.Data.Options
 
         public async Task SaveOptions(IOptions options)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-            var serializerOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-            };
-            var optionsJson = JsonSerializer.Serialize<object>(options, serializerOptions);
+            var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
             await _jsRuntime.InvokeVoidAsync(String.Format("{0}.set", options.GetType().Name), optionsJson);
             OptionSaved?.Invoke(this, options);
         }
