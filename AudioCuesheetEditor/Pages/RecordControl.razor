@@ -47,7 +47,7 @@ along with Foobar.  If not, see
             </Button>
             <DropdownToggle Color="Color.Danger" Split Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true"></DropdownToggle>
             <DropdownMenu>
-                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">@_localizer["Start record timer"]</DropdownItem>
+                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">@_localizer["Start record countdown timer ({0} seconds)", (startRecordTimer?.Interval / 1000)]</DropdownItem>
             </DropdownMenu>
         </Dropdown>
     </Column>
@@ -75,7 +75,6 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    //TODO: Display the current value of the RecordCountdownTimer
     //TODO: Allow the user to edit the default RecordCountdownTimer
     Timer updateGUITimer = new Timer(300);
     Timer? startRecordTimer;
