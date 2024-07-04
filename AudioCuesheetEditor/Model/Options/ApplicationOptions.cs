@@ -92,7 +92,6 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public Boolean LinkTracksWithPreviousOne { get; set; } = true;
         public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
-        public uint RecordCountdownTimer { get; set; } = 5;
         public TimeSpanFormat? TimeSpanFormat { get; set; }
 
         protected override ValidationResult Validate(string property)

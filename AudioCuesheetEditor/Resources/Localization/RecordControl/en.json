@@ -4,9 +4,12 @@
     "Record running!": "Record is running!",
     "Start recording": "Start recording",
     "Stop recording": "Stop recording",
-    "Start record countdown timer ({0} seconds)": "Start record countdown timer ({0} seconds)",
+    "Start record countdown timer": "Start record countdown timer",
     "Record will start in {0} seconds!": "Record will start in {0} seconds!",
     "Error": "Error",
-    "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.": "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet."
+    "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.": "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.",
+    "Start countdown": "Start countdown",
+    "Abort": "Abort",
+    "Seconds till record starts": "Seconds till record starts"
   }
 }

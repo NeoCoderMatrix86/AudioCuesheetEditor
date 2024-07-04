@@ -37,7 +37,7 @@ along with Foobar.  If not, see
 }
 <Row>
     <Column>
-        <Dropdown Direction="Direction.End">
+        <Dropdown Direction="Direction.End" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">
             <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
                     <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm0 1A5 5 0 1 0 8 3a5 5 0 0 0 0 10z" />
@@ -47,7 +47,7 @@ along with Foobar.  If not, see
             </Button>
             <DropdownToggle Color="Color.Danger" Split Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true"></DropdownToggle>
             <DropdownMenu>
-                <DropdownItem Clicked="StartRecordCountdownTimer" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">@_localizer["Start record countdown timer ({0} seconds)", (startRecordTimer?.Interval / 1000)]</DropdownItem>
+                <DropdownItem Clicked="OpenCountdownModal" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">@_localizer["Start record countdown timer"]</DropdownItem>
             </DropdownMenu>
         </Dropdown>
     </Column>
@@ -74,15 +74,41 @@ along with Foobar.  If not, see
 
 <ModalDialog @ref="modalDialog" />
 
+<Modal @ref="modalInputCountdownTime">
+    <ModalContent Centered>
+        <ModalHeader>
+            <ModalTitle>@_localizer["Start record countdown timer"]</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field Horizontal>
+                <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Seconds till record starts"]</FieldLabel>
+                <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop"><NumericEdit TValue="uint" Min="1" /></FieldBody>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Primary" Clicked="StartRecordCountdownTimer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stopwatch" viewBox="0 0 16 16">
+                    <path d="M8.5 5.6a.5.5 0 1 0-1 0v2.9h-3a.5.5 0 0 0 0 1H8a.5.5 0 0 0 .5-.5z" />
+                    <path d="M6.5 1A.5.5 0 0 1 7 .5h2a.5.5 0 0 1 0 1v.57c1.36.196 2.594.78 3.584 1.64l.012-.013.354-.354-.354-.353a.5.5 0 0 1 .707-.708l1.414 1.415a.5.5 0 1 1-.707.707l-.353-.354-.354.354-.013.012A7 7 0 1 1 7 2.071V1.5a.5.5 0 0 1-.5-.5M8 3a6 6 0 1 0 .001 12A6 6 0 0 0 8 3" />
+                </svg>
+                @_localizer["Start countdown"]
+            </Button>
+            <Button Color="Color.Secondary" Clicked="HideCountdownModal">@_localizer["Abort"]</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
 @code {
     //TODO: Allow the user to edit the default RecordCountdownTimer
     //TODO: Allow the user to stop the record countdown
+    //TODO: Keyboard enter for modal
     Timer updateGUITimer = new Timer(300);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
-    ApplicationOptions? applicationOptions;
 
     ModalDialog? modalDialog;
+    Modal? modalInputCountdownTime;
 
     [Parameter]
     public EventCallback StartRecordClicked { get; set; }
@@ -94,26 +120,16 @@ along with Foobar.  If not, see
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         base.OnInitialized();
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
 
         InitializeUIUpdate();
-
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        startRecordTimer = new Timer(applicationOptions.RecordCountdownTimer * 1000);
-        startRecordTimer.Elapsed += async delegate
-        {
-            await StartRecordingClicked();
-            startRecordTimer.Stop();
-        };
     }
 
     void InitializeUIUpdate()
@@ -122,12 +138,7 @@ along with Foobar.  If not, see
         updateGUITimer.Elapsed += delegate
         {
             StateHasChanged();
-            Boolean startRecordTimeEnabled = false;
-            if (startRecordTimer != null)
-            {
-                startRecordTimeEnabled = startRecordTimer.Enabled;
-            }
-            if ((startRecordTimeEnabled == false) && (_sessionStateContainer.Cuesheet.IsRecording == false))
+            if (_sessionStateContainer.Cuesheet.IsRecording == false)
             {
                 updateGUITimer.Stop();
             }
@@ -183,11 +194,37 @@ along with Foobar.  If not, see
         }
     }
 
-    void StartRecordCountdownTimer()
+    async Task OpenCountdownModal()
+    {
+        if (modalInputCountdownTime != null)
+        {
+            await modalInputCountdownTime.Show();
+        }
+    }
+
+    async Task HideCountdownModal()
+    {
+        if (modalInputCountdownTime != null)
+        {
+            await modalInputCountdownTime.Hide();
+        }
+    }
+
+    async Task StartRecordCountdownTimer()
     {
         recordTimerStarted = DateTime.Now;
-        startRecordTimer?.Start();
+        //TODO: Save input of modal to record options
+        //TODO: Create timer with input of modal
+        // var recordOptions = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
+        // startRecordTimer = new Timer(recordOptions.RecordCountdownTimer * 1000);
+        // startRecordTimer.Elapsed += async delegate
+        // {
+        //     await StartRecordingClicked();
+        //     startRecordTimer.Stop();
+        // };
+        // startRecordTimer?.Start();
         updateGUITimer.Start();
+        await HideCountdownModal();
     }
 
     async Task StopRecordingClicked()
@@ -195,17 +232,5 @@ along with Foobar.  If not, see
         var options = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
         _sessionStateContainer.Cuesheet.StopRecording(options);
         await StopRecordClicked.InvokeAsync();
-    }
-
-    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
-    {
-        if (options is ApplicationOptions applicationOption)
-        {
-            applicationOptions = applicationOption;
-            if (startRecordTimer != null)
-            {
-                startRecordTimer.Interval = applicationOptions.RecordCountdownTimer * 1000;
-            }
-        }
     }
 }

@@ -24,6 +24,7 @@ namespace AudioCuesheetEditor.Model.Options
         public String RecordedAudiofilename { get; set; } = Audiofile.RecordingFileName;
         [JsonIgnore]
         public TimeSensitivityMode RecordTimeSensitivity { get; set; }
+        public uint RecordCountdownTimer { get; set; } = 5;
         public String? RecordTimeSensitivityname
         {
             get { return Enum.GetName(typeof(TimeSensitivityMode), RecordTimeSensitivity); }
