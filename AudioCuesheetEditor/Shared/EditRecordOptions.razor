@@ -23,11 +23,11 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
 
 <Validations>
-    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.RecordedAudiofilename, _validationMessageLocalizer, token)">
+    <Validation AsyncValidator="(args, token) => ValidatorUtility<RecordOptions>.Validate(args, recordOptions, x => x.RecordedAudiofilename, _validationMessageLocalizer, token)">
         <Field Horizontal="true">
             <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                <TextEdit Text="@applicationOptions?.RecordedAudiofilename" TextChanged="RecordedAudiofilenameChanged" Immediate="false">
+                <TextEdit Text="@recordOptions?.RecordedAudiofilename" TextChanged="RecordedAudiofilenameChanged" Immediate="false">
                     <Feedback>
                         <ValidationError Tooltip />
                     </Feedback>
@@ -38,7 +38,7 @@ along with Foobar.  If not, see
     <Field Horizontal="true">
         <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record time sensitivity"]</FieldLabel>
         <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-            <Select TValue="String" SelectedValue="@applicationOptions?.RecordTimeSensitivityname" SelectedValueChanged="RecordTimeSensitivityChanged">
+            <Select TValue="String" SelectedValue="@recordOptions?.RecordTimeSensitivityname" SelectedValueChanged="RecordTimeSensitivityChanged">
                 @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
                 {
                     <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
@@ -46,11 +46,16 @@ along with Foobar.  If not, see
             </Select>
         </FieldBody>
     </Field>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop"></FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+            <Button Color="Color.Danger" Clicked="ResetOptions">@_localizer["Reset options to defaults"]</Button>
+        </FieldBody>
+    </Field>
 </Validations>
 
 @code {
-    //TODO: Save, reset, reload, etc. like import options
-    ApplicationOptions? applicationOptions;
+    RecordOptions? recordOptions;
 
     public void Dispose()
     {
@@ -63,7 +68,7 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
 
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        recordOptions = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
         await base.OnInitializedAsync();
     }
 
@@ -74,27 +79,33 @@ along with Foobar.  If not, see
 
     void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
     {
-        if (options is ApplicationOptions applicationOption)
+        if (options is RecordOptions recordingOptions)
         {
-            applicationOptions = applicationOption;
+            recordOptions = recordingOptions;
         }
     }
 
     async Task RecordedAudiofilenameChanged(string newValue)
     {
-        if (applicationOptions != null)
+        if (recordOptions != null)
         {
-            applicationOptions.RecordedAudiofilename = newValue;
+            recordOptions.RecordedAudiofilename = newValue;
         }
-        await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.RecordedAudiofilename, newValue);
+        await _localStorageOptionsProvider.SaveOptionsValue<RecordOptions>(x => x.RecordedAudiofilename, newValue);
     }
 
     async Task RecordTimeSensitivityChanged(string newValue)
     {
-        if (applicationOptions != null)
+        if (recordOptions != null)
         {
-            applicationOptions.RecordTimeSensitivityname = newValue;
+            recordOptions.RecordTimeSensitivityname = newValue;
         }
-        await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.RecordTimeSensitivityname!, newValue);
+        await _localStorageOptionsProvider.SaveOptionsValue<RecordOptions>(x => x.RecordTimeSensitivityname!, newValue);
+    }
+
+    async Task ResetOptions()
+    {
+        var newOptions = new RecordOptions();
+        await _localStorageOptionsProvider.SaveOptions(newOptions);
     }
 }

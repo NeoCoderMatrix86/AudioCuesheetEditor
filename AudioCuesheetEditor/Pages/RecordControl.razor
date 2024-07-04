@@ -192,7 +192,7 @@ along with Foobar.  If not, see
 
     async Task StopRecordingClicked()
     {
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        var options = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
         _sessionStateContainer.Cuesheet.StopRecording(options);
         await StopRecordClicked.InvokeAsync();
     }

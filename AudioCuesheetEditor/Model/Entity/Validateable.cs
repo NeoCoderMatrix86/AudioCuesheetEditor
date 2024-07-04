@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -40,7 +39,7 @@ namespace AudioCuesheetEditor.Model.Entity
                 var result = Validate(property.Name);
                 if (result.ValidationMessages != null)
                 {
-                    validationResult.ValidationMessages ??= new();
+                    validationResult.ValidationMessages ??= [];
                     validationResult.ValidationMessages.AddRange(result.ValidationMessages);
                 }
                 switch (validationResult.Status)

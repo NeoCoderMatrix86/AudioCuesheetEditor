@@ -140,7 +140,7 @@ along with Foobar.  If not, see
     [JSInvokable()]
     public async Task AudioRecordingFinished(String url)
     {
-        var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        var options = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
         var audiofile = new Audiofile(options.RecordedAudiofilename, url, Audiofile.AudioCodecWEBM, _httpClient, true);
         _ = audiofile.LoadContentStream();
         _sessionStateContainer.Cuesheet.Audiofile = audiofile;
@@ -205,6 +205,8 @@ along with Foobar.  If not, see
     {
         if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
+            //TODO: load options on initialize and reuse them
+            //TODO: load record options and insert to AddTrack
             var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
             _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);
             currentRecordingTrack = new Track();
