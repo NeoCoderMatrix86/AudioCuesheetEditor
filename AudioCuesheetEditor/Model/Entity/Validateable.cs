@@ -24,11 +24,18 @@ namespace AudioCuesheetEditor.Model.Entity
 
         public ValidationResult Validate<TProperty>(Expression<Func<T, TProperty>> expression)
         {
-            if (expression.Body is not MemberExpression body)
+            if (expression.Body is MemberExpression memberExpression)
             {
-                throw new ArgumentException("'expression' should be a member expression");
+                return Validate(memberExpression.Member.Name);
             }
-            return Validate(body.Member.Name);
+            else if (expression.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression unaryMemberExpression)
+            {
+                return Validate(unaryMemberExpression.Member.Name);
+            }
+            else
+            {
+                throw new ArgumentException("The provided expression does not reference a valid property.");
+            }
         }
 
         public ValidationResult Validate()
