@@ -130,21 +130,30 @@ along with Foobar.  If not, see
 </Column>
 
 @code {
+    RecordOptions? recordOptions;
+    ApplicationOptions? applicationOptions;
+
     public void Dispose()
     {
         _jsRuntime.InvokeVoidAsync("closeAudioRecording");
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
     }
 
     [JSInvokable()]
-    public async Task AudioRecordingFinished(String url)
+    public Task AudioRecordingFinished(String url)
     {
-        var options = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
-        var audiofile = new Audiofile(options.RecordedAudiofilename, url, Audiofile.AudioCodecWEBM, _httpClient, true);
+        var fileName = Audiofile.RecordingFileName;
+        if (recordOptions != null)
+        {
+            fileName = recordOptions.RecordedAudiofilename;
+        }
+        var audiofile = new Audiofile(fileName, url, Audiofile.AudioCodecWEBM, _httpClient, true);
         _ = audiofile.LoadContentStream();
         _sessionStateContainer.Cuesheet.Audiofile = audiofile;
         StateHasChanged();
+        return Task.CompletedTask;
     }
 
     Autocomplete<MusicBrainzArtist, Guid>? autocompleteArtist;
@@ -167,8 +176,12 @@ along with Foobar.  If not, see
         await _jsRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
         await _jsRuntime.InvokeVoidAsync("setupAudioRecording");
 
+        recordOptions = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
     }
 
     async Task OnKeyDownRecordArtist(KeyboardEventArgs args)
@@ -205,10 +218,7 @@ along with Foobar.  If not, see
     {
         if (_sessionStateContainer.Cuesheet.IsRecording == true)
         {
-            //TODO: load options on initialize and reuse them
-            //TODO: load record options and insert to AddTrack
-            var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-            _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, options);
+            _sessionStateContainer.Cuesheet.AddTrack(currentRecordingTrack, applicationOptions, recordOptions);
             currentRecordingTrack = new Track();
             if (autocompleteTitle != null)
             {
@@ -286,5 +296,17 @@ along with Foobar.  If not, see
     async Task RecordingStopped()
     {
         await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
+    }
+
+    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
+    {
+        if (options is RecordOptions recordingOptions)
+        {
+            recordOptions = recordingOptions;
+        }
+        if (options is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
+        }
     }
 }
