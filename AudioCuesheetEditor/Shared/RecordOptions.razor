@@ -27,35 +27,28 @@ along with Foobar.  If not, see
         <Field Horizontal="true">
             <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
             <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                @if (applicationOptions != null)
-                {
-                    <TextEdit @bind-Text="applicationOptions.RecordedAudiofilename" Immediate="false">
-                        <Feedback>
-                            <ValidationError Tooltip />
-                        </Feedback>
-                    </TextEdit>
-                }
+                <TextEdit Text="@applicationOptions?.RecordedAudiofilename" TextChanged="RecordedAudiofilenameChanged" Immediate="false">
+                    <Feedback>
+                        <ValidationError Tooltip />
+                    </Feedback>
+                </TextEdit>
             </FieldBody>
         </Field>
     </Validation>
     <Field Horizontal="true">
         <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record time sensitivity"]</FieldLabel>
         <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-            @if (applicationOptions != null)
-            {
-                <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityname">
-                    @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
-                    {
-                        <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
-                    }
-                </Select>
-            }
+            <Select TValue="String" SelectedValue="@applicationOptions?.RecordTimeSensitivityname" SelectedValueChanged="RecordTimeSensitivityChanged">
+                @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
+                {
+                    <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
+                }
+            </Select>
         </FieldBody>
     </Field>
 </Validations>
 
 @code {
-    //TODO: Save each property when changed
     //TODO: Save, reset, reload, etc. like import options
     ApplicationOptions? applicationOptions;
 
@@ -85,5 +78,23 @@ along with Foobar.  If not, see
         {
             applicationOptions = applicationOption;
         }
+    }
+
+    async Task RecordedAudiofilenameChanged(string newValue)
+    {
+        if (applicationOptions != null)
+        {
+            applicationOptions.RecordedAudiofilename = newValue;
+        }
+        await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.RecordedAudiofilename, newValue);
+    }
+
+    async Task RecordTimeSensitivityChanged(string newValue)
+    {
+        if (applicationOptions != null)
+        {
+            applicationOptions.RecordTimeSensitivityname = newValue;
+        }
+        await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.RecordTimeSensitivityname!, newValue);
     }
 }
