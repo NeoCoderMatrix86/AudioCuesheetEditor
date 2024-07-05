@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<RecordControl> _localizer
 @inject ITextLocalizerService _localizationService
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject HotKeys _hotKeys
 
 @if (_sessionStateContainer.Cuesheet.IsRecording == true)
 {
@@ -74,7 +75,7 @@ along with Foobar.  If not, see
 
 <ModalDialog @ref="modalDialog" />
 
-<Modal @ref="modalInputCountdownTime">
+<Modal @ref="modalInputCountdownTime" VisibleChanged="(visible) => modalInputCountdownTimeVisible = visible">
     <ModalContent Centered>
         <ModalHeader>
             <ModalTitle>@_localizer["Start record countdown timer"]</ModalTitle>
@@ -103,16 +104,17 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Allow the user to stop the record countdown
-    //TODO: Keyboard enter for modal
     Timer updateGUITimer = new Timer(300);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
+    HotKeysContext? hotKeysContext;
 
     RecordOptions? recordOptions;
     uint recordCountdownTimer;
 
     ModalDialog? modalDialog;
     Modal? modalInputCountdownTime;
+    Boolean modalInputCountdownTimeVisible = false;
 
     [Parameter]
     public EventCallback StartRecordClicked { get; set; }
@@ -122,6 +124,7 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
+        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
@@ -130,6 +133,9 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(Key.Enter, OnEnterKeyDown);
 
         recordOptions = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
         ReadOutOptions();
@@ -260,6 +266,14 @@ along with Foobar.  If not, see
         if (recordOptions != null)
         {
             recordCountdownTimer = recordOptions.RecordCountdownTimer;
+        }
+    }
+
+    async ValueTask OnEnterKeyDown()
+    {
+        if (modalInputCountdownTimeVisible)
+        {
+            await StartRecordCountdownTimer();
         }
     }
 }
