@@ -84,7 +84,7 @@ along with Foobar.  If not, see
             <Field Horizontal>
                 <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Seconds till record starts"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                    <NumericEdit TValue="uint" Min="1" @bind-Value="recordCountdownTimer" />
+                    <NumericPicker TValue="uint" Min="1" @bind-Value="recordCountdownTimer" />
                 </FieldBody>
             </Field>
         </ModalBody>

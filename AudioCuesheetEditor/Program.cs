@@ -22,6 +22,7 @@ using AudioCuesheetEditor.Model.Utility;
 using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -38,7 +39,8 @@ builder.Services.AddBlazorise(options =>
     options.Debounce = true;
     options.DebounceInterval = 300;
 })
-.AddBootstrap5Providers();
+.AddBootstrap5Providers()
+.AddFontAwesomeIcons();
 
 builder.Services.AddScoped<IHowl, Howl>();
 builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
