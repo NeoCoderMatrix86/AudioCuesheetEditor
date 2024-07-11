@@ -239,7 +239,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return previousLinkedTrack;
         }
 
-        public void AddTrack(Track track, ApplicationOptions? applicationOptions = null)
+        public void AddTrack(Track track, ApplicationOptions? applicationOptions = null, RecordOptions? recordOptions = null)
         {
             if (track.IsCloned)
             {
@@ -247,13 +247,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             var previousValue = new List<Track>(tracks);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
+            if (IsRecording && recordingStart.HasValue)
+            {
+                ArgumentNullException.ThrowIfNull(recordOptions);
+                track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
+            }
             //When no applications are available (because of used by import for example) we don't try to calculate properties
             if (applicationOptions != null)
             {
-                if (IsRecording && (recordingStart.HasValue))
-                {
-                    track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
-                }                
                 track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne;
             }
             tracks.Add(track);
@@ -418,13 +419,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             recordingStart = DateTime.UtcNow;
         }
 
-        public void StopRecording(ApplicationOptions applicationOptions)
+        public void StopRecording(RecordOptions recordOptions)
         {
             //Set end of last track
             var lastTrack = Tracks.LastOrDefault();
             if ((lastTrack != null) && (recordingStart.HasValue))
             {
-                lastTrack.End = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, applicationOptions.RecordTimeSensitivity);
+                lastTrack.End = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
             }
             recordingStart = null;
         }

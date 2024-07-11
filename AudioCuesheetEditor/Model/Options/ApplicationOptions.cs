@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Utility;
 using System.Globalization;
@@ -91,27 +90,8 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public String RecordedAudiofilename { get; set; } = Audiofile.RecordingFileName;
         public Boolean LinkTracksWithPreviousOne { get; set; } = true;
         public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
-        public uint RecordCountdownTimer { get; set; } = 5;
-        [JsonIgnore]
-        public TimeSensitivityMode RecordTimeSensitivity { get; set; }
-        public String? RecordTimeSensitivityname
-        {
-            get { return Enum.GetName(typeof(TimeSensitivityMode), RecordTimeSensitivity); }
-            set 
-            {
-                if (value != null)
-                {
-                    RecordTimeSensitivity = (TimeSensitivityMode)Enum.Parse(typeof(TimeSensitivityMode), value);
-                }
-                else
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-            }
-        }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
 
         protected override ValidationResult Validate(string property)
@@ -140,29 +120,6 @@ namespace AudioCuesheetEditor.Model.Options
                         {
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(CuesheetFilename)));
-                        }
-                    }
-                    break;
-                case nameof(RecordedAudiofilename):
-                    validationStatus = ValidationStatus.Success;
-                    if (String.IsNullOrEmpty(RecordedAudiofilename))
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(RecordedAudiofilename)));
-                    }
-                    else
-                    {
-                        var extension = Path.GetExtension(RecordedAudiofilename);
-                        if (extension.Equals(Audiofile.AudioCodecWEBM.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(RecordedAudiofilename), Audiofile.AudioCodecWEBM.FileExtension));
-                        }
-                        var filename = Path.GetFileNameWithoutExtension(RecordedAudiofilename);
-                        if (String.IsNullOrEmpty(filename))
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(RecordedAudiofilename)));
                         }
                     }
                     break;

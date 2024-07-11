@@ -69,6 +69,11 @@ window.ImportOptions = {
     set: (value) => localStorage['ImportOptions'] = value
 }
 
+window.RecordOptions = {
+    get: () => localStorage['RecordOptions'],
+    set: (value) => localStorage['RecordOptions'] = value
+}
+
 function dragLeave(e, domElement) {
     e.preventDefault();
     e.stopPropagation();

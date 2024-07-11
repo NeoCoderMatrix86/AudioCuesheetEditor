@@ -27,6 +27,7 @@
     "Error": "Error",
     "Here all validation messages will be displayed. For details switch to full edit mode.": "All validation messages will be displayed here. For details please switch to \"Full edit mode\".",
     "Start record timer": "Start record countdown timer",
-    "Record will start in {0} seconds!": "Record will start in {0} seconds!"
+    "Record will start in {0} seconds!": "Record will start in {0} seconds!",
+    "Record options": "Record options"
   }
 }

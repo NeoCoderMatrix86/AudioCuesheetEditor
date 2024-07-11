@@ -31,9 +31,11 @@ namespace AudioCuesheetEditorTests.Utility
             {
                 LinkTracksWithPreviousOne = false
             };
+            RecordOptions = new();
         }
 
         public ApplicationOptions ApplicationOptions { get; private set; }
+        public RecordOptions RecordOptions { get; private set; }
         public static ILogger<T> CreateLogger<T>()
         {
             var serviceProvider = new ServiceCollection()

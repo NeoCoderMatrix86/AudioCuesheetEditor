@@ -1,0 +1,111 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@implements IDisposable
+
+@inject ITextLocalizer<EditRecordOptions> _localizer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ITextLocalizerService _localizationService
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+
+<Validations>
+    <Validation AsyncValidator="(args, token) => ValidatorUtility<RecordOptions>.Validate(args, recordOptions, x => x.RecordedAudiofilename, _validationMessageLocalizer, token)">
+        <Field Horizontal="true">
+            <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+                <TextEdit Text="@recordOptions?.RecordedAudiofilename" TextChanged="RecordedAudiofilenameChanged" Immediate="false">
+                    <Feedback>
+                        <ValidationError Tooltip />
+                    </Feedback>
+                </TextEdit>
+            </FieldBody>
+        </Field>
+    </Validation>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record time sensitivity"]</FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+            <Select TValue="String" SelectedValue="@recordOptions?.RecordTimeSensitivityname" SelectedValueChanged="RecordTimeSensitivityChanged">
+                @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
+                {
+                    <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
+                }
+            </Select>
+        </FieldBody>
+    </Field>
+    <Field Horizontal="true">
+        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop"></FieldLabel>
+        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
+            <Button Color="Color.Danger" Clicked="ResetOptions">@_localizer["Reset options to defaults"]</Button>
+        </FieldBody>
+    </Field>
+</Validations>
+
+@code {
+    RecordOptions? recordOptions;
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
+
+        recordOptions = await _localStorageOptionsProvider.GetOptions<RecordOptions>();
+        await base.OnInitializedAsync();
+    }
+
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
+    {
+        if (options is RecordOptions recordingOptions)
+        {
+            recordOptions = recordingOptions;
+        }
+    }
+
+    async Task RecordedAudiofilenameChanged(string newValue)
+    {
+        if (recordOptions != null)
+        {
+            recordOptions.RecordedAudiofilename = newValue;
+        }
+        await _localStorageOptionsProvider.SaveOptionsValue<RecordOptions>(x => x.RecordedAudiofilename, newValue);
+    }
+
+    async Task RecordTimeSensitivityChanged(string newValue)
+    {
+        if (recordOptions != null)
+        {
+            recordOptions.RecordTimeSensitivityname = newValue;
+        }
+        await _localStorageOptionsProvider.SaveOptionsValue<RecordOptions>(x => x.RecordTimeSensitivityname!, newValue);
+    }
+
+    async Task ResetOptions()
+    {
+        var newOptions = new RecordOptions();
+        await _localStorageOptionsProvider.SaveOptions(newOptions);
+    }
+}

@@ -42,7 +42,6 @@ along with Foobar.  If not, see
                             <Tabs @bind-SelectedTab="@selectedOptionsTab">
                                 <Items>
                                     <Tab Name="common">@_localizer["Common settings"]</Tab>
-                                    <Tab Name="recording">@_localizer["Record settings"]</Tab>
                                 </Items>
                             </Tabs>
                         </CardHeader>
@@ -134,37 +133,6 @@ along with Foobar.  If not, see
                                             </FieldBody>
                                         </Field>
                                     </Validation>
-                                </TabPanel>
-                                <TabPanel Name="recording" Padding="Padding.Is3.OnY">
-                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<ApplicationOptions>.Validate(args, applicationOptions, x => x.RecordedAudiofilename, _validationMessageLocalizer, token)">
-                                        <Field Horizontal="true">
-                                            <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Filename for recorded audio"]</FieldLabel>
-                                            <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                                <TextEdit @bind-Text="applicationOptions.RecordedAudiofilename" Immediate="false">
-                                                    <Feedback>
-                                                        <ValidationError Tooltip />
-                                                    </Feedback>
-                                                </TextEdit>
-                                            </FieldBody>
-                                        </Field>
-                                    </Validation>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record countdown timer in seconds"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                            <NumericEdit TValue="uint" @bind-Value="applicationOptions.RecordCountdownTimer" Min="1" />
-                                        </FieldBody>
-                                    </Field>
-                                    <Field Horizontal="true">
-                                        <FieldLabel ColumnSize="ColumnSize.Is5.OnWidescreen.Is12.OnDesktop">@_localizer["Record time sensitivity"]</FieldLabel>
-                                        <FieldBody ColumnSize="ColumnSize.Is7.OnWidescreen.Is12.OnDesktop">
-                                            <Select TValue="String" @bind-SelectedValue="@applicationOptions.RecordTimeSensitivityname">
-                                                @foreach (var name in Enum.GetNames(typeof(TimeSensitivityMode)))
-                                                {
-                                                    <SelectItem Value="@name">@_localizer["TimeSensitivityMode." + name]</SelectItem>
-                                                }
-                                            </Select>
-                                        </FieldBody>
-                                    </Field>
                                 </TabPanel>
                             </TabsContent>
                         </CardBody>

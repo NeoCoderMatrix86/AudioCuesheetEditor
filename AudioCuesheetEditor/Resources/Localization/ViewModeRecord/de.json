@@ -27,6 +27,7 @@
     "Error": "Fehler",
     "Here all validation messages will be displayed. For details switch to full edit mode.": "Hier werden alle Validierungsnachrichten angezeigt. Für Details wechseln Sie bitte in den Bearbeitungsmodus \"Komplette Bearbeitung\".",
     "Start record timer": "Aufnahmecountdown starten",
-    "Record will start in {0} seconds!": "Aufnahme wird in {0} Sekunden starten!"
+    "Record will start in {0} seconds!": "Aufnahme wird in {0} Sekunden starten!",
+    "Record options": "Aufnahmeoptionen"
   }
 }
