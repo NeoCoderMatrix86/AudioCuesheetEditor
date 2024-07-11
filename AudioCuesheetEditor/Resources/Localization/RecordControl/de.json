@@ -10,6 +10,7 @@
     "Cuesheet already contains tracks. Recording is not possible, if tracks are present. Please save your work and start with a clean cuesheet.": "Das Cuesheet enthält bereits Titel. Die Aufnahme ist nicht möglich, wenn bereits Titel vorhanden sind. Bitte speichern Sie ihre Arbeit und starten Sie anschließend mit einem leeren Cuesheet.",
     "Start countdown": "Aufnahmecountdown starten",
     "Abort": "Abbrechen",
-    "Seconds till record starts": "Sekunden bis die Aufnahme startet"
+    "Seconds till record starts": "Sekunden bis die Aufnahme startet",
+    "Abort countdown": "Aufnahmecountdown abbrechen"
   }
 }
