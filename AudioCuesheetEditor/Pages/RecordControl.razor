@@ -45,8 +45,8 @@ along with Foobar.  If not, see
         @_localizer["Abort countdown"]
     </Button>
 }
-<Row>
-    <Column>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="display: flex; align-items: center;">
         <Dropdown Direction="Direction.End" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">
             <Button Color="Color.Danger" Clicked="StartRecordingClicked" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-record2" viewBox="0 0 16 16">
@@ -60,18 +60,19 @@ along with Foobar.  If not, see
                 <DropdownItem Clicked="OpenCountdownModal" Disabled="_sessionStateContainer.Cuesheet.IsRecording || startRecordTimer?.Enabled == true">@_localizer["Start record countdown timer"]</DropdownItem>
             </DropdownMenu>
         </Dropdown>
-    </Column>
-    <Column>
+    </div>
+
+    <div style="flex-grow: 1; display: flex; justify-content: center;">
         @if (_sessionStateContainer.Cuesheet.RecordingTime.HasValue == true)
         {
-            <Heading Size="HeadingSize.Is4">@GetTimespanAsString(_sessionStateContainer.Cuesheet.RecordingTime, true)</Heading>
+            <Heading Size="HeadingSize.Is4" style="margin: 0; align-self: center;">@GetTimespanAsString(_sessionStateContainer.Cuesheet.RecordingTime, true)</Heading>
         }
         else
         {
-            <Heading Size="HeadingSize.Is4">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</Heading>
+            <Heading Size="HeadingSize.Is4" style="margin: 0; align-self: center;">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</Heading>
         }
-    </Column>
-    <Column>
+    </div>
+    <div style="display: flex; align-items: center;">
         <Button Color="Color.Warning" Clicked="StopRecordingClicked" Disabled="!_sessionStateContainer.Cuesheet.IsRecording">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-btn" viewBox="0 0 16 16">
                 <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v3A1.5 1.5 0 0 0 6.5 11h3A1.5 1.5 0 0 0 11 9.5v-3A1.5 1.5 0 0 0 9.5 5h-3z" />
@@ -79,8 +80,8 @@ along with Foobar.  If not, see
             </svg>
             @_localizer["Stop recording"]
         </Button>
-    </Column>
-</Row>
+    </div>
+</div>
 
 <ModalDialog @ref="modalDialog" />
 
@@ -112,7 +113,6 @@ along with Foobar.  If not, see
 </Modal>
 
 @code {
-    //TODO: Make button for stop aligned to the end and optimize space for the time
     Timer updateGUITimer = new Timer(300);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
