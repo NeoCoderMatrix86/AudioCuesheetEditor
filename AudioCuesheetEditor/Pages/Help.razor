@@ -57,6 +57,7 @@ along with Foobar.  If not, see
         <br />
         <Blazorise.Link To="#headingOptions">@_localizer["Options"]</Blazorise.Link>
         <br />
+        <Blazorise.Link To="#headingOfflineUsage">@_localizer["Offline usage (progressive WebApp)"]</Blazorise.Link>
         <Row>
             <Column><Heading id="headingIntroduction" Size="HeadingSize.Is2">@_localizer["Introduction"]</Heading></Column>
             <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
@@ -130,6 +131,11 @@ along with Foobar.  If not, see
             <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
         </Row>
         @((MarkupString)_localizer["Options helptext"])
+        <Row>
+            <Column><Heading id="headingOfflineUsage" Size="HeadingSize.Is2">@_localizer["Offline usage (progressive WebApp)"]</Heading></Column>
+            <Column Flex="Flex.JustifyContent.End"><Blazorise.Link To="Help">@_localizer["Scroll to top"]</Blazorise.Link></Column>
+        </Row>
+        @((MarkupString)_localizer["Offline usage helptext"])
     </LayoutContent>
 </Layout>
 
