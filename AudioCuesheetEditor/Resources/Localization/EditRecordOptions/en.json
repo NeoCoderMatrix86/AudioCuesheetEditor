@@ -5,6 +5,7 @@
     "Record time sensitivity": "Recordtime sensitivity",
     "TimeSensitivityMode.Full": "Everything (incl. milliseconds)",
     "TimeSensitivityMode.Seconds": "Only seconds",
-    "TimeSensitivityMode.Minutes": "Only minutes"
+    "TimeSensitivityMode.Minutes": "Only minutes",
+    "Reset options to defaults": "Reset options to defaults"
   }
 }
