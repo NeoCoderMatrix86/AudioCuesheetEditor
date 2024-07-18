@@ -6,15 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>AudioCuesheetEditor</title>
     <base href="/" />
+    <link href="manifest.webmanifest" rel="manifest" />
+    <!--Icons taken from open_icon_library-full\icons\png\256x256\mimetypes\tango-style\application-x-cue.png-->
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
 
     <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
     <link href="_content/Blazorise.Bootstrap5/blazorise.bootstrap5.css" rel="stylesheet" />
+    <link href="_content/Blazorise.Icons.FontAwesome/v6/css/all.min.css" rel="stylesheet">
 
     <script src="scripts/howler.core.min.js"></script>
     <script src="_content/Howler.Blazor/JsInteropHowl.js"></script>
+
+    <script src="_content/Blazorise/breakpoint.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/button.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/closable.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/colorPicker.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/datePicker.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/dragDrop.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/dropdown.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/fileEdit.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/filePicker.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/inputMask.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/io.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/memoEdit.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/numericPicker.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/observer.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/table.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/textEdit.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/theme.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/timePicker.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/tooltip.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise/utilities.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise.Bootstrap5/modal.js?v=1.5.2.0" type="module"></script>
+    <script src="_content/Blazorise.Bootstrap5/tooltip.js?v=1.5.2.0" type="module"></script>
+
     <style>
         .center {
             display: flex;
@@ -52,6 +81,7 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
     <script src="scripts/bootstrap.bundle.min.js"></script>
     <script src="scripts/fix-webm-duration.js"></script>
     <script src="scripts/library.js"></script>

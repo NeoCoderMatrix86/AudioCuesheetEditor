@@ -36,8 +36,10 @@ namespace AudioCuesheetEditor.Data.Services
         public TimeSpan? Length { get; init; }
         public String? Disambiguation { get; init; }
     }
-    public class MusicBrainzDataProvider
+    public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
     {
+        private readonly ILogger<MusicBrainzDataProvider> _logger = logger;
+
         public const String Application = "AudioCuesheetEditor";
         public const String ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
 
@@ -45,54 +47,68 @@ namespace AudioCuesheetEditor.Data.Services
 
         public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String searchString)
         {
-            List<MusicBrainzArtist> artistSearchResult = new();
-            if (String.IsNullOrEmpty(searchString) == false)
+            List<MusicBrainzArtist> artistSearchResult = [];
+            try
             {
-                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true);
-                artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
+                if (String.IsNullOrEmpty(searchString) == false)
+                {
+                    using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                    var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true);
+                    artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
+                }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogError(hre, "Error getting response from MusicBrainz");
             }
             return artistSearchResult.AsReadOnly();
         }
 
         public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String searchString, String? artist = null)
         {
-            List<MusicBrainzTrack> titleSearchResult = new();
-            if (String.IsNullOrEmpty(searchString) == false)
+            List<MusicBrainzTrack> titleSearchResult = [];
+            try
             {
-                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
-                if (String.IsNullOrEmpty(artist))
+                if (String.IsNullOrEmpty(searchString) == false)
                 {
-                    findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true);
-                }
-                else
-                {
-                    findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
-                }
-                foreach (var result in findRecordingsResult.Results)
-                {
-                    String artistString = String.Empty;
-                    if (result.Item.ArtistCredit != null)
+                    using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                    ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
+                    if (String.IsNullOrEmpty(artist))
                     {
-                        foreach (var artistCredit in result.Item.ArtistCredit)
+                        findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true);
+                    }
+                    else
+                    {
+                        findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
+                    }
+                    foreach (var result in findRecordingsResult.Results)
+                    {
+                        String artistString = String.Empty;
+                        if (result.Item.ArtistCredit != null)
                         {
-                            artistString += artistCredit.Name;
-                            if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                            foreach (var artistCredit in result.Item.ArtistCredit)
                             {
-                                artistString += artistCredit.JoinPhrase;
+                                artistString += artistCredit.Name;
+                                if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                                {
+                                    artistString += artistCredit.JoinPhrase;
+                                }
                             }
                         }
+                        titleSearchResult.Add(new MusicBrainzTrack()
+                        {
+                            Id = result.Item.Id,
+                            Artist = artistString,
+                            Title = result.Item.Title,
+                            Length = result.Item.Length,
+                            Disambiguation = result.Item.Disambiguation
+                        });
                     }
-                    titleSearchResult.Add(new MusicBrainzTrack()
-                    {
-                        Id = result.Item.Id,
-                        Artist = artistString,
-                        Title = result.Item.Title,
-                        Length = result.Item.Length,
-                        Disambiguation = result.Item.Disambiguation
-                    });
                 }
+            }
+            catch(HttpRequestException hre)
+            {
+                _logger.LogError(hre, "Error getting response from MusicBrainz");
             }
             return titleSearchResult.AsReadOnly();
         }
@@ -100,26 +116,33 @@ namespace AudioCuesheetEditor.Data.Services
         public async Task<MusicBrainzTrack?> GetDetailsAsync(Guid id)
         {
             MusicBrainzTrack? track = null;
-            if (id != Guid.Empty)
+            try
             {
-                var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                var recording = await query.LookupRecordingAsync(id, Include.Artists);
-                if (recording != null)
+                if (id != Guid.Empty)
                 {
-                    String artist = String.Empty;
-                    if (recording.ArtistCredit != null)
+                    var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                    var recording = await query.LookupRecordingAsync(id, Include.Artists);
+                    if (recording != null)
                     {
-                        foreach (var artistCredit in recording.ArtistCredit)
+                        String artist = String.Empty;
+                        if (recording.ArtistCredit != null)
                         {
-                            artist += artistCredit.Name;
-                            if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                            foreach (var artistCredit in recording.ArtistCredit)
                             {
-                                artist += artistCredit.JoinPhrase;
+                                artist += artistCredit.Name;
+                                if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                                {
+                                    artist += artistCredit.JoinPhrase;
+                                }
                             }
                         }
+                        track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
                     }
-                    track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
                 }
+            }
+            catch (HttpRequestException hre)
+            {
+                _logger.LogError(hre, "Error getting response from MusicBrainz");
             }
             return track;
         }

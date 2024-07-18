@@ -92,9 +92,14 @@ namespace AudioCuesheetEditor.Extensions
             get { return cuesheetImportFile; }
             set
             {
+                if (cuesheetImportFile != null)
+                {
+                    cuesheetImportFile.AnalysisFinished -= CuesheetImportFile_AnalysisFinished;
+                }
                 cuesheetImportFile = value;
                 if ((CuesheetImportFile != null) && (CuesheetImportFile.Cuesheet != null))
                 {
+                    CuesheetImportFile.AnalysisFinished += CuesheetImportFile_AnalysisFinished;
                     ImportCuesheet = CuesheetImportFile.Cuesheet;
                 }
                 else
@@ -125,6 +130,22 @@ namespace AudioCuesheetEditor.Extensions
             {
                 currentViewMode = value;
                 CurrentViewModeChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        public IImportfile? Importfile
+        {
+            get
+            {
+                if (TextImportFile != null)
+                {
+                    return TextImportFile;
+                }
+                if (CuesheetImportFile != null)
+                {
+                    return CuesheetImportFile;
+                }
+                return null;
             }
         }
 
@@ -168,6 +189,18 @@ namespace AudioCuesheetEditor.Extensions
         private void Cuesheet_CuesheetImported(object? sender, EventArgs e)
         {
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        void CuesheetImportFile_AnalysisFinished(object? sender, EventArgs e)
+        {
+            if (CuesheetImportFile != null)
+            {
+                ImportCuesheet = CuesheetImportFile.Cuesheet;
+            }
+            else
+            {
+                ImportCuesheet = null;
+            }
         }
     }
 }

@@ -119,27 +119,14 @@ along with Foobar.  If not, see
                             </Paragraph>
                         </Alert>
                         <Accordion>
-                            @if (FileContentRecognized != null)
-                            {
-                                <Collapse Visible="importFileContentVisible">
-                                    <CollapseHeader>
-                                        <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
-                                    </CollapseHeader>
-                                    <CollapseBody Background="Background.Light">
-                                        <Text>
-                                            <pre>
-                                                @foreach(var line in FileContentRecognized)
-                                                {
-                                                    if (line != null)
-                                                    {
-                                                        @((MarkupString)String.Format("{0}<br />", line))
-                                                    }
-                                                }
-                                            </pre>
-                                        </Text>
-                                    </CollapseBody>
-                                </Collapse>
-                            }
+                            <Collapse Visible="importFileContentVisible">
+                                <CollapseHeader>
+                                    <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
+                                </CollapseHeader>
+                                <CollapseBody Background="Background.Light">
+                                    <ImportFileView />
+                                </CollapseBody>
+                            </Collapse>
                             @if (_sessionStateContainer.TextImportFile != null)
                             {
                                 <Collapse Visible="importOptionsVisible">
@@ -327,22 +314,6 @@ along with Foobar.  If not, see
 
     HotKeysContext? hotKeysContext;
     Validations? validations;
-
-    public IReadOnlyCollection<String?>? FileContentRecognized
-    {
-        get
-        {
-            if (_sessionStateContainer.TextImportFile != null)
-            {
-                return _sessionStateContainer.TextImportFile.FileContentRecognized;
-            }
-            if (_sessionStateContainer.CuesheetImportFile != null)
-            {
-                return _sessionStateContainer.CuesheetImportFile.FileContentRecognized;
-            }
-            return null;
-        }
-    }
 
     public void Dispose()
     {

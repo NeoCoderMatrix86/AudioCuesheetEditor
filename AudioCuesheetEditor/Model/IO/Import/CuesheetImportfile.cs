@@ -20,27 +20,49 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class CuesheetImportfile
+    public class CuesheetImportfile : IImportfile
     {
-        /// <summary>
-        /// File content (each element is a file line)
-        /// </summary>
-        public IReadOnlyCollection<String?>? FileContent { get; private set; }
+        private IEnumerable<String?> fileContent;
 
-        /// <summary>
-        /// File content with marking which passages has been reconized by scheme
-        /// </summary>
-        public IReadOnlyCollection<String?>? FileContentRecognized { get; private set; }
+        public EventHandler? AnalysisFinished;
+
+        /// <inheritdoc />
+        public IEnumerable<String?> FileContent 
+        {
+            get => fileContent;
+            set
+            {
+                fileContent = value;
+                Analyse();
+            }
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<String?> FileContentRecognized { get; private set; }
         public Exception? AnalyseException { get; private set; }
         public Cuesheet? Cuesheet { get; private set; }
+        public ApplicationOptions ApplicationOptions { get; private set; }
 
-        public CuesheetImportfile(MemoryStream fileContent, ApplicationOptions applicationOptions)
+        public CuesheetImportfile(MemoryStream fileContentStream, ApplicationOptions applicationOptions)
+        {
+            FileContentRecognized = [];
+            fileContentStream.Position = 0;
+            using var reader = new StreamReader(fileContentStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            fileContent = lines.AsReadOnly();
+            ApplicationOptions = applicationOptions;
+            Analyse();
+        }
+
+        private void Analyse()
         {
             try
             {
                 Cuesheet = new Cuesheet();
-                fileContent.Position = 0;
-                using var reader = new StreamReader(fileContent);
                 var cuesheetArtistGroupName = "CuesheetArtist";
                 var cuesheetTitleGroupName = "CuesheetTitle";
                 var cuesheetFileNameGroupName = "CuesheetFileName";
@@ -65,11 +87,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
                 Track? track = null;
-                List<String?> lines = new();
-                List<String?>? recognizedLines = new();
-                while (reader.EndOfStream == false)
+                List<String?> lines = [];
+                List<String?>? recognizedLines = [];
+                foreach (var line in FileContent)
                 {
-                    var line = reader.ReadLine();
                     lines.Add(line);
                     String? recognizedLine = line;
                     if (String.IsNullOrEmpty(line) == false)
@@ -214,9 +235,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(trackPreGapGroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(":")));
-                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(":") + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(":") + 1));
+                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
+                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
                                 if (track != null)
                                 {
                                     track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
@@ -238,9 +259,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(trackIndex01GroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(":")));
-                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(":") + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(":") + 1));
+                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
+                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
                                 if (track != null)
                                 {
                                     track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
@@ -256,7 +277,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             }
                             if (track != null)
                             {
-                                Cuesheet.AddTrack(track, applicationOptions);
+                                Cuesheet.AddTrack(track, ApplicationOptions);
                             }
                             else
                             {
@@ -270,9 +291,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(trackPostGapGroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(":")));
-                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(":") + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(":") + 1));
+                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
+                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
                                 if (track != null)
                                 {
                                     track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
@@ -290,15 +311,16 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     recognizedLines.Add(recognizedLine);
                 }
-                FileContent = lines.AsReadOnly();
+                fileContent = lines.AsReadOnly();
                 FileContentRecognized = recognizedLines.AsReadOnly();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AnalyseException = ex;
                 Cuesheet = null;
-                FileContentRecognized = null;
+                FileContentRecognized = FileContent;
             }
+            AnalysisFinished?.Invoke(this, EventArgs.Empty);
         }
     }
 }
