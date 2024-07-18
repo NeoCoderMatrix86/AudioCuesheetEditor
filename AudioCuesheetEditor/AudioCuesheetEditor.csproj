@@ -113,8 +113,8 @@
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.5.2" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.5.2" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.7" PrivateAssets="all" />
 	  <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
     <PackageReference Include="Blazorise.Components" Version="1.5.2" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
@@ -122,7 +122,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="4.1.0.1" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.1.0" />
     <PackageReference Include="z440.atl.core" Version="5.25.0" />
   </ItemGroup>
   
