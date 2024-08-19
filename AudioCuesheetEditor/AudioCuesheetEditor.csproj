@@ -7,7 +7,7 @@
 	<ImplicitUsings>enable</ImplicitUsings>
 	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
 	<RazorLangVersion>3.0</RazorLangVersion>
-	<Version>6.0.0</Version>
+	<Version>6.1.0</Version>
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	<PublishTrimmed>true</PublishTrimmed>
 	<RunAOTCompilation>true</RunAOTCompilation>
