@@ -78,23 +78,12 @@ namespace AudioCuesheetEditor.Services.IO
                         lines.Add(reader.ReadLine());
                     }
                     _sessionStateContainer.TextImportFile = _textImportService.Analyse(options, lines);
-                    //TODO
                     if (_textImportService.AnalysedCuesheet != null)
                     {
                         var importCuesheet = new Cuesheet();
                         importCuesheet.Import(_textImportService.AnalysedCuesheet, applicationOptions);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
                     }
-                    //_textImportService.Analyse(options)
-                    //TODO: use new import service
-                    //if (_sessionStateContainer.TextImportFile != null)
-                    //{
-                    //    _sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
-                    //    _sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged -= TextImportScheme_ValidateablePropertyChanged;
-                    //}
-                    //_sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options);
-                    //_sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
-                    //_sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged += TextImportScheme_ValidateablePropertyChanged;
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }
                 if (IOUtility.CheckFileMimeTypeForAudioCodec(file))

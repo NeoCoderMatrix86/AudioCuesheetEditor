@@ -161,9 +161,7 @@ along with Foobar.  If not, see
             switch (_sessionStateContainer.CurrentViewMode)
             {
                 case ViewMode.ViewModeImport:
-                    //TODO
-                    // cuesheet = _sessionStateContainer.ImportCuesheet;
-                    cuesheet = null;
+                    cuesheet = _sessionStateContainer.ImportCuesheet;
                     break;
                 default:
                     cuesheet = _sessionStateContainer.Cuesheet;
