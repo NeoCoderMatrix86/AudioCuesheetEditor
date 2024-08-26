@@ -53,6 +53,8 @@
     <Content Remove="Resources\Localization\Index\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\ValidationMessage\en.json" />
+    <Content Remove="Resources\Localization\EditImportOptions\de.json" />
+    <Content Remove="Resources\Localization\EditImportOptions\en.json" />
     <Content Remove="Resources\Localization\ViewModeImport\de.json" />
     <Content Remove="Resources\Localization\ViewModeImport\en.json" />
     <Content Remove="Resources\Localization\ViewModeRecord\de.json" />
@@ -98,6 +100,8 @@
     <EmbeddedResource Include="Resources\Localization\Index\de.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
+    <EmbeddedResource Include="Resources\Localization\EditImportOptions\de.json" />
+    <EmbeddedResource Include="Resources\Localization\EditImportOptions\en.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeImport\de.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeImport\en.json" />
     <EmbeddedResource Include="Resources\Localization\ViewModeRecord\de.json" />

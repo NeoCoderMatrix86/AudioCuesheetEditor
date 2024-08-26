@@ -21,18 +21,13 @@ namespace AudioCuesheetEditor.Model.Options
 {
     public class ImportOptions : IOptions
     {
-        public TextImportScheme TextImportScheme { get; set; }
-        public TimeSpanFormat? TimeSpanFormat { get; set; }
-
-        public ImportOptions()
-        {
-            TextImportScheme = TextImportScheme.DefaultTextImportScheme;
-        }
-
-        public ImportOptions(TextImportfile textImportfile)
-        {
-            TextImportScheme = textImportfile.TextImportScheme;
-            TimeSpanFormat = textImportfile.TimeSpanFormat;
-        }
+        public TextImportScheme TextImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
+        public TimeSpanFormat TimeSpanFormat { get; set; } = new();
+        //TODO
+        //public ImportOptions(TextImportfile textImportfile)
+        //{
+        //    TextImportScheme = textImportfile.TextImportScheme;
+        //    TimeSpanFormat = textImportfile.TimeSpanFormat;
+        //}
     }
 }

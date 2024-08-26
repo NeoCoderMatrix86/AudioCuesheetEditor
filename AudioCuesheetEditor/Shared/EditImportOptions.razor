@@ -1,0 +1,171 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@implements IDisposable
+
+@inject ITextLocalizerService _localizationService
+@inject ITextLocalizer<EditImportOptions> _localizer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+
+<Validations>
+    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, ImportOptions?.TextImportScheme, x => x.SchemeCuesheet, _validationMessageLocalizer, token)">
+        <Field Horizontal>
+            <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
+                <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
+                    @_localizer["Textimportscheme cuesheet"]
+                </Tooltip>
+            </FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <TextEdit Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" Text="@ImportOptions?.TextImportScheme.SchemeCuesheet" TextChanged="(text) => TextChangedAsync((options, value) => options.TextImportScheme.SchemeCuesheet = value, text)">
+                            <Feedback>
+                                <ValidationError Tooltip />
+                            </Feedback>
+                        </TextEdit>
+                    </Addon>
+                    <Addon AddonType="AddonType.End">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                @_localizer["Select placeholder"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
+                                {
+                                    <DropdownItem Clicked="() => TextChangedAsync((options, value) => options.TextImportScheme.SchemeCuesheet += value, availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere]))">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </Addon>
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+    <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, ImportOptions?.TextImportScheme, x => x.SchemeTracks, _validationMessageLocalizer, token)">
+        <Field Horizontal>
+            <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
+                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
+                    @_localizer["Textimportscheme track"]
+                </Tooltip>
+            </FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <TextEdit Placeholder="@_localizer["Enter textimportscheme track here"]" Text="@ImportOptions?.TextImportScheme.SchemeTracks" TextChanged="(text) => TextChangedAsync((options, value) => options.TextImportScheme.SchemeTracks = value, text)">
+                            <Feedback>
+                                <ValidationError Tooltip />
+                            </Feedback>
+                        </TextEdit>
+                    </Addon>
+                    <Addon AddonType="AddonType.End">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                @_localizer["Select placeholder"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
+                                {
+                                    <DropdownItem Clicked="() => TextChangedAsync((options, value) => options.TextImportScheme.SchemeTracks += value, availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere]))">@_localizer[availableSchemeTrack.Key]</DropdownItem>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </Addon>
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+    <Validation AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, ImportOptions?.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
+        <Field Horizontal>
+            <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
+                <Tooltip Text="@_localizer["Enter custom timespan format here"]">
+                    @_localizer["Customized timespan format import"]
+                </Tooltip>
+            </FieldLabel>
+            <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <TextEdit Text="@ImportOptions?.TimeSpanFormat.Scheme" TextChanged="(text) => TextChangedAsync((options, value) => options.TimeSpanFormat.Scheme = value, text)">
+                            <Feedback>
+                                <ValidationError Tooltip />
+                            </Feedback>
+                        </TextEdit>
+                    </Addon>
+                    <Addon AddonType="AddonType.End">
+                        <Dropdown>
+                            <DropdownToggle Color="Color.Secondary">
+                                @_localizer["Select placeholder"]
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
+                                {
+                                    <DropdownItem Value="@availableFormat.Value" Clicked="() => TextChangedAsync((options, value) => options.TimeSpanFormat.Scheme += value, availableFormat.Value.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere]))">@_localizer[availableFormat.Key]</DropdownItem>
+                                }
+                            </DropdownMenu>
+                        </Dropdown>
+                    </Addon>
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+</Validations>
+
+@code{
+    //TODO: Changes to ImportOptions need to do a reanalysis
+    public ImportOptions? ImportOptions { get; private set; }
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
+
+        ImportOptions = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+
+        await base.OnInitializedAsync();
+    }
+
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
+    {
+        if (options is ImportOptions importOptions)
+        {
+            ImportOptions = importOptions;
+            StateHasChanged();
+        }
+    }
+
+    async Task TextChangedAsync(Action<ImportOptions, String> setter, string text)
+    {
+        if (ImportOptions == null)
+        {
+            throw new NullReferenceException();
+        }
+        setter(ImportOptions, text);
+        await _localStorageOptionsProvider.SaveOptions(ImportOptions);
+    }
+}

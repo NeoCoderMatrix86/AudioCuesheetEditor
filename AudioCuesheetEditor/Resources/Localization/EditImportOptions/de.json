@@ -1,0 +1,21 @@
+{
+  "culture": "de",
+  "translations": {
+    "Enter textimportscheme cuesheet tooltip": "Textschema für den Import von Cuesheeteigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.",
+    "Enter textimportscheme cuesheet here": "Textschema für den Import von Cuesheeteigenschaften hier eingeben",
+    "Select placeholder": "Platzhalter auswählen",
+    "Enter textimportscheme track tooltip": "Textschema für den Import von Titeleigenschaften hier eingeben. Die Identifikation wird über reguläre Ausdrücke ausgeführt.",
+    "Enter textimportscheme track here": "Textschema für den Import von Titeleigenschaften hier eingeben",
+    "Textimportscheme cuesheet": "Import Schema Cuesheet",
+    "Textimportscheme track": "Import Schema Titel",
+    "Import Options": "Importoptionen",
+    "ENTER REGULAR EXPRESSION HERE": "Hier regulären Ausdruck eingeben",
+    "Enter custom timespan format here": "Hier können Sie bei Bedarf ein angepasstes Format für Zeitspannen eingeben. Details können der Hilfe entnommen werden.",
+    "Customized timespan format import": "Zeitspannenformat für Import",
+    "Days": "Tage",
+    "Hours": "Stunden",
+    "Minutes": "Minuten",
+    "Seconds": "Sekunden",
+    "Milliseconds": "Millisekunden"
+  }
+}
