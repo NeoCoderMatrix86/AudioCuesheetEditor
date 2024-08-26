@@ -20,10 +20,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <summary>
         /// File content (each element is a file line)
         /// </summary>
-        public IEnumerable<String?> FileContent { get; set; }
+        public IEnumerable<String?>? FileContent { get; set; }
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        public IEnumerable<String?> FileContentRecognized { get; }
+        public IEnumerable<String?>? FileContentRecognized { get; set; }
+        /// <summary>
+        /// Exception that has been thrown while readinng out the file
+        /// </summary>
+        public Exception? AnalyseException { get; set; }
     }
 }

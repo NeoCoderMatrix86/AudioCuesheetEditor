@@ -19,6 +19,8 @@ using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditor.Services.UI;
 using BlazorDownloadFile;
 using Blazorise;
 using Blazorise.Bootstrap5;
@@ -53,6 +55,9 @@ builder.Services.AddScoped<MusicBrainzDataProvider>();
 builder.Services.AddScoped<SessionStateContainer>();
 builder.Services.AddScoped<TraceChangeManager>();
 builder.Services.AddScoped<DateTimeUtility>();
+builder.Services.AddScoped<ImportManager>();
+builder.Services.AddScoped<TextImportService>();
+builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

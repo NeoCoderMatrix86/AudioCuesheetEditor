@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using System.Text.RegularExpressions;
@@ -22,12 +23,12 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class CuesheetImportfile : IImportfile
     {
-        private IEnumerable<String?> fileContent;
+        private IEnumerable<String?>? fileContent;
 
         public EventHandler? AnalysisFinished;
 
         /// <inheritdoc />
-        public IEnumerable<String?> FileContent 
+        public IEnumerable<String?>? FileContent 
         {
             get => fileContent;
             set
@@ -38,9 +39,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
         }
 
         /// <inheritdoc />
-        public IEnumerable<String?> FileContentRecognized { get; private set; }
-        public Exception? AnalyseException { get; private set; }
-        public Cuesheet? Cuesheet { get; private set; }
+        public IEnumerable<String?>? FileContentRecognized { get; set; }
+        /// <inheritdoc />
+        public Exception? AnalyseException { get; set; }
+        public ImportCuesheet? Cuesheet { get; private set; }
         public ApplicationOptions ApplicationOptions { get; private set; }
 
         public CuesheetImportfile(MemoryStream fileContentStream, ApplicationOptions applicationOptions)
@@ -62,7 +64,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         {
             try
             {
-                Cuesheet = new Cuesheet();
+                Cuesheet = new ImportCuesheet();
                 var cuesheetArtistGroupName = "CuesheetArtist";
                 var cuesheetTitleGroupName = "CuesheetTitle";
                 var cuesheetFileNameGroupName = "CuesheetFileName";
@@ -132,8 +134,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(cuesheetFileNameGroupName);
                             if (matchGroup != null)
                             {
-                                var audioFile = matchGroup.Value;
-                                Cuesheet.Audiofile = new Audiofile(audioFile);
+                                //TODO
+                                //var audioFile = matchGroup.Value;
+                                //Cuesheet.Audiofile = new Audiofile(audioFile);
                             }
                             else
                             {
@@ -147,8 +150,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(cuesheetCDTextfileGroupName);
                             if (matchGroup != null)
                             {
-                                var cdTextfile = matchGroup.Value;
-                                Cuesheet.CDTextfile = new CDTextfile(cdTextfile);
+                                //TODO
+                                //var cdTextfile = matchGroup.Value;
+                                //Cuesheet.CDTextfile = new CDTextfile(cdTextfile);
                             }
                             else
                             {
@@ -162,8 +166,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             var matchGroup = match.Groups.GetValueOrDefault(cuesheetCatalogueNumberGroupName);
                             if (matchGroup != null)
                             {
-                                var catalogueNumber = matchGroup.Value;
-                                Cuesheet.Cataloguenumber.Value = catalogueNumber;
+                                //TODO
+                                //var catalogueNumber = matchGroup.Value;
+                                //Cuesheet.Cataloguenumber.Value = catalogueNumber;
                             }
                             else
                             {
@@ -277,7 +282,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             }
                             if (track != null)
                             {
-                                Cuesheet.AddTrack(track, ApplicationOptions);
+                                //TODO
+                                //Cuesheet.AddTrack(track, ApplicationOptions);
                             }
                             else
                             {
