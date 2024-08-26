@@ -63,7 +63,7 @@ namespace AudioCuesheetEditor.Services.IO
                             var track = new ImportTrack();
                             recognizedLine = AnalyseLine(line, track, regExTracks);
                             recognized = recognizedLine != null;
-                            AnalysedCuesheet.Tracks = AnalysedCuesheet.Tracks.Append(track);
+                            AnalysedCuesheet.Tracks.Add(track);
                         }
                     }
                     recognizedFileContent.Add(recognizedLine);

@@ -137,6 +137,9 @@ along with Foobar.  If not, see
 
     protected override async Task OnInitializedAsync()
     {
+        TimeSpanFormat.TextLocalizer = _localizer;
+        TextImportScheme.TextLocalizer = _localizer;
+
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
 
@@ -147,6 +150,8 @@ along with Foobar.  If not, see
 
     void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
+        TimeSpanFormat.TextLocalizer = _localizer;
+        TextImportScheme.TextLocalizer = _localizer;
         StateHasChanged();
     }
 

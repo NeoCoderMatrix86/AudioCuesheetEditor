@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
@@ -39,7 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public CuesheetSection Section { get; } = section;
     }
 
-    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
+    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ICuesheetEntity, ITraceable, ICuesheet
     {
         public const String MimeType = "text/*";
         public const String FileExtension = ".cue";
@@ -393,7 +394,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(Cuesheet cuesheet, ApplicationOptions applicationOptions, TraceChangeManager? traceChangeManager = null)
+        public void Import(ImportCuesheet cuesheet, ApplicationOptions applicationOptions, TraceChangeManager? traceChangeManager = null)
         {
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
@@ -559,25 +560,27 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="cuesheet">Reference to import cuesheet</param>
         /// <param name="applicationOptions">Reference to application options</param>
-        private void CopyValues(Cuesheet cuesheet, ApplicationOptions applicationOptions)
+        private void CopyValues(ImportCuesheet cuesheet, ApplicationOptions applicationOptions)
         {
             Artist = cuesheet.Artist;
             Title = cuesheet.Title;
-            Audiofile = cuesheet.Audiofile;
-            CDTextfile = cuesheet.CDTextfile;
-            Cataloguenumber = cuesheet.Cataloguenumber;
+            //TODO
+            //Audiofile = cuesheet.Audiofile;
+            //CDTextfile = cuesheet.CDTextfile;
+            //Cataloguenumber = cuesheet.Cataloguenumber;
             foreach (var importTrack in cuesheet.Tracks)
             {
                 //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
                 var track = new Track(importTrack, false);
                 AddTrack(track, applicationOptions);
             }
-            // Copy sections
-            foreach (var splitPoint in cuesheet.Sections)
-            {
-                var newSplitPoint = AddSection();
-                newSplitPoint.CopyValues(splitPoint);
-            }
+            //TODO
+            //// Copy sections
+            //foreach (var splitPoint in cuesheet.Sections)
+            //{
+            //    var newSplitPoint = AddSection();
+            //    newSplitPoint.CopyValues(splitPoint);
+            //}
         }
 
         private void Track_RankPropertyValueChanged(object? sender, string e)

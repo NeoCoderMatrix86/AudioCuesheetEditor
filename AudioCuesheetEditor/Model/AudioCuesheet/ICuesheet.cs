@@ -14,14 +14,13 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class ImportOptions : IOptions
+    public interface ICuesheet
     {
-        public TextImportScheme TextImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
-        public TimeSpanFormat TimeSpanFormat { get; set; } = new();
+        public String? Artist { get; set; }
+        public String? Title { get; set; }
     }
 }

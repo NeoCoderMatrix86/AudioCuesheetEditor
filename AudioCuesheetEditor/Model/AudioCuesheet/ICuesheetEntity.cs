@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
+    //TODO: Check if this can be removed
     /// <summary>
     /// Interface for cuesheet entities (Cuesheet, track, etc.)
     /// </summary>

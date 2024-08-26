@@ -20,6 +20,8 @@ using System.Reflection;
 
 namespace AudioCuesheetEditor.Model.Utility
 {
+    //TODO: delete me!
+    [Obsolete("Use ApplicationOptionsTimeSpanParser!")]
     public class DateTimeUtility : IDisposable
     {
         private readonly LocalStorageOptionsProvider? _localStorageOptionsProvider;
@@ -46,7 +48,7 @@ namespace AudioCuesheetEditor.Model.Utility
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
-
+        //TODO: Make static
         public TimeSpan? ParseTimeSpan(String input)
         {
             TimeSpan? result = null;

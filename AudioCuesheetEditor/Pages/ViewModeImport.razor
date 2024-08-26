@@ -21,12 +21,11 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<ViewModeImport> _localizer
 @inject SessionStateContainer _sessionStateContainer
 @inject LocalStorageOptionsProvider _localStorageOptionsProvider
-@inject ILogger<ViewModeImport> _logger
 @inject ITextLocalizerService _localizationService
 @inject HotKeys _hotKeys
 @inject IJSRuntime _jsRuntime
 @inject HttpClient _httpClient
-@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject ImportManager _importManager
 
 <Validations @ref="validations">
     <Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
@@ -134,111 +133,12 @@ along with Foobar.  If not, see
                                         <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
                                     </CollapseHeader>
                                     <CollapseBody>
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeCuesheet, _validationMessageLocalizer, token)">
-                                            <Field Horizontal>
-                                                <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnMobile">
-                                                    <Tooltip Text="@_localizer["Enter textimportscheme cuesheet tooltip"]">
-                                                        @_localizer["Textimportscheme cuesheet"]
-                                                    </Tooltip>
-                                                </FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                                    <Addons>
-                                                        <Addon AddonType="AddonType.Body">
-                                                            <TextEdit Placeholder="@_localizer["Enter textimportscheme cuesheet here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet">
-                                                                <Feedback>
-                                                                    <ValidationError Tooltip />
-                                                                </Feedback>
-                                                            </TextEdit>
-                                                        </Addon>
-                                                        <Addon AddonType="AddonType.End">
-                                                            <Dropdown>
-                                                                <DropdownToggle Color="Color.Secondary">
-                                                                    @_localizer["Select placeholder"]
-                                                                </DropdownToggle>
-                                                                <DropdownMenu>
-                                                                    @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemeCuesheet)
-                                                                    {
-                                                                        <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeCuesheet += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                                                    }
-                                                                </DropdownMenu>
-                                                            </Dropdown>
-                                                        </Addon>
-                                                    </Addons>
-                                                </FieldBody>
-                                            </Field>
-                                        </Validation>
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, _sessionStateContainer.TextImportFile.TextImportScheme, x => x.SchemeTracks, _validationMessageLocalizer, token)">
-                                            <Field Horizontal>
-                                                <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
-                                                    <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Enter textimportscheme track tooltip"]">
-                                                        @_localizer["Textimportscheme track"]
-                                                    </Tooltip>
-                                                </FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                                    <Addons>
-                                                        <Addon AddonType="AddonType.Body">
-                                                            <TextEdit Placeholder="@_localizer["Enter textimportscheme track here"]" @bind-Text="_sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks">
-                                                                <Feedback>
-                                                                    <ValidationError Tooltip />
-                                                                </Feedback>
-                                                            </TextEdit>
-                                                        </Addon>
-                                                        <Addon AddonType="AddonType.End">
-                                                            <Dropdown>
-                                                                <DropdownToggle Color="Color.Secondary">
-                                                                    @_localizer["Select placeholder"]
-                                                                </DropdownToggle>
-                                                                <DropdownMenu>
-                                                                    @foreach (var availableSchemeTrack in TextImportScheme.AvailableSchemesTrack)
-                                                                    {
-                                                                        <DropdownItem Clicked="() => _sessionStateContainer.TextImportFile.TextImportScheme.SchemeTracks += availableSchemeTrack.Value.Replace(TextImportScheme.EnterRegularExpressionHere, _localizer[TextImportScheme.EnterRegularExpressionHere])">@_localizer[availableSchemeTrack.Key]</DropdownItem>
-                                                                    }
-                                                                </DropdownMenu>
-                                                            </Dropdown>
-                                                        </Addon>
-                                                    </Addons>
-                                                </FieldBody>
-                                            </Field>
-                                        </Validation>
-                                        <Validation AsyncValidator="(args, token) => ValidatorUtility<TimeSpanFormat>.Validate(args, _sessionStateContainer.TextImportFile.TimeSpanFormat, x => x.Scheme, _validationMessageLocalizer, token)">
-                                            <Field Horizontal>
-                                                <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
-                                                    <Tooltip Text="@_localizer["Enter custom timespan format here"]">
-                                                        @_localizer["Customized timespan format import"]
-                                                    </Tooltip>
-                                                </FieldLabel>
-                                                <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                                    <Addons>
-                                                        <Addon AddonType="AddonType.Body">
-                                                            <TextEdit @bind-Text="_sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme">
-                                                                <Feedback>
-                                                                        <ValidationError Tooltip />
-                                                                </Feedback>
-                                                            </TextEdit>
-                                                        </Addon>
-                                                        <Addon AddonType="AddonType.End">
-                                                            <Dropdown>
-                                                                <DropdownToggle Color="Color.Secondary">
-                                                                    @_localizer["Select placeholder"]
-                                                                </DropdownToggle>
-                                                                <DropdownMenu>
-                                                                    @foreach (var availableFormat in TimeSpanFormat.AvailableTimespanScheme)
-                                                                    {
-                                                                        <DropdownItem Value="@availableFormat.Value" Clicked="() => _sessionStateContainer.TextImportFile.TimeSpanFormat.Scheme += availableFormat.Value.Replace(TimeSpanFormat.EnterRegularExpressionHere, _localizer[TimeSpanFormat.EnterRegularExpressionHere])">@_localizer[availableFormat.Key]</DropdownItem>
-                                                                    }
-                                                                </DropdownMenu>
-                                                            </Dropdown>
-                                                        </Addon>
-                                                    </Addons>
-                                                </FieldBody>
-                                            </Field>
-                                        </Validation>
+                                        <EditImportOptions />
                                         <Field Horizontal>
                                             <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                                 @_localizer["Reset import options"]
                                             </FieldLabel>
                                             <FieldBody ColumnSize="ColumnSize.Is9.OnFullHD.Is8.OnDesktop.Is7.OnTablet.Is12.OnTablet">
-                                                <Button Color="Color.Warning" Clicked="OnReloadImportOptionsClicked">@_localizer["Reload import options"]</Button>
                                                 <Button Color="Color.Danger" Clicked="OnResetImportOptionsClicked">@_localizer["Reset import options to defaults"]</Button>
                                             </FieldBody>
                                         </Field>
@@ -317,25 +217,20 @@ along with Foobar.  If not, see
 
     public void Dispose()
     {
-        hotKeysContext?.Dispose();
+        hotKeysContext?.DisposeAsync();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        _logger.LogDebug("OnInitializedAsync");
+        base.OnInitialized();
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
 
         hotKeysContext = _hotKeys.CreateContext()
             .Add(Key.Enter, OnEnterKeyDown);
-
-        TimeSpanFormat.TextLocalizer = _localizer;
-        TextImportScheme.TextLocalizer = _localizer;
-
-        return Task.CompletedTask;
     }
 
     async Task OnSelectedStepChanged(String name)
@@ -457,57 +352,8 @@ along with Foobar.  If not, see
     private async Task OnFileChanged(IReadOnlyCollection<IFileEntry> files)
     {
         _sessionStateContainer.ResetImport();
-        displaySplitPoints = false;
-        foreach (var file in files)
-        {
-            if (IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
-            {
-                //We have a valid file here
-                var fileContent = new MemoryStream();
-                var stream = file.OpenReadStream();
-                await stream.CopyToAsync(fileContent);
-                stream.Close();
-                var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
-                if (cuesheet != null)
-                {
-                    _sessionStateContainer.ImportCuesheet = cuesheet;
-                }
-                displaySplitPoints = true;
-            }
-            if (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == true)
-            {
-                var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-                var stream = file.OpenReadStream();
-                MemoryStream memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                stream.Close();
-                _sessionStateContainer.CuesheetImportFile = new CuesheetImportfile(memoryStream, options);
-            }
-            if (IOUtility.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == true)
-            {
-                var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-                var stream = file.OpenReadStream();
-                MemoryStream memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                stream.Close();
-                if (_sessionStateContainer.TextImportFile != null)
-                {
-                    _sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
-                    _sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged -= TextImportScheme_ValidateablePropertyChanged;
-                }
-                _sessionStateContainer.TextImportFile = new TextImportfile(memoryStream, options);
-                _sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
-                _sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged += TextImportScheme_ValidateablePropertyChanged;
-            }
-            if (IOUtility.CheckFileMimeTypeForAudioCodec(file) == true)
-            {
-                var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
-                var codec = IOUtility.GetAudioCodec(file);
-                var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
-                _ = audiofile.LoadContentStream();
-                _sessionStateContainer.ImportAudiofile = audiofile;
-            }
-        }
+        var importedFiles = await _importManager.ImportFilesAsync(files);
+        displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
         await OnSelectedStepChanged("validateData");
         StateHasChanged();
     }
@@ -535,12 +381,6 @@ along with Foobar.  If not, see
     private async Task ImportData()
     {
         var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        if (_sessionStateContainer.TextImportFile != null)
-        {
-            //Save import options (values are inside the TextImportFile)
-            var importOptions = new ImportOptions(_sessionStateContainer.TextImportFile);
-            await _localStorageOptionsProvider.SaveOptions(importOptions);
-        }
         _sessionStateContainer.StartImportCuesheet(options);
         _sessionStateContainer.CurrentViewMode = ViewMode.ViewModeFull;
         StateHasChanged();
@@ -555,8 +395,6 @@ along with Foobar.  If not, see
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
-        TimeSpanFormat.TextLocalizer = _localizer;
-        TextImportScheme.TextLocalizer = _localizer;
         validations?.ValidateAll();
     }
 
@@ -591,33 +429,6 @@ along with Foobar.  If not, see
     {
         var newOptions = new ImportOptions();
         await _localStorageOptionsProvider.SaveOptions(newOptions);
-        await OnReloadImportOptionsClicked();
-    }
-
-    async Task OnReloadImportOptionsClicked()
-    {
-        var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-        if (_sessionStateContainer.TextImportFile != null)
-        {
-            _sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged -= Timespanformat_ValidateablePropertyChanged;
-            _sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged -= TextImportScheme_ValidateablePropertyChanged;
-            if (options.TimeSpanFormat != null)
-            {
-                _sessionStateContainer.TextImportFile.TimeSpanFormat = options.TimeSpanFormat;
-            }
-            else
-            {
-                _sessionStateContainer.TextImportFile.TimeSpanFormat = new TimeSpanFormat();
-            }
-            _sessionStateContainer.TextImportFile.TimeSpanFormat.ValidateablePropertyChanged += Timespanformat_ValidateablePropertyChanged;
-            _sessionStateContainer.TextImportFile.TextImportScheme = options.TextImportScheme;
-            _sessionStateContainer.TextImportFile.TextImportScheme.ValidateablePropertyChanged += TextImportScheme_ValidateablePropertyChanged;
-            if (validations != null)
-            {
-                validations.ValidateAll().GetAwaiter().GetResult();
-            }
-            StateHasChanged();
-        }
     }
 
     void TextImportScheme_ValidateablePropertyChanged(object? sender, String property)

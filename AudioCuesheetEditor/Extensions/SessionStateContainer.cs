@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
@@ -31,7 +32,6 @@ namespace AudioCuesheetEditor.Extensions
         private ViewMode currentViewMode;
         private Cuesheet cuesheet;
         private Cuesheet? importCuesheet;
-        private TextImportfile? textImportFile;
         private CuesheetImportfile? cuesheetImportFile;
         private Audiofile? importAudiofile;
 
@@ -65,28 +65,8 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public TextImportfile? TextImportFile
-        {
-            get { return textImportFile; }
-            set
-            {
-                if (textImportFile != null)
-                {
-                    textImportFile.AnalysisFinished -= TextImportScheme_AnalysisFinished;
-                }
-                textImportFile = value;
-                if (textImportFile != null)
-                {
-                    textImportFile.AnalysisFinished += TextImportScheme_AnalysisFinished;
-                    ImportCuesheet = textImportFile.Cuesheet;
-                }
-                else
-                {
-                    ImportCuesheet = null;
-                }
-            }
-        }
-
+        public TextImportfile? TextImportFile { get; set; }
+        
         public CuesheetImportfile? CuesheetImportFile
         {
             get { return cuesheetImportFile; }
@@ -100,7 +80,8 @@ namespace AudioCuesheetEditor.Extensions
                 if ((CuesheetImportFile != null) && (CuesheetImportFile.Cuesheet != null))
                 {
                     CuesheetImportFile.AnalysisFinished += CuesheetImportFile_AnalysisFinished;
-                    ImportCuesheet = CuesheetImportFile.Cuesheet;
+                    //TODO
+                    //ImportCuesheet = CuesheetImportFile.Cuesheet;
                 }
                 else
                 {
@@ -160,7 +141,8 @@ namespace AudioCuesheetEditor.Extensions
         {
             if (ImportCuesheet != null)
             {
-                Cuesheet.Import(ImportCuesheet, applicationOptions, _traceChangeManager);
+                //TODO
+                //Cuesheet.Import(ImportCuesheet, applicationOptions, _traceChangeManager);
                 ImportCuesheet = null;
             }
             ResetImport();
@@ -175,17 +157,7 @@ namespace AudioCuesheetEditor.Extensions
             _traceChangeManager.TraceChanges(Cuesheet);
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
-        private void TextImportScheme_AnalysisFinished(object? sender, EventArgs eventArgs)
-        {
-            if (textImportFile != null)
-            {
-                ImportCuesheet = textImportFile.Cuesheet;
-            }
-            else
-            {
-                ImportCuesheet = null;
-            }
-        }
+        
         private void Cuesheet_CuesheetImported(object? sender, EventArgs e)
         {
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
@@ -195,7 +167,8 @@ namespace AudioCuesheetEditor.Extensions
         {
             if (CuesheetImportFile != null)
             {
-                ImportCuesheet = CuesheetImportFile.Cuesheet;
+                //TODO
+                //ImportCuesheet = CuesheetImportFile.Cuesheet;
             }
             else
             {
