@@ -394,7 +394,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(ImportCuesheet cuesheet, ApplicationOptions applicationOptions, TraceChangeManager? traceChangeManager = null)
+        public void Import(ICuesheet cuesheet, ApplicationOptions applicationOptions, TraceChangeManager? traceChangeManager = null)
         {
             //Since we use a stack for several changes we need to lock execution for everything else
             lock (syncLock)
@@ -560,7 +560,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// </summary>
         /// <param name="cuesheet">Reference to import cuesheet</param>
         /// <param name="applicationOptions">Reference to application options</param>
-        private void CopyValues(ImportCuesheet cuesheet, ApplicationOptions applicationOptions)
+        private void CopyValues(ICuesheet cuesheet, ApplicationOptions applicationOptions)
         {
             Artist = cuesheet.Artist;
             Title = cuesheet.Title;
@@ -568,19 +568,34 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //Audiofile = cuesheet.Audiofile;
             //CDTextfile = cuesheet.CDTextfile;
             //Cataloguenumber = cuesheet.Cataloguenumber;
-            foreach (var importTrack in cuesheet.Tracks)
+            IEnumerable<ITrack>? tracks = null;
+            if (cuesheet is Cuesheet originCuesheet)
             {
-                //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
-                var track = new Track(importTrack, false);
-                AddTrack(track, applicationOptions);
+                tracks = originCuesheet.tracks;
+                // Copy sections
+                foreach (var section in originCuesheet.Sections)
+                {
+                    var newSplitPoint = AddSection();
+                    newSplitPoint.CopyValues(section);
+                }
             }
-            //TODO
-            //// Copy sections
-            //foreach (var splitPoint in cuesheet.Sections)
-            //{
-            //    var newSplitPoint = AddSection();
-            //    newSplitPoint.CopyValues(splitPoint);
-            //}
+            if (cuesheet is ImportCuesheet importCuesheet)
+            {
+                tracks = importCuesheet.Tracks;
+            }
+            if (tracks != null)
+            {
+                foreach (var importTrack in tracks)
+                {
+                    //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
+                    var track = new Track(importTrack, false);
+                    AddTrack(track, applicationOptions);
+                }
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
         }
 
         private void Track_RankPropertyValueChanged(object? sender, string e)

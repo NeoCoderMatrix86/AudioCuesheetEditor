@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
@@ -55,19 +54,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <inheritdoc/>
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
+        public Track() { }
+
         /// <summary>
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
         /// /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
-        public Track(ITrack track, Boolean copyCuesheetReference = true)
+        public Track(ITrack track, Boolean copyCuesheetReference = true) : this()
         {
             CopyValues(track, copyCuesheetReference);
         }
-        public Track()
-        {
-            
-        }
+        
         public uint? Position 
         {
             get => position;

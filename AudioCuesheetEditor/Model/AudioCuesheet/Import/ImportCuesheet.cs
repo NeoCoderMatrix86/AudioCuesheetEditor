@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
+
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
 {
     public class ImportCuesheet : ICuesheet
@@ -23,6 +24,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
         //TODO Audiofile
         //TODO CDTextfile
         public string? Cataloguenumber { get; set; }
-        public ICollection<ImportTrack> Tracks { get; set; } = [];
+
+        public ICollection<ImportTrack> Tracks { get; } = [];
     }
 }

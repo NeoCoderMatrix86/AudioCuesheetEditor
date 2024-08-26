@@ -20,7 +20,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public interface ICuesheet
     {
-        public String? Artist { get; set; }
-        public String? Title { get; set; }
+        string? Artist { get; set; }
+        string? Title { get; set; }
     }
 }
