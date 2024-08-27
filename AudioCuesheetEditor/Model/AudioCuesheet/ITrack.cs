@@ -17,14 +17,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public interface ITrack
     {
-        public string? Artist { get; set; }
-        public string? Title { get; set; }
-        public uint? Position { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
-        public TimeSpan? Length { get; set; }
-        //TODO: Flags
-        public TimeSpan? PreGap { get; set; }
-        public TimeSpan? PostGap { get; set; }
+        string? Artist { get; set; }
+        string? Title { get; set; }
+        uint? Position { get; set; }
+        TimeSpan? Begin { get; set; }
+        TimeSpan? End { get; set; }
+        TimeSpan? Length { get; set; }
+        IReadOnlyCollection<Flag> Flags { get; }
+        TimeSpan? PreGap { get; set; }
+        TimeSpan? PostGap { get; set; }
+        void SetFlags(IEnumerable<Flag> flags);
     }
 }

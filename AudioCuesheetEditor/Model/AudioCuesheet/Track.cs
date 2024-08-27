@@ -315,16 +315,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setFlags)
             {
-                //TODO
-                //if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Flags))))
-                //{
-                //    flags.Clear();
-                //    flags.AddRange(track.Flags);
-                //}
-                //else
-                //{
-                //    SetFlags(track.Flags);
-                //}
+                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Flags))))
+                {
+                    flags.Clear();
+                    flags.AddRange(track.Flags);
+                }
+                else
+                {
+                    SetFlags(track.Flags);
+                }
             }
             if (setPreGap)
             {
