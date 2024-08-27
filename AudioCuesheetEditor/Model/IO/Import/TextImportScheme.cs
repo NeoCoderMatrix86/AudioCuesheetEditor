@@ -122,7 +122,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         if (SchemeCuesheet?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
                             var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(")", startIndex) + 1) - startIndex);
+                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(')', startIndex) + 1) - startIndex);
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeCuesheet), realRegularExpression));
                         }
@@ -140,7 +140,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         if (SchemeTracks?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
                             var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(")", startIndex) + 1) - startIndex);
+                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(')', startIndex) + 1) - startIndex);
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeTracks), realRegularExpression));
                         }

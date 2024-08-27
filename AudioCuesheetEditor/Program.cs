@@ -57,6 +57,7 @@ builder.Services.AddScoped<TraceChangeManager>();
 builder.Services.AddScoped<DateTimeUtility>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<TextImportService>();
+builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 
 builder.Services.AddLogging();
