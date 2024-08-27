@@ -126,7 +126,9 @@ along with Foobar.  If not, see
 </Validations>
 
 @code{
-    //TODO: Changes to ImportOptions need to do a reanalysis
+    [Parameter]
+    public EventCallback<ImportOptions> OptionsChanged { get; set; }
+
     public ImportOptions? ImportOptions { get; private set; }
 
     public void Dispose()
@@ -172,5 +174,6 @@ along with Foobar.  If not, see
         }
         setter(ImportOptions, text);
         await _localStorageOptionsProvider.SaveOptions(ImportOptions);
+        await OptionsChanged.InvokeAsync(ImportOptions);
     }
 }

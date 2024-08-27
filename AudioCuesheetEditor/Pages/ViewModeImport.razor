@@ -133,7 +133,7 @@ along with Foobar.  If not, see
                                         <Button Clicked="(() => importOptionsVisible = !importOptionsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Import Options"]</Heading></Button>
                                     </CollapseHeader>
                                     <CollapseBody>
-                                        <EditImportOptions />
+                                        <EditImportOptions OptionsChanged="EditImportOptions_OptionsChanged" />
                                         <Field Horizontal>
                                             <FieldLabel ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnDesktop.Is5.OnTablet.Is12.OnTablet">
                                                 @_localizer["Reset import options"]
@@ -444,6 +444,14 @@ along with Foobar.  If not, see
         if (validations != null)
         {
             validations.ValidateAll().GetAwaiter().GetResult();
+        }
+    }
+
+    async Task EditImportOptions_OptionsChanged(ImportOptions importOptions)
+    {
+        if (_sessionStateContainer.TextImportFile?.FileContent != null)
+        {
+            await _importManager.ImportTextAsync(_sessionStateContainer.TextImportFile.FileContent);
         }
     }
 }

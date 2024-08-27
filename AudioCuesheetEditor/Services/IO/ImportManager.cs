@@ -68,8 +68,6 @@ namespace AudioCuesheetEditor.Services.IO
                 if (IOUtility.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension))
                 {
                     var fileContent = await ReadFileContentAsync(file);
-                    var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-                    var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
                     List<String?> lines = [];
@@ -77,13 +75,7 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         lines.Add(reader.ReadLine());
                     }
-                    _sessionStateContainer.TextImportFile = _textImportService.Analyse(options, lines);
-                    if (_textImportService.AnalysedCuesheet != null)
-                    {
-                        var importCuesheet = new Cuesheet();
-                        importCuesheet.Import(_textImportService.AnalysedCuesheet, applicationOptions);
-                        _sessionStateContainer.ImportCuesheet = importCuesheet;
-                    }
+                    await ImportTextAsync([.. lines]);
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }
                 if (IOUtility.CheckFileMimeTypeForAudioCodec(file))
@@ -98,6 +90,20 @@ namespace AudioCuesheetEditor.Services.IO
             }
             return importFileTypes;
         }
+
+        public async Task ImportTextAsync(IEnumerable<String?> fileContent)
+        {
+            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
+            _sessionStateContainer.TextImportFile = _textImportService.Analyse(options, fileContent);
+            if (_textImportService.AnalysedCuesheet != null)
+            {
+                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                var importCuesheet = new Cuesheet();
+                importCuesheet.Import(_textImportService.AnalysedCuesheet, applicationOptions);
+                _sessionStateContainer.ImportCuesheet = importCuesheet;
+            }
+        }
+
         private static async Task<MemoryStream> ReadFileContentAsync(IFileEntry file)
         {
             var fileContent = new MemoryStream();
