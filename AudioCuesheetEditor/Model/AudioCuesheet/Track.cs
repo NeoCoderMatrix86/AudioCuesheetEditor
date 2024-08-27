@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Remove
     }
 
-    public class Track : Validateable<Track>, ICuesheetEntity, ITraceable, ITrack
+    public class Track : Validateable<Track>, ITraceable, ITrack
     {
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 

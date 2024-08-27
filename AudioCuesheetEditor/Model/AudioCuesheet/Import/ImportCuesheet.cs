@@ -21,10 +21,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
     {
         public string? Artist { get; set; }
         public string? Title { get; set; }
-        //TODO Audiofile
-        //TODO CDTextfile
+        public string? Audiofile { get;set; }
+        /// <inheritdoc/>
+        public string? CDTextfile { get; set; }
         public string? Cataloguenumber { get; set; }
-
         public ICollection<ImportTrack> Tracks { get; } = [];
     }
 }

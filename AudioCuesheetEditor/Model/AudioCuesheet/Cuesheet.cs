@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public CuesheetSection Section { get; } = section;
     }
 
-    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ICuesheetEntity, ITraceable, ICuesheet
+    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ITraceable, ICuesheet
     {
         public const String MimeType = "text/*";
         public const String FileExtension = ".cue";
@@ -564,10 +564,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             Artist = cuesheet.Artist;
             Title = cuesheet.Title;
-            //TODO
-            //Audiofile = cuesheet.Audiofile;
-            //CDTextfile = cuesheet.CDTextfile;
-            //Cataloguenumber = cuesheet.Cataloguenumber;
             IEnumerable<ITrack>? tracks = null;
             if (cuesheet is Cuesheet originCuesheet)
             {
@@ -578,10 +574,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     var newSplitPoint = AddSection();
                     newSplitPoint.CopyValues(section);
                 }
+                Audiofile = originCuesheet.Audiofile;
+                CDTextfile = originCuesheet.CDTextfile;
+                Cataloguenumber = originCuesheet.Cataloguenumber;
             }
             if (cuesheet is ImportCuesheet importCuesheet)
             {
                 tracks = importCuesheet.Tracks;
+                if (String.IsNullOrEmpty(importCuesheet.Audiofile) == false)
+                {
+                    Audiofile = new Audiofile(importCuesheet.Audiofile);
+                }
+                if (String.IsNullOrEmpty(importCuesheet.CDTextfile) == false)
+                {
+                    CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
+                }
+                Cataloguenumber.Value = importCuesheet.Cataloguenumber;
             }
             if (tracks != null)
             {

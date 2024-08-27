@@ -14,8 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-using AudioCuesheetEditor.Model.AudioCuesheet.Import;
-
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public interface ICuesheet

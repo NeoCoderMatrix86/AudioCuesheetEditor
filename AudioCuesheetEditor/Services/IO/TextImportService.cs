@@ -155,10 +155,6 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 ((Cuesheet)entity).Cataloguenumber.Value = value;
             }
-            if (property.PropertyType == typeof(CDTextfile))
-            {
-                property.SetValue(entity, new CDTextfile(value));
-            }
         }
     }
 }
