@@ -22,7 +22,7 @@ using System.Text.Json;
 
 namespace AudioCuesheetEditor.Data.Options
 {
-    public class LocalStorageOptionsProvider(IJSRuntime jsRuntime)
+    public class LocalStorageOptionsProvider(IJSRuntime jsRuntime): ILocalStorageOptionsProvider
     {
         public event EventHandler<IOptions>? OptionSaved;
 

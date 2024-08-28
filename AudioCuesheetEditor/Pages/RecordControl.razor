@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject ITextLocalizer<RecordControl> _localizer
 @inject ITextLocalizerService _localizationService
-@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject HotKeys _hotKeys
 
 @if (_sessionStateContainer.Cuesheet.IsRecording == true)

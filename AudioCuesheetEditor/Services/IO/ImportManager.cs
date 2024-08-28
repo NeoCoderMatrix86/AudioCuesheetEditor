@@ -34,10 +34,10 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(SessionStateContainer sessionStateContainer, LocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService, CuesheetImportService cuesheetImportService)
+    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService, CuesheetImportService cuesheetImportService)
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
-        private readonly LocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
+        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly TextImportService _textImportService = textImportService;
         private readonly CuesheetImportService _cuesheetImportService = cuesheetImportService;
 

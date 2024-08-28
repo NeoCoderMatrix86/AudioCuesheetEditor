@@ -23,12 +23,12 @@ namespace AudioCuesheetEditor.Services.UI
 {
     public class ApplicationOptionsTimeSpanParser
     {
-        private readonly LocalStorageOptionsProvider _localStorageOptionsProvider;
+        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
 
         private ApplicationOptions? applicationOptions;
         private bool disposedValue;
 
-        public ApplicationOptionsTimeSpanParser(LocalStorageOptionsProvider localStorageOptionsProvider)
+        public ApplicationOptionsTimeSpanParser(ILocalStorageOptionsProvider localStorageOptionsProvider)
         {
             _localStorageOptionsProvider = localStorageOptionsProvider;
             _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;

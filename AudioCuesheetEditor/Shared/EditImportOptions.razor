@@ -21,7 +21,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizerService _localizationService
 @inject ITextLocalizer<EditImportOptions> _localizer
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
-@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <Validations>
     <Validation AsyncValidator="(args, token) => ValidatorUtility<TextImportScheme>.Validate(args, ImportOptions?.TextImportScheme, x => x.SchemeCuesheet, _validationMessageLocalizer, token)">

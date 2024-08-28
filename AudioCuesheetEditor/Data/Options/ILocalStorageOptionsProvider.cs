@@ -13,22 +13,16 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.Options;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using System.Globalization;
+using System.Linq.Expressions;
 
-namespace AudioCuesheetEditor.Extensions
+namespace AudioCuesheetEditor.Data.Options
 {
-    public static class WebAssemblyHostExtension
+    public interface ILocalStorageOptionsProvider
     {
-        public async static Task SetDefaultCulture(this WebAssemblyHost host)
-        {
-            var localStorageOptionsProvider = host.Services.GetRequiredService<ILocalStorageOptionsProvider>();
-            var options = await localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-
-            CultureInfo.DefaultThreadCurrentCulture = options.Culture;
-            CultureInfo.DefaultThreadCurrentUICulture = options.Culture;
-        }
+        event EventHandler<IOptions>? OptionSaved;
+        Task<T> GetOptions<T>() where T : IOptions;
+        Task SaveOptions(IOptions options);
+        Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object value) where T : class, IOptions, new();
     }
 }

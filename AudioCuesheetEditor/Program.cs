@@ -49,7 +49,7 @@ builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 builder.Services.AddBlazorDownloadFile();
 
-builder.Services.AddScoped<LocalStorageOptionsProvider>();
+builder.Services.AddScoped<ILocalStorageOptionsProvider, LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
 
 builder.Services.AddScoped<SessionStateContainer>();
