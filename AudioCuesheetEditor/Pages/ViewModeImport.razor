@@ -118,15 +118,18 @@ along with Foobar.  If not, see
                             </Paragraph>
                         </Alert>
                         <Accordion>
-                            <Collapse Visible="importFileContentVisible">
-                                <CollapseHeader>
-                                    <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
-                                </CollapseHeader>
-                                <CollapseBody Background="Background.Light">
-                                    <ImportFileView />
-                                </CollapseBody>
-                            </Collapse>
-                            @if (_sessionStateContainer.TextImportFile != null)
+                            @if (displayFileContent)
+                            {
+                                <Collapse Visible="importFileContentVisible">
+                                    <CollapseHeader>
+                                        <Button Clicked="(() => importFileContentVisible = !importFileContentVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Filecontent"]</Heading></Button>
+                                    </CollapseHeader>
+                                    <CollapseBody Background="Background.Light">
+                                        <ImportFileView />
+                                    </CollapseBody>
+                                </Collapse>
+                            }
+                            @if (displayEditImportOptions)
                             {
                                 <Collapse Visible="importOptionsVisible">
                                     <CollapseHeader>
@@ -144,7 +147,7 @@ along with Foobar.  If not, see
                                         </Field>
                                     </CollapseBody>
                                 </Collapse>
-                                @if (_sessionStateContainer.TextImportFile.AnalyseException != null)
+                                @if (_sessionStateContainer.TextImportFile?.AnalyseException != null)
                                 {
                                     <Alert Color="Color.Danger" Visible="true">
                                         <AlertDescription>
@@ -195,9 +198,6 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    //TODO: Hide fileContent if importing a project file
-    //TODO: Hide edit import options im importing a cuesheet file
-
     String selectedStep = "selectFiles";
     String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;
@@ -208,6 +208,8 @@ along with Foobar.  If not, see
     Boolean selectFilesCompleted = false;
     Boolean userChangedSelectedStep = false;
     Boolean displaySplitPoints = false;
+    Boolean displayFileContent = true;
+    Boolean displayEditImportOptions = true;
     Alert? alertInvalidFile;
     ModalDialog? modalDialog;
     List<String> invalidTextImportFileNames = new();
@@ -370,6 +372,8 @@ along with Foobar.  If not, see
             }
         }
         displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
+        displayFileContent = !importedFiles.ContainsValue(ImportFileType.ProjectFile);
+        displayEditImportOptions = importedFiles.ContainsValue(ImportFileType.Textfile);
         await OnSelectedStepChanged("validateData");
         StateHasChanged();
     }
