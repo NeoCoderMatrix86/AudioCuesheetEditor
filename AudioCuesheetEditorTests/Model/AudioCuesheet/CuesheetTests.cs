@@ -13,18 +13,28 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
+using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditorTests.Properties;
 using AudioCuesheetEditorTests.Utility;
+using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
 {
@@ -213,67 +223,83 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         }
 
         [TestMethod()]
-        public void ImportTest()
+        public async Task ImportTestAsync()
         {
-            //Prepare text input file
-            StringBuilder builder = new();
-            builder.AppendLine("CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3");
-            builder.AppendLine("Sample Artist 1 - Sample Title 1				00:05:00");
-            builder.AppendLine("Sample Artist 2 - Sample Title 2				00:09:23");
-            builder.AppendLine("Sample Artist 3 - Sample Title 3				00:15:54");
-            builder.AppendLine("Sample Artist 4 - Sample Title 4				00:20:13");
-            builder.AppendLine("Sample Artist 5 - Sample Title 5				00:24:54");
-            builder.AppendLine("Sample Artist 6 - Sample Title 6				00:31:54");
-            builder.AppendLine("Sample Artist 7 - Sample Title 7				00:45:54");
-            builder.AppendLine("Sample Artist 8 - Sample Title 8				01:15:54");
+            // Arrange
+            var fileContent = new List<String>
+            {
+                "CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3",
+                "Sample Artist 1 - Sample Title 1				00:05:00",
+                "Sample Artist 2 - Sample Title 2				00:09:23",
+                "Sample Artist 3 - Sample Title 3				00:15:54",
+                "Sample Artist 4 - Sample Title 4				00:20:13",
+                "Sample Artist 5 - Sample Title 5				00:24:54",
+                "Sample Artist 6 - Sample Title 6				00:31:54",
+                "Sample Artist 7 - Sample Title 7				00:45:54",
+                "Sample Artist 8 - Sample Title 8				01:15:54"
+            };
 
-            var tempFile = Path.GetTempFileName();
-            File.WriteAllText(tempFile, builder.ToString());
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
+            var textImportService = new TextImportService();
+            var cuesheetImportService = new CuesheetImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            await importManager.ImportTextAsync(fileContent);
+            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
+            Assert.IsTrue(sessionStateContainer.ImportCuesheet.Tracks.Count == 8);
+            var testHelper = new TestHelper();
+            // Act
+            sessionStateContainer.StartImportCuesheet(testHelper.ApplicationOptions);
 
-            //Test TextImportFile
-            //TODO
-            //var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes(tempFile)));
-            //textImportFile.TextImportScheme.SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet;
-            //textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
-            //Assert.IsNull(textImportFile.AnalyseException);
-            //Assert.IsNotNull(textImportFile.Cuesheet);
-            //Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
-            //Assert.IsTrue(textImportFile.IsValid);
-
-            //var testHelper = new TestHelper();
-            //var cuesheet = new Cuesheet();
-            //cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
-
-            //Assert.IsNull(cuesheet.CDTextfile);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate().Status);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(0).Validate().Status);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(1).Validate().Status);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(2).Validate().Status);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(3).Validate().Status);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(4).Validate().Status);    
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(5).Validate().Status);
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(6).Validate().Status);    
-            //Assert.AreEqual(ValidationStatus.Success, cuesheet.Tracks.ElementAt(7).Validate().Status);
-
-            File.Delete(tempFile);
+            // Assert
+            Assert.IsNull(sessionStateContainer.Cuesheet.CDTextfile);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(0).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(1).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(2).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(3).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(4).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(5).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(6).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(7).Validate().Status);
         }
 
         [TestMethod()]
-        public void ImportTestCalculateEndCorrectly()
+        public async Task ImportTestCalculateEndCorrectlyAsync()
         {
+            // Arrange
+            var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug_54);
+            using var reader = new StreamReader(textImportMemoryStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            var fileContent = lines.AsReadOnly();
             var testHelper = new TestHelper();
-            //TODO
-            //var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_Bug_54));
-            //textImportFile.TextImportScheme.SchemeCuesheet = String.Empty;
-            //Assert.IsNull(textImportFile.AnalyseException);
-            //Assert.IsNotNull(textImportFile.Cuesheet);
-            //Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 39);
-            //Assert.IsTrue(textImportFile.IsValid);
-            //var cuesheet = new Cuesheet();
-            //cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
-            //Assert.IsTrue(cuesheet.Tracks.Count == 39);
-            //Assert.IsTrue(cuesheet.Tracks.ElementAt(0).End == new TimeSpan(0, 5, 24));
-            //Assert.IsTrue(cuesheet.Tracks.ElementAt(38).Begin == new TimeSpan(3, 13, 13));
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var importOptions = new ImportOptions();
+            importOptions.TextImportScheme.SchemeCuesheet = null;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportService = new TextImportService();
+            var cuesheetImportService = new CuesheetImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            await importManager.ImportTextAsync(fileContent);
+            var cuesheet = new Cuesheet();
+            // Act
+            cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
+            // Assert
+            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
+            Assert.AreEqual(39, sessionStateContainer.ImportCuesheet.Tracks.Count);
+            Assert.AreEqual(39, cuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(0, 5, 24), cuesheet.Tracks.ElementAt(0).End);
+            Assert.AreEqual(new TimeSpan(3, 13, 13), cuesheet.Tracks.ElementAt(38).Begin);
         }
 
         [TestMethod()]
@@ -548,53 +574,65 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             Assert.AreEqual(editedTrack.End, track2.Begin);
         }
         [TestMethod()]
-        public void ImportSamplesTest()
+        public async Task ImportSamplesTestAsync()
         {
-            //TODO
-            //var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt")));
-            //textImportFile.TextImportScheme.SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet;
-            //textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
-            //Assert.IsNull(textImportFile.AnalyseException);
-            //Assert.IsNotNull(textImportFile.Cuesheet);
-            //Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
-            //Assert.IsTrue(textImportFile.IsValid);
-
-            //var testHelper = new TestHelper();
-            //var cuesheet = new Cuesheet
-            //{
-            //    Artist = "Testartist",
-            //    Title = "Testtitle"
-            //};
-            //cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
-            //Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
-            //Assert.AreEqual("CuesheetTitle", cuesheet.Title);
-            //Assert.AreEqual(8, cuesheet.Tracks.Count);
-            //Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
+            // Arrange
+            var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt");
+            var testHelper = new TestHelper();
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
+            var textImportService = new TextImportService();
+            var cuesheetImportService = new CuesheetImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            await importManager.ImportTextAsync(fileContent);
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Testartist",
+                Title = "Testtitle"
+            };
+            // Act
+            cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
+            // Assert
+            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
+            Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", cuesheet.Title);
+            Assert.AreEqual(8, cuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
         }
 
         [TestMethod()]
-        public void ImportSamples2Test()
+        public async Task ImportSamples2TestAsync()
         {
-            //TODO
-            //var textImportFile = new TextImportfile(new MemoryStream(File.ReadAllBytes("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt")));
-            //textImportFile.TextImportScheme.SchemeCuesheet = null;
-            //textImportFile.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
-            //Assert.IsNull(textImportFile.AnalyseException);
-            //Assert.IsNotNull(textImportFile.Cuesheet);
-            //Assert.IsTrue(textImportFile.Cuesheet.Tracks.Count == 8);
-            //Assert.IsTrue(textImportFile.IsValid);
-
-            //var testHelper = new TestHelper();
-            //var cuesheet = new Cuesheet
-            //{
-            //    Artist = "Testartist",
-            //    Title = "Testtitle"
-            //};
-            //cuesheet.Import(textImportFile.Cuesheet, testHelper.ApplicationOptions);
-            //Assert.IsNull(cuesheet.Artist);
-            //Assert.IsNull(cuesheet.Title);
-            //Assert.AreEqual(8, cuesheet.Tracks.Count);
-            //Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
+            // Arrange
+            var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt");
+            var testHelper = new TestHelper();
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var importOptions = new ImportOptions();
+            importOptions.TextImportScheme.SchemeCuesheet = null;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
+            var textImportService = new TextImportService();
+            var cuesheetImportService = new CuesheetImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            await importManager.ImportTextAsync(fileContent);
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Testartist",
+                Title = "Testtitle"
+            };
+            // Act
+            cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
+            // Assert
+            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
+            Assert.IsNull(cuesheet.Artist);
+            Assert.IsNull(cuesheet.Title);
+            Assert.AreEqual(8, cuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
         }
 
         [TestMethod()]
