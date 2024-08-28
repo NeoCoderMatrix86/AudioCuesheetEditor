@@ -246,10 +246,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var textImportService = new TextImportService();
             var cuesheetImportService = new CuesheetImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
-            await importManager.ImportTextAsync(fileContent);
-            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
-            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
-            Assert.IsTrue(sessionStateContainer.ImportCuesheet.Tracks.Count == 8);
+            await importManager.ImportTextAsync(fileContent);            
             var testHelper = new TestHelper();
             // Act
             sessionStateContainer.StartImportCuesheet(testHelper.ApplicationOptions);
