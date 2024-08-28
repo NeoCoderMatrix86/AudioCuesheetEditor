@@ -34,12 +34,10 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(SessionStateContainer sessionStateContainer, LocalStorageOptionsProvider localStorageOptionsProvider, IJSRuntime jsRuntime, HttpClient httpClient, TextImportService textImportService, CuesheetImportService cuesheetImportService)
+    public class ImportManager(SessionStateContainer sessionStateContainer, LocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService, CuesheetImportService cuesheetImportService)
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly LocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
-        private readonly IJSRuntime _jsRuntime = jsRuntime;
-        private readonly HttpClient _httpClient = httpClient;
         private readonly TextImportService _textImportService = textImportService;
         private readonly CuesheetImportService _cuesheetImportService = cuesheetImportService;
 
@@ -83,15 +81,6 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     await ImportTextAsync([.. lines]);
                     importFileTypes.Add(file, ImportFileType.Textfile);
-                }
-                if (IOUtility.CheckFileMimeTypeForAudioCodec(file))
-                {
-                    var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
-                    var codec = IOUtility.GetAudioCodec(file);
-                    var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
-                    _ = audiofile.LoadContentStream();
-                    _sessionStateContainer.ImportAudiofile = audiofile;
-                    importFileTypes.Add(file, ImportFileType.Audiofile);
                 }
             }
             return importFileTypes;

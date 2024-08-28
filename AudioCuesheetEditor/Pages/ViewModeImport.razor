@@ -356,6 +356,19 @@ along with Foobar.  If not, see
     {
         _sessionStateContainer.ResetImport();
         var importedFiles = await _importManager.ImportFilesAsync(files);
+        // Audio file is handled seperatly
+        foreach (var file in files)
+        {
+            if (IOUtility.CheckFileMimeTypeForAudioCodec(file))
+            {
+                var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURL", "dropFileInput");
+                var codec = IOUtility.GetAudioCodec(file);
+                var audiofile = new Audiofile(file.Name, audioFileObjectURL, codec, _httpClient);
+                _ = audiofile.LoadContentStream();
+                _sessionStateContainer.ImportAudiofile = audiofile;
+                importedFiles.Add(file, ImportFileType.Audiofile);
+            }
+        }
         displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
         await OnSelectedStepChanged("validateData");
         StateHasChanged();
