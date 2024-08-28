@@ -17,7 +17,6 @@ namespace AudioCuesheetEditor.Model.Utility
 {
     public class TimeSpanUtility
     {
-        //TODO: Unit Tests
         public static TimeSpan? ParseTimeSpan(String input, TimeSpanFormat? timeSpanFormat = null)
         {
             TimeSpan? result = null;
