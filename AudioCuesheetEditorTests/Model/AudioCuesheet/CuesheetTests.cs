@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
@@ -24,16 +23,12 @@ using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditorTests.Properties;
 using AudioCuesheetEditorTests.Utility;
-using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
@@ -242,7 +237,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
+            var importOptions = new ImportOptions
+            {
+                TextImportScheme = new TextImportScheme()
+                {
+                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
+                }
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
             var cuesheetImportService = new CuesheetImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
@@ -579,7 +582,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
+            var importOptions = new ImportOptions
+            {
+                TextImportScheme = new TextImportScheme()
+                {
+                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
+                }
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
             var cuesheetImportService = new CuesheetImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
