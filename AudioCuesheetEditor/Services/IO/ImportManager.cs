@@ -90,23 +90,23 @@ namespace AudioCuesheetEditor.Services.IO
         {
             var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
             _sessionStateContainer.TextImportFile = _textImportService.Analyse(options, fileContent);
-            if (_textImportService.AnalysedCuesheet != null)
+            if (_sessionStateContainer.TextImportFile.AnalysedCuesheet != null)
             {
                 var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var importCuesheet = new Cuesheet();
-                importCuesheet.Import(_textImportService.AnalysedCuesheet, applicationOptions);
+                importCuesheet.Import(_sessionStateContainer.TextImportFile.AnalysedCuesheet, applicationOptions);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }
 
         private async Task ImportCuesheetAsync(IEnumerable<String?> fileContent)
         {
-            _sessionStateContainer.CuesheetImportFile = _cuesheetImportService.Analyse(fileContent);
-            if (_cuesheetImportService.AnalysedCuesheet != null)
+            _sessionStateContainer.CuesheetImportFile = CuesheetImportService.Analyse(fileContent);
+            if (_sessionStateContainer.CuesheetImportFile.AnalysedCuesheet != null)
             {
                 var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var importCuesheet = new Cuesheet();
-                importCuesheet.Import(_cuesheetImportService.AnalysedCuesheet, applicationOptions);
+                importCuesheet.Import(_sessionStateContainer.CuesheetImportFile.AnalysedCuesheet, applicationOptions);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }

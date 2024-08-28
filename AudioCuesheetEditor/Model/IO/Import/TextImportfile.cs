@@ -13,12 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.Utility;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
@@ -33,5 +28,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public IEnumerable<String?>? FileContentRecognized { get; set; }
         /// <inheritdoc />
         public Exception? AnalyseException { get;set; }
+        /// <inheritdoc />
+        public ImportCuesheet? AnalysedCuesheet { get; set; }
     }
 }

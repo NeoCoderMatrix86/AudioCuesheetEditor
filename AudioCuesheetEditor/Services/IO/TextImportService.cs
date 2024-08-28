@@ -27,7 +27,6 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public class TextImportService
     {
-        public ImportCuesheet? AnalysedCuesheet { get; private set; }
         public ImportOptions? ImportOptions { get; private set; }
         //TODO: Unit Test
         public TextImportfile Analyse(ImportOptions importOptions, IEnumerable<String?> fileContent)
@@ -37,7 +36,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 importfile.FileContent = fileContent;
                 ImportOptions = importOptions;
-                AnalysedCuesheet = new ImportCuesheet();
+                importfile.AnalysedCuesheet = new ImportCuesheet();
                 Boolean cuesheetRecognized = false;
                 List<String?> recognizedFileContent = [];
                 foreach (var line in fileContent)
@@ -51,7 +50,7 @@ namespace AudioCuesheetEditor.Services.IO
                             //Remove entity names
                             var expression = ImportOptions.TextImportScheme.SchemeCuesheet.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty);
                             var regExCuesheet = new Regex(expression);
-                            recognizedLine = AnalyseLine(line, AnalysedCuesheet, regExCuesheet);
+                            recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet);
                             recognized = recognizedLine != null;
                             cuesheetRecognized = recognizedLine != null;
                         }
@@ -63,7 +62,7 @@ namespace AudioCuesheetEditor.Services.IO
                             var track = new ImportTrack();
                             recognizedLine = AnalyseLine(line, track, regExTracks);
                             recognized = recognizedLine != null;
-                            AnalysedCuesheet.Tracks.Add(track);
+                            importfile.AnalysedCuesheet.Tracks.Add(track);
                         }
                     }
                     recognizedFileContent.Add(recognizedLine);
@@ -77,7 +76,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 importfile.FileContentRecognized = fileContent;
                 importfile.AnalyseException = ex;
-                AnalysedCuesheet = null;
+                importfile.AnalysedCuesheet = null;
             }
             return importfile;
         }
