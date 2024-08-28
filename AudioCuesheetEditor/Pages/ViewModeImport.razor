@@ -195,6 +195,8 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
+    //TODO: Hide fileContent if importing a project file
+    //TODO: Hide edit import options im importing a cuesheet file
     String selectedStep = "selectFiles";
     String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
     Boolean cuesheetDataVisible = true;

@@ -50,14 +50,13 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 if (IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
                 {
-                    //TODO
-                    //var fileContent = await ReadFileContentAsync(file);
-                    //var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
-                    //if (cuesheet != null)
-                    //{
-                    //    _sessionStateContainer.ImportCuesheet = cuesheet;
-                    //}
-                    //importFileTypes.Add(file, ImportFileType.ProjectFile);
+                    var fileContent = await ReadFileContentAsync(file);
+                    var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
+                    if (cuesheet != null)
+                    {
+                        _sessionStateContainer.ImportCuesheet = cuesheet;
+                    }
+                    importFileTypes.Add(file, ImportFileType.ProjectFile);
                 }
                 if (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension))
                 {
