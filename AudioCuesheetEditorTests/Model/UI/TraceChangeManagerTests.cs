@@ -11,6 +11,8 @@ using AudioCuesheetEditor.Model.IO.Import;
 using System.IO;
 using AudioCuesheetEditorTests.Properties;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Services.IO;
 
 namespace AudioCuesheetEditor.Model.UI.Tests
 {
@@ -153,34 +155,50 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var testhelper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             //TODO
-            //var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
-            //textImportFile.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
-            //var cuesheet = new Cuesheet();
-            //Boolean eventFired = false;
-            //cuesheet.TrackAdded += delegate
-            //{
-            //    eventFired = true;
-            //};
-            //manager.TraceChanges(cuesheet);
-            //Assert.IsFalse(manager.CanUndo);
-            //Assert.IsFalse(manager.CanRedo);
-            //Assert.IsNotNull(textImportFile.Cuesheet);
-            //cuesheet.Import(textImportFile.Cuesheet, testhelper.ApplicationOptions, manager);
-            //Assert.AreEqual("DJFreezeT", cuesheet.Artist);
-            //Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
-            //Assert.AreNotEqual(0, cuesheet.Tracks.Count);
-            //Assert.IsTrue(manager.CanUndo);
-            //manager.Undo();
-            //Assert.AreEqual(0, cuesheet.Tracks.Count);
-            //Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Artist));
-            //Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Cataloguenumber.Value));
-            //Assert.IsFalse(manager.CanUndo);
-            //Assert.IsTrue(manager.CanRedo);
-            //manager.Redo();
-            //Assert.AreEqual("DJFreezeT", cuesheet.Artist);
-            //Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
-            //Assert.AreNotEqual(0, cuesheet.Tracks.Count);
-            //Assert.IsFalse(eventFired);
+            var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
+            using var reader = new StreamReader(textImportMemoryStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            var fileContent = lines.AsReadOnly();
+            var importService = new TextImportService();
+            var importOptions = new ImportOptions
+            {
+                TextImportScheme = new TextImportScheme()
+                {
+                    SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})",
+                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
+                }
+            };
+            var importfile = importService.Analyse(importOptions, fileContent);
+            var cuesheet = new Cuesheet();
+            Boolean eventFired = false;
+            cuesheet.TrackAdded += delegate
+            {
+                eventFired = true;
+            };
+            manager.TraceChanges(cuesheet);
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsFalse(manager.CanRedo);
+            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            cuesheet.Import(importfile.AnalysedCuesheet, testhelper.ApplicationOptions, manager);
+            Assert.AreEqual("DJFreezeT", cuesheet.Artist);
+            Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
+            Assert.AreNotEqual(0, cuesheet.Tracks.Count);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Artist));
+            Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Cataloguenumber.Value));
+            Assert.IsFalse(manager.CanUndo);
+            Assert.IsTrue(manager.CanRedo);
+            manager.Redo();
+            Assert.AreEqual("DJFreezeT", cuesheet.Artist);
+            Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
+            Assert.AreNotEqual(0, cuesheet.Tracks.Count);
+            Assert.IsFalse(eventFired);
         }
 
         [TestMethod()]

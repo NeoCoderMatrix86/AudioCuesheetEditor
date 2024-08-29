@@ -589,7 +589,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
                 }
-                Cataloguenumber.Value = importCuesheet.Cataloguenumber;
+                Cataloguenumber = new Cataloguenumber()
+                {
+                    Value = importCuesheet.Cataloguenumber
+                };
             }
             if (tracks != null)
             {
