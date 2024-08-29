@@ -22,9 +22,6 @@ namespace AudioCuesheetEditor.Model.IO
 {
     public class Projectfile(Cuesheet cuesheet)
     {
-        public const String MimeType = "text/*";
-        public const String FileExtension = ".ace";
-
         public static readonly String DefaultFilename = "Project.ace";
 
         public static readonly JsonSerializerOptions Options = new()

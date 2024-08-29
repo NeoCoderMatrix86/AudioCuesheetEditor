@@ -247,8 +247,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             };
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
-            var cuesheetImportService = new CuesheetImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
             await importManager.ImportTextAsync(fileContent);            
             var testHelper = new TestHelper();
             // Act
@@ -286,15 +285,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var importOptions = new ImportOptions();
             importOptions.TextImportScheme.SchemeCuesheet = null;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var cuesheetImportService = new CuesheetImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            var textImportService = new TextImportService();;
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
             await importManager.ImportTextAsync(fileContent);
             var cuesheet = new Cuesheet();
             // Act
             cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
             // Assert
-            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
             Assert.AreEqual(39, sessionStateContainer.ImportCuesheet.Tracks.Count);
             Assert.AreEqual(39, cuesheet.Tracks.Count);
@@ -592,8 +590,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             };
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
-            var cuesheetImportService = new CuesheetImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
             await importManager.ImportTextAsync(fileContent);
             var cuesheet = new Cuesheet
             {
@@ -603,7 +600,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             // Act
             cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
             // Assert
-            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
             Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", cuesheet.Title);
@@ -624,8 +621,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             importOptions.TextImportScheme.SchemeCuesheet = null;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
             var textImportService = new TextImportService();
-            var cuesheetImportService = new CuesheetImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, cuesheetImportService);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
             await importManager.ImportTextAsync(fileContent);
             var cuesheet = new Cuesheet
             {
@@ -635,7 +631,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             // Act
             cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
             // Assert
-            Assert.IsNull(sessionStateContainer.TextImportFile?.AnalyseException);
+            Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
             Assert.IsNull(cuesheet.Artist);
             Assert.IsNull(cuesheet.Title);

@@ -28,9 +28,12 @@ namespace AudioCuesheetEditor.Services.IO
     public class TextImportService
     {
         public ImportOptions? ImportOptions { get; private set; }
-        public TextImportfile Analyse(ImportOptions importOptions, IEnumerable<String?> fileContent)
+        public IImportfile Analyse(ImportOptions importOptions, IEnumerable<String?> fileContent)
         {
-            TextImportfile importfile = new();
+            Importfile importfile = new()
+            {
+                FileType = ImportFileType.Textfile
+            };
             try
             {
                 importfile.FileContent = fileContent;

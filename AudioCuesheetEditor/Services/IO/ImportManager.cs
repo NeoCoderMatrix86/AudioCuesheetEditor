@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Services.IO
             Dictionary<IFileEntry, ImportFileType> importFileTypes = [];
             foreach (var file in files)
             {
-                if (IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension))
+                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
@@ -53,7 +53,7 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     importFileTypes.Add(file, ImportFileType.ProjectFile);
                 }
-                if (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension))
+                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -66,7 +66,7 @@ namespace AudioCuesheetEditor.Services.IO
                     await ImportCuesheetAsync(lines);
                     importFileTypes.Add(file, ImportFileType.Cuesheet);
                 }
-                if (IOUtility.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension))
+                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -86,24 +86,24 @@ namespace AudioCuesheetEditor.Services.IO
         public async Task ImportTextAsync(IEnumerable<String?> fileContent)
         {
             var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-            _sessionStateContainer.TextImportFile = _textImportService.Analyse(options, fileContent);
-            if (_sessionStateContainer.TextImportFile.AnalysedCuesheet != null)
+            _sessionStateContainer.Importfile = _textImportService.Analyse(options, fileContent);
+            if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
                 var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var importCuesheet = new Cuesheet();
-                importCuesheet.Import(_sessionStateContainer.TextImportFile.AnalysedCuesheet, applicationOptions);
+                importCuesheet.Import(_sessionStateContainer.Importfile.AnalysedCuesheet, applicationOptions);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }
 
         private async Task ImportCuesheetAsync(IEnumerable<String?> fileContent)
         {
-            _sessionStateContainer.CuesheetImportFile = CuesheetImportService.Analyse(fileContent);
-            if (_sessionStateContainer.CuesheetImportFile.AnalysedCuesheet != null)
+            _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
+            if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
                 var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var importCuesheet = new Cuesheet();
-                importCuesheet.Import(_sessionStateContainer.CuesheetImportFile.AnalysedCuesheet, applicationOptions);
+                importCuesheet.Import(_sessionStateContainer.Importfile.AnalysedCuesheet, applicationOptions);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }

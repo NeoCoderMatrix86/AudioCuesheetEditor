@@ -1,4 +1,4 @@
-//This file is part of AudioCuesheetEditor.
+﻿//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -13,19 +13,12 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet.Import;
-
-namespace AudioCuesheetEditor.Model.IO.Import
+namespace AudioCuesheetEditor.Model.IO
 {
-    public class CuesheetImportfile : IImportfile
+    public static class FileMimeTypes
     {
-        /// <inheritdoc />
-        public IEnumerable<String?>? FileContent { get; set; }
-        /// <inheritdoc />
-        public IEnumerable<String?>? FileContentRecognized { get; set; }
-        /// <inheritdoc />
-        public Exception? AnalyseException { get; set; }
-        /// <inheritdoc />
-        public ImportCuesheet? AnalysedCuesheet { get; set; }
+        public const string Text = "text/plain";
+        public const string Projectfile = "text/*";
+        public const string Cuesheet = "text/*";
     }
 }

@@ -154,7 +154,6 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         {
             var testhelper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            //TODO
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
             using var reader = new StreamReader(textImportMemoryStream);
             List<String?> lines = [];

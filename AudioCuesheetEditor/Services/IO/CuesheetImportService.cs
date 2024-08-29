@@ -22,12 +22,15 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public class CuesheetImportService
     {
-        public static CuesheetImportfile Analyse(IEnumerable<String?> fileContent)
+        public static IImportfile Analyse(IEnumerable<String?> fileContent)
         {
-            CuesheetImportfile cuesheetImportfile = new();
+            Importfile importfile = new()
+            {
+                FileType = ImportFileType.Cuesheet
+            };
             try
             {
-                cuesheetImportfile.AnalysedCuesheet = new();
+                importfile.AnalysedCuesheet = new();
                 var cuesheetArtistGroupName = "CuesheetArtist";
                 var cuesheetTitleGroupName = "CuesheetTitle";
                 var cuesheetFileNameGroupName = "CuesheetFileName";
@@ -68,7 +71,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var artist = matchGroup.Value;
-                                cuesheetImportfile.AnalysedCuesheet.Artist = artist;
+                                importfile.AnalysedCuesheet.Artist = artist;
                             }
                             else
                             {
@@ -83,7 +86,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var title = matchGroup.Value;
-                                cuesheetImportfile.AnalysedCuesheet.Title = title;
+                                importfile.AnalysedCuesheet.Title = title;
                             }
                             else
                             {
@@ -98,7 +101,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var audioFile = matchGroup.Value;
-                                cuesheetImportfile.AnalysedCuesheet.Audiofile = audioFile;
+                                importfile.AnalysedCuesheet.Audiofile = audioFile;
                             }
                             else
                             {
@@ -113,7 +116,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var cdTextfile = matchGroup.Value;
-                                cuesheetImportfile.AnalysedCuesheet.CDTextfile = cdTextfile;
+                                importfile.AnalysedCuesheet.CDTextfile = cdTextfile;
                             }
                             else
                             {
@@ -128,7 +131,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var catalogueNumber = matchGroup.Value;
-                                cuesheetImportfile.AnalysedCuesheet.Cataloguenumber = catalogueNumber;
+                                importfile.AnalysedCuesheet.Cataloguenumber = catalogueNumber;
                             }
                             else
                             {
@@ -242,7 +245,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                             if (track != null)
                             {
-                                cuesheetImportfile.AnalysedCuesheet.Tracks.Add(track);
+                                importfile.AnalysedCuesheet.Tracks.Add(track);
                             }
                             else
                             {
@@ -276,16 +279,16 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     recognizedLines.Add(recognizedLine);
                 }
-                cuesheetImportfile.FileContent = lines.AsReadOnly();
-                cuesheetImportfile.FileContentRecognized = recognizedLines.AsReadOnly();
+                importfile.FileContent = lines.AsReadOnly();
+                importfile.FileContentRecognized = recognizedLines.AsReadOnly();
             }
             catch (Exception ex)
             {
-                cuesheetImportfile.AnalyseException = ex;
-                cuesheetImportfile.AnalysedCuesheet = null;
-                cuesheetImportfile.FileContentRecognized = fileContent;
+                importfile.AnalyseException = ex;
+                importfile.AnalysedCuesheet = null;
+                importfile.FileContentRecognized = fileContent;
             }
-            return cuesheetImportfile;
+            return importfile;
         }
     }
 }

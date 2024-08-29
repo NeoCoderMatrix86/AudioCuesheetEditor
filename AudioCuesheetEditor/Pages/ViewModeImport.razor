@@ -56,7 +56,7 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Textfile"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                    <FileEdit Filter="@TextImportfile.MimeType" Changed="OnTextImportFileChanged" AutoReset="false"></FileEdit>
+                                    <FileEdit Filter="@FileMimeTypes.Text" Changed="OnTextImportFileChanged" AutoReset="false"></FileEdit>
                                 </FieldBody>
                             </Field>
                         </Tooltip>
@@ -72,7 +72,7 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                    <FileEdit Filter="@Cuesheet.FileExtension" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
+                                    <FileEdit Filter="@FileExtensions.Cuesheet" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
                                 </FieldBody>
                             </Field>
                         </Tooltip>
@@ -88,7 +88,7 @@ along with Foobar.  If not, see
                             <Field Horizontal="true">
                                 <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Project filename"]</FieldLabel>
                                 <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                    <FileEdit Filter="@Projectfile.FileExtension" Changed="OnProjectfileChanged" AutoReset="false"></FileEdit>
+                                    <FileEdit Filter="@FileExtensions.Projectfile" Changed="OnProjectfileChanged" AutoReset="false"></FileEdit>
                                 </FieldBody>
                             </Field>
                         </Tooltip>
@@ -147,7 +147,7 @@ along with Foobar.  If not, see
                                         </Field>
                                     </CollapseBody>
                                 </Collapse>
-                                @if (_sessionStateContainer.TextImportFile?.AnalyseException != null)
+                                @if (_sessionStateContainer.Importfile?.AnalyseException != null)
                                 {
                                     <Alert Color="Color.Danger" Visible="true">
                                         <AlertDescription>
@@ -156,7 +156,7 @@ along with Foobar.  If not, see
                                                 <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z" />
                                             </svg>
                                         </AlertDescription>
-                                        <AlertMessage>@_localizer["Error during textimport"] : @_sessionStateContainer.TextImportFile.AnalyseException.Message</AlertMessage>
+                                        <AlertMessage>@_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message</AlertMessage>
                                     </Alert>
                                 }
                             }
@@ -199,7 +199,7 @@ along with Foobar.  If not, see
 
 @code {
     String selectedStep = "selectFiles";
-    String dragNDropUploadFilter = String.Join(',', TextImportfile.MimeType, Cuesheet.FileExtension, Projectfile.FileExtension);
+    String dragNDropUploadFilter = String.Join(',', FileMimeTypes.Text, FileExtensions.Cuesheet, FileExtensions.Projectfile);
     Boolean cuesheetDataVisible = true;
     Boolean cuesheetTracksVisible = true;
     Boolean cuesheetSplitPointsVisible = true;
@@ -247,7 +247,7 @@ along with Foobar.  If not, see
                 selectedStep = name;
                 break;
             case "validateData":
-                if ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.TextImportFile != null))
+                if ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.Importfile != null))
                 {
                     selectFilesCompleted = true;
                     selectedStep = name;
@@ -271,7 +271,7 @@ along with Foobar.  If not, see
     {
         get
         {
-            if ((userChangedSelectedStep == false) && ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.TextImportFile != null)))
+            if ((userChangedSelectedStep == false) && ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.Importfile != null)))
             {
                 selectFilesCompleted = true;
                 selectedStep = "validateData";
@@ -286,7 +286,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (IOUtility.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
+            if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
             {
                 invalidTextImportFileNames.Add(file.Name);
             }
@@ -304,7 +304,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
+            if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false)
             {
                 invalidCuesheetfileNames.Add(file.Name);
             }
@@ -322,7 +322,7 @@ along with Foobar.  If not, see
         if (e.Files.FirstOrDefault() != null)
         {
             var file = e.Files.First();
-            if (IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
+            if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
             {
                 invalidProjectfileNames.Add(file.Name);
             }
@@ -339,9 +339,9 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in e.Files)
         {
-            if ((IOUtility.CheckFileMimeType(file, Projectfile.MimeType, Projectfile.FileExtension) == false)
-                && (IOUtility.CheckFileMimeType(file, Cuesheet.MimeType, Cuesheet.FileExtension) == false)
-                && (IOUtility.CheckFileMimeType(file, TextImportfile.MimeType, TextImportfile.FileExtension) == false)
+            if ((IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
+                && (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false)
+                && (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
                 && (IOUtility.CheckFileMimeTypeForAudioCodec(file) == false))
             {
                 invalidDropFileNames.Add(file.Name);
@@ -469,9 +469,9 @@ along with Foobar.  If not, see
 
     async Task EditImportOptions_OptionsChanged(ImportOptions importOptions)
     {
-        if (_sessionStateContainer.TextImportFile?.FileContent != null)
+        if ((_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile) && (_sessionStateContainer.Importfile?.FileContent != null))
         {
-            await _importManager.ImportTextAsync(_sessionStateContainer.TextImportFile.FileContent);
+            await _importManager.ImportTextAsync(_sessionStateContainer.Importfile.FileContent);
         }
     }
 }

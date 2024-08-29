@@ -63,10 +63,6 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public TextImportfile? TextImportFile { get; set; }
-        
-        public CuesheetImportfile? CuesheetImportFile{ get; set; }
-
         public Audiofile? ImportAudiofile
         {
             get => importAudiofile;
@@ -91,26 +87,11 @@ namespace AudioCuesheetEditor.Extensions
             }
         }
 
-        public IImportfile? Importfile
-        {
-            get
-            {
-                if (TextImportFile != null)
-                {
-                    return TextImportFile;
-                }
-                if (CuesheetImportFile != null)
-                {
-                    return CuesheetImportFile;
-                }
-                return null;
-            }
-        }
+        public IImportfile? Importfile{ get; set; }
 
         public void ResetImport()
         {
-            TextImportFile = null;
-            CuesheetImportFile = null;
+            Importfile = null;
             ImportAudiofile = null;
         }
 

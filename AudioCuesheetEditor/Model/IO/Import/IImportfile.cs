@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
+using AudioCuesheetEditor.Services.IO;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
@@ -35,5 +36,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// The cuesheet which was created during analysing the <see cref="FileContent"/>
         /// </summary>
         ImportCuesheet? AnalysedCuesheet { get; set; }
+        ImportFileType FileType { get; set; }
     }
 }
