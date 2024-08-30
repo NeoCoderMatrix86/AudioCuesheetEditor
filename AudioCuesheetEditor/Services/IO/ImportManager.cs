@@ -167,10 +167,29 @@ namespace AudioCuesheetEditor.Services.IO
             if (tracks != null)
             {
                 var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-                foreach (var importTrack in tracks)
+                var begin = TimeSpan.Zero;
+                for (int i = 0; i < tracks.Count(); i++)
                 {
+                    var importTrack = tracks.ElementAt(i);
                     //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
                     var track = new Track(importTrack, false);
+                    if (importTrack is ImportTrack importTrackReference)
+                    {
+                        if (importTrackReference.StartDateTime != null)
+                        {
+                            if (i < tracks.Count() - 1)
+                            {
+                                var nextTrack = (ImportTrack)tracks.ElementAt(i + 1);
+                                var length = nextTrack.StartDateTime - importTrackReference.StartDateTime;
+                                track.Begin = begin;
+                                track.End = begin + length;
+                                if (track.End.HasValue)
+                                {
+                                    begin = track.End.Value;
+                                }
+                            }
+                        }
+                    }
                     target.AddTrack(track, applicationOptions);
                 }
             }

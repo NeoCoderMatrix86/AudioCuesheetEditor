@@ -28,6 +28,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
         public IReadOnlyCollection<Flag> Flags => flags;
         public TimeSpan? PreGap { get; set; }
         public TimeSpan? PostGap { get; set; }
+        public DateTime? StartDateTime { get; set; }
         public void SetFlags(IEnumerable<Flag> flags)
         {
             this.flags.Clear();

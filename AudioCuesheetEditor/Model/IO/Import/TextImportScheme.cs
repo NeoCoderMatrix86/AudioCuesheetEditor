@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
 using Blazorise.Localization;
 
@@ -54,6 +55,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             var schemeTrackFlags = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Flags), EnterRegularExpressionHere);
             var schemeTrackPreGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PreGap), EnterRegularExpressionHere);
             var schemeTrackPostGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PostGap), EnterRegularExpressionHere);
+            var schemeTrackStartDateTime = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(ImportTrack.StartDateTime), EnterRegularExpressionHere);
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {
@@ -65,7 +67,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 { nameof(Track.Length), schemeTrackLength },
                 { nameof(Track.Flags), schemeTrackFlags },
                 { nameof(Track.PreGap), schemeTrackPreGap },
-                { nameof(Track.PostGap), schemeTrackPostGap }
+                { nameof(Track.PostGap), schemeTrackPostGap },
+                { nameof(ImportTrack.StartDateTime), schemeTrackStartDateTime }
             };
         }
 

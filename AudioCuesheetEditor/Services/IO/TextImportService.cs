@@ -156,6 +156,13 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 ((Cuesheet)entity).Cataloguenumber.Value = value;
             }
+            if (property.PropertyType == typeof(DateTime?))
+            {
+                if (DateTime.TryParse(value, out var date))
+                {
+                    property.SetValue(entity, date);
+                }
+            }
         }
     }
 }

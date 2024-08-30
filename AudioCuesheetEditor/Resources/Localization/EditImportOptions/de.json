@@ -27,6 +27,7 @@
     "Hours": "Stunden",
     "Minutes": "Minuten",
     "Seconds": "Sekunden",
-    "Milliseconds": "Millisekunden"
+    "Milliseconds": "Millisekunden",
+    "StartDateTime": "Startzeitpunkt"
   }
 }
