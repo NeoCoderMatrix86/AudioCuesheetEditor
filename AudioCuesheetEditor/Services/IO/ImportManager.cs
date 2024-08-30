@@ -102,7 +102,9 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
+                _traceChangeManager.BulkEdit = true;
                 await CopyCuesheetAsync(_sessionStateContainer.Cuesheet, _sessionStateContainer.ImportCuesheet);
+                _traceChangeManager.BulkEdit = false;
             }
             _sessionStateContainer.ResetImport();
         }
@@ -129,7 +131,6 @@ namespace AudioCuesheetEditor.Services.IO
 
         private async Task CopyCuesheetAsync(Cuesheet target, ICuesheet cuesheetToCopy)
         {
-            _traceChangeManager.BulkEdit = true;
             target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
@@ -178,7 +179,6 @@ namespace AudioCuesheetEditor.Services.IO
                 throw new NullReferenceException();
             }
             target.IsImporting = false;
-            _traceChangeManager.BulkEdit = false;
             _sessionStateContainer.FireCuesheetImported();
         }
     }

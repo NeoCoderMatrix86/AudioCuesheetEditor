@@ -182,13 +182,12 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             // Act
             await importManager.ImportTextAsync(fileContent);
             // Assert
-            Assert.IsTrue(traceChangeManager.CanUndo);
+            Assert.IsFalse(traceChangeManager.CanUndo);
             Assert.IsFalse(traceChangeManager.CanRedo);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
             Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet.Artist);
             Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet.Cataloguenumber.Value);
             Assert.AreNotEqual(0, sessionStateContainer.ImportCuesheet.Tracks.Count);
-            Assert.IsTrue(traceChangeManager.CanUndo);
             Assert.IsFalse(eventFired);
         }
 
@@ -220,12 +219,13 @@ namespace AudioCuesheetEditor.Model.UI.Tests
                 eventFired = true;
             };
             await importManager.ImportTextAsync(fileContent);
+            await importManager.ImportCuesheetAsync();
             // Act
             traceChangeManager.Undo();
             // Assert
-            Assert.AreEqual(0, sessionStateContainer.ImportCuesheet?.Tracks.Count);
-            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.ImportCuesheet?.Artist));
-            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.ImportCuesheet?.Cataloguenumber.Value));
+            Assert.AreEqual(0, sessionStateContainer.Cuesheet.Tracks.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.Cuesheet.Artist));
+            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber.Value));
             Assert.IsFalse(traceChangeManager.CanUndo);
             Assert.IsTrue(traceChangeManager.CanRedo);
             Assert.IsFalse(eventFired);
