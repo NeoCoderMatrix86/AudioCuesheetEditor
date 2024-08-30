@@ -16,8 +16,11 @@
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
 using Blazorise;
 
@@ -31,11 +34,12 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService)
+    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService, TraceChangeManager traceChangeManager)
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly TextImportService _textImportService = textImportService;
+        private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
 
         public async Task<Dictionary<IFileEntry, ImportFileType>> ImportFilesAsync(IEnumerable<IFileEntry> files)
         {
@@ -88,11 +92,19 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.Importfile = _textImportService.Analyse(options, fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
-                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var importCuesheet = new Cuesheet();
-                importCuesheet.Import(_sessionStateContainer.Importfile.AnalysedCuesheet, applicationOptions);
+                await CopyCuesheetAsync(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
+        }
+
+        public async Task ImportCuesheetAsync()
+        {
+            if (_sessionStateContainer.ImportCuesheet != null)
+            {
+                await CopyCuesheetAsync(_sessionStateContainer.Cuesheet, _sessionStateContainer.ImportCuesheet);
+            }
+            _sessionStateContainer.ResetImport();
         }
 
         private async Task ImportCuesheetAsync(IEnumerable<String?> fileContent)
@@ -100,9 +112,8 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
-                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var importCuesheet = new Cuesheet();
-                importCuesheet.Import(_sessionStateContainer.Importfile.AnalysedCuesheet, applicationOptions);
+                await CopyCuesheetAsync(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }
@@ -114,6 +125,61 @@ namespace AudioCuesheetEditor.Services.IO
             await stream.CopyToAsync(fileContent);
             stream.Close();
             return fileContent;
+        }
+
+        private async Task CopyCuesheetAsync(Cuesheet target, ICuesheet cuesheetToCopy)
+        {
+            _traceChangeManager.BulkEdit = true;
+            target.IsImporting = true;
+            target.Artist = cuesheetToCopy.Artist;
+            target.Title = cuesheetToCopy.Title;
+            IEnumerable<ITrack>? tracks = null;
+            if (cuesheetToCopy is Cuesheet originCuesheet)
+            {
+                tracks = originCuesheet.Tracks;
+                // Copy sections
+                foreach (var section in originCuesheet.Sections)
+                {
+                    var newSplitPoint = target.AddSection();
+                    newSplitPoint.CopyValues(section);
+                }
+                target.Audiofile = originCuesheet.Audiofile;
+                target.CDTextfile = originCuesheet.CDTextfile;
+                target.Cataloguenumber = originCuesheet.Cataloguenumber;
+            }
+            if (cuesheetToCopy is ImportCuesheet importCuesheet)
+            {
+                tracks = importCuesheet.Tracks;
+                if (String.IsNullOrEmpty(importCuesheet.Audiofile) == false)
+                {
+                    target.Audiofile = new Audiofile(importCuesheet.Audiofile);
+                }
+                if (String.IsNullOrEmpty(importCuesheet.CDTextfile) == false)
+                {
+                    target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
+                }
+                target.Cataloguenumber = new Cataloguenumber()
+                {
+                    Value = importCuesheet.Cataloguenumber
+                };
+            }
+            if (tracks != null)
+            {
+                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                foreach (var importTrack in tracks)
+                {
+                    //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
+                    var track = new Track(importTrack, false);
+                    target.AddTrack(track, applicationOptions);
+                }
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+            target.IsImporting = false;
+            _traceChangeManager.BulkEdit = false;
+            _sessionStateContainer.FireCuesheetImported();
         }
     }
 }

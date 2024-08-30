@@ -247,23 +247,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             };
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
-            await importManager.ImportTextAsync(fileContent);            
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             var testHelper = new TestHelper();
             // Act
-            sessionStateContainer.StartImportCuesheet(testHelper.ApplicationOptions);
+            await importManager.ImportTextAsync(fileContent);
 
             // Assert
-            Assert.IsNull(sessionStateContainer.Cuesheet.CDTextfile);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(0).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(1).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(2).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(3).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(4).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(5).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(6).Validate().Status);
-            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.Cuesheet.Tracks.ElementAt(7).Validate().Status);
+            Assert.IsNull(sessionStateContainer.ImportCuesheet?.CDTextfile);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(0).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(1).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(2).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(3).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(4).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(5).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(6).Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, sessionStateContainer.ImportCuesheet?.Tracks.ElementAt(7).Validate().Status);
         }
 
         [TestMethod()]
@@ -285,19 +284,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var importOptions = new ImportOptions();
             importOptions.TextImportScheme.SchemeCuesheet = null;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();;
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
-            await importManager.ImportTextAsync(fileContent);
-            var cuesheet = new Cuesheet();
+            var textImportService = new TextImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             // Act
-            cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
+            await importManager.ImportTextAsync(fileContent);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
             Assert.AreEqual(39, sessionStateContainer.ImportCuesheet.Tracks.Count);
-            Assert.AreEqual(39, cuesheet.Tracks.Count);
-            Assert.AreEqual(new TimeSpan(0, 5, 24), cuesheet.Tracks.ElementAt(0).End);
-            Assert.AreEqual(new TimeSpan(3, 13, 13), cuesheet.Tracks.ElementAt(38).Begin);
+            Assert.AreEqual(new TimeSpan(0, 5, 24), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(0).End);
+            Assert.AreEqual(new TimeSpan(3, 13, 13), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(38).Begin);
         }
 
         [TestMethod()]
@@ -590,22 +586,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             };
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
-            await importManager.ImportTextAsync(fileContent);
-            var cuesheet = new Cuesheet
-            {
-                Artist = "Testartist",
-                Title = "Testtitle"
-            };
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             // Act
-            cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
+            await importManager.ImportTextAsync(fileContent);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
-            Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", cuesheet.Title);
-            Assert.AreEqual(8, cuesheet.Tracks.Count);
-            Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
+            Assert.AreEqual("CuesheetArtist", sessionStateContainer.ImportCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", sessionStateContainer.ImportCuesheet.Title);
+            Assert.AreEqual(8, sessionStateContainer.ImportCuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), sessionStateContainer.ImportCuesheet.Tracks.Last().End);
         }
 
         [TestMethod()]
@@ -619,24 +609,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var importOptions = new ImportOptions();
             importOptions.TextImportScheme.SchemeCuesheet = null;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(new ImportOptions());
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService);
-            await importManager.ImportTextAsync(fileContent);
-            var cuesheet = new Cuesheet
-            {
-                Artist = "Testartist",
-                Title = "Testtitle"
-            };
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             // Act
-            cuesheet.Import(sessionStateContainer.ImportCuesheet!, testHelper.ApplicationOptions);
+            await importManager.ImportTextAsync(fileContent);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
-            Assert.IsNull(cuesheet.Artist);
-            Assert.IsNull(cuesheet.Title);
-            Assert.AreEqual(8, cuesheet.Tracks.Count);
-            Assert.AreEqual(new TimeSpan(1, 15, 54), cuesheet.Tracks.Last().End);
+            Assert.IsNull(sessionStateContainer.ImportCuesheet.Artist);
+            Assert.IsNull(sessionStateContainer.ImportCuesheet.Title);
+            Assert.AreEqual(8, sessionStateContainer.ImportCuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), sessionStateContainer.ImportCuesheet.Tracks.Last().End);
         }
 
         [TestMethod()]

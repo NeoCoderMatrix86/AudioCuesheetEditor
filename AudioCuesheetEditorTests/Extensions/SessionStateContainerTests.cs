@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Extensions.Tests
                 cuesheetChangedFired = true;
             };
             Assert.IsFalse(cuesheetChangedFired);
-            container.Cuesheet.Import(new Cuesheet(), helper.ApplicationOptions);
+            container.FireCuesheetImported();
             Assert.IsTrue(cuesheetChangedFired);
         }
     }

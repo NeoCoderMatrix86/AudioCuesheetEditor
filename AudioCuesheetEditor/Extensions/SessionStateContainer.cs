@@ -93,29 +93,18 @@ namespace AudioCuesheetEditor.Extensions
         {
             Importfile = null;
             ImportAudiofile = null;
-        }
-
-        public void StartImportCuesheet(ApplicationOptions applicationOptions)
-        {
-            if (ImportCuesheet != null)
-            {
-                Cuesheet.Import(ImportCuesheet, applicationOptions, _traceChangeManager);
-                ImportCuesheet = null;
-            }
-            ResetImport();
+            ImportCuesheet = null;
         }
 
         private void SetCuesheetReference(Cuesheet value)
         {
-            cuesheet.CuesheetImported -= Cuesheet_CuesheetImported;
             cuesheet = value;
-            cuesheet.CuesheetImported += Cuesheet_CuesheetImported;
             _traceChangeManager.Reset();
             _traceChangeManager.TraceChanges(Cuesheet);
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
         
-        private void Cuesheet_CuesheetImported(object? sender, EventArgs e)
+        public void FireCuesheetImported()
         {
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
