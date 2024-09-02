@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-
-@implements IDisposable
+@implements IAsyncDisposable
 
 @inject ITextLocalizer<EditTrackModal> _localizer
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
@@ -420,10 +419,13 @@ along with Foobar.  If not, see
     Validations? validations;
     ApplicationOptions? applicationOptions;
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        hotKeysContext?.Dispose();
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        if (hotKeysContext != null)
+        {
+            await hotKeysContext.DisposeAsync();
+        }
     }
 
     protected override async Task OnInitializedAsync()

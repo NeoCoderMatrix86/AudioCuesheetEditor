@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-
-@implements IDisposable
+@implements IAsyncDisposable
 
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ITextLocalizer<OptionsDialog> _localizer
@@ -159,11 +158,14 @@ along with Foobar.  If not, see
     HotKeysContext? hotKeysContext;
     Validation? timespanformatValidation;
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        if (hotKeysContext != null)
+        {
+            await hotKeysContext.DisposeAsync();
+        }
     }
 
     public async Task Show()

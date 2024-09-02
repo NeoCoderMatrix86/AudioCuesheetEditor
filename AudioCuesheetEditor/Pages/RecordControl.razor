@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-@implements IDisposable
+@implements IAsyncDisposable
 
 @inject SessionStateContainer _sessionStateContainer
 @inject ITextLocalizer<RecordControl> _localizer
@@ -131,12 +131,15 @@ along with Foobar.  If not, see
     [Parameter]
     public EventCallback StopRecordClicked { get; set; }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
+        if (hotKeysContext != null)
+        {
+            await hotKeysContext.DisposeAsync();
+        }
     }
 
     protected override async Task OnInitializedAsync()
