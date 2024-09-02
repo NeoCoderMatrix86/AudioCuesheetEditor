@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
 using Blazorise.Localization;
 
@@ -54,6 +55,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             var schemeTrackFlags = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Flags), EnterRegularExpressionHere);
             var schemeTrackPreGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PreGap), EnterRegularExpressionHere);
             var schemeTrackPostGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PostGap), EnterRegularExpressionHere);
+            var schemeTrackStartDateTime = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(ImportTrack.StartDateTime), EnterRegularExpressionHere);
 
             AvailableSchemesTrack = new Dictionary<string, string>
             {
@@ -65,7 +67,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 { nameof(Track.Length), schemeTrackLength },
                 { nameof(Track.Flags), schemeTrackFlags },
                 { nameof(Track.PreGap), schemeTrackPreGap },
-                { nameof(Track.PostGap), schemeTrackPostGap }
+                { nameof(Track.PostGap), schemeTrackPostGap },
+                { nameof(ImportTrack.StartDateTime), schemeTrackStartDateTime }
             };
         }
 
@@ -122,14 +125,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         if (SchemeCuesheet?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
                             var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(")", startIndex) + 1) - startIndex);
-                            validationMessages ??= new();
+                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(')', startIndex) + 1) - startIndex);
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeCuesheet), realRegularExpression));
                         }
                     }
                     if (SchemeCuesheet?.Contains(enterRegularExpression) == true)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
                     }
                     break;
@@ -140,14 +143,14 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         if (SchemeTracks?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
                         {
                             var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(")", startIndex) + 1) - startIndex);
-                            validationMessages ??= new();
+                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(')', startIndex) + 1) - startIndex);
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeTracks), realRegularExpression));
                         }
                     }
                     if (SchemeTracks?.Contains(enterRegularExpression) == true)
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
                     }
                     break;

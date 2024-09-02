@@ -27,13 +27,13 @@ namespace AudioCuesheetEditor.Model.Utility
             {
                 if (String.IsNullOrEmpty(file.Type) == false)
                 {
-                    fileMimeTypeMatches = file.Type.ToLower() == mimeType.ToLower();
+                    fileMimeTypeMatches = file.Type.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
                 }
                 else
                 {
                     //Try to find by file extension
-                    var extension = Path.GetExtension(file.Name).ToLower();
-                    fileMimeTypeMatches = extension == fileExtension.ToLower();
+                    var extension = Path.GetExtension(file.Name);
+                    fileMimeTypeMatches = extension.Equals(fileExtension, StringComparison.CurrentCultureIgnoreCase);
                 }
             }
             return fileMimeTypeMatches;
@@ -47,7 +47,7 @@ namespace AudioCuesheetEditor.Model.Utility
         public static AudioCodec? GetAudioCodec(IFileEntry fileEntry)
         {
             AudioCodec? foundAudioCodec = null;
-            var extension = Path.GetExtension(fileEntry.Name).ToLower();
+            var extension = Path.GetExtension(fileEntry.Name);
             // First search with mime type and file extension
             var audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(fileEntry.Type, StringComparison.OrdinalIgnoreCase) && x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
             if (audioCodecsFound.Count() <= 1)

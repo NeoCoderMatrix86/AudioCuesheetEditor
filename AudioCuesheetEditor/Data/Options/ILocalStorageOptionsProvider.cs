@@ -13,15 +13,16 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Options;
+using System.Linq.Expressions;
 
-using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Utility;
-
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Data.Options
 {
-    public class ImportOptions : IOptions
+    public interface ILocalStorageOptionsProvider
     {
-        public TextImportScheme TextImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
-        public TimeSpanFormat TimeSpanFormat { get; set; } = new();
+        event EventHandler<IOptions>? OptionSaved;
+        Task<T> GetOptions<T>() where T : IOptions;
+        Task SaveOptions(IOptions options);
+        Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object value) where T : class, IOptions, new();
     }
 }

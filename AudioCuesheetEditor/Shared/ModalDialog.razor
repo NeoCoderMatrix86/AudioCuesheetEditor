@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-
-@implements IDisposable
+@implements IAsyncDisposable
 
 @inject ITextLocalizer<ModalDialog> _localizer
 @inject HotKeys _hotKeys
@@ -65,10 +64,13 @@ along with Foobar.  If not, see
 
 @code {
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        if (hotKeysContext != null)
+        {
+            await hotKeysContext.DisposeAsync();
+        }
     }
 
     protected override Task OnInitializedAsync()

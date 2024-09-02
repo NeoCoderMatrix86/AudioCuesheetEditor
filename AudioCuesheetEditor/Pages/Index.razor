@@ -15,14 +15,13 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-
-@implements IDisposable
+@implements IAsyncDisposable
 
 @page "/"
 @inject IJSRuntime _jsRuntime
 @inject ITextLocalizer<Index> _localizer
 @inject NavigationManager _navigationManager
-@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ILogger<Index> _logger
 @inject HotKeys _hotKeys
 @inject HttpClient _httpClient
@@ -78,12 +77,15 @@ along with Foobar.  If not, see
 <ModalDialog @ref="modalDialog" />
 
 @code {
-    
-    public void Dispose()
+
+    public async ValueTask DisposeAsync()
     {
-        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
+        if (hotKeysContext != null)
+        {
+            await hotKeysContext.DisposeAsync();
+        }
     }
 
     [CascadingParameter]

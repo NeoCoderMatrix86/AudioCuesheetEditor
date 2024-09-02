@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject ITextLocalizer<EditSections> _localizer
 @inject SessionStateContainer _sessionStateContainer
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
-@inject DateTimeUtility _dateTimeUtility
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject ITextLocalizerService _localizationService
 @inject TraceChangeManager _traceChangeManager
 @inject IJSRuntime _jsRuntime
@@ -77,7 +77,7 @@ along with Foobar.  If not, see
                         </TableRowCell>
                         <TableRowCell>
                             <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.Begin, _validationMessageLocalizer, token)">
-                                <TextEdit Text="@cuesheetSection.Begin?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<CuesheetSection, TimeSpan?>(cuesheetSection, x => x.Begin, value)" Immediate="false">
+                                <TextEdit Text="@cuesheetSection.Begin?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(cuesheetSection, x => x.Begin, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -86,7 +86,7 @@ along with Foobar.  If not, see
                         </TableRowCell>
                         <TableRowCell>
                             <Validation AsyncValidator="(args, token) => ValidatorUtility<CuesheetSection>.Validate(args, cuesheetSection, x => x.End, _validationMessageLocalizer, token)">
-                                <TextEdit Text="@cuesheetSection.End?.ToString()" TextChanged="(value) => _dateTimeUtility.TimespanTextChanged<CuesheetSection, TimeSpan?>(cuesheetSection, x => x.End, value)" Immediate="false">
+                                <TextEdit Text="@cuesheetSection.End?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(cuesheetSection, x => x.End, value)" Immediate="false">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>

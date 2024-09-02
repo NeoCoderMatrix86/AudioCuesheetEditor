@@ -18,7 +18,7 @@ along with Foobar.  If not, see
 
 @inherits LayoutComponentBase
 
-@implements IDisposable
+@implements IAsyncDisposable
 
 @inject NavigationManager _navigationManager
 @inject ITextLocalizer<MainLayout> _localizer
@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 @inject ILogger<MainLayout> _logger
 @inject IJSRuntime _jsRuntime
 @inject HotKeys _hotKeys
-@inject LocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject SessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
@@ -484,9 +484,8 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        hotKeysContext?.Dispose();
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
         _traceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
@@ -499,6 +498,10 @@ along with Foobar.  If not, see
         if (modalExportdialogCuesheet != null)
         {
             modalExportdialogCuesheet.GenerateExportfilesClicked -= ModalExportdialogCuesheet_GenerateExportfilesClicked;
+        }
+        if (hotKeysContext != null)
+        {
+            await hotKeysContext.DisposeAsync();
         }
     }
 

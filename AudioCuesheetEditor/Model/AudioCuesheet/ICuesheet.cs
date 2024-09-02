@@ -13,19 +13,12 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    /// <summary>
-    /// Interface for cuesheet entities (Cuesheet, track, etc.)
-    /// </summary>
-    public interface ICuesheetEntity
+    public interface ICuesheet
     {
-        public String? Artist { get; set; }
-        public String? Title { get; set; }
+        string? Artist { get; set; }
+        string? Title { get; set; }
     }
 }

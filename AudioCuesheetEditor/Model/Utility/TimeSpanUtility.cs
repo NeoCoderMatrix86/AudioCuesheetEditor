@@ -13,22 +13,28 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Model.Options;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using System.Globalization;
-
-namespace AudioCuesheetEditor.Extensions
+namespace AudioCuesheetEditor.Model.Utility
 {
-    public static class WebAssemblyHostExtension
+    public class TimeSpanUtility
     {
-        public async static Task SetDefaultCulture(this WebAssemblyHost host)
+        public static TimeSpan? ParseTimeSpan(String input, TimeSpanFormat? timeSpanFormat = null)
         {
-            var localStorageOptionsProvider = host.Services.GetRequiredService<ILocalStorageOptionsProvider>();
-            var options = await localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-
-            CultureInfo.DefaultThreadCurrentCulture = options.Culture;
-            CultureInfo.DefaultThreadCurrentUICulture = options.Culture;
+            TimeSpan? result = null;
+            if (String.IsNullOrEmpty(input) == false)
+            {
+                if (String.IsNullOrEmpty(timeSpanFormat?.Scheme))
+                {
+                    if (TimeSpan.TryParse(input, out var parsed))
+                    {
+                        result = parsed;
+                    }
+                }
+                else
+                {
+                    result = timeSpanFormat.ParseTimeSpan(input);
+                }
+            }
+            return result;
         }
     }
 }

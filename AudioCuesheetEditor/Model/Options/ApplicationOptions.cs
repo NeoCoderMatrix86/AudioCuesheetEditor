@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
@@ -110,10 +109,10 @@ namespace AudioCuesheetEditor.Model.Options
                     else
                     {
                         var extension = Path.GetExtension(CuesheetFilename);
-                        if (extension.Equals(Cuesheet.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
+                        if (extension.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
                         {
                             validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(CuesheetFilename), Cuesheet.FileExtension));
+                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(CuesheetFilename), FileExtensions.Cuesheet));
                         }
                         var filenameWithoutExtension = Path.GetFileNameWithoutExtension(CuesheetFilename);
                         if (string.IsNullOrEmpty(filenameWithoutExtension))
@@ -133,10 +132,10 @@ namespace AudioCuesheetEditor.Model.Options
                     else
                     {
                         var extension = Path.GetExtension(ProjectFilename);
-                        if (extension.Equals(Projectfile.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
+                        if (extension.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
                         {
                             validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), Projectfile.FileExtension));
+                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), FileExtensions.Projectfile));
                         }
                         var filename = Path.GetFileNameWithoutExtension(ProjectFilename);
                         if (String.IsNullOrEmpty(filename))

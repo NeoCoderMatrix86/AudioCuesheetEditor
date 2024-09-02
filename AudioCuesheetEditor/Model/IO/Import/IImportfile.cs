@@ -13,6 +13,9 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
+using AudioCuesheetEditor.Services.IO;
+
 namespace AudioCuesheetEditor.Model.IO.Import
 {
     public interface IImportfile
@@ -20,10 +23,19 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <summary>
         /// File content (each element is a file line)
         /// </summary>
-        public IEnumerable<String?> FileContent { get; set; }
+        IEnumerable<String?>? FileContent { get; set; }
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        public IEnumerable<String?> FileContentRecognized { get; }
+        IEnumerable<String?>? FileContentRecognized { get; set; }
+        /// <summary>
+        /// Exception that has been thrown while readinng out the file
+        /// </summary>
+        Exception? AnalyseException { get; set; }
+        /// <summary>
+        /// The cuesheet which was created during analysing the <see cref="FileContent"/>
+        /// </summary>
+        ImportCuesheet? AnalysedCuesheet { get; set; }
+        ImportFileType FileType { get; set; }
     }
 }

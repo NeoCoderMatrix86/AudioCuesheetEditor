@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Options;
@@ -39,11 +38,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public CuesheetSection Section { get; } = section;
     }
 
-    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ICuesheetEntity, ITraceable
+    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ITraceable, ICuesheet
     {
-        public const String MimeType = "text/*";
-        public const String FileExtension = ".cue";
-
         private readonly object syncLock = new();
 
         private List<Track> tracks = [];
@@ -62,7 +58,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
         public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionAdded;
         public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionRemoved;
-        public event EventHandler? CuesheetImported;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -176,7 +171,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         [JsonIgnore]
-        public Boolean IsImporting { get; private set; }
+        public Boolean IsImporting { get; set; }
         
         [JsonInclude]
         public IReadOnlyCollection<CuesheetSection> Sections 
@@ -393,27 +388,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public void Import(Cuesheet cuesheet, ApplicationOptions applicationOptions, TraceChangeManager? traceChangeManager = null)
-        {
-            //Since we use a stack for several changes we need to lock execution for everything else
-            lock (syncLock)
-            {
-                IsImporting = true;
-                //We are doing a bulk edit, so inform the TraceChangeManager
-                if (traceChangeManager != null)
-                {
-                    traceChangeManager.BulkEdit = true;
-                }
-                CopyValues(cuesheet, applicationOptions);
-                if (traceChangeManager != null)
-                {
-                    traceChangeManager.BulkEdit = false;
-                }
-                IsImporting = false;
-            }
-            CuesheetImported?.Invoke(this, EventArgs.Empty);
-        }
-
         public void StartRecording()
         {
             recordingStart = DateTime.UtcNow;
@@ -552,32 +526,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     trackToCalculate.Begin = TimeSpan.Zero;
                 }
             }            
-        }
-
-        /// <summary>
-        /// Copy values from import cuesheet to this cuesheet
-        /// </summary>
-        /// <param name="cuesheet">Reference to import cuesheet</param>
-        /// <param name="applicationOptions">Reference to application options</param>
-        private void CopyValues(Cuesheet cuesheet, ApplicationOptions applicationOptions)
-        {
-            Artist = cuesheet.Artist;
-            Title = cuesheet.Title;
-            Audiofile = cuesheet.Audiofile;
-            CDTextfile = cuesheet.CDTextfile;
-            Cataloguenumber = cuesheet.Cataloguenumber;
-            foreach (var importTrack in cuesheet.Tracks)
-            {
-                //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
-                var track = new Track(importTrack, false);
-                AddTrack(track, applicationOptions);
-            }
-            // Copy sections
-            foreach (var splitPoint in cuesheet.Sections)
-            {
-                var newSplitPoint = AddSection();
-                newSplitPoint.CopyValues(splitPoint);
-            }
         }
 
         private void Track_RankPropertyValueChanged(object? sender, string e)
