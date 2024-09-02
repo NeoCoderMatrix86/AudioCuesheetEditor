@@ -372,7 +372,7 @@ along with Foobar.  If not, see
             }
         }
         displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
-        displayFileContent = !importedFiles.ContainsValue(ImportFileType.ProjectFile);
+        displayFileContent = importedFiles.ContainsValue(ImportFileType.Textfile);
         displayEditImportOptions = importedFiles.ContainsValue(ImportFileType.Textfile);
         await OnSelectedStepChanged("validateData");
         StateHasChanged();
