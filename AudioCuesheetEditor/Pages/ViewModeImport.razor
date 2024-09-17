@@ -28,9 +28,9 @@ along with Foobar.  If not, see
 @inject ImportManager _importManager
 
 <Validations @ref="validations">
-    <Steps SelectedStep="@SelectedStep" SelectedStepChanged="@OnSelectedStepChanged">
+    <Steps @bind-SelectedStep="selectedStep" NavigationAllowed="NavigationAllowed">
         <Items>
-            <Step Name="selectFiles" Completed="selectFilesCompleted">@_localizer["Select files"]</Step>
+            <Step Name="selectFiles" Completed="SelectFilesCompleted">@_localizer["Select files"]</Step>
             <Step Name="validateData">@_localizer["Validate"]</Step>
         </Items>
         <Content>
@@ -156,16 +156,11 @@ along with Foobar.  If not, see
     Boolean cuesheetSplitPointsVisible = true;
     Boolean importFileContentVisible = true;
     Boolean importOptionsVisible = true;
-    Boolean selectFilesCompleted = false;
-    Boolean userChangedSelectedStep = false;
     Boolean displaySplitPoints = false;
     Boolean displayFileContent = true;
     Boolean displayEditImportOptions = true;
     Alert? alertInvalidFile;
     ModalDialog? modalDialog;
-    List<String> invalidTextImportFileNames = new();
-    List<String> invalidCuesheetfileNames = new();
-    List<String> invalidProjectfileNames = new();
     List<String> invalidDropFileNames = new();
 
     HotKeysContext? hotKeysContext;
@@ -189,48 +184,16 @@ along with Foobar.  If not, see
             .Add(Key.Enter, OnEnterKeyDown);
     }
 
-    async Task OnSelectedStepChanged(String name)
-    {
-        userChangedSelectedStep = true;
-        switch (name)
-        {
-            case "selectFiles":
-                selectedStep = name;
-                break;
-            case "validateData":
-                //TODO: File validation should be done seperatly
-                if ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.Importfile != null))
-                {
-                    selectFilesCompleted = true;
-                    selectedStep = name;
-                }
-                else
-                {
-                    if (modalDialog != null)
-                    {
-                        modalDialog.Title = _localizer["Not possible!"];
-                        modalDialog.Text = _localizer["Please select files for import before going to validation!"];
-                        modalDialog.ModalSize = ModalSize.Small;
-                        modalDialog.Mode = ModalDialog.DialogMode.Alert;
-                        await modalDialog.ShowModal();
-                    }
-                }
-                break;
-        }
-    }
+    Boolean SelectFilesCompleted => (_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.Importfile != null);
 
-    //TODO: Shouldn't edit the selected step
-    String SelectedStep
+    bool NavigationAllowed(StepNavigationContext context)
     {
-        get
+        if (context.CurrentStepName == "selectFiles" && context.NextStepName == "validateData")
         {
-            if ((userChangedSelectedStep == false) && ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.Importfile != null)))
-            {
-                selectFilesCompleted = true;
-                selectedStep = "validateData";
-            }
-            return selectedStep;
+            return SelectFilesCompleted;
         }
+
+        return true;
     }
 
     private async Task OnDropFileChanged(FileChangedEventArgs e)
@@ -273,7 +236,7 @@ along with Foobar.  If not, see
         displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
         displayFileContent = importedFiles.ContainsValue(ImportFileType.Textfile);
         displayEditImportOptions = importedFiles.ContainsValue(ImportFileType.Textfile);
-        await OnSelectedStepChanged("validateData");
+        selectedStep = "validateData";
         StateHasChanged();
     }
 
@@ -304,10 +267,10 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    async Task AbortImport()
+    void AbortImport()
     {
         _sessionStateContainer.ResetImport();
-        await OnSelectedStepChanged("selectFiles");
+        selectedStep = "selectFiles";
     }
 
     private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
