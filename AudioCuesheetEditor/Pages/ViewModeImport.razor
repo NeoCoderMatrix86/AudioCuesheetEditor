@@ -41,58 +41,9 @@ along with Foobar.  If not, see
                         <Field class="dragNDropFile mb-3" ondragover="dragOver(event, this)" ondragleave="dragLeave(event, this)" ondrop="dropFiles(event, this, 'dropFileInput')">
                             <svg class="dragNDropFileIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
                             <FileEdit id="dropFileInput" Multiple Filter="@dragNDropUploadFilter" Changed="OnDropFileChanged" AutoReset="false"></FileEdit>
-                            <FieldLabel for="dropFileInput">@((MarkupString)(_localizer["Choose file or drag it here"].ToString()))</FieldLabel>
+                            <FieldLabel for="dropFileInput">@((MarkupString)(_localizer["Choose file or drag it here"]))</FieldLabel>
                         </Field>
                         @foreach (var invalidFileName in invalidDropFileNames)
-                        {
-                            <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
-                                <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
-                                <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
-                                <CloseButton />
-                            </Alert>
-                        }
-                        <Divider />
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import textfile tooltip"]">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Textfile"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                    <FileEdit Filter="@FileMimeTypes.Text" Changed="OnTextImportFileChanged" AutoReset="false"></FileEdit>
-                                </FieldBody>
-                            </Field>
-                        </Tooltip>
-                        @foreach (var invalidFileName in invalidTextImportFileNames)
-                        {
-                            <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
-                                <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
-                                <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
-                                <CloseButton />
-                            </Alert>
-                        }
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import cuesheet tooltip"]">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Cuesheet"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                    <FileEdit Filter="@FileExtensions.Cuesheet" Changed="OnCuesheetfileChanged" AutoReset="false"></FileEdit>
-                                </FieldBody>
-                            </Field>
-                        </Tooltip>
-                        @foreach (var invalidFileName in invalidCuesheetfileNames)
-                        {
-                            <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
-                                <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
-                                <AlertDescription>@String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)</AlertDescription>
-                                <CloseButton />
-                            </Alert>
-                        }
-                        <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Import project tooltip"]">
-                            <Field Horizontal="true">
-                                <FieldLabel ColumnSize="ColumnSize.Is2.OnFullHD.Is3.OnDesktop.Is4.OnTablet.Is5.OnMobile">@_localizer["Project filename"]</FieldLabel>
-                                <FieldBody ColumnSize="ColumnSize.Is10.OnFullHD.Is9.OnDesktop.Is8.OnTablet.Is12.OnMobile">
-                                    <FileEdit Filter="@FileExtensions.Projectfile" Changed="OnProjectfileChanged" AutoReset="false"></FileEdit>
-                                </FieldBody>
-                            </Field>
-                        </Tooltip>
-                        @foreach (var invalidFileName in invalidProjectfileNames)
                         {
                             <Alert @ref="alertInvalidFile" Color="Color.Danger" Visible Dismisable>
                                 <AlertMessage>@_localizer["Invalid file"]</AlertMessage>
@@ -247,6 +198,7 @@ along with Foobar.  If not, see
                 selectedStep = name;
                 break;
             case "validateData":
+                //TODO: File validation should be done seperatly
                 if ((_sessionStateContainer.ImportCuesheet != null) || (_sessionStateContainer.Importfile != null))
                 {
                     selectFilesCompleted = true;
@@ -267,6 +219,7 @@ along with Foobar.  If not, see
         }
     }
 
+    //TODO: Shouldn't edit the selected step
     String SelectedStep
     {
         get
@@ -277,60 +230,6 @@ along with Foobar.  If not, see
                 selectedStep = "validateData";
             }
             return selectedStep;
-        }
-    }
-
-    private async Task OnTextImportFileChanged(FileChangedEventArgs e)
-    {
-        invalidTextImportFileNames.Clear();
-        if (e.Files.FirstOrDefault() != null)
-        {
-            var file = e.Files.First();
-            if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
-            {
-                invalidTextImportFileNames.Add(file.Name);
-            }
-            else
-            {
-                await OnFileChanged(new List<IFileEntry>() { file });
-            }
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnCuesheetfileChanged(FileChangedEventArgs e)
-    {
-        invalidCuesheetfileNames.Clear();
-        if (e.Files.FirstOrDefault() != null)
-        {
-            var file = e.Files.First();
-            if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false)
-            {
-                invalidCuesheetfileNames.Add(file.Name);
-            }
-            else
-            {
-                await OnFileChanged(new List<IFileEntry>() { file });
-            }
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnProjectfileChanged(FileChangedEventArgs e)
-    {
-        invalidProjectfileNames.Clear();
-        if (e.Files.FirstOrDefault() != null)
-        {
-            var file = e.Files.First();
-            if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
-            {
-                invalidProjectfileNames.Add(file.Name);
-            }
-            else
-            {
-                await OnFileChanged(new List<IFileEntry>() { file });
-            }
-            StateHasChanged();
         }
     }
 
