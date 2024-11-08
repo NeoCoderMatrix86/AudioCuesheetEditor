@@ -57,7 +57,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                             {
                                 case ExportType.Cuesheet:
                                     content = WriteCuesheet(audioFileName, section);
-                                    filename = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(ApplicationOptions?.CuesheetFilename), counter, Cuesheet.FileExtension);
+                                    filename = String.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(ApplicationOptions?.CuesheetFilename), counter, FileExtensions.Cuesheet);
                                     break;
                                 case ExportType.Exportprofile:
                                     if (Exportprofile != null)

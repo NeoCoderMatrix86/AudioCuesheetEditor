@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Remove
     }
 
-    public class Track : Validateable<Track>, ICuesheetEntity, ITraceable
+    public class Track : Validateable<Track>, ITraceable, ITrack
     {
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 
@@ -54,19 +54,18 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <inheritdoc/>
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
+        public Track() { }
+
         /// <summary>
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
         /// /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
-        public Track(Track track, Boolean copyCuesheetReference = true)
+        public Track(ITrack track, Boolean copyCuesheetReference = true) : this()
         {
             CopyValues(track, copyCuesheetReference);
         }
-        public Track()
-        {
-            
-        }
+        
         public uint? Position 
         {
             get => position;
@@ -242,17 +241,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <param name="setPreGap">Copy PreGap from track also?</param>
         /// <param name="setPostGap">Copy PostGap from track also?</param>
         /// <param name="useInternalSetters">A list of properties, for whom the internal set construct should be used, in order to avoid automatic calculation.</param>
-        public void CopyValues(Track track, Boolean setCuesheet = true, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true, IEnumerable<String>? useInternalSetters = null)
+        public void CopyValues(ITrack track, Boolean setCuesheet = true, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true, IEnumerable<String>? useInternalSetters = null)
         {
-            if (setCuesheet)
+            if (setCuesheet && (track is Track cuesheetTrack))
             {
                 if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Cuesheet))))
                 {
-                    cuesheet = track.Cuesheet;
+                    cuesheet = cuesheetTrack.Cuesheet;
                 }
                 else
                 {
-                    Cuesheet = track.Cuesheet;
+                    Cuesheet = cuesheetTrack.Cuesheet;
                 }
             }
             if (setPosition)
@@ -348,15 +347,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     PostGap = track.PostGap;
                 }
             }
-            if (setIsLinkedToPreviousTrack)
+            if (setIsLinkedToPreviousTrack && (track is Track cuesheetTrack2))
             {
                 if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(IsLinkedToPreviousTrack))))
                 {
-                    isLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
+                    isLinkedToPreviousTrack = cuesheetTrack2.IsLinkedToPreviousTrack;
                 }
                 else
                 {
-                    IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
+                    IsLinkedToPreviousTrack = cuesheetTrack2.IsLinkedToPreviousTrack;
                 }
             }
         }

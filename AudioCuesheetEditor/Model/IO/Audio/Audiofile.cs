@@ -17,13 +17,14 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
-    public class Audiofile : IDisposable
+    [method: JsonConstructor]
+    public class Audiofile(String name, Boolean isRecorded = false) : IDisposable
     {
         public static readonly String RecordingFileName = "Recording.webm";
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
-        public static readonly List<AudioCodec> AudioCodecs = new()
-        {
+        public static readonly List<AudioCodec> AudioCodecs =
+        [
             AudioCodecWEBM,
             new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"),
             new AudioCodec("audio/ogg", ".oga", "AudioCodec OGA"),
@@ -32,19 +33,12 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             new AudioCodec("audio/wav", ".wav", "AudioCodec WAV"),
             new AudioCodec("audio/wav", ".wave", "AudioCodec WAVE"),
             new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
-        };
+        ];
 
         private AudioCodec? audioCodec;
         private bool disposedValue;
 
         public event EventHandler? ContentStreamLoaded;
-        
-        [JsonConstructor]
-        public Audiofile(String name, Boolean isRecorded = false)
-        {
-            Name = name;
-            IsRecorded = isRecorded;
-        }
 
         public Audiofile(String name, String objectURL, AudioCodec? audioCodec, HttpClient httpClient, Boolean isRecorded = false) : this(name, isRecorded)
         {
@@ -57,7 +51,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             HttpClient = httpClient;
         }
 
-        public String Name { get; private set; }
+        public String Name { get; private set; } = name;
         [JsonIgnore]
         public String? ObjectURL { get; private set; }
         /// <summary>
@@ -74,7 +68,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         [JsonIgnore]
         public Stream? ContentStream { get; private set; }
         [JsonIgnore]
-        public Boolean IsRecorded { get; private set; }
+        public Boolean IsRecorded { get; private set; } = isRecorded;
         /// <summary>
         /// Duration of the audio file
         /// </summary>
@@ -88,7 +82,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             private set
             {
                 audioCodec = value;
-                if ((audioCodec != null) && (Name.EndsWith(audioCodec.FileExtension) == false))
+                if ((audioCodec != null) && (Name?.EndsWith(audioCodec.FileExtension) == false))
                 {
                     //Replace file ending
                     Name = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), audioCodec.FileExtension);
@@ -107,7 +101,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                     audioFileType = AudioCodec.FileExtension.Replace(".", "").ToUpper();
                 }
                 //Try to find by file name
-                audioFileType ??= Path.GetExtension(Name).Replace(".", "").ToUpper();
+                audioFileType ??= Path.GetExtension(Name)?.Replace(".", "").ToUpper();
                 return audioFileType;
             }
         }

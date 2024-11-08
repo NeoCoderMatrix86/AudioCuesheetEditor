@@ -1,0 +1,32 @@
+{
+  "culture": "en",
+  "translations": {
+    "Enter textimportscheme cuesheet tooltip": "Enter textscheme for cuesheet properties import here. Identification will be done using regular expressions.",
+    "Enter textimportscheme cuesheet here": "Enter textscheme for cuesheet properties import here",
+    "Select placeholder": "Select placeholder",
+    "Enter textimportscheme track tooltip": "Enter textscheme for track properties import here. Identification will be done using regular expressions.",
+    "Enter textimportscheme track here": "Enter textscheme for track properties import here",
+    "Textimportscheme cuesheet": "Textimport scheme cuesheet",
+    "Textimportscheme track": "Textimport scheme track",
+    "Import Options": "Import options",
+    "ENTER REGULAR EXPRESSION HERE": "Enter regular expression here",
+    "Enter custom timespan format here": "You can enter a custom format for timespan here. Details can be found in help.",
+    "Customized timespan format import": "Timespan format for import",
+    "CD artist": "CD artist",
+    "CD title": "CD title",
+    "Audiofile": "Audiofile",
+    "CD textfile": "CD Textfile",
+    "Cataloguenumber": "Cataloguenumber",
+    "Artist": "Artist",
+    "Title": "Title",
+    "Begin": "Begin",
+    "End": "End",
+    "Length": "Length",
+    "Days": "Days",
+    "Hours": "Hours",
+    "Minutes": "Minutes",
+    "Seconds": "Seconds",
+    "Milliseconds": "Milliseconds",
+    "StartDateTime": "Startdatetime"
+  }
+}

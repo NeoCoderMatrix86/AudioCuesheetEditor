@@ -46,12 +46,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         validationStatus = ValidationStatus.Success;
                         if (Value.All(Char.IsDigit) == false)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} must only contain numbers!", nameof(Value)));
                         }
                         if (Value.Length != 13)
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} has an invalid length. Allowed length is {1}!", nameof(Value), 13));
                         }
                     }

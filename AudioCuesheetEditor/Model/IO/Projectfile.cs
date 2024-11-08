@@ -20,11 +20,8 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO
 {
-    public class Projectfile
+    public class Projectfile(Cuesheet cuesheet)
     {
-        public const String MimeType = "text/*";
-        public const String FileExtension = ".ace";
-
         public static readonly String DefaultFilename = "Project.ace";
 
         public static readonly JsonSerializerOptions Options = new()
@@ -39,16 +36,7 @@ namespace AudioCuesheetEditor.Model.IO
             return JsonSerializer.Deserialize<Cuesheet>(json, Options);
         }
 
-        public Projectfile(Cuesheet cuesheet)
-        {
-            if (cuesheet == null)
-            {
-                throw new ArgumentNullException(nameof(cuesheet));
-            }
-            Cuesheet = cuesheet;
-        }
-
-        public Cuesheet Cuesheet { get; private set; }
+        public Cuesheet Cuesheet { get; private set; } = cuesheet;
 
         /// <summary>
         /// Generate a ProjectFile

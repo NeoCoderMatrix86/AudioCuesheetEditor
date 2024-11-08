@@ -1,16 +1,34 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using AudioCuesheetEditor.Model.UI;
+﻿//This file is part of AudioCuesheetEditor.
+
+//AudioCuesheetEditor is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+
+//AudioCuesheetEditor is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+
+//You should have received a copy of the GNU General Public License
+//along with Foobar.  If not, see
+//<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
+using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditorTests.Utility;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditorTests.Utility;
-using AudioCuesheetEditor.Model.IO.Import;
 using System.IO;
-using AudioCuesheetEditorTests.Properties;
-using AudioCuesheetEditor.Model.Entity;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.UI.Tests
 {
@@ -148,38 +166,121 @@ namespace AudioCuesheetEditor.Model.UI.Tests
         }
 
         [TestMethod()]
-        public void ImportCuesheetTest()
+        public async Task Import_ValidTextfile_IsUndoable()
         {
+            // Arrange
             var testhelper = new TestHelper();
-            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var textImportFile = new TextImportfile(new MemoryStream(Resources.Textimport_with_Cuesheetdata));
-            textImportFile.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
-            var cuesheet = new Cuesheet();
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
+            using var reader = new StreamReader(textImportMemoryStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            var fileContent = lines.AsReadOnly();
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var importOptions = new ImportOptions();
+            importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
+            importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportService = new TextImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             Boolean eventFired = false;
-            cuesheet.TrackAdded += delegate
+            sessionStateContainer.Cuesheet.TrackAdded += delegate
             {
                 eventFired = true;
             };
-            manager.TraceChanges(cuesheet);
-            Assert.IsFalse(manager.CanUndo);
-            Assert.IsFalse(manager.CanRedo);
-            Assert.IsNotNull(textImportFile.Cuesheet);
-            cuesheet.Import(textImportFile.Cuesheet, testhelper.ApplicationOptions, manager);
-            Assert.AreEqual("DJFreezeT", cuesheet.Artist);
-            Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
-            Assert.AreNotEqual(0, cuesheet.Tracks.Count);
-            Assert.IsTrue(manager.CanUndo);
-            manager.Undo();
-            Assert.AreEqual(0, cuesheet.Tracks.Count);
-            Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Artist));
-            Assert.IsTrue(String.IsNullOrEmpty(cuesheet.Cataloguenumber.Value));
-            Assert.IsFalse(manager.CanUndo);
-            Assert.IsTrue(manager.CanRedo);
-            manager.Redo();
-            Assert.AreEqual("DJFreezeT", cuesheet.Artist);
-            Assert.AreEqual("0123456789123", cuesheet.Cataloguenumber.Value);
-            Assert.AreNotEqual(0, cuesheet.Tracks.Count);
+            // Act
+            await importManager.ImportTextAsync(fileContent);
+            // Assert
+            Assert.IsFalse(traceChangeManager.CanUndo);
+            Assert.IsFalse(traceChangeManager.CanRedo);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
+            Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet.Artist);
+            Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet.Cataloguenumber.Value);
+            Assert.AreNotEqual(0, sessionStateContainer.ImportCuesheet.Tracks.Count);
             Assert.IsFalse(eventFired);
+        }
+
+        [TestMethod()]
+        public async Task UndoImport_ValidTextfile_ResetsToEmptyCuesheet()
+        {
+            // Arrange
+            var testhelper = new TestHelper();
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
+            using var reader = new StreamReader(textImportMemoryStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            var fileContent = lines.AsReadOnly();
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var importOptions = new ImportOptions();
+            importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
+            importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportService = new TextImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            Boolean eventFired = false;
+            sessionStateContainer.Cuesheet.TrackAdded += delegate
+            {
+                eventFired = true;
+            };
+            await importManager.ImportTextAsync(fileContent);
+            await importManager.ImportCuesheetAsync();
+            // Act
+            traceChangeManager.Undo();
+            // Assert
+            Assert.AreEqual(0, sessionStateContainer.Cuesheet.Tracks.Count);
+            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.Cuesheet.Artist));
+            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber.Value));
+            Assert.IsFalse(traceChangeManager.CanUndo);
+            Assert.IsTrue(traceChangeManager.CanRedo);
+            Assert.IsFalse(eventFired);
+        }
+
+        [TestMethod()]
+        public async Task UndoAndRedoImport_ValidTextfile_ResetsTextfileValues()
+        {
+            // Arrange
+            var testhelper = new TestHelper();
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
+            using var reader = new StreamReader(textImportMemoryStream);
+            List<String?> lines = [];
+            while (reader.EndOfStream == false)
+            {
+                lines.Add(reader.ReadLine());
+            }
+            var fileContent = lines.AsReadOnly();
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var importOptions = new ImportOptions();
+            importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
+            importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportService = new TextImportService();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            Boolean eventFired = false;
+            sessionStateContainer.Cuesheet.TrackAdded += delegate
+            {
+                eventFired = true;
+            };
+            await importManager.ImportTextAsync(fileContent);
+            traceChangeManager.Undo();
+            // Act
+            traceChangeManager.Redo();
+            // Assert
+            Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet?.Artist);
+            Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet?.Cataloguenumber.Value);
+            Assert.AreEqual(39, sessionStateContainer.ImportCuesheet?.Tracks.Count);
+            Assert.IsFalse(eventFired);
+
         }
 
         [TestMethod()]

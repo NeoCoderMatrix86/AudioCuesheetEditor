@@ -78,7 +78,7 @@ along with Foobar.  If not, see
         if (newTabName == "editFilecontent")
         {
             //Set fileContent just when component is visible in order to autosize the MemoEdit
-            if (_sessionStateContainer.Importfile != null)
+            if (_sessionStateContainer.Importfile?.FileContent != null)
             {
                 fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContent);
             }

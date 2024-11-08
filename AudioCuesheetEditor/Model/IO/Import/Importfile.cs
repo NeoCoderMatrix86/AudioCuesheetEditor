@@ -13,15 +13,21 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
+using AudioCuesheetEditor.Services.IO;
 
-using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Utility;
-
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class ImportOptions : IOptions
+    public class Importfile : IImportfile
     {
-        public TextImportScheme TextImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
-        public TimeSpanFormat TimeSpanFormat { get; set; } = new();
+        /// <inheritdoc />
+        public IEnumerable<String?>? FileContent { get; set; }
+        /// <inheritdoc />
+        public IEnumerable<String?>? FileContentRecognized { get; set; }
+        /// <inheritdoc />
+        public Exception? AnalyseException { get; set; }
+        /// <inheritdoc />
+        public ImportCuesheet? AnalysedCuesheet { get; set; }
+        public ImportFileType FileType { get; set; }
     }
 }

@@ -13,28 +13,15 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Pages;
-using Markdig.Extensions.Yaml;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace AudioCuesheetEditor.Model.UI
 {
     /// <summary>
     /// Class for tracing changes on an object
     /// </summary>
-    public class TracedChange
+    public class TracedChange(ITraceable traceableObject, TraceableChange traceableChange)
     {
-        private readonly WeakReference<ITraceable> _tracedObject;
-        public TracedChange(ITraceable traceableObject, TraceableChange traceableChange)
-        {
-            _tracedObject = new WeakReference<ITraceable>(traceableObject, false);
-            TraceableChange = traceableChange;
-        }
+        private readonly WeakReference<ITraceable> _tracedObject = new(traceableObject, false);
+
         public ITraceable? TraceableObject
         {
             get
@@ -47,26 +34,21 @@ namespace AudioCuesheetEditor.Model.UI
             }
         }
 
-        public TraceableChange TraceableChange { get; }
+        public TraceableChange TraceableChange { get; } = traceableChange;
     }
 
-    public class TracedChanges
+    public class TracedChanges(IEnumerable<TracedChange> changes)
     {
-        public TracedChanges(IEnumerable<TracedChange> changes)
-        {
-            Changes = new(changes);
-        }
-
-        public List<TracedChange> Changes { get; }
+        public List<TracedChange> Changes { get; } = new(changes);
         public Boolean HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
     }
 
     /// <summary>
     /// Manager for Undo and Redo operations on objects.
     /// </summary>
-    public class TraceChangeManager
+    public class TraceChangeManager(ILogger<TraceChangeManager> logger)
     {
-        private readonly ILogger<TraceChangeManager> _logger;
+        private readonly ILogger<TraceChangeManager> _logger = logger;
 
         private readonly Stack<TracedChanges> undoStack = new();
         private readonly Stack<TracedChanges> redoStack = new();
@@ -77,7 +59,7 @@ namespace AudioCuesheetEditor.Model.UI
         public event EventHandler? UndoDone;
         public event EventHandler? RedoDone;
 
-        public Boolean CurrentlyHandlingRedoOrUndoChanges { get; private set; }
+        public Boolean CurrentlyHandlingRedoOrUndoChanges { get; private set; } = false;
         /// <summary>
         /// Is Undo() currently possible (are there any changes)?
         /// </summary>
@@ -98,12 +80,6 @@ namespace AudioCuesheetEditor.Model.UI
             {
                 return redoStack.Count > 0;
             }
-        }
-
-        public TraceChangeManager(ILogger<TraceChangeManager> logger)
-        {
-            CurrentlyHandlingRedoOrUndoChanges = false;
-            _logger = logger;
         }
 
         public void TraceChanges(ITraceable traceable)
@@ -229,7 +205,7 @@ namespace AudioCuesheetEditor.Model.UI
                 _logger.LogDebug("Set BulkEdit called with {value}", value);
                 if (value)
                 {
-                    bulkEditTracedChanges = new();
+                    bulkEditTracedChanges = [];
                 }
                 else
                 {
@@ -293,7 +269,7 @@ namespace AudioCuesheetEditor.Model.UI
                     if (BulkEdit == false)
                     {
                         //Single change
-                        var changes = new TracedChanges(new List<TracedChange>() { new((ITraceable)sender, e.TraceableChange) });
+                        var changes = new TracedChanges([new((ITraceable)sender, e.TraceableChange)]);
                         undoStack.Push(changes);
                         redoStack.Clear();
                         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);

@@ -1,4 +1,4 @@
-//This file is part of AudioCuesheetEditor.
+﻿//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -14,55 +14,23 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
+using AudioCuesheetEditor.Model.IO.Import;
 using System.Text.RegularExpressions;
 
-namespace AudioCuesheetEditor.Model.IO.Import
+namespace AudioCuesheetEditor.Services.IO
 {
-    public class CuesheetImportfile : IImportfile
+    public class CuesheetImportService
     {
-        private IEnumerable<String?> fileContent;
-
-        public EventHandler? AnalysisFinished;
-
-        /// <inheritdoc />
-        public IEnumerable<String?> FileContent 
+        public static IImportfile Analyse(IEnumerable<String?> fileContent)
         {
-            get => fileContent;
-            set
+            Importfile importfile = new()
             {
-                fileContent = value;
-                Analyse();
-            }
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<String?> FileContentRecognized { get; private set; }
-        public Exception? AnalyseException { get; private set; }
-        public Cuesheet? Cuesheet { get; private set; }
-        public ApplicationOptions ApplicationOptions { get; private set; }
-
-        public CuesheetImportfile(MemoryStream fileContentStream, ApplicationOptions applicationOptions)
-        {
-            FileContentRecognized = [];
-            fileContentStream.Position = 0;
-            using var reader = new StreamReader(fileContentStream);
-            List<String?> lines = [];
-            while (reader.EndOfStream == false)
-            {
-                lines.Add(reader.ReadLine());
-            }
-            fileContent = lines.AsReadOnly();
-            ApplicationOptions = applicationOptions;
-            Analyse();
-        }
-
-        private void Analyse()
-        {
+                FileType = ImportFileType.Cuesheet
+            };
             try
             {
-                Cuesheet = new Cuesheet();
+                importfile.AnalysedCuesheet = new();
                 var cuesheetArtistGroupName = "CuesheetArtist";
                 var cuesheetTitleGroupName = "CuesheetTitle";
                 var cuesheetFileNameGroupName = "CuesheetFileName";
@@ -86,10 +54,10 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 var regexTrackPostGap = new Regex(CuesheetConstants.TrackPostGap + "(?'" + trackPostGapGroupName + "'.{0,})");
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
-                Track? track = null;
+                ImportTrack? track = null;
                 List<String?> lines = [];
                 List<String?>? recognizedLines = [];
-                foreach (var line in FileContent)
+                foreach (var line in fileContent)
                 {
                     lines.Add(line);
                     String? recognizedLine = line;
@@ -103,7 +71,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var artist = matchGroup.Value;
-                                Cuesheet.Artist = artist;
+                                importfile.AnalysedCuesheet.Artist = artist;
                             }
                             else
                             {
@@ -118,7 +86,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var title = matchGroup.Value;
-                                Cuesheet.Title = title;
+                                importfile.AnalysedCuesheet.Title = title;
                             }
                             else
                             {
@@ -133,7 +101,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var audioFile = matchGroup.Value;
-                                Cuesheet.Audiofile = new Audiofile(audioFile);
+                                importfile.AnalysedCuesheet.Audiofile = audioFile;
                             }
                             else
                             {
@@ -148,7 +116,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var cdTextfile = matchGroup.Value;
-                                Cuesheet.CDTextfile = new CDTextfile(cdTextfile);
+                                importfile.AnalysedCuesheet.CDTextfile = cdTextfile;
                             }
                             else
                             {
@@ -163,7 +131,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             if (matchGroup != null)
                             {
                                 var catalogueNumber = matchGroup.Value;
-                                Cuesheet.Cataloguenumber.Value = catalogueNumber;
+                                importfile.AnalysedCuesheet.Cataloguenumber = catalogueNumber;
                             }
                             else
                             {
@@ -172,7 +140,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                         }
                         if (regexTrackBegin.IsMatch(line) == true)
                         {
-                            track = new Track();
+                            track = new ImportTrack();
                             recognizedLine = String.Format(CuesheetConstants.RecognizedMarkHTML, line);
                         }
                         if ((regexTrackArtist.IsMatch(line) == true) && (track != null))
@@ -277,7 +245,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             }
                             if (track != null)
                             {
-                                Cuesheet.AddTrack(track, ApplicationOptions);
+                                importfile.AnalysedCuesheet.Tracks.Add(track);
                             }
                             else
                             {
@@ -311,16 +279,16 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     recognizedLines.Add(recognizedLine);
                 }
-                fileContent = lines.AsReadOnly();
-                FileContentRecognized = recognizedLines.AsReadOnly();
+                importfile.FileContent = lines.AsReadOnly();
+                importfile.FileContentRecognized = recognizedLines.AsReadOnly();
             }
             catch (Exception ex)
             {
-                AnalyseException = ex;
-                Cuesheet = null;
-                FileContentRecognized = FileContent;
+                importfile.AnalyseException = ex;
+                importfile.AnalysedCuesheet = null;
+                importfile.FileContentRecognized = fileContent;
             }
-            AnalysisFinished?.Invoke(this, EventArgs.Empty);
+            return importfile;
         }
     }
 }
