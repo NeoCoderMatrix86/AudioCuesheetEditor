@@ -15,8 +15,6 @@
     "Begin": "Beginn",
     "End": "Ende",
     "Length": "Länge",
-    "Unlink this track from previous track": "Diesen Titel vom vorherigen Titel abkoppeln",
-    "Link this track with previous track": "Diesen Titel an den vorherigen Titel koppeln",
     "Current track is played": "Dieser Track wird aktuell wiedergegeben",
     "Edit track tooltip": "Titeldetails in einem Dialog bearbeiten",
     "Copy track tooltip": "Kopiere diesen Titel mit allen Werten und füge ihn anschließend zum Cuesheet hinzu.",

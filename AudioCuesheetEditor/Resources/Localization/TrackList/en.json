@@ -15,8 +15,6 @@
     "Begin": "Begin",
     "End": "End",
     "Length": "Length",
-    "Unlink this track from previous track": "Unlink this track from previous track",
-    "Link this track with previous track": "Link this track with previous track",
     "Current track is played": "Current track is played",
     "Edit track tooltip": "Edit track details in a dialog",
     "Copy track tooltip": "Copy this track with all values and attach it to the cuesheet.",
