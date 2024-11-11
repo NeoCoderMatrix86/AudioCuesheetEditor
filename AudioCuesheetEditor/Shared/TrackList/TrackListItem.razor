@@ -24,6 +24,7 @@ along with Foobar.  If not, see
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject ITextLocalizerService _localizationService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <Validations @ref="validations">
     @if (Cuesheet != null)
@@ -294,8 +295,8 @@ along with Foobar.  If not, see
     async Task CopyTrackClicked(Track trackToCopy)
     {
         var copy = new Track(trackToCopy);
-        //TODO
-        // Cuesheet?.AddTrack(copy, applicationOptions);
+        var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        Cuesheet?.AddTrack(copy, applicationOptions);
         _traceChangeManager.TraceChanges(copy);
         await EditTrackModal(copy);
     }
