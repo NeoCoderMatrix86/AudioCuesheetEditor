@@ -175,7 +175,6 @@ along with Foobar.  If not, see
     Validations? validations;
     Boolean revalidate = false;
     List<Track> TracksAttachedToValidateablePropertyChanged = new();
-    DropContainer<Track>? dropContainer;
 
     [Parameter]
     public AudioPlayer? AudioPlayer { get; set; }
@@ -397,14 +396,12 @@ along with Foobar.  If not, see
     void Cuesheet_TrackAdded(object? sender, TrackAddRemoveEventArgs args)
     {
         StateHasChanged();
-        dropContainer?.Refresh();
         AttachTracksToValidateablePropertyChanged();
         revalidate = true;
     }
 
     void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
     {
-        dropContainer?.Refresh();
         DetachTrackFromValidateablePropertyChanged(args.Track);
         revalidate = true;
     }
