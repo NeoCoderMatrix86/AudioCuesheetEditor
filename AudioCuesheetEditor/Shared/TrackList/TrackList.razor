@@ -1,0 +1,489 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@implements IDisposable
+
+@inject ITextLocalizer<TrackList> _localizer
+@inject SessionStateContainer _sessionStateContainer
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
+@inject TraceChangeManager _traceChangeManager
+@inject ILogger<TrackList> _logger
+@inject ITextLocalizerService _localizationService
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+
+<Validations @ref="validations">
+    @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+    {
+        var validationResult = Cuesheet?.Validate(x => x.Tracks);
+        <Alert Color="Color.Danger" Visible="validationResult?.Status == Model.Entity.ValidationStatus.Error">
+            <Heading Size="HeadingSize.Is4">
+                @_localizer["Validation errors"]
+            </Heading>
+            @if (validationResult?.ValidationMessages != null)
+            {
+                @foreach(var message in validationResult.ValidationMessages)
+                {
+                    <Paragraph>@message.GetMessageLocalized(_validationMessageLocalizer)</Paragraph>
+                }
+            }
+        </Alert>
+        <Buttons Role="ButtonsRole.Toolbar">
+            <Buttons Margin="Margin.Is2.FromEnd">
+                <Tooltip Text="@_localizer["Add new track"]">
+                    <Button Color="Color.Primary" Clicked="OnAddTrackClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
+                            @_localizer["Add new track"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+            </Buttons>
+            <Buttons Margin="Margin.Is2.FromEnd">
+                @if (TrackSelectionVisible == false)
+                {
+                    <Tooltip Text="@_localizer["Display selection of tracks"]">
+                        <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+                                <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+                            </svg>
+                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                                @_localizer["Display selection of tracks"]
+                            </Span>
+                        </Button>
+                    </Tooltip>
+                }
+                else
+                {
+                    <Tooltip Text="@_localizer["Hide selection of tracks"]">
+                        <Button Color="Color.Info" Clicked="() => TrackSelectionVisible = !TrackSelectionVisible" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2-square" viewBox="0 0 16 16">
+                                <path d="M3 14.5A1.5 1.5 0 0 1 1.5 13V3A1.5 1.5 0 0 1 3 1.5h8a.5.5 0 0 1 0 1H3a.5.5 0 0 0-.5.5v10a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V8a.5.5 0 0 1 1 0v5a1.5 1.5 0 0 1-1.5 1.5H3z" />
+                                <path d="M8.354 10.354l7-7a.5.5 0 0 0-.708-.708L8 9.293 5.354 6.646a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0z" />
+                            </svg>
+                            <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                                @_localizer["Hide selection of tracks"]
+                            </Span>
+                        </Button>
+                    </Tooltip>
+                }
+            </Buttons>
+            <Buttons>
+                <Tooltip Text="@_localizer["Edit selected tracks"]">
+                    <Button Color="Color.Secondary" Clicked="EditSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stickies" viewBox="0 0 16 16">
+                            <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1H1.5z"/>
+                            <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2h-11zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5v-11zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293L10 14.793z"/>
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.Inline.OnWidescreen">
+                            @_localizer["Edit selected tracks"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+                <Tooltip Text="@_localizer["Delete selected tracks"]">
+                    <Button Color="Color.Warning" Clicked="DeleteSelectedTracksClicked" Disabled="selectedTracks.Count == 0" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                            @_localizer["Delete selected tracks"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+                <Tooltip Text="@_localizer["Delete all tracks"]">
+                    <Button Color="Color.Danger" Clicked="OnDeleteAllTracksClicked" Margin="Margin.Is2.OnY.OnMobile.Is0.OnTablet">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
+                        </svg>
+                        <Span Display="Display.None.OnMobile.None.OnTablet.None.OnDesktop.None.OnWidescreen.Inline.OnFullHD">
+                            @_localizer["Delete all tracks"]
+                        </Span>
+                    </Button>
+                </Tooltip>
+            </Buttons>
+        </Buttons>
+        <br />
+    }
+
+    <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow>
+        <TableHeader ThemeContrast="ThemeContrast.Light">
+            <TableRow>
+                @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
+                {
+                    <TableHeaderCell>
+                        <Div Class="d-flex align-items-center">
+                            @if (Cuesheet?.Tracks.Count > 0)
+                            {
+                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
+                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
+                                </Tooltip>
+                            }
+                            @_localizer["Selection"]
+                        </Div>
+                    </TableHeaderCell>
+                }
+                @switch (_sessionStateContainer.CurrentViewMode)
+                {
+                    case ViewMode.ViewModeFull:
+                    case ViewMode.ViewModeImport:
+                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                        break;
+                    case ViewMode.ViewModeRecord:
+                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
+                        break;
+                }
+                <TableHeaderCell>#</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
+                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
+                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            <TrackListItem AudioPlayer="AudioPlayer" SelectedTracks="selectedTracks" TrackSelectionVisible="TrackSelectionVisible" SelectedTracksChanged="(newSelectedTracks) => selectedTracks = newSelectedTracks" />
+        </TableBody>
+    </Table>
+</Validations>
+
+<ModalDialog @ref="modalDialog" />
+<EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
+
+@code {
+    ModalDialog? modalDialog;
+    EditTrackModal? modalTrackEdit;
+    List<Track> selectedTracks = new();
+    Boolean _trackSelectionVisible = false;
+    Validations? validations;
+    Boolean revalidate = false;
+    List<Track> TracksAttachedToValidateablePropertyChanged = new();
+    DropContainer<Track>? dropContainer;
+
+    [Parameter]
+    public AudioPlayer? AudioPlayer { get; set; }
+
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            Cuesheet? cuesheet;
+            switch (_sessionStateContainer.CurrentViewMode)
+            {
+                case ViewMode.ViewModeImport:
+                    cuesheet = _sessionStateContainer.ImportCuesheet;
+                    break;
+                default:
+                    cuesheet = _sessionStateContainer.Cuesheet;
+                    break;
+            }
+            return cuesheet;
+        }
+    }
+
+    public Boolean TrackSelectionVisible
+    {
+        get => _trackSelectionVisible;
+        set
+        {
+            _trackSelectionVisible = value;
+            selectedTracks = new();
+        }
+    }
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
+        _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
+        _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
+        DetachTrackFromValidateablePropertyChanged();
+        DetachCuesheetFromSplitPointsAddedRemoved();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
+
+        _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+
+        _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
+
+        AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        _logger.LogDebug("OnAfterRenderAsync({firstRender})", firstRender);
+        if ((revalidate) && (validations != null))
+        {
+            await validations.ValidateAll();
+            revalidate = false;
+        }
+    }
+
+    async Task OnAddTrackClicked()
+    {
+        var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        var newTrack = new Track();
+        Cuesheet?.AddTrack(newTrack, applicationOptions);
+        _traceChangeManager.TraceChanges(newTrack);
+    }
+
+    async Task EditSelectedTracksClicked()
+    {
+        if (modalTrackEdit != null)
+        {
+            modalTrackEdit.TracksToEdit = selectedTracks;
+            await modalTrackEdit.Show();
+        }
+    }
+
+    private void DeleteSelectedTracksClicked()
+    {
+        Cuesheet?.RemoveTracks(selectedTracks.AsReadOnly());
+        selectedTracks.Clear();
+    }
+
+    async Task OnDeleteAllTracksClicked()
+    {
+        _logger.LogInformation("OnDeleteAllTracksClicked");
+        //Display a confirm warning
+        if (modalDialog != null)
+        {
+            modalDialog.Title = _localizer["Confirmation required"];
+            modalDialog.Text = _localizer["Do you really want to delete all tracks?"];
+            modalDialog.ModalSize = ModalSize.Small;
+            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
+            void deleteTracksDelegate(object? sender, EventArgs args)
+            {
+                _logger.LogInformation("deleteTracksDelegate");
+                Cuesheet?.RemoveTracks(Cuesheet.Tracks);
+                selectedTracks.Clear();
+                modalDialog.Confirmed -= deleteTracksDelegate;
+                StateHasChanged();
+            };
+            modalDialog.Confirmed += deleteTracksDelegate;
+            await modalDialog.ShowModal();
+        }
+    }
+
+    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    {
+        if (expressionToCheck == true)
+        {
+            return _localizer[localizedStringName];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    bool SelectAllIndeterminate
+    {
+        get => selectedTracks.Count > 0 && selectedTracks.Count < Cuesheet?.Tracks.Count;
+    }
+
+    private void OnSelectAllTracks(bool select)
+    {
+        if (select)
+        {
+            if (Cuesheet != null)
+            {
+                foreach (var track in Cuesheet.Tracks)
+                {
+                    if (!selectedTracks.Contains(track))
+                    {
+                        selectedTracks.Add(track);
+                    }
+                }
+            }
+        }
+        else
+        {
+            selectedTracks.Clear();
+        }
+    }
+
+    bool AllTracksSelected
+    {
+        get => selectedTracks.Count > 0 && selectedTracks.Count == Cuesheet?.Tracks.Count;
+    }
+
+    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+        validations?.ValidateAll();
+    }
+
+    private MarkupString GetMarkupString(String? stringValue)
+    {
+        MarkupString result = new MarkupString(String.Empty);
+        if (stringValue != null)
+        {
+            result = new MarkupString(stringValue);
+        }
+        return result;
+    }
+
+    private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        DetachTrackFromValidateablePropertyChanged();
+        DetachCuesheetFromSplitPointsAddedRemoved();
+        selectedTracks.Clear();
+        StateHasChanged();
+        AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
+    }
+
+    private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        // Unsubscribe to previous attached events
+        DetachCuesheetFromSplitPointsAddedRemoved();
+        var tracks = TracksAttachedToValidateablePropertyChanged.Except(_sessionStateContainer.Cuesheet.Tracks);
+        for (int i = tracks.Count() - 1; i >= 0; i--)
+        {
+            var track = tracks.ElementAt(i);
+            DetachTrackFromValidateablePropertyChanged(track);
+            TracksAttachedToValidateablePropertyChanged.Remove(track);
+        }
+        // Reattach if needed
+        AttachTracksToValidateablePropertyChanged();
+        AttachCuesheetToSplitPointsAddedRemoved();
+        revalidate = true;
+        StateHasChanged();
+    }
+
+    private void TraceChangeManager_UndoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    private void TraceChangeManager_RedoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void Cuesheet_TrackAdded(object? sender, TrackAddRemoveEventArgs args)
+    {
+        StateHasChanged();
+        dropContainer?.Refresh();
+        AttachTracksToValidateablePropertyChanged();
+        revalidate = true;
+    }
+
+    void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
+    {
+        dropContainer?.Refresh();
+        DetachTrackFromValidateablePropertyChanged(args.Track);
+        revalidate = true;
+    }
+
+    void AttachTracksToValidateablePropertyChanged()
+    {
+        if (Cuesheet != null)
+        {
+            foreach (var track in Cuesheet.Tracks)
+            {
+                if (TracksAttachedToValidateablePropertyChanged.Contains(track) == false)
+                {
+                    track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+                    TracksAttachedToValidateablePropertyChanged.Add(track);
+                }
+            }
+        }
+    }
+
+    void DetachTrackFromValidateablePropertyChanged(Track? track = null)
+    {
+        if (track == null)
+        {
+            foreach (var trackCurrentlyAttached in TracksAttachedToValidateablePropertyChanged)
+            {
+                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;            
+            }
+        }
+        else
+        {
+            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+        }
+    }
+
+    void Track_ValidateablePropertyChanged(object? sender, string property)
+    {
+        if (validations != null)
+        {
+            validations.ValidateAll().GetAwaiter().GetResult();
+        }
+        StateHasChanged();
+    }
+
+    void AttachCuesheetToSplitPointsAddedRemoved()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.SectionAdded += Cuesheet_SectionAdded;
+            Cuesheet.SectionRemoved += Cuesheet_SectionRemoved;
+        }
+    }
+
+    void DetachCuesheetFromSplitPointsAddedRemoved()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.SectionAdded -= Cuesheet_SectionAdded;
+            Cuesheet.SectionRemoved -= Cuesheet_SectionRemoved;
+        }
+    }
+
+    void Cuesheet_SectionAdded(object? sender, CuesheetSectionAddRemoveEventArgs args)
+    {
+        args.Section.ValidateablePropertyChanged += Section_ValidateablePropertyChanged;
+    }
+
+    void Cuesheet_SectionRemoved(object? sender, CuesheetSectionAddRemoveEventArgs args)
+    {
+        args.Section.ValidateablePropertyChanged -= Section_ValidateablePropertyChanged;
+    }
+
+    void Section_ValidateablePropertyChanged(object? sender, string property)
+    {
+        switch (property)
+        {
+            case nameof(CuesheetSection.Begin):
+            case nameof(CuesheetSection.End):
+                StateHasChanged();
+                break;
+        }
+    }
+}
