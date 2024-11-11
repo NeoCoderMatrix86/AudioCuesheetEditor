@@ -333,6 +333,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            //TODO: Doesn't fire TrackRemoved (with a list of removed tracks)
         }
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
