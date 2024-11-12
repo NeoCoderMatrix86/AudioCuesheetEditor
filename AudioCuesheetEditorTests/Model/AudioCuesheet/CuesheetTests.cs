@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
@@ -427,7 +428,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         {
             var testHelper = new TestHelper();
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
+            AutoResetEvent trackRemovedEvent = new(false);
             var cuesheet = new Cuesheet();
+            cuesheet.TrackRemoved += (object? sender, TrackAddRemoveEventArgs trackAddRemoveEventArgs) => trackRemovedEvent.Set();
             var track1 = new Track() { Artist = "1", Title = "1" };
             var track2 = new Track() { Artist = "2", Title = "2" };
             var track3 = new Track() { Artist = "3", Title = "3" };
@@ -445,12 +448,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             track5.End = new TimeSpan(0, 25, 0);
             Assert.AreEqual(5, cuesheet.Tracks.Count);
             cuesheet.RemoveTrack(track2);
+            Assert.AreEqual(true, trackRemovedEvent.WaitOne(1000));
             Assert.AreEqual((uint)2, track3.Position);
             Assert.AreEqual((uint)3, track4.Position);
             Assert.AreEqual((uint)4, track5.Position);
             testHelper = new TestHelper();
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             cuesheet = new Cuesheet();
+            cuesheet.TrackRemoved += (object? sender, TrackAddRemoveEventArgs trackAddRemoveEventArgs) => trackRemovedEvent.Set();
             track1 = new Track
             {
                 Artist = "Track 1",
@@ -487,6 +492,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
             var list = new List<Track>() { track2, track4 };
             cuesheet.RemoveTracks(list.AsReadOnly());
+            Assert.AreEqual(true, trackRemovedEvent.WaitOne(1000));
             Assert.AreEqual(3, cuesheet.Tracks.Count);
             Assert.AreEqual(new TimeSpan(0, 5, 0), track3.Begin);
             Assert.AreEqual(new TimeSpan(0, 15, 0), track5.Begin);
