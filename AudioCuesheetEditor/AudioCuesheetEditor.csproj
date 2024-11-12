@@ -51,6 +51,8 @@
     <Content Remove="Resources\Localization\Index\en.json" />
     <Content Remove="Resources\Localization\TrackLinkControl\de.json" />
     <Content Remove="Resources\Localization\TrackLinkControl\en.json" />
+    <Content Remove="Resources\Localization\TrackSelection\de.json" />
+    <Content Remove="Resources\Localization\TrackSelection\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\ValidationMessage\en.json" />
     <Content Remove="Resources\Localization\EditImportOptions\de.json" />
@@ -100,6 +102,8 @@
     <EmbeddedResource Include="Resources\Localization\Help\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackSelection\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackSelection\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditImportOptions\de.json" />
