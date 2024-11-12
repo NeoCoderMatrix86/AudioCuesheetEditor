@@ -212,7 +212,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public CuesheetSection? GetSectionAtTrack(Track track)
         {
-            return Sections?.FirstOrDefault(x => track.Begin < x.Begin && track.End >= x.Begin);
+            return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
         }
 
         /// <summary>
