@@ -14,14 +14,12 @@
     "Begin": "Beginn",
     "End": "Ende",
     "Length": "Länge",
-    "Current track is played": "Dieser Track wird aktuell wiedergegeben",
     "Position": "Position",
     "Abort": "Abbrechen",
     "Save changes": "Änderungen speichern",
     "Confirmation required": "Bestätigung erforderlich",
     "Do you really want to delete all tracks?": "Möchten Sie wirklich alle Titel löschen?",
     "Edit selected tracks": "Ausgewählte Titel bearbeiten",
-    "Validation errors": "Validierungsfehler",
-    "A split point is currently set at the time of this track": "Ein Aufteilungspunkt ist aktuell in dem Zeitfenster dieses Titels gesetzt"
+    "Validation errors": "Validierungsfehler"
   }
 }

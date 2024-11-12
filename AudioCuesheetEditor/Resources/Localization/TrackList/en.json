@@ -14,14 +14,12 @@
     "Begin": "Begin",
     "End": "End",
     "Length": "Length",
-    "Current track is played": "Current track is played",
     "Position": "Position",
     "Abort": "Abort",
     "Save changes": "Save changes",
     "Confirmation required": "Confirmation required",
     "Do you really want to delete all tracks?": "Do you really want to delete all tracks?",
     "Edit selected tracks": "Edit selected tracks",
-    "Validation errors": "Validation errors",
-    "A split point is currently set at the time of this track": "A split point is currently set at the time of this track"
+    "Validation errors": "Validation errors"
   }
 }

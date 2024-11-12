@@ -32,10 +32,10 @@ along with Foobar.  If not, see
         <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
             <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
             <TableRow Color="((AudioPlayer != null) && (AudioPlayer.CurrentlyPlayingTrack != null) && (AudioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.Default">
-                <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks.Contains(track)" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
+                <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
                 <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
                 <TableRowCell>
-                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Artist, _validationMessageLocalizer, token)">
                             <ItemContent>
                                 @if (context.Item.Disambiguation != null)
@@ -51,7 +51,7 @@ along with Foobar.  If not, see
                     </Tooltip>
                 </TableRowCell>
                 <TableRowCell>
-                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                         <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Title, _validationMessageLocalizer, token)">
                             <ItemContent>
                                 @if (context.Item.Disambiguation != null)
@@ -87,7 +87,7 @@ along with Foobar.  If not, see
                                         </Badge>
                                     </Tooltip>
                                 }
-                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                     <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
                                         <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Begin, value)" Immediate="false">
                                             <Feedback>
@@ -99,7 +99,7 @@ along with Foobar.  If not, see
                             </Div>
                         </TableRowCell>
                         <TableRowCell>
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.End, _validationMessageLocalizer, token)">
                                     <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(track, x => x.End, value)" Immediate="false">
                                         <Feedback>
@@ -110,7 +110,7 @@ along with Foobar.  If not, see
                             </Tooltip>
                         </TableRowCell>
                         <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
-                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer != null) && (AudioPlayer.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
                                 <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Length, _validationMessageLocalizer, token)">
                                     <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Length, value)" Immediate="false">
                                         <Feedback>
@@ -130,7 +130,7 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Localization
+    //TODO: Split point display doesn't work
     EditTrackModal? modalTrackEdit;
     Validations? validations;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
@@ -147,7 +147,7 @@ along with Foobar.  If not, see
     public Boolean TrackSelectionVisible { get; set; }
 
     [Parameter, EditorRequired]
-    public IReadOnlyCollection<Track> SelectedTracks { get; set; } = new List<Track>();
+    public IReadOnlyCollection<Track>? SelectedTracks { get; set; }
 
     [Parameter]
     public EventCallback<List<Track>> SelectedTracksChanged { get; set; }
@@ -219,7 +219,11 @@ along with Foobar.  If not, see
 
     void SelectedTrackChanged(Track track, bool selected)
     {
-        var selectedTracks = new List<Track>(SelectedTracks);
+        var selectedTracks = new List<Track>();
+        if (SelectedTracks != null)
+        {
+            selectedTracks.AddRange(SelectedTracks);
+        }
         if (selected)
         {
             selectedTracks.Add(track);
@@ -276,7 +280,11 @@ along with Foobar.  If not, see
 
     void TrackDeleted(Track track)
     {
-        var selectedTracks = new List<Track>(SelectedTracks);
+        var selectedTracks = new List<Track>();
+        if (SelectedTracks != null)
+        {
+            selectedTracks.AddRange(SelectedTracks);
+        }
         selectedTracks.Remove(track);
         SelectedTracksChanged.InvokeAsync(selectedTracks);
     }
