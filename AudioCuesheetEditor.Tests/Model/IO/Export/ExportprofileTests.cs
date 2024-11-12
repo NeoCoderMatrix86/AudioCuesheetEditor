@@ -1,4 +1,3 @@
-using AudioCuesheetEditor.Model.IO.Export;
 //This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -14,19 +13,12 @@ using AudioCuesheetEditor.Model.IO.Export;
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Export;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AudioCuesheetEditorTests.Utility;
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using System.IO;
-using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Entity;
 
-namespace AudioCuesheetEditor.Model.IO.Export.Tests
+namespace AudioCuesheetEditor.Tests.Model.IO.Export
 {
     [TestClass()]
     public class ExportprofileTests
@@ -36,7 +28,7 @@ namespace AudioCuesheetEditor.Model.IO.Export.Tests
         {
             var exportprofile = new Exportprofile
             {
-                Filename = String.Empty
+                Filename = string.Empty
             };
             Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(x => x.Filename).Status);
             exportprofile.Filename = "Test123";

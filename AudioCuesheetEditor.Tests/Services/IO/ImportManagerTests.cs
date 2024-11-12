@@ -19,7 +19,7 @@ using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
-using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;

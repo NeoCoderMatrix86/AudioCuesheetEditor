@@ -13,14 +13,15 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
+namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 {
     [TestClass()]
     public class TrackTests
@@ -84,7 +85,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
                 Position = 2
             };
             Assert.IsFalse(track2.IsLinkedToPreviousTrack);
-            Boolean eventFired = false;
+            bool eventFired = false;
             track2.IsLinkedToPreviousTrackChanged += delegate
             {
                 eventFired = true;

@@ -17,15 +17,15 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
-using AudioCuesheetEditorTests.Properties;
+using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditor.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
-namespace AudioCuesheetEditor.Services.IO.Tests
+namespace AudioCuesheetEditor.Tests.Services.IO
 {
     [TestClass()]
     public class TextImportServiceTests
@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_SampleCuesheet_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3",
                 "Sample Artist 1 - Sample Title 1				00:05:00",
@@ -73,7 +73,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_InvalidSchemeTracks_CreatesAnalyseException()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist|CuesheetTitle				c:\\tmp\\TestTextFile.cdt",
                 "1|Sample Artist 1 - Sample Title 1				00:05:00",
@@ -104,7 +104,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_InputfileWithExtraSeperator_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist|CuesheetTitle				c:\\tmp\\TestTextFile.cdt",
                 "1|Sample Artist 1 - Sample Title 1				00:05:00",
@@ -144,7 +144,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_InvalidScheme_CreatesAnalyseException()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist|CuesheetTitle				c:\\tmp\\TestTextFile.cdt				A83412346734",
                 "1|Sample Artist 1 - Sample Title 1				00:05:00",
@@ -155,14 +155,14 @@ namespace AudioCuesheetEditor.Services.IO.Tests
                 "6|Sample Artist 6 - Sample Title 6				00:31:54",
                 "7|Sample Artist 7 - Sample Title 7				00:45:54",
                 "8|Sample Artist 8 - Sample Title 8				01:15:54",
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty
             };
             var importService = new TextImportService();
             var importOptions = new ImportOptions
@@ -183,7 +183,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_CuesheetWithTextfileAndCatalogueNumber_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist|CuesheetTitle				c:\\tmp\\TestTextFile.cdt				A83412346734",
                 "1|Sample Artist 1 - Sample Title 1				00:05:00",
@@ -194,14 +194,14 @@ namespace AudioCuesheetEditor.Services.IO.Tests
                 "6|Sample Artist 6 - Sample Title 6				00:31:54",
                 "7|Sample Artist 7 - Sample Title 7				00:45:54",
                 "8|Sample Artist 8 - Sample Title 8				01:15:54",
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty,
-                String.Empty
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty,
+                string.Empty
             };
             var importService = new TextImportService();
             var importOptions = new ImportOptions
@@ -232,7 +232,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_CuesheeTracksOnly_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "Sample Artist 1 - Sample Title 1				00:05:00",
                 "Sample Artist 2 - Sample Title 2				00:09:23",
@@ -270,15 +270,15 @@ namespace AudioCuesheetEditor.Services.IO.Tests
             // Arrange
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug_213);
             using var reader = new StreamReader(textImportMemoryStream);
-            List<String?> lines = [];
+            List<string?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
             }
             var fileContent = lines.AsReadOnly();
             var importService = new TextImportService();
-            var importOptions = new ImportOptions() 
-            { 
+            var importOptions = new ImportOptions()
+            {
                 TimeSpanFormat = new TimeSpanFormat() { Scheme = "(?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})" },
                 TextImportScheme = new TextImportScheme()
                 {
@@ -299,7 +299,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_CuesheetWithFlags_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "Sample Artist 1 - Sample Title 1				00:05:00	DCP",
                 "Sample Artist 2 - Sample Title 2				00:09:23",
@@ -342,7 +342,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_CuesheetWithPreGapAndPostGap_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "Sample Artist 1 - Sample Title 1		00:00:02		00:05:00		00:00:00",
                 "Sample Artist 2 - Sample Title 2		00:00:04		00:09:23		00:00:00",
@@ -390,7 +390,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_SchemeCuesheetOnly_CreatesFileContentRecognizedOnlyForCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3",
                 "Sample Artist 1 - Sample Title 1				00:05:00",
@@ -417,10 +417,10 @@ namespace AudioCuesheetEditor.Services.IO.Tests
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
             Assert.IsNotNull(importfile.FileContentRecognized);
-            Assert.AreEqual(String.Format("{0} - {1}				{2}",
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"),
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), importfile.FileContentRecognized.First());
+            Assert.AreEqual(string.Format("{0} - {1}				{2}",
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), importfile.FileContentRecognized.First());
             Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
             Assert.AreEqual("c:\\tmp\\Testfile.mp3", importfile.AnalysedCuesheet.Audiofile);
@@ -439,7 +439,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public void Analyse_CuesheetWithoutTracks_CreatesValidFileContentRecognized()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3",
                 "Sample Artist 1 - Sample Title 1				00:05:00",
@@ -470,10 +470,10 @@ namespace AudioCuesheetEditor.Services.IO.Tests
             Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
             Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
             Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
-            Assert.AreEqual(String.Format("{0} - {1}				{2}",
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"),
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Title 8"),
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), importfile.FileContentRecognized.Last());
+            Assert.AreEqual(string.Format("{0} - {1}				{2}",
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Title 8"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), importfile.FileContentRecognized.Last());
         }
 
         [TestMethod()]
@@ -482,7 +482,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
             // Arrange
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug__233);
             using var reader = new StreamReader(textImportMemoryStream);
-            List<String?> lines = [];
+            List<string?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -503,10 +503,10 @@ namespace AudioCuesheetEditor.Services.IO.Tests
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
             Assert.IsNotNull(importfile.FileContentRecognized);
-            Assert.AreEqual(String.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "Age Of Love"),
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
-                String.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), importfile.FileContentRecognized.ElementAt(53));
+            Assert.AreEqual(string.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "Age Of Love"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), importfile.FileContentRecognized.ElementAt(53));
         }
     }
 }

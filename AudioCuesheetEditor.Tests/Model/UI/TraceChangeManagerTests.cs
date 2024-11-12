@@ -19,9 +19,10 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
-using AudioCuesheetEditorTests.Properties;
-using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Tests.Properties;
+using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -30,7 +31,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Model.UI.Tests
+namespace AudioCuesheetEditor.Tests.Model.UI
 {
     [TestClass()]
     public class TraceChangeManagerTests
@@ -174,7 +175,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
             using var reader = new StreamReader(textImportMemoryStream);
-            List<String?> lines = [];
+            List<string?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -187,7 +188,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
-            Boolean eventFired = false;
+            bool eventFired = false;
             sessionStateContainer.Cuesheet.TrackAdded += delegate
             {
                 eventFired = true;
@@ -213,7 +214,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
             using var reader = new StreamReader(textImportMemoryStream);
-            List<String?> lines = [];
+            List<string?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -226,7 +227,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
-            Boolean eventFired = false;
+            bool eventFired = false;
             sessionStateContainer.Cuesheet.TrackAdded += delegate
             {
                 eventFired = true;
@@ -237,8 +238,8 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             traceChangeManager.Undo();
             // Assert
             Assert.AreEqual(0, sessionStateContainer.Cuesheet.Tracks.Count);
-            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.Cuesheet.Artist));
-            Assert.IsTrue(String.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber.Value));
+            Assert.IsTrue(string.IsNullOrEmpty(sessionStateContainer.Cuesheet.Artist));
+            Assert.IsTrue(string.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber.Value));
             Assert.IsFalse(traceChangeManager.CanUndo);
             Assert.IsTrue(traceChangeManager.CanRedo);
             Assert.IsFalse(eventFired);
@@ -253,7 +254,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
             using var reader = new StreamReader(textImportMemoryStream);
-            List<String?> lines = [];
+            List<string?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -266,7 +267,7 @@ namespace AudioCuesheetEditor.Model.UI.Tests
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
             var textImportService = new TextImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
-            Boolean eventFired = false;
+            bool eventFired = false;
             sessionStateContainer.Cuesheet.TrackAdded += delegate
             {
                 eventFired = true;

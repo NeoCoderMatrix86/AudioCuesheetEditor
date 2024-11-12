@@ -15,14 +15,15 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
-using AudioCuesheetEditorTests.Properties;
-using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Tests.Properties;
+using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -32,7 +33,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
+namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 {
     [TestClass()]
     public class CuesheetTests
@@ -222,7 +223,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public async Task ImportTestAsync()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "CuesheetArtist - CuesheetTitle				c:\\tmp\\Testfile.mp3",
                 "Sample Artist 1 - Sample Title 1				00:05:00",
@@ -272,7 +273,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             // Arrange
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug_54);
             using var reader = new StreamReader(textImportMemoryStream);
-            List<String?> lines = [];
+            List<string?> lines = [];
             while (reader.EndOfStream == false)
             {
                 lines.Add(reader.ReadLine());
@@ -321,11 +322,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             cuesheet = new Cuesheet();
             cuesheet.StartRecording();
             track = new Track();
-            testHelper.RecordOptions.RecordTimeSensitivity = Options.TimeSensitivityMode.Seconds;
+            testHelper.RecordOptions.RecordTimeSensitivity = TimeSensitivityMode.Seconds;
             cuesheet.AddTrack(track, testHelper.ApplicationOptions, testHelper.RecordOptions);
             Assert.AreEqual(TimeSpan.Zero, track.Begin);
             Assert.IsNull(track.End);
-            System.Threading.Thread.Sleep(3000);
+            Thread.Sleep(3000);
             track2 = new Track();
             cuesheet.AddTrack(track2, testHelper.ApplicationOptions, testHelper.RecordOptions);
             Assert.IsNotNull(track.End);
@@ -430,7 +431,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             AutoResetEvent trackRemovedEvent = new(false);
             var cuesheet = new Cuesheet();
-            cuesheet.TrackRemoved += (object? sender, TrackAddRemoveEventArgs trackAddRemoveEventArgs) => trackRemovedEvent.Set();
+            cuesheet.TrackRemoved += (sender, trackAddRemoveEventArgs) => trackRemovedEvent.Set();
             var track1 = new Track() { Artist = "1", Title = "1" };
             var track2 = new Track() { Artist = "2", Title = "2" };
             var track3 = new Track() { Artist = "3", Title = "3" };
@@ -455,7 +456,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
             testHelper = new TestHelper();
             testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             cuesheet = new Cuesheet();
-            cuesheet.TrackRemoved += (object? sender, TrackAddRemoveEventArgs trackAddRemoveEventArgs) => trackRemovedEvent.Set();
+            cuesheet.TrackRemoved += (sender, trackAddRemoveEventArgs) => trackRemovedEvent.Set();
             track1 = new Track
             {
                 Artist = "Track 1",

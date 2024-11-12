@@ -13,16 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Model.Entity;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
+namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 {
     [TestClass()]
     public class CataloguenumberTests
@@ -31,13 +26,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Tests
         public void CatalogueNumberTest()
         {
             var catalogueNumber = new Cataloguenumber();
-            Assert.AreEqual(Entity.ValidationStatus.NoValidation, catalogueNumber.Validate().Status);
+            Assert.AreEqual(ValidationStatus.NoValidation, catalogueNumber.Validate().Status);
             catalogueNumber.Value = "Testvalue";
-            Assert.AreEqual(Entity.ValidationStatus.Error, catalogueNumber.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Error, catalogueNumber.Validate().Status);
             catalogueNumber.Value = "01234567891234567890";
-            Assert.AreEqual(Entity.ValidationStatus.Error, catalogueNumber.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Error, catalogueNumber.Validate().Status);
             catalogueNumber.Value = "1234567890123";
-            Assert.AreEqual(Entity.ValidationStatus.Success, catalogueNumber.Validate().Status);
+            Assert.AreEqual(ValidationStatus.Success, catalogueNumber.Validate().Status);
         }
     }
 }

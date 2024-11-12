@@ -13,19 +13,18 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditorTests.Utility;
+using AudioCuesheetEditor.Model.Entity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
 
-namespace AudioCuesheetEditor.Model.Entity.Tests
+namespace AudioCuesheetEditor.Tests.Model.Entity
 {
     public class ValidateableTestClass : Validateable<ValidateableTestClass>
     {
-        private String? testProperty;
+        private string? testProperty;
         private int? testProperty2;
 
-        public String? TestProperty 
+        public string? TestProperty
         {
             get => testProperty;
             set
@@ -34,7 +33,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
                 OnValidateablePropertyChanged();
             }
         }
-        public int? TestProperty2 
+        public int? TestProperty2
         {
             get => testProperty2;
             set
@@ -51,9 +50,9 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
             {
                 case nameof(TestProperty):
                     validationStatus = ValidationStatus.Success;
-                    if (String.IsNullOrEmpty(TestProperty))
+                    if (string.IsNullOrEmpty(TestProperty))
                     {
-                        validationMessages ??= new();
+                        validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(TestProperty)));
                     }
                     break;
@@ -69,7 +68,7 @@ namespace AudioCuesheetEditor.Model.Entity.Tests
         {
             var testObject = new ValidateableTestClass
             {
-                TestProperty = String.Empty
+                TestProperty = string.Empty
             };
             Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
             Assert.IsNotNull(testObject.Validate().ValidationMessages);
