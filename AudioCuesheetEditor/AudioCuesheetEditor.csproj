@@ -51,6 +51,8 @@
     <Content Remove="Resources\Localization\Index\en.json" />
     <Content Remove="Resources\Localization\TrackLinkControl\de.json" />
     <Content Remove="Resources\Localization\TrackLinkControl\en.json" />
+    <Content Remove="Resources\Localization\TrackListItemControlColumn\de.json" />
+    <Content Remove="Resources\Localization\TrackListItemControlColumn\en.json" />
     <Content Remove="Resources\Localization\TrackSelection\de.json" />
     <Content Remove="Resources\Localization\TrackSelection\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
@@ -92,6 +94,8 @@
     <EmbeddedResource Include="Resources\Localization\EditRecordOptions\en.json" />
     <EmbeddedResource Include="Resources\Localization\TrackLinkControl\de.json" />
     <EmbeddedResource Include="Resources\Localization\TrackLinkControl\en.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackListItemControlColumn\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackListItemControlColumn\en.json" />
     <EmbeddedResource Include="Resources\Localization\TrackList\de.json" />
     <EmbeddedResource Include="Resources\Localization\TrackList\en.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
