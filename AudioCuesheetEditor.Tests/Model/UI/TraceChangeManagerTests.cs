@@ -189,7 +189,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             var textImportService = new TextImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             bool eventFired = false;
-            sessionStateContainer.Cuesheet.TrackAdded += delegate
+            sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
                 eventFired = true;
             };
@@ -228,7 +228,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             var textImportService = new TextImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             bool eventFired = false;
-            sessionStateContainer.Cuesheet.TrackAdded += delegate
+            sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
                 eventFired = true;
             };
@@ -268,7 +268,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             var textImportService = new TextImportService();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
             bool eventFired = false;
-            sessionStateContainer.Cuesheet.TrackAdded += delegate
+            sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
                 eventFired = true;
             };

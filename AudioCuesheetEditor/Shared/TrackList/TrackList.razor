@@ -212,8 +212,8 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
-        _sessionStateContainer.Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
-        _sessionStateContainer.Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
+        _sessionStateContainer.Cuesheet.TracksRemoved -= Cuesheet_TracksRemoved;
+        _sessionStateContainer.Cuesheet.TracksAdded -= Cuesheet_TracksAdded;
         DetachTrackFromValidateablePropertyChanged();
         DetachCuesheetFromSplitPointsAddedRemoved();
     }
@@ -227,8 +227,8 @@ along with Foobar.  If not, see
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
 
-        _sessionStateContainer.Cuesheet.TrackAdded += Cuesheet_TrackAdded;
-        _sessionStateContainer.Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
+        _sessionStateContainer.Cuesheet.TracksAdded += Cuesheet_TracksAdded;
+        _sessionStateContainer.Cuesheet.TracksRemoved += Cuesheet_TracksRemoved;
 
         AttachTracksToValidateablePropertyChanged();
         AttachCuesheetToSplitPointsAddedRemoved();
@@ -378,16 +378,19 @@ along with Foobar.  If not, see
         StateHasChanged();
     }
 
-    void Cuesheet_TrackAdded(object? sender, TrackAddRemoveEventArgs args)
+    void Cuesheet_TracksAdded(object? sender, TracksAddedRemovedEventArgs args)
     {
         StateHasChanged();
         AttachTracksToValidateablePropertyChanged();
         revalidate = true;
     }
 
-    void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
+    void Cuesheet_TracksRemoved(object? sender, TracksAddedRemovedEventArgs args)
     {
-        DetachTrackFromValidateablePropertyChanged(args.Track);
+        foreach(var track in args.Tracks)
+        {
+            DetachTrackFromValidateablePropertyChanged(track);
+        }
         revalidate = true;
     }
 
