@@ -139,6 +139,8 @@ along with Foobar.  If not, see
     public void Dispose()
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
     }
 
     [Parameter, EditorRequired]
@@ -175,6 +177,8 @@ along with Foobar.  If not, see
     {
         base.OnInitialized();
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
     }
 
     void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
@@ -275,5 +279,15 @@ along with Foobar.  If not, see
         var selectedTracks = new List<Track>(SelectedTracks);
         selectedTracks.Remove(track);
         SelectedTracksChanged.InvokeAsync(selectedTracks);
+    }
+
+    void TraceChangeManager_UndoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+    
+    void TraceChangeManager_RedoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
