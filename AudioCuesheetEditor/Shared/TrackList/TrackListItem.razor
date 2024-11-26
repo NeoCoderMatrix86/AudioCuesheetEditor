@@ -31,7 +31,7 @@ along with Foobar.  If not, see
     {
         <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
             <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
-            <TableRow Color="((AudioPlayer != null) && (AudioPlayer.CurrentlyPlayingTrack != null) && (AudioPlayer.CurrentlyPlayingTrack == track)) ? Color.Primary : Color.Default">
+            <TableRow Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default">
                 <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
                 <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
                 <TableRowCell>
@@ -130,6 +130,7 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
+    //TODO: Hier drag und drop beispiel angepasst einfügen
     EditTrackModal? modalTrackEdit;
     Validations? validations;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
