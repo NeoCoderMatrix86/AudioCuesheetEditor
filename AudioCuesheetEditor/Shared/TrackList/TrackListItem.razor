@@ -25,13 +25,14 @@ along with Foobar.  If not, see
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject ITextLocalizerService _localizationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILogger<TrackListItem> _logger
 
 <Validations @ref="validations">
     @if (Cuesheet != null)
     {
         <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
             <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
-            <TableRow Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default">
+            <TableRow Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default" Draggable DragStart="() => OnDragStart(track)" DragEnter="() => OnDragEnter(track)" DragLeave="() => OnDragLeave(track)" DragOver="() => OnDragOver(track)" Drop="() => OnDrop(track)" Border="track == dragOverTrack ? Border.Is0.OnTop.Is4.Warning : null">
                 <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
                 <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
                 <TableRowCell>
@@ -130,11 +131,14 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Hier drag und drop beispiel angepasst einfügen
+    //TODO: Drag border korrigieren
+    //TODO: Drag over eingabelement sorgt für löschen des dragOverTracks
     EditTrackModal? modalTrackEdit;
     Validations? validations;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
+    Track? draggedTrack;
+    Track? dragOverTrack;
 
     public void Dispose()
     {
@@ -293,9 +297,44 @@ along with Foobar.  If not, see
     {
         StateHasChanged();
     }
-    
+
     void TraceChangeManager_RedoDone(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    void OnDragStart(Track track)
+    {
+        _logger.LogDebug("OnDragStart: {0}", track.Position);
+        draggedTrack = track;
+    }
+
+    void OnDrop(Track track)
+    {
+        //TODO: verschieben der tracks!
+        draggedTrack = null;
+        dragOverTrack = null;
+    }
+
+    void OnDragEnter(Track track)
+    {
+        _logger.LogDebug("OnDragEnter: {0}", track.Position);
+        dragOverTrack = track;
+    }
+
+    void OnDragOver(Track track)
+    {
+        _logger.LogDebug("OnDragOver: {0}", track.Position);
+        dragOverTrack = track;
+    }
+
+    void OnDragLeave(Track track)
+    {
+        _logger.LogDebug("OnDragLeave: {0}", track.Position);
+        if (track == dragOverTrack)
+        {
+            _logger.LogDebug("track == dragOverTrack");
+            dragOverTrack = null;
+        }
     }
 }
