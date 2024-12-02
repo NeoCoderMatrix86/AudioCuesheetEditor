@@ -55,6 +55,8 @@
     <Content Remove="Resources\Localization\TrackListItemControlColumn\en.json" />
     <Content Remove="Resources\Localization\TrackListItem\de.json" />
     <Content Remove="Resources\Localization\TrackListItem\en.json" />
+    <Content Remove="Resources\Localization\TrackList\de.json" />
+    <Content Remove="Resources\Localization\TrackList\en.json" />
     <Content Remove="Resources\Localization\TrackSelection\de.json" />
     <Content Remove="Resources\Localization\TrackSelection\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
