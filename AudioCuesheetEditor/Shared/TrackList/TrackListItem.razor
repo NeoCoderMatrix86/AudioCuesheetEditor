@@ -26,13 +26,15 @@ along with Foobar.  If not, see
 @inject ITextLocalizerService _localizationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ILogger<TrackListItem> _logger
+@inject BaseComponentManager _baseComponentManager
 
 <Validations @ref="validations">
     @if (Cuesheet != null)
     {
+        var rowElementId = Guid.NewGuid().ToString();
         <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
             <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
-            <TableRow Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default" Draggable DragStart="() => OnDragStart(track)" DragEnter="() => OnDragEnter(track)" DragLeave="() => OnDragLeave(track)" DragOver="() => OnDragOver(track)" Drop="() => OnDrop(track)" Border="track == dragOverTrack ? Border.Is0.OnTop.Is4.Warning : null">
+            <TableRow ElementId="@rowElementId" Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default" Draggable DragStart="() => OnDragStart(track)" DragEnter="() => OnDragEnter(track)" DragLeave="(args) => OnDragLeave(args, rowElementId, track)" DragOver="() => OnDragOver(track)" Drop="() => OnDrop(track)" Border="track == dragOverTrack ? Border.Is0.OnTop.Is4.Warning : null">
                 <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
                 <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
                 <TableRowCell>
@@ -312,6 +314,7 @@ along with Foobar.  If not, see
     void OnDrop(Track track)
     {
         //TODO: verschieben der tracks!
+        _logger.LogDebug("OnDrop: {0}", track.Position);
         draggedTrack = null;
         dragOverTrack = null;
     }
@@ -328,9 +331,19 @@ along with Foobar.  If not, see
         dragOverTrack = track;
     }
 
-    void OnDragLeave(Track track)
+    async Task OnDragLeave(DragEventArgs args, string elementId, Track track)
     {
         _logger.LogDebug("OnDragLeave: {0}", track.Position);
+        var rect = await _baseComponentManager.GetBoundingClientRectAsync(elementId);
+        if (rect != null &&
+            args.ClientX >= rect.Left &&
+            args.ClientX <= rect.Right &&
+            args.ClientY >= rect.Top &&
+            args.ClientY <= rect.Bottom)
+        {
+            _logger.LogDebug("Mouse is still inside the row.");
+            return;
+        }
         if (track == dragOverTrack)
         {
             _logger.LogDebug("track == dragOverTrack");

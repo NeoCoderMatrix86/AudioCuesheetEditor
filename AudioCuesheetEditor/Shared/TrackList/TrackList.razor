@@ -168,6 +168,7 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
+    //TODO: Resizable sorgt für problem beim ziehen einer zeile über spaltenrahmen hinweg (eventuell über event ItemDragged?)
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();

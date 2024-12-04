@@ -18,7 +18,6 @@ using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
-using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using BlazorDownloadFile;
@@ -58,6 +57,7 @@ builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
+builder.Services.AddScoped<BaseComponentManager>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
