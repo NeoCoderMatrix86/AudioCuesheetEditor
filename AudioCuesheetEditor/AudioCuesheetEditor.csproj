@@ -141,7 +141,7 @@
     <PackageReference Include="Markdig" Version="0.38.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.1.0" />
     <PackageReference Include="z440.atl.core" Version="6.9.0" />
   </ItemGroup>
