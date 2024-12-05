@@ -180,8 +180,8 @@ along with Foobar.  If not, see
             {
                 track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
             }
-            Cuesheet.TrackAdded -= Cuesheet_TrackAdded;
-            Cuesheet.TrackRemoved -= Cuesheet_TrackRemoved;
+            Cuesheet.TracksAdded -= Cuesheet_TracksAdded;
+            Cuesheet.TracksRemoved -= Cuesheet_TracksRemoved;
         }
         _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
@@ -195,8 +195,8 @@ along with Foobar.  If not, see
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         if (Cuesheet != null)
         {
-            Cuesheet.TrackAdded += Cuesheet_TrackAdded;
-            Cuesheet.TrackRemoved += Cuesheet_TrackRemoved;
+            Cuesheet.TracksAdded += Cuesheet_TracksAdded;
+            Cuesheet.TracksRemoved += Cuesheet_TracksRemoved;
         }
         _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
@@ -230,15 +230,21 @@ along with Foobar.  If not, see
         return Task.CompletedTask;
     }
 
-    void Cuesheet_TrackAdded(object? sender, TrackAddRemoveEventArgs args)
+    void Cuesheet_TracksAdded(object? sender, TracksAddedRemovedEventArgs args)
     {
-        args.Track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+        foreach (var track in args.Tracks)
+        {
+            track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+        }
         validations?.ValidateAll().GetAwaiter().GetResult();
     }
 
-    void Cuesheet_TrackRemoved(object? sender, TrackAddRemoveEventArgs args)
+    void Cuesheet_TracksRemoved(object? sender, TracksAddedRemovedEventArgs args)
     {
-        args.Track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+        foreach (var track in args.Tracks)
+        {
+            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+        }
         validations?.ValidateAll().GetAwaiter().GetResult();
     }
 

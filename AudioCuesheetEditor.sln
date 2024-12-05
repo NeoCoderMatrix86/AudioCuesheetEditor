@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioCuesheetEditor", "AudioCuesheetEditor\AudioCuesheetEditor.csproj", "{099AE4DF-4847-460F-BBF2-207B9A35B58D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioCuesheetEditorTests", "AudioCuesheetEditorTests\AudioCuesheetEditorTests.csproj", "{12CA5D1F-D758-4016-85D0-A045AC06CFE6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioCuesheetEditor.Tests", "AudioCuesheetEditor.Tests\AudioCuesheetEditor.Tests.csproj", "{12CA5D1F-D758-4016-85D0-A045AC06CFE6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

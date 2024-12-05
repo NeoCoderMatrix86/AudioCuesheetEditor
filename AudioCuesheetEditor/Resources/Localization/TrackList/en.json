@@ -1,0 +1,25 @@
+{
+  "culture": "en",
+  "translations": {
+    "Add new track": "Add new track",
+    "Display selection of tracks": "Display selection",
+    "Selection": "Selection",
+    "Select all": "Select all track for multiple track operations",
+    "Delete selected tracks": "Delete selected",
+    "Hide selection of tracks": "Hide selection",
+    "Delete all tracks": "Delete all tracks",
+    "Controls": "Controls",
+    "Artist": "Artist",
+    "Title": "Title",
+    "Begin": "Begin",
+    "End": "End",
+    "Length": "Length",
+    "Position": "Position",
+    "Abort": "Abort",
+    "Save changes": "Save changes",
+    "Confirmation required": "Confirmation required",
+    "Do you really want to delete all tracks?": "Do you really want to delete all tracks?",
+    "Edit selected tracks": "Edit selected tracks",
+    "Validation errors": "Validation errors"
+  }
+}
