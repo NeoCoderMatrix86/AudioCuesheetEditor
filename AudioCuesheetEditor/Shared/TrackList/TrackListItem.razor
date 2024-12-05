@@ -31,10 +31,9 @@ along with Foobar.  If not, see
 <Validations @ref="validations">
     @if (Cuesheet != null)
     {
-        var rowElementId = Guid.NewGuid().ToString();
         <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
             <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
-            <TableRow ElementId="@rowElementId" Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default" Draggable DragStart="() => OnDragStart(track)" DragEnter="() => OnDragEnter(track)" DragLeave="(args) => OnDragLeave(args, rowElementId, track)" DragOver="() => OnDragOver(track)" Drop="() => OnDrop(track)" Border="track == dragOverTrack ? Border.Is0.OnTop.Is4.Warning : null">
+            <TableRow ElementId="@GetRowElementId(track)" Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default" Draggable DragStart="() => OnDragStart(track)" DragEnter="() => OnDragEnter(track)" DragLeave="(args) => OnDragLeave(args, track)" DragOver="() => OnDragOver(track)" Drop="() => OnDrop(track)" Border="track == dragOverTrack ? Border.Is0.OnTop.Is4.Warning : null">
                 <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
                 <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
                 <TableRowCell>
@@ -134,7 +133,8 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Drag border korrigieren
-    //TODO: Drag over eingabelement sorgt für löschen des dragOverTracks
+    readonly Dictionary<Track, string> rowElementIds = new();
+
     EditTrackModal? modalTrackEdit;
     Validations? validations;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
@@ -331,10 +331,13 @@ along with Foobar.  If not, see
         dragOverTrack = track;
     }
 
-    async Task OnDragLeave(DragEventArgs args, string elementId, Track track)
+    async Task OnDragLeave(DragEventArgs args, Track track)
     {
         _logger.LogDebug("OnDragLeave: {0}", track.Position);
+        var elementId = GetRowElementId(track);
         var rect = await _baseComponentManager.GetBoundingClientRectAsync(elementId);
+        _logger.LogDebug("rect.Left: {rect.Left}, rect.Right: {rect.Right}, rect.Top: {rect.Top}, rect.Bottom: {rect.Bottom}", rect.Left, rect.Right, rect.Top, rect.Bottom);
+        _logger.LogDebug("args.ClientX: {args.ClientX}, args.ClientY: {args.ClientY}", args.ClientX, args.ClientY);
         if (rect != null &&
             args.ClientX >= rect.Left &&
             args.ClientX <= rect.Right &&
@@ -349,5 +352,14 @@ along with Foobar.  If not, see
             _logger.LogDebug("track == dragOverTrack");
             dragOverTrack = null;
         }
+    }
+
+    string GetRowElementId(Track track)
+    {
+        if (!rowElementIds.ContainsKey(track))
+        {
+            rowElementIds[track] = Guid.NewGuid().ToString();
+        }
+        return rowElementIds[track];
     }
 }
