@@ -280,138 +280,141 @@ along with Foobar.  If not, see
 
 <ModalExportdialog @ref="modalExportdialogExportprofile" Title="@_localizer["Exportprofiles"]" ExportType="ExportType.Exportprofile" ApplicationOptions="applicationOptions" ExportOptions="exportOptions">
     <PrepareExportStepContent>
-        <Field Horizontal="true" JustifyContent="JustifyContent.End">
-            <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
-            <FieldBody ColumnSize="ColumnSize.Is9">
-                <SelectList TItem="Exportprofile" TValue="Guid?" Data="@exportOptions?.ExportProfiles" TextField="@((item) => item.Name)" ValueField="@((item)=>item.Id)" SelectedValue="exportOptions?.SelectedProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
-            </FieldBody>
-        </Field>
-        <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@_localizer["Add new exportprofile"]</Button>
-        <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@_localizer["Delete selected exportprofile"]</Button>
-        <Divider />
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.Name, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
+        @if (exportOptions != null)
+        {
+            <Field Horizontal="true" JustifyContent="JustifyContent.End">
+                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Select exportprofile"]</FieldLabel>
                 <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" Text="@exportOptions?.SelectedExportProfile?.Name" TextChanged="OnSelectedProfileNameChanged" Disabled="exportOptions?.SelectedExportProfile == null">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextEdit>
+                    <SelectList TItem="Exportprofile" TValue="Guid?" Data="@exportOptions?.ExportProfiles" TextField="@((item) => item.Name)" ValueField="@((item)=>item.Id)" SelectedValue="exportOptions?.SelectedProfileId" SelectedValueChanged="SelectedExportProfileChanged" />
                 </FieldBody>
             </Field>
-        </Validation>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@exportOptions?.SelectedExportProfile?.Filename" TextChanged="OnSelectedExportProfileFilenameChanged" Disabled="exportOptions?.SelectedExportProfile == null">
-                        <Feedback>
-                            <ValidationError />
-                        </Feedback>
-                    </TextEdit>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.SchemeHead, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">
-                    <Tooltip Text="@_localizer["Enter exportschemehead here tooltip"]" Placement="TooltipPlacement.TopEnd">
-                        @_localizer["Exportprofilescheme head"]
-                    </Tooltip>
-                </FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <Addons>
-                        <Addon AddonType="AddonType.Body">
-                            <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@exportOptions?.SelectedExportProfile?.SchemeHead" TextChanged="OnSelectedExportProfileSchemeHeadChanged" Disabled="exportOptions?.SelectedExportProfile == null">
-                                <Feedback>
-                                    <ValidationError Tooltip />
-                                </Feedback>
-                            </TextEdit>
-                        </Addon>
-                        <Addon AddonType="AddonType.End">
-                            <Dropdown>
-                                <DropdownToggle Color="Color.Secondary">
-                                    @_localizer["Select placeholder"]
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
-                                    {
-                                        <DropdownItem Clicked="() => DropDownItemSelected(nameof(Exportprofile.SchemeHead), availableScheme.Value)" Disabled="exportOptions?.SelectedExportProfile == null">@_localizer[availableScheme.Key]</DropdownItem>
-                                    }
-                                </DropdownMenu>
-                            </Dropdown>
-                        </Addon>
-                    </Addons>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.SchemeTracks, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">
-                    <Tooltip Text="@_localizer["Enter exportscheme track here tooltip"]" Placement="TooltipPlacement.TopEnd">
-                        @_localizer["Exportprofilescheme track"]
-                    </Tooltip>
-                </FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <Addons>
-                        <Addon AddonType="AddonType.Body">
-                            <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@exportOptions?.SelectedExportProfile?.SchemeTracks" TextChanged="OnSelectedExportProfileSchemeTracksChanged" Disabled="exportOptions?.SelectedExportProfile == null">
-                                <Feedback>
-                                    <ValidationError Tooltip />
-                                </Feedback>
-                            </TextEdit>
-                        </Addon>
-                        <Addon AddonType="AddonType.End">
-                            <Dropdown>
-                                <DropdownToggle Color="Color.Secondary">
-                                    @_localizer["Select placeholder"]
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    @foreach (var availableScheme in Exportprofile.AvailableTrackSchemes)
-                                    {
-                                        <DropdownItem Clicked="() => DropDownItemSelected(nameof(Exportprofile.SchemeTracks), availableScheme.Value)" Disabled="exportOptions?.SelectedExportProfile == null">@_localizer[availableScheme.Key]</DropdownItem>
-                                    }
-                                </DropdownMenu>
-                            </Dropdown>
-                        </Addon>
-                    </Addons>
-                </FieldBody>
-            </Field>
-        </Validation>
-        <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.SchemeFooter, _validationMessageLocalizer, token)">
-            <Field Horizontal="true">
-                <FieldLabel ColumnSize="ColumnSize.Is3">
-                    <Tooltip Text="@_localizer["Enter exportscheme footer here tooltip"]" Placement="TooltipPlacement.TopStart">
-                        @_localizer["Exportprofilescheme footer"]
-                    </Tooltip>
-                </FieldLabel>
-                <FieldBody ColumnSize="ColumnSize.Is9">
-                    <Addons>
-                        <Addon AddonType="AddonType.Body">
-                            <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@exportOptions?.SelectedExportProfile?.SchemeFooter" TextChanged="OnSelectedExportProfileSchemeFooterChanged" Disabled="exportOptions?.SelectedExportProfile == null">
-                                <Feedback>
-                                    <ValidationError Tooltip />
-                                </Feedback>
-                            </TextEdit>
-                        </Addon>
-                        <Addon AddonType="AddonType.End">
-                            <Dropdown>
-                                <DropdownToggle Color="Color.Secondary">
-                                    @_localizer["Select placeholder"]
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
-                                    {
-                                        <DropdownItem Clicked="() => DropDownItemSelected(nameof(Exportprofile.SchemeFooter), availableScheme.Value)" Disabled="exportOptions?.SelectedExportProfile == null">@_localizer[availableScheme.Key]</DropdownItem>
-                                    }
-                                </DropdownMenu>
-                            </Dropdown>
-                        </Addon>
-                    </Addons>
-                </FieldBody>
-            </Field>
-        </Validation>
+            <Button Color="Color.Primary" Clicked="OnAddNewExportProfileClicked">@_localizer["Add new exportprofile"]</Button>
+            <Button Color="Color.Danger" Clicked="OnDeleteExportProfileClicked">@_localizer["Delete selected exportprofile"]</Button>
+            <Divider />
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.Name, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Name"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile name here"]" Text="@exportOptions?.SelectedExportProfile?.Name" TextChanged="OnSelectedProfileNameChanged" Disabled="exportOptions?.SelectedExportProfile == null">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.Filename, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">@_localizer["Filename"]</FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <TextEdit Placeholder="@_localizer["Enter exportprofile filename here"]" Text="@exportOptions?.SelectedExportProfile?.Filename" TextChanged="OnSelectedExportProfileFilenameChanged" Disabled="exportOptions?.SelectedExportProfile == null">
+                            <Feedback>
+                                <ValidationError />
+                            </Feedback>
+                        </TextEdit>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.SchemeHead, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Text="@_localizer["Enter exportschemehead here tooltip"]" Placement="TooltipPlacement.TopEnd">
+                            @_localizer["Exportprofilescheme head"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme head here"]" Text="@exportOptions?.SelectedExportProfile?.SchemeHead" TextChanged="OnSelectedExportProfileSchemeHeadChanged" Disabled="exportOptions?.SelectedExportProfile == null">
+                                    <Feedback>
+                                        <ValidationError Tooltip />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @_localizer["Select placeholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => DropDownItemSelected(nameof(Exportprofile.SchemeHead), availableScheme.Value)" Disabled="exportOptions?.SelectedExportProfile == null">@_localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.SchemeTracks, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Text="@_localizer["Enter exportscheme track here tooltip"]" Placement="TooltipPlacement.TopEnd">
+                            @_localizer["Exportprofilescheme track"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme track here"]" Text="@exportOptions?.SelectedExportProfile?.SchemeTracks" TextChanged="OnSelectedExportProfileSchemeTracksChanged" Disabled="exportOptions?.SelectedExportProfile == null">
+                                    <Feedback>
+                                        <ValidationError Tooltip />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @_localizer["Select placeholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in Exportprofile.AvailableTrackSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => DropDownItemSelected(nameof(Exportprofile.SchemeTracks), availableScheme.Value)" Disabled="exportOptions?.SelectedExportProfile == null">@_localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+            </Validation>
+            <Validation AsyncValidator="(args, token) => ValidatorUtility<Exportprofile>.Validate(args, exportOptions?.SelectedExportProfile, x => x.SchemeFooter, _validationMessageLocalizer, token)">
+                <Field Horizontal="true">
+                    <FieldLabel ColumnSize="ColumnSize.Is3">
+                        <Tooltip Text="@_localizer["Enter exportscheme footer here tooltip"]" Placement="TooltipPlacement.TopStart">
+                            @_localizer["Exportprofilescheme footer"]
+                        </Tooltip>
+                    </FieldLabel>
+                    <FieldBody ColumnSize="ColumnSize.Is9">
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <TextEdit Placeholder="@_localizer["Enter exportscheme footer here"]" Text="@exportOptions?.SelectedExportProfile?.SchemeFooter" TextChanged="OnSelectedExportProfileSchemeFooterChanged" Disabled="exportOptions?.SelectedExportProfile == null">
+                                    <Feedback>
+                                        <ValidationError Tooltip />
+                                    </Feedback>
+                                </TextEdit>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Dropdown>
+                                    <DropdownToggle Color="Color.Secondary">
+                                        @_localizer["Select placeholder"]
+                                    </DropdownToggle>
+                                    <DropdownMenu>
+                                        @foreach (var availableScheme in Exportprofile.AvailableCuesheetSchemes)
+                                        {
+                                            <DropdownItem Clicked="() => DropDownItemSelected(nameof(Exportprofile.SchemeFooter), availableScheme.Value)" Disabled="exportOptions?.SelectedExportProfile == null">@_localizer[availableScheme.Key]</DropdownItem>
+                                        }
+                                    </DropdownMenu>
+                                </Dropdown>
+                            </Addon>
+                        </Addons>
+                    </FieldBody>
+                </Field>
+            </Validation>
+        }
     </PrepareExportStepContent>
 </ModalExportdialog>
 

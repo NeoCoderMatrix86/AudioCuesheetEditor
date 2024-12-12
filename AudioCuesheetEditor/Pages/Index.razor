@@ -100,8 +100,10 @@ along with Foobar.  If not, see
     ModalDialog? modalDialog;
     AudioPlayer? audioPlayer;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
+        base.OnInitialized();
+
         _logger.LogDebug("OnInitializedAsync");
         _logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
 
@@ -113,18 +115,12 @@ along with Foobar.  If not, see
             .Add(ModKey.Ctrl, Key.y, () => _traceChangeManager.Redo());
 
         _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
-
-        var dotNetReference = DotNetObjectReference.Create(this);
-        await _jsRuntime.InvokeVoidAsync("GLOBAL.SetIndexReference", dotNetReference);
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        await base.OnParametersSetAsync();
-        if (mainLayout != null)
-        {
-            mainLayout.SetDisplayMenuBar(true);
-        }
+        base.OnParametersSet();
+        mainLayout?.SetDisplayMenuBar(true);
     }
 
     async ValueTask OnEnterKeyDown()
