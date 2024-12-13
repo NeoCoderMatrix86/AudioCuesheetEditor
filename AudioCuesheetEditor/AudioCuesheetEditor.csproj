@@ -41,8 +41,6 @@
     <Content Remove="Resources\Localization\RecordControl\en.json" />
     <Content Remove="Resources\Localization\EditRecordOptions\de.json" />
     <Content Remove="Resources\Localization\EditRecordOptions\en.json" />
-    <Content Remove="Resources\Localization\TracksTable\de.json" />
-    <Content Remove="Resources\Localization\TracksTable\en.json" />
     <Content Remove="Resources\Localization\CultureSelector\de.json" />
     <Content Remove="Resources\Localization\CultureSelector\en.json" />
     <Content Remove="Resources\Localization\FileEdit\de.json" />
@@ -51,6 +49,16 @@
     <Content Remove="Resources\Localization\Help\en.json" />
     <Content Remove="Resources\Localization\Index\de.json" />
     <Content Remove="Resources\Localization\Index\en.json" />
+    <Content Remove="Resources\Localization\TrackLinkControl\de.json" />
+    <Content Remove="Resources\Localization\TrackLinkControl\en.json" />
+    <Content Remove="Resources\Localization\TrackListItemControlColumn\de.json" />
+    <Content Remove="Resources\Localization\TrackListItemControlColumn\en.json" />
+    <Content Remove="Resources\Localization\TrackListItem\de.json" />
+    <Content Remove="Resources\Localization\TrackListItem\en.json" />
+    <Content Remove="Resources\Localization\TrackList\de.json" />
+    <Content Remove="Resources\Localization\TrackList\en.json" />
+    <Content Remove="Resources\Localization\TrackSelection\de.json" />
+    <Content Remove="Resources\Localization\TrackSelection\en.json" />
     <Content Remove="Resources\Localization\ValidationMessage\de.json" />
     <Content Remove="Resources\Localization\ValidationMessage\en.json" />
     <Content Remove="Resources\Localization\EditImportOptions\de.json" />
@@ -88,8 +96,14 @@
     <EmbeddedResource Include="Resources\Localization\RecordControl\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditRecordOptions\de.json" />
     <EmbeddedResource Include="Resources\Localization\EditRecordOptions\en.json" />
-    <EmbeddedResource Include="Resources\Localization\TracksTable\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TracksTable\en.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackLinkControl\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackLinkControl\en.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackListItemControlColumn\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackListItemControlColumn\en.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackListItem\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackListItem\en.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackList\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackList\en.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
     <EmbeddedResource Include="Resources\Localization\CultureSelector\en.json" />
     <EmbeddedResource Include="Resources\Localization\FileEdit\de.json" />
@@ -98,6 +112,8 @@
     <EmbeddedResource Include="Resources\Localization\Help\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\en.json" />
     <EmbeddedResource Include="Resources\Localization\Index\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackSelection\de.json" />
+    <EmbeddedResource Include="Resources\Localization\TrackSelection\en.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
     <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
     <EmbeddedResource Include="Resources\Localization\EditImportOptions\de.json" />
@@ -114,20 +130,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.6.2" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.6.2" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.0" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.0" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all" />
-	  <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
-    <PackageReference Include="Blazorise.Components" Version="1.6.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.11" PrivateAssets="all" />
+    <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
+    <PackageReference Include="Blazorise.Components" Version="1.7.0" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
     <PackageReference Include="Markdig" Version="0.38.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
     <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.1.0" />
-    <PackageReference Include="z440.atl.core" Version="6.7.0" />
+    <PackageReference Include="z440.atl.core" Version="6.9.0" />
   </ItemGroup>
   
   <ItemGroup>

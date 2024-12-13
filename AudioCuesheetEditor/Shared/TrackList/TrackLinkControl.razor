@@ -1,0 +1,98 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@implements IDisposable
+
+@inject ITextLocalizer<TrackLinkControl> _localizer
+@inject ITextLocalizerService _localizationService
+@inject SessionStateContainer _sessionStateContainer
+
+@if ((TrackReference != Cuesheet?.Tracks.FirstOrDefault()) && (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull))
+{
+    <TableRow>
+        <TableRowCell ColumnSpan="(TrackSelectionVisible == true) ? 9 : 8">
+            @if (TrackReference?.IsLinkedToPreviousTrack == true)
+            {
+                <Button Color="Color.Warning" Block="true" Size="Size.ExtraSmall" Clicked="() => SetLink(false)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zM7.646.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 1.707V5.5a.5.5 0 0 1-1 0V1.707L6.354 2.854a.5.5 0 1 1-.708-.708l2-2zM8 10a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 14.293V10.5A.5.5 0 0 1 8 10z" />
+                    </svg>
+                    @_localizer["Unlink this track from previous track"]
+                </Button>
+            }
+            else
+            {
+                <Button Color="Color.Success" Block="true" Size="Size.ExtraSmall" Clicked="() => SetLink(true)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-collapse" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8zm7-8a.5.5 0 0 1 .5.5v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 4.293V.5A.5.5 0 0 1 8 0zm-.5 11.707l-1.146 1.147a.5.5 0 0 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 11.707V15.5a.5.5 0 0 1-1 0v-3.793z" />
+                    </svg>
+                    @_localizer["Link this track with previous track"]
+                </Button>
+            }
+        </TableRowCell>
+    </TableRow>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public Boolean TrackSelectionVisible { get; set; }
+
+    [Parameter, EditorRequired]
+    public Track? TrackReference { get; set; }
+
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            Cuesheet? cuesheet;
+            switch (_sessionStateContainer.CurrentViewMode)
+            {
+                case ViewMode.ViewModeImport:
+                    cuesheet = _sessionStateContainer.ImportCuesheet;
+                    break;
+                default:
+                    cuesheet = _sessionStateContainer.Cuesheet;
+                    break;
+            }
+            return cuesheet;
+        }
+    }
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+    }
+
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SetLink(Boolean linkState)
+    {
+        if (TrackReference != null)
+        {
+            TrackReference.IsLinkedToPreviousTrack = linkState;
+        }
+    }
+}

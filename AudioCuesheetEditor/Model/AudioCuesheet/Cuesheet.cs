@@ -28,9 +28,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class TrackAddRemoveEventArgs(Track track) : EventArgs
+    public class TracksAddedRemovedEventArgs(IEnumerable<Track> tracks) : EventArgs
     {
-        public Track Track { get; } = track;
+        public IEnumerable<Track> Tracks { get; } = tracks;
     }
 
     public class CuesheetSectionAddRemoveEventArgs(CuesheetSection section) : EventArgs
@@ -54,8 +54,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-        public event EventHandler<TrackAddRemoveEventArgs>? TrackAdded;
-        public event EventHandler<TrackAddRemoveEventArgs>? TrackRemoved;
+        public event EventHandler<TracksAddedRemovedEventArgs>? TracksAdded;
+        public event EventHandler<TracksAddedRemovedEventArgs>? TracksRemoved;
         public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionAdded;
         public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionRemoved;
 
@@ -212,7 +212,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public CuesheetSection? GetSectionAtTrack(Track track)
         {
-            return Sections?.FirstOrDefault(x => track.Begin < x.Begin && track.End >= x.Begin);
+            return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             if (IsImporting == false)
             {
-                TrackAdded?.Invoke(this, new TrackAddRemoveEventArgs(track));
+                TracksAdded?.Invoke(this, new TracksAddedRemovedEventArgs([track]));
             }
         }
 
@@ -299,7 +299,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TrackRemoved?.Invoke(this, new TrackAddRemoveEventArgs(track));
+            TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs([track]));
         }
 
         /// <summary>
@@ -333,6 +333,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs(intersection));
         }
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
