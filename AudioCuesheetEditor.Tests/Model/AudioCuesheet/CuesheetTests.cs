@@ -638,5 +638,35 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             cuesheet.Title = "Testtitle";
             Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(x => x.Title).Status);
         }
+
+        [TestMethod()]
+        public void IsLinkedToPreviousTrack_ChangedLastTrackBegin_SetsTrackProperties()
+        {
+            //Arrange
+            var applicationOptions = new ApplicationOptions()
+            {
+                LinkTracksWithPreviousOne = false
+            };
+            var cuesheet = new Cuesheet();
+            var track1 = new Track()
+            {
+                Artist = "Track1 Artist",
+                Title = "Track1 Title"
+            };
+            var track2 = new Track()
+            {
+                Artist = "Track2 Artist",
+                Title = "Track2 Title",
+                End = new TimeSpan(0, 9, 12)
+            };
+            cuesheet.AddTrack(track1, applicationOptions);
+            cuesheet.AddTrack(track2, applicationOptions);
+            track2.Begin = new TimeSpan(0, 4, 23);
+            //Act
+            track2.IsLinkedToPreviousTrack = true;
+            //Assert
+            Assert.AreEqual((uint)2, track2.Position);
+            Assert.AreEqual(track2.Begin, track1.End);
+        }
     }
 }
