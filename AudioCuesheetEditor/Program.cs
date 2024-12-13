@@ -57,7 +57,6 @@ builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
-builder.Services.AddScoped<BaseComponentManager>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

@@ -26,14 +26,13 @@ along with Foobar.  If not, see
 @inject ITextLocalizerService _localizationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject ILogger<TrackListItem> _logger
-@inject BaseComponentManager _baseComponentManager
 
 <Validations @ref="validations">
     @if (Cuesheet != null)
     {
         <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
             <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
-            <TableRow ElementId="@GetRowElementId(track)" Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default" Draggable DragStart="() => OnDragStart(track)" DragEnter="() => OnDragEnter(track)" DragLeave="(args) => OnDragLeave(args, track)" DragOver="() => OnDragOver(track)" Drop="() => OnDrop(track)" Border="track == dragOverTrack ? Border.Is0.OnTop.Is4.Warning : null">
+            <TableRow Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default">
                 <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
                 <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
                 <TableRowCell>
@@ -132,15 +131,10 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Drag border korrigieren
-    readonly Dictionary<Track, string> rowElementIds = new();
-
     EditTrackModal? modalTrackEdit;
     Validations? validations;
     IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
     IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
-    Track? draggedTrack;
-    Track? dragOverTrack;
 
     public void Dispose()
     {
@@ -303,63 +297,5 @@ along with Foobar.  If not, see
     void TraceChangeManager_RedoDone(object? sender, EventArgs args)
     {
         StateHasChanged();
-    }
-
-    void OnDragStart(Track track)
-    {
-        _logger.LogDebug("OnDragStart: {0}", track.Position);
-        draggedTrack = track;
-    }
-
-    void OnDrop(Track track)
-    {
-        //TODO: verschieben der tracks!
-        _logger.LogDebug("OnDrop: {0}", track.Position);
-        draggedTrack = null;
-        dragOverTrack = null;
-    }
-
-    void OnDragEnter(Track track)
-    {
-        _logger.LogDebug("OnDragEnter: {0}", track.Position);
-        dragOverTrack = track;
-    }
-
-    void OnDragOver(Track track)
-    {
-        _logger.LogDebug("OnDragOver: {0}", track.Position);
-        dragOverTrack = track;
-    }
-
-    async Task OnDragLeave(DragEventArgs args, Track track)
-    {
-        _logger.LogDebug("OnDragLeave: {0}", track.Position);
-        var elementId = GetRowElementId(track);
-        var rect = await _baseComponentManager.GetBoundingClientRectAsync(elementId);
-        _logger.LogDebug("rect.Left: {rect.Left}, rect.Right: {rect.Right}, rect.Top: {rect.Top}, rect.Bottom: {rect.Bottom}", rect.Left, rect.Right, rect.Top, rect.Bottom);
-        _logger.LogDebug("args.ClientX: {args.ClientX}, args.ClientY: {args.ClientY}", args.ClientX, args.ClientY);
-        if (rect != null &&
-            args.ClientX >= rect.Left &&
-            args.ClientX <= rect.Right &&
-            args.ClientY >= rect.Top &&
-            args.ClientY <= rect.Bottom)
-        {
-            _logger.LogDebug("Mouse is still inside the row.");
-            return;
-        }
-        if (track == dragOverTrack)
-        {
-            _logger.LogDebug("track == dragOverTrack");
-            dragOverTrack = null;
-        }
-    }
-
-    string GetRowElementId(Track track)
-    {
-        if (!rowElementIds.ContainsKey(track))
-        {
-            rowElementIds[track] = Guid.NewGuid().ToString();
-        }
-        return rowElementIds[track];
     }
 }

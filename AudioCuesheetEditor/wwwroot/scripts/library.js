@@ -144,8 +144,3 @@ function beforeunload(e) {
 function removeBeforeunload() {
     window.removeEventListener('beforeunload', beforeunload);
 }
-
-function getBoundingClientRect(domId) {
-    var element = document.getElementById(domId);
-    return element.getBoundingClientRect();
-}
