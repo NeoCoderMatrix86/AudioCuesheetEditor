@@ -607,6 +607,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         {
                             trackRaisedEvent.Begin = previousTrack.End;
                         }
+                        if ((previousTrack.End.HasValue == false) && (trackRaisedEvent.Begin.HasValue))
+                        {
+                            previousTrack.End = trackRaisedEvent.Begin;
+                        }
                     }
                 }
             }
