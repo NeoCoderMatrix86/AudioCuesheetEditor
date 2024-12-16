@@ -1,0 +1,301 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@implements IDisposable
+
+@inject ITextLocalizer<TrackListItem> _localizer
+@inject SessionStateContainer _sessionStateContainer
+@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject TraceChangeManager _traceChangeManager
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject ITextLocalizerService _localizationService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
+@inject ILogger<TrackListItem> _logger
+
+<Validations @ref="validations">
+    @if (Cuesheet != null)
+    {
+        <Virtualize TItem="Track" Items="Cuesheet.Tracks.ToList()" Context="track" SpacerElement="tr">
+            <TrackLinkControl TrackReference="track" TrackSelectionVisible="TrackSelectionVisible" />
+            <TableRow Color="(AudioPlayer?.CurrentlyPlayingTrack == track) ? Color.Primary : Color.Default">
+                <TrackSelection Visible="TrackSelectionVisible" Selected="SelectedTracks?.Contains(track) == true" SelectedChanged="(selected) => SelectedTrackChanged(track, selected)" />
+                <TrackListItemControlColumn TrackReference="track" AudioPlayer="AudioPlayer" TrackDeleted="() => TrackDeleted(track)" />
+                <TableRowCell>
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                        <Autocomplete TItem="MusicBrainzArtist" TValue="Guid" Data="autocompleteTrackArtists" FreeTyping TextField="@((item) => item.Name)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Artist" ReadData="OnReadDataAutocompleteTrackArtist" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Artist, _validationMessageLocalizer, token)">
+                            <ItemContent>
+                                @if (context.Item.Disambiguation != null)
+                                {
+                                    <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                }
+                                else
+                                {
+                                    <Paragraph>@context.Text</Paragraph>
+                                }
+                            </ItemContent>
+                        </Autocomplete>
+                    </Tooltip>
+                </TableRowCell>
+                <TableRowCell>
+                    <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                        <Autocomplete TItem="MusicBrainzTrack" TValue="Guid" Data="autocompleteTrackTitles" FreeTyping TextField="@((item) => item.Title)" ValueField="@((item) => item.Id)" @bind-SelectedText="track.Title" ReadData="(args) => OnReadDataAutocompleteTrackTitle(args, track)" SelectedValueChanged="(value) => OnSelectedValueChangedTrackTitle(value, track)" AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Title, _validationMessageLocalizer, token)">
+                            <ItemContent>
+                                @if (context.Item.Disambiguation != null)
+                                {
+                                    <Paragraph>@String.Format("{0} ({1})", context.Text, context.Item.Disambiguation)</Paragraph>
+                                }
+                                else
+                                {
+                                    <Paragraph>@context.Text</Paragraph>
+                                }
+                            </ItemContent>
+                        </Autocomplete>
+                    </Tooltip>
+                </TableRowCell>
+                @switch (_sessionStateContainer.CurrentViewMode)
+                {
+                    case ViewMode.ViewModeRecord:
+                        <TableRowCell>@track.Begin</TableRowCell>
+                        <TableRowCell>@track.End</TableRowCell>
+                        <TableRowCell>@track.Length</TableRowCell>
+                        break;
+                    case ViewMode.ViewModeFull:
+                    case ViewMode.ViewModeImport:
+                        <TableRowCell>
+                            <Div Flex="Flex.JustifyContent.Start.AlignItems.Center">
+                                @if (Cuesheet?.GetSectionAtTrack(track) != null)
+                                {
+                                    <Tooltip Text="@_localizer["A split point is currently set at the time of this track"]">
+                                        <Badge Color="Color.Info" Pill>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-signpost-split" viewBox="0 0 16 16">
+                                                <path d="M7 7V1.414a1 1 0 0 1 2 0V2h5a1 1 0 0 1 .8.4l.975 1.3a.5.5 0 0 1 0 .6L14.8 5.6a1 1 0 0 1-.8.4H9v10H7v-5H2a1 1 0 0 1-.8-.4L.225 9.3a.5.5 0 0 1 0-.6L1.2 7.4A1 1 0 0 1 2 7h5zm1 3V8H2l-.75 1L2 10h6zm0-5h6l.75-1L14 3H8v2z" />
+                                            </svg>
+                                        </Badge>
+                                    </Tooltip>
+                                }
+                                <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                    <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Begin, _validationMessageLocalizer, token)">
+                                        <TextEdit Text="@track.Begin?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Begin, value)" Immediate="false">
+                                            <Feedback>
+                                                <ValidationError />
+                                            </Feedback>
+                                        </TextEdit>
+                                    </Validation>
+                                </Tooltip>
+                            </Div>
+                        </TableRowCell>
+                        <TableRowCell>
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.End, _validationMessageLocalizer, token)">
+                                    <TextEdit Text="@track.End?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(track, x => x.End, value)" Immediate="false">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </Validation>
+                            </Tooltip>
+                        </TableRowCell>
+                        <TableRowCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">
+                            <Tooltip Placement="TooltipPlacement.Top" Text="@GetLocalizedString((AudioPlayer?.AudioIsPlaying == true) && (AudioPlayer.CurrentlyPlayingTrack == track),"Current track is played")">
+                                <Validation AsyncValidator="(args, token) => ValidatorUtility<Track>.Validate(args, track, x => x.Length, _validationMessageLocalizer, token)">
+                                    <TextEdit Text="@track.Length?.ToString()" TextChanged="(value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(track, x => x.Length, value)" Immediate="false">
+                                        <Feedback>
+                                            <ValidationError />
+                                        </Feedback>
+                                    </TextEdit>
+                                </Validation>
+                            </Tooltip>
+                        </TableRowCell>
+                        break;
+                }
+            </TableRow>
+        </Virtualize>
+    }
+</Validations>
+
+<EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
+
+@code {
+    EditTrackModal? modalTrackEdit;
+    Validations? validations;
+    IEnumerable<MusicBrainzArtist>? autocompleteTrackArtists;
+    IEnumerable<MusicBrainzTrack>? autocompleteTrackTitles;
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+        _traceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+    }
+
+    [Parameter, EditorRequired]
+    public Boolean TrackSelectionVisible { get; set; }
+
+    [Parameter, EditorRequired]
+    public IReadOnlyCollection<Track>? SelectedTracks { get; set; }
+
+    [Parameter]
+    public EventCallback<List<Track>> SelectedTracksChanged { get; set; }
+
+    [Parameter, EditorRequired]
+    public AudioPlayer? AudioPlayer { get; set; }
+
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            Cuesheet? cuesheet;
+            switch (_sessionStateContainer.CurrentViewMode)
+            {
+                case ViewMode.ViewModeImport:
+                    cuesheet = _sessionStateContainer.ImportCuesheet;
+                    break;
+                default:
+                    cuesheet = _sessionStateContainer.Cuesheet;
+                    break;
+            }
+            return cuesheet;
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+        _traceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        _traceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+    }
+
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+        validations?.ValidateAll();
+    }
+
+    String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
+    {
+        if (expressionToCheck == true)
+        {
+            return _localizer[localizedStringName];
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    async Task EditTrackModal(Track trackToEdit)
+    {
+        if (modalTrackEdit != null)
+        {
+            modalTrackEdit.TracksToEdit = new List<Track>() { trackToEdit };
+            await modalTrackEdit.Show();
+        }
+    }
+
+    async Task CopyTrackClicked(Track trackToCopy)
+    {
+        var copy = new Track(trackToCopy);
+        var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        Cuesheet?.AddTrack(copy, applicationOptions);
+        _traceChangeManager.TraceChanges(copy);
+        await EditTrackModal(copy);
+    }
+
+    void SelectedTrackChanged(Track track, bool selected)
+    {
+        var selectedTracks = new List<Track>();
+        if (SelectedTracks != null)
+        {
+            selectedTracks.AddRange(SelectedTracks);
+        }
+        if (selected)
+        {
+            selectedTracks.Add(track);
+        }
+        else
+        {
+            selectedTracks.Remove(track);
+        }
+        SelectedTracksChanged.InvokeAsync(selectedTracks);
+    }
+
+    async Task OnReadDataAutocompleteTrackArtist(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(autocompleteReadDataEventArgs.SearchValue);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackArtists = artists;
+            }
+        }
+    }
+
+    async Task OnReadDataAutocompleteTrackTitle(AutocompleteReadDataEventArgs autocompleteReadDataEventArgs, Track track)
+    {
+        if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+        {
+            var titles = await _musicBrainzDataProvider.SearchTitleAsync(autocompleteReadDataEventArgs.SearchValue, track.Artist);
+            if (!autocompleteReadDataEventArgs.CancellationToken.IsCancellationRequested)
+            {
+                autocompleteTrackTitles = titles;
+            }
+        }
+    }
+
+    async Task OnSelectedValueChangedTrackTitle(Guid selectedValue, Track track)
+    {
+        switch (_sessionStateContainer.CurrentViewMode)
+        {
+            case ViewMode.ViewModeFull:
+            case ViewMode.ViewModeImport:
+                var trackDetails = await _musicBrainzDataProvider.GetDetailsAsync(selectedValue);
+                if (trackDetails != null)
+                {
+                    track.Length = trackDetails.Length;
+                    if (String.IsNullOrEmpty(track.Artist))
+                    {
+                        track.Artist = trackDetails.Artist;
+                    }
+                }
+                break;
+        }
+    }
+
+    void TrackDeleted(Track track)
+    {
+        var selectedTracks = new List<Track>();
+        if (SelectedTracks != null)
+        {
+            selectedTracks.AddRange(SelectedTracks);
+        }
+        selectedTracks.Remove(track);
+        SelectedTracksChanged.InvokeAsync(selectedTracks);
+    }
+
+    void TraceChangeManager_UndoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void TraceChangeManager_RedoDone(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+}

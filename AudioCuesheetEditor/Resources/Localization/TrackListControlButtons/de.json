@@ -1,0 +1,13 @@
+{
+  "culture": "de",
+  "translations": {
+    "Add new track": "Neuen Titel hinzufügen",
+    "Display selection of tracks": "Auswahl einblenden",
+    "Delete selected tracks": "Ausgewählte löschen",
+    "Hide selection of tracks": "Auswahl ausblenden",
+    "Delete all tracks": "Alle Titel löschen",
+    "Edit selected tracks": "Ausgewählte Titel bearbeiten",
+    "Pin table header": "Tabellenkopf anheften",
+    "Pin the table header to top, displaying all controls above the table while scrolling through the records": "Tabellenkopf anheften, um während des scrollens alle Buttons oberhalb anzuordnen"
+  }
+}

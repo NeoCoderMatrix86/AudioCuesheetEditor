@@ -92,6 +92,8 @@ namespace AudioCuesheetEditor.Model.Options
         public Boolean LinkTracksWithPreviousOne { get; set; } = true;
         public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
         public TimeSpanFormat? TimeSpanFormat { get; set; }
+        public Boolean TracksTableSelectionVisible { get; set; } = false;
+        public Boolean TracksTableHeaderPinned { get; set; } = false;
 
         protected override ValidationResult Validate(string property)
         {

@@ -3,19 +3,7 @@ var audioFileObjectURL = null;
 var startTime;
 var mediaStream = null;
 window.addEventListener('beforeunload', beforeunload);
-GLOBAL.Index = null;
-GLOBAL.AudioPlayer = null;
 GLOBAL.ViewModeRecord = null;
-GLOBAL.SetIndexReference = function (dotNetReference) {
-    if (GLOBAL.Index === null) {
-        GLOBAL.Index = dotNetReference;
-    }
-};
-GLOBAL.SetAudioPlayerReference = function (dotNetReference) {
-    if (GLOBAL.AudioPlayer === null) {
-        GLOBAL.AudioPlayer = dotNetReference;
-    }
-};
 
 GLOBAL.SetViewModeRecordReference = function (dotNetReference) {
     if (GLOBAL.ViewModeRecord === null) {
