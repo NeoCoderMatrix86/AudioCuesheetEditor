@@ -1,0 +1,13 @@
+{
+  "culture": "en",
+  "translations": {
+    "Add new track": "Add new track",
+    "Display selection of tracks": "Display selection",
+    "Delete selected tracks": "Delete selected",
+    "Hide selection of tracks": "Hide selection",
+    "Delete all tracks": "Delete all tracks",
+    "Edit selected tracks": "Edit selected tracks",
+    "Pin table header": "Pin table header",
+    "Pin the table header to top, displaying all controls above the table while scrolling through the records": "Pin the table header to top, displaying all controls above the table while scrolling through the records"
+  }
+}

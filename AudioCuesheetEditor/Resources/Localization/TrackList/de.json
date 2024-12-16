@@ -1,13 +1,8 @@
 {
   "culture": "de",
   "translations": {
-    "Add new track": "Neuen Titel hinzufügen",
-    "Display selection of tracks": "Auswahl einblenden",
     "Selection": "Auswahl",
     "Select all": "Wählen Sie alle Spuren für Mehrfachspuroperationen aus",
-    "Delete selected tracks": "Ausgewählte löschen",
-    "Hide selection of tracks": "Auswahl ausblenden",
-    "Delete all tracks": "Alle Titel löschen",
     "Controls": "Steuerung",
     "Artist": "Künstler",
     "Title": "Titel",
@@ -19,7 +14,6 @@
     "Save changes": "Änderungen speichern",
     "Confirmation required": "Bestätigung erforderlich",
     "Do you really want to delete all tracks?": "Möchten Sie wirklich alle Titel löschen?",
-    "Edit selected tracks": "Ausgewählte Titel bearbeiten",
     "Validation errors": "Validierungsfehler"
   }
 }
