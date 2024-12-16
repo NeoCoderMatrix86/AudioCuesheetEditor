@@ -47,14 +47,14 @@ along with Foobar.  If not, see
             AddButtonClicked="OnAddTrackClicked" 
             EditSelectedTracksClicked="EditSelectedTracksClicked" 
             DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
-            DeleteAllTracksClicked="OnDeleteAllTracksClicked" 
-            FixedTableHeader="fixedTableHeader" 
-            FixedTableHeaderChanged="(newValue) => fixedTableHeader = newValue" 
+            DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+            FixedTableHeader="PinnedTableHeader"
+            FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
             TrackSelectionVisible="TrackSelectionVisible" 
             TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
     }
 
-    <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow FixedHeader="fixedTableHeader" FixedHeaderTableHeight="" FixedHeaderTableMaxHeight="70vh">
+    <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow FixedHeader="PinnedTableHeader" FixedHeaderTableHeight="" FixedHeaderTableMaxHeight="70vh">
         <TableHeader ThemeContrast="ThemeContrast.Light">
             <TableRow>
                 @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
@@ -99,15 +99,13 @@ along with Foobar.  If not, see
 <EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
 
 @code {
-    //TODO: Save trackselectionvisible and fixedheader to applicationOptions
     ModalDialog? modalDialog;
     EditTrackModal? modalTrackEdit;
     List<Track> selectedTracks = new();
-    Boolean trackSelectionVisible = false;
     Validations? validations;
     Boolean revalidate = false;
     List<Track> TracksAttachedToValidateablePropertyChanged = new();
-    Boolean fixedTableHeader = false;
+    ApplicationOptions? applicationOptions;
 
     [Parameter]
     public AudioPlayer? AudioPlayer { get; set; }
@@ -132,11 +130,34 @@ along with Foobar.  If not, see
 
     public Boolean TrackSelectionVisible
     {
-        get => trackSelectionVisible;
+        get
+        {
+            if (applicationOptions != null)
+            {
+                return applicationOptions.TracksTableSelectionVisible;
+            }
+            return false;
+        }
         set
         {
-            trackSelectionVisible = value;
+            _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TracksTableSelectionVisible, value);
             selectedTracks = new();
+        }
+    }
+
+    public Boolean PinnedTableHeader
+    {
+        get
+        {
+            if (applicationOptions != null)
+            {
+                return applicationOptions.TracksTableHeaderPinned;
+            }
+            return false;
+        }
+        set
+        {
+            _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TracksTableHeaderPinned, value);
         }
     }
 
@@ -147,13 +168,14 @@ along with Foobar.  If not, see
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.Cuesheet.TracksRemoved -= Cuesheet_TracksRemoved;
         _sessionStateContainer.Cuesheet.TracksAdded -= Cuesheet_TracksAdded;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
         DetachTrackFromValidateablePropertyChanged();
         DetachCuesheetFromSplitPointsAddedRemoved();
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
 
         _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
 
@@ -165,6 +187,9 @@ along with Foobar.  If not, see
 
         AttachTracksToValidateablePropertyChanged();
         AttachCuesheetToSplitPointsAddedRemoved();
+
+        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -178,9 +203,8 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task OnAddTrackClicked()
+    void OnAddTrackClicked()
     {
-        var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
         var newTrack = new Track();
         Cuesheet?.AddTrack(newTrack, applicationOptions);
         _traceChangeManager.TraceChanges(newTrack);
@@ -402,6 +426,15 @@ along with Foobar.  If not, see
             case nameof(CuesheetSection.End):
                 StateHasChanged();
                 break;
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
+            StateHasChanged();
         }
     }
 }
