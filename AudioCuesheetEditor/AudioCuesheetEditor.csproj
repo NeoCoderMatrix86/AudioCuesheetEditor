@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-	<TargetFramework>net8.0</TargetFramework>
+	<TargetFramework>net9.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
 	<RazorLangVersion>3.0</RazorLangVersion>
-	<Version>8.0.0</Version>
+	<Version>9.0.0</Version>
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	<PublishTrimmed>true</PublishTrimmed>
 	<RunAOTCompilation>true</RunAOTCompilation>
@@ -134,20 +134,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.0" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.0" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.1" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.1" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.11" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
     <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
-    <PackageReference Include="Blazorise.Components" Version="1.7.0" />
+    <PackageReference Include="Blazorise.Components" Version="1.7.1" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
-    <PackageReference Include="Markdig" Version="0.38.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.1" />
-    <PackageReference Include="System.Net.Http.Json" Version="8.0.1" />
+    <PackageReference Include="Markdig" Version="0.39.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="9.0.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.1.0" />
-    <PackageReference Include="z440.atl.core" Version="6.9.0" />
+    <PackageReference Include="z440.atl.core" Version="6.10.0" />
   </ItemGroup>
   
   <ItemGroup>
