@@ -57,6 +57,7 @@ namespace AudioCuesheetEditor.Services.UI
 
         private void ChangeLanguage(string name)
         {
+            //TODO: Check if available
             SelectedCulture = new(name);
             CultureInfo.DefaultThreadCurrentCulture = SelectedCulture;
             CultureInfo.DefaultThreadCurrentUICulture = SelectedCulture;

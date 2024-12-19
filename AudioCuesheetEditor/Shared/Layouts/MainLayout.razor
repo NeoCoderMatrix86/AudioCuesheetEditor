@@ -1,0 +1,95 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inherits LayoutComponentBase
+
+@implements IDisposable
+
+@inject NavigationManager _navigationManager
+@inject IStringLocalizer<MainLayout> _localizer
+@inject LocalizationService _localizationService
+@inject IJSRuntime _jsRuntime
+
+@* Required *@
+<MudThemeProvider />
+<MudPopoverProvider />
+
+@* Needed for dialogs *@
+<MudDialogProvider />
+
+@* Needed for snackbars *@
+<MudSnackbarProvider />
+
+<ErrorBoundary>
+    <ChildContent>
+        <CascadingValue Value="@this">
+            <MudLayout>
+                <AppBar DisplayMenu DisplayUndoRedoButtonGroup MenuClicked="() => DrawerToggle()" />
+                <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+                    @*NavMenu*@
+                </MudDrawer>
+                <MudMainContent>
+                    @Body
+                </MudMainContent>
+            </MudLayout>
+        </CascadingValue>
+    </ChildContent>
+    <ErrorContent>
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+            @_localizer["An error has occured in this application. Please report this error with as much details as possible here:"]<MudLink Href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?&labels=bug&template=bug_report.md" Target="_blank">https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/new?&labels=bug&template=bug_report.md</MudLink>
+            <br />
+            @_localizer["Error details"]
+            <br />
+            @context
+            <br />
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="ReloadApplication">@_localizer["Reload application"]</MudButton>
+        </MudAlert>
+    </ErrorContent>
+</ErrorBoundary>
+
+@code {
+    //TODO
+    bool _drawerOpen = false;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+    }
+
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    async Task ReloadApplication()
+    {
+        await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+        _navigationManager.NavigateTo(_navigationManager.Uri, true);
+    }
+}

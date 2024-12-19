@@ -39,10 +39,7 @@ along with Foobar.  If not, see
     <ChildContent>
         <CascadingValue Value="@this">
             <MudLayout>
-                <AppBar MenuClicked="() => DrawerToggle()" />
-                <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-                    @*NavMenu*@
-                </MudDrawer>
+                <AppBar />
                 <MudMainContent>
                     @Body
                 </MudMainContent>
@@ -63,14 +60,6 @@ along with Foobar.  If not, see
 </ErrorBoundary>
 
 @code {
-    //TODO
-    bool _drawerOpen = false;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
     public void Dispose()
     {
         _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;

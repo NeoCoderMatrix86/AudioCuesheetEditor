@@ -22,22 +22,28 @@ along with Foobar.  If not, see
 @inject LocalizationService _localizationService
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
-    <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="MenuClicked" />
+    @if (DisplayMenu)
+    {
+        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="MenuClicked" />
+    }
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
         AudioCuesheetEditor
     </MudButton>
-    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
-        <MudButton StartIcon="@Icons.Material.Outlined.Undo" Disabled="!_traceChangeManager.CanUndo" OnClick="() => _traceChangeManager.Undo()">
-            <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                @_localizer["Undo"]
-            </MudHidden>
-        </MudButton>
-        <MudButton StartIcon="@Icons.Material.Outlined.Redo" Disabled="!_traceChangeManager.CanRedo" OnClick="() => _traceChangeManager.Redo()">
-            <MudHidden Breakpoint="Breakpoint.SmAndDown">
-                @_localizer["Redo"]
-            </MudHidden>
-        </MudButton>
-    </MudButtonGroup>
+    @if (DisplayUndoRedoButtonGroup)
+    {
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
+            <MudButton StartIcon="@Icons.Material.Outlined.Undo" Disabled="!_traceChangeManager.CanUndo" OnClick="() => _traceChangeManager.Undo()">
+                <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                    @_localizer["Undo"]
+                </MudHidden>
+            </MudButton>
+            <MudButton StartIcon="@Icons.Material.Outlined.Redo" Disabled="!_traceChangeManager.CanRedo" OnClick="() => _traceChangeManager.Redo()">
+                <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                    @_localizer["Redo"]
+                </MudHidden>
+            </MudButton>
+        </MudButtonGroup>
+    }
     <MudSpacer />
     <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
         @foreach (var culture in LocalizationService.AvailableCultures)
@@ -54,7 +60,13 @@ along with Foobar.  If not, see
 
 @code {
     [Parameter]
+    public Boolean DisplayMenu { get; set; }
+
+    [Parameter]
     public EventCallback MenuClicked { get; set; }
+
+    [Parameter]
+    public Boolean DisplayUndoRedoButtonGroup { get; set; }
 
     async Task SelectedCultureChanged(string name)
     {
