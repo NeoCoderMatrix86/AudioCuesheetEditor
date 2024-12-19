@@ -51,7 +51,7 @@ along with Foobar.  If not, see
             <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@culture.DisplayName</MudMenuItem>
         }
     </MudMenu>
-    <MudMenu Icon="@Icons.Material.Outlined.HelpOutline" Color="Color.Inherit" AriaLabel="@_localizer["Help"]" TransformOrigin="Origin.TopCenter">
+    <MudMenu StartIcon="@Icons.Material.Outlined.HelpOutline" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Color="Color.Inherit" AriaLabel="@_localizer["Help"]" TransformOrigin="Origin.TopCenter">
         <MudMenuItem Href="help">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Href="about">@_localizer["About"]</MudMenuItem>
         <MudMenuItem Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
