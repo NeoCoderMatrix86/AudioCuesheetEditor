@@ -15,44 +15,47 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
+@implements IDisposable
 
 @page "/about"
-@inject HttpClient _httpClient
-@inject ITextLocalizer<About> _localizer
+@layout MainLayoutWithoutMenu
 
-<Layout>
-    <LayoutContent Margin="Margin.Is2">
-        <Heading Size="HeadingSize.Is1">@_localizer["About AudioCuesheetEditor"]</Heading>
-        <Heading Size="HeadingSize.Is5">@_localizer["Version"]: @VersionString</Heading>
-        <Heading Size="HeadingSize.Is5">@_localizer["Project url"]: <Blazorise.Link To="https://www.github.com/NeoCoderMatrix86/AudioCuesheetEditor" Target="Target.Blank">https://www.github.com/NeoCoderMatrix86/AudioCuesheetEditor</Blazorise.Link></Heading>
-        <Heading Size="HeadingSize.Is5">@_localizer["Preview environment"]: <Blazorise.Link To="https://preview-audiocuesheeteditor.netlify.app/" Target="Target.Blank">https://preview-audiocuesheeteditor.netlify.app/</Blazorise.Link></Heading>
-        <Blazorise.Link To="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="Target.Blank">@_localizer["Donate for this project"]</Blazorise.Link>
-        <br />
-        <br />
-        <Heading Size="HeadingSize.Is3">@_localizer["Licence"]</Heading>
-        <Paragraph>@((MarkupString)licence)</Paragraph>
-    </LayoutContent>
-</Layout>
+@inject HttpClient _httpClient
+@inject IStringLocalizer<About> _localizer
+@inject LocalizationService _localizationService
+
+<MudText Typo="Typo.h3">@_localizer["About AudioCuesheetEditor"]</MudText>
+<MudText Typo="Typo.h5">@_localizer["Version"]: @VersionString</MudText>
+<MudText Typo="Typo.h5">@_localizer["Project url"]: <MudLink Href="https://www.github.com/NeoCoderMatrix86/AudioCuesheetEditor" Target="_blank">https://www.github.com/NeoCoderMatrix86/AudioCuesheetEditor</MudLink></MudText>
+<MudText Typo="Typo.h5">@_localizer["Preview environment"]: <MudLink Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">https://preview-audiocuesheeteditor.netlify.app/</MudLink></MudText>
+<MudLink Href="https://www.paypal.com/donate/?cmd=_donations&business=sbbaus%40web%2ede&lc=DE&item_name=Cuesheet%20Project&no_note=0&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest" Target="_blank">@_localizer["Donate for this project"]</MudLink>
+<br />
+<br />
+<MudText Typo="Typo.h4">@_localizer["Licence"]</MudText>
+@if (licence != null)
+{
+    <MudText>@((MarkupString)licence)</MudText>
+}
 
 @code {
-    [CascadingParameter]
-    public MainLayout? mainLayout { get; set; }
+    String? licence;
 
-    String licence = default!;
+    public void Dispose()
+    {
+        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+    }
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         var licenceContent = await _httpClient.GetStringAsync("Licence.txt");
         licence = Markdown.ToHtml(licenceContent);
     }
 
-    protected override async Task OnParametersSetAsync()
+    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
     {
-        await base.OnParametersSetAsync();
-        if (mainLayout != null)
-        {
-            mainLayout.SetDisplayMenuBar(false);
-        }
+        StateHasChanged();
     }
 
     public String VersionString
