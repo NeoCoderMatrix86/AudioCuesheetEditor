@@ -42,19 +42,6 @@ namespace AudioCuesheetEditor.Model.Options
     public class ApplicationOptions : Validateable<ApplicationOptions>, IOptions
     {
         public const String DefaultCultureName = "en-US";
-
-        public static IReadOnlyCollection<CultureInfo> AvailableCultures
-        {
-            get
-            {
-                var cultures = new List<CultureInfo>
-                {
-                    new("en-US"),
-                    new("de-DE")
-                };
-                return cultures.AsReadOnly();
-            }
-        }
         public String? CuesheetFilename { get; set; } = Exportfile.DefaultCuesheetFilename;
         public String? CultureName { get; set; } = DefaultCultureName;
         [JsonIgnore]

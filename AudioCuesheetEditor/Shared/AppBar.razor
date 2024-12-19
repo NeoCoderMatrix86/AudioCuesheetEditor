@@ -1,0 +1,73 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inject NavigationManager _navigationManager
+@inject TraceChangeManager _traceChangeManager
+@inject IStringLocalizer<AppBar> _localizer
+@inject LocalizationService _localizationService
+
+<MudAppBar Elevation="1" Color="Color.Dark" Fixed>
+    <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="MenuClicked" />
+    <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
+        AudioCuesheetEditor
+    </MudButton>
+    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
+        <MudButton StartIcon="@Icons.Material.Outlined.Undo" Disabled="!_traceChangeManager.CanUndo" OnClick="() => _traceChangeManager.Undo()">
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                @_localizer["Undo"]
+            </MudHidden>
+        </MudButton>
+        <MudButton StartIcon="@Icons.Material.Outlined.Redo" Disabled="!_traceChangeManager.CanRedo" OnClick="() => _traceChangeManager.Redo()">
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                @_localizer["Redo"]
+            </MudHidden>
+        </MudButton>
+    </MudButtonGroup>
+    <MudSpacer />
+    <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
+        @foreach (var culture in LocalizationService.AvailableCultures)
+        {
+            <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@culture.DisplayName</MudMenuItem>
+        }
+    </MudMenu>
+    <MudMenu Icon="@Icons.Material.Outlined.HelpOutline" Color="Color.Inherit" AriaLabel="@_localizer["Help"]" TransformOrigin="Origin.TopCenter">
+        <MudMenuItem Href="help">@_localizer["Help"]</MudMenuItem>
+        <MudMenuItem Href="about">@_localizer["About"]</MudMenuItem>
+        <MudMenuItem Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
+    </MudMenu>
+</MudAppBar>
+
+@code {
+    [Parameter]
+    public EventCallback MenuClicked { get; set; }
+
+    async Task SelectedCultureChanged(string name)
+    {
+        await _localizationService.ChangeLanguageAsync(name);
+    }
+
+    String GetStyle(CultureInfo cultureInfo)
+    {
+        String style = "white-space: nowrap;";
+        if (cultureInfo.Name == _localizationService.SelectedCulture.Name)
+        {
+            style += "background-color: var(--mud-palette-info-lighten);";
+        }
+        return style;
+    }
+}
