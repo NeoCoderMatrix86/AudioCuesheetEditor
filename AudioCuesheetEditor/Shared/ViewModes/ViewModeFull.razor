@@ -15,10 +15,9 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-@implements IDisposable
+@inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeFull> _localizer
-@inject LocalizationService _localizationService
 
 <MudExpansionPanels MultiExpansion>
     <MudExpansionPanel @bind-Expanded="cuesheetSectionsExpanded">
@@ -57,20 +56,4 @@ along with Foobar.  If not, see
     Boolean cuesheetDataExpanded = false;
     Boolean cuesheetTracksExpanded = false;
     AudioPlayer? audioPlayer;
-
-    public void Dispose()
-    {
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-    }
-
-    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
 }

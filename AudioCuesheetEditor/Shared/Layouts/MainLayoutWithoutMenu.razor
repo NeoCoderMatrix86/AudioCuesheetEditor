@@ -16,13 +16,10 @@ along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
 
-@inherits LayoutComponentBase
-
-@implements IDisposable
+@inherits BaseLocalizedLayoutComponentBase
 
 @inject NavigationManager _navigationManager
 @inject IStringLocalizer<MainLayout> _localizer
-@inject LocalizationService _localizationService
 @inject IJSRuntime _jsRuntime
 
 @* Required *@
@@ -60,22 +57,6 @@ along with Foobar.  If not, see
 </ErrorBoundary>
 
 @code {
-    public void Dispose()
-    {
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-    }
-
-    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
     async Task ReloadApplication()
     {
         await _jsRuntime.InvokeVoidAsync("removeBeforeunload");

@@ -15,14 +15,13 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-@implements IDisposable
+@inherits BaseLocalizedComponent
 
 @page "/about"
 @layout MainLayoutWithoutMenu
 
 @inject HttpClient _httpClient
 @inject IStringLocalizer<About> _localizer
-@inject LocalizationService _localizationService
 
 <MudText Typo="Typo.h3">@_localizer["About AudioCuesheetEditor"]</MudText>
 <MudText Typo="Typo.h5">@_localizer["Version"]: @VersionString</MudText>
@@ -40,22 +39,11 @@ along with Foobar.  If not, see
 @code {
     String? licence;
 
-    public void Dispose()
-    {
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
         var licenceContent = await _httpClient.GetStringAsync("Licence.txt");
         licence = Markdown.ToHtml(licenceContent);
-    }
-
-    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
     }
 
     public String VersionString

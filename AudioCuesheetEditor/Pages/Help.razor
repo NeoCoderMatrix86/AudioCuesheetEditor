@@ -18,29 +18,12 @@ along with Foobar.  If not, see
 
 @page "/Help"
 @layout MainLayoutWithoutMenu
-
-@implements IDisposable
+@inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<Help> _localizer
-@inject LocalizationService _localizationService
 
 <MudText Typo="Typo.h1">@_localizer["Help"]</MudText>
 
 @code {
     //TODO
-    public void Dispose()
-    {
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-    }
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-    }
-
-    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
 }
