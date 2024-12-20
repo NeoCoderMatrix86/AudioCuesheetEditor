@@ -15,133 +15,20 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-@implements IAsyncDisposable
 
 @page "/"
-@inject IJSRuntime _jsRuntime
-@inject ITextLocalizer<Index> _localizer
-@inject NavigationManager _navigationManager
-@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
-@inject ILogger<Index> _logger
-@inject HotKeys _hotKeys
-@inject HttpClient _httpClient
+
 @inject SessionStateContainer _sessionStateContainer
-@inject ITextLocalizerService _localizationService
-@inject TraceChangeManager _traceChangeManager
 
-<Row Margin="Margin.Is2">
-    @switch (_sessionStateContainer.CurrentViewMode)
-    {
-        case ViewMode.ViewModeRecord:
-            <ViewModeRecord />
-            break;
-        case ViewMode.ViewModeFull:
-            <Column>
-                <Accordion>
-                    <Collapse Visible="cuesheetSplitPointsVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => cuesheetSplitPointsVisible = !cuesheetSplitPointsVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet sections"]</Heading></Button>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <EditSections />
-                        </CollapseBody>
-                    </Collapse>
-                    <Collapse Visible="cuesheetDataVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => cuesheetDataVisible = !cuesheetDataVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Cuesheet data"]</Heading></Button>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <CuesheetData />
-                        </CollapseBody>
-                    </Collapse>
-                    <Collapse Visible="cuesheetTracksVisible">
-                        <CollapseHeader>
-                            <Button Clicked="(() => cuesheetTracksVisible = !cuesheetTracksVisible)"><Heading Size="HeadingSize.Is3">@_localizer["Tracks"]</Heading></Button>
-                        </CollapseHeader>
-                        <CollapseBody>
-                            <TrackList AudioPlayer="audioPlayer" />
-                        </CollapseBody>
-                    </Collapse>
-                </Accordion>
-                <br />
-                <AudioPlayer @ref="audioPlayer" CurrentlyPlayingTrackChanged="() => StateHasChanged()" />
-                <br />
-            </Column>
-            break;
-        case ViewMode.ViewModeImport:
-            <ViewModeImport />
-            break;
-    }
-</Row>
-
-<ModalDialog @ref="modalDialog" />
-
-@code {
-
-    public async ValueTask DisposeAsync()
-    {
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-        _sessionStateContainer.CurrentViewModeChanged -= CurrentViewModeChanged;
-        if (hotKeysContext != null)
-        {
-            await hotKeysContext.DisposeAsync();
-        }
-    }
-
-    [CascadingParameter]
-    public MainLayout? mainLayout { get; set; }
-
-    Boolean cuesheetSplitPointsVisible = false;
-    Boolean cuesheetDataVisible = true;
-    Boolean cuesheetTracksVisible = true;
-
-    HotKeysContext? hotKeysContext;
-
-    ModalDialog? modalDialog;
-    AudioPlayer? audioPlayer;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        _logger.LogDebug("OnInitializedAsync");
-        _logger.LogInformation("CultureInfo.CurrentCulture = {0}", CultureInfo.CurrentCulture);
-
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-
-        hotKeysContext = _hotKeys.CreateContext()
-            .Add(Key.Enter, OnEnterKeyDown)
-            .Add(ModKey.Ctrl, Key.z, () => _traceChangeManager.Undo())
-            .Add(ModKey.Ctrl, Key.y, () => _traceChangeManager.Redo());
-
-        _sessionStateContainer.CurrentViewModeChanged += CurrentViewModeChanged;
-    }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        mainLayout?.SetDisplayMenuBar(true);
-    }
-
-    async ValueTask OnEnterKeyDown()
-    {
-        if ((modalDialog != null) && (modalDialog.Visible))
-        {
-            await modalDialog.Confirm();
-        }
-    }
-
-    private void CurrentViewModeChanged(object? sender, EventArgs args)
-    {
-        if (audioPlayer != null)
-        {
-            Task.Run(async () => await audioPlayer.Reset());
-        }
-        StateHasChanged();
-    }
-
-    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
+@switch (_sessionStateContainer.CurrentViewMode)
+{
+    case ViewMode.ViewModeRecord:
+        <ViewModeRecord />
+        break;    
+    case ViewMode.ViewModeFull:
+        <ViewModeFull />
+        break;
+    case ViewMode.ViewModeImport:
+        <ViewModeImport />
+        break;
 }
