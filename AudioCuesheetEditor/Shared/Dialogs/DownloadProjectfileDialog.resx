@@ -117,25 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Cuesheetfile" xml:space="preserve">
-    <value>Cuesheetfile</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
+  <data name="Download project" xml:space="preserve">
+    <value>Download project</value>
   </data>
-  <data name="Export" xml:space="preserve">
-    <value>Export</value>
+  <data name="Filename" xml:space="preserve">
+    <value>Filename</value>
   </data>
-  <data name="Other" xml:space="preserve">
-    <value>Other</value>
-  </data>
-  <data name="Projectfile" xml:space="preserve">
-    <value>Projectfile</value>
-  </data>
-  <data name="Redo" xml:space="preserve">
-    <value>Redo</value>
-  </data>
-  <data name="Undo" xml:space="preserve">
-    <value>Undo</value>
+  <data name="Save project" xml:space="preserve">
+    <value>Save project</value>
   </data>
 </root>

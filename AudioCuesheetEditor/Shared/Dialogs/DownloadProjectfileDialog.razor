@@ -1,0 +1,41 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<DownloadProjectfileDialog> _localizer
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5">@_localizer["Save project"]</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="(args) => MudDialog?.Cancel()">@_localizer["Cancel"]</MudButton>
+        <MudButton Color="Color.Info" Variant="Variant.Filled">@_localizer["Download project"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+    //TODO
+    //TODO: validation
+    //TODO: Load application settings for filename
+}
