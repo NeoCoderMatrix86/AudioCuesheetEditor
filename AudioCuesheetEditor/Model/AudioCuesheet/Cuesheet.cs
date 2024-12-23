@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
+using static MudBlazor.Colors;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
@@ -47,7 +48,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String? title;
         private Audiofile? audiofile;
         private CDTextfile? cDTextfile;
-        private Cataloguenumber catalogueNumber = new();
+        private String? catalogueNumber;
         private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
         private List<CuesheetSection> sections = [];
@@ -138,14 +139,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public Cataloguenumber Cataloguenumber 
+        public String? Cataloguenumber 
         {
             get => catalogueNumber;
             set
             {
                 var previousValue = catalogueNumber;
                 catalogueNumber = value;
-                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(Cataloguenumber));
+                FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
             }
         }
 
@@ -464,7 +465,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (String.IsNullOrEmpty(Artist))
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!"));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
                     }
                     break;
                 case nameof(Title):
@@ -473,6 +474,22 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     {
                         validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
+                    }
+                    break;
+                case nameof(Cataloguenumber):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Cataloguenumber) == false)
+                    {
+                        if (Cataloguenumber.All(Char.IsDigit) == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} must only contain numbers!", nameof(Cataloguenumber)));
+                        }
+                        if (Cataloguenumber.Length != 13)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} has an invalid length. Allowed length is {1}!", nameof(Cataloguenumber), 13));
+                        }
                     }
                     break;
             }

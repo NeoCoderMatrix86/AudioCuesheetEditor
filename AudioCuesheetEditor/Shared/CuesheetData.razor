@@ -25,8 +25,9 @@ along with Foobar.  If not, see
 @if (Cuesheet != null)
 {
     <MudForm Model="Cuesheet">
-        <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter cuesheet artist here"]" Variant="Variant.Outlined" />
-        <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter cuesheet title here"]" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
     </MudForm>
 }
 @code {

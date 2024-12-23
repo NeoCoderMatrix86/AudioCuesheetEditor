@@ -17,12 +17,9 @@ using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
-using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
-using AudioCuesheetEditor.Model.Utility;
-using Blazorise;
 
 namespace AudioCuesheetEditor.Services.IO
 {
@@ -40,51 +37,52 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly TextImportService _textImportService = textImportService;
         private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
-
-        public async Task<Dictionary<IFileEntry, ImportFileType>> ImportFilesAsync(IEnumerable<IFileEntry> files)
-        {
-            Dictionary<IFileEntry, ImportFileType> importFileTypes = [];
-            foreach (var file in files)
-            {
-                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
-                    if (cuesheet != null)
-                    {
-                        _sessionStateContainer.ImportCuesheet = cuesheet;
-                    }
-                    importFileTypes.Add(file, ImportFileType.ProjectFile);
-                }
-                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    List<String?> lines = [];
-                    while (reader.EndOfStream == false)
-                    {
-                        lines.Add(reader.ReadLine());
-                    }
-                    await ImportCuesheetAsync(lines);
-                    importFileTypes.Add(file, ImportFileType.Cuesheet);
-                }
-                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    List<String?> lines = [];
-                    while (reader.EndOfStream == false)
-                    {
-                        lines.Add(reader.ReadLine());
-                    }
-                    await ImportTextAsync([.. lines]);
-                    importFileTypes.Add(file, ImportFileType.Textfile);
-                }
-            }
-            return importFileTypes;
-        }
+        
+        //TODO
+        //public async Task<Dictionary<IFileEntry, ImportFileType>> ImportFilesAsync(IEnumerable<IFileEntry> files)
+        //{
+        //    Dictionary<IFileEntry, ImportFileType> importFileTypes = [];
+        //    foreach (var file in files)
+        //    {
+        //        if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
+        //        {
+        //            var fileContent = await ReadFileContentAsync(file);
+        //            var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
+        //            if (cuesheet != null)
+        //            {
+        //                _sessionStateContainer.ImportCuesheet = cuesheet;
+        //            }
+        //            importFileTypes.Add(file, ImportFileType.ProjectFile);
+        //        }
+        //        if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
+        //        {
+        //            var fileContent = await ReadFileContentAsync(file);
+        //            fileContent.Position = 0;
+        //            using var reader = new StreamReader(fileContent);
+        //            List<String?> lines = [];
+        //            while (reader.EndOfStream == false)
+        //            {
+        //                lines.Add(reader.ReadLine());
+        //            }
+        //            await ImportCuesheetAsync(lines);
+        //            importFileTypes.Add(file, ImportFileType.Cuesheet);
+        //        }
+        //        if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
+        //        {
+        //            var fileContent = await ReadFileContentAsync(file);
+        //            fileContent.Position = 0;
+        //            using var reader = new StreamReader(fileContent);
+        //            List<String?> lines = [];
+        //            while (reader.EndOfStream == false)
+        //            {
+        //                lines.Add(reader.ReadLine());
+        //            }
+        //            await ImportTextAsync([.. lines]);
+        //            importFileTypes.Add(file, ImportFileType.Textfile);
+        //        }
+        //    }
+        //    return importFileTypes;
+        //}
 
         public async Task ImportTextAsync(IEnumerable<String?> fileContent)
         {
@@ -119,21 +117,22 @@ namespace AudioCuesheetEditor.Services.IO
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }
-
-        private static async Task<MemoryStream> ReadFileContentAsync(IFileEntry file)
-        {
-            var fileContent = new MemoryStream();
-            var stream = file.OpenReadStream();
-            await stream.CopyToAsync(fileContent);
-            stream.Close();
-            return fileContent;
-        }
+        //TODO
+        //private static async Task<MemoryStream> ReadFileContentAsync(IFileEntry file)
+        //{
+        //    var fileContent = new MemoryStream();
+        //    var stream = file.OpenReadStream();
+        //    await stream.CopyToAsync(fileContent);
+        //    stream.Close();
+        //    return fileContent;
+        //}
 
         private async Task CopyCuesheetAsync(Cuesheet target, ICuesheet cuesheetToCopy)
         {
             target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
+            target.Cataloguenumber = cuesheetToCopy.CatalogueNumber;
             IEnumerable<ITrack>? tracks = null;
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
@@ -159,10 +158,6 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
                 }
-                target.Cataloguenumber = new Cataloguenumber()
-                {
-                    Value = importCuesheet.Cataloguenumber
-                };
             }
             if (tracks != null)
             {

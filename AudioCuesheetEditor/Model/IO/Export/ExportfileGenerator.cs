@@ -118,9 +118,9 @@ namespace AudioCuesheetEditor.Model.IO.Export
         private string WriteCuesheet(String? audiofileName, CuesheetSection? section = null)
         {
             var builder = new StringBuilder();
-            if (Cuesheet.Cataloguenumber != null && string.IsNullOrEmpty(Cuesheet.Cataloguenumber.Value) == false && Cuesheet.Cataloguenumber.Validate().Status != ValidationStatus.Error)
+            if (string.IsNullOrEmpty(Cuesheet.Cataloguenumber) == false)
             {
-                builder.AppendLine(string.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, Cuesheet.Cataloguenumber.Value));
+                builder.AppendLine(string.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, Cuesheet.Cataloguenumber));
             }
             if (Cuesheet.CDTextfile != null)
             {
@@ -190,7 +190,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     .Replace(Exportprofile.SchemeCuesheetTitle, section != null ? section.Title : Cuesheet.Title)
                     .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.Name)
-                    .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
+                    .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                     .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                     .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
@@ -249,7 +249,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     .Replace(Exportprofile.SchemeCuesheetTitle, section != null ? section.Title : Cuesheet.Title)
                     .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, Cuesheet.CDTextfile?.Name)
-                    .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber?.Value)
+                    .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, Cuesheet.Cataloguenumber)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                     .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                     .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
@@ -266,8 +266,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 case nameof(Cuesheet):
                     var validationResults = new Dictionary<IValidateable, ValidationResult>
                     {
-                        { Cuesheet, Cuesheet.Validate() },
-                        { Cuesheet.Cataloguenumber, Cuesheet.Cataloguenumber.Validate() }
+                        { Cuesheet, Cuesheet.Validate() }
                     };
                     foreach (var track in Cuesheet.Tracks)
                     {

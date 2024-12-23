@@ -152,10 +152,6 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 property.SetValue(entity, new Audiofile(value));
             }
-            if (property.PropertyType == typeof(Cataloguenumber))
-            {
-                ((Cuesheet)entity).Cataloguenumber.Value = value;
-            }
             if (property.PropertyType == typeof(DateTime?))
             {
                 if (DateTime.TryParse(value, out var date))
