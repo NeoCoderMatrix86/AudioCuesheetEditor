@@ -29,7 +29,7 @@ namespace AudioCuesheetEditor.Model.Entity
         /// <returns></returns>
         ValidationResult Validate(String property);
 
-        public event EventHandler<String>? ValidateablePropertyChanged;
+        event EventHandler<String>? ValidateablePropertyChanged;
     }
     public enum ValidationStatus
     {
