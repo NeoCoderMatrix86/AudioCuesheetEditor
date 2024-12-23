@@ -132,7 +132,7 @@ namespace AudioCuesheetEditor.Services.IO
             target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
-            target.Cataloguenumber = cuesheetToCopy.CatalogueNumber;
+            target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
             IEnumerable<ITrack>? tracks = null;
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
