@@ -42,25 +42,10 @@ function resetLocalStorage() {
     localStorage.clear();
 }
 
-window.ApplicationOptions = {
-    get: () => localStorage['ApplicationOptions'],
-    set: (value) => localStorage['ApplicationOptions'] = value
-}
-
-window.ExportOptions = {
-    get: () => localStorage['ExportOptions'],
-    set: (value) => localStorage['ExportOptions'] = value
-}
-
-window.ImportOptions = {
-    get: () => localStorage['ImportOptions'],
-    set: (value) => localStorage['ImportOptions'] = value
-}
-
-window.RecordOptions = {
-    get: () => localStorage['RecordOptions'],
-    set: (value) => localStorage['RecordOptions'] = value
-}
+window.AppSettings = {
+    get: (key) => localStorage[key],
+    set: (key, value) => localStorage[key] = value
+};
 
 function dragLeave(e, domElement) {
     e.preventDefault();

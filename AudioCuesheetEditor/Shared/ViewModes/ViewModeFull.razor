@@ -33,7 +33,7 @@ along with Foobar.  If not, see
             <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
         </TitleContent>
         <ChildContent>
-            <CuesheetData />
+            <CuesheetData Cuesheet="Cuesheet" />
         </ChildContent>
     </MudExpansionPanel>
     <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
@@ -56,4 +56,8 @@ along with Foobar.  If not, see
     Boolean cuesheetDataExpanded = true;
     Boolean cuesheetTracksExpanded = true;
     AudioPlayer? audioPlayer;
+
+    [Parameter]
+    [EditorRequired]
+    public Cuesheet? Cuesheet { get; set; }
 }

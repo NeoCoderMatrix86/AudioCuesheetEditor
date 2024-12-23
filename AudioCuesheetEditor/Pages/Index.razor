@@ -18,21 +18,59 @@ along with Foobar.  If not, see
 
 @page "/"
 
-@inject SessionStateContainer _sessionStateContainer
+@inherits BaseLocalizedComponent
 
-@switch (_sessionStateContainer.CurrentViewMode)
-{
-    case ViewMode.ViewModeRecord:
+@inject SessionStateContainer _sessionStateContainer
+@inject IStringLocalizer<Index> _localizer
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
+
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)(viewOptions != null ? viewOptions.ActiveTab : ViewMode.DetailView)" ActivePanelIndexChanged="ActiveTabIndexChanged">
+    <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
+        <ViewModeFull Cuesheet="_sessionStateContainer.Cuesheet" />
+    </MudTabPanel>
+    <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
         <ViewModeRecord />
-        break;    
-    case ViewMode.ViewModeFull:
-        <ViewModeFull />
-        break;
-    case ViewMode.ViewModeImport:
+    </MudTabPanel>
+    <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
         <ViewModeImport />
-        break;
-}
+    </MudTabPanel>
+</MudTabs>
 
 @code{
-    //TODO: Switch for view modes (including setting options and reading options, etc.)
+    ViewOptions? viewOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        viewOptions = await _localStorageOptionsProvider.GetOptions<ViewOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        StateHasChanged();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        }
+    }
+
+    async Task ActiveTabIndexChanged(int tabIndex)
+    {
+        var activeViewMode = (ViewMode)tabIndex;
+        if (viewOptions != null)
+        {
+            viewOptions.ActiveTab = activeViewMode;
+        }
+        await _localStorageOptionsProvider.SaveOptionsValue<ViewOptions>(x => x.ActiveTab, activeViewMode);
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ViewOptions viewOption)
+        {
+            viewOptions = viewOption;
+        }
+    }
 }

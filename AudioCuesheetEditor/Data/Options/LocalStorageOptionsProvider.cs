@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Data.Options
         {
             var type = typeof(T);
             IOptions? options = (IOptions?)Activator.CreateInstance(type);
-            String optionsJson = await _jsRuntime.InvokeAsync<String>(String.Format("{0}.get", type.Name));
+            String optionsJson = await _jsRuntime.InvokeAsync<String>("AppSettings.get", type.Name);
             if (String.IsNullOrEmpty(optionsJson) == false)
             {
                 try
@@ -64,7 +64,7 @@ namespace AudioCuesheetEditor.Data.Options
         public async Task SaveOptions(IOptions options)
         {
             var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
-            await _jsRuntime.InvokeVoidAsync(String.Format("{0}.set", options.GetType().Name), optionsJson);
+            await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
             OptionSaved?.Invoke(this, options);
         }
 

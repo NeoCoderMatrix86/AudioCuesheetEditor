@@ -35,21 +35,7 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: More fields when using full edit mode? Maybe another expand should be used for not so much used informations
 
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            Cuesheet? cuesheet;
-            switch (_sessionStateContainer.CurrentViewMode)
-            {
-                case ViewMode.ViewModeImport:
-                    cuesheet = _sessionStateContainer.ImportCuesheet;
-                    break;
-                default:
-                    cuesheet = _sessionStateContainer.Cuesheet;
-                    break;
-            }
-            return cuesheet;
-        }
-    }
+    [Parameter]
+    [EditorRequired]
+    public Cuesheet? Cuesheet { get; set; }
 }

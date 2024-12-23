@@ -16,19 +16,16 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Extensions
 {
     public class SessionStateContainer
     {
-        public event EventHandler? CurrentViewModeChanged;
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ImportCuesheetChanged;
 
         private readonly TraceChangeManager _traceChangeManager;
-        private ViewMode currentViewMode;
         private Cuesheet cuesheet;
         private Cuesheet? importCuesheet;
         private Audiofile? importAudiofile;
@@ -74,16 +71,6 @@ namespace AudioCuesheetEditor.Extensions
                     ImportCuesheet.Audiofile = ImportAudiofile;
                     ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
                 }
-            }
-        }
-
-        public ViewMode CurrentViewMode 
-        {
-            get { return currentViewMode; }
-            set
-            {
-                currentViewMode = value;
-                CurrentViewModeChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

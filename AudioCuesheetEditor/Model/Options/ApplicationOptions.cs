@@ -22,16 +22,6 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
-    /// <summary>
-    /// Enum for setting desired GUI mode
-    /// </summary>
-    public enum ViewMode
-    {
-        ViewModeFull = 0,
-        ViewModeRecord = 1,
-        ViewModeImport = 2
-    }
-
     public enum TimeSensitivityMode
     {
         Full = 0,
@@ -56,23 +46,6 @@ namespace AudioCuesheetEditor.Model.Options
                 else
                 {
                     return CultureInfo.CurrentCulture;
-                }
-            }
-        }
-        [JsonIgnore]
-        public ViewMode ViewMode { get; set; }
-        public String? ViewModename 
-        {
-            get { return Enum.GetName(typeof(ViewMode), ViewMode); }
-            set 
-            {
-                if (value != null)
-                {
-                    ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value);
-                }
-                else
-                {
-                    throw new ArgumentNullException(nameof(value));
                 }
             }
         }
