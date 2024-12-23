@@ -42,13 +42,13 @@ namespace AudioCuesheetEditor.Data.Options
             {
                 try
                 {
-                    options = (IOptions?)JsonSerializer.Deserialize(optionsJson, typeof(T));
-                    options ??= (IOptions?)Activator.CreateInstance(typeof(T));
+                    options = JsonSerializer.Deserialize<T>(optionsJson);
+                    options ??= Activator.CreateInstance<T>();
                 }
                 catch (JsonException)
                 {
                     //nothing to do, we can not deserialize
-                    options = (IOptions?)Activator.CreateInstance(typeof(T));
+                    options = Activator.CreateInstance<T>();
                 }
             }
             if (options != null)
