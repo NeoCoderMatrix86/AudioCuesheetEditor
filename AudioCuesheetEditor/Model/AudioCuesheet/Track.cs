@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Remove
     }
 
-    public class Track : Validateable<Track>, ITraceable, ITrack
+    public class Track : Validateable, ITraceable, ITrack
     {
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 
@@ -382,7 +382,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             this.flags.AddRange(flags);
         }
 
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;

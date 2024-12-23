@@ -16,18 +16,18 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
-using Blazorise.Localization;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class TextImportScheme : Validateable<TextImportScheme>
+    public class TextImportScheme : Validateable
     {
         public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
 
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemeCuesheet;
         public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
 
-        public static ITextLocalizer? TextLocalizer { get; set; }
+        //TODO
+        //public static ITextLocalizer? TextLocalizer { get; set; }
 
         static TextImportScheme()
         {
@@ -107,15 +107,16 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 OnValidateablePropertyChanged();
             }
         }
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
             String enterRegularExpression = EnterRegularExpressionHere;
-            if (TextLocalizer != null)
-            {
-                enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
-            }
+            //TODO
+            //if (TextLocalizer != null)
+            //{
+            //    enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
+            //}
             switch (property)
             {
                 case nameof(SchemeCuesheet):

@@ -20,6 +20,7 @@ using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
+using AudioCuesheetEditor.Services.Validation;
 using BlazorDownloadFile;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -59,6 +60,7 @@ builder.Services.AddScoped<TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 builder.Services.AddScoped<LocalizationService>();
+builder.Services.AddScoped<ValidationService>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

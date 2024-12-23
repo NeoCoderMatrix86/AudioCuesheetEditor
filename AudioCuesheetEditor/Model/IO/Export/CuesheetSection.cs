@@ -20,7 +20,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
-    public class CuesheetSection : Validateable<CuesheetSection>, ITraceable
+    public class CuesheetSection : Validateable, ITraceable
     {
         private Cuesheet? cuesheet;
         private TimeSpan? begin;
@@ -131,7 +131,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             Begin = splitPoint.Begin;
         }
 
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;

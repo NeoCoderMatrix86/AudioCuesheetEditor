@@ -14,12 +14,11 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using Blazorise.Localization;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.Utility
 {
-    public class TimeSpanFormat : Validateable<TimeSpanFormat>
+    public class TimeSpanFormat : Validateable
     {
         public const String Days = "Days";
         public const String Hours = "Hours";
@@ -30,7 +29,8 @@ namespace AudioCuesheetEditor.Model.Utility
         public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
         public static readonly IReadOnlyDictionary<String, String> AvailableTimespanScheme;
 
-        public static ITextLocalizer? TextLocalizer { get; set; }
+        //TODO
+        //public static ITextLocalizer? TextLocalizer { get; set; }
 
         static TimeSpanFormat()
         {
@@ -110,15 +110,16 @@ namespace AudioCuesheetEditor.Model.Utility
             return timespan;
         }
 
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
             var enterRegularExpression = EnterRegularExpressionHere;
-            if (TextLocalizer != null)
-            {
-                enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
-            }
+            //TODO
+            //if (TextLocalizer != null)
+            //{
+            //    enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
+            //}
             switch (property)
             {
                 case nameof(Scheme):

@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public CuesheetSection Section { get; } = section;
     }
 
-    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ITraceable, ICuesheet
+    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable, ITraceable, ICuesheet
     {
         private readonly object syncLock = new();
 
@@ -405,7 +405,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             recordingStart = null;
         }
 
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
@@ -464,7 +464,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (String.IsNullOrEmpty(Artist))
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
+                        validationMessages.Add(new ValidationMessage("{0} has no value!"));
                     }
                     break;
                 case nameof(Title):

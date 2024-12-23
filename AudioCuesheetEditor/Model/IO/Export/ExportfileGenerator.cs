@@ -15,12 +15,9 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using System.Data;
-using System.Diagnostics.Metrics;
 using System.Text;
-using System.Xml.Linq;
 
 namespace AudioCuesheetEditor.Model.IO.Export
 {
@@ -30,7 +27,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
         Exportprofile
     }
 
-    public class ExportfileGenerator(ExportType exportType, Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null) : Validateable<ExportfileGenerator>
+    public class ExportfileGenerator(ExportType exportType, Cuesheet cuesheet, Exportprofile? exportprofile = null, ApplicationOptions? applicationOptions = null) : Validateable
     {
         public Cuesheet Cuesheet { get; } = cuesheet;
         public Exportprofile? Exportprofile { get; set; } = exportprofile;
@@ -261,7 +258,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
             return builder.ToString();
         }
 
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationResult validationResult;
             switch (property)
@@ -299,7 +296,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                         }
                         else
                         {
-                            validationResult = ApplicationOptions.Validate(x => x.CuesheetFilename);
+                            validationResult = ApplicationOptions.Validate(nameof(ApplicationOptions.CuesheetFilename));
                         }
                     }
                     else

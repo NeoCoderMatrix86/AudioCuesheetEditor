@@ -71,38 +71,27 @@ namespace AudioCuesheetEditor.Data.Options
         public async Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object value) where T : class, IOptions, new()
         {
             var options = await GetOptions<T>();
+            Boolean saveOptions = true;
+            PropertyInfo? propertyInfo = null;
             if (propertyExpression.Body is MemberExpression memberExpression)
             {
-                var propertyInfo = memberExpression.Member as PropertyInfo;
-                if (propertyInfo != null)
-                {
-                    propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType));
-                }
-                else
-                {
-                    throw new ArgumentException("The provided expression does not reference a valid property.");
-                }
+                propertyInfo = memberExpression.Member as PropertyInfo;
             }
             else if (propertyExpression.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression unaryMemberExpression)
             {
-                var propertyInfo = unaryMemberExpression.Member as PropertyInfo;
-                if (propertyInfo != null)
+                propertyInfo = unaryMemberExpression.Member as PropertyInfo;
+            }
+            if (propertyInfo != null)
+            {
+                propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType));
+                if (options is IValidateable validateable)
                 {
-                    propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType));
-                }
-                else
-                {
-                    throw new ArgumentException("The provided expression does not reference a valid property.");
+                    saveOptions = validateable.Validate(propertyInfo.Name).Status != ValidationStatus.Error;
                 }
             }
             else
             {
                 throw new ArgumentException("The provided expression does not reference a valid property.");
-            }
-            Boolean saveOptions = true;
-            if (options is IValidateable<T> validateable)
-            {
-                saveOptions = validateable.Validate(propertyExpression).Status != ValidationStatus.Error;
             }
             if (saveOptions)
             {

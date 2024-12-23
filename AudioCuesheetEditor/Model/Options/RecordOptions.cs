@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
-    public class RecordOptions : Validateable<RecordOptions>, IOptions
+    public class RecordOptions : Validateable, IOptions
     {
         public String RecordedAudiofilename { get; set; } = Audiofile.RecordingFileName;
         [JsonIgnore]
@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
