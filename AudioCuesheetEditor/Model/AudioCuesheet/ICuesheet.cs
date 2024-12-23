@@ -20,6 +20,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     {
         string? Artist { get; set; }
         string? Title { get; set; }
-        string? CatalogueNumber { get; set; }
+        string? Cataloguenumber { get; set; }
     }
 }
