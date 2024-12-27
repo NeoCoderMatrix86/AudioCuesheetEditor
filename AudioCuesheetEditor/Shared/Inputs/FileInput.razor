@@ -1,0 +1,66 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+<MudStack Row StretchItems="StretchItems.Start">
+    <MudFileUpload T="IBrowserFile" @ref="fileUpload" FilesChanged="OnFileChanged" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+            @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
+        <ActivatorContent>
+            <MudField Label="Audiofile" FullWidth Variant="Variant.Outlined" Class="@textfieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile">
+                <MudText Style="@MudTextStyle">
+                    @(audiofilename != null ? audiofilename : "No audio file selected")
+                </MudText>
+            </MudField>
+        </ActivatorContent>
+    </MudFileUpload>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">Pick file</MudButton>
+    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="String.IsNullOrEmpty(audiofilename)" />
+</MudStack>
+
+@code {
+    //TODO: Parameter, etc.
+    //TODO: Validierung Datei
+    //TODO: Localization
+    //TODO: Ist deutlich höher als textfelder
+    MudFileUpload<IBrowserFile>? fileUpload;
+    string? audiofilename;
+    string? textfieldClass;
+
+    String? MudTextStyle => audiofilename == null ? "color: var(--mud-palette-text-secondary)" : null;
+
+    void OnFileChanged(IBrowserFile? browserFile)
+    {
+        //TODO
+        audiofilename = browserFile?.Name;
+    }
+
+    void SetDragClass() => textfieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
+
+    void ClearDragClass() => textfieldClass = null;
+
+    async Task OnUploadFilesClickedAsync()
+    {
+        await (fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
+    }
+
+    async Task OnClearClickedAsync()
+    {
+        await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
+        audiofilename = null;
+        ClearDragClass();
+    }
+}
