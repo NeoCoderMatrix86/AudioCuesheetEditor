@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components;
 
@@ -24,11 +25,31 @@ namespace AudioCuesheetEditor.Shared
 
         [Inject]
         protected LocalizationService LocalizationService { get; set; } = default!;
+        [Inject]
+        protected TraceChangeManager TraceChangeManager { get; set; } = default!;
 
         protected override void OnInitialized()
         {
             base.OnInitialized();
             LocalizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
+            TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
+            TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+            TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+        }
+
+        void TraceChangeManager_RedoDone(object? sender, EventArgs e)
+        {
+            StateHasChanged();
+        }
+
+        void TraceChangeManager_UndoDone(object? sender, EventArgs e)
+        {
+            StateHasChanged();
+        }
+
+        void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs e)
+        {
+            StateHasChanged();
         }
 
         void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
