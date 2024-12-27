@@ -19,7 +19,6 @@ using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
-using static MudBlazor.Colors;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
