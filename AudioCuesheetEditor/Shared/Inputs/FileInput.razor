@@ -20,35 +20,31 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start">
-    <MudFileUpload T="IBrowserFile" @ref="fileUpload" FilesChanged="OnFileChanged" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-            @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
+    <MudFileUpload T="IBrowserFile" @ref="fileUpload" @bind-Files="selectedFile" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+    @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
         <ActivatorContent>
             <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
     <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">@_localizer["Pick file"]</MudButton>
-    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="String.IsNullOrEmpty(audiofilename)" />
+    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="selectedFile == null" />
 </MudStack>
 
 @code {
     //TODO: Parameter, etc.
     //TODO: Validierung Datei
 
-    const string FieldLabelText = "Audiofile";
-    const string FieldLabelTextNoFileSelected = "No file selected";
+    [Parameter]
+    [EditorRequired]
+    public String? Label { get; set; }
 
     MudFileUpload<IBrowserFile>? fileUpload;
-    string? audiofilename;
+    //TODO: Mappen auf internes model
+    IBrowserFile? selectedFile;
     string? fieldClass;
 
-    RenderFragment? FieldContent => audiofilename != null ? @<MudText>@audiofilename</MudText> : null;
-    String? FieldLabel => audiofilename != null ? FieldLabelText : FieldLabelTextNoFileSelected;
-
-    void OnFileChanged(IBrowserFile? browserFile)
-    {
-        //TODO
-        SetAudiofilename(browserFile?.Name);
-    }
+    RenderFragment? FieldContent => selectedFile != null ? @<MudText>@selectedFile.Name</MudText> : null;
+    String? FieldLabel => selectedFile != null ? Label : _localizer["No file selected"];
 
     void SetDragClass() => fieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
 
@@ -62,12 +58,7 @@ along with Foobar.  If not, see
     async Task OnClearClickedAsync()
     {
         await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
-        SetAudiofilename(null);
+        selectedFile = null;
         ClearDragClass();
-    }
-
-    void SetAudiofilename(string? newFilename)
-    {
-        audiofilename = newFilename;
     }
 }
