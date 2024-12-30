@@ -120,7 +120,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
         }
 
-        public async Task LoadContentStream()
+        public async Task LoadContentStreamAsync()
         {
             if ((ContentStream == null) && (String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null) && (HttpClient != null))
             {
