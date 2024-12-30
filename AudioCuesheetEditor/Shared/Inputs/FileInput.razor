@@ -18,13 +18,9 @@ along with Foobar.  If not, see
 
 <MudStack Row StretchItems="StretchItems.Start">
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" FilesChanged="OnFileChanged" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-            @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
+    @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
         <ActivatorContent>
-            <MudField Label="Audiofile" FullWidth Variant="Variant.Outlined" Class="@textfieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile">
-                <MudText Style="@MudTextStyle">
-                    @(audiofilename != null ? audiofilename : "No audio file selected")
-                </MudText>
-            </MudField>
+            <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
     <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">Pick file</MudButton>
@@ -36,21 +32,25 @@ along with Foobar.  If not, see
     //TODO: Validierung Datei
     //TODO: Localization
     //TODO: Ist deutlich höher als textfelder
+    const string FieldLabelText = "Audiofile";
+    const string FieldLabelTextNoFileSelected = "No file selected";
+
     MudFileUpload<IBrowserFile>? fileUpload;
     string? audiofilename;
-    string? textfieldClass;
+    string? fieldClass;
 
-    String? MudTextStyle => audiofilename == null ? "color: var(--mud-palette-text-secondary)" : null;
+    RenderFragment? FieldContent => audiofilename != null ? @<MudText>@audiofilename</MudText> : null;
+    String? FieldLabel => audiofilename != null ? FieldLabelText : FieldLabelTextNoFileSelected;
 
     void OnFileChanged(IBrowserFile? browserFile)
     {
         //TODO
-        audiofilename = browserFile?.Name;
+        SetAudiofilename(browserFile?.Name);
     }
 
-    void SetDragClass() => textfieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
+    void SetDragClass() => fieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
 
-    void ClearDragClass() => textfieldClass = null;
+    void ClearDragClass() => fieldClass = null;
 
     async Task OnUploadFilesClickedAsync()
     {
@@ -60,7 +60,12 @@ along with Foobar.  If not, see
     async Task OnClearClickedAsync()
     {
         await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
-        audiofilename = null;
+        SetAudiofilename(null);
         ClearDragClass();
+    }
+
+    void SetAudiofilename(string? newFilename)
+    {
+        audiofilename = newFilename;
     }
 }
