@@ -18,7 +18,7 @@ along with Foobar.  If not, see
 
 <MudStack Row StretchItems="StretchItems.Start">
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" FilesChanged="OnFileChanged" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-    @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
+            @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
         <ActivatorContent>
             <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
