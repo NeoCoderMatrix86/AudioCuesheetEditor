@@ -15,6 +15,9 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start">
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" FilesChanged="OnFileChanged" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
@@ -23,7 +26,7 @@ along with Foobar.  If not, see
             <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
-    <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">Pick file</MudButton>
+    <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">@_localizer["Pick file"]</MudButton>
     <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="String.IsNullOrEmpty(audiofilename)" />
 </MudStack>
 
@@ -31,6 +34,7 @@ along with Foobar.  If not, see
     //TODO: Parameter, etc.
     //TODO: Validierung Datei
     //TODO: Localization
+
     const string FieldLabelText = "Audiofile";
     const string FieldLabelTextNoFileSelected = "No file selected";
 
