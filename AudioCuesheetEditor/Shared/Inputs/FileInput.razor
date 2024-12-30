@@ -23,15 +23,14 @@ along with Foobar.  If not, see
             <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">Pick file</MudButton>
-    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="String.IsNullOrEmpty(audiofilename)" />
+    <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">Pick file</MudButton>
+    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="String.IsNullOrEmpty(audiofilename)" />
 </MudStack>
 
 @code {
     //TODO: Parameter, etc.
     //TODO: Validierung Datei
     //TODO: Localization
-    //TODO: Ist deutlich höher als textfelder
     const string FieldLabelText = "Audiofile";
     const string FieldLabelTextNoFileSelected = "No file selected";
 
