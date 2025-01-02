@@ -29,12 +29,11 @@ along with Foobar.  If not, see
         <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
         <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
         <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" />
+        <FileInput Label="@_localizer["CD Textfile"]" OnFileSelected="OnCDTextfileSelected" Filter="@CDTextfile.FileExtension" />
         <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
     </MudForm>
 }
 @code {
-    //TODO
-    //TODO: Localization
     //TODO: Make a possibility to download the audiofile
 
     [Parameter]
@@ -74,5 +73,19 @@ along with Foobar.  If not, see
         {
             fileInputAudiofileErrorText = null;
         }
+    }
+
+    void OnCDTextfileSelected(IBrowserFile? browserFile)
+    {
+        if (Cuesheet == null)
+        {
+            return;
+        }
+        CDTextfile? textfile = null;
+        if (browserFile != null)
+        {
+            textfile = _fileInputManager.CreateCDTextfile(browserFile);
+        }
+        Cuesheet.CDTextfile = textfile;
     }
 }

@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -54,6 +55,12 @@ namespace AudioCuesheetEditor.Services.IO
                 _ = _httpClient.GetStreamAsync(audioFileObjectURL).ContinueWith(x => audiofile.ContentStream = x.Result);
             }
             return audiofile;
+        }
+
+        public CDTextfile CreateCDTextfile(IBrowserFile browserFile)
+        {
+            //TODO: Check file mime type
+            return new CDTextfile(browserFile.Name);
         }
     }
 }
