@@ -21,7 +21,7 @@ along with Foobar.  If not, see
 
 <MudStack Row StretchItems="StretchItems.Start" id="@Id">
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-    @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
+        @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
         <ActivatorContent>
             <MudField Typo="Typo.body2" Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
@@ -45,6 +45,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public String? Error { get; set; }
+
+    [Parameter]
+    public String? Filter { get; set; }
 
     IBrowserFile? selectedFile;
     MudFileUpload<IBrowserFile>? fileUpload;
