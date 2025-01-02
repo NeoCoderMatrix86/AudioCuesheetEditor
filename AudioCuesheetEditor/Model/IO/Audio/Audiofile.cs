@@ -20,7 +20,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
     [method: JsonConstructor]
     public class Audiofile(String name, Boolean isRecorded = false) : IDisposable
     {
-        //TODO: Aufräumen der Felder (HttpClient gehört hier nicht rein!)
         public static readonly String RecordingFileName = "Recording.webm";
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
