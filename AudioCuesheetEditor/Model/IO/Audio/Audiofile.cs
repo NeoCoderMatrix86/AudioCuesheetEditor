@@ -131,18 +131,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
         }
 
-        //TODO
-        //public async Task LoadContentStreamAsync()
-        //{
-        //    if ((ContentStream == null) && (String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null) && (HttpClient != null))
-        //    {
-        //        ContentStream = await HttpClient.GetStreamAsync(ObjectURL);
-        //        var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
-        //        Duration = new TimeSpan(0, 0, track.Duration);
-        //        ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
-        //    }
-        //}
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
