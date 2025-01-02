@@ -20,10 +20,10 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start" id="@Id">
-    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
     @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
         <ActivatorContent>
-            <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
+            <MudField Typo="Typo.body2" Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
     <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">@_localizer["Pick file"]</MudButton>
@@ -32,7 +32,6 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Parameter, etc.
-    //TODO: Validierung Datei
 
     [Parameter]
     [EditorRequired]
@@ -43,6 +42,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";
+
+    [Parameter]
+    public String? Error { get; set; }
 
     IBrowserFile? selectedFile;
     MudFileUpload<IBrowserFile>? fileUpload;

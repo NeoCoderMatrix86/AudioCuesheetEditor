@@ -21,7 +21,9 @@ namespace AudioCuesheetEditor.Services.Validation
     public class ValidationService(IStringLocalizer<ValidationMessage> localizer)
     {
         private readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
-        public Func<object, string, Task<IEnumerable<string>>> ValidateProperty => (model, propertyName) =>
+        public Func<object, string, Task<IEnumerable<string>>> ValidateProperty => (model, propertyName) => Task.FromResult(Validate(model, propertyName));
+
+        public IEnumerable<string> Validate(object model, string propertyName)
         {
             List<string> errors = [];
             if (model is IValidateable validateable)
@@ -44,9 +46,9 @@ namespace AudioCuesheetEditor.Services.Validation
             }
             else
             {
-                throw new ArgumentException("Model was not of supposed type '{0}'", nameof(IValidateable));
+                throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
             }
-            return Task.FromResult(errors.AsEnumerable());
-        };
+            return errors.AsEnumerable();
+        }
     }
 }
