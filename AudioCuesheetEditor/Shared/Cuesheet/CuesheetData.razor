@@ -21,12 +21,14 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<CuesheetData> _localizer
 @inject SessionStateContainer _sessionStateContainer
 @inject ValidationService _validationService
+@inject FileInputManager _fileInputManager
 
 @if (Cuesheet != null)
 {
     <MudForm Model="Cuesheet">
         <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
         <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
+        <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" OnFileSelected="OnAudiofileSelected" />
         <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
     </MudForm>
 }
@@ -38,4 +40,25 @@ along with Foobar.  If not, see
     [Parameter]
     [EditorRequired]
     public Cuesheet? Cuesheet { get; set; }
+
+    string? fileInputAudiofileId;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (fileInputAudiofileId == null)
+        {
+            fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
+        }
+    }
+
+    async Task OnAudiofileSelected(IBrowserFile? browserFile)
+    {
+        if ((browserFile != null) && (fileInputAudiofileId != null))
+        {
+            var audioFile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile);
+            //TODO: Switch for cuesheet (import or default) and attach the audiofile
+        }
+        //TODO: Validate Cuesheet
+    }
 }

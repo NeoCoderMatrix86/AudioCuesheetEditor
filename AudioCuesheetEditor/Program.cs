@@ -61,6 +61,7 @@ builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
+builder.Services.AddScoped<FileInputManager>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

@@ -20,6 +20,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
     [method: JsonConstructor]
     public class Audiofile(String name, Boolean isRecorded = false) : IDisposable
     {
+        //TODO: Aufräumen der Felder (HttpClient gehört hier nicht rein!)
         public static readonly String RecordingFileName = "Recording.webm";
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
@@ -36,11 +37,12 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         ];
 
         private AudioCodec? audioCodec;
+        private Stream? contentStream;
         private bool disposedValue;
 
         public event EventHandler? ContentStreamLoaded;
 
-        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, HttpClient httpClient, Boolean isRecorded = false) : this(name, isRecorded)
+        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, Boolean isRecorded = false) : this(name, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
@@ -48,7 +50,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
-            HttpClient = httpClient;
         }
 
         public String Name { get; private set; } = name;
@@ -66,15 +67,26 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// File content stream. Be carefull, this stream is loaded asynchronously. Connect to the StreamLoaded for checking if loading has already been done!
         /// </summary>
         [JsonIgnore]
-        public Stream? ContentStream { get; private set; }
+        public Stream? ContentStream
+        {
+            get => contentStream;
+            set
+            {
+                contentStream = value;
+                if ((ContentStream != null) && (AudioCodec != null))
+                {
+                    var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
+                    Duration = new TimeSpan(0, 0, track.Duration);
+                    ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
         [JsonIgnore]
         public Boolean IsRecorded { get; private set; } = isRecorded;
         /// <summary>
         /// Duration of the audio file
         /// </summary>
         public TimeSpan? Duration { get; private set; }
-        [JsonIgnore]
-        public HttpClient? HttpClient { get; set; }
 
         public AudioCodec? AudioCodec 
         {
@@ -120,16 +132,17 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
         }
 
-        public async Task LoadContentStreamAsync()
-        {
-            if ((ContentStream == null) && (String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null) && (HttpClient != null))
-            {
-                ContentStream = await HttpClient.GetStreamAsync(ObjectURL);
-                var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
-                Duration = new TimeSpan(0, 0, track.Duration);
-                ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        //TODO
+        //public async Task LoadContentStreamAsync()
+        //{
+        //    if ((ContentStream == null) && (String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null) && (HttpClient != null))
+        //    {
+        //        ContentStream = await HttpClient.GetStreamAsync(ObjectURL);
+        //        var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
+        //        Duration = new TimeSpan(0, 0, track.Duration);
+        //        ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
+        //    }
+        //}
 
         protected virtual void Dispose(bool disposing)
         {

@@ -19,8 +19,8 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<FileInput> _localizer
 
-<MudStack Row StretchItems="StretchItems.Start">
-    <MudFileUpload T="IBrowserFile" @ref="fileUpload" @bind-Files="selectedFile" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+<MudStack Row StretchItems="StretchItems.Start" id="@Id">
+    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
     @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass">
         <ActivatorContent>
             <MudField Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
@@ -38,9 +38,14 @@ along with Foobar.  If not, see
     [EditorRequired]
     public String? Label { get; set; }
 
-    MudFileUpload<IBrowserFile>? fileUpload;
-    //TODO: Mappen auf internes model
+    [Parameter]
+    public EventCallback<IBrowserFile?> OnFileSelected { get; set; }
+
+    [Parameter]
+    public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";
+
     IBrowserFile? selectedFile;
+    MudFileUpload<IBrowserFile>? fileUpload;
     string? fieldClass;
 
     RenderFragment? FieldContent => selectedFile != null ? @<MudText>@selectedFile.Name</MudText> : null;
@@ -58,7 +63,13 @@ along with Foobar.  If not, see
     async Task OnClearClickedAsync()
     {
         await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
-        selectedFile = null;
+        await SetSelectedFileAsync(null);
         ClearDragClass();
+    }
+
+    async Task SetSelectedFileAsync(IBrowserFile? browserFile)
+    {
+        selectedFile = browserFile;
+        await OnFileSelected.InvokeAsync(selectedFile);
     }
 }

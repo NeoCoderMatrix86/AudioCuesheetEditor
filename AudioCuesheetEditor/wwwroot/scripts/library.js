@@ -1,5 +1,5 @@
 ﻿var GLOBAL = {};
-var audioFileObjectURL = null;
+var fileObjectURL = null;
 var startTime;
 var mediaStream = null;
 window.addEventListener('beforeunload', beforeunload);
@@ -11,21 +11,22 @@ GLOBAL.SetViewModeRecordReference = function (dotNetReference) {
     }
 };
 
-function getObjectURL(domId) {
-    if (audioFileObjectURL != null) {
-        URL.revokeObjectURL(audioFileObjectURL);
+function getObjectURLFromMudFileUpload(stackId) {
+    if (fileObjectURL != null) {
+        URL.revokeObjectURL(fileObjectURL);
     }
-    var element = document.getElementById(domId);
+    var stackElement = document.getElementById(stackId);
+    var inputElement = stackElement.querySelector('input[type="file"]');
     var file = null;
-    for (var i = 0, f; f = element.files[i]; i++) {
+    for (var i = 0, f; f = inputElement.files[i]; i++) {
         if (f.type.startsWith("audio/")) {
             file = f;
         }
     }
     if (file != null) {
-        audioFileObjectURL = URL.createObjectURL(file);
+        fileObjectURL = URL.createObjectURL(file);
     }
-    return audioFileObjectURL;
+    return fileObjectURL;
 }
 
 function triggerClick(domId) {
