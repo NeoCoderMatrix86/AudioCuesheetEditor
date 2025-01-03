@@ -20,10 +20,11 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start" id="@Id">
-    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-        @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
+    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+            @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
         <ActivatorContent>
-            <MudField Typo="Typo.body2" Label="@FieldLabel" ChildContent="FieldContent!" FullWidth Variant="Variant.Outlined" Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
+            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile"
+                    Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
         </ActivatorContent>
     </MudFileUpload>
     <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">@_localizer["Pick file"]</MudButton>
@@ -31,7 +32,6 @@ along with Foobar.  If not, see
 </MudStack>
 
 @code {
-    //TODO: The Label is not visible if no file is selected, making it unclear, what the fileinput is used for
     [Parameter]
     [EditorRequired]
     public String? Label { get; set; }
@@ -51,9 +51,7 @@ along with Foobar.  If not, see
     IBrowserFile? selectedFile;
     MudFileUpload<IBrowserFile>? fileUpload;
     string? fieldClass;
-
-    RenderFragment? FieldContent => selectedFile != null ? @<MudText>@selectedFile.Name</MudText> : null;
-    String? FieldLabel => selectedFile != null ? Label : _localizer["No file selected"];
+    String TextFieldValue => selectedFile != null ? selectedFile.Name : _localizer["No file selected"];
 
     void SetDragClass() => fieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
 

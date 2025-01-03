@@ -43,16 +43,46 @@ namespace AudioCuesheetEditor.Services.IO
             }
             return foundAudioCodec;
         }
-        public async Task<Audiofile> CreateAudiofileAsync(String fileInputId, IBrowserFile browserFile)
+
+        public static Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
         {
-            //TODO: Check file mime type
-            //TODO: RevokeObjectURL of previous audiofile
-            var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
-            var codec = GetAudioCodec(browserFile);
-            var audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec);
-            if (String.IsNullOrEmpty(audioFileObjectURL) == false)
+            Boolean fileMimeTypeMatches = false;
+            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
             {
-                _ = _httpClient.GetStreamAsync(audioFileObjectURL).ContinueWith(x => audiofile.ContentStream = x.Result);
+                if (String.IsNullOrEmpty(file.ContentType) == false)
+                {
+                    fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
+                }
+                else
+                {
+                    //Try to find by file extension
+                    var extension = Path.GetExtension(file.Name);
+                    fileMimeTypeMatches = extension.Equals(fileExtension, StringComparison.CurrentCultureIgnoreCase);
+                }
+            }
+            return fileMimeTypeMatches;
+        }
+
+        public async Task<Audiofile?> CreateAudiofileAsync(String? fileInputId, IBrowserFile? browserFile)
+        {
+            Audiofile? audiofile = null;
+            if ((String.IsNullOrEmpty(fileInputId) == false) && (browserFile != null))
+            {
+                // Check file mime type
+                var codec = GetAudioCodec(browserFile);
+                if (codec != null)
+                {
+                    var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
+                    audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec);
+                    if (String.IsNullOrEmpty(audioFileObjectURL) == false)
+                    {
+                        _ = _httpClient.GetStreamAsync(audioFileObjectURL).ContinueWith(x => audiofile.ContentStream = x.Result);
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("The audio file provided is not of a valid type.");
+                }
             }
             return audiofile;
         }

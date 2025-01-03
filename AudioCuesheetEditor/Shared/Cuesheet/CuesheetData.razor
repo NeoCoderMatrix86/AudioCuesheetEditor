@@ -58,20 +58,27 @@ along with Foobar.  If not, see
         {
             return;
         }
-        Audiofile? audiofile = null;
-        if ((browserFile != null) && (fileInputAudiofileId != null))
+        fileInputAudiofileErrorText = null;
+        try 
         {
-            audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile);
+            Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile);
         }
-        Cuesheet.Audiofile = audiofile;
-        var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
-        if (validationMessages.Count() > 0)
+        catch(ArgumentException ae)
         {
-            fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
+            fileInputAudiofileErrorText = ae.Message;
         }
-        else
+        // Just validate the cuesheet if there is no error already
+        if (fileInputAudiofileErrorText == null)
         {
-            fileInputAudiofileErrorText = null;
+            var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
+            if (validationMessages.Count() > 0)
+            {
+                fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
+            }
+            else
+            {
+                fileInputAudiofileErrorText = null;
+            }
         }
     }
 
