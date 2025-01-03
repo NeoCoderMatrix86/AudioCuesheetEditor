@@ -15,415 +15,53 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-@implements IAsyncDisposable
 
-@inject ITextLocalizer<AudioPlayer> _localizer
-@inject IHowl _howl
-@inject HotKeys _hotKeys
-@inject ITextLocalizerService _localizationService
-@inject SessionStateContainer _sessionStateContainer
+@inherits BaseLocalizedComponent
 
-<Card>
-    <CardHeader><Heading Size="HeadingSize.Is3">@_localizer["Audioplayer"]</Heading></CardHeader>
-    <CardBody>
-        <Row>
-            <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
-                @if (CurrentPlaybackPosition.HasValue)
-                {
-                    @CurrentPlaybackPosition.Value.ToString("hh\\:mm\\:ss")
-                }
-                else
-                {
-                    @String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)
-                }
-            </Column>
-            <Column ColumnSize="ColumnSize.Is10.OnFullHD.Is8.OnWidescreen.Is6.OnTablet.Is4.OnMobile">
-                <Slider TValue="double" Min="0.0" Max="100.0" ValueChanged="OnSliderValueChanged" Value="CurrentSliderValue"></Slider>
-            </Column>
-            <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
-                @if (TotalTime.HasValue)
-                {
-                    @TotalTime.Value.ToString("hh\\:mm\\:ss")
-                }
-                else
-                {
-                    @String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)
-                }
-            </Column>
-        </Row>
-        <Row>
-            <Column ColumnSize="ColumnSize.Is1.OnFullHD.Is2.OnWidescreen.Is3.OnTablet.Is4.OnMobile">
-                @if (AudioIsPlaying == true)
-                {
-                    <Button Color="Color.Primary" Class="oi oi-media-pause" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
-                }
-                else
-                {
-                    <Button Color="Color.Primary" Class="oi oi-media-play" Clicked="OnPlayClicked" Disabled="!PlaybackPossible" />
-                }
-            </Column>
-            <Column>
-                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Set playback to begin of previous track"]">
-                    <Button Color="Color.Secondary" Class="oi oi-media-step-backward" Clicked="() => OnPlayNextPreviousTrackClicked(true)" Disabled="!(PlaybackPossible && PreviousButtonEnabled)" />
-                </Tooltip>
-                <Button Color="Color.Primary" Class="oi oi-media-stop" Clicked="OnStopClicked" />
-                <Tooltip Placement="TooltipPlacement.Top" Text="@_localizer["Set playback to begin of next track"]">
-                    <Button Color="Color.Secondary" Class="oi oi-media-step-forward" Clicked="() => OnPlayNextPreviousTrackClicked()" Disabled="!(PlaybackPossible && NextButtonEnabled)" />
-                </Tooltip>
-            </Column>
-        </Row>
-    </CardBody>
-</Card>
+@inject IStringLocalizer<AudioPlayer> _localizer
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@_localizer["Playback"]</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
+            @if (CurrentPlaybackPosition.HasValue)
+            {
+                <MudText>@CurrentPlaybackPosition.Value.ToString("hh\\:mm\\:ss")</MudText>
+            }
+            else
+            {
+                <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+            }
+            <MudSlider T="double" Variant="Variant.Filled" />
+            @if (TotalTime.HasValue)
+            {
+                @TotalTime.Value.ToString("hh\\:mm\\:ss")
+            }
+            else
+            {
+                <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+            }
+        </MudStack>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudIconButton Icon="@Icons.Material.Outlined.PlayArrow" Variant="Variant.Filled" Color="Color.Primary" />
+            <MudButtonGroup OverrideStyles="false">
+                <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" />
+                <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" />
+                <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" />
+            </MudButtonGroup>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
 
 @code {
-    Timer? audioUpdateTimer;
-    int soundId;
-    Track? currentlyPlayingTrack;
-    HotKeysContext? hotKeysContext;
-    Boolean paused;
-    Audiofile? audioFile;
-    Cuesheet? cuesheetAttachedToAudiofileChangedEvent;
-
-    [Parameter]
-    public EventCallback<Track> CurrentlyPlayingTrackChanged { get; set; }
-
+    //TODO
+    //TODO: Tooltips für play, next, stop, etc.
+    //TODO: Disable controls when no playback is possible
+    //TODO: Localization
     public TimeSpan? CurrentPlaybackPosition { get; private set; }
     public TimeSpan? TotalTime { get; private set; }
-    public Boolean AudioIsPlaying { get; private set; }
-
-    public async ValueTask DisposeAsync()
-    {
-        _howl.OnPlay -= HowlOnPlay;
-        _howl.OnPause -= HowlOnPause;
-        _howl.OnEnd -= HowlOnEnd;
-        _howl.OnStop -= HowlOnStop;
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
-        if (_sessionStateContainer.Cuesheet != null)
-        {
-            _sessionStateContainer.Cuesheet.AudioFileChanged -= Cuesheet_AudioFileChanged;
-        }
-        audioUpdateTimer?.Dispose();
-        if (hotKeysContext != null)
-        {
-            await hotKeysContext.DisposeAsync();
-        }
-    }
-
-    public Boolean PlaybackPossible
-    {
-        get { return ((_sessionStateContainer.Cuesheet != null) && (_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible == true)); }
-    }
-
-    public Boolean PreviousButtonEnabled
-    {
-        get
-        {
-            Boolean enabled = false;
-            if (CurrentlyPlayingTrack != null)
-            {
-                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-                if (index >= 1)
-                {
-                    enabled = true;
-                }
-            }
-            return enabled;
-        }
-    }
-
-    public Boolean NextButtonEnabled
-    {
-        get
-        {
-            Boolean enabled = false;
-            if (CurrentlyPlayingTrack != null)
-            {
-                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-                if (index < (_sessionStateContainer.Cuesheet.Tracks.Count - 1))
-                {
-                    enabled = true;
-                }
-            }
-            return enabled;
-        }
-    }
-
-    public Track? CurrentlyPlayingTrack
-    {
-        get { return currentlyPlayingTrack; }
-        private set
-        {
-            //Only fire the update, if the value has changed
-            if (value != currentlyPlayingTrack)
-            {
-                currentlyPlayingTrack = value;
-                CurrentlyPlayingTrackChanged.InvokeAsync(CurrentlyPlayingTrack);
-            }
-        }
-    }
-
-    public async Task OnPlayTrackClicked(Track? trackToPlay)
-    {
-        if ((trackToPlay != null) && (trackToPlay.Begin != null))
-        {
-            if (AudioIsPlaying == false)
-            {
-                await OnPlayClicked();
-            }
-            await _howl.Seek(soundId, trackToPlay.Begin.Value);
-            StateHasChanged();
-        }
-    }
-
-    public async Task Reset()
-    {
-        await _howl.Stop(soundId);
-    }
-
-    protected Double CurrentSliderValue
-    {
-        get
-        {
-            Double sliderValue = 0.0;
-            if ((TotalTime != null) && (CurrentPlaybackPosition != null))
-            {
-                sliderValue = (CurrentPlaybackPosition.Value / TotalTime.Value) * 100.0;
-            }
-            return sliderValue;
-        }
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        //Attach shortcuts
-        hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKey.Ctrl, Key.p, OnPlayKeyDown)
-            .Add(ModKey.Ctrl, Key.ArrowLeft, OnPlayNextTrackKeyDown)
-            .Add(ModKey.Ctrl, Key.ArrowRight, OnPlayPreviousTrackKeyDown)
-            .Add(Key.MediaPlayPause, OnPlayKeyDown)
-            .Add(Key.MediaTrackNext, OnPlayNextTrackKeyDown)
-            .Add(Key.MediaTrackPrevious, OnPlayPreviousTrackKeyDown)
-            .Add(Key.MediaStop, OnStopKeyDown);
-
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        cuesheetAttachedToAudiofileChangedEvent = _sessionStateContainer.Cuesheet;
-        cuesheetAttachedToAudiofileChangedEvent.AudioFileChanged += Cuesheet_AudioFileChanged;
-        AnalyseCuesheet();
-
-        //Setup audio timer
-        audioUpdateTimer = new Timer(500);
-        audioUpdateTimer.AutoReset = true;
-        audioUpdateTimer.Elapsed += async delegate
-        {
-            AudioIsPlaying = await _howl.IsPlaying(soundId);
-            if (AudioIsPlaying == true)
-            {
-                CurrentPlaybackPosition = await _howl.GetCurrentTime(soundId);
-                if (TotalTime.HasValue == false)
-                {
-                    TotalTime = _howl.TotalTime;
-                }
-            }
-            if ((_sessionStateContainer.Cuesheet != null) && (CurrentPlaybackPosition.HasValue == true))
-            {
-                CurrentlyPlayingTrack = _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin.Value <= CurrentPlaybackPosition.Value && x.End.Value > CurrentPlaybackPosition.Value);
-            }
-            StateHasChanged();
-        };
-
-        _howl.OnPlay += HowlOnPlay;
-        _howl.OnPause += HowlOnPause;
-        _howl.OnEnd += HowlOnEnd;
-        _howl.OnStop += HowlOnStop;
-
-        await base.OnInitializedAsync();
-    }
-
-    void HowlOnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs args)
-    {
-        paused = false;
-        audioUpdateTimer?.Start();
-    }
-
-    void HowlOnPause(Howler.Blazor.Components.Events.HowlEventArgs args)
-    {
-        paused = true;
-    }
-
-    void HowlOnEnd(Howler.Blazor.Components.Events.HowlEventArgs args)
-    {
-        paused = false;
-        audioUpdateTimer?.Stop();
-        CurrentlyPlayingTrack = null;
-        CurrentPlaybackPosition = null;
-        AudioIsPlaying = false;
-        StateHasChanged();
-    }
-
-    void HowlOnStop(Howler.Blazor.Components.Events.HowlEventArgs args)
-    {
-        paused = false;
-        audioUpdateTimer?.Stop();
-        CurrentlyPlayingTrack = null;
-        CurrentPlaybackPosition = null;
-        AudioIsPlaying = false;
-        soundId = default;
-        StateHasChanged();
-    }
-
-    async Task OnSliderValueChanged(Double newvalue)
-    {
-        if (TotalTime.HasValue)
-        {
-            var newPosition = newvalue * TotalTime.Value / 100.0;
-            if ((paused == true) || (AudioIsPlaying == false))
-            {
-                await OnPlayClicked();
-            }
-            await _howl.Seek(soundId, newPosition);
-        }
-    }
-
-    async Task OnPlayClicked()
-    {
-        if (_sessionStateContainer.Cuesheet.Audiofile != audioFile)
-        {
-            soundId = default;
-        }
-        if (soundId != default)
-        {
-            await _howl.Pause(soundId);
-            StateHasChanged();
-        }
-        else
-        {
-            if ((_sessionStateContainer.Cuesheet == null) || (_sessionStateContainer.Cuesheet.Audiofile == null) || (_sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible == false))
-            {
-                throw new ArgumentNullException(nameof(_sessionStateContainer.Cuesheet.Audiofile));
-            }
-            string[]? sources = null;
-            string[]? formats = null;
-            if (_sessionStateContainer.Cuesheet.Audiofile.ObjectURL != null)
-            {
-                sources = new[] { _sessionStateContainer.Cuesheet.Audiofile.ObjectURL };
-            }
-            if (_sessionStateContainer.Cuesheet.Audiofile.AudioFileType != null)
-            {
-                formats = new[] { _sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower() };
-            }
-            var options = new HowlOptions
-            {
-                Sources = sources,
-                Formats = formats,
-                Html5 = true
-            };
-            audioFile = _sessionStateContainer.Cuesheet.Audiofile;
-            soundId = await _howl.Play(options);
-        }
-    }
-
-    async ValueTask OnPlayKeyDown()
-    {
-        await OnPlayClicked();
-    }
-
-    async Task OnPlayNextPreviousTrackClicked(Boolean previous = false)
-    {
-        if (CurrentlyPlayingTrack != null)
-        {
-            var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-            Track? trackToPlay = null;
-            if (previous == false)
-            {
-                trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index + 1);
-            }
-            else
-            {
-                trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index - 1);
-            }
-            await OnPlayTrackClicked(trackToPlay);
-        }
-    }
-
-    async ValueTask OnPlayNextTrackKeyDown()
-    {
-        await OnPlayNextPreviousTrackClicked(true);
-    }
-
-    async ValueTask OnPlayPreviousTrackKeyDown()
-    {
-        await OnPlayNextPreviousTrackClicked();
-    }
-
-    async Task OnStopClicked()
-    {
-        await _howl.Stop(soundId);
-    }
-
-    async ValueTask OnStopKeyDown()
-    {
-        await OnStopClicked();
-    }
-
-    void Cuesheet_AudioFileChanged(object? sender, EventArgs args)
-    {
-        AnalyseCuesheet();
-    }
-
-    void AudioFile_ContentStreamLoaded(object? sender, EventArgs args)
-    {
-        if (sender != null)
-        {
-            //We need to unlink ourself since the event should only occur once (for each object)
-            ((Audiofile)sender).ContentStreamLoaded -= AudioFile_ContentStreamLoaded;
-        }
-        AnalyseAudioFile();
-    }
-
-    void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    void AnalyseAudioFile()
-    {
-        if ((_sessionStateContainer.Cuesheet != null) && (_sessionStateContainer.Cuesheet.Audiofile != null) && (_sessionStateContainer.Cuesheet.Audiofile.Duration.HasValue) && (TotalTime.HasValue == false))
-        {
-            TotalTime = _sessionStateContainer.Cuesheet.Audiofile.Duration.Value;
-            StateHasChanged();
-        }
-    }
-
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        if (cuesheetAttachedToAudiofileChangedEvent != null)
-        {
-            cuesheetAttachedToAudiofileChangedEvent.AudioFileChanged -= Cuesheet_AudioFileChanged;
-        }
-        AnalyseCuesheet();
-        cuesheetAttachedToAudiofileChangedEvent = _sessionStateContainer.Cuesheet;
-        cuesheetAttachedToAudiofileChangedEvent.AudioFileChanged += Cuesheet_AudioFileChanged;
-    }
-
-    void AnalyseCuesheet()
-    {
-        if (_sessionStateContainer.Cuesheet.Audiofile != null)
-        {
-            if (_sessionStateContainer.Cuesheet.Audiofile.IsContentStreamLoaded)
-            {
-                AnalyseAudioFile();
-            }
-            else
-            {
-                TotalTime = null;
-                _sessionStateContainer.Cuesheet.Audiofile.ContentStreamLoaded += AudioFile_ContentStreamLoaded;
-            }
-        }
-        else
-        {
-            TotalTime = null;
-        }
-    }
 }
