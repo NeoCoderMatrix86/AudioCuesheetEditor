@@ -99,7 +99,6 @@ namespace AudioCuesheetEditor.Services.Audio
                     };
                     soundId = await _howl.Play(options);
                     currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
-                    
                 }
             }
         }
