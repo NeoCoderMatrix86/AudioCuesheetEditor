@@ -13,12 +13,19 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.AudioCuesheet;
+
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService
+    public class PlaybackService(SessionStateContainer sessionStateContainer)
     {
+        private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
         //TODO: here comes all playback related stuff
         public TimeSpan? CurrentPosition { get; private set; }
         public TimeSpan? TotalTime { get; private set; }
+        //Refer to Cuesheet (not ImportCuesheet) since playback will always be done on the imported cuesheet
+        public Boolean PlaybackPossible => _sessionStateContainer.Cuesheet.Audiofile != null ? _sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible : false;
+
     }
 }
