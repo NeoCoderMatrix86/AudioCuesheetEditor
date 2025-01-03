@@ -28,6 +28,8 @@ namespace AudioCuesheetEditor.Services.Audio
 
         private int? soundId;
         private Audiofile? currentlyPlayingAudiofile;
+        private Timer? updateTimer;
+        private readonly Lock timerLock = new();
 
         public PlaybackService(SessionStateContainer sessionStateContainer, IHowl howl)
         {
@@ -43,21 +45,27 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             IsPlaying = false;
             soundId = null;
+            StopTimer();
+            CurrentPosition = null;
         }
 
         private void Howl_OnEnd(Howler.Blazor.Components.Events.HowlEventArgs obj)
         {
             IsPlaying = false;
+            StopTimer();
+            CurrentPosition = null;
         }
 
         private void Howl_OnPause(Howler.Blazor.Components.Events.HowlEventArgs obj)
         {
             IsPlaying = false;
+            StopTimer();
         }
 
         private void Howl_OnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs obj)
         {
             IsPlaying = true;
+            StartTimer();
         }
 
         public TimeSpan? CurrentPosition { get; private set; }
@@ -109,5 +117,27 @@ namespace AudioCuesheetEditor.Services.Audio
                 await _howl.Stop(soundId.Value);
             }
         }
+
+        private void StartTimer()
+        {
+            updateTimer ??= new Timer(UpdateCurrentPosition, null, 0, 500);
+        }
+
+        private void StopTimer()
+        {
+            updateTimer?.Dispose();
+            updateTimer = null;
+        }
+
+        private async void UpdateCurrentPosition(object? state)
+        {
+            // Thread-safe access
+            lock (timerLock)
+            {
+                if (soundId == null || !IsPlaying) return;
+            }
+            CurrentPosition = await _howl.GetCurrentTime(soundId.Value);
+        }
+
     }
 }

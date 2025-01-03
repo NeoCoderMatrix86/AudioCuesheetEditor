@@ -48,7 +48,7 @@ along with Foobar.  If not, see
             }
         </MudStack>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="() => _playbackService.PlayOrPauseAsync()" />
+            <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="OnPlayOrPauseClicked" />
             <MudButtonGroup OverrideStyles="false">
                 <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" />
                 <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" />
@@ -65,4 +65,34 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: Slider should display the value in tooltip (like vlc does)
     //TODO: Media Keyboard mapping
+
+    Timer? audioUpdateTimer;
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        audioUpdateTimer?.Dispose();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        audioUpdateTimer = new(1000);
+        audioUpdateTimer.AutoReset = true;
+        audioUpdateTimer.Elapsed += delegate
+        {
+            //TODO: Update slider value
+            StateHasChanged();
+            if (_playbackService.IsPlaying == false)
+            {
+                audioUpdateTimer.Stop();
+            }
+        };
+    }
+
+    async Task OnPlayOrPauseClicked()
+    {
+        audioUpdateTimer?.Start();
+        await _playbackService.PlayOrPauseAsync();
+    }
 }
