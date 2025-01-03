@@ -36,15 +36,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddLocalization();
 builder.Services.AddMudServices();
 
-//TODO
-//builder.Services.AddBlazorise(options =>
-//{
-//    options.Debounce = true;
-//    options.DebounceInterval = 300;
-//})
-//.AddBootstrap5Providers()
-//.AddFontAwesomeIcons();
-
 builder.Services.AddScoped<IHowl, Howl>();
 builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
