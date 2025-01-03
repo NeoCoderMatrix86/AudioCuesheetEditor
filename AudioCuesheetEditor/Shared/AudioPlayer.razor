@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<AudioPlayer> _localizer
+@inject PlaybackService _playbackService
 
 <MudCard>
     <MudCardHeader>
@@ -28,18 +29,18 @@ along with Foobar.  If not, see
     </MudCardHeader>
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
-            @if (CurrentPlaybackPosition.HasValue)
+            @if (_playbackService.CurrentPosition.HasValue)
             {
-                <MudText>@CurrentPlaybackPosition.Value.ToString("hh\\:mm\\:ss")</MudText>
+                <MudText>@_playbackService.CurrentPosition.Value.ToString("hh\\:mm\\:ss")</MudText>
             }
             else
             {
                 <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
             <MudSlider T="double" Variant="Variant.Filled" />
-            @if (TotalTime.HasValue)
+            @if (_playbackService.TotalTime.HasValue)
             {
-                @TotalTime.Value.ToString("hh\\:mm\\:ss")
+                @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
             }
             else
             {
@@ -62,6 +63,4 @@ along with Foobar.  If not, see
     //TODO: Tooltips für play, next, stop, etc.
     //TODO: Disable controls when no playback is possible
     //TODO: Localization
-    public TimeSpan? CurrentPlaybackPosition { get; private set; }
-    public TimeSpan? TotalTime { get; private set; }
 }

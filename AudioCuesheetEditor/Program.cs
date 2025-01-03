@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.Audio;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Services.Validation;
@@ -53,6 +54,7 @@ builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<FileInputManager>();
+builder.Services.AddScoped<PlaybackService>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
