@@ -81,16 +81,27 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 else
                 {
-                    throw new ArgumentException("The audio file provided is not of a valid type.");
+                    throw new ArgumentException("The audiofile provided is not of a valid type.");
                 }
             }
             return audiofile;
         }
 
-        public CDTextfile CreateCDTextfile(IBrowserFile browserFile)
+        public static CDTextfile? CreateCDTextfile(IBrowserFile? browserFile)
         {
-            //TODO: Check file mime type
-            return new CDTextfile(browserFile.Name);
+            CDTextfile? cdTextfile = null;
+            if (browserFile != null)
+            {
+                if (CheckFileMimeType(browserFile, CDTextfile.MimeType, CDTextfile.FileExtension))
+                {
+                    cdTextfile = new CDTextfile(browserFile.Name);
+                }
+                else
+                {
+                    throw new ArgumentException("The cdtextfile provided is not of a valid type.");
+                }
+            }
+            return cdTextfile;
         }
     }
 }
