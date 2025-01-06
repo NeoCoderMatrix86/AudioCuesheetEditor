@@ -31,6 +31,15 @@ namespace AudioCuesheetEditor.Services.Audio
         private bool disposedValue;
         private readonly Lock timerLock = new();
 
+        public TimeSpan? CurrentPosition { get; private set; }
+        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
+        public TimeSpan? TotalTime => _sessionStateContainer.Cuesheet.Audiofile?.Duration;
+        public Boolean IsPlaying { get; private set; } = false;
+        //Refer to Cuesheet (not ImportCuesheet) since playback will always be done on the imported cuesheet
+        public Boolean PlaybackPossible => _sessionStateContainer.Cuesheet.Audiofile != null && _sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible;
+        public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
+        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < _sessionStateContainer.Cuesheet.Tracks.Count - 1;
+
         public PlaybackService(SessionStateContainer sessionStateContainer, IHowl howl)
         {
             _sessionStateContainer = sessionStateContainer;
@@ -41,41 +50,6 @@ namespace AudioCuesheetEditor.Services.Audio
             _howl.OnStop += Howl_OnStop;
         }
 
-        private void Howl_OnStop(Howler.Blazor.Components.Events.HowlEventArgs obj)
-        {
-            IsPlaying = false;
-            soundId = null;
-            StopTimer();
-            CurrentPosition = null;
-        }
-
-        private void Howl_OnEnd(Howler.Blazor.Components.Events.HowlEventArgs obj)
-        {
-            IsPlaying = false;
-            StopTimer();
-            CurrentPosition = null;
-        }
-
-        private void Howl_OnPause(Howler.Blazor.Components.Events.HowlEventArgs obj)
-        {
-            IsPlaying = false;
-            StopTimer();
-        }
-
-        private void Howl_OnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs obj)
-        {
-            IsPlaying = true;
-            StartTimer();
-        }
-
-        public TimeSpan? CurrentPosition { get; private set; }
-        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
-        public TimeSpan? TotalTime => _sessionStateContainer.Cuesheet.Audiofile?.Duration;
-        public Boolean IsPlaying { get; private set; } = false;
-        //Refer to Cuesheet (not ImportCuesheet) since playback will always be done on the imported cuesheet
-        public Boolean PlaybackPossible => _sessionStateContainer.Cuesheet.Audiofile != null && _sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible;
-        public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
-        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < _sessionStateContainer.Cuesheet.Tracks.Count - 1;
         public async Task PlayOrPauseAsync(Track? trackToPlay = null)
         {
             //Reset if the last played audiofile is not the current one
@@ -125,6 +99,7 @@ namespace AudioCuesheetEditor.Services.Audio
                 await _howl.Stop(soundId.Value);
             }
         }
+
         public async Task PlayNextTrackAsync()
         {
             if (CurrentlyPlayingTrack != null)
@@ -134,6 +109,7 @@ namespace AudioCuesheetEditor.Services.Audio
                 await PlayOrPauseAsync(trackToPlay);
             }
         }
+
         public async Task PlayPreviousTrackAsync()
         {
             if (CurrentlyPlayingTrack != null)
@@ -143,11 +119,66 @@ namespace AudioCuesheetEditor.Services.Audio
                 await PlayOrPauseAsync(trackToPlay);
             }
         }
+
+        public async Task SeekAsync(TimeSpan time)
+        {
+            if (soundId.HasValue)
+            {
+                if (IsPlaying == false)
+                {
+                    await PlayOrPauseAsync();
+                }
+                await _howl.Seek(soundId.Value, time);
+            }
+        }
+
         public void Dispose()
         {
             // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _howl.OnPlay -= Howl_OnPlay;
+                    _howl.OnPause -= Howl_OnPause;
+                    _howl.OnEnd -= Howl_OnEnd;
+                    _howl.OnStop -= Howl_OnStop;
+                }
+                disposedValue = true;
+            }
+        }
+
+        private void Howl_OnStop(Howler.Blazor.Components.Events.HowlEventArgs obj)
+        {
+            IsPlaying = false;
+            soundId = null;
+            StopTimer();
+            CurrentPosition = null;
+        }
+
+        private void Howl_OnEnd(Howler.Blazor.Components.Events.HowlEventArgs obj)
+        {
+            IsPlaying = false;
+            StopTimer();
+            CurrentPosition = null;
+        }
+
+        private void Howl_OnPause(Howler.Blazor.Components.Events.HowlEventArgs obj)
+        {
+            IsPlaying = false;
+            StopTimer();
+        }
+
+        private void Howl_OnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs obj)
+        {
+            IsPlaying = true;
+            StartTimer();
         }
 
         private void StartTimer()
@@ -171,19 +202,6 @@ namespace AudioCuesheetEditor.Services.Audio
             CurrentPosition = await _howl.GetCurrentTime(soundId.Value);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _howl.OnPlay -= Howl_OnPlay;
-                    _howl.OnPause -= Howl_OnPause;
-                    _howl.OnEnd -= Howl_OnEnd;
-                    _howl.OnStop -= Howl_OnStop;
-                }
-                disposedValue = true;
-            }
-        }
+        
     }
 }

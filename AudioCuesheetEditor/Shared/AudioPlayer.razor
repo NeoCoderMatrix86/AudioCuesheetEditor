@@ -37,7 +37,7 @@ along with Foobar.  If not, see
             {
                 <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudSlider T="double" Variant="Variant.Filled" />
+            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Value="sliderValue" ValueChanged="OnSliderValueChanged" />
             @if (_playbackService.TotalTime.HasValue)
             {
                 @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
@@ -67,6 +67,7 @@ along with Foobar.  If not, see
     //TODO: Media Keyboard mapping
 
     Timer? audioUpdateTimer;
+    double sliderValue;
 
     protected override void Dispose(bool disposing)
     {
@@ -81,7 +82,14 @@ along with Foobar.  If not, see
         audioUpdateTimer.AutoReset = true;
         audioUpdateTimer.Elapsed += delegate
         {
-            //TODO: Update slider value
+            if ((_playbackService.CurrentPosition.HasValue) && (_playbackService.TotalTime.HasValue))
+            {
+                sliderValue = (_playbackService.CurrentPosition.Value / _playbackService.TotalTime.Value) * 100.0;
+            }
+            else
+            {
+                sliderValue = 0.0;
+            }
             StateHasChanged();
             if (_playbackService.IsPlaying == false)
             {
@@ -94,5 +102,14 @@ along with Foobar.  If not, see
     {
         audioUpdateTimer?.Start();
         await _playbackService.PlayOrPauseAsync();
+    }
+
+    async Task OnSliderValueChanged(double newValue)
+    {
+        if (_playbackService.TotalTime.HasValue)
+        {
+            var newPosition = newValue * _playbackService.TotalTime.Value / 100.0;
+            await _playbackService.SeekAsync(newPosition);
+        }
     }
 }
