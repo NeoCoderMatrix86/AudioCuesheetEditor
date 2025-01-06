@@ -122,6 +122,10 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task SeekAsync(TimeSpan time)
         {
+            if (soundId.HasValue == false)
+            {
+                await PlayOrPauseAsync();
+            }
             if (soundId.HasValue)
             {
                 if (IsPlaying == false)

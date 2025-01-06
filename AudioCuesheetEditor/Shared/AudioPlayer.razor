@@ -37,7 +37,7 @@ along with Foobar.  If not, see
             {
                 <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Value="sliderValue" ValueChanged="OnSliderValueChanged" />
+            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.PlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" />
             @if (_playbackService.TotalTime.HasValue)
             {
                 @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
@@ -110,6 +110,7 @@ along with Foobar.  If not, see
         {
             var newPosition = newValue * _playbackService.TotalTime.Value / 100.0;
             await _playbackService.SeekAsync(newPosition);
+            audioUpdateTimer?.Start();
         }
     }
 }
