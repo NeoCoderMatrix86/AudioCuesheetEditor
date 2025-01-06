@@ -19,15 +19,15 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<TrackListControlButtons> _localizer
 <MudButtonGroup OverrideStyles="false">
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert>
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" StartIcon="@Icons.Material.Outlined.Add">@_localizer["Add new track"]</MudButton>
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
         <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" />
     </MudHidden>
 </MudButtonGroup>
 <MudButtonGroup OverrideStyles="false">
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => TrackSelectionVisibleChanged.InvokeAsync(!TrackSelectionVisible)" StartIcon="@(TrackSelectionVisible == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
             @if (TrackSelectionVisible)
             {
@@ -39,42 +39,41 @@ along with Foobar.  If not, see
             }
         </MudButton>
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.LgAndUp">
         <MudIconButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => TrackSelectionVisibleChanged.InvokeAsync(!TrackSelectionVisible)" Icon="@(TrackSelectionVisible == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)" />
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" StartIcon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
             @_localizer["Pin table header"]
         </MudButton>
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.LgAndUp">
         <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" Icon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)" />
     </MudHidden>
 </MudButtonGroup>
 <MudButtonGroup OverrideStyles="false">
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert>
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
         <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.DynamicFeed" Disabled="SelectedTracks?.Count == 0">@_localizer["Edit selected tracks"]</MudButton>
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
         <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.DynamicFeed" Disabled="SelectedTracks?.Count == 0" />
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="SelectedTracks?.Count == 0">@_localizer["Delete selected tracks"]</MudButton>
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.LgAndUp">
         <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="SelectedTracks?.Count == 0" />
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg" Invert>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="SelectedTracks?.Count == 0">@_localizer["Delete all tracks"]</MudButton>
     </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.Lg">
+    <MudHidden Breakpoint="Breakpoint.LgAndUp">
         <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="SelectedTracks?.Count == 0" />
     </MudHidden>
 </MudButtonGroup>
 
 @code {
     //TODO: Tooltips
-    //TODO: Fix breakpoints to work like with blazorise
     [Parameter]
     public EventCallback AddButtonClicked { get; set; }
 
