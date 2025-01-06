@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<TrackList> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject TraceChangeManager _traceChangeManager
 
 @{
     var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
@@ -34,11 +35,56 @@ along with Foobar.  If not, see
     }
 }
 
+<TrackListControlButtons 
+    SelectedTracks="selectedTracks" 
+    AddButtonClicked="OnAddTrackClicked" 
+    EditSelectedTracksClicked="EditSelectedTracksClicked" 
+    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
+    DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+    FixedTableHeader="PinnedTableHeader"
+    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
+    TrackSelectionVisible="TrackSelectionVisible" 
+    TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
+
 @code {
     //TODO
     //TODO: Display alert for track count only on ViewModeFull
+    //TODO: Display TrackListControlButtons only on ViewModeFull
+    //TODO: Localization
+
+    List<Track> selectedTracks = new();
 
     [Parameter]
     [EditorRequired]
     public Cuesheet? Cuesheet { get; set; }
+
+    //TODO: Read from options
+    public Boolean PinnedTableHeader { get; private set; } = false;
+
+    //TODO: Read from options
+    public Boolean TrackSelectionVisible { get; private set; } = false;
+
+    void OnAddTrackClicked()
+    {
+        var newTrack = new Track();
+        //TODO
+        // Cuesheet?.AddTrack(newTrack, applicationOptions);
+        // _traceChangeManager.TraceChanges(newTrack);
+    }
+
+    void EditSelectedTracksClicked()
+    {
+        //TODO: display modal dialog
+    }
+
+    void DeleteSelectedTracksClicked()
+    {
+        Cuesheet?.RemoveTracks(selectedTracks.AsReadOnly());
+        selectedTracks.Clear();
+    }
+
+    void OnDeleteAllTracksClicked()
+    {
+        //TODO: Display a confirm warning
+    }
 }
