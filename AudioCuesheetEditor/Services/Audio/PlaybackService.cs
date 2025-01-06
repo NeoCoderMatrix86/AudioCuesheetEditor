@@ -14,21 +14,21 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Howler.Blazor.Components;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService
+    public class PlaybackService : IDisposable
     {
-        //TODO: here comes all playback related stuff
-        //TODO: IDisposable
         private readonly SessionStateContainer _sessionStateContainer;
         private readonly IHowl _howl;
 
         private int? soundId;
         private Audiofile? currentlyPlayingAudiofile;
         private Timer? updateTimer;
+        private bool disposedValue;
         private readonly Lock timerLock = new();
 
         public PlaybackService(SessionStateContainer sessionStateContainer, IHowl howl)
@@ -69,11 +69,14 @@ namespace AudioCuesheetEditor.Services.Audio
         }
 
         public TimeSpan? CurrentPosition { get; private set; }
+        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
         public TimeSpan? TotalTime => _sessionStateContainer.Cuesheet.Audiofile?.Duration;
         public Boolean IsPlaying { get; private set; } = false;
         //Refer to Cuesheet (not ImportCuesheet) since playback will always be done on the imported cuesheet
         public Boolean PlaybackPossible => _sessionStateContainer.Cuesheet.Audiofile != null && _sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible;
-        public async Task PlayOrPauseAsync()
+        public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
+        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < _sessionStateContainer.Cuesheet.Tracks.Count - 1;
+        public async Task PlayOrPauseAsync(Track? trackToPlay = null)
         {
             //Reset if the last played audiofile is not the current one
             if (currentlyPlayingAudiofile != _sessionStateContainer.Cuesheet.Audiofile)
@@ -107,15 +110,44 @@ namespace AudioCuesheetEditor.Services.Audio
                     };
                     soundId = await _howl.Play(options);
                     currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
+                    if (trackToPlay?.Begin.HasValue == true)
+                    {
+                        await _howl.Seek(soundId.Value, trackToPlay.Begin.Value);
+                    }
                 }
             }
         }
+        
         public async Task StopAsync()
         {
             if (soundId != null)
             {
                 await _howl.Stop(soundId.Value);
             }
+        }
+        public async Task PlayNextTrackAsync()
+        {
+            if (CurrentlyPlayingTrack != null)
+            {
+                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index + 1);
+                await PlayOrPauseAsync(trackToPlay);
+            }
+        }
+        public async Task PlayPreviousTrackAsync()
+        {
+            if (CurrentlyPlayingTrack != null)
+            {
+                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index - 1);
+                await PlayOrPauseAsync(trackToPlay);
+            }
+        }
+        public void Dispose()
+        {
+            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         private void StartTimer()
@@ -139,5 +171,19 @@ namespace AudioCuesheetEditor.Services.Audio
             CurrentPosition = await _howl.GetCurrentTime(soundId.Value);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _howl.OnPlay -= Howl_OnPlay;
+                    _howl.OnPause -= Howl_OnPause;
+                    _howl.OnEnd -= Howl_OnEnd;
+                    _howl.OnStop -= Howl_OnStop;
+                }
+                disposedValue = true;
+            }
+        }
     }
 }

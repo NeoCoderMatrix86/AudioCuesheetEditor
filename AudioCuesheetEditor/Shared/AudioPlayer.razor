@@ -50,9 +50,9 @@ along with Foobar.  If not, see
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
             <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="OnPlayOrPauseClicked" />
             <MudButtonGroup OverrideStyles="false">
-                <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" />
+                <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="() => _playbackService.PlayPreviousTrackAsync()" />
                 <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" />
-                <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" />
+                <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="() => _playbackService.PlayNextTrackAsync()" />
             </MudButtonGroup>
         </MudStack>
     </MudCardContent>
