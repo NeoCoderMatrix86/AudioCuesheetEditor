@@ -38,29 +38,51 @@ along with Foobar.  If not, see
 }
 
 <TrackListControlButtons 
-SelectedTracks="selectedTracks" 
-AddButtonClicked="OnAddTrackClicked" 
-EditSelectedTracksClicked="EditSelectedTracksClicked" 
-DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
-DeleteAllTracksClicked="OnDeleteAllTracksClicked"
-FixedTableHeader="PinnedTableHeader"
-FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
-TrackSelectionVisible="TrackSelectionVisible" 
-TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
+    SelectedTracks="selectedTracks" 
+    AddButtonClicked="AddTrackClicked" 
+    EditSelectedTracksClicked="EditSelectedTracksClicked" 
+    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
+    DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+    FixedTableHeader="PinnedTableHeader"
+    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
+    TrackSelectionVisible="TrackSelectionVisible" 
+    TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
         <PropertyColumn Property="x => x.Position" Title="#" CellStyle="max-width: 50px;" />
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
-                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" ValueChanged="(value) => context.Item.Artist = value.Name">
+                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText>
                     <ItemTemplate Context="autocompleteContext">
-                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                        @if (autocompleteContext.Disambiguation != null)
+                        {
+                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@autocompleteContext.Name</MudText>
+                        }
                     </ItemTemplate>
                 </MudAutocomplete>
             </EditTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]" />
+        <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
+            <EditTemplate>
+                <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" ValueChanged="(value) => TitleSelected(context.Item, value)" ResetValueOnEmptyText>
+                    <ItemTemplate Context="autocompleteContext">
+                        @if (autocompleteContext.Disambiguation != null)
+                        {
+                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@autocompleteContext.Title</MudText>
+                        }
+                    </ItemTemplate>
+                </MudAutocomplete>
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
             <EditTemplate>
                 <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)" />
@@ -102,7 +124,7 @@ TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
     //TODO: Read from options
     public Boolean TrackSelectionVisible { get; private set; } = false;
 
-    void OnAddTrackClicked()
+    void AddTrackClicked()
     {
         var newTrack = new Track();
         //TODO: applicationOptions übergeben
@@ -134,5 +156,25 @@ TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
             artists = await _musicBrainzDataProvider.SearchArtistAsync(value);
         }
         return artists;
+    }
+
+    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string value, Track currentTrack, CancellationToken token)
+    {
+        IEnumerable<MusicBrainzTrack>? tracks = null;
+        if (!token.IsCancellationRequested)
+        {
+            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentTrack.Artist);
+        }
+        return tracks;
+    }
+
+    void TitleSelected(Track track, MusicBrainzTrack? musicBrainzTrack)
+    {
+        //TODO: Only with ViewModeFull and ViewModeImport
+        track.Length = musicBrainzTrack?.Length;
+        if (String.IsNullOrEmpty(track.Artist))
+        {
+            track.Artist = musicBrainzTrack?.Artist;
+        }
     }
 }

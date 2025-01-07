@@ -16,8 +16,6 @@
 using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace AudioCuesheetEditor.Data.Services
@@ -111,40 +109,6 @@ namespace AudioCuesheetEditor.Data.Services
                 _logger.LogError(hre, "Error getting response from MusicBrainz");
             }
             return titleSearchResult.AsReadOnly();
-        }
-
-        public async Task<MusicBrainzTrack?> GetDetailsAsync(Guid id)
-        {
-            MusicBrainzTrack? track = null;
-            try
-            {
-                if (id != Guid.Empty)
-                {
-                    var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                    var recording = await query.LookupRecordingAsync(id, Include.Artists);
-                    if (recording != null)
-                    {
-                        String artist = String.Empty;
-                        if (recording.ArtistCredit != null)
-                        {
-                            foreach (var artistCredit in recording.ArtistCredit)
-                            {
-                                artist += artistCredit.Name;
-                                if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
-                                {
-                                    artist += artistCredit.JoinPhrase;
-                                }
-                            }
-                        }
-                        track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
-                    }
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Error getting response from MusicBrainz");
-            }
-            return track;
         }
 
         private String? ApplicationVersion
