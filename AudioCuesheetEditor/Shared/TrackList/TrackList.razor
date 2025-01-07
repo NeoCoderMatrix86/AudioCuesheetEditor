@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<TrackList> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject TraceChangeManager _traceChangeManager
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 
 @{
     var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
@@ -46,11 +47,40 @@ along with Foobar.  If not, see
     TrackSelectionVisible="TrackSelectionVisible" 
     TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
 
+<MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
+    <Columns>
+        <PropertyColumn Property="x => x.Position" Title="#"/>
+        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]" />
+        <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]" />
+        <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.End" Title="@_localizer["End"]">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)" />
+            </EditTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
 @code {
     //TODO
     //TODO: Display alert for track count only on ViewModeFull
     //TODO: Display TrackListControlButtons only on ViewModeFull
     //TODO: Localization
+    //TODO: Control Column via TemplateColumn
+    //TODO: Validation for each column
+    //TODO: Autocompolete for artist and title
+    //TODO: Position column width
+    //TODO: Virtualize datagrid
+    //TODO: Pin header
 
     List<Track> selectedTracks = new();
 
@@ -67,9 +97,9 @@ along with Foobar.  If not, see
     void OnAddTrackClicked()
     {
         var newTrack = new Track();
-        //TODO
-        // Cuesheet?.AddTrack(newTrack, applicationOptions);
-        // _traceChangeManager.TraceChanges(newTrack);
+        //TODO: applicationOptions übergeben
+        Cuesheet?.AddTrack(newTrack);
+        _traceChangeManager.TraceChanges(newTrack);
     }
 
     void EditSelectedTracksClicked()
