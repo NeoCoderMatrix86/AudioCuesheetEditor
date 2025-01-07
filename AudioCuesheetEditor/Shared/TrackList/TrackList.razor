@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject TraceChangeManager _traceChangeManager
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
 
 @{
     var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
@@ -37,20 +38,28 @@ along with Foobar.  If not, see
 }
 
 <TrackListControlButtons 
-    SelectedTracks="selectedTracks" 
-    AddButtonClicked="OnAddTrackClicked" 
-    EditSelectedTracksClicked="EditSelectedTracksClicked" 
-    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
-    DeleteAllTracksClicked="OnDeleteAllTracksClicked"
-    FixedTableHeader="PinnedTableHeader"
-    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
-    TrackSelectionVisible="TrackSelectionVisible" 
-    TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
+SelectedTracks="selectedTracks" 
+AddButtonClicked="OnAddTrackClicked" 
+EditSelectedTracksClicked="EditSelectedTracksClicked" 
+DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
+DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+FixedTableHeader="PinnedTableHeader"
+FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
+TrackSelectionVisible="TrackSelectionVisible" 
+TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
         <PropertyColumn Property="x => x.Position" Title="#" CellStyle="max-width: 50px;" />
-        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]" />
+        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
+            <EditTemplate>
+                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" ValueChanged="(value) => context.Item.Artist = value.Name">
+                    <ItemTemplate Context="autocompleteContext">
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                    </ItemTemplate>
+                </MudAutocomplete>
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]" />
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
             <EditTemplate>
@@ -115,5 +124,15 @@ along with Foobar.  If not, see
     void OnDeleteAllTracksClicked()
     {
         //TODO: Display a confirm warning
+    }
+
+    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
+    {
+        IEnumerable<MusicBrainzArtist>? artists = null;
+        if (!token.IsCancellationRequested)
+        {
+            artists = await _musicBrainzDataProvider.SearchArtistAsync(value);
+        }
+        return artists;
     }
 }
