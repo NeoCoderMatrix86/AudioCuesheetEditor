@@ -36,7 +36,9 @@ along with Foobar.  If not, see
         </CascadingValue>
     </MudTabPanel>
     <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
-        <ViewModeImport />
+        <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
+            <ViewModeImport />
+        </CascadingValue>
     </MudTabPanel>
 </MudTabs>
 
