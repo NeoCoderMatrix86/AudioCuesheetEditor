@@ -50,6 +50,11 @@ along with Foobar.  If not, see
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
+        <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
+            <CellTemplate>
+                <TrackListItemControlColumn TrackReference="context.Item" />
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn Property="x => x.Position" Title="#" CellStyle="max-width: 50px;" />
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
@@ -112,6 +117,7 @@ along with Foobar.  If not, see
     //TODO: Selection for tracks
     //TODO: reduce column width for timespans
     //TODO: Position should not be editable for RecordView
+    //TODO: currently played track should be marked
 
     List<Track> selectedTracks = new();
 
