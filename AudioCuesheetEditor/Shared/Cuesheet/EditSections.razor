@@ -34,6 +34,8 @@ along with Foobar.  If not, see
                 <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.End, value)" />
             </EditTemplate>
         </PropertyColumn>
+        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Cuesheet artist"]" />
+        <PropertyColumn Property="x => x.Title" Title="@_localizer["Cuesheet title"]" />
     </Columns>
 </MudDataGrid>
 
@@ -41,8 +43,6 @@ along with Foobar.  If not, see
     //TODO
     //TOOD: Localization
     //TODO: Controls column
-    //TODO: CD Artist column
-    //TODO: CD Title column
     //TODO: audiofile column
     //TODO: Validation for all columns
 
