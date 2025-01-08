@@ -24,6 +24,11 @@ along with Foobar.  If not, see
 
 <MudDataGrid Items="Cuesheet?.Sections" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
+        <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
+            <CellTemplate>
+                <MudIconButton Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Delete" OnClick="() => Cuesheet?.RemoveSection(context.Item)" />
+            </CellTemplate>
+        </TemplateColumn>
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
             <EditTemplate>
                 <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.Begin, value)" />
@@ -45,6 +50,7 @@ along with Foobar.  If not, see
     //TODO: Controls column
     //TODO: audiofile column
     //TODO: Validation for all columns
+    //TODO: Tooltip for controls
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
