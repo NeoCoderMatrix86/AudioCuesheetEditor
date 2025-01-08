@@ -23,7 +23,8 @@ along with Foobar.  If not, see
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 
-@{
+@if (CurrentViewMode == ViewMode.DetailView)
+{
     var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
     if (validationResult?.Status == ValidationStatus.Error)
     {
@@ -35,18 +36,17 @@ along with Foobar.  If not, see
             }
         </MudAlert>
     }
+    <TrackListControlButtons 
+        SelectedTracks="selectedTracks" 
+        AddButtonClicked="AddTrackClicked" 
+        EditSelectedTracksClicked="EditSelectedTracksClicked" 
+        DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
+        DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+        FixedTableHeader="PinnedTableHeader"
+        FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
+        TrackSelectionVisible="TrackSelectionVisible" 
+        TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
 }
-
-<TrackListControlButtons 
-    SelectedTracks="selectedTracks" 
-    AddButtonClicked="AddTrackClicked" 
-    EditSelectedTracksClicked="EditSelectedTracksClicked" 
-    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
-    DeleteAllTracksClicked="OnDeleteAllTracksClicked"
-    FixedTableHeader="PinnedTableHeader"
-    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
-    TrackSelectionVisible="TrackSelectionVisible" 
-    TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
@@ -104,8 +104,6 @@ along with Foobar.  If not, see
 @code {
     //TODO
     //TODO: Link / Unlink tracks
-    //TODO: Display alert for track count only on ViewModeFull
-    //TODO: Display TrackListControlButtons only on ViewModeFull
     //TODO: Localization
     //TODO: Control Column via TemplateColumn
     //TODO: Validation for each column
@@ -116,8 +114,10 @@ along with Foobar.  If not, see
 
     List<Track> selectedTracks = new();
 
-    [Parameter]
-    [EditorRequired]
+    [CascadingParameter]
+    public ViewMode CurrentViewMode { get; set; }
+
+    [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
     //TODO: Read from options

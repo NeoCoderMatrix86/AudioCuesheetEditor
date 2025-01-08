@@ -26,10 +26,14 @@ along with Foobar.  If not, see
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)(viewOptions != null ? viewOptions.ActiveTab : ViewMode.DetailView)" ActivePanelIndexChanged="ActiveTabIndexChanged">
     <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
-        <ViewModeFull Cuesheet="_sessionStateContainer.Cuesheet" />
+        <CascadingValue Value="_sessionStateContainer.Cuesheet">
+            <ViewModeFull />
+        </CascadingValue>
     </MudTabPanel>
     <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
-        <ViewModeRecord Cuesheet="_sessionStateContainer.Cuesheet" />
+        <CascadingValue Value="_sessionStateContainer.Cuesheet">
+            <ViewModeRecord />
+        </CascadingValue>
     </MudTabPanel>
     <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
         <ViewModeImport />
