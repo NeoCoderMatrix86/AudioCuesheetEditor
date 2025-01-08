@@ -18,13 +18,12 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<NavMenu> _localizer
-@inject TraceChangeManager _traceChangeManager
 @inject IDialogService _dialogService
 
 <MudNavMenu>
     <MudNavGroup Title="@_localizer["Edit"]" Icon="@Icons.Material.Outlined.History">
-        <MudNavLink Icon="@Icons.Material.Outlined.Undo" Disabled="!_traceChangeManager.CanUndo" OnClick="() => _traceChangeManager.Undo()">@_localizer["Undo"]</MudNavLink>
-        <MudNavLink Icon="@Icons.Material.Outlined.Redo" Disabled="!_traceChangeManager.CanRedo" OnClick="() => _traceChangeManager.Redo()">@_localizer["Redo"]</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()">@_localizer["Undo"]</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Outlined.Redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()">@_localizer["Redo"]</MudNavLink>
     </MudNavGroup>
     <MudNavGroup Title="@_localizer["Export"]" Icon="@Icons.Material.Outlined.FileDownload">
         <MudNavLink Icon="@Icons.Material.Outlined.AudioFile">@_localizer["Cuesheetfile"]</MudNavLink>

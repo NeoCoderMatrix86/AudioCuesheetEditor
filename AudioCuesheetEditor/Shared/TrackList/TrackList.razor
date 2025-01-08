@@ -19,7 +19,6 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<TrackList> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
-@inject TraceChangeManager _traceChangeManager
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 
@@ -137,7 +136,7 @@ along with Foobar.  If not, see
         var newTrack = new Track();
         //TODO: applicationOptions übergeben
         Cuesheet?.AddTrack(newTrack);
-        _traceChangeManager.TraceChanges(newTrack);
+        TraceChangeManager.TraceChanges(newTrack);
     }
 
     void EditSelectedTracksClicked()
