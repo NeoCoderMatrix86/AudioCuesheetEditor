@@ -19,11 +19,41 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject SessionStateContainer _sessionStateContainer
+@inject ImportManager _importManager
+@inject FileInputManager _fileInputManager
 
 <CascadingValue Value="ViewMode.ImportView">
     <MudStepper>
         <MudStep Title="@_localizer["Select files"]">
-
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@_localizer["Select files for import"]</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent id="@dropFileInputId">
+                    <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="InputFilesChanged" Hidden="false" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                                   InputStyle="opacity:0" tabindex="-1" @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" 
+                                   Accept="@String.Join(',', FileMimeTypes.Text, FileExtensions.Cuesheet, FileExtensions.Projectfile)">
+                        <ActivatorContent>
+                            <MudPaper Height="300px" Outlined Class="@dragClass">
+                                <MudStack AlignItems="AlignItems.Center">
+                                    <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Style="font-size: 8rem;" />
+                                    <MudText Typo="Typo.h4" Align="Align.Center">
+                                        @_localizer["Drag and drop files here or click to choose files"]
+                                    </MudText>
+                                </MudStack>
+                            </MudPaper>
+                        </ActivatorContent>
+                    </MudFileUpload>
+                    @foreach (var invalidFileName in invalidDropFileNames)
+                    {
+                        <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ShowCloseIcon>
+                            @String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)
+                        </MudAlert>
+                    }
+                </MudCardContent>
+            </MudCard>
         </MudStep>
         <MudStep Title="@_localizer["Validate"]">
 
@@ -37,4 +67,57 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: Validation view
     //TODO: Options for import
+
+    const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    string dragClass = DefaultDragClass;
+    List<String> invalidDropFileNames = new();
+    string dropFileInputId = "dropFileInputId";
+
+    void SetDragClass() => dragClass = $"{DefaultDragClass} mud-border-primary";
+
+    void ClearDragClass() => dragClass = DefaultDragClass;
+
+    async Task InputFilesChanged(InputFileChangeEventArgs e)
+    {
+        invalidDropFileNames.Clear();
+        ClearDragClass();
+        var files = e.GetMultipleFiles();
+        foreach (var file in files)
+        {
+            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
+                && (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false)
+                && (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
+                && (FileInputManager.GetAudioCodec(file) == null))
+            {
+                invalidDropFileNames.Add(file.Name);
+            }
+        }
+        if (invalidDropFileNames.Count == 0)
+        {
+            await ImportFiles(files);
+        }
+    }
+
+    async Task ImportFiles(IReadOnlyCollection<IBrowserFile> files)
+    {
+        _sessionStateContainer.ResetImport();
+        var importedFiles = await _importManager.ImportFilesAsync(files);
+        // Audio file is handled seperatly
+        foreach (var file in files)
+        {
+            var codec = FileInputManager.GetAudioCodec(file);
+            if (codec != null)
+            {
+                var audiofile = await _fileInputManager.CreateAudiofileAsync(dropFileInputId, file);
+                _sessionStateContainer.ImportAudiofile = audiofile;
+                importedFiles.Add(file, ImportFileType.Audiofile);
+            }
+        }
+        //TODO
+        // displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
+        // displayFileContent = importedFiles.ContainsValue(ImportFileType.Textfile);
+        // displayEditImportOptions = importedFiles.ContainsValue(ImportFileType.Textfile);
+        // selectedStep = "validateData";
+        // StateHasChanged();
+    }
 }
