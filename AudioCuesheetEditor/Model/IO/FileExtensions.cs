@@ -20,5 +20,6 @@ namespace AudioCuesheetEditor.Model.IO
         public const string Text = ".txt";
         public const string Projectfile = ".ace";
         public const string Cuesheet = ".cue";
+        public const string CDTextfile = ".cdt";
     }
 }

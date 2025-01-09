@@ -22,9 +22,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class CDTextfile
     {
-        public const String MimeType = "text/*";
-        public const String FileExtension = ".cdt";
-
         public CDTextfile(String name)
         {
             if (String.IsNullOrEmpty(name))

@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
@@ -92,7 +93,7 @@ namespace AudioCuesheetEditor.Services.IO
             CDTextfile? cdTextfile = null;
             if (browserFile != null)
             {
-                if (CheckFileMimeType(browserFile, CDTextfile.MimeType, CDTextfile.FileExtension))
+                if (CheckFileMimeType(browserFile, FileMimeTypes.CDTextfile, FileExtensions.CDTextfile))
                 {
                     cdTextfile = new CDTextfile(browserFile.Name);
                 }
