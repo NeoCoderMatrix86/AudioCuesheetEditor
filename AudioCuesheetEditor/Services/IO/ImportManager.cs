@@ -40,7 +40,6 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly TextImportService _textImportService = textImportService;
         private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
 
-        //TODO
         public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
             Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
