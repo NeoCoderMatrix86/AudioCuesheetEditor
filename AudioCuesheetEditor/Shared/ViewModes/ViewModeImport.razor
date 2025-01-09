@@ -23,9 +23,9 @@ along with Foobar.  If not, see
 @inject FileInputManager _fileInputManager
 
 <CascadingValue Value="ViewMode.ImportView">
-    <MudStepper>
+    <MudStepper OnPreviewInteraction="PreviewInteraction">
         <MudStep Title="@_localizer["Select files"]">
-            <SelectImportFiles />
+            <SelectImportFiles FilesImported="(files) => importedFiles = files" />
         </MudStep>
         <MudStep Title="@_localizer["Validate"]">
 
@@ -38,5 +38,14 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: Validation view
     //TODO: Options for import
-    //TODO: disable step 2 if no file is available
+    Dictionary<IBrowserFile, ImportFileType>? importedFiles;
+
+    Task PreviewInteraction(StepperInteractionEventArgs arg)
+    {
+        if (arg.StepIndex == 0)
+        {
+            arg.Cancel = importedFiles == null || importedFiles.Count == 0;
+        }
+        return Task.CompletedTask;
+    }
 }

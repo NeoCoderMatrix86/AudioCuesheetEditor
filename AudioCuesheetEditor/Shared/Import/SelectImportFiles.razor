@@ -42,8 +42,10 @@ along with Foobar.  If not, see
 @code {
     string dropFileInputId = "dropFileInputId";
     List<String> invalidDropFileNames = new();
-    //TODO
     //TODO: localize
+
+    [Parameter]
+    public EventCallback<Dictionary<IBrowserFile, ImportFileType>> FilesImported { get; set; }
 
     async Task InputFilesChanged(IReadOnlyCollection<IBrowserFile> files)
     {
@@ -79,11 +81,6 @@ along with Foobar.  If not, see
                 importedFiles.Add(file, ImportFileType.Audiofile);
             }
         }
-        //TODO
-        // displaySplitPoints = importedFiles.ContainsValue(ImportFileType.ProjectFile);
-        // displayFileContent = importedFiles.ContainsValue(ImportFileType.Textfile);
-        // displayEditImportOptions = importedFiles.ContainsValue(ImportFileType.Textfile);
-        // selectedStep = "validateData";
-        // StateHasChanged();
+        await FilesImported.InvokeAsync(importedFiles);
     }
 }
