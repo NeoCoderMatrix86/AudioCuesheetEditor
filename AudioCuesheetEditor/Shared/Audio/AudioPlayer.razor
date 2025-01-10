@@ -51,7 +51,7 @@ along with Foobar.  If not, see
             <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="OnPlayOrPauseClicked" />
             <MudButtonGroup OverrideStyles="false">
                 <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="() => _playbackService.PlayPreviousTrackAsync()" />
-                <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" />
+                <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" Disabled="!_playbackService.PlaybackPossible" />
                 <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="() => _playbackService.PlayNextTrackAsync()" />
             </MudButtonGroup>
         </MudStack>
@@ -64,7 +64,6 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: Slider should display the value in tooltip (like vlc does)
     //TODO: Media Keyboard mapping
-    //TODO: disable stop if no playback is possible
 
     double sliderValue;
 
