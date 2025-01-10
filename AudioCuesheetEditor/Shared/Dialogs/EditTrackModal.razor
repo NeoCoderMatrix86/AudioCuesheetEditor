@@ -1,0 +1,57 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<EditTrackModal> _localizer
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5">@_localizer["Edit track details"]</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="EditedTrack">
+            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Linked"]" />
+            <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.Artist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.Title" Label="@_localizer["Title"]" Variant="Variant.Outlined" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="(args) => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
+        <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => MudDialog?.Close(DialogResult.Ok(EditedTrack))">@_localizer["Save changes"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    //TODO
+    //TODO: localization
+    //TODO: Save changes
+    //TODO: Validation for all fields
+    //TODO: All other fields (begin, end, length, flags, pregap, postgap)
+    //TODO: Multiple edit
+
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    public Boolean MultipleEdit { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public Track EditedTrack { get; set; } = null!;
+}

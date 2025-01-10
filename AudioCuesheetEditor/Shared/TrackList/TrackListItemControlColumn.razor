@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<TrackListItemControlColumn> _localizer
 @inject PlaybackService _playbackService
+@inject IDialogService _dialogService
 
 @switch (CurrentViewMode)
 {
@@ -26,6 +27,9 @@ along with Foobar.  If not, see
         break;
     case ViewMode.DetailView:
     case ViewMode.ImportView:
+        <MudButtonGroup OverrideStyles="false">
+            <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Edit" OnClick="EditTrackModalClicked" />
+        </MudButtonGroup>
         <MudButtonGroup OverrideStyles="false">
             <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.CopyAll" />
         </MudButtonGroup>
@@ -64,5 +68,20 @@ along with Foobar.  If not, see
     {
         Cuesheet?.RemoveTrack(TrackReference);
         TrackDeleted.InvokeAsync();
+    }
+
+    async Task EditTrackModalClicked()
+    {
+        var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, TrackReference.Clone() } };
+        var options = new DialogOptions() { CloseButton = true };
+        var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            //TODO: Check if copy of values is an idea
+            var editedTrack = (Track)result.Data;
+            TrackReference.CopyValues(editedTrack, false);
+            //TODO: How do we get the values back to the track?
+        }
     }
 }
