@@ -44,7 +44,6 @@ along with Foobar.  If not, see
 
 @code{
     //TODO: Reset of cuesheet and reset of application
-    //TODO: Setting _sessionStateContainer.ImportCuesheet doesn't reload the cascadin parameter leading to empty components
     ViewOptions? viewOptions;
 
     protected override async Task OnInitializedAsync()
@@ -52,6 +51,8 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         viewOptions = await _localStorageOptionsProvider.GetOptions<ViewOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
         StateHasChanged();
     }
 
@@ -61,6 +62,8 @@ along with Foobar.  If not, see
         if (disposing)
         {
             _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+            _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
+            _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
         }
     }
 
@@ -80,5 +83,15 @@ along with Foobar.  If not, see
         {
             viewOptions = viewOption;
         }
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
