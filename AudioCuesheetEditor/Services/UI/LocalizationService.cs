@@ -49,20 +49,25 @@ namespace AudioCuesheetEditor.Services.UI
 
         public async Task ChangeLanguageAsync(string name)
         {
-            //TODO: Check if available
-            ChangeLanguage(name);
-            await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.CultureName!, name);
-            LocalizationChanged?.Invoke(this, new EventArgs());
+            if (ChangeLanguage(name))
+            {
+                await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.CultureName!, name);
+                LocalizationChanged?.Invoke(this, new EventArgs());
+            }
         }
 
-        private void ChangeLanguage(string name)
+        private Boolean ChangeLanguage(string name)
         {
-            //TODO: Check if available
-            SelectedCulture = new(name);
-            CultureInfo.DefaultThreadCurrentCulture = SelectedCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = SelectedCulture;
-            CultureInfo.CurrentCulture = SelectedCulture;
-            CultureInfo.CurrentUICulture = SelectedCulture;
+            var newCulture = AvailableCultures.SingleOrDefault(c => c.Name == name);
+            if (newCulture != null)
+            {
+                SelectedCulture = newCulture;
+                CultureInfo.DefaultThreadCurrentCulture = SelectedCulture;
+                CultureInfo.DefaultThreadCurrentUICulture = SelectedCulture;
+                CultureInfo.CurrentCulture = SelectedCulture;
+                CultureInfo.CurrentUICulture = SelectedCulture;
+            }
+            return newCulture != null;
         }
     }
 }
