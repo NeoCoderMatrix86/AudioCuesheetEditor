@@ -66,41 +66,22 @@ along with Foobar.  If not, see
     //TODO: Media Keyboard mapping
     //TODO: disable stop if no playback is possible
 
-    Timer? audioUpdateTimer;
     double sliderValue;
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        audioUpdateTimer?.Dispose();
+        _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        audioUpdateTimer = new(1000);
-        audioUpdateTimer.AutoReset = true;
-        audioUpdateTimer.Elapsed += delegate
-        {
-            if ((_playbackService.CurrentPosition.HasValue) && (_playbackService.TotalTime.HasValue))
-            {
-                sliderValue = (_playbackService.CurrentPosition.Value / _playbackService.TotalTime.Value) * 100.0;
-            }
-            else
-            {
-                sliderValue = 0.0;
-            }
-            StateHasChanged();
-            if (_playbackService.IsPlaying == false)
-            {
-                audioUpdateTimer.Stop();
-            }
-        };
+        _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
     }
 
     async Task OnPlayOrPauseClicked()
     {
-        audioUpdateTimer?.Start();
         await _playbackService.PlayOrPauseAsync();
     }
 
@@ -110,7 +91,19 @@ along with Foobar.  If not, see
         {
             var newPosition = newValue * _playbackService.TotalTime.Value / 100.0;
             await _playbackService.SeekAsync(newPosition);
-            audioUpdateTimer?.Start();
         }
+    }
+
+    void PlaybackService_CurrentPositionChanged()
+    {
+        if ((_playbackService.CurrentPosition.HasValue) && (_playbackService.TotalTime.HasValue))
+        {
+            sliderValue = (_playbackService.CurrentPosition.Value / _playbackService.TotalTime.Value) * 100.0;
+        }
+        else
+        {
+            sliderValue = 0.0;
+        }
+        InvokeAsync(StateHasChanged);
     }
 }

@@ -30,8 +30,22 @@ namespace AudioCuesheetEditor.Services.Audio
         private Timer? updateTimer;
         private bool disposedValue;
         private readonly Lock timerLock = new();
+        private TimeSpan? currentPosition;
 
-        public TimeSpan? CurrentPosition { get; private set; }
+        public event Action? CurrentPositionChanged;
+
+        public TimeSpan? CurrentPosition
+        {
+            get => currentPosition;
+            private set
+            {
+                if (currentPosition != value)
+                {
+                    currentPosition = value;
+                    CurrentPositionChanged?.Invoke();
+                }
+            }
+        }
         public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
         public TimeSpan? TotalTime => _sessionStateContainer.Cuesheet.Audiofile?.Duration;
         public Boolean IsPlaying { get; private set; } = false;
@@ -102,6 +116,7 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task PlayNextTrackAsync()
         {
+            //TODO: When playback is already running, the playback pauses
             if (CurrentlyPlayingTrack != null)
             {
                 var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
@@ -112,6 +127,7 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task PlayPreviousTrackAsync()
         {
+            //TODO: When playback is already running, the playback pauses
             if (CurrentlyPlayingTrack != null)
             {
                 var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
@@ -205,7 +221,5 @@ namespace AudioCuesheetEditor.Services.Audio
             }
             CurrentPosition = await _howl.GetCurrentTime(soundId.Value);
         }
-
-        
     }
 }
