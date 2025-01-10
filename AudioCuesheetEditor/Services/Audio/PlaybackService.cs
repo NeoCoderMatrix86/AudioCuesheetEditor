@@ -64,7 +64,7 @@ namespace AudioCuesheetEditor.Services.Audio
             _howl.OnStop += Howl_OnStop;
         }
 
-        public async Task PlayOrPauseAsync(Track? trackToPlay = null)
+        public async Task PlayOrPauseAsync()
         {
             //Reset if the last played audiofile is not the current one
             if (currentlyPlayingAudiofile != _sessionStateContainer.Cuesheet.Audiofile)
@@ -98,14 +98,25 @@ namespace AudioCuesheetEditor.Services.Audio
                     };
                     soundId = await _howl.Play(options);
                     currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
-                    if (trackToPlay?.Begin.HasValue == true)
-                    {
-                        await _howl.Seek(soundId.Value, trackToPlay.Begin.Value);
-                    }
                 }
             }
         }
-        
+
+        public async Task PlayAsync(Track trackToPlay)
+        {
+            if (trackToPlay?.Begin.HasValue == true)
+            {
+                if (IsPlaying == false)
+                {
+                    await PlayOrPauseAsync();
+                }
+                if (soundId.HasValue)
+                {
+                    await _howl.Seek(soundId.Value, trackToPlay.Begin.Value);
+                }
+            }
+        }
+
         public async Task StopAsync()
         {
             if (soundId != null)
@@ -116,23 +127,27 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task PlayNextTrackAsync()
         {
-            //TODO: When playback is already running, the playback pauses
             if (CurrentlyPlayingTrack != null)
             {
                 var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
                 var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index + 1);
-                await PlayOrPauseAsync(trackToPlay);
+                if (trackToPlay != null)
+                {
+                    await PlayAsync(trackToPlay);
+                }
             }
         }
 
         public async Task PlayPreviousTrackAsync()
         {
-            //TODO: When playback is already running, the playback pauses
             if (CurrentlyPlayingTrack != null)
             {
                 var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
                 var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index - 1);
-                await PlayOrPauseAsync(trackToPlay);
+                if (trackToPlay != null)
+                {
+                    await PlayAsync(trackToPlay);
+                }
             }
         }
 

@@ -30,7 +30,7 @@ along with Foobar.  If not, see
             <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.CopyAll" />
         </MudButtonGroup>
         <MudButtonGroup OverrideStyles="false">
-            <MudIconButton Color="Color.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayOrPauseAsync(TrackReference)" />
+            <MudIconButton Color="Color.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(TrackReference)" />
         </MudButtonGroup>
         <MudButtonGroup OverrideStyles="false">
             <MudIconButton Color="Color.Dark" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.MoveUp" Disabled="!(Cuesheet?.MoveTrackPossible(TrackReference, MoveDirection.Up) == true)" OnClick="() => Cuesheet?.MoveTrack(TrackReference, MoveDirection.Up)"/>
