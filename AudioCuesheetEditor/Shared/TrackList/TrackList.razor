@@ -54,7 +54,7 @@ along with Foobar.  If not, see
                 <TrackListItemControlColumn TrackReference="context.Item" />
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn Property="x => x.Position" Title="#" CellStyle="max-width: 50px;" />
+        <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" />
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable>
@@ -114,7 +114,6 @@ along with Foobar.  If not, see
     //TODO: Pin header
     //TODO: Selection for tracks
     //TODO: reduce column width for timespans
-    //TODO: Position should not be editable for RecordView
     //TODO: currently played track should be marked
     //TODO: options for custom timespanformat
     //TODO: Controls should be reduced to play (and maybe delete), all other functions should be made for selected rows via toolbar (or modal dialog)
