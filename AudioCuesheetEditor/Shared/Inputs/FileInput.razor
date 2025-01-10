@@ -27,8 +27,8 @@ along with Foobar.  If not, see
                     Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
         </ActivatorContent>
     </MudFileUpload>
-    <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="OnUploadFilesClickedAsync">@_localizer["Pick file"]</MudButton>
-    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="OnClearClickedAsync" Disabled="selectedFile == null" />
+    <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Pick file"]</MudButton>
+    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="selectedFile == null" />
 </MudStack>
 
 @code {
@@ -57,12 +57,12 @@ along with Foobar.  If not, see
 
     void ClearDragClass() => fieldClass = null;
 
-    async Task OnUploadFilesClickedAsync()
+    async Task PickFilesClickedAsync()
     {
         await (fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
     }
 
-    async Task OnClearClickedAsync()
+    async Task ClearClickedAsync()
     {
         await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
         await SetSelectedFileAsync(null);
