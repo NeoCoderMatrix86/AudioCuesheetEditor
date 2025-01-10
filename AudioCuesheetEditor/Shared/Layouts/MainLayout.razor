@@ -36,10 +36,7 @@ along with Foobar.  If not, see
     <ChildContent>
         <CascadingValue Value="@this">
             <MudLayout>
-                <AppBar DisplayMenu DisplayUndoRedoButtonGroup MenuClicked="() => ToggleDrawer()" />
-                <MudDrawer @bind-Open="drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-                    <NavMenu />
-                </MudDrawer>
+                <AppBar DisplayExportMenu DisplayUndoRedoButtonGroup />
                 <MudMainContent>
                     @Body
                 </MudMainContent>
@@ -60,13 +57,6 @@ along with Foobar.  If not, see
 </ErrorBoundary>
 
 @code {
-    bool drawerOpen = false;
-
-    void ToggleDrawer()
-    {
-        drawerOpen = !drawerOpen;
-    }
-
     async Task ReloadApplication()
     {
         await _jsRuntime.InvokeVoidAsync("removeBeforeunload");

@@ -129,10 +129,4 @@
   <data name="Preview environment" xml:space="preserve">
     <value>Vorschauumgebung</value>
   </data>
-  <data name="Redo" xml:space="preserve">
-    <value>Wiederherstellen</value>
-  </data>
-  <data name="Undo" xml:space="preserve">
-    <value>Rückgängig</value>
-  </data>
 </root>

@@ -129,10 +129,4 @@
   <data name="Preview environment" xml:space="preserve">
     <value>Preview environment</value>
   </data>
-  <data name="Redo" xml:space="preserve">
-    <value>Redo</value>
-  </data>
-  <data name="Undo" xml:space="preserve">
-    <value>Undo</value>
-  </data>
 </root>

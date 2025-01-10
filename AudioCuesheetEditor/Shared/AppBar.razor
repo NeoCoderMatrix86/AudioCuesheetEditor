@@ -19,31 +19,31 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject NavigationManager _navigationManager
-@inject TraceChangeManager _traceChangeManager
 @inject IStringLocalizer<AppBar> _localizer
+@inject IDialogService _dialogService
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
-    @if (DisplayMenu)
-    {
-        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="MenuClicked" />
-    }
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
-        AudioCuesheetEditor
+        <MudHidden Breakpoint="Breakpoint.Xs">
+            <MudText Typo="Typo.h6">AudioCuesheetEditor</MudText>
+        </MudHidden>
     </MudButton>
     @if (DisplayUndoRedoButtonGroup)
     {
-        <MudHidden Breakpoint="Breakpoint.Xs">
-            <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
-                <MudButton StartIcon="@Icons.Material.Outlined.Undo" Disabled="!_traceChangeManager.CanUndo" OnClick="() => _traceChangeManager.Undo()">
-                    @_localizer["Undo"]
-                </MudButton>
-                <MudButton StartIcon="@Icons.Material.Outlined.Redo" Disabled="!_traceChangeManager.CanRedo" OnClick="() => _traceChangeManager.Redo()">
-                    @_localizer["Redo"]
-                </MudButton>
-            </MudButtonGroup>
-        </MudHidden>
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
+            <MudIconButton Icon="@Icons.Material.Outlined.Undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()" />
+        </MudButtonGroup>
     }
     <MudSpacer />
+    @if (DisplayExportMenu)
+    {
+        <MudMenu Label="@_localizer["Export"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FileDownload">
+            <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile">@_localizer["Cuesheet"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="()=> _dialogService.Show<DownloadProjectfileDialog>(null, DownloadProjectfileDialogOptions)">@_localizer["Projectfile"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport">@_localizer["Custom"]</MudMenuItem>
+        </MudMenu>
+    }
     <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
         @foreach (var culture in LocalizationService.AvailableCultures)
         {
@@ -58,14 +58,16 @@ along with Foobar.  If not, see
 </MudAppBar>
 
 @code {
-    [Parameter]
-    public Boolean DisplayMenu { get; set; }
-
-    [Parameter]
-    public EventCallback MenuClicked { get; set; }
+    //TODO: Export cuesheet
+    //TODO: Export Custom
+    //TODO: Tooltips undo/redo
+    private readonly DialogOptions DownloadProjectfileDialogOptions = new() { BackdropClick = false, CloseButton = true };
 
     [Parameter]
     public Boolean DisplayUndoRedoButtonGroup { get; set; }
+
+    [Parameter]
+    public Boolean DisplayExportMenu { get; set; }
 
     async Task SelectedCultureChanged(string name)
     {
