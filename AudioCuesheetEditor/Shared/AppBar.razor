@@ -41,7 +41,7 @@ along with Foobar.  If not, see
         <MudMenu Label="@_localizer["Export"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FileDownload">
             <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile">@_localizer["Cuesheet"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="()=> _dialogService.Show<DownloadProjectfileDialog>(null, DownloadProjectfileDialogOptions)">@_localizer["Projectfile"]</MudMenuItem>
-            <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport">@_localizer["Custom"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport">@_localizer["Textfile"]</MudMenuItem>
         </MudMenu>
     }
     <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
@@ -61,6 +61,7 @@ along with Foobar.  If not, see
     //TODO: Export cuesheet
     //TODO: Export Custom
     //TODO: Tooltips undo/redo
+    //TODO: Tooltips for export options
     private readonly DialogOptions DownloadProjectfileDialogOptions = new() { BackdropClick = false, CloseButton = true };
 
     [Parameter]

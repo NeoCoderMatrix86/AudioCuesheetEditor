@@ -123,10 +123,22 @@
   <data name="Change language" xml:space="preserve">
     <value>Sprache wechseln</value>
   </data>
+  <data name="Cuesheet" xml:space="preserve">
+    <value>Cuesheet</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Hilfe</value>
   </data>
   <data name="Preview environment" xml:space="preserve">
     <value>Vorschauumgebung</value>
+  </data>
+  <data name="Projectfile" xml:space="preserve">
+    <value>Projektdatei</value>
+  </data>
+  <data name="Textfile" xml:space="preserve">
+    <value>Textdatei</value>
   </data>
 </root>
