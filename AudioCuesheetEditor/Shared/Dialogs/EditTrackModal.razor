@@ -29,11 +29,16 @@ along with Foobar.  If not, see
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
             <MudTextField @bind-Value="EditedTrack.Artist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" />
             <MudTextField @bind-Value="EditedTrack.Title" Label="@_localizer["Title"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.Begin" Label="@_localizer["Begin"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.End" Label="@_localizer["End"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.Length" Label="@_localizer["Length"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.PreGap" Label="@_localizer["PreGap"]" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="EditedTrack.PostGap" Label="@_localizer["PostGap"]" Variant="Variant.Outlined" />
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="(args) => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
         <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => MudDialog?.Close(DialogResult.Ok(EditedTrack))">@_localizer["Save changes"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(args) => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -42,7 +47,7 @@ along with Foobar.  If not, see
     //TODO: localization
     //TODO: Save changes
     //TODO: Validation for all fields
-    //TODO: All other fields (begin, end, length, flags, pregap, postgap)
+    //TODO: Flags
     //TODO: Multiple edit
 
     [CascadingParameter]

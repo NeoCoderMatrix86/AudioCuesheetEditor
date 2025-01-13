@@ -27,8 +27,8 @@ along with Foobar.  If not, see
         <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" />
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="(args) => MudDialog?.Cancel()">@_localizer["Cancel"]</MudButton>
         <MudButton Color="Color.Info" Variant="Variant.Filled">@_localizer["Download project"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(args) => MudDialog?.Cancel()">@_localizer["Cancel"]</MudButton>
     </DialogActions>
 </MudDialog>
 
