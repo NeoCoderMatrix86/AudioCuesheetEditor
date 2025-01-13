@@ -25,7 +25,7 @@ along with Foobar.  If not, see
     </TitleContent>
     <DialogContent>
         <MudForm Model="EditedTrack">
-            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Linked"]" />
+            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
             <MudTextField @bind-Value="EditedTrack.Artist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" />
             <MudTextField @bind-Value="EditedTrack.Title" Label="@_localizer["Title"]" Variant="Variant.Outlined" />
