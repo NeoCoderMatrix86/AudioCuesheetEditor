@@ -76,12 +76,9 @@ along with Foobar.  If not, see
         var options = new DialogOptions() { CloseButton = true };
         var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
         var result = await dialog.Result;
-        if (result?.Canceled == false)
+        if ((result?.Canceled == false) && (result.Data is Track editedTrack))
         {
-            //TODO: Check if copy of values is an idea
-            var editedTrack = (Track)result.Data;
-            TrackReference.CopyValues(editedTrack, false);
-            //TODO: How do we get the values back to the track?
+            TrackReference.CopyValues(editedTrack, setCuesheet: false);
         }
     }
 }
