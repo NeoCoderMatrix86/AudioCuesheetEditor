@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<EditTrackModal> _localizer
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 
 <MudDialog>
     <TitleContent>
@@ -29,11 +30,11 @@ along with Foobar.  If not, see
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
             <MudTextField @bind-Value="EditedTrack.Artist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" />
             <MudTextField @bind-Value="EditedTrack.Title" Label="@_localizer["Title"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.Begin" Label="@_localizer["Begin"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.End" Label="@_localizer["End"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.Length" Label="@_localizer["Length"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.PreGap" Label="@_localizer["PreGap"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.PostGap" Label="@_localizer["PostGap"]" Variant="Variant.Outlined" />
+            <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" />
+            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" />
+            <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" />
+            <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" />
+            <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" />
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -49,7 +50,6 @@ along with Foobar.  If not, see
     //TODO: Flags
     //TODO: Multiple edit
     //TODO: Autocomplete for artist and title
-    //TODO: use ApplicationOptionsTimeSpanParser fdor timespan inputs (begin, end, length, pregap, postgap)
 
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
