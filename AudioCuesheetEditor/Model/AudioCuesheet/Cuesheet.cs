@@ -236,6 +236,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void AddTrack(Track track, ApplicationOptions? applicationOptions = null, RecordOptions? recordOptions = null)
         {
+            //TODO applicationOptions should not be used anymore, the IsLinkedToPreviousTrack will be set on the track that should be added
             if (track.IsCloned)
             {
                 throw new ArgumentException("Cloned tracks may not be added!");
