@@ -36,15 +36,15 @@ along with Foobar.  If not, see
         </MudAlert>
     }
     <TrackListControlButtons 
-    SelectedTracks="selectedTracks" 
-    AddButtonClicked="AddTrackClicked" 
-    EditSelectedTracksClicked="EditSelectedTracksClicked" 
-    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
-    DeleteAllTracksClicked="OnDeleteAllTracksClicked"
-    FixedTableHeader="PinnedTableHeader"
-    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
-    TrackSelectionVisible="TrackSelectionVisible" 
-    TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
+        SelectedTracks="selectedTracks" 
+        AddButtonClicked="AddTrackClicked" 
+        EditSelectedTracksClicked="EditSelectedTracksClicked" 
+        DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
+        DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+        FixedTableHeader="PinnedTableHeader"
+        FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
+        TrackSelectionVisible="TrackSelectionVisible" 
+        TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
 }
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
