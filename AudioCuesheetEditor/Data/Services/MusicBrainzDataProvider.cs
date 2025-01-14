@@ -22,13 +22,13 @@ namespace AudioCuesheetEditor.Data.Services
 {
     public class MusicBrainzArtist
     {
-        public Guid Id { get; init; }
+        public Guid? Id { get; init; }
         public String? Name { get; init; }
         public String? Disambiguation { get; init; }
     }
     public class MusicBrainzTrack
     {
-        public Guid Id { get; init; }
+        public Guid? Id { get; init; }
         public String? Artist { get; init; }
         public String? Title { get; init; }
         public TimeSpan? Length { get; init; }
