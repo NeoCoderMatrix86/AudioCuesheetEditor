@@ -233,7 +233,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
                 eventFired = true;
             };
             await importManager.ImportTextAsync(fileContent);
-            await importManager.ImportCuesheetAsync();
+            importManager.ImportCuesheet();
             // Act
             traceChangeManager.Undo();
             // Assert

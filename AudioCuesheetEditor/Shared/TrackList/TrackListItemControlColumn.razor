@@ -28,10 +28,10 @@ along with Foobar.  If not, see
     case ViewMode.DetailView:
     case ViewMode.ImportView:
         <MudButtonGroup OverrideStyles="false">
-            <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Edit" OnClick="EditTrackModalClicked" />
+            <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Edit" OnClick="() => EditTrackModalClicked(TrackReference)" />
         </MudButtonGroup>
         <MudButtonGroup OverrideStyles="false">
-            <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.CopyAll" />
+            <MudIconButton Color="Color.Success" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.CopyAll" OnClick="CopyTrackClicked" />
         </MudButtonGroup>
         <MudButtonGroup OverrideStyles="false">
             <MudIconButton Color="Color.Info" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(TrackReference)" />
@@ -47,10 +47,7 @@ along with Foobar.  If not, see
 }
 
 @code {
-    //TODO
-    //TODO: Button for edit track as dialog
     //TODO: Tooltips
-    //TODO: Copy track and display in modal dialog
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -70,9 +67,17 @@ along with Foobar.  If not, see
         TrackDeleted.InvokeAsync();
     }
 
-    async Task EditTrackModalClicked()
+    async Task CopyTrackClicked()
     {
-        var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, TrackReference.Clone() } };
+        var copy = new Track(TrackReference);
+        Cuesheet?.AddTrack(copy);
+        TraceChangeManager.TraceChanges(copy);
+        await EditTrackModalClicked(copy);
+    }
+
+    async Task EditTrackModalClicked(Track trackToEdit)
+    {
+        var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, trackToEdit.Clone() } };
         var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false };
         var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
         var result = await dialog.Result;

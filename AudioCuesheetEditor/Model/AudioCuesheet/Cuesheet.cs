@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
     public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable, ITraceable, ICuesheet
     {
-        private readonly object syncLock = new();
+        private readonly Lock syncLock = new();
 
         private List<Track> tracks = [];
         private String? artist;
@@ -234,9 +234,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return previousLinkedTrack;
         }
 
-        public void AddTrack(Track track, ApplicationOptions? applicationOptions = null, RecordOptions? recordOptions = null)
+        public void AddTrack(Track track)
         {
-            //TODO applicationOptions should not be used anymore, the IsLinkedToPreviousTrack will be set on the track that should be added
             if (track.IsCloned)
             {
                 throw new ArgumentException("Cloned tracks may not be added!");
@@ -245,14 +244,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
             if (IsRecording && recordingStart.HasValue)
             {
-                ArgumentNullException.ThrowIfNull(recordOptions);
-                track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
+                //TODO
+                //ArgumentNullException.ThrowIfNull(recordOptions);
+                //track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
             }
-            //When no applications are available (because of used by import for example) we don't try to calculate properties
-            if (applicationOptions != null)
-            {
-                track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne;
-            }
+            //Fire the event manually since we don't know if the track is already linked to previous one
+            Track_IsLinkedToPreviousTrackChanged(track, EventArgs.Empty);
             tracks.Add(track);
             track.Cuesheet = this;
             ReCalculateTrackProperties(track);
