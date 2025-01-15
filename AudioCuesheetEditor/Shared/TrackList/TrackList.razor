@@ -57,7 +57,7 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" />
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
-                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" ValueChanged="(value) => context.Item.Artist = value?.Name" 
+                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" ValueChanged="(value) => context.Item.Artist = value?.Name"
                     ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
@@ -75,7 +75,8 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                    ValueChanged="(value) => TitleSelected(context.Item, value)" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                    Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                    ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -119,7 +120,6 @@ along with Foobar.  If not, see
     //TODO: currently played track should be marked
     //TODO: options for custom timespanformat
     //TODO: Controls should be reduced to play (and maybe delete), all other functions should be made for selected rows via toolbar (or modal dialog)
-    //TODO: Bug Autocomplete for artist and title doesn't reflect changes to track (when edited modal)
 
     List<Track> selectedTracks = new();
 
