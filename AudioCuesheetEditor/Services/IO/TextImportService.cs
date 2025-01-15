@@ -143,10 +143,9 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 property.SetValue(entity, value);
             }
-            if (property.PropertyType == typeof(IReadOnlyCollection<Flag>))
+            if (property.PropertyType == typeof(IEnumerable<Flag>))
             {
-                var list = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
-                ((ITrack)entity).SetFlags(list);
+                ((ITrack)entity).Flags = Flag.AvailableFlags.Where(x => value.Contains(x.CuesheetLabel));
             }
             if (property.PropertyType == typeof(Audiofile))
             {

@@ -18,21 +18,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
 {
     public class ImportTrack : ITrack
     {
-        private readonly List<Flag> flags = [];
         public string? Artist { get; set; }
         public string? Title { get; set; }
         public uint? Position { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }
-        public IReadOnlyCollection<Flag> Flags => flags;
+        public IEnumerable<Flag> Flags { get; set; } = [];
         public TimeSpan? PreGap { get; set; }
         public TimeSpan? PostGap { get; set; }
         public DateTime? StartDateTime { get; set; }
-        public void SetFlags(IEnumerable<Flag> flags)
-        {
-            this.flags.Clear();
-            this.flags.AddRange(flags);
-        }
     }
 }

@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private String? title;
         private TimeSpan? begin;
         private TimeSpan? end;
-        private TimeSpan? _length;
+        private TimeSpan? length;
         private List<Flag> flags = [];
         private Boolean isLinkedToPreviousTrack;
         private Cuesheet? cuesheet;
@@ -117,7 +117,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 else
                 {
-                    return _length;
+                    return length;
                 }
             }
             set
@@ -151,18 +151,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 else
                 {
-                    _length = value;
+                    length = value;
                 }
                 FireEvents(previousValue, fireRankPropertyValueChanged: false, fireTraceablePropertyChanged: false);
             }
         }
         [JsonInclude]
-        public IReadOnlyCollection<Flag> Flags
+        public IEnumerable<Flag> Flags
         {
             get { return flags.AsReadOnly(); }
-            private set
+            set
             {
+                var previousValue = flags;
                 flags = [.. value];
+                FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(Flags));
             }
         }
         [JsonIgnore]
@@ -324,7 +326,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
                 else
                 {
-                    SetFlags(track.Flags);
+                    Flags = track.Flags;
                 }
             }
             if (setPreGap)
@@ -360,28 +362,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     IsLinkedToPreviousTrack = cuesheetTrack2.IsLinkedToPreviousTrack;
                 }
             }
-        }
-
-        ///<inheritdoc/>
-        public void SetFlag(Flag flag, SetFlagMode flagMode)
-        {
-            var previousValue = flags;
-            if ((flagMode == SetFlagMode.Add) && (Flags.Contains(flag) == false))
-            {
-                flags.Add(flag);
-            }
-            if ((flagMode == SetFlagMode.Remove) && Flags.Contains(flag))
-            {
-                flags.Remove(flag);
-            }
-            OnTraceablePropertyChanged(previousValue);
-        }
-
-        ///<inheritdoc/>
-        public void SetFlags(IEnumerable<Flag> flags)
-        {
-            this.flags.Clear();
-            this.flags.AddRange(flags);
         }
 
         public override ValidationResult Validate(string property)
