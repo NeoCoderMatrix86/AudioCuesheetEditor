@@ -78,7 +78,7 @@ along with Foobar.  If not, see
     async Task EditTrackModalClicked(Track trackToEdit)
     {
         var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, trackToEdit.Clone() } };
-        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
         var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
         var result = await dialog.Result;
         if ((result?.Canceled == false) && (result.Data is Track editedTrack))
