@@ -119,6 +119,18 @@ along with Foobar.  If not, see
                         </MudSelect>
                     </MudItem>
                     <MudFlexBreak />
+                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackFlags" Color="Color.Primary" /></MudItem>
+                    <MudItem xs="7">
+                        <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
+                            <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info" Disabled="!editTrackFlags">
+                                @foreach (var flag in Flag.AvailableFlags)
+                                {
+                                    <MudChip Value="flag">@flag.Name</MudChip>
+                                }
+                            </MudChipSet>
+                        </MudField>
+                    </MudItem>
+                    <MudFlexBreak />
                     <MudItem xs="2"><MudSwitch @bind-Value="editTrackPregap" Color="Color.Primary" /></MudItem>
                     <MudItem xs="7">
                         <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" Disabled="!editTrackPregap" />
@@ -179,6 +191,14 @@ along with Foobar.  If not, see
                 <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" />
                 <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" />
                 <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" />
+                <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
+                    <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info">
+                        @foreach(var flag in Flag.AvailableFlags)
+                        {
+                            <MudChip Value="flag">@flag.Name</MudChip>
+                        }
+                    </MudChipSet>
+                </MudField>
                 <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" />
                 <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" />
             }
@@ -194,7 +214,6 @@ along with Foobar.  If not, see
     //TODO
     //TODO: localization
     //TODO: Validation for all fields
-    //TODO: Flags
     //TODO: Multiple edit
     //TODO: On save with multiple edit, we need to pass all information back to the calling component in order to react
     //TODO: Make 2 dialogs for editing track modal (one for single, one for multiple)
@@ -216,7 +235,7 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
 
-    Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackPregap, editTrackPostgap;
+    Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap;
     DynamicEditValue editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackPregap, editModeTrackPostgap;
 
     async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
