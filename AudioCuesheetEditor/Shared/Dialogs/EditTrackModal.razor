@@ -40,7 +40,7 @@ along with Foobar.  If not, see
                     <MudItem xs="2"><MudSwitch @bind-Value="editTrackPosition" Color="Color.Primary" /></MudItem>
                     <MudItem xs="7"><MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Disabled="!editTrackPosition" /></MudItem>
                     <MudItem xs="3">
-                        <MudSelect @bind-Value="editTrackPositionMode" Disabled="!editTrackPosition">
+                        <MudSelect @bind-Value="editModeTrackPosition" Disabled="!editTrackPosition">
                             <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
                             <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
                             <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
@@ -81,6 +81,66 @@ along with Foobar.  If not, see
                                 }
                             </ItemTemplate>
                         </MudAutocomplete>
+                    </MudItem>
+                    <MudFlexBreak />
+                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackBegin" Color="Color.Primary" /></MudItem>
+                    <MudItem xs="7">
+                        <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" Disabled="!editTrackBegin" />
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudSelect @bind-Value="editModeTrackBegin" Disabled="!editTrackBegin">
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                    <MudFlexBreak />
+                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackEnd" Color="Color.Primary" /></MudItem>
+                    <MudItem xs="7">
+                        <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" Disabled="!editTrackEnd" />
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudSelect @bind-Value="editModeTrackEnd" Disabled="!editTrackEnd">
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                    <MudFlexBreak />
+                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackLength" Color="Color.Primary" /></MudItem>
+                    <MudItem xs="7">
+                        <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" Disabled="!editTrackLength" />
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudSelect @bind-Value="editModeTrackLength" Disabled="!editTrackLength">
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                    <MudFlexBreak />
+                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackPregap" Color="Color.Primary" /></MudItem>
+                    <MudItem xs="7">
+                        <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" Disabled="!editTrackPregap" />
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudSelect @bind-Value="editModeTrackPregap" Disabled="!editTrackPregap">
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                        </MudSelect>
+                    </MudItem>
+                    <MudFlexBreak />
+                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackPostgap" Color="Color.Primary" /></MudItem>
+                    <MudItem xs="7">
+                        <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" Disabled="!editTrackPostgap" />
+                    </MudItem>
+                    <MudItem xs="3">
+                        <MudSelect @bind-Value="editModeTrackPostgap" Disabled="!editTrackPostgap">
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
+                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                        </MudSelect>
                     </MudItem>
                 </MudGrid>
             }
@@ -137,6 +197,7 @@ along with Foobar.  If not, see
     //TODO: Flags
     //TODO: Multiple edit
     //TODO: On save with multiple edit, we need to pass all information back to the calling component in order to react
+    //TODO: Make 2 dialogs for editing track modal (one for single, one for multiple)
 
     enum DynamicEditValue
     {
@@ -155,8 +216,8 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
 
-    Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle;
-    DynamicEditValue editTrackPositionMode;
+    Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackPregap, editTrackPostgap;
+    DynamicEditValue editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackPregap, editModeTrackPostgap;
 
     async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
     {
