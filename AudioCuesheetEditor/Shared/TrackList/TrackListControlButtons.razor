@@ -28,21 +28,6 @@ along with Foobar.  If not, see
 </MudButtonGroup>
 <MudButtonGroup OverrideStyles="false">
     <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => TrackSelectionVisibleChanged.InvokeAsync(!TrackSelectionVisible)" StartIcon="@(TrackSelectionVisible == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
-            @if (TrackSelectionVisible)
-            {
-                @_localizer["Hide selection of tracks"]
-            }
-            else
-            {
-                @_localizer["Display selection of tracks"]
-            }
-        </MudButton>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => TrackSelectionVisibleChanged.InvokeAsync(!TrackSelectionVisible)" Icon="@(TrackSelectionVisible == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)" />
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" StartIcon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
             @_localizer["Pin table header"]
         </MudButton>
@@ -53,22 +38,22 @@ along with Foobar.  If not, see
 </MudButtonGroup>
 <MudButtonGroup OverrideStyles="false">
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.DynamicFeed" Disabled="SelectedTracks?.Count == 0">@_localizer["Edit selected tracks"]</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.DynamicFeed" Disabled="EditSelectedTracksDisabled">@_localizer["Edit selected tracks"]</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.MdAndUp">
-        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.DynamicFeed" Disabled="SelectedTracks?.Count == 0" />
+        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.DynamicFeed" Disabled="EditSelectedTracksDisabled" />
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="SelectedTracks?.Count == 0">@_localizer["Delete selected tracks"]</MudButton>
+        <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled">@_localizer["Delete selected tracks"]</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="SelectedTracks?.Count == 0" />
+        <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" />
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="SelectedTracks?.Count == 0">@_localizer["Delete all tracks"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="DeleteAllTracksDisabled">@_localizer["Delete all tracks"]</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="SelectedTracks?.Count == 0" />
+        <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="DeleteAllTracksDisabled" />
     </MudHidden>
 </MudButtonGroup>
 
@@ -79,40 +64,25 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback EditSelectedTracksClicked { get; set; }
+    
+    [Parameter]
+    public Boolean EditSelectedTracksDisabled { get; set; }
 
     [Parameter]
     public EventCallback DeleteSelectedTracksClicked { get; set; }
 
     [Parameter]
+    public Boolean DeleteSelectedTracksDisabled { get; set; }
+
+    [Parameter]
     public EventCallback DeleteAllTracksClicked { get; set; }
+
+    [Parameter]
+    public Boolean DeleteAllTracksDisabled { get; set; }
 
     [Parameter]
     public Boolean FixedTableHeader { get; set; }
 
     [Parameter]
     public EventCallback<Boolean> FixedTableHeaderChanged { get; set; }
-
-    [Parameter]
-    public Boolean TrackSelectionVisible { get; set; }
-
-    [Parameter]
-    public EventCallback<Boolean> TrackSelectionVisibleChanged { get; set; }
-
-    [Parameter]
-    public IReadOnlyCollection<Track>? SelectedTracks { get; set; }
-
-    String TooltipTextTrackSelectionVisible
-    {
-        get
-        {
-            if (TrackSelectionVisible)
-            {
-                return _localizer["Hide selection of tracks"];
-            }
-            else
-            {
-                return _localizer["Display selection of tracks"];
-            }
-        }
-    }
 }

@@ -37,19 +37,20 @@ along with Foobar.  If not, see
         </MudAlert>
     }
     <TrackListControlButtons 
-        SelectedTracks="selectedTracks" 
         AddButtonClicked="AddTrackClicked" 
         EditSelectedTracksClicked="EditSelectedTracksClicked" 
-        DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
+        EditSelectedTracksDisabled="selectedTracks.Count == 0"
+        DeleteSelectedTracksClicked="DeleteSelectedTracksClicked"
+        DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
         DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+        DeleteAllTracksDisabled="selectedTracks.Count == 0"
         FixedTableHeader="PinnedTableHeader"
-        FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
-        TrackSelectionVisible="TrackSelectionVisible" 
-        TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
+        FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"/>
 }
 
-<MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
+<MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
+        <SelectColumn />
         <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
             <CellTemplate>
                 <TrackListItemControlColumn TrackReference="context.Item" />
@@ -58,8 +59,8 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" />
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
-                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" ValueChanged="(value) => context.Item.Artist = value?.Name"
-                        ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
+                    ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -76,8 +77,8 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                        Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                        ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                    Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                    ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -123,7 +124,7 @@ along with Foobar.  If not, see
     //TODO: Controls should be reduced to play (and maybe delete), all other functions should be made for selected rows via toolbar (or modal dialog)
     //TODO: Currently loading of autocomplete is needed to enter a free value
 
-    List<Track> selectedTracks = new();
+    HashSet<Track> selectedTracks = new();
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -134,9 +135,6 @@ along with Foobar.  If not, see
     //TODO: Read from options
     public Boolean PinnedTableHeader { get; private set; } = false;
 
-    //TODO: Read from options
-    public Boolean TrackSelectionVisible { get; private set; } = false;
-
     void AddTrackClicked()
     {
         var newTrack = new Track();
@@ -146,11 +144,10 @@ along with Foobar.  If not, see
 
     async Task EditSelectedTracksClicked()
     {
-        var firstTrack = selectedTracks.FirstOrDefault();
-        if (firstTrack != null)
+        if (selectedTracks.Count > 0)
         {
             //TODO: Set header for editing multiple tracks
-            var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, firstTrack.Clone() } };
+            var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } }, { x => x.MultipleEdit, selectedTracks.Count > 1 } };
             var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
             var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
             var result = await dialog.Result;
@@ -164,7 +161,7 @@ along with Foobar.  If not, see
 
     void DeleteSelectedTracksClicked()
     {
-        Cuesheet?.RemoveTracks(selectedTracks.AsReadOnly());
+        Cuesheet?.RemoveTracks(selectedTracks.ToList());
         selectedTracks.Clear();
     }
 
