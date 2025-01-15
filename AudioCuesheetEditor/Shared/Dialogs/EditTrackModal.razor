@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<EditTrackModal> _localizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
 
 <MudDialog>
     <TitleContent>
@@ -28,8 +29,34 @@ along with Foobar.  If not, see
         <MudForm Model="EditedTrack">
             <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.Artist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" />
-            <MudTextField @bind-Value="EditedTrack.Title" Label="@_localizer["Title"]" Variant="Variant.Outlined" />
+            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
+            Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
+            SelectValueOnTab ShowProgressIndicator>
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Name</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
+            Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue 
+            SelectValueOnTab ShowProgressIndicator>
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Title</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
             <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" />
             <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" />
             <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" />
@@ -60,4 +87,43 @@ along with Foobar.  If not, see
     [Parameter]
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
+
+    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
+    {
+        IEnumerable<MusicBrainzArtist>? artists = null;
+        if (!token.IsCancellationRequested)
+        {
+            artists = await _musicBrainzDataProvider.SearchArtistAsync(value);
+            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+            if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
+            {
+                artists = artists.Prepend(new() { Name = value });
+            }
+        }
+        return artists;
+    }
+
+    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string value, CancellationToken token)
+    {
+        IEnumerable<MusicBrainzTrack>? tracks = null;
+        if (!token.IsCancellationRequested)
+        {
+            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, EditedTrack.Artist);
+            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+            if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
+            {
+                tracks = tracks.Prepend(new() { Artist = EditedTrack.Artist, Title = value });
+            }
+        }
+        return tracks;
+    }
+
+    void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
+    {
+        EditedTrack.Title = musicBrainzTrack?.Title;
+        if (EditedTrack.Length.HasValue == false)
+        {
+            EditedTrack.Length = musicBrainzTrack?.Length;
+        }
+    }
 }
