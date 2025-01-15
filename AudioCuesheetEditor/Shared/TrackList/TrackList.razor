@@ -149,6 +149,7 @@ along with Foobar.  If not, see
         var firstTrack = selectedTracks.FirstOrDefault();
         if (firstTrack != null)
         {
+            //TODO: Set header for editing multiple tracks
             var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, firstTrack.Clone() } };
             var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
             var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
