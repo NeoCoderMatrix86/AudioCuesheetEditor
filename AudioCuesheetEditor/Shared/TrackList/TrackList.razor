@@ -48,7 +48,7 @@ along with Foobar.  If not, see
         FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"/>
 }
 
-<MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
+<MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
         <SelectColumn />
         <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
