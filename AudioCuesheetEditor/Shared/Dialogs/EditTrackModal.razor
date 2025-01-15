@@ -27,7 +27,7 @@ along with Foobar.  If not, see
     </TitleContent>
     <DialogContent>
         <MudForm Model="EditedTrack">
-            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" />
+            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
             <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
                 Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
