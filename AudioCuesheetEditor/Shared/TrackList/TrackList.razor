@@ -195,13 +195,13 @@ along with Foobar.  If not, see
         {
             case ViewMode.DetailView:
             case ViewMode.ImportView:
-                if (track.Length.HasValue == false)
+                if ((String.IsNullOrEmpty(track.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
+                {
+                    track.Artist = musicBrainzTrack.Artist;
+                }
+                if ((track.Length.HasValue == false) && (musicBrainzTrack?.Length.HasValue == true))
                 {
                     track.Length = musicBrainzTrack?.Length;
-                }
-                if (String.IsNullOrEmpty(track.Artist))
-                {
-                    track.Artist = musicBrainzTrack?.Artist;
                 }
                 break;
         }

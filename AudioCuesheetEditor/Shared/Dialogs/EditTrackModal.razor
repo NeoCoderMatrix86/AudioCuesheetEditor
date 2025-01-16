@@ -30,8 +30,8 @@ along with Foobar.  If not, see
             <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
             <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
-                Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
-                SelectValueOnTab ShowProgressIndicator>
+                            Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
+                            SelectValueOnTab ShowProgressIndicator>
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -44,8 +44,8 @@ along with Foobar.  If not, see
                 </ItemTemplate>
             </MudAutocomplete>
             <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title" 
-                Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue 
-                SelectValueOnTab ShowProgressIndicator>
+                            Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue 
+                            SelectValueOnTab ShowProgressIndicator>
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -123,7 +123,11 @@ along with Foobar.  If not, see
     void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
     {
         EditedTrack.Title = musicBrainzTrack?.Title;
-        if (EditedTrack.Length.HasValue == false)
+        if ((String.IsNullOrEmpty(EditedTrack.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
+        {
+            EditedTrack.Artist = musicBrainzTrack.Artist;
+        }
+        if ((EditedTrack.Length.HasValue == false) && (musicBrainzTrack?.Length.HasValue == true))
         {
             EditedTrack.Length = musicBrainzTrack?.Length;
         }
