@@ -26,182 +26,50 @@ along with Foobar.  If not, see
         <MudText Typo="Typo.h5">@_localizer["Edit track details"]</MudText>
     </TitleContent>
     <DialogContent>
-        <MudForm Model="EditedTrack">
-            @if (MultipleEdit)
-            {
-                <MudGrid Class="align-baseline">
-                    <MudItem xs="2"><MudText>@_localizer["Change"]</MudText></MudItem>
-                    <MudItem xs="7"><MudText>@_localizer["Value"]</MudText></MudItem>
-                    <MudItem xs="3"><MudText>@_localizer["Calculate"]</MudText></MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackIsLinkedToPreviousTrack" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7"><MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Disabled="!editTrackIsLinkedToPreviousTrack" /></MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackPosition" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7"><MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Disabled="!editTrackPosition" /></MudItem>
-                    <MudItem xs="3">
-                        <MudSelect @bind-Value="editModeTrackPosition" Disabled="!editTrackPosition">
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackArtist" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name"
-                                         Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue
-                                         SelectValueOnTab ShowProgressIndicator Disabled="!editTrackArtist">
-                            <ItemTemplate Context="autocompleteContext">
-                                @if (autocompleteContext.Disambiguation != null)
-                                {
-                                    <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
-                                }
-                                else
-                                {
-                                    <MudText>@autocompleteContext.Name</MudText>
-                                }
-                            </ItemTemplate>
-                        </MudAutocomplete>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackTitle" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
-                                         Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue
-                                         SelectValueOnTab ShowProgressIndicator Disabled="!editTrackTitle">
-                            <ItemTemplate Context="autocompleteContext">
-                                @if (autocompleteContext.Disambiguation != null)
-                                {
-                                    <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-                                }
-                                else
-                                {
-                                    <MudText>@autocompleteContext.Title</MudText>
-                                }
-                            </ItemTemplate>
-                        </MudAutocomplete>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackBegin" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" Disabled="!editTrackBegin" />
-                    </MudItem>
-                    <MudItem xs="3">
-                        <MudSelect @bind-Value="editModeTrackBegin" Disabled="!editTrackBegin">
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackEnd" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" Disabled="!editTrackEnd" />
-                    </MudItem>
-                    <MudItem xs="3">
-                        <MudSelect @bind-Value="editModeTrackEnd" Disabled="!editTrackEnd">
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackLength" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" Disabled="!editTrackLength" />
-                    </MudItem>
-                    <MudItem xs="3">
-                        <MudSelect @bind-Value="editModeTrackLength" Disabled="!editTrackLength">
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackFlags" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
-                            <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info" Disabled="!editTrackFlags">
-                                @foreach (var flag in Flag.AvailableFlags)
-                                {
-                                    <MudChip Value="flag">@flag.Name</MudChip>
-                                }
-                            </MudChipSet>
-                        </MudField>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackPregap" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" Disabled="!editTrackPregap" />
-                    </MudItem>
-                    <MudItem xs="3">
-                        <MudSelect @bind-Value="editModeTrackPregap" Disabled="!editTrackPregap">
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                    <MudFlexBreak />
-                    <MudItem xs="2"><MudSwitch @bind-Value="editTrackPostgap" Color="Color.Primary" /></MudItem>
-                    <MudItem xs="7">
-                        <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" Disabled="!editTrackPostgap" />
-                    </MudItem>
-                    <MudItem xs="3">
-                        <MudSelect @bind-Value="editModeTrackPostgap" Disabled="!editTrackPostgap">
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                            <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                        </MudSelect>
-                    </MudItem>
-                </MudGrid>
-            }
-            else
-            {
-                <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" />
-                <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
-                <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
-                    Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
-                    SelectValueOnTab ShowProgressIndicator>
-                    <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Name</MudText>
-                        }
-                    </ItemTemplate>
-                </MudAutocomplete>
-                <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title" 
-                    Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue 
-                    SelectValueOnTab ShowProgressIndicator>
-                    <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Title</MudText>
-                        }
-                    </ItemTemplate>
-                </MudAutocomplete>
-                <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" />
-                <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" />
-                <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" />
-                <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
-                    <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info">
-                        @foreach(var flag in Flag.AvailableFlags)
-                        {
-                            <MudChip Value="flag">@flag.Name</MudChip>
-                        }
-                    </MudChipSet>
-                </MudField>
-                <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" />
-                <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" />
-            }
+        <MudForm Model="EditedTrack">            
+            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" />
+            <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
+            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
+                Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
+                SelectValueOnTab ShowProgressIndicator>
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Name</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title" 
+                Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue 
+                SelectValueOnTab ShowProgressIndicator>
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Title</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" />
+            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" />
+            <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" />
+            <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
+                <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info">
+                    @foreach(var flag in Flag.AvailableFlags)
+                    {
+                        <MudChip Value="flag">@flag.Name</MudChip>
+                    }
+                </MudChipSet>
+            </MudField>
+            <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" />
+            <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" />
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -214,29 +82,13 @@ along with Foobar.  If not, see
     //TODO
     //TODO: localization
     //TODO: Validation for all fields
-    //TODO: Multiple edit
-    //TODO: On save with multiple edit, we need to pass all information back to the calling component in order to react
-    //TODO: Make 2 dialogs for editing track modal (one for single, one for multiple)
-
-    enum DynamicEditValue
-    {
-        EnteredValueEquals = 0,
-        EnteredValueAdd = 1,
-        EnteredValueSubstract = 2
-    }
 
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
 
     [Parameter]
-    public Boolean MultipleEdit { get; set; }
-
-    [Parameter]
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
-
-    Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap;
-    DynamicEditValue editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackPregap, editModeTrackPostgap;
 
     async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
     {
@@ -271,7 +123,7 @@ along with Foobar.  If not, see
     void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
     {
         EditedTrack.Title = musicBrainzTrack?.Title;
-        if ((MultipleEdit == false) && (EditedTrack.Length.HasValue == false))
+        if (EditedTrack.Length.HasValue == false)
         {
             EditedTrack.Length = musicBrainzTrack?.Length;
         }

@@ -37,15 +37,15 @@ along with Foobar.  If not, see
         </MudAlert>
     }
     <TrackListControlButtons 
-        AddButtonClicked="AddTrackClicked" 
-        EditSelectedTracksClicked="EditSelectedTracksClicked" 
-        EditSelectedTracksDisabled="selectedTracks.Count == 0"
-        DeleteSelectedTracksClicked="DeleteSelectedTracksClicked"
-        DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
-        DeleteAllTracksClicked="OnDeleteAllTracksClicked"
-        DeleteAllTracksDisabled="selectedTracks.Count == 0"
-        FixedTableHeader="PinnedTableHeader"
-        FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"/>
+    AddButtonClicked="AddTrackClicked" 
+    EditSelectedTracksClicked="EditSelectedTracksClicked" 
+    EditSelectedTracksDisabled="selectedTracks.Count == 0"
+    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked"
+    DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+    DeleteAllTracksClicked="OnDeleteAllTracksClicked"
+    DeleteAllTracksDisabled="selectedTracks.Count == 0"
+    FixedTableHeader="PinnedTableHeader"
+    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"/>
 }
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
@@ -60,7 +60,7 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                    ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -77,8 +77,8 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                    Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                    ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -144,12 +144,22 @@ along with Foobar.  If not, see
 
     async Task EditSelectedTracksClicked()
     {
-        if (selectedTracks.Count > 0)
+        if (selectedTracks.Count == 1)
         {
-            //TODO: Set header for editing multiple tracks
-            var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } }, { x => x.MultipleEdit, selectedTracks.Count > 1 } };
+            var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } } };
             var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
             var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
+            var result = await dialog.Result;
+            if ((result?.Canceled == false) && (result.Data is Track editedTrack))
+            {
+                selectedTracks.First().CopyValues(editedTrack, setCuesheet: false);
+            }
+        }
+        if (selectedTracks.Count > 1)
+        {
+            var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } } };
+            var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
+            var dialog = _dialogService.Show<EditMultipleTracksModal>(null, parameters, options);
             var result = await dialog.Result;
             if ((result?.Canceled == false) && (result.Data is Track editedTrack))
             {
