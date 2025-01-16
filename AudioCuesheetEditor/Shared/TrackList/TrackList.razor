@@ -54,7 +54,7 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                                    ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -71,8 +71,8 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                                 Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                                 ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
