@@ -21,7 +21,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
-@inject IDialogService _dialogService
+@inject EditTrackModalManager _editTrackModalManager
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -144,29 +144,7 @@ along with Foobar.  If not, see
 
     async Task EditSelectedTracksClicked()
     {
-        if (selectedTracks.Count == 1)
-        {
-            var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } } };
-            var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
-            var dialog = _dialogService.Show<EditTrackModal>(null, parameters, options);
-            var result = await dialog.Result;
-            if ((result?.Canceled == false) && (result.Data is Track editedTrack))
-            {
-                selectedTracks.First().CopyValues(editedTrack, setCuesheet: false);
-            }
-        }
-        if (selectedTracks.Count > 1)
-        {
-            var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } } };
-            var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
-            var dialog = _dialogService.Show<EditMultipleTracksModal>(null, parameters, options);
-            var result = await dialog.Result;
-            if ((result?.Canceled == false) && (result.Data is Track editedTrack))
-            {
-                //TODO: Copy value to all selected tracks
-                // TrackReference.CopyValues(editedTrack, setCuesheet: false);
-            }
-        }
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(selectedTracks);
     }
 
     void DeleteSelectedTracksClicked()

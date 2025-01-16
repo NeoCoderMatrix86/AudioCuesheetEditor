@@ -48,17 +48,17 @@ along with Foobar.  If not, see
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackArtist" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
                     <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name"
-                                        Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue
-                                        SelectValueOnTab ShowProgressIndicator Disabled="!editTrackArtist">
+                    Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue
+                    SelectValueOnTab ShowProgressIndicator Disabled="!editTrackArtist">
                         <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Name</MudText>
-                        }
+                            @if (autocompleteContext.Disambiguation != null)
+                            {
+                                <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@autocompleteContext.Name</MudText>
+                            }
                         </ItemTemplate>
                     </MudAutocomplete>
                 </MudItem>
@@ -66,17 +66,17 @@ along with Foobar.  If not, see
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackTitle" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
                     <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
-                                     Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="(value) => EditedTrack.Title = value?.Title" ResetValueOnEmptyText Clearable CoerceValue
-                                     SelectValueOnTab ShowProgressIndicator Disabled="!editTrackTitle">
+                    Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="(value) => EditedTrack.Title = value?.Title" ResetValueOnEmptyText Clearable CoerceValue
+                    SelectValueOnTab ShowProgressIndicator Disabled="!editTrackTitle">
                         <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Title</MudText>
-                        }
+                            @if (autocompleteContext.Disambiguation != null)
+                            {
+                                <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                            }
+                            else
+                            {
+                                <MudText>@autocompleteContext.Title</MudText>
+                            }
                         </ItemTemplate>
                     </MudAutocomplete>
                 </MudItem>
@@ -121,10 +121,10 @@ along with Foobar.  If not, see
                 <MudItem xs="7">
                     <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
                         <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info" Disabled="!editTrackFlags">
-                        @foreach (var flag in Flag.AvailableFlags)
-                        {
-                            <MudChip Value="flag">@flag.Name</MudChip>
-                        }
+                            @foreach (var flag in Flag.AvailableFlags)
+                            {
+                                <MudChip Value="flag">@flag.Name</MudChip>
+                            }
                         </MudChipSet>
                     </MudField>
                 </MudItem>
@@ -156,7 +156,7 @@ along with Foobar.  If not, see
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => MudDialog?.Close(DialogResult.Ok(EditedTrack))">@_localizer["Save changes"]</MudButton>
+        <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="SaveClick">@_localizer["Save changes"]</MudButton>
         <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(args) => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
     </DialogActions>
 </MudDialog>
@@ -165,14 +165,6 @@ along with Foobar.  If not, see
     //TODO
     //TODO: localization
     //TODO: Validation for all fields
-    //TODO: On save we need to pass all information back to the calling component in order to react
-
-    enum DynamicEditValue
-    {
-        EnteredValueEquals = 0,
-        EnteredValueAdd = 1,
-        EnteredValueSubstract = 2
-    }
 
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
@@ -212,5 +204,13 @@ along with Foobar.  If not, see
             }
         }
         return tracks;
+    }
+
+    void SaveClick()
+    {
+        var result = new EditMultipleTracksModalResult(EditedTrack, editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, 
+            editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap, editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, 
+            editModeTrackPregap, editModeTrackPostgap);
+        MudDialog?.Close(DialogResult.Ok(result));
     }
 }
