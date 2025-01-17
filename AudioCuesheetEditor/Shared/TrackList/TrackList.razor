@@ -139,6 +139,7 @@ along with Foobar.  If not, see
 
     void AddTrackClicked()
     {
+        //TODO: IsLinkedToPreviousTrack setzen aus optionen
         var newTrack = new Track();
         Cuesheet?.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);
