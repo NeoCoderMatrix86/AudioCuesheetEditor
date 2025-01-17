@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject EditTrackModalManager _editTrackModalManager
+@inject ValidationService _validationService
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -37,24 +38,30 @@ along with Foobar.  If not, see
         </MudAlert>
     }
     <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0" 
-                    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0" 
-                    DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="PinnedTableHeader" 
-                    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"/>
+    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0" 
+    DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="PinnedTableHeader" 
+    FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"/>
 }
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column">
     <Columns>
-        <SelectColumn />
+        <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
         <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
             <CellTemplate>
                 <TrackListItemControlColumn TrackReference="context.Item" />
             </CellTemplate>
         </TemplateColumn>
-        <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" />
+        <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView">
+            <EditTemplate>
+                <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
+                    ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
+            </EditTemplate>
+        </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                                    ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                    ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
+                    Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -71,8 +78,9 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                                 Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                                 ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator>
+                    Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                    ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
+                    ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -88,17 +96,20 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)" />
+                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.End" Title="@_localizer["End"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)" />
+                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)" />
+                <MudTextField Value="@context.Item.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
             </EditTemplate>
         </PropertyColumn>
     </Columns>
@@ -108,7 +119,6 @@ along with Foobar.  If not, see
     //TODO
     //TODO: Link / Unlink tracks
     //TODO: Localization
-    //TODO: Validation for each column
     //TODO: Virtualize datagrid
     //TODO: Pin header
     //TODO: Selection for tracks
@@ -117,6 +127,7 @@ along with Foobar.  If not, see
     //TODO: options for custom timespanformat
     //TODO: Controls should be reduced to play (and maybe delete), all other functions should be made for selected rows via toolbar (or modal dialog)
     //TODO: Currently loading of autocomplete is needed to enter a free value
+    //TODO: Only artist and title should be editable on record view
 
     HashSet<Track> selectedTracks = new();
 
@@ -199,5 +210,16 @@ along with Foobar.  If not, see
                 }
                 break;
         }
+    }
+
+    String? GetValidationErrorMessage(object model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
+        {
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+        }
+        return validationErrorMessage;
     }
 }
