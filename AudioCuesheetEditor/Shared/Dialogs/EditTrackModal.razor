@@ -27,7 +27,7 @@ along with Foobar.  If not, see
         <MudText Typo="Typo.h5">@_localizer["Edit track details"]</MudText>
     </TitleContent>
     <DialogContent>
-        <MudForm Model="EditedTrack">            
+        <MudForm Model="EditedTrack">
             <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack)))"
                        ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack))" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
