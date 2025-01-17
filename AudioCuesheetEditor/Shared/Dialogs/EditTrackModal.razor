@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<EditTrackModal> _localizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject ValidationService _validationService
 
 <MudDialog>
     <TitleContent>
@@ -27,11 +28,14 @@ along with Foobar.  If not, see
     </TitleContent>
     <DialogContent>
         <MudForm Model="EditedTrack">            
-            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" />
-            <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" />
+            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack)))"
+                       ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack))" />
+            <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
+                          ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" />
             <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
-                            Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue 
-                            SelectValueOnTab ShowProgressIndicator>
+                             Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue
+                             SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
+                             ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -44,8 +48,9 @@ along with Foobar.  If not, see
                 </ItemTemplate>
             </MudAutocomplete>
             <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title" 
-                            Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue 
-                            SelectValueOnTab ShowProgressIndicator>
+                             Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue
+                             SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))"
+                             ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -57,10 +62,13 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" />
-            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" />
-            <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" />
-            <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
+            <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" 
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Begin))" />
+            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.End))" />
+            <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Length))" />
+            <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Flags)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Flags))">
                 <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info">
                     @foreach(var flag in Flag.AvailableFlags)
                     {
@@ -68,8 +76,10 @@ along with Foobar.  If not, see
                     }
                 </MudChipSet>
             </MudField>
-            <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" />
-            <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" />
+            <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.PreGap)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.PreGap))" />
+            <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.PostGap)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.PostGap))" />
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -81,7 +91,6 @@ along with Foobar.  If not, see
 @code {
     //TODO
     //TODO: localization
-    //TODO: Validation for all fields
 
     [CascadingParameter]
     private MudDialogInstance? MudDialog { get; set; }
@@ -131,5 +140,16 @@ along with Foobar.  If not, see
         {
             EditedTrack.Length = musicBrainzTrack?.Length;
         }
+    }
+
+    String? GetValidationErrorMessage(object model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
+        {
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+        }
+        return validationErrorMessage;
     }
 }
