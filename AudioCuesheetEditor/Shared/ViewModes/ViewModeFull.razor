@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeFull> _localizer
+@inject IDialogService _dialogService
 
 <CascadingValue Value="ViewMode.DetailView">
     <MudExpansionPanels MultiExpansion>
@@ -39,7 +40,10 @@ along with Foobar.  If not, see
         </MudExpansionPanel>
         <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
             <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+                <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Baseline">
+                    <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked" />
+                </MudStack>
             </TitleContent>
             <ChildContent>
                 <TrackList />
@@ -52,8 +56,16 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: maybe customize a bit more (background color, etc.)
+    //TODO: Onclick of options
+    //TODO: Tooltip options
 
     Boolean cuesheetSectionsExpanded = false;
     Boolean cuesheetDataExpanded = true;
     Boolean cuesheetTracksExpanded = true;
+
+    void SettingsClicked()
+    {
+        var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false };
+        _dialogService.Show<EditTrackListOptionsDialog>(null, options);
+    }
 }

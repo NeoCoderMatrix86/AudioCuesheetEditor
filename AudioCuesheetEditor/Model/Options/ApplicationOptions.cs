@@ -49,7 +49,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public Boolean LinkTracksWithPreviousOne { get; set; } = true;
         public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
         public TimeSpanFormat? TimeSpanFormat { get; set; }
 
