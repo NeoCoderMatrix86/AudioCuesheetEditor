@@ -50,10 +50,11 @@ along with Foobar.  If not, see
             <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@culture.DisplayName</MudMenuItem>
         }
     </MudMenu>
-    <MudMenu StartIcon="@Icons.Material.Outlined.HelpOutline" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Color="Color.Inherit" AriaLabel="@_localizer["Help"]" TransformOrigin="Origin.TopCenter">
-        <MudMenuItem Href="help">@_localizer["Help"]</MudMenuItem>
-        <MudMenuItem Href="about">@_localizer["About"]</MudMenuItem>
-        <MudMenuItem Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
+    <MudMenu StartIcon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+        <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="help">@_localizer["Help"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
     </MudMenu>
 </MudAppBar>
 
@@ -62,6 +63,7 @@ along with Foobar.  If not, see
     //TODO: Export Custom
     //TODO: Tooltips undo/redo
     //TODO: Tooltips for export options
+    //TODO: Include keyboard shortcuts display to 3 dots menu
     private readonly DialogOptions DownloadProjectfileDialogOptions = new() { BackdropClick = false, CloseButton = true };
 
     [Parameter]
@@ -83,5 +85,12 @@ along with Foobar.  If not, see
             style += "background-color: var(--mud-palette-info-lighten);";
         }
         return style;
+    }
+
+    void SettingsClicked()
+    {
+        var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false };
+        //TODO: Switch to application options dialog
+        _dialogService.Show<EditTrackListOptionsDialog>(null, options);
     }
 }
