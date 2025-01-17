@@ -22,6 +22,9 @@ using System.Text.Json;
 
 namespace AudioCuesheetEditor.Data.Options
 {
+    //TODO: Make the service load and inject the application options, leading to options beeing available on all components
+    //TODO: Also make the application options with sub parts (for record, import, etc.)
+    //TODO: Make one dialog for options
     public class LocalStorageOptionsProvider(IJSRuntime jsRuntime): ILocalStorageOptionsProvider
     {
         public event EventHandler<IOptions>? OptionSaved;
