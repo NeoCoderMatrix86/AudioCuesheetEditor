@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject MusicBrainzDataProvider _musicBrainzDataProvider
 @inject EditTrackModalManager _editTrackModalManager
 @inject ValidationService _validationService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -54,14 +55,14 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView">
             <EditTemplate>
                 <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
-                    ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                    ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
-                    Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
+                                 ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
+                                 Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -78,9 +79,9 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                    Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                    ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
-                    ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
+                                 Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                                 ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -127,6 +128,7 @@ along with Foobar.  If not, see
     //TODO: Currently loading of autocomplete is needed to enter a free value
 
     HashSet<Track> selectedTracks = new();
+    TrackListOptions? trackListOptions;
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -137,10 +139,36 @@ along with Foobar.  If not, see
     //TODO: Read from options
     public Boolean PinnedTableHeader { get; private set; } = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        trackListOptions = await _localStorageOptionsProvider.GetOptions<TrackListOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        if (disposing)
+        {
+            _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is TrackListOptions newTrackListOptions)
+        {
+            trackListOptions = newTrackListOptions;
+        }
+    }
+
     void AddTrackClicked()
     {
-        //TODO: IsLinkedToPreviousTrack setzen aus optionen
-        var newTrack = new Track();
+        var newTrack = new Track()
+        {
+            IsLinkedToPreviousTrack = trackListOptions!.LinkTracks
+        };
         Cuesheet?.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);
     }
