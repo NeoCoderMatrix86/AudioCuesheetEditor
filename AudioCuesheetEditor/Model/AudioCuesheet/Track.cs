@@ -54,8 +54,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <inheritdoc/>
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
-        //TODO: There should be constructor with a default value for IsLinkedToPreviousTrack from options
-
         public Track() { }
 
         /// <summary>
