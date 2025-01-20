@@ -64,6 +64,8 @@ namespace AudioCuesheetEditor.Shared
                 if (disposing)
                 {
                     LocalizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+                    TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+                    TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
                 }
 
                 disposedValue = true;
