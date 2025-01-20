@@ -51,6 +51,7 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
         public TimeSpanFormat? TimeSpanFormat { get; set; }
+        public Boolean LinkTracks { get; set; } = true;
 
         public override ValidationResult Validate(string property)
         {

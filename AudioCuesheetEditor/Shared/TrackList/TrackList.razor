@@ -128,7 +128,6 @@ along with Foobar.  If not, see
     //TODO: Currently loading of autocomplete is needed to enter a free value
 
     HashSet<Track> selectedTracks = new();
-    TrackListOptions? trackListOptions;
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -139,35 +138,11 @@ along with Foobar.  If not, see
     //TODO: Read from options
     public Boolean PinnedTableHeader { get; private set; } = false;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        trackListOptions = await _localStorageOptionsProvider.GetOptions<TrackListOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        if (disposing)
-        {
-            _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-        }
-    }
-
-    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
-    {
-        if (options is TrackListOptions newTrackListOptions)
-        {
-            trackListOptions = newTrackListOptions;
-        }
-    }
-
     void AddTrackClicked()
     {
         var newTrack = new Track()
         {
-            IsLinkedToPreviousTrack = trackListOptions!.LinkTracks
+            IsLinkedToPreviousTrack = ApplicationOptions.LinkTracks
         };
         Cuesheet?.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);

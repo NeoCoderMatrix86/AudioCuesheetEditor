@@ -24,7 +24,12 @@ along with Foobar.  If not, see
         <MudText Typo="Typo.h5">@_localizer["Options"]</MudText>
     </TitleContent>
     <DialogContent>
-
+        <MudTabs Color="Color.Info" Rounded>
+            <MudTabPanel Text="@_localizer["Common"]" Icon="@Icons.Material.Outlined.Settings">
+                <MudText Typo="Typo.h6">@_localizer["Input"]</MudText>
+                <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
+            </MudTabPanel>
+        </MudTabs>
     </DialogContent>
 </MudDialog>
 

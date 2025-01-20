@@ -23,6 +23,6 @@ namespace AudioCuesheetEditor.Data.Options
         event EventHandler<IOptions>? OptionSaved;
         Task<T> GetOptions<T>() where T : IOptions;
         Task SaveOptions(IOptions options);
-        Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object value) where T : class, IOptions, new();
+        Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object? value) where T : class, IOptions, new();
     }
 }

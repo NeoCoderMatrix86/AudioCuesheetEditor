@@ -89,7 +89,7 @@ along with Foobar.  If not, see
 
     void SettingsClicked()
     {
-        var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false };
+        var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false, FullScreen = true };
         _dialogService.Show<OptionsDialog>(null, options);
     }
 }
