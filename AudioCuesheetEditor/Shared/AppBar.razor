@@ -90,7 +90,6 @@ along with Foobar.  If not, see
     void SettingsClicked()
     {
         var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false };
-        //TODO: Switch to application options dialog
-        _dialogService.Show<EditTrackListOptionsDialog>(null, options);
+        _dialogService.Show<OptionsDialog>(null, options);
     }
 }
