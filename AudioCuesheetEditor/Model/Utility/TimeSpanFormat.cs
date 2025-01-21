@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using System.Text.RegularExpressions;
+using static MudBlazor.Colors;
 
 namespace AudioCuesheetEditor.Model.Utility
 {
@@ -26,28 +27,11 @@ namespace AudioCuesheetEditor.Model.Utility
         public const String Seconds = "Seconds";
         public const String Milliseconds = "Milliseconds";
 
-        public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
-        public static readonly IReadOnlyDictionary<String, String> AvailableTimespanScheme;
-
-        //TODO
-        //public static ITextLocalizer? TextLocalizer { get; set; }
+        public static readonly IEnumerable<String> AvailableTimespanScheme;
 
         static TimeSpanFormat()
         {
-            var schemeDays = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Days), EnterRegularExpressionHere);
-            var schemeHours = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Hours), EnterRegularExpressionHere);
-            var schemeMinutes = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Minutes), EnterRegularExpressionHere);
-            var schemeSeconds = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Seconds), EnterRegularExpressionHere);
-            var schemeMilliseconds = String.Format("(?'{0}.{1}'{2})", nameof(TimeSpanFormat), nameof(Milliseconds), EnterRegularExpressionHere);
-
-            AvailableTimespanScheme = new Dictionary<string, string>
-            {
-                { nameof(TimeSpanFormat.Days), schemeDays },
-                { nameof(TimeSpanFormat.Hours), schemeHours },
-                { nameof(TimeSpanFormat.Minutes), schemeMinutes },
-                { nameof(TimeSpanFormat.Seconds), schemeSeconds },
-                { nameof(TimeSpanFormat.Milliseconds), schemeMilliseconds }
-            };
+            AvailableTimespanScheme = [Days, Hours, Minutes, Seconds, Milliseconds];
         }
 
         public event EventHandler? SchemeChanged;
@@ -68,40 +52,32 @@ namespace AudioCuesheetEditor.Model.Utility
         public TimeSpan? ParseTimeSpan(String input)
         {
             TimeSpan? timespan = null;
-            if (String.IsNullOrEmpty(Scheme) == false)
+            if ((String.IsNullOrEmpty(Scheme) == false) && (String.IsNullOrEmpty(input) == false))
             {
-                var match = Regex.Match(input, Scheme.Replace(String.Format("{0}.", nameof(TimeSpanFormat)), ""));
+                var pattern = CreateFlexibleRegexPattern(Scheme);
+                var match = Regex.Match(input, pattern);
                 if (match.Success)
                 {
-                    int days = 0;
-                    int hours = 0;
-                    int minutes = 0;
-                    int seconds = 0;
-                    int milliseconds = 0;
-                    for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
+                    int days = 0, hours = 0, minutes = 0, seconds = 0, milliseconds = 0;
+                    foreach (var groupName in match.Groups.Keys)
                     {
-                        var key = match.Groups.Keys.ElementAt(groupCounter);
-                        var group = match.Groups.GetValueOrDefault(key);
-                        if ((group != null) && group.Success)
+                        switch (groupName)
                         {
-                            switch (key)
-                            {
-                                case Days:
-                                    days = Convert.ToInt32(group.Value);
-                                    break;
-                                case Hours:
-                                    hours = Convert.ToInt32(group.Value);
-                                    break;
-                                case Minutes:
-                                    minutes = Convert.ToInt32(group.Value);
-                                    break;
-                                case Seconds:
-                                    seconds = Convert.ToInt32(group.Value);
-                                    break;
-                                case Milliseconds:
-                                    milliseconds = Convert.ToInt32(group.Value);
-                                    break;
-                            }
+                            case nameof(Days):
+                                days = Convert.ToInt32(match.Groups[groupName].Value);
+                                break;
+                            case nameof(Hours):
+                                hours = Convert.ToInt32(match.Groups[groupName].Value);
+                                break;
+                            case nameof(Minutes):
+                                minutes = Convert.ToInt32(match.Groups[groupName].Value);
+                                break;
+                            case nameof(Seconds):
+                                seconds = Convert.ToInt32(match.Groups[groupName].Value);
+                                break;
+                            case nameof(Milliseconds):
+                                milliseconds = Convert.ToInt32(match.Groups[groupName].Value);
+                                break;
                         }
                     }
                     timespan = new TimeSpan(days, hours, minutes, seconds, milliseconds);
@@ -114,12 +90,6 @@ namespace AudioCuesheetEditor.Model.Utility
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
-            var enterRegularExpression = EnterRegularExpressionHere;
-            //TODO
-            //if (TextLocalizer != null)
-            //{
-            //    enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
-            //}
             switch (property)
             {
                 case nameof(Scheme):
@@ -132,18 +102,27 @@ namespace AudioCuesheetEditor.Model.Utility
                             && (Scheme.Contains(Seconds) == false)
                             && (Scheme.Contains(Milliseconds) == false))
                         {
-                            validationMessages ??= new();
+                            validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(Scheme)));
-                        }
-                        if (Scheme.Contains(enterRegularExpression))
-                        {
-                            validationMessages ??= new();
-                            validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
                         }
                     }
                     break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
+        }
+
+        private static string CreateFlexibleRegexPattern(string scheme)
+        {
+            var regex = Regex.Escape(scheme);
+
+            regex = regex.Replace(Days, $"(?<{nameof(Days)}>\\d+)");
+            regex = regex.Replace(Hours, $"(?<{nameof(Hours)}>\\d+)");
+            regex = regex.Replace(Minutes, $"(?<{nameof(Minutes)}>\\d+)");
+            regex = regex.Replace(Seconds, $"(?<{nameof(Seconds)}>\\d+)");
+            regex = regex.Replace(Milliseconds, $"(?<{nameof(Milliseconds)}>\\d+)");
+            regex = regex.Replace(@"\\:", @"[\s|:.,-]?");
+
+            return $"^{regex}$";
         }
     }
 }
