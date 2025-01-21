@@ -13,10 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace AudioCuesheetEditor.Model.Utility.Tests
+namespace AudioCuesheetEditor.Tests.Model.Utility
 {
     [TestClass()]
     public class TimeSpanUtilityTests
