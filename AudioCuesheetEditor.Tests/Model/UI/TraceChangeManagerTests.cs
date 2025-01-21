@@ -151,12 +151,11 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         [TestMethod()]
         public void TrackListTest()
         {
-            var testhelper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
             Assert.IsFalse(manager.CanUndo);
-            cuesheet.AddTrack(new Track(), testhelper.ApplicationOptions);
+            cuesheet.AddTrack(new Track());
             Assert.IsTrue(manager.CanUndo);
             manager.Undo();
             Assert.AreEqual(0, cuesheet.Tracks.Count);
@@ -170,7 +169,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         public async Task Import_ValidTextfile_IsUndoable()
         {
             // Arrange
-            var testhelper = new TestHelper();
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
@@ -200,7 +198,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             Assert.IsFalse(traceChangeManager.CanRedo);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
             Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet.Artist);
-            Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet.Cataloguenumber.Value);
+            Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet.Cataloguenumber);
             Assert.AreNotEqual(0, sessionStateContainer.ImportCuesheet.Tracks.Count);
             Assert.IsFalse(eventFired);
         }
@@ -209,7 +207,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         public async Task UndoImport_ValidTextfile_ResetsToEmptyCuesheet()
         {
             // Arrange
-            var testhelper = new TestHelper();
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
@@ -239,7 +236,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             // Assert
             Assert.AreEqual(0, sessionStateContainer.Cuesheet.Tracks.Count);
             Assert.IsTrue(string.IsNullOrEmpty(sessionStateContainer.Cuesheet.Artist));
-            Assert.IsTrue(string.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber.Value));
+            Assert.IsTrue(string.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber));
             Assert.IsFalse(traceChangeManager.CanUndo);
             Assert.IsTrue(traceChangeManager.CanRedo);
             Assert.IsFalse(eventFired);
@@ -278,7 +275,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             traceChangeManager.Redo();
             // Assert
             Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet?.Artist);
-            Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet?.Cataloguenumber.Value);
+            Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet?.Cataloguenumber);
             Assert.AreEqual(39, sessionStateContainer.ImportCuesheet?.Tracks.Count);
             Assert.IsFalse(eventFired);
 
@@ -287,8 +284,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         [TestMethod()]
         public void RemoveTracksTest()
         {
-            var testhelper = new TestHelper();
-            testhelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
@@ -316,10 +311,10 @@ namespace AudioCuesheetEditor.Tests.Model.UI
                 Title = "Track 4 Title",
                 End = new TimeSpan(0, 9, 12)
             };
-            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testhelper.ApplicationOptions);
-            cuesheet.AddTrack(track3, testhelper.ApplicationOptions);
-            cuesheet.AddTrack(track4, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track4);
             Assert.AreEqual(ValidationStatus.Success, track1.Validate().Status);
             Assert.AreEqual(ValidationStatus.Success, track2.Validate().Status);
             Assert.AreEqual(ValidationStatus.Success, track3.Validate().Status);
@@ -347,7 +342,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         [TestMethod()]
         public void MoveTracksTest()
         {
-            var testhelper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
@@ -375,10 +369,10 @@ namespace AudioCuesheetEditor.Tests.Model.UI
                 Title = "Track 4 Title",
                 End = new TimeSpan(0, 9, 12)
             };
-            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testhelper.ApplicationOptions);
-            cuesheet.AddTrack(track3, testhelper.ApplicationOptions);
-            cuesheet.AddTrack(track4, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track4);
             cuesheet.MoveTrack(track2, MoveDirection.Up);
             Assert.AreEqual(track2, cuesheet.Tracks.First());
             manager.Undo();
@@ -388,7 +382,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         [TestMethod()]
         public void ResetTest()
         {
-            var testhelper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             Assert.IsFalse(manager.CanUndo);
             Assert.IsFalse(manager.CanRedo);
@@ -400,7 +393,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
                 Title = "Track 1 Title",
                 End = new TimeSpan(0, 2, 30)
             };
-            cuesheet.AddTrack(track1, testhelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
             Assert.IsTrue(manager.CanUndo);
             manager.Reset();
             Assert.IsFalse(manager.CanUndo);
@@ -410,7 +403,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         [TestMethod()]
         public void BulkEditTracksTest()
         {
-            var helper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
@@ -427,10 +419,10 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             manager.TraceChanges(track2);
             manager.TraceChanges(track3);
             manager.TraceChanges(track4);
-            cuesheet.AddTrack(track1, helper.ApplicationOptions);
-            cuesheet.AddTrack(track2, helper.ApplicationOptions);
-            cuesheet.AddTrack(track3, helper.ApplicationOptions);
-            cuesheet.AddTrack(track4, helper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track4);
             track1.IsLinkedToPreviousTrack = true;
             track2.IsLinkedToPreviousTrack = true;
             track3.IsLinkedToPreviousTrack = true;
@@ -476,7 +468,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         public void BulkEditTracksLengthTest()
         {
             //We do an edit on 4 tracks to set the length, undo, redo and again undo.
-            var helper = new TestHelper();
             var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var cuesheet = new Cuesheet();
             manager.TraceChanges(cuesheet);
@@ -488,10 +479,10 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             manager.TraceChanges(track2);
             manager.TraceChanges(track3);
             manager.TraceChanges(track4);
-            cuesheet.AddTrack(track1, helper.ApplicationOptions);
-            cuesheet.AddTrack(track2, helper.ApplicationOptions);
-            cuesheet.AddTrack(track3, helper.ApplicationOptions);
-            cuesheet.AddTrack(track4, helper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track4);
             track1.IsLinkedToPreviousTrack = true;
             track2.IsLinkedToPreviousTrack = true;
             track3.IsLinkedToPreviousTrack = true;

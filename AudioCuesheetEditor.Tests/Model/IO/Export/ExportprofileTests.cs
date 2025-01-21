@@ -30,17 +30,17 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
             {
                 Filename = string.Empty
             };
-            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(x => x.Filename).Status);
+            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(nameof(Exportprofile.Filename)).Status);
             exportprofile.Filename = "Test123";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.Filename).Status);
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.Filename)).Status);
             exportprofile.SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.SchemeHead).Status);
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.SchemeHead)).Status);
             exportprofile.SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.SchemeTracks).Status);
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.SchemeTracks)).Status);
             exportprofile.SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(x => x.SchemeFooter).Status);
+            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.SchemeFooter)).Status);
             exportprofile.SchemeFooter = "Exported %Track.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(x => x.SchemeFooter).Status);
+            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(nameof(Exportprofile.SchemeFooter)).Status);
         }
     }
 }

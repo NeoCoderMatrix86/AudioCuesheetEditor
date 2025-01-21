@@ -24,10 +24,7 @@ namespace AudioCuesheetEditor.Tests.Utility
     {
         public TestHelper()
         {
-            ApplicationOptions = new ApplicationOptions
-            {
-                LinkTracksWithPreviousOne = false
-            };
+            ApplicationOptions = new ApplicationOptions();
             RecordOptions = new();
         }
 

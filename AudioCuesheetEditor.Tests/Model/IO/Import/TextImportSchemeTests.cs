@@ -16,13 +16,9 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Import;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AudioCuesheetEditorTests.Model.IO.Import
+namespace AudioCuesheetEditor.Tests.Model.IO.Import
 {
     [TestClass()]
     public class TextImportSchemeTests
@@ -32,22 +28,22 @@ namespace AudioCuesheetEditorTests.Model.IO.Import
         {
             var importScheme = new TextImportScheme
             {
-                SchemeTracks = String.Empty,
-                SchemeCuesheet = String.Empty
+                SchemeTracks = string.Empty,
+                SchemeCuesheet = string.Empty
             };
             Assert.AreEqual(ValidationStatus.Success, importScheme.Validate().Status);
             importScheme.SchemeCuesheet = "(?'Track.Begin'\\w{1,}) - (?'Cuesheet.Artist'\\w{1})";
-            var validationResult = importScheme.Validate(x => x.SchemeCuesheet);
+            var validationResult = importScheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Begin'\\w{1,})")));
             importScheme.SchemeCuesheet = "(?'Track.Begin'\\w{1,}) - (?'Cuesheet.Artist'\\w{1}) - (?'Track.Artist'[A-z0-9]{1,})";
-            validationResult = importScheme.Validate(x => x.SchemeCuesheet);
+            validationResult = importScheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
             Assert.IsTrue(validationResult.ValidationMessages?.Count == 2);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Begin'\\w{1,})")));
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Artist'[A-z0-9]{1,})")));
-            Boolean eventFiredCorrect = false;
-            importScheme.SchemeChanged += delegate (object? sender, String property)
+            bool eventFiredCorrect = false;
+            importScheme.SchemeChanged += delegate (object? sender, string property)
             {
                 if (property == nameof(TextImportScheme.SchemeTracks))
                 {
@@ -56,7 +52,7 @@ namespace AudioCuesheetEditorTests.Model.IO.Import
             };
             importScheme.SchemeTracks = "(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,}) - (?'Track.End'\\w{1,})";
             Assert.AreEqual(true, eventFiredCorrect);
-            validationResult = importScheme.Validate(x => x.SchemeTracks);
+            validationResult = importScheme.Validate(nameof(TextImportScheme.SchemeTracks));
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,})")));
             importScheme.SchemeCuesheet = "(?'Cuesheet.Artist'\\w{1,}) - (?'Cuesheet.AudioFile'[a-zA-Z0-9_. ;äöü&:,\\]{1,})";
