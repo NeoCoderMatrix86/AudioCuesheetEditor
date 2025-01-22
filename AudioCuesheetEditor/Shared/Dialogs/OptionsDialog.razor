@@ -28,6 +28,15 @@ along with Foobar.  If not, see
             <MudTabPanel Text="@_localizer["Common"]" Icon="@Icons.Material.Outlined.Settings">
                 <MudText Typo="Typo.h6">@_localizer["Input"]</MudText>
                 <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
+                <MudStack Row AlignItems="AlignItems.Baseline">
+                    <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" />
+                    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+                        @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
+                        {
+                            <MudMenuItem OnClick="() => AppendPlaceholderToTimeInputFormatTextField(scheme)">@_localizer[scheme]</MudMenuItem>
+                        }
+                    </MudMenu>
+                </MudStack>
             </MudTabPanel>
         </MudTabs>
     </DialogContent>
@@ -36,6 +45,30 @@ along with Foobar.  If not, see
 @code {
     //TODO: Develop the options dialog
     //TODO: Localize
-    //TODO: Add timespanformat to input options
     //TODO: Add record options
+    //TODO: Validation for timespan format input
+    MudTextField<string>? timeInputFormatTextField;
+
+    async Task TimeInputFormatChangedAsync(string newValue)
+    {
+        TimeSpanFormat? timeSpanFormat = ApplicationOptions?.TimeSpanFormat;
+        if (string.IsNullOrEmpty(newValue))
+        {
+            timeSpanFormat = null;
+        }
+        else
+        {
+            if (timeSpanFormat == null)
+            {
+                timeSpanFormat = new();
+            }
+            timeSpanFormat.Scheme = newValue;
+        }
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TimeSpanFormat!, timeSpanFormat);
+    }
+
+    void AppendPlaceholderToTimeInputFormatTextField(string placeholder)
+    {
+        timeInputFormatTextField?.SetText($"{timeInputFormatTextField.Text}{placeholder}");
+    }
 }
