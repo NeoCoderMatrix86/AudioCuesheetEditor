@@ -19,12 +19,13 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ImportFileContent> _localizer
 @inject SessionStateContainer _sessionStateContainer
+@inject ImportManager _importManager
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined>
-    <MudTabPanel Text="@_localizer["Analyse preview"]">
-        @if (FileContentRecognized != null)
-        {
-            <MudField>
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
+    @if (FileContentRecognized != null)
+    {
+        <MudTabPanel Text="@_localizer["Analyse preview"]">
+            <MudField Class="ml-2 mr-2">
                 <pre>                
                     @foreach (var line in FileContentRecognized)
                     {
@@ -32,14 +33,36 @@ along with Foobar.  If not, see
                     }
                 </pre>
             </MudField>
-        }
-    </MudTabPanel>
+        </MudTabPanel>
+        <MudTabPanel Text="@_localizer["Edit"]">
+            <MudTextField Class="ml-2 mr-2" T="string" Lines="@FileContentRecognized.Count()" AutoGrow Text="@FileContent" TextChanged="FileContent_TextChangedAsync" />
+        </MudTabPanel>
+    }
 </MudTabs>
 
 @code {
-    //TODO
-    //TODO: Edit tab
     //TODO: localize
 
     public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
+    public String FileContent
+    {
+        get
+        {
+            String fileContent = String.Empty;
+            if (_sessionStateContainer.Importfile?.FileContent != null)
+            {
+                fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContent);
+            }
+            return fileContent;
+        }
+    }
+
+    async Task FileContent_TextChangedAsync(string newFileContent)
+    {
+        var fileContentValue = newFileContent?.Split(Environment.NewLine);
+        if (fileContentValue != null)
+        {
+            await _importManager.ImportTextAsync(fileContentValue);
+        }
+    }
 }
