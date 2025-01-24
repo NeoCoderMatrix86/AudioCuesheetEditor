@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.Utility;
 
 namespace AudioCuesheetEditor.Model.Options
 {
+    //TODO: Delete me
     public class ImportOptions : IOptions
     {
         public TextImportScheme TextImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;

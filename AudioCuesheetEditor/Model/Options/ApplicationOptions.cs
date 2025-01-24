@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
 using System.Globalization;
 using System.Text.Json.Serialization;
@@ -52,6 +53,8 @@ namespace AudioCuesheetEditor.Model.Options
         public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
         public TimeSpanFormat? TimeSpanFormat { get; set; }
         public Boolean LinkTracks { get; set; } = true;
+        public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
+        public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
 
         public override ValidationResult Validate(string property)
         {
