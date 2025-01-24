@@ -20,6 +20,14 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ValidateImport> _localizer
 
 <MudExpansionPanels MultiExpansion>
+    <MudExpansionPanel @bind-Expanded="filecontentExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <ImportFileContent />
+        </ChildContent>
+    </MudExpansionPanel>
     <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
         <TitleContent>
             <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
@@ -44,6 +52,7 @@ along with Foobar.  If not, see
     //TODO: Filecontent
     //TODO: Options for import
 
+    Boolean filecontentExpanded = true;
     Boolean cuesheetDataExpanded = true;
     Boolean cuesheetTracksExpanded = true;
 }
