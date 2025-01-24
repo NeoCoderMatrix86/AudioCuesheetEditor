@@ -63,6 +63,7 @@ namespace AudioCuesheetEditor.Data.Options
 
         public async Task SaveOptions(IOptions options)
         {
+            //TODO: validate options if IValidateable
             var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
             await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
             OptionSaved?.Invoke(this, options);
