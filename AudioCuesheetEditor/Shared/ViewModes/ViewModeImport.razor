@@ -24,8 +24,8 @@ along with Foobar.  If not, see
 
 <CascadingValue Value="ViewMode.ImportView">
     <MudStepper OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
-        <MudStep Title="@_localizer["Select files"]">
-            <SelectImportFiles FilesImported="FilesImported" />
+        <MudStep Title="@_localizer["Select files"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
+            <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
         </MudStep>
         <MudStep Title="@_localizer["Validate"]">
             <ValidateImport />
@@ -39,11 +39,11 @@ along with Foobar.  If not, see
     //TODO: Options for import
     //TODO: Complete import button
     //TODO: Disable next button if not possible
-    //TODO: Enable step back to first step
     //TODO: Bug: Save activestep while switching view modes (going to Fullmode and back results in restarting the import)
 
     Dictionary<IBrowserFile, ImportFileType>? importedFiles;
     int activeStepIndex;
+    Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
 
     Task PreviewInteraction(StepperInteractionEventArgs arg)
     {
@@ -58,5 +58,12 @@ along with Foobar.  If not, see
     {
         importedFiles = files;
         activeStepIndex = 1;
+        selectFilesStepCompleted = true;
+        selectFilesStepError = false;
+    }
+
+    void InvalidFilesDropped(List<string> files)
+    {
+        selectFilesStepError = files.Any();
     }
 }
