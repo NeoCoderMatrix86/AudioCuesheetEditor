@@ -18,6 +18,8 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ValidateImport> _localizer
+@inject ImportManager _importManager
+@inject SessionStateContainer _sessionStateContainer
 
 <MudExpansionPanels MultiExpansion>
     <MudExpansionPanel @bind-Expanded="filecontentExpanded">
@@ -25,8 +27,8 @@ along with Foobar.  If not, see
             <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
         </TitleContent>
         <ChildContent>
-            <ImportFileContent />
-            <ImportSchemes />
+            <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
+            <ImportSchemes ImportSchemeCuesheetChanged="ImportSchemes_ImportSchemeCuesheetChanged" />
         </ChildContent>
     </MudExpansionPanel>
     <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
@@ -55,4 +57,19 @@ along with Foobar.  If not, see
     Boolean filecontentExpanded = true;
     Boolean cuesheetDataExpanded = true;
     Boolean cuesheetTracksExpanded = true;
+
+    void ImportFileContent_FileContentChanged(string newFileContent)
+    {
+        var textToAnalyse = newFileContent.Split(Environment.NewLine);
+        _importManager.ImportText(textToAnalyse, ApplicationOptions!.ImportScheme, ApplicationOptions!.ImportTimeSpanFormat);
+    }
+
+    void ImportSchemes_ImportSchemeCuesheetChanged(string newScheme)
+    {
+        var fileContent = _sessionStateContainer.Importfile?.FileContent;
+        if (fileContent != null)
+        {
+            _importManager.ImportText(fileContent, ApplicationOptions!.ImportScheme, ApplicationOptions.ImportTimeSpanFormat);
+        }
+    }
 }

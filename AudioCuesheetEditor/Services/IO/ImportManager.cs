@@ -19,8 +19,10 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Model.Utility;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -77,17 +79,17 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         lines.Add(reader.ReadLine());
                     }
-                    await ImportTextAsync([.. lines]);
+                    var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                    ImportText([.. lines], options.ImportScheme, options.ImportTimeSpanFormat);
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }
             }
             return importFileTypes;
         }
 
-        public async Task ImportTextAsync(IEnumerable<String?> fileContent)
+        public void ImportText(IEnumerable<String?> fileContent, TextImportScheme textImportScheme, TimeSpanFormat timeSpanFormat)
         {
-            var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-            _sessionStateContainer.Importfile = TextImportService.Analyse(options.ImportScheme, fileContent, options.ImportTimeSpanFormat);
+            _sessionStateContainer.Importfile = TextImportService.Analyse(textImportScheme, fileContent, timeSpanFormat);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
                 var importCuesheet = new Cuesheet();

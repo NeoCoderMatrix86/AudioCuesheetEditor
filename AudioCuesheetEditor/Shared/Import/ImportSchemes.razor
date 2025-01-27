@@ -36,7 +36,10 @@ along with Foobar.  If not, see
     //TODO: validation
     //TODO: track scheme
     //TODO: timeformat scheme
-    //TODO: scheme(s) changed -> reanalyse
+
+    [Parameter]
+    public EventCallback<string> ImportSchemeCuesheetChanged { get; set; }
+
     MudTextField<string>? importSchemeCuesheetTextField;
 
     void AppendPlaceholderToImportSchemeCuesheetTextField(string placeholder)
@@ -47,6 +50,6 @@ along with Foobar.  If not, see
     async Task ImportSchemeCuesheetTextChangedAsync(string newScheme)
     {
         await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
-        //TODO: reanalyse
+        await ImportSchemeCuesheetChanged.InvokeAsync(newScheme);
     }
 }

@@ -19,7 +19,6 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ImportFileContent> _localizer
 @inject SessionStateContainer _sessionStateContainer
-@inject ImportManager _importManager
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
     @if (FileContentRecognized != null)
@@ -43,6 +42,8 @@ along with Foobar.  If not, see
 @code {
     //TODO: localize
 
+    [Parameter]
+    public EventCallback<string> FileContentChanged { get; set; }
     public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
     public String FileContent
     {
@@ -59,10 +60,6 @@ along with Foobar.  If not, see
 
     async Task FileContent_TextChangedAsync(string newFileContent)
     {
-        var fileContentValue = newFileContent?.Split(Environment.NewLine);
-        if (fileContentValue != null)
-        {
-            await _importManager.ImportTextAsync(fileContentValue);
-        }
+        await FileContentChanged.InvokeAsync(newFileContent);
     }
 }
