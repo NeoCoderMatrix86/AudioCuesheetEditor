@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -27,7 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Services.IO.Tests
+namespace AudioCuesheetEditor.Tests.Services.IO
 {
     [TestClass()]
     public class ImportManagerTests
@@ -36,7 +37,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
         public async Task ImportTextAsync_TextfileWithStartDateTime_CreatesValidCuesheetAsync()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "Innellea~The Golden Fort~02.08.2024 20:10:48",
                 "Nora En Pure~Diving with Whales (Daniel Portman Remix)~02.08.2024 20:15:21",
@@ -82,8 +83,7 @@ namespace AudioCuesheetEditor.Services.IO.Tests
                 }
             };
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             var testHelper = new TestHelper();
             // Act
             await importManager.ImportTextAsync(fileContent);

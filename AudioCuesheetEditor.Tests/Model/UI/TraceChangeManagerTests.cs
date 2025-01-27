@@ -184,8 +184,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             bool eventFired = false;
             sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
@@ -222,8 +221,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             bool eventFired = false;
             sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
@@ -262,8 +260,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
             importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             bool eventFired = false;
             sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
