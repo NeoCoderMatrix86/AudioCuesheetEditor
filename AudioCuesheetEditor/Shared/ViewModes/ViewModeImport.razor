@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ImportManager _importManager
 
 <CascadingValue Value="ViewMode.ImportView">
+    <ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
     <MudExpansionPanels MultiExpansion>
         <MudExpansionPanel @bind-Expanded="inputfilesExpanded">
             <TitleContent>
@@ -63,15 +64,15 @@ along with Foobar.  If not, see
             </ChildContent>
         </MudExpansionPanel>
     </MudExpansionPanels>
+    <ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
 </CascadingValue>
 
 @code {
-    //TODO
     //TODO: Localization
-    //TODO: Control navigation (seeing the selected files, completing import, etc.)
     //TODO: Bug: Save activestep while switching view modes (going to Fullmode and back results in restarting the import)
     Boolean inputfilesExpanded = true, filecontentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean filecontentDisabled = true, cuesheetDataDisabled = true, cuesheetTracksDisabled = true;
+    Boolean importDisabled = true, restartDisabled = true;
 
     void ImportFileContent_FileContentChanged(string newFileContent)
     {
@@ -97,5 +98,26 @@ along with Foobar.  If not, see
         filecontentDisabled = false;
         cuesheetDataDisabled = false;
         cuesheetTracksDisabled = false;
+        importDisabled = _sessionStateContainer.Importfile?.AnalyseException != null;
+        restartDisabled = false;
+    }
+
+    void RestartImport()
+    {
+        inputfilesExpanded = true;
+        filecontentExpanded = false;
+        cuesheetDataExpanded = false;
+        cuesheetTracksExpanded = false;
+        filecontentDisabled = true; 
+        cuesheetDataDisabled = true;
+        cuesheetTracksDisabled = true;
+        importDisabled = true;
+        restartDisabled = true;
+    }
+
+    void CompleteImport()
+    {
+        _importManager.ImportCuesheet();
+        //TODO: switch to detail view
     }
 }
