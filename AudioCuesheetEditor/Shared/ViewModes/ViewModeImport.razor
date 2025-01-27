@@ -20,50 +20,82 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject SessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
-@inject FileInputManager _fileInputManager
 
 <CascadingValue Value="ViewMode.ImportView">
-    <MudStepper OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
-        <MudStep Title="@_localizer["Select files"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
-            <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
-        </MudStep>
-        <MudStep Title="@_localizer["Validate"]">
-            <ValidateImport />
-        </MudStep>
-    </MudStepper>
+    <MudExpansionPanels MultiExpansion>
+        <MudExpansionPanel @bind-Expanded="inputfilesExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Inputfiles"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <SelectImportFiles FilesImported="FilesImported" />
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="filecontentExpanded" Disabled="filecontentDisabled">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
+                <ImportSchemes ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
+                @if (_sessionStateContainer.Importfile?.AnalyseException != null)
+                {
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                        @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
+                    </MudAlert>
+                }
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded" Disabled="cuesheetDataDisabled">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <CuesheetData />
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded" Disabled="cuesheetTracksDisabled">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <TrackList />
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
 </CascadingValue>
 
 @code {
     //TODO
     //TODO: Localization
-    //TODO: Complete import button
-    //TODO: Disable next button if not possible
+    //TODO: Control navigation (seeing the selected files, completing import, etc.)
     //TODO: Bug: Save activestep while switching view modes (going to Fullmode and back results in restarting the import)
-    //TODO: Switch from stepper to expansion panels (switching the opened panels)
+    Boolean inputfilesExpanded = true, filecontentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
+    Boolean filecontentDisabled = true, cuesheetDataDisabled = true, cuesheetTracksDisabled = true;
 
-    Dictionary<IBrowserFile, ImportFileType>? importedFiles;
-    int activeStepIndex;
-    Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
-
-    Task PreviewInteraction(StepperInteractionEventArgs arg)
+    void ImportFileContent_FileContentChanged(string newFileContent)
     {
-        if (arg.StepIndex == 0)
+        var textToAnalyse = newFileContent.Split(Environment.NewLine);
+        _importManager.ImportText(textToAnalyse, ApplicationOptions!.ImportScheme, ApplicationOptions!.ImportTimeSpanFormat);
+    }
+
+    void ReanalyseImportfile()
+    {
+        var fileContent = _sessionStateContainer.Importfile?.FileContent;
+        if (fileContent != null)
         {
-            arg.Cancel = importedFiles == null || importedFiles.Count == 0;
+            _importManager.ImportText(fileContent, ApplicationOptions!.ImportScheme, ApplicationOptions.ImportTimeSpanFormat);
         }
-        return Task.CompletedTask;
     }
 
     void FilesImported(Dictionary<IBrowserFile, ImportFileType> files)
     {
-        importedFiles = files;
-        activeStepIndex = 1;
-        selectFilesStepCompleted = true;
-        selectFilesStepError = false;
-    }
-
-    void InvalidFilesDropped(List<string> files)
-    {
-        selectFilesStepError = files.Any();
+        inputfilesExpanded = false;
+        filecontentExpanded = true;
+        cuesheetDataExpanded = true;
+        cuesheetTracksExpanded = true;
+        filecontentDisabled = false;
+        cuesheetDataDisabled = false;
+        cuesheetTracksDisabled = false;
     }
 }

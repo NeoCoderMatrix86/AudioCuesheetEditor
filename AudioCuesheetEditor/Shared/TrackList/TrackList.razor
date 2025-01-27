@@ -142,7 +142,7 @@ along with Foobar.  If not, see
     {
         var newTrack = new Track()
         {
-            IsLinkedToPreviousTrack = ApplicationOptions.LinkTracks
+            IsLinkedToPreviousTrack = ApplicationOptions!.LinkTracks
         };
         Cuesheet?.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);
