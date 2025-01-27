@@ -26,7 +26,25 @@ along with Foobar.  If not, see
     <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
         @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
         {
-            <MudMenuItem OnClick="() => AppendPlaceholderToImportSchemeCuesheetTextField(scheme)">@_localizer[scheme]</MudMenuItem>
+            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importSchemeCuesheetTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+        }
+    </MudMenu>
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Baseline">
+    <MudTextField T="string" @ref="importSchemeTracksTextField" Label="@_localizer["Textimport scheme tracks"]" Text="@ApplicationOptions?.ImportScheme.SchemeTracks" TextChanged="ImportSchemeTracksTextChangedAsync" Clearable />
+    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+        @foreach (var scheme in TextImportScheme.AvailableSchemesTrack)
+        {
+            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importSchemeTracksTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+        }
+    </MudMenu>
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Baseline">
+    <MudTextField T="string" @ref="importTimeInputFormatTextField" Label="@_localizer["Time input format for import"]" Text="@ApplicationOptions?.ImportTimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync" Clearable />
+    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+        @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
+        {
+            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importTimeInputFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
         }
     </MudMenu>
 </MudStack>
@@ -34,22 +52,39 @@ along with Foobar.  If not, see
 @code {
     //TODO
     //TODO: validation
-    //TODO: track scheme
-    //TODO: timeformat scheme
+    //TODO: Reset of schemes
 
     [Parameter]
     public EventCallback<string> ImportSchemeCuesheetChanged { get; set; }
 
-    MudTextField<string>? importSchemeCuesheetTextField;
+    [Parameter]
+    public EventCallback<string> ImportSchemeTracksChanged { get; set; }
 
-    void AppendPlaceholderToImportSchemeCuesheetTextField(string placeholder)
+    [Parameter]
+    public EventCallback<string> ImportTimeInputFormatChanged { get; set; }
+
+    MudTextField<string>? importSchemeCuesheetTextField, importSchemeTracksTextField, importTimeInputFormatTextField;
+
+    void AppendPlaceholderToTextField(MudTextField<string>? mudTextField, string placeholder)
     {
-        importSchemeCuesheetTextField?.SetText($"{importSchemeCuesheetTextField.Text}{placeholder}");
+        mudTextField?.SetText($"{mudTextField.Text}{placeholder}");
     }
 
     async Task ImportSchemeCuesheetTextChangedAsync(string newScheme)
     {
         await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
         await ImportSchemeCuesheetChanged.InvokeAsync(newScheme);
+    }
+
+    async Task ImportSchemeTracksTextChangedAsync(string newScheme)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeTracks, newScheme);
+        await ImportSchemeTracksChanged.InvokeAsync(newScheme);
+    }
+
+    async Task ImportTimeInputFormatChangedAsync(string newScheme)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportTimeSpanFormat.Scheme, newScheme);
+        await ImportTimeInputFormatChanged.InvokeAsync(newScheme);
     }
 }

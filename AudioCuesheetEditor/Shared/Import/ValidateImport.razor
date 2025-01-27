@@ -28,7 +28,7 @@ along with Foobar.  If not, see
         </TitleContent>
         <ChildContent>
             <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
-            <ImportSchemes ImportSchemeCuesheetChanged="ImportSchemes_ImportSchemeCuesheetChanged" />
+            <ImportSchemes ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
         </ChildContent>
     </MudExpansionPanel>
     <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
@@ -64,7 +64,7 @@ along with Foobar.  If not, see
         _importManager.ImportText(textToAnalyse, ApplicationOptions!.ImportScheme, ApplicationOptions!.ImportTimeSpanFormat);
     }
 
-    void ImportSchemes_ImportSchemeCuesheetChanged(string newScheme)
+    void ReanalyseImportfile()
     {
         var fileContent = _sessionStateContainer.Importfile?.FileContent;
         if (fileContent != null)
