@@ -23,41 +23,112 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Import
     [TestClass()]
     public class TextImportSchemeTests
     {
-        [TestMethod()]
-        public void TextImportSchemeValidationTest()
+        [TestMethod]
+        public void Validate_SchemeCuesheet_WithValidPlaceholders_ShouldReturnSuccess()
         {
-            var importScheme = new TextImportScheme
+            // Arrange
+            var scheme = new TextImportScheme
             {
-                SchemeTracks = string.Empty,
-                SchemeCuesheet = string.Empty
+                SchemeCuesheet = "(?'Artist'.+) - (?'Title'.+)\\t+(?'Audiofile'.+)"
             };
-            Assert.AreEqual(ValidationStatus.Success, importScheme.Validate().Status);
-            importScheme.SchemeCuesheet = "(?'Track.Begin'\\w{1,}) - (?'Cuesheet.Artist'\\w{1})";
-            var validationResult = importScheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Begin'\\w{1,})")));
-            importScheme.SchemeCuesheet = "(?'Track.Begin'\\w{1,}) - (?'Cuesheet.Artist'\\w{1}) - (?'Track.Artist'[A-z0-9]{1,})";
-            validationResult = importScheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.IsTrue(validationResult.ValidationMessages?.Count == 2);
-            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Begin'\\w{1,})")));
-            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Track.Artist'[A-z0-9]{1,})")));
-            bool eventFiredCorrect = false;
-            importScheme.SchemeChanged += delegate (object? sender, string property)
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, result.Status);
+            Assert.AreEqual(0, result.ValidationMessages.Count);
+        }
+
+        [TestMethod]
+        public void Validate_SchemeCuesheet_WithSimplePlaceholders_ShouldReturnSuccess()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
             {
-                if (property == nameof(TextImportScheme.SchemeTracks))
-                {
-                    eventFiredCorrect = true;
-                }
+                SchemeCuesheet = "Artist - Title"
             };
-            importScheme.SchemeTracks = "(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,}) - (?'Track.End'\\w{1,})";
-            Assert.AreEqual(true, eventFiredCorrect);
-            validationResult = importScheme.Validate(nameof(TextImportScheme.SchemeTracks));
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Last().Equals("(?'Cuesheet.Title'[a-zA-Z0-9_ .;äöü&:,]{1,})")));
-            importScheme.SchemeCuesheet = "(?'Cuesheet.Artist'\\w{1,}) - (?'Cuesheet.AudioFile'[a-zA-Z0-9_. ;äöü&:,\\]{1,})";
-            importScheme.SchemeTracks = "(?'Track.Artist'[A-z0-9]{1,}) - (?'Track.Title'.{1,})";
-            Assert.AreEqual(ValidationStatus.Success, importScheme.Validate().Status);
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, result.Status);
+            Assert.AreEqual(0, result.ValidationMessages.Count);
+        }
+
+        [TestMethod]
+        public void Validate_SchemeCuesheet_WithoutPlaceholders_ShouldReturnError()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
+            {
+                SchemeCuesheet = "InvalidPattern"
+            };
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, result.Status);
+            Assert.AreEqual(1, result.ValidationMessages.Count);
+            var message = result.ValidationMessages.Single();
+            Assert.AreEqual("{0} contains no placeholder!", message.Message);
+            Assert.AreEqual(nameof(TextImportScheme.SchemeCuesheet), message.Parameter?.FirstOrDefault());
+        }
+
+        [TestMethod]
+        public void Validate_SchemeTracks_WithValidPlaceholders_ShouldReturnSuccess()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
+            {
+                SchemeTracks = "(?'Artist'.+) - (?'Title'.+)(?:...\\t)(?'End'.+)"
+            };
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeTracks));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, result.Status);
+            Assert.AreEqual(0, result.ValidationMessages.Count);
+        }
+
+        [TestMethod]
+        public void Validate_SchemeTracks_WithSimplePlaceholders_ShouldReturnSuccess()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
+            {
+                SchemeTracks = "Artist - Title\tEnd"
+            };
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeTracks));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, result.Status);
+            Assert.AreEqual(0, result.ValidationMessages.Count);
+        }
+
+        [TestMethod]
+        public void Validate_SchemeTracks_WithoutPlaceholders_ShouldReturnError()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
+            {
+                SchemeTracks = "InvalidPattern"
+            };
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeTracks));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, result.Status);
+            Assert.AreEqual(1, result.ValidationMessages.Count);
+            var message = result.ValidationMessages.Single();
+            Assert.AreEqual("{0} contains no placeholder!", message.Message);
+            Assert.AreEqual(nameof(TextImportScheme.SchemeTracks), message.Parameter?.FirstOrDefault());
         }
     }
 }

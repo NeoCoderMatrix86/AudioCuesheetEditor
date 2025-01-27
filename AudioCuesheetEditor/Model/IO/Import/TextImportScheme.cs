@@ -30,8 +30,8 @@ namespace AudioCuesheetEditor.Model.IO.Import
             AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
         }
 
-        public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\A.*) - (?'Title'\w{1,})\t{1,}(?'Audiofile'.{1,})";
-        public static readonly String DefaultSchemeTracks = @"(?'Artist'[a-zA-Z0-9_ .();äöü&:,'*-?:]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü&'*-?:]{1,})\t{0,}(?'End'.{1,})";
+        public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\w*) - (?'Title'\w*)\t{1,}(?'Audiofile'.*)";
+        public static readonly String DefaultSchemeTracks = @"(?'Artist'.+) - (?'Title'.+)(?:...\t)(?'End'.+)";
 
         public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
@@ -73,11 +73,37 @@ namespace AudioCuesheetEditor.Model.IO.Import
             {
                 case nameof(SchemeCuesheet):
                     validationStatus = ValidationStatus.Success;
-                    //TODO: Check for placeholders
+                    Boolean containsPlaceHolder = false;
+                    var enumerator = AvailableSchemeCuesheet.GetEnumerator();
+                    if (enumerator.MoveNext())
+                    {
+                        do
+                        {
+                            containsPlaceHolder = SchemeCuesheet?.Contains(enumerator.Current) == true;
+                        } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                    }
+                    if (containsPlaceHolder == false)
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeCuesheet)));
+                    }
                     break;
                 case nameof(SchemeTracks):
                     validationStatus = ValidationStatus.Success;
-                    //TODO: Check for placeholders
+                    containsPlaceHolder = false;
+                    enumerator = AvailableSchemesTrack.GetEnumerator();
+                    if (enumerator.MoveNext())
+                    {
+                        do
+                        {
+                            containsPlaceHolder = SchemeTracks?.Contains(enumerator.Current) == true;
+                        } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                    }
+                    if (containsPlaceHolder == false)
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeTracks)));
+                    }
                     break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
