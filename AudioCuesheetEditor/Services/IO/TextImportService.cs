@@ -76,6 +76,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
             catch (Exception ex)
             {
+                importfile.FileContent = fileContent;
                 importfile.FileContentRecognized = fileContent;
                 importfile.AnalyseException = ex;
                 importfile.AnalysedCuesheet = null;

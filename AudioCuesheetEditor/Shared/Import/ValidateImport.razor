@@ -29,6 +29,12 @@ along with Foobar.  If not, see
         <ChildContent>
             <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
             <ImportSchemes ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
+            @if (_sessionStateContainer.Importfile?.AnalyseException != null)
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                    @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
+                </MudAlert>
+            }
         </ChildContent>
     </MudExpansionPanel>
     <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
