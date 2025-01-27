@@ -22,15 +22,31 @@ along with Foobar.  If not, see
 
 <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>
 <MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" Clearable />
+    <MudTextField T="string" @ref="importSchemeCuesheetTextField" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" TextChanged="ImportSchemeCuesheetTextChangedAsync" Clearable />
+    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+        @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
+        {
+            <MudMenuItem OnClick="() => AppendPlaceholderToImportSchemeCuesheetTextField(scheme)">@_localizer[scheme]</MudMenuItem>
+        }
+    </MudMenu>
 </MudStack>
 
 @code {
     //TODO
     //TODO: validation
-    //TODO: Save text changed to scheme cuesheet
-    //TODO: add placeholder button
     //TODO: track scheme
     //TODO: timeformat scheme
     //TODO: scheme(s) changed -> reanalyse
+    MudTextField<string>? importSchemeCuesheetTextField;
+
+    void AppendPlaceholderToImportSchemeCuesheetTextField(string placeholder)
+    {
+        importSchemeCuesheetTextField?.SetText($"{importSchemeCuesheetTextField.Text}{placeholder}");
+    }
+
+    async Task ImportSchemeCuesheetTextChangedAsync(string newScheme)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
+        //TODO: reanalyse
+    }
 }

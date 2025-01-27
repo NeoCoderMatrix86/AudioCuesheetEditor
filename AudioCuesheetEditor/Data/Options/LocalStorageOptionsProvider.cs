@@ -63,41 +63,77 @@ namespace AudioCuesheetEditor.Data.Options
 
         public async Task SaveOptions(IOptions options)
         {
-            //TODO: validate options if IValidateable
-            var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
-            await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
-            OptionSaved?.Invoke(this, options);
+            bool saveOptions = true;
+            if (options is IValidateable validateable)
+            {
+                saveOptions = validateable.Validate().Status != ValidationStatus.Error;
+            }
+            if (saveOptions)
+            {
+                var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
+                await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
+                OptionSaved?.Invoke(this, options);
+            }
         }
 
-        public async Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object? value) where T : class, IOptions, new()
+        public async Task SaveOptionsValue<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
         {
             var options = await GetOptions<T>();
-            Boolean saveOptions = true;
             PropertyInfo? propertyInfo = null;
+            object? targetObject = options;
+
             if (propertyExpression.Body is MemberExpression memberExpression)
             {
-                propertyInfo = memberExpression.Member as PropertyInfo;
+                propertyInfo = ResolveNestedProperty(memberExpression, ref targetObject);
             }
             else if (propertyExpression.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression unaryMemberExpression)
             {
-                propertyInfo = unaryMemberExpression.Member as PropertyInfo;
+                propertyInfo = ResolveNestedProperty(unaryMemberExpression, ref targetObject);
             }
-            if (propertyInfo != null)
+
+            if (propertyInfo != null && targetObject != null)
             {
-                propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType));
-                if (options is IValidateable validateable)
-                {
-                    saveOptions = validateable.Validate(propertyInfo.Name).Status != ValidationStatus.Error;
-                }
+                propertyInfo.SetValue(targetObject, Convert.ChangeType(value, propertyInfo.PropertyType));
             }
             else
             {
                 throw new ArgumentException("The provided expression does not reference a valid property.");
             }
-            if (saveOptions)
+            await SaveOptions(options);
+        }
+
+        private static PropertyInfo? ResolveNestedProperty(MemberExpression? memberExpression, ref object? targetObject)
+        {
+            PropertyInfo? propertyInfo = null;
+            var members = new Stack<MemberExpression>();
+
+            while (memberExpression != null)
             {
-                await SaveOptions(options);
+                members.Push(memberExpression);
+                if (memberExpression.Expression is MemberExpression parentMember)
+                {
+                    memberExpression = parentMember;
+                }
+                else
+                {
+                    memberExpression = null;
+                }
             }
+
+            while (members.Count > 0 && targetObject != null)
+            {
+                memberExpression = members.Pop();
+                propertyInfo = targetObject.GetType().GetProperty(memberExpression.Member.Name);
+                if (propertyInfo != null)
+                {
+                    if (members.Count > 0)
+                    {
+                        targetObject = propertyInfo.GetValue(targetObject);
+                    }
+                }
+            }
+
+            return propertyInfo;
         }
     }
 }
