@@ -47,6 +47,9 @@ along with Foobar.  If not, see
     [Parameter]
     public EventCallback<Dictionary<IBrowserFile, ImportFileType>> FilesImported { get; set; }
 
+    [Parameter]
+    public EventCallback<List<String>> InvalidFilesChanged { get; set; }
+
     async Task InputFilesChanged(IReadOnlyCollection<IBrowserFile> files)
     {
         invalidDropFileNames.Clear();
@@ -63,6 +66,10 @@ along with Foobar.  If not, see
         if (invalidDropFileNames.Count == 0)
         {
             await ImportFiles(files);
+        }
+        else
+        {
+            await InvalidFilesChanged.InvokeAsync(invalidDropFileNames);
         }
     }
 
