@@ -33,11 +33,10 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService, TraceChangeManager traceChangeManager)
+    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TraceChangeManager traceChangeManager)
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
-        private readonly TextImportService _textImportService = textImportService;
         private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
 
         public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
@@ -87,8 +86,8 @@ namespace AudioCuesheetEditor.Services.IO
 
         public async Task ImportTextAsync(IEnumerable<String?> fileContent)
         {
-            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-            _sessionStateContainer.Importfile = _textImportService.Analyse(options, fileContent);
+            var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            _sessionStateContainer.Importfile = TextImportService.Analyse(options.ImportScheme, fileContent, options.ImportTimeSpanFormat);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
                 var importCuesheet = new Cuesheet();

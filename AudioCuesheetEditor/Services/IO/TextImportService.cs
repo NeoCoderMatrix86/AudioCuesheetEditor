@@ -18,7 +18,6 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -27,8 +26,7 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public class TextImportService
     {
-        public ImportOptions? ImportOptions { get; private set; }
-        public IImportfile Analyse(ImportOptions importOptions, IEnumerable<String?> fileContent)
+        public static IImportfile Analyse(TextImportScheme textImportScheme, IEnumerable<String?> fileContent, TimeSpanFormat? timeSpanFormat = null)
         {
             Importfile importfile = new()
             {
@@ -37,32 +35,34 @@ namespace AudioCuesheetEditor.Services.IO
             try
             {
                 importfile.FileContent = fileContent;
-                ImportOptions = importOptions;
                 importfile.AnalysedCuesheet = new ImportCuesheet();
                 Boolean cuesheetRecognized = false;
                 List<String?> recognizedFileContent = [];
+                Regex? regExCuesheet = null, regExTracks = null;
+                if (String.IsNullOrEmpty(textImportScheme.SchemeCuesheet) == false)
+                {
+                    regExCuesheet = CreateCuesheetRegexPattern(textImportScheme.SchemeCuesheet);
+                }
+                if (String.IsNullOrEmpty(textImportScheme.SchemeTracks) == false)
+                {
+                    regExTracks = CreateTrackRegexPattern(textImportScheme.SchemeTracks);
+                }
                 foreach (var line in fileContent)
                 {
                     var recognizedLine = line;
                     if (String.IsNullOrEmpty(line) == false)
                     {
                         Boolean recognized = false;
-                        if ((recognized == false) && (cuesheetRecognized == false) && (String.IsNullOrEmpty(ImportOptions.TextImportScheme.SchemeCuesheet) == false))
+                        if ((recognized == false) && (cuesheetRecognized == false) && (regExCuesheet != null))
                         {
-                            //Remove entity names
-                            var expression = ImportOptions.TextImportScheme.SchemeCuesheet.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty);
-                            var regExCuesheet = new Regex(expression);
-                            recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet);
+                            recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet, timeSpanFormat);
                             recognized = recognizedLine != null;
                             cuesheetRecognized = recognizedLine != null;
                         }
-                        if ((recognized == false) && (String.IsNullOrEmpty(ImportOptions.TextImportScheme.SchemeTracks) == false))
+                        if ((recognized == false) && (regExTracks != null))
                         {
-                            //Remove entity names
-                            var expression = ImportOptions.TextImportScheme.SchemeTracks.Replace(String.Format("{0}.", nameof(Cuesheet)), String.Empty).Replace(String.Format("{0}.", nameof(Track)), String.Empty);
-                            var regExTracks = new Regex(expression);
                             var track = new ImportTrack();
-                            recognizedLine = AnalyseLine(line, track, regExTracks);
+                            recognizedLine = AnalyseLine(line, track, regExTracks, timeSpanFormat);
                             recognized = recognizedLine != null;
                             importfile.AnalysedCuesheet.Tracks.Add(track);
                         }
@@ -83,7 +83,7 @@ namespace AudioCuesheetEditor.Services.IO
             return importfile;
         }
 
-        private String? AnalyseLine(String line, object entity, Regex regex)
+        private static String? AnalyseLine(String line, object entity, Regex regex, TimeSpanFormat? timeSpanFormat)
         {
             String? recognized = null;
             string? recognizedLine = line;
@@ -101,7 +101,7 @@ namespace AudioCuesheetEditor.Services.IO
                             var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                             if (property != null)
                             {
-                                SetValue(entity, property, group.Value);
+                                SetValue(entity, property, group.Value, timeSpanFormat);
                                 recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
                                     , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
                                     , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
@@ -129,11 +129,11 @@ namespace AudioCuesheetEditor.Services.IO
             return recognized;
         }
 
-        private void SetValue(object entity, PropertyInfo property, string value)
+        private static void SetValue(object entity, PropertyInfo property, string value, TimeSpanFormat? timeSpanFormat)
         {
             if (property.PropertyType == typeof(TimeSpan?))
             {
-                property.SetValue(entity, TimeSpanUtility.ParseTimeSpan(value, ImportOptions?.TimeSpanFormat));
+                property.SetValue(entity, TimeSpanUtility.ParseTimeSpan(value, timeSpanFormat));
             }
             if (property.PropertyType == typeof(uint?))
             {
@@ -157,6 +157,61 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     property.SetValue(entity, date);
                 }
+            }
+        }
+
+        private static Regex CreateCuesheetRegexPattern(string scheme)
+        {
+            var regex = new Regex(scheme);
+            var groupNames = regex.GetGroupNames();
+            //GroupNames always has a group "0", so we count for more than one group
+            if (groupNames.Any(x => x != "0"))
+            {
+                return regex;
+            }
+            else
+            {
+                var regexString = Regex.Escape(scheme);
+
+                regexString = regexString.Replace(nameof(Cuesheet.Artist), $"(?<{nameof(Cuesheet.Artist)}>.+)");
+                regexString = regexString.Replace(nameof(Cuesheet.Title), $"(?<{nameof(Cuesheet.Title)}>.+)");
+                regexString = regexString.Replace(nameof(Cuesheet.Audiofile), $"(?<{nameof(Cuesheet.Audiofile)}>.+)");
+                regexString = regexString.Replace(nameof(Cuesheet.CDTextfile), $"(?<{nameof(Cuesheet.CDTextfile)}>.+)");
+                regexString = regexString.Replace(nameof(Cuesheet.Cataloguenumber), $"(?<{nameof(Cuesheet.Cataloguenumber)}>.+)");
+                //Replace tab with non matching group
+                regexString = regexString.Replace("\\t", "(?:...\\t)");
+
+                return new Regex(regexString);
+            }
+        }
+
+        private static Regex CreateTrackRegexPattern(string scheme)
+        {
+            var regex = new Regex(scheme);
+            var groupNames = regex.GetGroupNames();
+            //GroupNames always has a group "0", so we count for more than one group
+            if (groupNames.Any(x => x != "0"))
+            {
+                return regex;
+            }
+            else
+            {
+                var regexString = Regex.Escape(scheme);
+
+                regexString = regexString.Replace(nameof(ImportTrack.Artist), $"(?<{nameof(ImportTrack.Artist)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.Title), $"(?<{nameof(ImportTrack.Title)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.Begin), $"(?<{nameof(ImportTrack.Begin)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.End), $"(?<{nameof(ImportTrack.End)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.Length), $"(?<{nameof(ImportTrack.Length)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.Position), $"(?<{nameof(ImportTrack.Position)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.Flags), $"(?<{nameof(ImportTrack.Flags)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.PreGap), $"(?<{nameof(ImportTrack.PreGap)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.PostGap), $"(?<{nameof(ImportTrack.PostGap)}>.+)");
+                regexString = regexString.Replace(nameof(ImportTrack.StartDateTime), $"(?<{nameof(ImportTrack.StartDateTime)}>.+)");
+                //Replace tab with non matching group
+                regexString = regexString.Replace("\\t", "(?:...\\t)");
+
+                return new Regex(regexString);
             }
         }
     }
