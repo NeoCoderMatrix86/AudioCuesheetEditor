@@ -28,7 +28,7 @@ along with Foobar.  If not, see
             <CuesheetData />
         </ChildContent>
     </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
+    <MudExpansionPanel @bind-Expanded="tracksExpanded">
         <TitleContent>
             <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
         </TitleContent>
@@ -45,8 +45,6 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: maybe customize a bit more (background color, etc.)
     //TODO: Record options
-    //TODO: Initialize audio recording
 
-    Boolean cuesheetDataExpanded = false;
-    Boolean cuesheetTracksExpanded = true;
+    Boolean cuesheetDataExpanded = false, tracksExpanded = true;
 }
