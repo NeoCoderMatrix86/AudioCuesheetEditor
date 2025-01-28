@@ -21,7 +21,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
 
-<ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
+<ImportControl ImportClicked="CompleteImportAsync" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
 <MudExpansionPanels MultiExpansion>
     <MudExpansionPanel @bind-Expanded="inputfilesExpanded">
         <TitleContent>
@@ -63,7 +63,7 @@ along with Foobar.  If not, see
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
-<ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
+<ImportControl ImportClicked="CompleteImportAsync" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
 
 @code {
     //TODO: Localization
@@ -113,9 +113,9 @@ along with Foobar.  If not, see
         restartDisabled = true;
     }
 
-    void CompleteImport()
+    async Task CompleteImportAsync()
     {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
         _importManager.ImportCuesheet();
-        LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 }

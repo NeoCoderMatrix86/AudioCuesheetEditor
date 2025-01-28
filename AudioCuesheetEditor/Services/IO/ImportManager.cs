@@ -128,7 +128,7 @@ namespace AudioCuesheetEditor.Services.IO
             return fileContent;
         }
 
-        private void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
+        private static void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
         {
             target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
@@ -193,7 +193,6 @@ namespace AudioCuesheetEditor.Services.IO
                 throw new NullReferenceException();
             }
             target.IsImporting = false;
-            _sessionStateContainer.FireCuesheetImported();
         }
     }
 }

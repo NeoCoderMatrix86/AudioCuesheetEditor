@@ -13,12 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace AudioCuesheetEditor.Extensions.Tests
+namespace AudioCuesheetEditor.Tests.Extensions
 {
     [TestClass()]
     public class SessionStateContainerTests
@@ -38,22 +39,6 @@ namespace AudioCuesheetEditor.Extensions.Tests
             Assert.IsFalse(importCuesheetChangedFired);
             container.ImportCuesheet = new Cuesheet();
             Assert.IsTrue(importCuesheetChangedFired);
-        }
-
-        [TestMethod()]
-        public void SessionStateContainerFireCuesheetChangedTest()
-        {
-            var helper = new TestHelper();
-            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var container = new SessionStateContainer(manager);
-            var cuesheetChangedFired = false;
-            container.CuesheetChanged += delegate
-            {
-                cuesheetChangedFired = true;
-            };
-            Assert.IsFalse(cuesheetChangedFired);
-            container.FireCuesheetImported();
-            Assert.IsTrue(cuesheetChangedFired);
         }
     }
 }

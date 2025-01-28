@@ -90,10 +90,5 @@ namespace AudioCuesheetEditor.Extensions
             _traceChangeManager.TraceChanges(Cuesheet);
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
-        
-        public void FireCuesheetImported()
-        {
-            CuesheetChanged?.Invoke(this, EventArgs.Empty);
-        }
     }
 }
