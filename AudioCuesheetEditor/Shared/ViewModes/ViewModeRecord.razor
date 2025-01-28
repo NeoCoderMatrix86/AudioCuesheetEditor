@@ -19,24 +19,26 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ViewModeRecord> _localizer
 
-<MudExpansionPanels MultiExpansion>
-    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <CuesheetData />
-        </ChildContent>
-    </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="tracksExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <TrackList />
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
+<CascadingValue Value="ViewMode.RecordView">
+    <MudExpansionPanels MultiExpansion>
+        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <CuesheetData />
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="tracksExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <TrackList />
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</CascadingValue>
 
 @code {
     //TODO: Record options on top?!

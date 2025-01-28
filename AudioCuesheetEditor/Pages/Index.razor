@@ -24,23 +24,21 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Index> _localizer
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)(ApplicationOptions != null ? ApplicationOptions.ActiveTab : ViewMode.DetailView)" ActivePanelIndexChanged="EventUtil.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
-    <CascadingValue Value="ApplicationOptions?.ActiveTab">
-        <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
-            <CascadingValue Value="_sessionStateContainer.Cuesheet">
-                <ViewModeFull />
-            </CascadingValue>
-        </MudTabPanel>
-        <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
-            <CascadingValue Value="_sessionStateContainer.Cuesheet">
-                <ViewModeRecord />
-            </CascadingValue>
-        </MudTabPanel>
-        <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
-            <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
-                <ViewModeImport />
-            </CascadingValue>
-        </MudTabPanel>
-    </CascadingValue>
+    <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
+        <CascadingValue Value="_sessionStateContainer.Cuesheet">
+            <ViewModeFull />
+        </CascadingValue>
+    </MudTabPanel>
+    <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
+        <CascadingValue Value="_sessionStateContainer.Cuesheet">
+            <ViewModeRecord />
+        </CascadingValue>
+    </MudTabPanel>
+    <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
+        <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
+            <ViewModeImport />
+        </CascadingValue>
+    </MudTabPanel>
 </MudTabs>
 
 @code{
