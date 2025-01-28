@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
@@ -77,6 +78,7 @@ namespace AudioCuesheetEditor.Model.Options
         public Boolean LinkTracks { get; set; } = true;
         public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
         public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
+        public String RecordedAudiofilename { get; set; } = Audiofile.RecordingFileName;
 
         public override ValidationResult Validate(string property)
         {
@@ -130,6 +132,7 @@ namespace AudioCuesheetEditor.Model.Options
                         }
                     }
                     break;
+                //TODO: Validate RecordedAudiofilename
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }

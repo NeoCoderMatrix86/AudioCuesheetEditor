@@ -18,34 +18,87 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeRecord> _localizer
+@inject IJSRuntime _jsRuntime
+@inject SessionStateContainer _sessionStateContainer
 
-<MudExpansionPanels MultiExpansion>
-    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <CuesheetData />
-        </ChildContent>
-    </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="tracksExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <TrackList />
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
-
+<MudStepper OnPreviewInteraction="PreviewInteraction" ActiveIndexChanged="ActiveIndexChangedAsync">
+    <MudStep Title="@_localizer["Setup recording"]">
+        <MudTextField T="string" Label="@_localizer["Recorded audiofilename"]" Placeholder="@_localizer["Enter the filename used for the recorded audiofile"]" Text="@ApplicationOptions?.RecordedAudiofilename" Variant="Variant.Outlined" />
+    </MudStep>
+    <MudStep Title="@_localizer["Record"]">
+        <MudExpansionPanels MultiExpansion>
+            <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+                <TitleContent>
+                    <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+                </TitleContent>
+                <ChildContent>
+                    <CuesheetData />
+                </ChildContent>
+            </MudExpansionPanel>
+            <MudExpansionPanel @bind-Expanded="tracksExpanded">
+                <TitleContent>
+                    <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+                </TitleContent>
+                <ChildContent>
+                    <TrackList />
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudStep>
+</MudStepper>
 
 @code {
-    //TODO: Record options on top?!
+    //TODO: edit recording filename -> save to options
+    //TODO: Setup recording -> RecordTimeSensitivity? Or should we just use an option for viewing how timespans will be displayed?
     //TODO: Control recording
     //TODO: Enter a new track
     //TODO: Localization
     //TODO: maybe customize a bit more (background color, etc.)
-    //TODO: Record options
-
     Boolean cuesheetDataExpanded = false, tracksExpanded = true;
+
+    [JSInvokable()]
+    public Task AudioRecordingFinished(String objectUrl)
+    {
+        var fileName = Audiofile.RecordingFileName;
+        if (ApplicationOptions != null)
+        {
+            fileName = ApplicationOptions.RecordedAudiofilename;
+        }
+        var audiofile = new Audiofile(fileName, objectUrl, Audiofile.AudioCodecWEBM, true);
+        //TODO: is audiofile.LoadContentStream() needed?
+        _sessionStateContainer.Cuesheet.Audiofile = audiofile;
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _jsRuntime.InvokeVoidAsync("closeAudioRecording");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var dotNetReference = DotNetObjectReference.Create(this);
+        await _jsRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
+    }
+
+    Task PreviewInteraction(StepperInteractionEventArgs arg)
+    {
+        if (arg.StepIndex == 0)
+        {
+            var validationResult = ApplicationOptions?.Validate(nameof(ApplicationOptions.RecordedAudiofilename));
+            arg.Cancel = validationResult?.Status == ValidationStatus.Error;
+        }
+        return Task.CompletedTask;
+    }
+
+    async Task ActiveIndexChangedAsync(int newIndex)
+    {
+        if (newIndex == 1)
+        {
+            await _jsRuntime.InvokeVoidAsync("setupAudioRecording");
+        }
+    }
 }
