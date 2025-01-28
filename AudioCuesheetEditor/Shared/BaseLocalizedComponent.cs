@@ -50,6 +50,7 @@ namespace AudioCuesheetEditor.Shared
             if (option is ApplicationOptions applicationOptions)
             {
                 ApplicationOptions = applicationOptions;
+                StateHasChanged();
             }
         }
 
