@@ -22,36 +22,34 @@ along with Foobar.  If not, see
 
 @inject SessionStateContainer _sessionStateContainer
 @inject IStringLocalizer<Index> _localizer
-@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)(viewOptions != null ? viewOptions.ActiveTab : ViewMode.DetailView)" ActivePanelIndexChanged="ActiveTabIndexChanged">
-    <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
-        <CascadingValue Value="_sessionStateContainer.Cuesheet">
-            <ViewModeFull />
-        </CascadingValue>
-    </MudTabPanel>
-    <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
-        <CascadingValue Value="_sessionStateContainer.Cuesheet">
-            <ViewModeRecord />
-        </CascadingValue>
-    </MudTabPanel>
-    <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
-        <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
-            <ViewModeImport />
-        </CascadingValue>
-    </MudTabPanel>
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)(ApplicationOptions != null ? ApplicationOptions.ActiveTab : ViewMode.DetailView)" ActivePanelIndexChanged="EventUtil.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
+    <CascadingValue Value="ApplicationOptions?.ActiveTab">
+        <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
+            <CascadingValue Value="_sessionStateContainer.Cuesheet">
+                <ViewModeFull />
+            </CascadingValue>
+        </MudTabPanel>
+        <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
+            <CascadingValue Value="_sessionStateContainer.Cuesheet">
+                <ViewModeRecord />
+            </CascadingValue>
+        </MudTabPanel>
+        <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
+            <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
+                <ViewModeImport />
+            </CascadingValue>
+        </MudTabPanel>
+    </CascadingValue>
 </MudTabs>
 
 @code{
     //TODO: Reset of cuesheet and reset of application
     //TODO: Loading of project files (.ace and .cue) via a seperate menu item
-    ViewOptions? viewOptions;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        viewOptions = await _localStorageOptionsProvider.GetOptions<ViewOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
         StateHasChanged();
@@ -62,7 +60,6 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         if (disposing)
         {
-            _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
             _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
             _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
         }
@@ -71,19 +68,7 @@ along with Foobar.  If not, see
     async Task ActiveTabIndexChanged(int tabIndex)
     {
         var activeViewMode = (ViewMode)tabIndex;
-        if (viewOptions != null)
-        {
-            viewOptions.ActiveTab = activeViewMode;
-        }
-        await _localStorageOptionsProvider.SaveOptionsValue<ViewOptions>(x => x.ActiveTab, activeViewMode);
-    }
-
-    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
-    {
-        if (options is ViewOptions viewOption)
-        {
-            viewOptions = viewOption;
-        }
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, activeViewMode);
     }
 
     void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)

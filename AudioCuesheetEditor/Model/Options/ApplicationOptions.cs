@@ -29,7 +29,12 @@ namespace AudioCuesheetEditor.Model.Options
         Seconds = 1,
         Minutes = 2
     }
-
+    public enum ViewMode
+    {
+        DetailView = 0,
+        RecordView = 1,
+        ImportView = 2
+    }
     public class ApplicationOptions : Validateable, IOptions
     {
         public const String DefaultCultureName = "en-US";
@@ -47,6 +52,23 @@ namespace AudioCuesheetEditor.Model.Options
                 else
                 {
                     return CultureInfo.CurrentCulture;
+                }
+            }
+        }
+        [JsonIgnore]
+        public ViewMode ActiveTab { get; set; }
+        public String? ActiveTabName
+        {
+            get => Enum.GetName(ActiveTab);
+            set
+            {
+                if (value != null)
+                {
+                    ActiveTab = Enum.Parse<ViewMode>(value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
                 }
             }
         }

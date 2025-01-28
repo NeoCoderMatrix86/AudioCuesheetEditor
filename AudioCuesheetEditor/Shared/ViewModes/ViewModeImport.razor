@@ -21,51 +21,49 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
 
-<CascadingValue Value="ViewMode.ImportView">
-    <ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
-    <MudExpansionPanels MultiExpansion>
-        <MudExpansionPanel @bind-Expanded="inputfilesExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Inputfiles"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <SelectImportFiles FilesImported="FilesImported" />
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="filecontentExpanded" Disabled="filecontentDisabled">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
-                <ImportSchemes ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
-                @if (_sessionStateContainer.Importfile?.AnalyseException != null)
-                {
-                    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                        @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
-                    </MudAlert>
-                }
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded" Disabled="cuesheetDataDisabled">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <CuesheetData />
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded" Disabled="cuesheetTracksDisabled">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <TrackList />
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
-    <ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
-</CascadingValue>
+<ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
+<MudExpansionPanels MultiExpansion>
+    <MudExpansionPanel @bind-Expanded="inputfilesExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Inputfiles"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <SelectImportFiles FilesImported="FilesImported" />
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="filecontentExpanded" Disabled="filecontentDisabled">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
+            <ImportSchemes ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
+            @if (_sessionStateContainer.Importfile?.AnalyseException != null)
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                    @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
+                </MudAlert>
+            }
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded" Disabled="cuesheetDataDisabled">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <CuesheetData />
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded" Disabled="cuesheetTracksDisabled">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <TrackList />
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+<ImportControl ImportClicked="CompleteImport" RestartClicked="RestartImport" ImportDisabled="importDisabled" RestartDisabled="restartDisabled" />
 
 @code {
     //TODO: Localization
@@ -118,6 +116,6 @@ along with Foobar.  If not, see
     void CompleteImport()
     {
         _importManager.ImportCuesheet();
-        //TODO: switch to detail view
+        LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 }

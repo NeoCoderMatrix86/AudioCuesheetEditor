@@ -19,36 +19,34 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ViewModeFull> _localizer
 
-<CascadingValue Value="ViewMode.DetailView">
-    <MudExpansionPanels MultiExpansion>
-        <MudExpansionPanel @bind-Expanded="cuesheetSectionsExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Sections"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <EditSections />
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <CuesheetData />
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <TrackList />
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
+<MudExpansionPanels MultiExpansion>
+    <MudExpansionPanel @bind-Expanded="cuesheetSectionsExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Sections"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <EditSections />
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <CuesheetData />
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <TrackList />
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
 
-    <AudioPlayer />
-</CascadingValue>
+<AudioPlayer />
 
 @code {
     //TODO: maybe customize a bit more (background color, etc.)
