@@ -18,12 +18,13 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ControlRecording> _localizer
+@inject IJSRuntime _jsRuntime
 
 <MudCard Outlined>
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording">@_localizer["Start recording"]</MudButton>
+                <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
                 <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
                     <MudMenuItem Disabled="StartRecordingDisabled">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
@@ -36,7 +37,7 @@ along with Foobar.  If not, see
             {
                 <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="() => Cuesheet?.StopRecording()">@_localizer["Stop recording"]</MudButton>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync">@_localizer["Stop recording"]</MudButton>
         </MudStack>
     </MudCardContent>
 </MudCard>
@@ -71,10 +72,18 @@ along with Foobar.  If not, see
         };
     }
 
-    void StartRecording()
+    async Task StartRecordingAsync()
     {
         Cuesheet?.StartRecording();
         updateGUITimer.Start();
-        //TODO: Call "startAudioRecording", etc
+        await _jsRuntime.InvokeVoidAsync("startAudioRecording");
+        Cuesheet!.Audiofile = null;
+        await StartRecordingClicked.InvokeAsync();
+    }
+
+    async Task StopRecordingAsync() 
+    {
+        Cuesheet?.StopRecording();
+        await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
     }
 }
