@@ -392,13 +392,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             recordingStart = DateTime.UtcNow;
         }
 
-        public void StopRecording(RecordOptions recordOptions)
+        public void StopRecording()
         {
             //Set end of last track
             var lastTrack = Tracks.LastOrDefault();
             if ((lastTrack != null) && (recordingStart.HasValue))
             {
-                lastTrack.End = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
+                lastTrack.End = DateTime.UtcNow - recordingStart.Value;
             }
             recordingStart = null;
         }
@@ -688,32 +688,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
-        }
-
-        private static TimeSpan CalculateTimeSpanWithSensitivity(TimeSpan inputTimeSpan, TimeSensitivityMode sensitivityMode)
-        {
-            TimeSpan timeSpan;
-            switch (sensitivityMode)
-            {
-                default:
-                case TimeSensitivityMode.Full:
-                    timeSpan = inputTimeSpan;
-                    break;
-                case TimeSensitivityMode.Seconds:
-                    timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes, inputTimeSpan.Seconds);
-                    break;
-                case TimeSensitivityMode.Minutes:
-                    if (inputTimeSpan.Seconds >= 30)
-                    {
-                        timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes + 1, 0);
-                    }
-                    else
-                    {
-                        timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes, 0);
-                    }
-                    break;
-            }
-            return timeSpan;
         }
 
         private void RecalculateLastTrackEnd()

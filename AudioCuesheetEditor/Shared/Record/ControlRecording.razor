@@ -23,8 +23,8 @@ along with Foobar.  If not, see
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingClicked">@_localizer["Start recording"]</MudButton>
-                <MudMenu Icon="@Icons.Material.Outlined.ArrowRight">
+                <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording">@_localizer["Start recording"]</MudButton>
+                <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
                     <MudMenuItem Disabled="StartRecordingDisabled">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
             </MudButtonGroup>
@@ -36,28 +36,44 @@ along with Foobar.  If not, see
             {
                 <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="StopRecordingDisabled" OnClick="StopRecordingClicked">@_localizer["Stop recording"]</MudButton>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="() => Cuesheet?.StopRecording()">@_localizer["Stop recording"]</MudButton>
         </MudStack>
     </MudCardContent>
 </MudCard>
 
 @code {
     //TODO: localization
-    //TODO: Disable start and stop if not possible (cuesheet has tracks, recording not setup, etc.)
     //TODO: Countdown timer dialog and events
+    Timer updateGUITimer = new(500);
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
-    [Parameter]
-    public Boolean StartRecordingDisabled { get; set; }
+    public Boolean StartRecordingDisabled => Cuesheet?.IsRecording == true || Cuesheet?.Tracks.Count > 0;
 
-    [Parameter]
-    public Boolean StopRecordingDisabled { get; set; }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        updateGUITimer.AutoReset = true;
+        updateGUITimer.Elapsed += delegate
+        {
+            StateHasChanged();
+            Boolean startRecordTimeEnabled = false;
+            //TODO
+            // if (startRecordTimer != null)
+            // {
+            //     startRecordTimeEnabled = startRecordTimer.Enabled;
+            // }
+            if ((startRecordTimeEnabled == false) && (Cuesheet?.IsRecording == false))
+            {
+                updateGUITimer.Stop();
+            }
+        };
+    }
 
-    [Parameter]
-    public EventCallback StartRecordingClicked { get; set; }
-
-    [Parameter]
-    public EventCallback StopRecordingClicked { get; set; }
+    void StartRecording()
+    {
+        Cuesheet?.StartRecording();
+        updateGUITimer.Start();
+    }
 }
