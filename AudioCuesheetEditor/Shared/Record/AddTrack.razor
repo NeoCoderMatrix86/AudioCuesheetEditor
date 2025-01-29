@@ -1,0 +1,109 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<AddTrack> _localizer
+@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject ValidationService _validationService
+
+<MudCard Outlined>
+    <MudCardContent>
+        <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = currentRecordingTrack.Artist }"
+                             ValueChanged="(value) => currentRecordingTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))">
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Name</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => SearchTitle(value, token)" ToStringFunc="(value) => value.Title"
+                             Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="(value) => currentRecordingTrack.Title = value?.Title"
+                             ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
+                             ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))">
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Title</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add">@_localizer["Add"]</MudButton>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    //TODO
+    //TODO: Keyboard bindings
+    //TODO: ValueChanged -> Focus next input
+    //TODO: Event for add track
+
+    Track currentRecordingTrack = new Track();
+
+    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
+    {
+        IEnumerable<MusicBrainzArtist>? artists = null;
+        if (!token.IsCancellationRequested)
+        {
+            artists = await _musicBrainzDataProvider.SearchArtistAsync(value);
+            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+            if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
+            {
+                artists = artists.Prepend(new() { Name = value });
+            }
+        }
+        return artists;
+    }
+
+    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string value, CancellationToken token)
+    {
+        IEnumerable<MusicBrainzTrack>? tracks = null;
+        if (!token.IsCancellationRequested)
+        {
+            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentRecordingTrack.Artist);
+            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+            if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
+            {
+                tracks = tracks.Prepend(new() { Artist = currentRecordingTrack.Artist, Title = value });
+            }
+        }
+        return tracks;
+    }
+
+    String? GetValidationErrorMessage(object model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
+        {
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+        }
+        return validationErrorMessage;
+    }
+}
