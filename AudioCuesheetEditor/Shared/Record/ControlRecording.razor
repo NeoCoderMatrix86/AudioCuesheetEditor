@@ -23,9 +23,9 @@ along with Foobar.  If not, see
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                <MudButton StartIcon="@Icons.Material.Outlined.Mic">@_localizer["Start recording"]</MudButton>
+                <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingClicked">@_localizer["Start recording"]</MudButton>
                 <MudMenu Icon="@Icons.Material.Outlined.ArrowRight">
-                    <MudMenuItem>@_localizer["Enter countdown timer"]</MudMenuItem>
+                    <MudMenuItem Disabled="StartRecordingDisabled">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
             </MudButtonGroup>
             @if (Cuesheet?.RecordingTime.HasValue == true)
@@ -36,16 +36,28 @@ along with Foobar.  If not, see
             {
                 <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop">@_localizer["Stop recording"]</MudButton>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="StopRecordingDisabled" OnClick="StopRecordingClicked">@_localizer["Stop recording"]</MudButton>
         </MudStack>
     </MudCardContent>
 </MudCard>
 
 @code {
     //TODO: localization
-    //TODO: Eventhandling
     //TODO: Disable start and stop if not possible (cuesheet has tracks, recording not setup, etc.)
+    //TODO: Countdown timer dialog and events
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
+
+    [Parameter]
+    public Boolean StartRecordingDisabled { get; set; }
+
+    [Parameter]
+    public Boolean StopRecordingDisabled { get; set; }
+
+    [Parameter]
+    public EventCallback StartRecordingClicked { get; set; }
+
+    [Parameter]
+    public EventCallback StopRecordingClicked { get; set; }
 }
