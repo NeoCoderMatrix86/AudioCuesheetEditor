@@ -1,0 +1,51 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ControlRecording> _localizer
+
+<MudCard Outlined>
+    <MudCardContent>
+        <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                <MudButton StartIcon="@Icons.Material.Outlined.Mic">@_localizer["Start recording"]</MudButton>
+                <MudMenu Icon="@Icons.Material.Outlined.ArrowRight">
+                    <MudMenuItem>@_localizer["Enter countdown timer"]</MudMenuItem>
+                </MudMenu>
+            </MudButtonGroup>
+            @if (Cuesheet?.RecordingTime.HasValue == true)
+            {
+                <MudText Typo="Typo.h5">@Cuesheet.RecordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, Cuesheet.RecordingTime.Value.Milliseconds))</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+            }
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop">@_localizer["Stop recording"]</MudButton>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    //TODO: localization
+    //TODO: Eventhandling
+    //TODO: Disable start and stop if not possible (cuesheet has tracks, recording not setup, etc.)
+
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+}

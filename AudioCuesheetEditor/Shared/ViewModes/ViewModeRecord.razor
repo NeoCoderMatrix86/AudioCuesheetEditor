@@ -26,6 +26,8 @@ along with Foobar.  If not, see
         <MudTextField T="string" Label="@_localizer["Recorded audiofilename"]" Placeholder="@_localizer["Enter the filename used for the recorded audiofile"]" Text="@ApplicationOptions?.RecordedAudiofilename" Variant="Variant.Outlined" />
     </MudStep>
     <MudStep Title="@_localizer["Record"]">
+        <ControlRecording />
+        <br />
         <MudExpansionPanels MultiExpansion>
             <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
                 <TitleContent>
@@ -55,6 +57,7 @@ along with Foobar.  If not, see
     //TODO: Enter a new track
     //TODO: Localization
     //TODO: maybe customize a bit more (background color, etc.)
+    //TODO: We need to find a way to make recording mobile friendly (ControlRecording and Track input)
     Boolean cuesheetDataExpanded = false, tracksExpanded = true;
 
     [JSInvokable()]
