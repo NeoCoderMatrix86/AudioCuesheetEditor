@@ -78,7 +78,6 @@ along with Foobar.  If not, see
         updateGUITimer.Start();
         await _jsRuntime.InvokeVoidAsync("startAudioRecording");
         Cuesheet!.Audiofile = null;
-        await StartRecordingClicked.InvokeAsync();
     }
 
     async Task StopRecordingAsync() 
