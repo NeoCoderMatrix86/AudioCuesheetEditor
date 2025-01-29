@@ -29,7 +29,7 @@ along with Foobar.  If not, see
                     <MudMenuItem Disabled="StartRecordingDisabled">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
             </MudButtonGroup>
-            @if (Cuesheet?.RecordingTime.HasValue == true)
+            @if ((Cuesheet?.IsRecording == true) && (Cuesheet?.RecordingTime.HasValue == true))
             {
                 <MudText Typo="Typo.h5">@Cuesheet.RecordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, Cuesheet.RecordingTime.Value.Milliseconds))</MudText>
             }

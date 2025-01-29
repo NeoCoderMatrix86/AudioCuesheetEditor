@@ -244,9 +244,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
             if (IsRecording && recordingStart.HasValue)
             {
-                //TODO
-                //ArgumentNullException.ThrowIfNull(recordOptions);
-                //track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
+                track.Begin = DateTime.UtcNow - recordingStart.Value;
             }
             //Fire the event manually since we don't know if the track is already linked to previous one
             Track_IsLinkedToPreviousTrackChanged(track, EventArgs.Empty);

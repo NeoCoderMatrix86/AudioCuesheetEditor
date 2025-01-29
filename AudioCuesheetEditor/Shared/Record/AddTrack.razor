@@ -24,9 +24,10 @@ along with Foobar.  If not, see
 <MudCard Outlined>
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
-            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = currentRecordingTrack.Artist }"
-                             ValueChanged="(value) => currentRecordingTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))">
+            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = currentRecordingTrack.Artist }"
+                             ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
+                             Disabled="Cuesheet?.IsRecording == false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -38,10 +39,10 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => SearchTitle(value, token)" ToStringFunc="(value) => value.Title"
+            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => SearchTitle(value, token)" ToStringFunc="(value) => value.Title"
                              Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="(value) => currentRecordingTrack.Title = value?.Title"
                              ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
-                             ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))">
+                             ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -53,18 +54,22 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add">@_localizer["Add"]</MudButton>
+            <MudButton @ref="addButton" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false">@_localizer["Add track"]</MudButton>
         </MudStack>
     </MudCardContent>
 </MudCard>
 
 @code {
-    //TODO
+    //TODO: localize
     //TODO: Keyboard bindings
-    //TODO: ValueChanged -> Focus next input
-    //TODO: Event for add track
+
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
 
     Track currentRecordingTrack = new Track();
+    MudAutocomplete<MusicBrainzArtist>? artistInput;
+    MudAutocomplete<MusicBrainzTrack>? titleInput;
+    MudButton? addButton;
 
     async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
     {
@@ -105,5 +110,36 @@ along with Foobar.  If not, see
             validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
         }
         return validationErrorMessage;
+    }
+
+    async Task ArtistValueChangedAsync(MusicBrainzArtist? musicBrainzArtist)
+    {
+        currentRecordingTrack.Artist = musicBrainzArtist?.Name;
+        if ((musicBrainzArtist != null) && (titleInput != null))
+        {
+            await titleInput.FocusAsync();
+        }
+    }
+
+    async Task TitleValueChangedAsync(MusicBrainzTrack? musicBrainzTrack)
+    {
+        currentRecordingTrack.Title = musicBrainzTrack?.Title;
+        if ((musicBrainzTrack != null) && (addButton != null))
+        {
+            await addButton.FocusAsync();
+        }
+    }
+
+    async Task AddTrackAsync()
+    {
+        if (Cuesheet?.IsRecording == true)
+        {
+            Cuesheet?.AddTrack(currentRecordingTrack);
+            currentRecordingTrack = new();
+            if (artistInput != null)
+            {
+                await artistInput.FocusAsync();
+            }
+        }
     }
 }
