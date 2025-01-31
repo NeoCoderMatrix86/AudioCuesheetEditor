@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ControlRecording> _localizer
 @inject IJSRuntime _jsRuntime
+@inject IDialogService _dialogService
 
 <MudCard Outlined>
     <MudCardContent>
@@ -26,7 +27,7 @@ along with Foobar.  If not, see
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
                 <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
                 <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
-                    <MudMenuItem Disabled="StartRecordingDisabled">@_localizer["Enter countdown timer"]</MudMenuItem>
+                    <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
             </MudButtonGroup>
             @if ((Cuesheet?.IsRecording == true) && (Cuesheet?.RecordingTime.HasValue == true))
@@ -46,7 +47,9 @@ along with Foobar.  If not, see
     //TODO: Display that recording is currently running
     //TODO: localization
     //TODO: Countdown timer dialog and events
+    //TODO: Display animation (startRecordTimer is running and recording is running)
     Timer updateGUITimer = new(500);
+    Timer? startRecordTimer;
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
@@ -61,11 +64,10 @@ along with Foobar.  If not, see
         {
             StateHasChanged();
             Boolean startRecordTimeEnabled = false;
-            //TODO
-            // if (startRecordTimer != null)
-            // {
-            //     startRecordTimeEnabled = startRecordTimer.Enabled;
-            // }
+            if (startRecordTimer != null)
+            {
+                startRecordTimeEnabled = startRecordTimer.Enabled;
+            }
             if ((startRecordTimeEnabled == false) && (Cuesheet?.IsRecording == false))
             {
                 updateGUITimer.Stop();
@@ -85,5 +87,22 @@ along with Foobar.  If not, see
     {
         Cuesheet?.StopRecording();
         await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
+    }
+
+    async Task DisplayStartCountdownDialog()
+    {
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false };
+        var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(null, options);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            startRecordTimer = new Timer(ApplicationOptions!.RecordCountdownTimer * 1000);
+            startRecordTimer.Elapsed += async delegate
+            {
+                await StartRecordingAsync();
+                startRecordTimer.Stop();
+            };
+            startRecordTimer.Start();
+        }
     }
 }
