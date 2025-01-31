@@ -54,7 +54,7 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
-    public Boolean StartRecordingDisabled => Cuesheet?.IsRecording == true || Cuesheet?.Tracks.Count > 0;
+    public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecording == true || Cuesheet?.Tracks.Count > 0;
 
     protected override void OnInitialized()
     {
