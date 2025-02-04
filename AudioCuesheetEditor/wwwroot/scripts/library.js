@@ -76,9 +76,11 @@ function setupAudioRecording() {
 }
 
 function closeAudioRecording() {
-    mediaStream.getTracks().forEach(function (track) {
-        track.stop();
-    });
+    if (mediaStream !== null) {
+        mediaStream.getTracks().forEach(function (track) {
+            track.stop();
+        });
+    }
 }
 
 function handleAudioRecording(stream) {
