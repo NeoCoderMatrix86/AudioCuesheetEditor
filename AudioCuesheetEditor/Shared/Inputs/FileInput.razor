@@ -21,14 +21,14 @@ along with Foobar.  If not, see
 
 <MudStack Row StretchItems="StretchItems.Start" id="@Id">
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-            @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
+                   @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
         <ActivatorContent>
             <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile"
-                    Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
+                          Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
         </ActivatorContent>
     </MudFileUpload>
     <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Pick file"]</MudButton>
-    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="selectedFile == null" />
+    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
 </MudStack>
 
 @code {
@@ -48,10 +48,13 @@ along with Foobar.  If not, see
     [Parameter]
     public String? Filter { get; set; }
 
+    [Parameter]
+    public String? FileName { get; set; }
+
     IBrowserFile? selectedFile;
     MudFileUpload<IBrowserFile>? fileUpload;
     string? fieldClass;
-    String TextFieldValue => selectedFile != null ? selectedFile.Name : _localizer["No file selected"];
+    String TextFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
 
     void SetDragClass() => fieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
 

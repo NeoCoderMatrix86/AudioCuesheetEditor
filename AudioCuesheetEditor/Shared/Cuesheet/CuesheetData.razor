@@ -32,7 +32,7 @@ along with Foobar.  If not, see
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" />
+                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" />
                 <FileInput Label="@_localizer["CD Textfile"]" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" />
                 <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
                 break;
