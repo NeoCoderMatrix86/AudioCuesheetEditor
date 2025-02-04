@@ -23,6 +23,11 @@ along with Foobar.  If not, see
 
 <MudCard Outlined>
     <MudCardContent>
+        @if (Cuesheet?.IsRecording == true)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
+            <br />
+        }
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
                 <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
@@ -44,7 +49,6 @@ along with Foobar.  If not, see
 </MudCard>
 
 @code {
-    //TODO: Display that recording is currently running
     //TODO: localization
     //TODO: Countdown timer dialog and events
     //TODO: Display animation (startRecordTimer is running and recording is running)
