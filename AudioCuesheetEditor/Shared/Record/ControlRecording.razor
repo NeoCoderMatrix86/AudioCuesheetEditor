@@ -28,6 +28,13 @@ along with Foobar.  If not, see
             <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
             <br />
         }
+        @if (startRecordTimer?.Enabled == true)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => startRecordTimer.Dispose()">
+                @_localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]
+            </MudAlert>
+            <br />
+        }
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
                 <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
@@ -50,10 +57,9 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: localization
-    //TODO: Countdown timer dialog and events
-    //TODO: Display animation (startRecordTimer is running and recording is running)
     Timer updateGUITimer = new(500);
     Timer? startRecordTimer;
+    DateTime recordTimerStarted;
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
@@ -105,8 +111,11 @@ along with Foobar.  If not, see
             {
                 await StartRecordingAsync();
                 startRecordTimer.Stop();
+                startRecordTimer.Dispose();
             };
             startRecordTimer.Start();
+            updateGUITimer.Start();
+            recordTimerStarted = DateTime.Now;
         }
     }
 }
