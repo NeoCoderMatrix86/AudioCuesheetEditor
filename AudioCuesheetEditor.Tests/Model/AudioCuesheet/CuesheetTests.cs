@@ -294,42 +294,36 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void RecordTest()
         {
-            //TODO
-            //var testHelper = new TestHelper();
-            //var cuesheet = new Cuesheet();
-            //Assert.IsFalse(cuesheet.IsRecording);
-            //Assert.IsNull(cuesheet.RecordingTime);
-            //cuesheet.StartRecording();
-            //Assert.IsTrue(cuesheet.IsRecording);
-            //Assert.IsNotNull(cuesheet.RecordingTime);
-            //var track = new Track();
-            //Assert.IsNull(track.Begin);
-            //Assert.IsNull(track.End);
-            //cuesheet.AddTrack(track, testHelper.RecordOptions);
-            //Assert.AreEqual(TimeSpan.Zero, track.Begin);
-            //Assert.IsNull(track.End);
-            //var track2 = new Track();
-            //cuesheet.AddTrack(track2, testHelper.ApplicationOptions, testHelper.RecordOptions);
-            //Assert.IsNotNull(track.End);
-            //Assert.AreNotEqual(TimeSpan.Zero, track.End);
-            ////Now lets test with another RecordTimeSensitivity
-            //cuesheet = new Cuesheet();
-            //cuesheet.StartRecording();
-            //track = new Track();
-            //testHelper.RecordOptions.RecordTimeSensitivity = TimeSensitivityMode.Seconds;
-            //cuesheet.AddTrack(track, testHelper.ApplicationOptions, testHelper.RecordOptions);
-            //Assert.AreEqual(TimeSpan.Zero, track.Begin);
-            //Assert.IsNull(track.End);
-            //Thread.Sleep(3000);
-            //track2 = new Track();
-            //cuesheet.AddTrack(track2, testHelper.ApplicationOptions, testHelper.RecordOptions);
-            //Assert.IsNotNull(track.End);
-            //Assert.AreNotEqual(TimeSpan.Zero, track.End);
-            //Assert.AreEqual(0, track.End.Value.Milliseconds);
-            //cuesheet.StopRecording(testHelper.RecordOptions);
-            //Assert.IsNotNull(track.End);
-            //Assert.AreEqual(track.End, track2.Begin);
-            //Assert.AreEqual(0, track2.End?.Milliseconds);
+            var cuesheet = new Cuesheet();
+            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsNull(cuesheet.RecordingTime);
+            cuesheet.StartRecording();
+            Assert.IsTrue(cuesheet.IsRecording);
+            Assert.IsNotNull(cuesheet.RecordingTime);
+            var track = new Track();
+            Assert.IsNull(track.Begin);
+            Assert.IsNull(track.End);
+            cuesheet.AddTrack(track);
+            Assert.AreEqual(TimeSpan.Zero, track.Begin);
+            Assert.IsNull(track.End);
+            var track2 = new Track();
+            cuesheet.AddTrack(track2);
+            Assert.IsNotNull(track.End);
+            Assert.AreNotEqual(TimeSpan.Zero, track.End);
+            cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+            track = new Track();
+            cuesheet.AddTrack(track);
+            Assert.AreEqual(TimeSpan.Zero, track.Begin);
+            Assert.IsNull(track.End);
+            Thread.Sleep(3000);
+            track2 = new Track();
+            cuesheet.AddTrack(track2);
+            Assert.IsNotNull(track.End);
+            Assert.AreNotEqual(TimeSpan.Zero, track.End);
+            cuesheet.StopRecording();
+            Assert.IsNotNull(track.End);
+            Assert.AreEqual(track.End, track2.Begin);
         }
 
         [TestMethod()]
