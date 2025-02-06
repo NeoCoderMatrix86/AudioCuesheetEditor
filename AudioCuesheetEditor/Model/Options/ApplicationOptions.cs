@@ -15,7 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
@@ -132,7 +131,6 @@ namespace AudioCuesheetEditor.Model.Options
                         }
                     }
                     break;
-                //TODO: Validate RecordedAudiofilename
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }
