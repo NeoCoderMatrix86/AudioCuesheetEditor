@@ -88,6 +88,17 @@ namespace AudioCuesheetEditor.Services.IO
             return audiofile;
         }
 
+        public Audiofile? CreateRecordedAudiofile(String objectUrl)
+        {
+            Audiofile? audiofile = null;
+            if (String.IsNullOrEmpty(objectUrl) == false)
+            {
+                audiofile = new Audiofile(Audiofile.RecordingFileName, objectUrl, Audiofile.AudioCodecWEBM, true);
+                _ = _httpClient.GetStreamAsync(objectUrl).ContinueWith(x => audiofile.ContentStream = x.Result);
+            }
+            return audiofile;
+        }
+
         public static CDTextfile? CreateCDTextfile(IBrowserFile? browserFile)
         {
             CDTextfile? cdTextfile = null;

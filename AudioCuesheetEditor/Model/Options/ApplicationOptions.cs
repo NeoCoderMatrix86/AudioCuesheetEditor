@@ -78,7 +78,6 @@ namespace AudioCuesheetEditor.Model.Options
         public Boolean LinkTracks { get; set; } = true;
         public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
         public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
-        public String RecordedAudiofilename { get; set; } = Audiofile.RecordingFileName;
         public uint RecordCountdownTimer { get; set; } = 5;
 
         public override ValidationResult Validate(string property)

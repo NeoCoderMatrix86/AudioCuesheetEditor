@@ -21,6 +21,13 @@ along with Foobar.  If not, see
 @inject IJSRuntime _jsRuntime
 @inject IDialogService _dialogService
 
+@if ((Cuesheet?.Tracks.Count != 0) && (Cuesheet?.IsRecording == false))
+{
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
+        <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
+        <MudText>@_localizer["The cuesheet already contains tracks, please save your work and remove them to start recording!"]</MudText>
+    </MudAlert>
+}
 <MudCard Outlined>
     <MudCardContent>
         @if (Cuesheet?.IsRecording == true)
