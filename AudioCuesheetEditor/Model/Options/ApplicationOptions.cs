@@ -78,6 +78,7 @@ namespace AudioCuesheetEditor.Model.Options
         public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
         public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
         public uint RecordCountdownTimer { get; set; } = 5;
+        public Boolean PinTracksTableHeader { get; set; } = false;
 
         public override ValidationResult Validate(string property)
         {
