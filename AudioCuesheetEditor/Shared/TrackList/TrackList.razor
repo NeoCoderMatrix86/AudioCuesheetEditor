@@ -39,13 +39,13 @@ along with Foobar.  If not, see
         </MudAlert>
     }
     <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0" 
-                             DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
-                             DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="ApplicationOptions?.PinTracksTableHeader == true"
-                             FixedTableHeaderChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.PinTracksTableHeader, newValue)"/>
+    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+    DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="ApplicationOptions?.PinTracksTableHeader == true"
+    FixedTableHeaderChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.PinTracksTableHeader, newValue)"/>
 }
 
 <MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="ApplicationOptions?.PinTracksTableHeader == true" Virtualize Height="800px">
+EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight">
     <Columns>
         <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
         <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
@@ -125,12 +125,29 @@ along with Foobar.  If not, see
     //TODO: Currently loading of autocomplete is needed to enter a free value
 
     HashSet<Track> selectedTracks = new();
+    string? tableHeight;
+    Boolean fixedHeader;
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (CurrentViewMode == ViewMode.DetailView)
+        {
+            tableHeight = "100dvh";
+            fixedHeader = ApplicationOptions?.PinTracksTableHeader == true;
+        }
+        else
+        {
+            tableHeight = null;
+            fixedHeader = false;
+        }
+    }
 
     void AddTrackClicked()
     {
