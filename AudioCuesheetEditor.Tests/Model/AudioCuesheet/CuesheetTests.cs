@@ -21,6 +21,7 @@ using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Tests.Properties;
 using AudioCuesheetEditor.Tests.Utility;
@@ -31,7 +32,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 {
@@ -210,7 +210,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod()]
-        public async Task ImportTestAsync()
+        public void ImportTest()
         {
             // Arrange
             var fileContent = new List<string>
@@ -229,19 +229,18 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             var testHelper = new TestHelper();
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
 
             // Assert
             Assert.IsNull(sessionStateContainer.ImportCuesheet?.CDTextfile);
@@ -257,7 +256,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod()]
-        public async Task ImportTestCalculateEndCorrectlyAsync()
+        public void ImportTestCalculateEndCorrectly()
         {
             // Arrange
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug_54);
@@ -272,12 +271,18 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = null;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var options = new ApplicationOptions();
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            options.ImportScheme = textImportScheme;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var timeSpanFormat = new TimeSpanFormat();
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
@@ -556,7 +561,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.AreEqual(editedTrack.End, track2.Begin);
         }
         [TestMethod()]
-        public async Task ImportSamplesTestAsync()
+        public void ImportSamplesTest()
         {
             // Arrange
             var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt");
@@ -564,18 +569,17 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
@@ -586,7 +590,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod()]
-        public async Task ImportSamples2TestAsync()
+        public void ImportSamples2Test()
         {
             // Arrange
             var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt");
@@ -594,12 +598,20 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = null;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions
+            {
+                ImportScheme = textImportScheme
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);

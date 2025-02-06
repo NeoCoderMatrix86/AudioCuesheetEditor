@@ -20,6 +20,7 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Tests.Properties;
 using AudioCuesheetEditor.Tests.Utility;
@@ -29,7 +30,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Model.UI
 {
@@ -166,7 +166,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         }
 
         [TestMethod()]
-        public async Task Import_ValidTextfile_IsUndoable()
+        public void Import_ValidTextfile_IsUndoable()
         {
             // Arrange
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
@@ -180,10 +180,14 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             }
             var fileContent = lines.AsReadOnly();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
-            importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})",
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             bool eventFired = false;
             sessionStateContainer.Cuesheet.TracksAdded += delegate
@@ -191,7 +195,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
                 eventFired = true;
             };
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsFalse(traceChangeManager.CanUndo);
             Assert.IsFalse(traceChangeManager.CanRedo);
@@ -203,7 +207,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         }
 
         [TestMethod()]
-        public async Task UndoImport_ValidTextfile_ResetsToEmptyCuesheet()
+        public void UndoImport_ValidTextfile_ResetsToEmptyCuesheet()
         {
             // Arrange
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
@@ -217,17 +221,21 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             }
             var fileContent = lines.AsReadOnly();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
-            importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})",
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             bool eventFired = false;
             sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
                 eventFired = true;
             };
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             importManager.ImportCuesheet();
             // Act
             traceChangeManager.Undo();
@@ -241,7 +249,7 @@ namespace AudioCuesheetEditor.Tests.Model.UI
         }
 
         [TestMethod()]
-        public async Task UndoAndRedoImport_ValidTextfile_ResetsTextfileValues()
+        public void UndoAndRedoImport_ValidTextfile_ResetsTextfileValues()
         {
             // Arrange
             var testhelper = new TestHelper();
@@ -256,17 +264,21 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             }
             var fileContent = lines.AsReadOnly();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})";
-            importOptions.TextImportScheme.SchemeTracks = TextImportScheme.DefaultSchemeTracks;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = "(?'Artist'\\A.*) - (?'Title'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Cataloguenumber'.{1,})",
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             bool eventFired = false;
             sessionStateContainer.Cuesheet.TracksAdded += delegate
             {
                 eventFired = true;
             };
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             traceChangeManager.Undo();
             // Act
             traceChangeManager.Redo();
