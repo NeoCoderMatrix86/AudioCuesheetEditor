@@ -64,10 +64,9 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Localization
-    //TODO: Bug: Save activestep while switching view modes (going to Fullmode and back results in restarting the import)
     
     int activeStepIndex;
-    Boolean inputfilesExpanded = true, filecontentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
+    Boolean filecontentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
 
     void ImportFileContent_FileContentChanged(string newFileContent)
@@ -87,7 +86,6 @@ along with Foobar.  If not, see
 
     void FilesImported(Dictionary<IBrowserFile, ImportFileType> files)
     {
-        inputfilesExpanded = false;
         filecontentExpanded = true;
         cuesheetDataExpanded = true;
         cuesheetTracksExpanded = true;
