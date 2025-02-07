@@ -24,6 +24,7 @@ along with Foobar.  If not, see
 @inject EditTrackModalManager _editTrackModalManager
 @inject ValidationService _validationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
+@inject PlaybackService _playbackService
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -44,8 +45,8 @@ along with Foobar.  If not, see
     FixedTableHeaderChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.PinTracksTableHeader, newValue)"/>
 }
 
-<MudDataGrid Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight">
+<MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight" RowContextMenuClick="OpenMenuContent">
     <Columns>
         <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
         <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
@@ -117,16 +118,27 @@ EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeade
     </Columns>
 </MudDataGrid>
 
+<MudMenu PositionAtCursor="true" @ref="trackContextMenu">
+    @if (contextMenuTrack != null)
+    {
+        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="CopyTrackClicked">@_localizer["Duplicate this track"]</MudMenuItem>
+    }
+</MudMenu>
+
 @code {
     //TODO: Localization
     //TODO: reduce column width for timespans
     //TODO: currently played track should be marked
     //TODO: Controls should be reduced to play (and maybe delete), all other functions should be made for selected rows via toolbar (or modal dialog)
+    //TODO: Bug: Contextmenu has a weird position
     //TODO: Currently loading of autocomplete is needed to enter a free value
 
     HashSet<Track> selectedTracks = new();
     string? tableHeight;
     Boolean fixedHeader;
+    MudMenu? trackContextMenu;
+    Track? contextMenuTrack;
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -233,5 +245,30 @@ EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeade
             validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
         }
         return validationErrorMessage;
+    }
+
+    async Task CopyTrackClicked()
+    {
+        if (contextMenuTrack != null)
+        {
+            var copy = new Track(contextMenuTrack);
+            Cuesheet?.AddTrack(copy);
+            TraceChangeManager.TraceChanges(copy);
+            await EditTrackModalClicked(copy);
+        }
+    }
+
+    async Task EditTrackModalClicked(Track trackToEdit)
+    {
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync([trackToEdit]);
+    }
+
+    async Task OpenMenuContent(DataGridRowClickEventArgs<Track> args)
+    {
+        contextMenuTrack = args.Item;
+        if (trackContextMenu != null)
+        {
+            await trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
+        }
     }
 }
