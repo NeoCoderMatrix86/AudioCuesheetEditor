@@ -330,7 +330,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs(intersection));
         }
-
+        //TODO: Unit Tests
         public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
             lock (syncLock)
@@ -354,7 +354,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 return false;
             }
         }
-
+        //TODO: Unit Tests
         public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
             lock (syncLock)
@@ -389,60 +389,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
 
-                OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            }
-        }
-
-
-        public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
-        {
-            Boolean movePossible = false;
-            lock (syncLock)
-            {
-                var index = Tracks.ToList().IndexOf(track);
-                if (moveDirection == MoveDirection.Up)
-                {
-                    if (index > 0)
-                    {
-                        movePossible = true;
-                    }
-                }
-                if (moveDirection == MoveDirection.Down)
-                {
-                    if ((index + 1) < Tracks.Count)
-                    {
-                        movePossible = true;
-                    }
-                }
-            }
-            return movePossible;
-        }
-
-        public void MoveTrack(Track track, MoveDirection moveDirection)
-        {
-            var index = tracks.IndexOf(track);
-            Track? currentTrack = null;
-            switch (moveDirection)
-            {
-                case MoveDirection.Up:
-                    if (index > 0)
-                    {
-                        currentTrack = tracks.ElementAt(index - 1);
-                    }
-                    break;
-                case MoveDirection.Down:
-                    if ((index + 1) < Tracks.Count)
-                    {
-                        currentTrack = tracks.ElementAt(index + 1);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException("Invalid enum value for MoveDirection!", nameof(moveDirection));
-            }
-            if (currentTrack != null)
-            {
-                var previousValue = new List<Track>(tracks);
-                SwitchTracks(track, currentTrack);
                 OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
         }
