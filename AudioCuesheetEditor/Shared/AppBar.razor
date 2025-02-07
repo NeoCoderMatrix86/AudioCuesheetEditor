@@ -40,7 +40,7 @@ along with Foobar.  If not, see
     {
         <MudMenu Label="@_localizer["Export"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FileDownload">
             <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile">@_localizer["Cuesheet"]</MudMenuItem>
-            <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="()=> _dialogService.Show<DownloadProjectfileDialog>(null, DownloadProjectfileDialogOptions)">@_localizer["Projectfile"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="DownloadProjectfileClicked">@_localizer["Projectfile"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport">@_localizer["Textfile"]</MudMenuItem>
         </MudMenu>
     }
@@ -50,7 +50,7 @@ along with Foobar.  If not, see
             <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@culture.DisplayName</MudMenuItem>
         }
     </MudMenu>
-    <MudMenu StartIcon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
         <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="help">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
@@ -87,9 +87,15 @@ along with Foobar.  If not, see
         return style;
     }
 
-    void SettingsClicked()
+    async Task DownloadProjectfileClicked() 
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
+        await _dialogService.ShowAsync<DownloadProjectfileDialog>(null, options);
+    }
+
+    async Task SettingsClicked()
     {
         var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false, FullScreen = true };
-        _dialogService.Show<OptionsDialog>(null, options);
+        await _dialogService.ShowAsync<OptionsDialog>(null, options);
     }
 }

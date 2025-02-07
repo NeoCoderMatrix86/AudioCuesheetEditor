@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 @inject SessionStateContainer _sessionStateContainer
 @inject IStringLocalizer<Index> _localizer
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="EventUtil.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="EventUtil.AsNonRenderingEventHandler<int>(this, ActiveTabIndexChanged)" KeepPanelsAlive>
     <CascadingValue Value="GetViewMode()">
         <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
             <CascadingValue Value="_sessionStateContainer.Cuesheet">
