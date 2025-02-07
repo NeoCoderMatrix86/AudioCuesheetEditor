@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
 
@@ -331,6 +330,69 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs(intersection));
         }
+
+        public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
+        {
+            lock (syncLock)
+            {
+                var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
+
+                if (trackIndices.Count == 0)
+                {
+                    return false;
+                }
+
+                if (moveDirection == MoveDirection.Up)
+                {
+                    return trackIndices.First() > 0;
+                }
+                if (moveDirection == MoveDirection.Down)
+                {
+                    return trackIndices.Last() < Tracks.Count - 1;
+                }
+
+                return false;
+            }
+        }
+
+        public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
+        {
+            lock (syncLock)
+            {
+                if (!MoveTracksPossible(tracksToMove, moveDirection))
+                {
+                    return;
+                }
+                var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
+
+                var previousValue = new List<Track>(Tracks);
+
+                if (moveDirection == MoveDirection.Up)
+                {
+                    foreach (var index in trackIndices)
+                    {
+                        if (index > 0)
+                        {
+                            SwitchTracks(tracks[index], tracks[index - 1]);
+                        }
+                    }
+                }
+                else if (moveDirection == MoveDirection.Down)
+                {
+                    for (int i = trackIndices.Count - 1; i >= 0; i--)
+                    {
+                        int index = trackIndices[i];
+                        if (index < Tracks.Count - 1)
+                        {
+                            SwitchTracks(tracks[index], tracks[index + 1]);
+                        }
+                    }
+                }
+
+                OnTraceablePropertyChanged(previousValue, nameof(Tracks));
+            }
+        }
+
 
         public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
         {

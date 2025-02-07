@@ -19,29 +19,12 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<TrackListControlButtons> _localizer
 <MudButtonGroup OverrideStyles="false">
+    <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" />
     <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" StartIcon="@Icons.Material.Outlined.Add">@_localizer["Add new track"]</MudButton>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled">@_localizer["Edit selected tracks"]</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.MdAndUp">
-        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" />
-    </MudHidden>
-</MudButtonGroup>
-<MudButtonGroup OverrideStyles="false">
-    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" StartIcon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
-            @_localizer["Pin table header"]
-        </MudButton>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" Icon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)" />
-    </MudHidden>
-</MudButtonGroup>
-<MudButtonGroup OverrideStyles="false">
-    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.DynamicFeed" Disabled="EditSelectedTracksDisabled">@_localizer["Edit selected tracks"]</MudButton>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.MdAndUp">
-        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.DynamicFeed" Disabled="EditSelectedTracksDisabled" />
+        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled" />
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled">@_localizer["Delete selected tracks"]</MudButton>
@@ -56,9 +39,24 @@ along with Foobar.  If not, see
         <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="DeleteAllTracksDisabled" />
     </MudHidden>
 </MudButtonGroup>
+<MudButtonGroup OverrideStyles="false">
+    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" StartIcon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
+            @_localizer["Pin table header"]
+        </MudButton>
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp">
+        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" Icon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)" />
+    </MudHidden>
+</MudButtonGroup>
+<MudButtonGroup OverrideStyles="false">
+    <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" />
+    <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" />
+</MudButtonGroup>
 
 @code {
     //TODO: Tooltips
+    //TODO: Localization
 
     [Parameter]
     public EventCallback AddButtonClicked { get; set; }
@@ -80,6 +78,18 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Boolean DeleteAllTracksDisabled { get; set; }
+
+    [Parameter]
+    public EventCallback MoveTracksUpClicked { get; set; }
+
+    [Parameter]
+    public Boolean MoveTracksUpDisabled { get; set; }
+
+    [Parameter]
+    public EventCallback MoveTracksDownClicked { get; set; }
+
+    [Parameter]
+    public Boolean MoveTracksDownDisabled { get; set; }
 
     [Parameter]
     public Boolean FixedTableHeader { get; set; }

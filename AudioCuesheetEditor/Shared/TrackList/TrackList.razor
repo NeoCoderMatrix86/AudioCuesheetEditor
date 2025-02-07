@@ -40,20 +40,17 @@ along with Foobar.  If not, see
         </MudAlert>
     }
     <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0" 
-    DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
-    DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="ApplicationOptions?.PinTracksTableHeader == true"
-    FixedTableHeaderChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.PinTracksTableHeader, newValue)"/>
+                             DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+                             DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="ApplicationOptions?.PinTracksTableHeader == true"
+                             FixedTableHeaderChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.PinTracksTableHeader, newValue)"
+                             MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
+                             MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)" />
 }
 
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
              EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight" RowContextMenuClick="OpenMenuContent">
     <Columns>
         <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
-        <TemplateColumn Title="@_localizer["Controls"]" Editable="false">
-            <CellTemplate>
-                <TrackListItemControlColumn TrackReference="context.Item" />
-            </CellTemplate>
-        </TemplateColumn>
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView">
             <EditTemplate>
                 <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
@@ -130,8 +127,6 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: reduce column width for timespans
     //TODO: currently played track should be marked
-    //TODO: Controls should be reduced to play (and maybe delete), all other functions should be made for selected rows via toolbar (or modal dialog)
-    //TODO: Bug: Contextmenu has a weird position
     //TODO: Currently loading of autocomplete is needed to enter a free value
 
     HashSet<Track> selectedTracks = new();
