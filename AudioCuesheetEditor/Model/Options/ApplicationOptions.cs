@@ -31,6 +31,7 @@ namespace AudioCuesheetEditor.Model.Options
     }
     public class ApplicationOptions : Validateable, IOptions
     {
+        private string? projectFilename = Projectfile.DefaultFilename;
         public const String DefaultCultureName = "en-US";
         public String? CuesheetFilename { get; set; } = Exportfile.DefaultCuesheetFilename;
         public String? CultureName { get; set; } = DefaultCultureName;
@@ -66,7 +67,22 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
+        public String? ProjectFilename
+        { 
+            get => projectFilename;
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    var extension = Path.GetExtension(value);
+                    if (extension?.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        value = $"{value}{FileExtensions.Projectfile}";
+                    }
+                }
+                projectFilename = value;
+            }
+        }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
         public Boolean LinkTracks { get; set; } = true;
         public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
