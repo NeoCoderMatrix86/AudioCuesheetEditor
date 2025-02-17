@@ -49,7 +49,7 @@ along with Foobar.  If not, see
 }
 
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight" RowContextMenuClick="OpenMenuContent">
+             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent">
     <Columns>
         <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView">
@@ -129,10 +129,10 @@ EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeade
     //TODO: reduce column width for timespans
     //TODO: currently played track should be marked
     //TODO: Currently loading of autocomplete is needed to enter a free value
+    //TODO: Pin header
+    //TODO: Virtualize?
 
     HashSet<Track> selectedTracks = new();
-    string? tableHeight;
-    Boolean fixedHeader;
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
 
@@ -141,21 +141,6 @@ EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeade
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        if (CurrentViewMode == ViewMode.DetailView)
-        {
-            tableHeight = "100dvh";
-            fixedHeader = ApplicationOptions?.PinTracksTableHeader == true;
-        }
-        else
-        {
-            tableHeight = null;
-            fixedHeader = false;
-        }
-    }
 
     void AddTrackClicked()
     {
