@@ -89,7 +89,7 @@ along with Foobar.  If not, see
     async Task DownloadProjectfileClicked() 
     {
         var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
-        await _dialogService.ShowAsync<DownloadProjectfileDialog>(null, options);
+        await _dialogService.ShowAsync<DownloadProjectfileDialog>(_localizer["Save project"], options);
     }
 
     async Task SettingsClicked()

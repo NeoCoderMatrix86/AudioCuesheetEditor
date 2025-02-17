@@ -23,9 +23,6 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 
 <MudDialog>
-    <TitleContent>
-        <MudText Typo="Typo.h5">@_localizer["Save project"]</MudText>
-    </TitleContent>
     <DialogContent>
         <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@ApplicationOptions?.ProjectFilename" TextChanged="FilenameChanged" 
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
