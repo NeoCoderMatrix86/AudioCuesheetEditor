@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject PlaybackService _playbackService
+@inject IDialogService _dialogService
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -41,14 +42,14 @@ along with Foobar.  If not, see
     }
     <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0" 
                              DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
-                             DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="selectedTracks.Count == 0" FixedTableHeader="ApplicationOptions?.PinTracksTableHeader == true"
+                             DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false" FixedTableHeader="ApplicationOptions?.PinTracksTableHeader == true"
                              FixedTableHeaderChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.PinTracksTableHeader, newValue)"
                              MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
                              MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)" />
 }
 
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight" RowContextMenuClick="OpenMenuContent">
+EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" FixedHeader="fixedHeader" Virtualize Height="@tableHeight" RowContextMenuClick="OpenMenuContent">
     <Columns>
         <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView">
@@ -60,8 +61,8 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                                 ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
-                                 Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
+                ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
+                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -78,9 +79,9 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                                 Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                                 ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
+                Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
+                ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -177,9 +178,19 @@ along with Foobar.  If not, see
         selectedTracks.Clear();
     }
 
-    void OnDeleteAllTracksClicked()
+    async Task OnDeleteAllTracksClicked()
     {
-        //TODO: Display a confirm warning
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want to remove all tracks?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            Cuesheet?.RemoveTracks(Cuesheet.Tracks);
+            selectedTracks.Clear();
+        }
     }
 
     async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string? value, CancellationToken token)
