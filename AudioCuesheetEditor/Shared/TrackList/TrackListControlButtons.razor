@@ -40,16 +40,6 @@ along with Foobar.  If not, see
     </MudHidden>
 </MudButtonGroup>
 <MudButtonGroup OverrideStyles="false">
-    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" StartIcon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)">
-            @_localizer["Pin table header"]
-        </MudButton>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="() => FixedTableHeaderChanged.InvokeAsync(!FixedTableHeader)" Icon="@(FixedTableHeader == true ? @Icons.Material.Outlined.CheckBox : @Icons.Material.Outlined.CheckBoxOutlineBlank)" />
-    </MudHidden>
-</MudButtonGroup>
-<MudButtonGroup OverrideStyles="false">
     <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" />
     <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" />
 </MudButtonGroup>
@@ -90,10 +80,4 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Boolean MoveTracksDownDisabled { get; set; }
-
-    [Parameter]
-    public Boolean FixedTableHeader { get; set; }
-
-    [Parameter]
-    public EventCallback<Boolean> FixedTableHeaderChanged { get; set; }
 }
