@@ -24,8 +24,8 @@ along with Foobar.  If not, see
 <MudCard Outlined>
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
-            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = currentRecordingTrack.Artist }"
-                             ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
+            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Text="@currentRecordingTrack.Artist"
+                             ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
                              Disabled="Cuesheet?.IsRecording == false">
                 <ItemTemplate Context="autocompleteContext">
@@ -41,7 +41,7 @@ along with Foobar.  If not, see
             </MudAutocomplete>
             <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => SearchTitle(value, token)" ToStringFunc="(value) => value.Title"
                              Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="(value) => currentRecordingTrack.Title = value?.Title"
-                             ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
+                             ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
                              ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)

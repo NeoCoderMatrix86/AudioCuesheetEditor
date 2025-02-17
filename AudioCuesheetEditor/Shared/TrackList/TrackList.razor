@@ -60,7 +60,7 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                                 ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator
+                                 ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
                                  Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
@@ -79,7 +79,7 @@ along with Foobar.  If not, see
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
                                  Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                                 ResetValueOnEmptyText Clearable CoerceValue SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
+                                 ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
                                  ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)

@@ -48,7 +48,7 @@ along with Foobar.  If not, see
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackArtist" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
                     <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name"
-                                     Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue
+                                     Text="@EditedTrack.Artist" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable
                                      SelectValueOnTab ShowProgressIndicator Disabled="!editTrackArtist">
                         <ItemTemplate Context="autocompleteContext">
                             @if (autocompleteContext.Disambiguation != null)
@@ -66,7 +66,7 @@ along with Foobar.  If not, see
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackTitle" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
                     <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
-                                     Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="(value) => EditedTrack.Title = value?.Title" ResetValueOnEmptyText Clearable CoerceValue
+                                     Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="(value) => EditedTrack.Title = value?.Title" ResetValueOnEmptyText Clearable
                                      SelectValueOnTab ShowProgressIndicator Disabled="!editTrackTitle">
                         <ItemTemplate Context="autocompleteContext">
                             @if (autocompleteContext.Disambiguation != null)

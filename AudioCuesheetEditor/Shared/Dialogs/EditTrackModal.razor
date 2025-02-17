@@ -33,7 +33,7 @@ along with Foobar.  If not, see
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
                           ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" />
             <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" 
-                             Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable CoerceValue
+                             Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable 
                              SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
                              ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))">
                 <ItemTemplate Context="autocompleteContext">
@@ -48,7 +48,7 @@ along with Foobar.  If not, see
                 </ItemTemplate>
             </MudAutocomplete>
             <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title" 
-                             Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable CoerceValue
+                             Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable
                              SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))"
                              ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))">
                 <ItemTemplate Context="autocompleteContext">
