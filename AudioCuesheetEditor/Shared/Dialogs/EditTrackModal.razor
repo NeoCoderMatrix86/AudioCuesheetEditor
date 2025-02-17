@@ -99,7 +99,7 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
 
-    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string value, CancellationToken token)
+    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string? value, CancellationToken token)
     {
         IEnumerable<MusicBrainzArtist>? artists = null;
         if (!token.IsCancellationRequested)
@@ -114,7 +114,7 @@ along with Foobar.  If not, see
         return artists;
     }
 
-    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string value, CancellationToken token)
+    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string? value, CancellationToken token)
     {
         IEnumerable<MusicBrainzTrack>? tracks = null;
         if (!token.IsCancellationRequested)

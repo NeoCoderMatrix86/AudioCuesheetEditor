@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Data.Services
 
         private String? applicationVersion = null;
 
-        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String searchString)
+        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString)
         {
             List<MusicBrainzArtist> artistSearchResult = [];
             try
@@ -62,7 +62,7 @@ namespace AudioCuesheetEditor.Data.Services
             return artistSearchResult.AsReadOnly();
         }
 
-        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String searchString, String? artist = null)
+        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist = null)
         {
             List<MusicBrainzTrack> titleSearchResult = [];
             try
