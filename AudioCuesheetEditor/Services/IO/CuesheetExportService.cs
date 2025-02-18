@@ -27,13 +27,13 @@ namespace AudioCuesheetEditor.Services.IO
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
 
-        public Boolean CanGenerateExportfiles(string filename)
+        public Boolean CanGenerateExportfiles(string? filename)
         {
             var extension = Path.GetExtension(filename);
-            return extension.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) && _sessionStateContainer.Cuesheet.Validate().Status == ValidationStatus.Success;
+            return extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == true && _sessionStateContainer.Cuesheet.Validate().Status == ValidationStatus.Success;
         }
 
-        public IReadOnlyCollection<Exportfile> GenerateExportfiles(string filename)
+        public IReadOnlyCollection<Exportfile> GenerateExportfiles(string? filename)
         {
             List<Exportfile> exportfiles = [];
             if (CanGenerateExportfiles(filename))
