@@ -50,12 +50,14 @@ builder.Services.AddScoped<TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();
+builder.Services.AddScoped<CuesheetExportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
 builder.Services.AddScoped<EditTrackModalManager>();
+builder.Services.AddScoped<ExportfileGenerator>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
