@@ -39,7 +39,7 @@ along with Foobar.  If not, see
     @if (DisplayExportMenu)
     {
         <MudMenu Label="@_localizer["Export"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FileDownload">
-            <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile">@_localizer["Cuesheet"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadCuesheetClicked">@_localizer["Cuesheet"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="DownloadProjectfileClicked">@_localizer["Projectfile"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport">@_localizer["Textfile"]</MudMenuItem>
         </MudMenu>
@@ -90,6 +90,12 @@ along with Foobar.  If not, see
     {
         var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
         await _dialogService.ShowAsync<DownloadProjectfileDialog>(_localizer["Save project"], options);
+    }
+
+    async Task DownloadCuesheetClicked()
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true };
+        await _dialogService.ShowAsync<GenerateCuesheetDialog>(_localizer["Download cuesheet"], options);
     }
 
     async Task SettingsClicked()

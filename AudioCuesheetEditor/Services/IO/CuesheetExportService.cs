@@ -61,6 +61,11 @@ namespace AudioCuesheetEditor.Services.IO
                 else
                 {
                     string? content = null;
+                    var extension = Path.GetExtension(filename);
+                    if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        filename = $"{filename}{FileExtensions.Cuesheet}";
+                    }
                     if (_sessionStateContainer.Cuesheet.Audiofile != null)
                     {
                         content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
@@ -69,7 +74,7 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
                         var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
-                        exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = end });
+                        exportfiles.Add(new Exportfile() { Name = filename!, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = end });
                     }
                 }
             }

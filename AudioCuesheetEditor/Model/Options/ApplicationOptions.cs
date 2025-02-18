@@ -32,8 +32,24 @@ namespace AudioCuesheetEditor.Model.Options
     public class ApplicationOptions : Validateable, IOptions
     {
         private string? projectFilename = Projectfile.DefaultFilename;
+        private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
         public const String DefaultCultureName = "en-US";
-        public String? CuesheetFilename { get; set; } = Exportfile.DefaultCuesheetFilename;
+        public String? CuesheetFilename 
+        {
+            get => cuesheetFilename;
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    var extension = Path.GetExtension(value);
+                    if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        value = $"{value}{FileExtensions.Cuesheet}";
+                    }
+                }
+                cuesheetFilename = value;
+            }
+        }
         public String? CultureName { get; set; } = DefaultCultureName;
         [JsonIgnore]
         public CultureInfo Culture

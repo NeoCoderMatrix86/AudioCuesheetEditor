@@ -1,0 +1,79 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<GenerateCuesheetDialog> _localizer
+@inject SessionStateContainer _sessionStateContainer
+@inject ValidationService _validationService
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject CuesheetExportService _cuesheetExportService
+
+<MudDialog>
+    <DialogContent>
+        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@ApplicationOptions?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
+        <br />
+        <MudTable Items="exportfiles">
+            <HeaderContent>
+                <MudTh>@_localizer["Name"]</MudTh>
+                <MudTh>@_localizer["Begin"]</MudTh>
+                <MudTh>@_localizer["End"]</MudTh>
+                <MudTh>@_localizer["Content"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
+                <MudTd DataLabel="@_localizer["Begin"]">@context.Begin</MudTd>
+                <MudTd DataLabel="@_localizer["End"]">@context.End</MudTd>
+                <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFile(context.Name, context.Content, "text/plain")' /></MudTd>
+            </RowTemplate>
+        </MudTable>
+        <br />
+    </DialogContent>
+</MudDialog>
+
+@code {
+    //TODO: localization
+
+    IEnumerable<Exportfile> exportfiles = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        exportfiles = _cuesheetExportService.GenerateExportfiles(ApplicationOptions?.CuesheetFilename);
+    }
+
+    String? GetValidationErrorMessage()
+    {
+        String? validationErrorMessage = null;
+        if (ApplicationOptions != null)
+        {
+            var validationMessages = _validationService.Validate(ApplicationOptions, nameof(ApplicationOptions.CuesheetFilename));
+            if (validationMessages.Count() > 0)
+            {
+                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+            }
+        }
+        return validationErrorMessage;
+    }
+
+    async Task CuesheetFilenameChanged(string newFilename)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.CuesheetFilename, newFilename);
+        exportfiles = _cuesheetExportService.GenerateExportfiles(ApplicationOptions?.CuesheetFilename);
+    }
+}
