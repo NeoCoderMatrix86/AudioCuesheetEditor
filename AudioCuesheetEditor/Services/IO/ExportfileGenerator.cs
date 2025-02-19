@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.Services.IO
         public IReadOnlyCollection<Exportfile> GenerateExportfiles(Exportprofile? exportprofile)
         {
             List<Exportfile> exportfiles = [];
-            if (!CanGenerateExportfiles(exportprofile).Any())
+            if ((!CanGenerateExportfiles(exportprofile).Any()) && (exportprofile != null))
             {
                 if (_sessionStateContainer.Cuesheet.Sections.Count != 0)
                 {
