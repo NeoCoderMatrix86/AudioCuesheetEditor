@@ -34,7 +34,7 @@ along with Foobar.  If not, see
             </MudAlert>
         }
         <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@ApplicationOptions?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
-        Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
         <br />
         <MudTable Items="exportfiles">
             <HeaderContent>
