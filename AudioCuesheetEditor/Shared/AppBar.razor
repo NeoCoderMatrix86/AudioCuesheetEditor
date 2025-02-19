@@ -41,7 +41,7 @@ along with Foobar.  If not, see
         <MudMenu Label="@_localizer["Export"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FileDownload">
             <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadCuesheetClicked">@_localizer["Cuesheet"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="DownloadProjectfileClicked">@_localizer["Projectfile"]</MudMenuItem>
-            <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport">@_localizer["Textfile"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport" OnClick="DownloadExportClicked">@_localizer["Textfile"]</MudMenuItem>
         </MudMenu>
     }
     <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
@@ -58,9 +58,7 @@ along with Foobar.  If not, see
     </MudMenu>
 </MudAppBar>
 
-@code {
-    //TODO: Export cuesheet
-    //TODO: Export Custom
+@code {    
     //TODO: Tooltips undo/redo
     //TODO: Tooltips for export options
     //TODO: Include keyboard shortcuts display to 3 dots menu
@@ -96,6 +94,12 @@ along with Foobar.  If not, see
     {
         var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true };
         await _dialogService.ShowAsync<GenerateCuesheetDialog>(_localizer["Download cuesheet"], options);
+    }
+
+    async Task DownloadExportClicked()
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true };
+        await _dialogService.ShowAsync<GenerateExportDialog>(_localizer["Export profiles"], options);
     }
 
     async Task SettingsClicked()

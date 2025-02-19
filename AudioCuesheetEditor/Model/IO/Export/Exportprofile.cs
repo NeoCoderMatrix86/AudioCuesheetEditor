@@ -57,11 +57,11 @@ namespace AudioCuesheetEditor.Model.IO.Export
             SchemeDateTime = String.Format("{0}DateTime{1}", SchemeCharacter, SchemeCharacter);
             SchemeTime = String.Format("{0}Time{1}", SchemeCharacter, SchemeCharacter);
 
-            SchemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
-            SchemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            SchemeCuesheetAudiofile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
-            SchemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-            SchemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
+            SchemeCuesheetArtist = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Cuesheet.Artist), SchemeCharacter);
+            SchemeCuesheetTitle = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Cuesheet.Title), SchemeCharacter);
+            SchemeCuesheetAudiofile = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Cuesheet.Audiofile), SchemeCharacter);
+            SchemeCuesheetCDTextfile = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Cuesheet.CDTextfile), SchemeCharacter);
+            SchemeCuesheetCatalogueNumber = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
 
             AvailableCuesheetSchemes = new Dictionary<string, string>
             {
@@ -75,15 +75,15 @@ namespace AudioCuesheetEditor.Model.IO.Export
                 { "Time", SchemeTime }
             };
 
-            SchemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
-            SchemeTrackTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Title), SchemeCharacter);
-            SchemeTrackBegin = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Begin), SchemeCharacter);
-            SchemeTrackEnd = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.End), SchemeCharacter);
-            SchemeTrackLength = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
-            SchemeTrackPosition = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
-            SchemeTrackFlags = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
-            SchemeTrackPreGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
-            SchemeTrackPostGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
+            SchemeTrackArtist = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Artist), SchemeCharacter);
+            SchemeTrackTitle = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Title), SchemeCharacter);
+            SchemeTrackBegin = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Begin), SchemeCharacter);
+            SchemeTrackEnd = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.End), SchemeCharacter);
+            SchemeTrackLength = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Length), SchemeCharacter);
+            SchemeTrackPosition = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Position), SchemeCharacter);
+            SchemeTrackFlags = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.Flags), SchemeCharacter);
+            SchemeTrackPreGap = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.PreGap), SchemeCharacter);
+            SchemeTrackPostGap = String.Format("{0}{1}{2}", SchemeCharacter, nameof(Track.PostGap), SchemeCharacter);
 
             AvailableTrackSchemes = new Dictionary<string, string>()
             {

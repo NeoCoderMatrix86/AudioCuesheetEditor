@@ -1,0 +1,127 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<GenerateExportDialog> _localizer
+@inject ValidationService _validationService
+@inject ExportfileGenerator _exportfileGenerator
+
+@if (exportOptions != null)
+{
+    <MudDialog>
+        <DialogContent>
+            <MudSelect T="Exportprofile" Variant="Variant.Outlined" Label="@_localizer["Select export profile"]" @bind-Value="exportOptions.SelectedExportProfile">
+                @foreach (var profile in exportOptions.ExportProfiles)
+                {
+                    <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
+                }
+            </MudSelect>
+            <MudButtonGroup OverrideStyles="false">
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick">@_localizer["Add new export profile"]</MudButton>
+                <MudButton Color="Color.Error" Variant="Variant.Filled" Disabled="exportOptions.SelectedExportProfile == null" OnClick="DeleteClick">@_localizer["Delete selected export profile"]</MudButton>
+            </MudButtonGroup>
+            <MudDivider />
+            @if (exportOptions.SelectedExportProfile != null)
+            {
+                <MudForm Model="exportOptions.SelectedExportProfile">
+                    <MudTextField @bind-Value="exportOptions.SelectedExportProfile.Name" For="(() => exportOptions.SelectedExportProfile.Name)" Validation="_validationService.ValidateProperty" Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
+                    <MudTextField @bind-Value="exportOptions.SelectedExportProfile.Filename" For="(() => exportOptions.SelectedExportProfile.Filename)" Validation="_validationService.ValidateProperty" Label="@_localizer["Filename"]" Placeholder="@_localizer["Enter the filename for this profile here"]" Variant="Variant.Outlined" />
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudTextField @bind-Value="exportOptions.SelectedExportProfile.SchemeHead" For="(() => exportOptions.SelectedExportProfile.SchemeHead)" Validation="_validationService.ValidateProperty" Label="@_localizer["Scheme head"]" Placeholder="@_localizer["Enter the header scheme for this profile here"]" Variant="Variant.Outlined" />
+                        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+                            @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
+                            {
+                                <MudMenuItem OnClick="() => exportOptions.SelectedExportProfile.SchemeHead += placeholder.Value">@_localizer[placeholder.Key]</MudMenuItem>
+                            }
+                        </MudMenu>
+                    </MudStack>
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudTextField @bind-Value="exportOptions.SelectedExportProfile.SchemeTracks" For="(() => exportOptions.SelectedExportProfile.SchemeTracks)" Validation="_validationService.ValidateProperty" Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" />
+                        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+                            @foreach (var placeholder in Exportprofile.AvailableTrackSchemes)
+                            {
+                                <MudMenuItem OnClick="() => exportOptions.SelectedExportProfile.SchemeTracks += placeholder.Value">@_localizer[placeholder.Key]</MudMenuItem>
+                            }
+                        </MudMenu>
+                    </MudStack>
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudTextField @bind-Value="exportOptions.SelectedExportProfile.SchemeFooter" For="(() => exportOptions.SelectedExportProfile.SchemeFooter)" Validation="_validationService.ValidateProperty" Label="@_localizer["Scheme footer"]" Placeholder="@_localizer["Enter the footer scheme for this profile here"]" Variant="Variant.Outlined" />
+                        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+                            @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
+                            {
+                                <MudMenuItem OnClick="() => exportOptions.SelectedExportProfile.SchemeFooter += placeholder.Value">@_localizer[placeholder.Key]</MudMenuItem>
+                            }
+                        </MudMenu>
+                    </MudStack>
+                </MudForm>
+            }
+        </DialogContent>
+    </MudDialog>
+}
+
+@code {
+    //TODO
+    //TODO: Validation of profile
+    //TODO: Save profile after each change
+    //TODO: Generation of export
+
+
+    ExportOptions? exportOptions;
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        exportOptions = await LocalStorageOptionsProvider.GetOptions<ExportOptions>();
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ExportOptions exportOption)
+        {
+            exportOptions = exportOption;
+        }
+    }
+
+    async Task AddClick()
+    {
+        if (exportOptions != null)
+        {
+            var newProfile = new Exportprofile();
+            exportOptions.ExportProfiles.Add(newProfile);
+            exportOptions.SelectedExportProfile = newProfile;
+            await LocalStorageOptionsProvider.SaveOptions(exportOptions);
+        }
+    }
+
+    async Task DeleteClick()
+    {
+        if (exportOptions?.SelectedExportProfile != null)
+        {
+            exportOptions.ExportProfiles.Remove(exportOptions.SelectedExportProfile);
+            exportOptions.SelectedExportProfile = exportOptions.ExportProfiles.LastOrDefault();
+            await LocalStorageOptionsProvider.SaveOptions(exportOptions);
+        }
+    }
+}

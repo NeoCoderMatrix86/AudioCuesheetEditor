@@ -24,8 +24,8 @@ namespace AudioCuesheetEditor.Model.Options
         {
             Filename = "YouTube.txt",
             Name = "YouTube",
-            SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
-            SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+            SchemeHead = "%Artist% - %Title%",
+            SchemeTracks = "%Artist% - %Title% %Begin%"
         };
         public static readonly ICollection<Exportprofile> DefaultExportProfiles =
         [
@@ -34,21 +34,21 @@ namespace AudioCuesheetEditor.Model.Options
             {
                 Filename = "Mixcloud.txt",
                 Name = "Mixcloud",
-                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+                SchemeTracks = "%Artist% - %Title% %Begin%"
             },
             new Exportprofile()
             {
                 Filename = "Export.csv",
                 Name = "CSV Export",
-                SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;",
-                SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
+                SchemeHead = "%Artist%;%Title%;",
+                SchemeTracks = "%Position%;%Artist%;%Title%;%Begin%;%End%;%Length%",
                 SchemeFooter = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)"
             },
             new Exportprofile()
             {
                 Filename = "Tracks.txt",
                 Name = "Tracks only",
-                SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
+                SchemeTracks = "%Position% - %Artist% - %Title% - %Begin% - %End% - %Length%",
             }
         ];
         public ExportOptions() 
