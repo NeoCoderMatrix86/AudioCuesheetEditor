@@ -27,16 +27,23 @@ namespace AudioCuesheetEditor.Services.IO
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
 
-        public Boolean CanGenerateExportfiles(string? filename)
+        public IEnumerable<ValidationMessage> CanGenerateExportfiles(string? filename)
         {
+            List<ValidationMessage> validationMessages = [];
             var extension = Path.GetExtension(filename);
-            return extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == true && _sessionStateContainer.Cuesheet.Validate().Status == ValidationStatus.Success;
+            if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
+            {
+                validationMessages ??= [];
+                validationMessages.Add(new ValidationMessage("File extension is not '{0}'", FileExtensions.Cuesheet));
+            }
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
+            return validationMessages;
         }
 
         public IReadOnlyCollection<Exportfile> GenerateExportfiles(string? filename)
         {
             List<Exportfile> exportfiles = [];
-            if (CanGenerateExportfiles(filename))
+            if (!CanGenerateExportfiles(filename).Any())
             {
                 if (_sessionStateContainer.Cuesheet.Sections.Count != 0)
                 {

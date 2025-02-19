@@ -27,15 +27,17 @@ namespace AudioCuesheetEditor.Services.IO
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
 
-        public Boolean CanGenerateExportfiles(Exportprofile exportprofile)
+        public IEnumerable<ValidationMessage> CanGenerateExportfiles(Exportprofile exportprofile)
         {
-            return exportprofile.Validate().Status == ValidationStatus.Success && _sessionStateContainer.Cuesheet.Validate().Status == ValidationStatus.Success;
+            List<ValidationMessage> validationMessages = [..exportprofile.Validate().ValidationMessages];
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
+            return validationMessages;
         }
 
         public IReadOnlyCollection<Exportfile> GenerateExportfiles(Exportprofile exportprofile)
         {
             List<Exportfile> exportfiles = [];
-            if (CanGenerateExportfiles(exportprofile))
+            if (!CanGenerateExportfiles(exportprofile).Any())
             {
                 if (_sessionStateContainer.Cuesheet.Sections.Count != 0)
                 {

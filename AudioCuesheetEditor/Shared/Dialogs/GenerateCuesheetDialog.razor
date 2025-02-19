@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<GenerateCuesheetDialog> _localizer
+@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject SessionStateContainer _sessionStateContainer
 @inject ValidationService _validationService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
@@ -25,8 +26,15 @@ along with Foobar.  If not, see
 
 <MudDialog>
     <DialogContent>
+        @if (String.IsNullOrEmpty(GetGenerationValidationMessages()) == false)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                @_localizer["Export is currently not possible:"]
+                @((MarkupString)GetGenerationValidationMessages()!)
+            </MudAlert>
+        }
         <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@ApplicationOptions?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
-                      Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
+        Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
         <br />
         <MudTable Items="exportfiles">
             <HeaderContent>
@@ -67,6 +75,17 @@ along with Foobar.  If not, see
             {
                 validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
             }
+        }
+        return validationErrorMessage;
+    }
+
+    String? GetGenerationValidationMessages()
+    {
+        String? validationErrorMessage = null;
+        var messages = _cuesheetExportService.CanGenerateExportfiles(ApplicationOptions?.CuesheetFilename);
+        if (messages.Count() > 0)
+        {
+            validationErrorMessage = String.Join("<br />", messages.Select(x => x.GetMessageLocalized(_validationMessageLocalizer)));
         }
         return validationErrorMessage;
     }
