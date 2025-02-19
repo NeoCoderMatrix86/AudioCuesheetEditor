@@ -27,14 +27,22 @@ namespace AudioCuesheetEditor.Services.IO
     {
         private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
 
-        public IEnumerable<ValidationMessage> CanGenerateExportfiles(Exportprofile exportprofile)
+        public IEnumerable<ValidationMessage> CanGenerateExportfiles(Exportprofile? exportprofile)
         {
-            List<ValidationMessage> validationMessages = [..exportprofile.Validate().ValidationMessages];
+            List<ValidationMessage> validationMessages = [];
+            if (exportprofile != null)
+            {
+                validationMessages.AddRange(exportprofile.Validate().ValidationMessages);
+            }
+            else
+            {
+                validationMessages.Add(new ValidationMessage("No exportprofile selected!"));
+            }
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
             return validationMessages;
         }
 
-        public IReadOnlyCollection<Exportfile> GenerateExportfiles(Exportprofile exportprofile)
+        public IReadOnlyCollection<Exportfile> GenerateExportfiles(Exportprofile? exportprofile)
         {
             List<Exportfile> exportfiles = [];
             if (!CanGenerateExportfiles(exportprofile).Any())

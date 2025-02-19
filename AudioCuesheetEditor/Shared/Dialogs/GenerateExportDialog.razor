@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<GenerateExportDialog> _localizer
+@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ValidationService _validationService
 @inject ExportfileGenerator _exportfileGenerator
 
@@ -25,6 +26,13 @@ along with Foobar.  If not, see
 {
     <MudDialog>
         <DialogContent>
+            @if (String.IsNullOrEmpty(GetGenerationValidationMessages()) == false)
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                    @_localizer["Export is currently not possible:"]
+                    @((MarkupString)GetGenerationValidationMessages()!)
+                </MudAlert>
+            }
             <MudSelect T="Exportprofile" Variant="Variant.Outlined" Label="@_localizer["Select export profile"]" @bind-Value="exportOptions.SelectedExportProfile">
                 @foreach (var profile in exportOptions.ExportProfiles)
                 {
@@ -35,6 +43,7 @@ along with Foobar.  If not, see
                 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick">@_localizer["Add new export profile"]</MudButton>
                 <MudButton Color="Color.Error" Variant="Variant.Filled" Disabled="exportOptions.SelectedExportProfile == null" OnClick="DeleteClick">@_localizer["Delete selected export profile"]</MudButton>
             </MudButtonGroup>
+            <br />
             <MudDivider />
             @if (exportOptions.SelectedExportProfile != null)
             {
@@ -80,7 +89,6 @@ along with Foobar.  If not, see
     //TODO: Save profile after each change
     //TODO: Generation of export
 
-
     ExportOptions? exportOptions;
 
     protected override void Dispose(bool disposing)
@@ -123,5 +131,16 @@ along with Foobar.  If not, see
             exportOptions.SelectedExportProfile = exportOptions.ExportProfiles.LastOrDefault();
             await LocalStorageOptionsProvider.SaveOptions(exportOptions);
         }
+    }
+
+    String? GetGenerationValidationMessages()
+    {
+        String? validationErrorMessage = null;
+        var messages = _exportfileGenerator.CanGenerateExportfiles(exportOptions?.SelectedExportProfile);
+        if (messages.Count() > 0)
+        {
+            validationErrorMessage = String.Join("<br />", messages.Select(x => x.GetMessageLocalized(_validationMessageLocalizer)));
+        }
+        return validationErrorMessage;
     }
 }
