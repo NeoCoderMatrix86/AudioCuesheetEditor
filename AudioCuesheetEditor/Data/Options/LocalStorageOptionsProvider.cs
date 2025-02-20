@@ -102,6 +102,23 @@ namespace AudioCuesheetEditor.Data.Options
             await SaveOptions(options);
         }
 
+        public async Task SaveNestedOptionValue<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new()
+        {
+            var options = await GetOptions<T>();
+
+            if (nestedPropertyExpression.Body is not MemberExpression memberExpression)
+            {
+                throw new ArgumentException("The provided nested property expression does not reference a member!");
+            }
+
+            var nestedProperty = typeof(T).GetProperty(memberExpression.Member.Name) ?? throw new ArgumentException("The provided nested property expression does not reference a valid property.");
+            var nestedInstance = nestedProperty.GetValue(options) ?? throw new InvalidOperationException("The nested property is null.");
+            var valueProperty = ResolveNestedProperty(valuePropertyExpression.Body as MemberExpression, ref nestedInstance) ?? throw new ArgumentException("The provided value property expression does not reference a valid property.");
+            valueProperty.SetValue(nestedInstance, Convert.ChangeType(value, valueProperty.PropertyType));
+
+            await SaveOptions(options);
+        }
+
         private static PropertyInfo? ResolveNestedProperty(MemberExpression? memberExpression, ref object? targetObject)
         {
             PropertyInfo? propertyInfo = null;

@@ -24,5 +24,6 @@ namespace AudioCuesheetEditor.Data.Options
         Task<T> GetOptions<T>() where T : IOptions;
         Task SaveOptions(IOptions options);
         Task SaveOptionsValue<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new();
+        Task SaveNestedOptionValue<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new();
     }
 }
