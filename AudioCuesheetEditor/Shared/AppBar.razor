@@ -98,7 +98,7 @@ along with Foobar.  If not, see
 
     async Task DownloadExportClicked()
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true };
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullScreen = true };
         await _dialogService.ShowAsync<GenerateExportDialog>(_localizer["Export profiles"], options);
     }
 
