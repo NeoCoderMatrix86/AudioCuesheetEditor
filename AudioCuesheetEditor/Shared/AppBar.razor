@@ -21,6 +21,8 @@ along with Foobar.  If not, see
 @inject NavigationManager _navigationManager
 @inject IStringLocalizer<AppBar> _localizer
 @inject IDialogService _dialogService
+@inject SessionStateContainer _sessionStateContainer
+@inject IJSRuntime _jsRuntime
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
@@ -51,10 +53,20 @@ along with Foobar.  If not, see
         }
     </MudMenu>
     <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
-        <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
+        @if (DisplaySettings) 
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
+        }
         <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="help">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
+        @if (DisplayReset)
+        {
+            <MudMenu Label="@_localizer["Reset"]">
+                <MudMenuItem Icon="@Icons.Material.Outlined.NotStarted" OnClick="ResetCuesheetClicked">@_localizer["Reset cuesheet"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.RestartAlt" OnClick="ResetApplicationClicked">@_localizer["Reset application"]</MudMenuItem>
+            </MudMenu>
+        }
     </MudMenu>
 </MudAppBar>
 
@@ -68,6 +80,12 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Boolean DisplayExportMenu { get; set; }
+
+    [Parameter]
+    public Boolean DisplaySettings { get; set; }
+
+    [Parameter]
+    public Boolean DisplayReset { get; set; }
 
     async Task SelectedCultureChanged(string name)
     {
@@ -106,5 +124,35 @@ along with Foobar.  If not, see
     {
         var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false, FullScreen = true };
         await _dialogService.ShowAsync<OptionsDialog>(null, options);
+    }
+
+    async Task ResetCuesheetClicked() 
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want reset the cuesheet? All information you have not saved are lost!"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            _sessionStateContainer.Cuesheet = new(TraceChangeManager);
+        }
+    }
+
+    async Task ResetApplicationClicked()
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want reset the application? All information you have not saved are lost!"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
+            await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+            _navigationManager.NavigateTo(_navigationManager.Uri, true);
+        }
     }
 }
