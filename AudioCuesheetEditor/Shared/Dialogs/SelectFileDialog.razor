@@ -1,0 +1,68 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<SelectFileDialog> _localizer
+@inject SessionStateContainer _sessionStateContainer
+@inject ImportManager _importManager
+
+<MudDialog>
+    <DialogContent>
+        <br />
+        <MudCard>
+            <MudCardContent id="@dropFileInputId">
+                <DropFileInput OnFilesSelected="InputFilesChanged" Filter="@String.Join(',', FileExtensions.Cuesheet, FileExtensions.Projectfile)" />
+                @foreach (var invalidFileName in invalidDropFileNames)
+                {
+                    <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ShowCloseIcon CloseIconClicked="() => invalidDropFileNames.Remove(invalidFileName)">
+                        @String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)
+                    </MudAlert>
+                }
+            </MudCardContent>
+        </MudCard>
+        <br />
+    </DialogContent>
+</MudDialog>
+
+@code {
+    //TODO: localize
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    string dropFileInputId = "dropFileInputId_SelectFileDialog";
+    List<String> invalidDropFileNames = new();
+
+    async Task InputFilesChanged(IReadOnlyCollection<IBrowserFile> files)
+    {
+        invalidDropFileNames.Clear();
+        foreach (var file in files)
+        {
+            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
+                && (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false))
+            {
+                invalidDropFileNames.Add(file.Name);
+            }
+        }
+        if (invalidDropFileNames.Count == 0)
+        {
+            await _importManager.ImportFilesAsync(files);
+            MudDialog?.Close();
+        }
+    }
+}

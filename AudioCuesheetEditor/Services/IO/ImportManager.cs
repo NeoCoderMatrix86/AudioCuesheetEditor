@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.Services.IO
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
                     if (cuesheet != null)
                     {
-                        _sessionStateContainer.ImportCuesheet = cuesheet;
+                        _sessionStateContainer.Cuesheet = cuesheet;
                     }
                     importFileTypes.Add(file, ImportFileType.ProjectFile);
                 }
@@ -114,9 +114,7 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
-                var importCuesheet = new Cuesheet();
-                CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
-                _sessionStateContainer.ImportCuesheet = importCuesheet;
+                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
             }
         }
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)

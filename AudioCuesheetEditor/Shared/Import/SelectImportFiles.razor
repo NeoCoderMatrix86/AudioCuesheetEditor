@@ -29,10 +29,10 @@ along with Foobar.  If not, see
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent id="@dropFileInputId">
-        <DropFileInput OnFilesSelected="InputFilesChanged" Filter="@String.Join(',', FileMimeTypes.Text, FileExtensions.Cuesheet, FileExtensions.Projectfile)" />
+        <DropFileInput OnFilesSelected="InputFilesChanged" Filter="@FileMimeTypes.Text" />
         @foreach (var invalidFileName in invalidDropFileNames)
         {
-            <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ShowCloseIcon>
+            <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ShowCloseIcon CloseIconClicked="() => CloseInvalidFileClicked(invalidFileName)">
                 @String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)
             </MudAlert>
         }
@@ -55,9 +55,7 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in files)
         {
-            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
-                && (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false)
-                && (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
+            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
                 && (FileInputManager.GetAudioCodec(file) == null))
             {
                 invalidDropFileNames.Add(file.Name);
@@ -89,5 +87,11 @@ along with Foobar.  If not, see
             }
         }
         await FilesImported.InvokeAsync(importedFiles);
+    }
+
+    async Task CloseInvalidFileClicked(string invalidFile)
+    {
+        invalidDropFileNames.Remove(invalidFile);
+        await InvalidFilesChanged.InvokeAsync(invalidDropFileNames);
     }
 }
