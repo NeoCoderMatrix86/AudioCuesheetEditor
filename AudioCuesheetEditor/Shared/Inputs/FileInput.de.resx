@@ -120,7 +120,7 @@
   <data name="No file selected" xml:space="preserve">
     <value>Keine Datei ausgewählt</value>
   </data>
-  <data name="Pick file" xml:space="preserve">
-    <value>Datei auswählen</value>
+  <data name="Search" xml:space="preserve">
+    <value>Durchsuchen</value>
   </data>
 </root>

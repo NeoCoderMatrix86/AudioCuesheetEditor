@@ -120,7 +120,7 @@
   <data name="No file selected" xml:space="preserve">
     <value>No file selected</value>
   </data>
-  <data name="Pick file" xml:space="preserve">
-    <value>Pick file</value>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
   </data>
 </root>
