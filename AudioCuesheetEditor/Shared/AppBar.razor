@@ -23,6 +23,8 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject SessionStateContainer _sessionStateContainer
 @inject IJSRuntime _jsRuntime
+@inject SessionStateContainer _sessionStateContainer
+@inject IBlazorDownloadFileService _blazorDownloadFileService
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
@@ -42,6 +44,7 @@ along with Foobar.  If not, see
     {
         <MudMenu Label="@_localizer["File"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.ImportExport">
             <MudMenuItem Icon="@Icons.Material.Outlined.FileOpen" OnClick="OpenFileClicked">@_localizer["Open"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadAudio" Disabled="_sessionStateContainer.Cuesheet?.Audiofile == null">@_localizer["Download audio file"]</MudMenuItem>
             <MudMenu Label="@_localizer["Export"]" StartIcon="@Icons.Material.Outlined.FileDownload">
                 <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadCuesheetClicked">@_localizer["Cuesheet"]</MudMenuItem>
                 <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="DownloadProjectfileClicked">@_localizer["Projectfile"]</MudMenuItem>
@@ -165,5 +168,14 @@ along with Foobar.  If not, see
     {
         var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
         await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
+    }
+
+    void DownloadAudio()
+    {
+        var audioFile = _sessionStateContainer.Cuesheet?.Audiofile;
+        if (audioFile != null)
+        {
+            _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
+        }
     }
 }
