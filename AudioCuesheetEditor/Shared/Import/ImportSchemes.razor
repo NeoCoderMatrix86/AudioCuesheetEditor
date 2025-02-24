@@ -20,8 +20,12 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ImportSchemes> _localizer
 @inject ValidationService _validationService
+@inject IDialogService _dialogService
 
-<MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>
+<MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+    <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>
+    <MudIconButton Icon="@Icons.Material.Outlined.LockReset" Color="Color.Warning" Variant="Variant.Filled" OnClick="ResetSchemes" />
+</MudStack>
 <MudStack Row AlignItems="AlignItems.Baseline">
     <MudTextField T="string" @ref="importSchemeCuesheetTextField" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" 
                   TextChanged="ImportSchemeCuesheetTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))) == false" 
@@ -57,8 +61,6 @@ along with Foobar.  If not, see
 </MudStack>
 
 @code {
-    //TODO: Reset of schemes
-
     [Parameter]
     public EventCallback<string> ImportSchemeCuesheetChanged { get; set; }
 
@@ -105,5 +107,27 @@ along with Foobar.  If not, see
             }
         }
         return validationErrorMessage;
+    }
+
+    async Task ResetSchemes()
+    {
+        if (ApplicationOptions != null)
+        {
+            var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
+        };
+            var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+            var result = await dialog.Result;
+            if (result?.Canceled == false)
+            {
+                ApplicationOptions.ImportScheme = TextImportScheme.DefaultTextImportScheme;
+                ApplicationOptions.ImportTimeSpanFormat = new();
+                await LocalStorageOptionsProvider.SaveOptions(ApplicationOptions);
+                await ImportSchemeCuesheetChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeCuesheet);
+                await ImportSchemeTracksChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeTracks);
+                await ImportTimeInputFormatChanged.InvokeAsync(ApplicationOptions.ImportTimeSpanFormat.Scheme);
+            }
+        }
     }
 }
