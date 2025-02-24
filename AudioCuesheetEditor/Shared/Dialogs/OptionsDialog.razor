@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<OptionsDialog> _localizer
+@inject ValidationService _validationService
 
 <MudDialog>
     <TitleContent>
@@ -29,7 +30,9 @@ along with Foobar.  If not, see
                 <MudText Typo="Typo.h6">@_localizer["Input"]</MudText>
                 <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
                 <MudStack Row AlignItems="AlignItems.Baseline">
-                    <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" Clearable />
+                    <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
+                                  Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
+                                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
                     <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
                         @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
                         {
@@ -46,7 +49,6 @@ along with Foobar.  If not, see
     //TODO: Develop the options dialog
     //TODO: Localize
     //TODO: Add record options
-    //TODO: Validation for timespan format input
     //TODO: Add option how time spans are displayed
     MudTextField<string>? timeInputFormatTextField;
 
@@ -71,5 +73,19 @@ along with Foobar.  If not, see
     void AppendPlaceholderToTimeInputFormatTextField(string placeholder)
     {
         timeInputFormatTextField?.SetText($"{timeInputFormatTextField.Text}{placeholder}");
+    }
+
+    String? GetValidationErrorMessage(object? model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        if (model != null)
+        {
+            var validationMessages = _validationService.Validate(model, propertyName);
+            if (validationMessages.Count() > 0)
+            {
+                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+            }
+        }
+        return validationErrorMessage;
     }
 }
