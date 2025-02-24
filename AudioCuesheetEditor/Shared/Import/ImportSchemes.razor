@@ -116,9 +116,9 @@ along with Foobar.  If not, see
         if (ApplicationOptions != null)
         {
             var parameters = new DialogParameters<ConfirmDialog>
-        {
-            { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
-        };
+            {
+                { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
+            };
             var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
             var result = await dialog.Result;
             if (result?.Canceled == false)
