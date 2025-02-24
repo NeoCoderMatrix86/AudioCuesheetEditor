@@ -19,10 +19,13 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ImportSchemes> _localizer
+@inject ValidationService _validationService
 
 <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>
 <MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" @ref="importSchemeCuesheetTextField" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" TextChanged="ImportSchemeCuesheetTextChangedAsync" Clearable />
+    <MudTextField T="string" @ref="importSchemeCuesheetTextField" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" 
+                  TextChanged="ImportSchemeCuesheetTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))) == false" 
+                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))" />
     <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
         @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
         {
@@ -31,7 +34,9 @@ along with Foobar.  If not, see
     </MudMenu>
 </MudStack>
 <MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" @ref="importSchemeTracksTextField" Label="@_localizer["Textimport scheme tracks"]" Text="@ApplicationOptions?.ImportScheme.SchemeTracks" TextChanged="ImportSchemeTracksTextChangedAsync" Clearable />
+    <MudTextField T="string" @ref="importSchemeTracksTextField" Label="@_localizer["Textimport scheme tracks"]" Text="@ApplicationOptions?.ImportScheme.SchemeTracks" 
+                  TextChanged="ImportSchemeTracksTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeTracks))) == false"
+                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeTracks))" />
     <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
         @foreach (var scheme in TextImportScheme.AvailableSchemesTrack)
         {
@@ -40,7 +45,9 @@ along with Foobar.  If not, see
     </MudMenu>
 </MudStack>
 <MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" @ref="importTimeInputFormatTextField" Label="@_localizer["Time input format for import"]" Text="@ApplicationOptions?.ImportTimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync" Clearable />
+    <MudTextField T="string" @ref="importTimeInputFormatTextField" Label="@_localizer["Time input format for import"]" Text="@ApplicationOptions?.ImportTimeSpanFormat?.Scheme" 
+                  TextChanged="ImportTimeInputFormatChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportTimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
+                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportTimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
     <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
         @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
         {
@@ -50,8 +57,6 @@ along with Foobar.  If not, see
 </MudStack>
 
 @code {
-    //TODO
-    //TODO: validation
     //TODO: Reset of schemes
 
     [Parameter]
@@ -86,5 +91,19 @@ along with Foobar.  If not, see
     {
         await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportTimeSpanFormat.Scheme, newScheme);
         await ImportTimeInputFormatChanged.InvokeAsync(newScheme);
+    }
+
+    String? GetValidationErrorMessage(object? model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        if (model != null)
+        {
+            var validationMessages = _validationService.Validate(model, propertyName);
+            if (validationMessages.Count() > 0)
+            {
+                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+            }
+        }
+        return validationErrorMessage;
     }
 }
