@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<EditSections> _localizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject ValidationService _validationService
 
 <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddSectionClicked" StartIcon="@Icons.Material.Outlined.Add">@_localizer["Add new section"]</MudButton>
 
@@ -31,27 +32,34 @@ along with Foobar.  If not, see
         </TemplateColumn>
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.Begin, value)" />
+                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.Begin, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.End" Title="@_localizer["End"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.End, value)" />
+                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.End, value)" 
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End))" />
             </EditTemplate>
         </PropertyColumn>
-        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Cuesheet artist"]" />
-        <PropertyColumn Property="x => x.Title" Title="@_localizer["Cuesheet title"]" />
+        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Cuesheet artist"]">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Artist" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Artist))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Title" Title="@_localizer["Cuesheet title"]">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Title" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Title)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Title))" />
+            </EditTemplate>
+        </PropertyColumn>
     </Columns>
 </MudDataGrid>
 
 @code {
-    //TODO
     //TOOD: Localization
     //TODO: Controls column
     //TODO: audiofile column
-    //TODO: Validation for all columns
     //TODO: Tooltip for controls
-    //TODO: options for custom timespanformat
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
@@ -63,5 +71,16 @@ along with Foobar.  If not, see
             var section = Cuesheet.AddSection();
             TraceChangeManager.TraceChanges(section);
         }
+    }
+
+    String? GetValidationErrorMessage(object model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
+        {
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+        }
+        return validationErrorMessage;
     }
 }
