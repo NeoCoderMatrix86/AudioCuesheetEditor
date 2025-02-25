@@ -37,12 +37,14 @@ along with Foobar.  If not, see
         {
             <MudMenuItem Icon="@Icons.Material.Outlined.FileDownload" Disabled="selectedFile == null" OnClick="() => OnDownloadFileClicked.InvokeAsync(selectedFile)">@_localizer["Download file"]</MudMenuItem>
         }
+        <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="selectedFile == null" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)">@_localizer["Rename file"]</MudMenuItem>
     </MudMenu>
 </MudStack>
 
 @code {
     //TODO: Align items along the MudStack
-    //TODO: Add rename of file
+    //TODO: Localization
+
     [Parameter]
     [EditorRequired]
     public String? Label { get; set; }
@@ -52,6 +54,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback<IBrowserFile?> OnDownloadFileClicked { get; set; }
+
+    [Parameter]
+    public EventCallback<IBrowserFile?> OnFileRenameClicked { get; set; }
 
     [Parameter]
     public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";

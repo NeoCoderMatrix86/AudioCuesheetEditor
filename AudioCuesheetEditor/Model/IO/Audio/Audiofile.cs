@@ -37,6 +37,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
 
         private AudioCodec? audioCodec;
         private Stream? contentStream;
+        private String name = name;
         private bool disposedValue;
 
         public event EventHandler? ContentStreamLoaded;
@@ -51,7 +52,23 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             AudioCodec = audioCodec;
         }
 
-        public String Name { get; private set; } = name;
+        public String Name 
+        {
+            get => name;
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+                var extension = Path.GetExtension(value);
+                if (extension.Equals(audioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
+                {
+                    value = $"{value}{audioCodec?.FileExtension}";
+                }
+                name = value;
+            }
+        }
         [JsonIgnore]
         public String? ObjectURL { get; private set; }
         /// <summary>

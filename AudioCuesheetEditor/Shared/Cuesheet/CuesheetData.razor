@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject FileInputManager _fileInputManager
 @inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject IDialogService _dialogService
 
 @if (Cuesheet != null)
 {
@@ -32,8 +33,8 @@ along with Foobar.  If not, see
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile OnDownloadFileClicked="DownloadAudio" />
-                <FileInput Label="@_localizer["CD Textfile"]" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" />
+                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile OnDownloadFileClicked="DownloadAudio" OnFileRenameClicked="AudioFileRename" />
+                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" />
                 <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
                 break;
         }
@@ -41,8 +42,6 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
-    //TODO: Enable setting the filename of audiofile
-
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
@@ -115,6 +114,54 @@ along with Foobar.  If not, see
         if (audioFile != null)
         {
             await _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
+        }
+    }
+
+    async Task CDTextFileRename()
+    {
+        var newFileName = await ShowInputDialog(Cuesheet?.CDTextfile?.Name);
+        if (String.IsNullOrEmpty(newFileName) == false)
+        {
+            var cdTextFile = Cuesheet?.CDTextfile;
+            if (cdTextFile != null)
+            {
+                cdTextFile.Name = newFileName;
+            }
+        }
+    }
+
+    async Task AudioFileRename()
+    {
+        var newFileName = await ShowInputDialog(Cuesheet?.Audiofile?.Name);
+        if (String.IsNullOrEmpty(newFileName) == false)
+        {
+            var audioFile = Cuesheet?.Audiofile;
+            if (audioFile != null)
+            {
+                audioFile.Name = newFileName;
+            }
+        }
+    }
+
+    async Task<String?> ShowInputDialog(string? initialValue)
+    {
+        var parameters = new DialogParameters<InputTextDialog>
+        {
+            { x => x.Placeholder, _localizer["Enter the new file name here"] },
+            { x => x.Label, _localizer["New file name"] },
+            { x => x.InitialValue, initialValue }
+        };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
+        var result = await dialog.Result;
+        var newFileName = result?.Data as string;
+        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
+        {
+            return newFileName;
+        }
+        else
+        {
+            return null;
         }
     }
 }
