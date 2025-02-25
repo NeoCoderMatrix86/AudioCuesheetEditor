@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.UI;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -32,9 +33,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public IEnumerable<Track> Tracks { get; } = tracks;
     }
 
-    public class CuesheetSectionAddRemoveEventArgs(CuesheetSection section) : EventArgs
+    public class CuesheetSectionsAddRemoveEventArgs(IEnumerable<CuesheetSection> sections) : EventArgs
     {
-        public CuesheetSection Section { get; } = section;
+        public IEnumerable<CuesheetSection> Sections { get; } = sections;
     }
 
     public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable, ITraceable, ICuesheet
@@ -55,8 +56,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler<TracksAddedRemovedEventArgs>? TracksAdded;
         public event EventHandler<TracksAddedRemovedEventArgs>? TracksRemoved;
-        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionAdded;
-        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionRemoved;
+        public event EventHandler<CuesheetSectionsAddRemoveEventArgs>? SectionsAdded;
+        public event EventHandler<CuesheetSectionsAddRemoveEventArgs>? SectionsRemoved;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -189,26 +190,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public TraceChangeManager? TraceChangeManager { get; } = traceChangeManager;
 
+        //TODO: Unit Tests
         public CuesheetSection AddSection()
         {
             var previousValue = new List<CuesheetSection>(sections);
             var section = new CuesheetSection(this);
             sections.Add(section);
-            SectionAdded?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
+            SectionsAdded?.Invoke(this, new CuesheetSectionsAddRemoveEventArgs([section]));
             OnTraceablePropertyChanged(previousValue, nameof(Sections));
             return section;
         }
 
-        public void RemoveSection(CuesheetSection section)
+        //TODO: Unit Tests
+        public void RemoveSections(IEnumerable<CuesheetSection> sectionsToRemove)
         {
             var previousValue = new List<CuesheetSection>(sections);
-            if (sections.Remove(section))
-            {
-                OnTraceablePropertyChanged(previousValue, nameof(Sections));
-                SectionRemoved?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
-            }
+            var intersection = sections.Intersect(sectionsToRemove);
+            sections = sections.Except(intersection).ToList();
+            OnTraceablePropertyChanged(previousValue, nameof(Sections));
+            SectionsRemoved?.Invoke(this, new CuesheetSectionsAddRemoveEventArgs(intersection));
         }
 
+        //TODO: Unit Tests
         public CuesheetSection? GetSectionAtTrack(Track track)
         {
             return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
