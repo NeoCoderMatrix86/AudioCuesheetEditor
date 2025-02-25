@@ -19,9 +19,9 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<CuesheetData> _localizer
-@inject SessionStateContainer _sessionStateContainer
 @inject ValidationService _validationService
 @inject FileInputManager _fileInputManager
+@inject IBlazorDownloadFileService _blazorDownloadFileService
 
 @if (Cuesheet != null)
 {
@@ -32,12 +32,12 @@ along with Foobar.  If not, see
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" />
+                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile OnDownloadFileClicked="DownloadAudio" />
                 <FileInput Label="@_localizer["CD Textfile"]" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" />
                 <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
                 break;
         }
-        
+
     </MudForm>
 }
 @code {
@@ -106,6 +106,15 @@ along with Foobar.  If not, see
         catch (ArgumentException ae)
         {
             fileInputCDTextfileErrorText = ae.Message;
+        }
+    }
+
+    async Task DownloadAudio()
+    {
+        var audioFile = Cuesheet?.Audiofile;
+        if (audioFile != null)
+        {
+            await _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
         }
     }
 }

@@ -18,28 +18,40 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<FileInput> _localizer
+@inject IBlazorDownloadFileService _blazorDownloadFileService
 
 <MudStack Row StretchItems="StretchItems.Start" id="@Id">
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                   @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
+    @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
         <ActivatorContent>
             <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile"
-                          Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
+            Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
         </ActivatorContent>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
         <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Search"]</MudButton>
     </MudHidden>
     <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
+    <MudMenu Style="height: 56px; margin-top: 8px;" Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
+        @if (DisplayDownloadFile)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.FileDownload" Disabled="selectedFile == null" OnClick="() => OnDownloadFileClicked.InvokeAsync(selectedFile)">@_localizer["Download file"]</MudMenuItem>
+        }
+    </MudMenu>
 </MudStack>
 
 @code {
+    //TODO: Align items along the MudStack
+    //TODO: Add rename of file
     [Parameter]
     [EditorRequired]
     public String? Label { get; set; }
 
     [Parameter]
     public EventCallback<IBrowserFile?> OnFileSelected { get; set; }
+
+    [Parameter]
+    public EventCallback<IBrowserFile?> OnDownloadFileClicked { get; set; }
 
     [Parameter]
     public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";
@@ -52,6 +64,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public String? FileName { get; set; }
+
+    [Parameter]
+    public Boolean DisplayDownloadFile { get; set; } = false;
 
     IBrowserFile? selectedFile;
     MudFileUpload<IBrowserFile>? fileUpload;
@@ -79,5 +94,6 @@ along with Foobar.  If not, see
         selectedFile = browserFile;
         FileName = selectedFile?.Name;
         await OnFileSelected.InvokeAsync(selectedFile);
+
     }
 }
