@@ -48,19 +48,25 @@ along with Foobar.  If not, see
             }
         </MudStack>
         <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="OnPlayOrPauseClicked" />
+            <MudTooltip Text="@_localizer["Play or pause the current audio"]">
+                <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="OnPlayOrPauseClicked" />
+            </MudTooltip>
             <MudButtonGroup OverrideStyles="false">
-                <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="() => _playbackService.PlayPreviousTrackAsync()" />
-                <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" Disabled="!_playbackService.PlaybackPossible" />
-                <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="() => _playbackService.PlayNextTrackAsync()" />
+                <MudTooltip Text="@_localizer["Jump to previous track"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="() => _playbackService.PlayPreviousTrackAsync()" />
+                </MudTooltip>
+                <MudTooltip Text="@_localizer["Stop the current playback"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" Disabled="!_playbackService.PlaybackPossible" />
+                </MudTooltip>
+                <MudTooltip Text="@_localizer["Jump to next track"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="() => _playbackService.PlayNextTrackAsync()" />
+                </MudTooltip>
             </MudButtonGroup>
         </MudStack>
     </MudCardContent>
 </MudCard>
 
 @code {
-    //TODO
-    //TODO: Tooltips für play, next, stop, etc.
     //TODO: Localization
     //TODO: Slider should display the value in tooltip (like vlc does)
     //TODO: Media Keyboard mapping
