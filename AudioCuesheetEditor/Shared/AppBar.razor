@@ -62,6 +62,7 @@ along with Foobar.  If not, see
         }
         <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="help">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="DisplayHotkeys">@_localizer["Hotkeys"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
         @if (DisplayReset)
         {
@@ -76,7 +77,6 @@ along with Foobar.  If not, see
 @code {    
     //TODO: Tooltips undo/redo
     //TODO: Tooltips for export options
-    //TODO: Include keyboard shortcuts display to 3 dots menu
     //TODO: Localization
     //TODO: Bug: Switching the language doesn't reload the application texts
 
@@ -165,5 +165,11 @@ along with Foobar.  If not, see
     {
         var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
         await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
+    }
+
+    async Task DisplayHotkeys()
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
+        await _dialogService.ShowAsync<DisplayHotkeysDialog>(_localizer["Hotkeys"], options);
     }
 }
