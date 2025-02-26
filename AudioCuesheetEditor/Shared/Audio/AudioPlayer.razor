@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<AudioPlayer> _localizer
 @inject PlaybackService _playbackService
+@inject HotKeys _hotKeys
 
 <MudCard>
     <MudCardHeader>
@@ -53,13 +54,13 @@ along with Foobar.  If not, see
             </MudTooltip>
             <MudButtonGroup OverrideStyles="false">
                 <MudTooltip Text="@_localizer["Jump to previous track"]">
-                    <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="() => _playbackService.PlayPreviousTrackAsync()" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="PlayPreviousTrackAsync" />
                 </MudTooltip>
                 <MudTooltip Text="@_localizer["Stop the current playback"]">
-                    <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="() => _playbackService.StopAsync()" Disabled="!_playbackService.PlaybackPossible" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="StopAsync" Disabled="!_playbackService.PlaybackPossible" />
                 </MudTooltip>
                 <MudTooltip Text="@_localizer["Jump to next track"]">
-                    <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="() => _playbackService.PlayNextTrackAsync()" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="PlayNextTrackAsync" />
                 </MudTooltip>
             </MudButtonGroup>
         </MudStack>
@@ -69,25 +70,48 @@ along with Foobar.  If not, see
 @code {
     //TODO: Localization
     //TODO: Slider should display the value in tooltip (like vlc does)
-    //TODO: Media Keyboard mapping
 
     double sliderValue;
+    HotKeysContext? hotKeysContext;
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
         _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
+        hotKeysContext?.DisposeAsync();
     }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKey.Ctrl, Key.p, OnPlayOrPauseClicked)
+            .Add(ModKey.Ctrl, Key.ArrowRight, PlayNextTrackAsync)
+            .Add(ModKey.Ctrl, Key.ArrowLeft, PlayPreviousTrackAsync)
+            .Add(Key.MediaPlayPause, OnPlayOrPauseClicked)
+            .Add(Key.MediaTrackNext, PlayNextTrackAsync)
+            .Add(Key.MediaTrackPrevious, PlayPreviousTrackAsync)
+            .Add(Key.MediaStop, StopAsync);
     }
 
     async Task OnPlayOrPauseClicked()
     {
         await _playbackService.PlayOrPauseAsync();
+    }
+
+    async Task PlayPreviousTrackAsync()
+    {
+        await _playbackService.PlayPreviousTrackAsync();
+    }
+
+    async Task PlayNextTrackAsync()
+    {
+        await _playbackService.PlayNextTrackAsync();
+    }
+    async Task StopAsync()
+    {
+        await _playbackService.StopAsync();
     }
 
     async Task OnSliderValueChanged(double newValue)
