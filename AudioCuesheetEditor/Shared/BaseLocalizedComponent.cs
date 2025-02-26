@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components;
 
@@ -34,13 +35,18 @@ namespace AudioCuesheetEditor.Shared
 
         public ApplicationOptions? ApplicationOptions { get; private set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
-            await base.OnInitializedAsync();
+            base.OnInitialized();
             LocalizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
             TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
             TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
             TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
             ApplicationOptions = await LocalStorageOptionsProvider.GetOptions<ApplicationOptions>();
             LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         }
