@@ -114,6 +114,10 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" >
             <EditTemplate>
+                @if (_playbackService.CurrentlyPlayingTrack == context.Item)
+                {
+                    <MudIcon Icon="@Icons.Material.Outlined.Audiotrack" Title="@_localizer["Currently playing this track"]" />
+                }
                 @if (Cuesheet?.GetSection(context.Item) != null)
                 {
                     <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
@@ -138,7 +142,6 @@ along with Foobar.  If not, see
 @code {
     //TODO: Localization
     //TODO: reduce column width for timespans
-    //TODO: currently played track should be marked
     //TODO: Currently loading of autocomplete is needed to enter a free value
     //TODO: Pin header
     //TODO: Virtualize?
@@ -153,6 +156,18 @@ along with Foobar.  If not, see
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
+    }
 
     void AddTrackClicked()
     {
@@ -285,5 +300,10 @@ along with Foobar.  If not, see
         {
             return @Icons.Material.Outlined.VerticalAlignCenter;
         }
+    }
+
+    void PlaybackService_CurrentPositionChanged()
+    {
+        StateHasChanged();
     }
 }
