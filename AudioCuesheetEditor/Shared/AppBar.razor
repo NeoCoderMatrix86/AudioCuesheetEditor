@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject SessionStateContainer _sessionStateContainer
 @inject IJSRuntime _jsRuntime
+@inject HotKeys _hotKeys
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
@@ -74,11 +75,27 @@ along with Foobar.  If not, see
     </MudMenu>
 </MudAppBar>
 
-@code {    
+@code {
     //TODO: Tooltips undo/redo
     //TODO: Tooltips for export options
     //TODO: Localization
     //TODO: Bug: Switching the language doesn't reload the application texts
+
+    HotKeysContext? hotKeysContext;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKey.Ctrl, Key.z, () => TraceChangeManager.Undo())
+            .Add(ModKey.Ctrl, Key.y, () => TraceChangeManager.Redo());
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        hotKeysContext?.DisposeAsync();
+    }
 
     [Parameter]
     public Boolean DisplayUndoRedoButtonGroup { get; set; }
