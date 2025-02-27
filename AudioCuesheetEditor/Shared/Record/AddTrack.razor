@@ -25,9 +25,9 @@ along with Foobar.  If not, see
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Text="@currentRecordingTrack.Artist"
-                             ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
-                             Disabled="Cuesheet?.IsRecording == false">
+            ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
+            Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
+            Disabled="Cuesheet?.IsRecording == false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -40,9 +40,9 @@ along with Foobar.  If not, see
                 </ItemTemplate>
             </MudAutocomplete>
             <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => SearchTitle(value, token)" ToStringFunc="(value) => value.Title"
-                             Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="(value) => currentRecordingTrack.Title = value?.Title"
-                             ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
-                             ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false">
+            Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="(value) => currentRecordingTrack.Title = value?.Title"
+            ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
+            ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -169,5 +169,7 @@ along with Foobar.  If not, see
     void Cuesheet_IsRecordingChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+        artistInput?.ClearAsync();
+        titleInput?.ClearAsync();
     }
 }
