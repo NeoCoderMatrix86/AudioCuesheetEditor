@@ -58,6 +58,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler<TracksAddedRemovedEventArgs>? TracksRemoved;
         public event EventHandler<CuesheetSectionsAddRemoveEventArgs>? SectionsAdded;
         public event EventHandler<CuesheetSectionsAddRemoveEventArgs>? SectionsRemoved;
+        public event EventHandler? IsRecordingChanged;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -399,6 +400,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public void StartRecording()
         {
             recordingStart = DateTime.UtcNow;
+            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void StopRecording()
@@ -410,6 +412,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 lastTrack.End = DateTime.UtcNow - recordingStart.Value;
             }
             recordingStart = null;
+            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public override ValidationResult Validate(string property)
