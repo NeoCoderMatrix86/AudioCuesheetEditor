@@ -118,6 +118,10 @@ along with Foobar.  If not, see
                 {
                     <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
                 }
+                @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
+                {
+                    <MudIconButton Icon="@GetLinkedTrackIcon(context.Item)" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
+                }
             </EditTemplate>
         </TemplateColumn>
     </Columns>
@@ -267,6 +271,18 @@ along with Foobar.  If not, see
         if (trackContextMenu != null)
         {
             await trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
+        }
+    }
+
+    String GetLinkedTrackIcon(Track track)
+    {
+        if (track.IsLinkedToPreviousTrack)
+        {
+            return @Icons.Material.Outlined.Height;
+        }
+        else
+        {
+            return @Icons.Material.Outlined.VerticalAlignCenter;
         }
     }
 }
