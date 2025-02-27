@@ -44,7 +44,8 @@ along with Foobar.  If not, see
                              DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
                              DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
                              MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
-                             MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)" />
+                             MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
+                             CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()" />
 }
 
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
@@ -135,7 +136,7 @@ along with Foobar.  If not, see
     @if (contextMenuTrack != null)
     {
         <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
-        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="CopyTrackClicked">@_localizer["Duplicate this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
     }
 </MudMenu>
 
@@ -265,11 +266,16 @@ along with Foobar.  If not, see
         return validationErrorMessage;
     }
 
-    async Task CopyTrackClicked()
+    async Task CopyTrackClicked(Track? trackToCopy = null)
     {
-        if (contextMenuTrack != null)
+        var trackThatWillBeCopied = trackToCopy;
+        if (trackThatWillBeCopied == null)
         {
-            var copy = new Track(contextMenuTrack);
+            trackThatWillBeCopied = selectedTracks.FirstOrDefault();
+        }
+        if (trackThatWillBeCopied != null)
+        {
+            var copy = new Track(trackThatWillBeCopied);
             Cuesheet?.AddTrack(copy);
             TraceChangeManager.TraceChanges(copy);
             await EditTrackModalClicked(copy);

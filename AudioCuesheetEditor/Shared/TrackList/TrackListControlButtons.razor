@@ -27,6 +27,12 @@ along with Foobar.  If not, see
         <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled" />
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+        <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" StartIcon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled">@_localizer["Copy selected track"]</MudButton>
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp">
+        <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" />
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
         <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled">@_localizer["Delete selected tracks"]</MudButton>
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.LgAndUp">
@@ -47,6 +53,7 @@ along with Foobar.  If not, see
 @code {
     //TODO: Tooltips
     //TODO: Localization
+    //TODO: Add Button for copying a track
 
     [Parameter]
     public EventCallback AddButtonClicked { get; set; }
@@ -56,6 +63,12 @@ along with Foobar.  If not, see
     
     [Parameter]
     public Boolean EditSelectedTracksDisabled { get; set; }
+
+    [Parameter]
+    public EventCallback CopySelectedTracksClicked { get; set; }
+
+    [Parameter]
+    public Boolean CopySelectedTracksDisabled { get; set; }
 
     [Parameter]
     public EventCallback DeleteSelectedTracksClicked { get; set; }
