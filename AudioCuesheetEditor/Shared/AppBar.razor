@@ -88,7 +88,8 @@ along with Foobar.  If not, see
         base.OnInitialized();
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKey.Ctrl, Key.z, () => TraceChangeManager.Undo())
-            .Add(ModKey.Ctrl, Key.y, () => TraceChangeManager.Redo());
+            .Add(ModKey.Ctrl, Key.y, () => TraceChangeManager.Redo())
+            .Add(ModKey.Ctrl, Key.h, () => _navigationManager.NavigateTo("help"));
     }
 
     protected override void Dispose(bool disposing)
