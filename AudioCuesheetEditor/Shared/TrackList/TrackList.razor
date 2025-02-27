@@ -54,14 +54,14 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView">
             <EditTemplate>
                 <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
-                ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
-                ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
-                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
+                                 ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
+                                 Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -78,9 +78,9 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
-                Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
-                ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
+                                 Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                                 ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))">
                     <ItemTemplate Context="autocompleteContext">
                         @if (autocompleteContext.Disambiguation != null)
                         {
@@ -97,19 +97,19 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView">
             <EditTemplate>
                 <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
-                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView">
             <EditTemplate>
                 <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
-                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView">
             <EditTemplate>
                 <MudTextField Value="@context.Item.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
-                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
             </EditTemplate>
         </PropertyColumn>
     </Columns>
