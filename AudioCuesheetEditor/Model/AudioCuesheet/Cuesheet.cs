@@ -33,11 +33,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public IEnumerable<Track> Tracks { get; } = tracks;
     }
 
-    public class CuesheetSectionsAddRemoveEventArgs(IEnumerable<CuesheetSection> sections) : EventArgs
-    {
-        public IEnumerable<CuesheetSection> Sections { get; } = sections;
-    }
-
     public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable, ITraceable, ICuesheet
     {
         private readonly Lock syncLock = new();
@@ -52,12 +47,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
         private List<CuesheetSection> sections = [];
 
-        public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-        public event EventHandler<TracksAddedRemovedEventArgs>? TracksAdded;
-        public event EventHandler<TracksAddedRemovedEventArgs>? TracksRemoved;
-        public event EventHandler<CuesheetSectionsAddRemoveEventArgs>? SectionsAdded;
-        public event EventHandler<CuesheetSectionsAddRemoveEventArgs>? SectionsRemoved;
         public event EventHandler? IsRecordingChanged;
 
         [JsonInclude]
@@ -124,7 +114,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         RecalculateLastTrackEnd();
                     }
                 }
-                FireEvents(previousValue, fireAudioFileChanged: true, propertyName: nameof(Audiofile));
+                FireEvents(previousValue, propertyName: nameof(Audiofile));
             }
         }
 
@@ -197,7 +187,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             var previousValue = new List<CuesheetSection>(sections);
             var section = new CuesheetSection(this);
             sections.Add(section);
-            SectionsAdded?.Invoke(this, new CuesheetSectionsAddRemoveEventArgs([section]));
             OnTraceablePropertyChanged(previousValue, nameof(Sections));
             return section;
         }
@@ -209,7 +198,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             var intersection = sections.Intersect(sectionsToRemove);
             sections = sections.Except(intersection).ToList();
             OnTraceablePropertyChanged(previousValue, nameof(Sections));
-            SectionsRemoved?.Invoke(this, new CuesheetSectionsAddRemoveEventArgs(intersection));
         }
 
         //TODO: Unit Tests
@@ -256,10 +244,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             ReCalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            if (IsImporting == false)
-            {
-                TracksAdded?.Invoke(this, new TracksAddedRemovedEventArgs([track]));
-            }
         }
 
         public void RemoveTrack(Track track)
@@ -298,7 +282,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs([track]));
         }
 
         /// <summary>
@@ -332,7 +315,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs(intersection));
         }
         //TODO: Unit Tests
         public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
@@ -716,12 +698,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Method for checking if fire of events should be done
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireAudioFileChanged">Fire AudioFileChanged?</param>
         /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -729,10 +710,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var propertyValue = propertyInfo.GetValue(this);
                 if (Equals(propertyValue, previousValue) == false)
                 {
-                    if (fireAudioFileChanged)
-                    {
-                        AudioFileChanged?.Invoke(this, EventArgs.Empty);
-                    }
                     if (fireValidateablePropertyChanged)
                     {
                         OnValidateablePropertyChanged(propertyName);

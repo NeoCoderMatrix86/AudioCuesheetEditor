@@ -189,11 +189,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
-            bool eventFired = false;
-            sessionStateContainer.Cuesheet.TracksAdded += delegate
-            {
-                eventFired = true;
-            };
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
@@ -203,7 +198,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet.Artist);
             Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet.Cataloguenumber);
             Assert.AreNotEqual(0, sessionStateContainer.ImportCuesheet.Tracks.Count);
-            Assert.IsFalse(eventFired);
         }
 
         [TestMethod()]
@@ -230,11 +224,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
-            bool eventFired = false;
-            sessionStateContainer.Cuesheet.TracksAdded += delegate
-            {
-                eventFired = true;
-            };
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             importManager.ImportCuesheet();
             // Act
@@ -245,7 +234,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             Assert.IsTrue(string.IsNullOrEmpty(sessionStateContainer.Cuesheet.Cataloguenumber));
             Assert.IsFalse(traceChangeManager.CanUndo);
             Assert.IsTrue(traceChangeManager.CanRedo);
-            Assert.IsFalse(eventFired);
         }
 
         [TestMethod()]
@@ -273,11 +261,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
-            bool eventFired = false;
-            sessionStateContainer.Cuesheet.TracksAdded += delegate
-            {
-                eventFired = true;
-            };
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             traceChangeManager.Undo();
             // Act
@@ -286,8 +269,6 @@ namespace AudioCuesheetEditor.Tests.Model.UI
             Assert.AreEqual("DJFreezeT", sessionStateContainer.ImportCuesheet?.Artist);
             Assert.AreEqual("0123456789123", sessionStateContainer.ImportCuesheet?.Cataloguenumber);
             Assert.AreEqual(39, sessionStateContainer.ImportCuesheet?.Tracks.Count);
-            Assert.IsFalse(eventFired);
-
         }
 
         [TestMethod()]
