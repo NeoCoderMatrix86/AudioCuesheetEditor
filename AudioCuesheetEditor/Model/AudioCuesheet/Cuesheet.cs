@@ -201,7 +201,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         //TODO: Unit Tests
-        public CuesheetSection? GetSectionAtTrack(Track track)
+        public CuesheetSection? GetSection(Track track)
         {
             return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
         }
