@@ -141,10 +141,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         [JsonIgnore]
-        public bool IsRecording
-        {
-            get { return RecordingTime.HasValue; }
-        }
+        public bool IsRecording => RecordingTime.HasValue;
 
         public TimeSpan? RecordingTime
         {
@@ -158,6 +155,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     return null;
                 }
+            }
+        }
+
+        //TODO: Unit Tests
+        public IEnumerable<String> IsRecordingPossible
+        {
+            get
+            {
+                var errors = new List<String>();
+                if (IsRecording)
+                {
+                    errors.Add("Record is already running!");
+                }
+                if (Tracks.Count != 0)
+                {
+                    errors.Add("Cuesheet already contains tracks!");
+                }
+                if (Audiofile?.IsRecorded == true)
+                {
+                    errors.Add("A recording is already available!");
+                }
+                return errors;
             }
         }
 
@@ -379,10 +398,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
+        //TODO: Unit Tests
         public void StartRecording()
         {
-            recordingStart = DateTime.UtcNow;
-            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
+            if (IsRecordingPossible.Any() == false)
+            {
+                recordingStart = DateTime.UtcNow;
+                IsRecordingChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void StopRecording()

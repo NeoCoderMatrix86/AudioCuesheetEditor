@@ -22,12 +22,18 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 
-@if ((Cuesheet?.Tracks.Count != 0) && (Cuesheet?.IsRecording == false))
-{
-    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
-        <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
-        <MudText>@_localizer["The cuesheet already contains tracks, please save your work and remove them to start recording!"]</MudText>
-    </MudAlert>
+@{
+    var recordingPossibleMessages = Cuesheet?.IsRecordingPossible;
+    if ((Cuesheet?.IsRecording == false) && (Cuesheet?.Audiofile?.IsRecorded == false) && (recordingPossibleMessages?.Any() == true))
+    {
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
+            <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
+            @foreach (var recordingPossibleMessage in recordingPossibleMessages)
+            {
+                <MudText>@_localizer[recordingPossibleMessage]</MudText>
+            }
+        </MudAlert>
+    }
 }
 <MudCard Outlined>
     <MudCardContent>
@@ -80,7 +86,7 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
-    public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecording == true || Cuesheet?.Tracks.Count > 0;
+    public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecordingPossible.Any() == true;
 
     protected override void OnInitialized()
     {
