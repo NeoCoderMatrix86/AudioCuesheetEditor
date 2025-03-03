@@ -21,33 +21,29 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 
 <MudDialog>
-    <TitleContent>
-        <MudText Typo="Typo.h5">@_localizer["Options"]</MudText>
-    </TitleContent>
     <DialogContent>
-        <MudTabs Color="Color.Info" Rounded>
-            <MudTabPanel Text="@_localizer["Common"]" Icon="@Icons.Material.Outlined.Settings">
-                <MudText Typo="Typo.h6">@_localizer["Input"]</MudText>
-                <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
-                <MudStack Row AlignItems="AlignItems.Baseline">
-                    <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
-                                  Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
-                                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
-                    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
-                        @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
-                        {
-                            <MudMenuItem OnClick="() => AppendPlaceholderToTimeInputFormatTextField(scheme)">@_localizer[scheme]</MudMenuItem>
-                        }
-                    </MudMenu>
-                </MudStack>
-            </MudTabPanel>
-        </MudTabs>
+        <MudText Typo="Typo.h6"><b>@_localizer["Input"]</b></MudText>
+        <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
+        <MudStack Row AlignItems="AlignItems.Baseline">
+            <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
+                            Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
+                            ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
+            <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+                @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
+                {
+                    <MudMenuItem OnClick="() => AppendPlaceholderToTimeInputFormatTextField(scheme)">@_localizer[scheme]</MudMenuItem>
+                }
+            </MudMenu>
+        </MudStack>
+        <MudText Typo="Typo.h6"><b>@_localizer["Display"]</b></MudText>
     </DialogContent>
 </MudDialog>
 
 @code {
     //TODO: Localize
     //TODO: Add option how time spans are displayed
+    //TODO: Align input for time input format along with the menu at the end
+
     MudTextField<string>? timeInputFormatTextField;
 
     async Task TimeInputFormatChangedAsync(string newValue)
