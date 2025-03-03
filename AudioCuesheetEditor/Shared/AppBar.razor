@@ -34,8 +34,12 @@ along with Foobar.  If not, see
     @if (DisplayUndoRedoButtonGroup)
     {
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
-            <MudIconButton Icon="@Icons.Material.Outlined.Undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()" />
-            <MudIconButton Icon="@Icons.Material.Outlined.Redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()" />
+            <MudTooltip Text="@_localizer["Undo last edit"]">
+                <MudIconButton Icon="@Icons.Material.Outlined.Undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()" />
+            </MudTooltip>
+            <MudTooltip Text="@_localizer["Redo last edit"]">
+                <MudIconButton Icon="@Icons.Material.Outlined.Redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()" />
+            </MudTooltip>
         </MudButtonGroup>
     }
     <MudSpacer />
@@ -76,7 +80,6 @@ along with Foobar.  If not, see
 </MudAppBar>
 
 @code {
-    //TODO: Tooltips undo/redo
     //TODO: Tooltips for export options
     //TODO: Localization
     //TODO: Bug: Switching the language doesn't reload the application texts
