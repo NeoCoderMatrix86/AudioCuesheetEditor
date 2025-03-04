@@ -63,6 +63,9 @@ along with Foobar.  If not, see
         <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" />
     </MudTooltip>
 </MudButtonGroup>
+<MudTooltip Text="@_localizer["Fixed table header"]">
+    <MudToggleIconButton Variant="Variant.Filled" Toggled="FixedHeader" ToggledChanged="FixedHeaderClicked" Icon="@Icons.Material.Outlined.Link" ToggledIcon="@Icons.Material.Outlined.LinkOff" />
+</MudTooltip>
 
 @code {
     //TODO: Localization
@@ -72,7 +75,7 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback EditSelectedTracksClicked { get; set; }
-    
+
     [Parameter]
     public Boolean EditSelectedTracksDisabled { get; set; }
 
@@ -105,4 +108,10 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Boolean MoveTracksDownDisabled { get; set; }
+
+    [Parameter]
+    public Boolean FixedHeader { get; set; }
+
+    [Parameter]
+    public EventCallback FixedHeaderClicked { get; set; }
 }

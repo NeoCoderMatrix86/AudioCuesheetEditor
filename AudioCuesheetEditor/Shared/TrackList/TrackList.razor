@@ -45,11 +45,12 @@ along with Foobar.  If not, see
                              DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
                              MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
                              MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
-                             CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()" />
+                             CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                             FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.FixedTracksTableHeader, !ApplicationOptions?.FixedTracksTableHeader)" />
 }
 
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent">
+             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(ApplicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true">
     <Columns>
         <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
         <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
