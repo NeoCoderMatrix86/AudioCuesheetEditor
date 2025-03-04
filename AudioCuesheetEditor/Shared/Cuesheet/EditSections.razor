@@ -23,19 +23,25 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 
 <MudButtonGroup OverrideStyles="false">
-    <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddSectionClicked" Icon="@Icons.Material.Outlined.Add" />
-    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedSections" StartIcon="@Icons.Material.Outlined.Delete" Disabled="selectedSections.Any() == false">@_localizer["Delete selected sections"]</MudButton>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedSections" Icon="@Icons.Material.Outlined.Delete" Disabled="selectedSections.Any() == false" />
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllSections" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="Cuesheet?.Sections.Any() == false">@_localizer["Delete all sections"]</MudButton>
-    </MudHidden>
-    <MudHidden Breakpoint="Breakpoint.LgAndUp">
-        <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllSections" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="Cuesheet?.Sections.Any() == false" />
-    </MudHidden>
+    <MudTooltip Text="@_localizer["Add new section"]">
+        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddSectionClicked" Icon="@Icons.Material.Outlined.Add" />
+    </MudTooltip>
+    <MudTooltip Text="@_localizer["Delete selected sections"]">
+        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedSections" StartIcon="@Icons.Material.Outlined.Delete" Disabled="selectedSections.Any() == false">@_localizer["Delete selected sections"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedSections" Icon="@Icons.Material.Outlined.Delete" Disabled="selectedSections.Any() == false" />
+        </MudHidden>
+    </MudTooltip>
+    <MudTooltip Text="@_localizer["Delete all sections"]">
+        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllSections" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="Cuesheet?.Sections.Any() == false">@_localizer["Delete all sections"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+            <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllSections" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="Cuesheet?.Sections.Any() == false" />
+        </MudHidden>
+    </MudTooltip>
 </MudButtonGroup>
 
 <MudDataGrid Items="Cuesheet?.Sections" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column"
@@ -75,7 +81,6 @@ MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedSections">
 
 @code {
     //TOOD: Localization
-    //TODO: Tooltip for controls
     HashSet<CuesheetSection> selectedSections = new();
 
     [CascadingParameter]
