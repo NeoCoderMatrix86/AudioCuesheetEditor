@@ -29,12 +29,12 @@ along with Foobar.  If not, see
         </ActivatorContent>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
-        <MudButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Search"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Search"]</MudButton>
     </MudHidden>
-    <MudIconButton Variant="Variant.Filled" Style="height: 56px; margin-top: 8px;" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
+    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
     @if (DisplayMenu)
     {
-        <MudMenu Style="height: 56px; margin-top: 8px;" Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
+        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
             @if (DisplayDownloadFile)
             {
                 <MudMenuItem Icon="@Icons.Material.Outlined.FileDownload" Disabled="selectedFile == null" OnClick="() => OnDownloadFileClicked.InvokeAsync(selectedFile)">@_localizer["Download file"]</MudMenuItem>
@@ -45,7 +45,6 @@ along with Foobar.  If not, see
 </MudStack>
 
 @code {
-    //TODO: Align items along the MudStack
     //TODO: Localization
 
     [Parameter]
