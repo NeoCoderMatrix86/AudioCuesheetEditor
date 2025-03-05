@@ -138,7 +138,7 @@ along with Foobar.  If not, see
     </Columns>
 </MudDataGrid>
 
-<MudMenu PositionAtCursor="true" @ref="trackContextMenu">
+<MudMenu PositionAtCursor @ref="trackContextMenu">
     @if (contextMenuTrack != null)
     {
         <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
