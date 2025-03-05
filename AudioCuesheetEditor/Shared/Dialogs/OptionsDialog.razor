@@ -27,8 +27,8 @@ along with Foobar.  If not, see
         <MudStack Row AlignItems="AlignItems.Baseline">
             <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
                             Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
-                            ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
-            <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+                            ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" Variant="Variant.Outlined" />
+            <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                 @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
                 {
                     <MudMenuItem OnClick="() => AppendPlaceholderToTimeInputFormatTextField(scheme)">@_localizer[scheme]</MudMenuItem>
@@ -40,7 +40,6 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Localize
-    //TODO: Align input for time input format along with the menu at the end
 
     MudTextField<string>? timeInputFormatTextField;
 
