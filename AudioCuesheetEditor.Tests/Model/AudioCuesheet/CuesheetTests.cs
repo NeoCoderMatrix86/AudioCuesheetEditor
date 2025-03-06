@@ -269,18 +269,18 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             track3.Begin = new TimeSpan(0, 5, 15);
             validationResult = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
-
         }
 
         [TestMethod()]
-        public void RemoveTrackTest()
+        public void RemoveTrack_ShouldReCalculate_WithPreviouslyAddedTracks()
         {
+            // Arrange
             var cuesheet = new Cuesheet();
-            var track1 = new Track() { Artist = "1", Title = "1" };
-            var track2 = new Track() { Artist = "2", Title = "2" };
-            var track3 = new Track() { Artist = "3", Title = "3" };
-            var track4 = new Track() { Artist = "4", Title = "4" };
-            var track5 = new Track() { Artist = "5", Title = "5" };
+            var track1 = new Track() { Artist = "1", Title = "1", IsLinkedToPreviousTrack = true };
+            var track2 = new Track() { Artist = "2", Title = "2", IsLinkedToPreviousTrack = true };
+            var track3 = new Track() { Artist = "3", Title = "3" , IsLinkedToPreviousTrack = true };
+            var track4 = new Track() { Artist = "4", Title = "4" , IsLinkedToPreviousTrack = true };
+            var track5 = new Track() { Artist = "5", Title = "5" , IsLinkedToPreviousTrack = true };
             cuesheet.AddTrack(track1);
             cuesheet.AddTrack(track2);
             cuesheet.AddTrack(track3);
@@ -291,48 +291,61 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             track3.End = new TimeSpan(0, 15, 0);
             track4.End = new TimeSpan(0, 20, 0);
             track5.End = new TimeSpan(0, 25, 0);
-            Assert.AreEqual(5, cuesheet.Tracks.Count);
+            // Act
             cuesheet.RemoveTrack(track2);
+            // Assert
             Assert.AreEqual((uint)2, track3.Position);
             Assert.AreEqual((uint)3, track4.Position);
             Assert.AreEqual((uint)4, track5.Position);
-            cuesheet = new Cuesheet();
-            track1 = new Track
+        }
+
+        [TestMethod()]
+        public void RemoveTracks_ShouldRemoveTracks_WithPreviouslyAddedTracks()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track
             {
                 Artist = "Track 1",
-                Title = "Track 1"
+                Title = "Track 1",
+                IsLinkedToPreviousTrack = true
             };
             cuesheet.AddTrack(track1);
-            track2 = new Track
+            var track2 = new Track
             {
                 Title = "Track 2",
                 Artist = "Track 2",
-                Begin = new TimeSpan(0, 5, 0)
+                Begin = new TimeSpan(0, 5, 0),
+                IsLinkedToPreviousTrack = true
             };
             cuesheet.AddTrack(track2);
-            track3 = new Track
+            var track3 = new Track
             {
                 Artist = "Track 3",
                 Title = "Track 3",
-                Begin = new TimeSpan(0, 10, 0)
+                Begin = new TimeSpan(0, 10, 0),
+                IsLinkedToPreviousTrack = true
             };
             cuesheet.AddTrack(track3);
-            track4 = new Track
+            var track4 = new Track
             {
                 Artist = "Track 4",
                 Title = "Track 4",
-                Begin = new TimeSpan(0, 15, 0)
+                Begin = new TimeSpan(0, 15, 0),
+                IsLinkedToPreviousTrack = true
             };
             cuesheet.AddTrack(track4);
-            track5 = new Track
+            var track5 = new Track
             {
                 Artist = "Track 5",
                 Title = "Track 5",
-                Begin = new TimeSpan(0, 20, 0)
+                Begin = new TimeSpan(0, 20, 0), IsLinkedToPreviousTrack = true
             };
             cuesheet.AddTrack(track5);
             var list = new List<Track>() { track2, track4 };
+            // Act
             cuesheet.RemoveTracks(list.AsReadOnly());
+            // Assert
             Assert.AreEqual(3, cuesheet.Tracks.Count);
             Assert.AreEqual(new TimeSpan(0, 5, 0), track3.Begin);
             Assert.AreEqual(new TimeSpan(0, 15, 0), track5.Begin);
