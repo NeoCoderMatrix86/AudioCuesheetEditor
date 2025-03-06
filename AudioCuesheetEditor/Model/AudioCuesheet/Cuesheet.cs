@@ -216,7 +216,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             var previousValue = new List<CuesheetSection>(sections);
             var intersection = sections.Intersect(sectionsToRemove);
-            sections = sections.Except(intersection).ToList();
+            sections = [.. sections.Except(intersection)];
             OnTraceablePropertyChanged(previousValue, nameof(Sections));
         }
 
@@ -315,7 +315,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
             var intersection = tracks.Intersect(tracksToRemove);
-            tracks = tracks.Except(intersection).ToList();
+            tracks = [.. tracks.Except(intersection)];
             foreach (var track in tracks)
             {
                 if (track.IsLinkedToPreviousTrack)
