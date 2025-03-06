@@ -64,9 +64,7 @@ namespace AudioCuesheetEditor.Services.UI
             if (newCulture != null)
             {
                 SelectedCulture = newCulture;
-                CultureInfo.DefaultThreadCurrentCulture = SelectedCulture;
                 CultureInfo.DefaultThreadCurrentUICulture = SelectedCulture;
-                CultureInfo.CurrentCulture = SelectedCulture;
                 CultureInfo.CurrentUICulture = SelectedCulture;
             }
             return newCulture != null;
