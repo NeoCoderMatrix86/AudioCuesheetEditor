@@ -20,6 +20,7 @@ using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Services.UI
 {
+    //TODO: Unit Tests
     public class SessionStateContainer : ISessionStateContainer
     {
         public event EventHandler? CuesheetChanged;
