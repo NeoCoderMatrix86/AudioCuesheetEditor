@@ -13,19 +13,19 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Services.UI;
 using System.Data;
 using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO
 {
     //TODO: Unit Tests
-    public class ExportfileGenerator(SessionStateContainer sessionStateContainer)
+    public class ExportfileGenerator(ISessionStateContainer sessionStateContainer)
     {
-        private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
 
         public IEnumerable<ValidationMessage> CanGenerateExportfiles(Exportprofile? exportprofile)
         {

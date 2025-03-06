@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 
 @inherits BaseLocalizedComponent
 
-@inject SessionStateContainer _sessionStateContainer
+@inject ISessionStateContainer _sessionStateContainer
 @inject IStringLocalizer<Index> _localizer
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>

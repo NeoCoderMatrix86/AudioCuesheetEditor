@@ -18,9 +18,9 @@ using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.UI;
 
-namespace AudioCuesheetEditor.Extensions
+namespace AudioCuesheetEditor.Services.UI
 {
-    public class SessionStateContainer
+    public class SessionStateContainer : ISessionStateContainer
     {
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ImportCuesheetChanged;
@@ -49,11 +49,11 @@ namespace AudioCuesheetEditor.Extensions
                 var previousValue = importCuesheet;
                 importCuesheet = value;
                 //When there is an audiofile from import, we use this file because it has an object url and gets duration, etc.
-                if ((importCuesheet != null) && (ImportAudiofile != null))
+                if (importCuesheet != null && ImportAudiofile != null)
                 {
                     importCuesheet.Audiofile = ImportAudiofile;
                 }
-                if (Object.Equals(previousValue, importCuesheet) == false)
+                if (Equals(previousValue, importCuesheet) == false)
                 {
                     ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
                 }
@@ -66,7 +66,7 @@ namespace AudioCuesheetEditor.Extensions
             set
             {
                 importAudiofile = value;
-                if ((ImportCuesheet != null) && (ImportAudiofile != null))
+                if (ImportCuesheet != null && ImportAudiofile != null)
                 {
                     ImportCuesheet.Audiofile = ImportAudiofile;
                     ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);

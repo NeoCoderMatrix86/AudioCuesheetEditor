@@ -45,7 +45,7 @@ builder.Services.AddBlazorDownloadFile();
 builder.Services.AddScoped<ILocalStorageOptionsProvider, LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
 
-builder.Services.AddScoped<SessionStateContainer>();
+builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
 builder.Services.AddScoped<TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<TextImportService>();

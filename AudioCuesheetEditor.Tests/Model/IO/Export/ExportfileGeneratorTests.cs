@@ -14,710 +14,218 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Tests.Utility;
+using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditor.Services.UI;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.IO;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Model.IO.Export
 {
-    [TestClass()]
+    [TestClass]
     public class ExportfileGeneratorTests
     {
-        //TODO
-        //[TestMethod()]
-        //public void GenerateCuesheetFilesTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        cuesheet.AddTrack(track);
-        //    }
-        //    var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    Assert.AreEqual(Exportfile.DefaultCuesheetFilename, generatedFiles.First().Name);
-        //    var content = generatedFiles.First().Content;
-        //    Assert.IsNotNull(content);
-        //    var fileName = Path.GetTempFileName();
-        //    File.WriteAllBytes(fileName, content);
-        //    var fileContent = File.ReadAllLines(fileName);
-        //    Assert.AreEqual(fileContent[0], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
-        //    Assert.AreEqual(fileContent[1], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-        //    Assert.AreEqual(fileContent[2], string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
-        //    var position = 1;
-        //    for (int i = 3; i < fileContent.Length; i += 4)
-        //    {
-        //        var track = cuesheet.Tracks.Single(x => x.Position == position);
-        //        position++;
-        //        Assert.AreEqual(fileContent[i], string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
-        //        Assert.AreEqual(fileContent[i + 1], string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
-        //        Assert.AreEqual(fileContent[i + 2], string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
-        //        var trackBegin = track.Begin;
-        //        Assert.IsNotNull(trackBegin);
-        //        Assert.AreEqual(fileContent[i + 3], string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75));
-        //    }
-        //    File.Delete(fileName);
-        //    cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
-        //    cuesheet.Cataloguenumber.Value = "0123456789123";
-        //    generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    content = generatedFiles.First().Content;
-        //    Assert.IsNotNull(content);
-        //    fileName = Path.GetTempFileName();
-        //    File.WriteAllBytes(fileName, content);
-        //    fileContent = File.ReadAllLines(fileName);
-        //    Assert.AreEqual(fileContent[0], string.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, cuesheet.Cataloguenumber.Value));
-        //    Assert.AreEqual(fileContent[1], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, cuesheet.CDTextfile.Name));
-        //    File.Delete(fileName);
-        //    cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
-        //    cuesheet.Cataloguenumber.Value = "Testvalue";
-        //    Assert.AreEqual(ValidationStatus.Error, generator.Validate().Status);
-        //    generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(0, generatedFiles.Count);
-        //}
+        private readonly Mock<ISessionStateContainer> mockSessionStateContainer;
+        private readonly ExportfileGenerator exportfileGenerator;
 
-        //[TestMethod()]
-        //public void GenerateCuesheetFilesWithPreGapAndPostGapTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        var rand = new Random();
-        //        var flagsToAdd = rand.Next(1, 3);
-        //        for (int x = 0; x < flagsToAdd; x++)
-        //        {
-        //            track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
-        //        }
-        //        track.PostGap = new TimeSpan(0, 0, 2);
-        //        track.PreGap = new TimeSpan(0, 0, 3);
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //    }
-        //    var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    var content = generatedFiles.First().Content;
-        //    Assert.IsNotNull(content);
-        //    var fileName = Path.GetTempFileName();
-        //    File.WriteAllBytes(fileName, content);
-        //    var fileContent = File.ReadAllLines(fileName);
-        //    Assert.AreEqual(fileContent[0], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
-        //    Assert.AreEqual(fileContent[1], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-        //    Assert.AreEqual(fileContent[2], string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
-        //    var position = 1;
-        //    for (int i = 3; i < fileContent.Length; i += 7)
-        //    {
-        //        var track = cuesheet.Tracks.Single(x => x.Position == position);
-        //        position++;
-        //        Assert.AreEqual(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio), fileContent[i]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title), fileContent[i + 1]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist), fileContent[i + 2]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel))), fileContent[i + 3]);
-        //        var preGap = track.PreGap;
-        //        var trackBegin = track.Begin;
-        //        var postGap = track.PostGap;
-        //        Assert.IsNotNull(preGap);
-        //        Assert.IsNotNull(trackBegin);
-        //        Assert.IsNotNull(postGap);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(preGap.Value.TotalMinutes), preGap.Value.Seconds, preGap.Value.Milliseconds / 75), fileContent[i + 4]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75), fileContent[i + 5]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(postGap.Value.TotalMinutes), postGap.Value.Seconds, postGap.Value.Milliseconds / 75), fileContent[i + 6]);
-        //    }
-        //    File.Delete(fileName);
-        //}
+        public ExportfileGeneratorTests()
+        {
+            mockSessionStateContainer = new Mock<ISessionStateContainer>();
+            exportfileGenerator = new ExportfileGenerator(mockSessionStateContainer.Object);
+        }
 
-        //[TestMethod()]
-        //public void GenerateCuesheetFilesWithTrackFlagsTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        var rand = new Random();
-        //        var flagsToAdd = rand.Next(1, 3);
-        //        for (int x = 0; x < flagsToAdd; x++)
-        //        {
-        //            track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
-        //        }
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //    }
-        //    var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    var content = generatedFiles.First().Content;
-        //    Assert.IsNotNull(content);
-        //    var fileName = Path.GetTempFileName();
-        //    File.WriteAllBytes(fileName, content);
-        //    var fileContent = File.ReadAllLines(fileName);
-        //    Assert.AreEqual(fileContent[0], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
-        //    Assert.AreEqual(fileContent[1], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-        //    Assert.AreEqual(fileContent[2], string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
-        //    var position = 1;
-        //    for (int i = 3; i < fileContent.Length; i += 5)
-        //    {
-        //        var track = cuesheet.Tracks.Single(x => x.Position == position);
-        //        position++;
-        //        Assert.AreEqual(fileContent[i], string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
-        //        Assert.AreEqual(fileContent[i + 1], string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
-        //        Assert.AreEqual(fileContent[i + 2], string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
-        //        Assert.AreEqual(fileContent[i + 3], string.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
-        //        var trackBegin = track.Begin;
-        //        Assert.IsNotNull(trackBegin);
-        //        Assert.AreEqual(fileContent[i + 4], string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75));
-        //    }
-        //    File.Delete(fileName);
-        //}
+        [TestMethod]
+        public void GenerateExportFile_ShouldGenerateExportfile_WithoutSections()
+        {
+            // Arrange
+            var exportProfile = new Exportprofile
+            {
+                Name = "TestProfile",
+                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
+                Filename = "TestExport.txt"
+            };
+            var mockLogger = new Mock<ILogger<TraceChangeManager>>();
+            var mockTraceChangeManager = new Mock<TraceChangeManager>(mockLogger.Object);
+            var cuesheet = new Cuesheet(mockTraceChangeManager.Object)
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new("Test audiofile.mp3")
+            };
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 1",
+                Title = "Test title 1",
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 4, 12),
+                Position = 1
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 2",
+                Title = "Test title 2",
+                End = new TimeSpan(0, 8, 32),
+                Position = 2
+            });
+            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
-        //[TestMethod()]
-        //public void GenerateCuesheetFilesWithIncorrectTrackPositionsTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    var random = new Random();
-        //    for (int i = 1; i < 6; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin,
-        //            Position = (uint)(i + random.Next(1, 10))
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //    }
-        //    var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
-        //    Assert.AreEqual(ValidationStatus.Error, generator.Validate().Status);
-        //    //Rearrange positions
-        //    cuesheet.Tracks.ElementAt(0).Position = 1;
-        //    cuesheet.Tracks.ElementAt(1).Position = 2;
-        //    cuesheet.Tracks.ElementAt(2).Position = 3;
-        //    cuesheet.Tracks.ElementAt(3).Position = 4;
-        //    cuesheet.Tracks.ElementAt(4).Position = 5;
-        //    Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    var content = generatedFiles.First().Content;
-        //    Assert.IsNotNull(content);
-        //    var fileName = Path.GetTempFileName();
-        //    File.WriteAllBytes(fileName, content);
-        //    var fileContent = File.ReadAllLines(fileName);
-        //    Assert.AreEqual(fileContent[0], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title));
-        //    Assert.AreEqual(fileContent[1], string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist));
-        //    Assert.AreEqual(fileContent[2], string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheet.Audiofile.Name, cuesheet.Audiofile.AudioFileType));
-        //    var position = 1;
-        //    for (int i = 3; i < fileContent.Length; i += 4)
-        //    {
-        //        var track = cuesheet.Tracks.ElementAt(position - 1);
-        //        Assert.AreEqual(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, position, CuesheetConstants.CuesheetTrackAudio), fileContent[i]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title), fileContent[i + 1]);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist), fileContent[i + 2]);
-        //        var trackBegin = track.Begin;
-        //        Assert.IsNotNull(trackBegin);
-        //        Assert.AreEqual(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75), fileContent[i + 3]);
-        //        position++;
-        //    }
-        //    File.Delete(fileName);
-        //}
+            // Act
+            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
 
-        //[TestMethod()]
-        //public void GenerateCuesheetFilesWithSectionsTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //    }
-        //    var section = cuesheet.AddSection();
-        //    section.Begin = new TimeSpan(1, 30, 0);
-        //    section.End = new TimeSpan(2, 0, 0);
-        //    section.Title = "Last part";
-        //    section.AudiofileName = "Last part.mp3";
-        //    section = cuesheet.AddSection();
-        //    section.Begin = new TimeSpan(0, 0, 0);
-        //    section.End = new TimeSpan(0, 30, 0);
-        //    section.AudiofileName = "First part.mp3";
-        //    section = cuesheet.AddSection();
-        //    section.Begin = new TimeSpan(0, 30, 0);
-        //    section.End = new TimeSpan(1, 0, 0);
-        //    section.Artist = "Demo Artist Part2";
-        //    section = cuesheet.AddSection();
-        //    section.Artist = "Artist 3";
-        //    section.Title = "Title 3";
-        //    section.AudiofileName = "Part 3.mp3";
-        //    section.Begin = new TimeSpan(1, 0, 0);
-        //    section.End = new TimeSpan(1, 30, 0);
-        //    testHelper.ApplicationOptions.CuesheetFilename = "Unit test.cue";
-        //    var generator = new ExportfileGenerator(ExportType.Cuesheet, cuesheet, applicationOptions: testHelper.ApplicationOptions);
-        //    Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(4, generatedFiles.Count);
-        //    var position = 1;
-        //    var counter = 1;
-        //    //Check split according to sections
-        //    Assert.AreEqual(new TimeSpan(0, 0, 0), generatedFiles.First().Begin);
-        //    Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
-        //    Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
-        //    Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(2).Begin);
-        //    Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(2).End);
-        //    Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.Last().Begin);
-        //    Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.Last().End);
-        //    foreach (var generatedFile in generatedFiles)
-        //    {
-        //        Assert.AreEqual(string.Format("Unit test({0}).cue", counter), generatedFile.Name);
-        //        counter++;
-        //        var content = generatedFile.Content;
-        //        Assert.IsNotNull(content);
-        //        var fileName = Path.GetTempFileName();
-        //        File.WriteAllBytes(fileName, content);
-        //        var fileContent = File.ReadAllLines(fileName);
-        //        File.Delete(fileName);
-        //        int positionDifference = 1 - position;
-        //        // Check cuesheet header for artist and title
-        //        var sectionForThisFile = cuesheet.Sections.FirstOrDefault(x => x.Begin == generatedFile.Begin);
-        //        if (sectionForThisFile != null)
-        //        {
-        //            Assert.AreEqual(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, sectionForThisFile.Title), fileContent.First());
-        //            Assert.AreEqual(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, sectionForThisFile.Artist), fileContent[1]);
-        //            Assert.AreEqual(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, sectionForThisFile.AudiofileName, cuesheet.Audiofile?.AudioFileType), fileContent[2]);
-        //        }
-        //        else
-        //        {
-        //            Assert.AreEqual(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, cuesheet.Title), fileContent.First());
-        //            Assert.AreEqual(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, cuesheet.Artist), fileContent[1]);
-        //            var cuesheetFileName = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(cuesheet.Audiofile?.Name), counter - 1, Path.GetExtension(cuesheet.Audiofile?.Name));
-        //            Assert.AreEqual(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, cuesheetFileName, cuesheet.Audiofile?.AudioFileType), fileContent[2]);
-        //        }
-        //        //Check for start from position 1 and begin = 00:00:00
-        //        for (int i = 3; i < fileContent.Length; i += 4)
-        //        {
-        //            var track = cuesheet.Tracks.Single(x => x.Position == position);
-        //            position++;
-        //            Assert.AreEqual(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position + positionDifference, CuesheetConstants.CuesheetTrackAudio), fileContent[i]);
-        //            Assert.AreEqual(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title), fileContent[i + 1]);
-        //            Assert.AreEqual(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist), fileContent[i + 2]);
-        //            var trackBegin = track.Begin;
-        //            if (generatedFile.Begin != null)
-        //            {
-        //                if (generatedFile.Begin >= track.Begin)
-        //                {
-        //                    trackBegin = TimeSpan.Zero;
-        //                }
-        //                else
-        //                {
-        //                    trackBegin = track.Begin - generatedFile.Begin;
-        //                }
-        //            }
-        //            Assert.IsNotNull(trackBegin);
-        //            Assert.AreEqual(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(trackBegin.Value.TotalMinutes), trackBegin.Value.Seconds, trackBegin.Value.Milliseconds / 75), fileContent[i + 3]);
-        //        }
-        //        position--;
-        //    }
-        //}
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(exportProfile.Filename, result.First().Name);
+            Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
+            Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
+            var content = result.First().Content;
+            Assert.IsNotNull(content);
+            var contentString = System.Text.Encoding.UTF8.GetString(content);
+            Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
+1 Test artist 1 - Test title 1
+2 Test artist 2 - Test title 2
 
-        //[TestMethod()]
-        //public void GenerateExportfilesTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    //Prepare cuesheet
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //        var rand = new Random();
-        //        var flagsToAdd = rand.Next(0, 3);
-        //        if (flagsToAdd > 0)
-        //        {
-        //            for (int x = 0; x < flagsToAdd; x++)
-        //            {
-        //                track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
-        //            }
-        //        }
-        //    }
+", contentString);
+        }
 
-        //    cuesheet.Cataloguenumber.Value = "0123456789123";
-        //    cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
+        [TestMethod]
+        public void GenerateExportFile_ShouldGenerateExportfiles_WithSections()
+        {
+            // Arrange
+            var exportProfile = new Exportprofile
+            {
+                Name = "TestProfile",
+                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
+                Filename = "TestExport.txt"
+            };
+            var mockLogger = new Mock<ILogger<TraceChangeManager>>();
+            var mockTraceChangeManager = new Mock<TraceChangeManager>(mockLogger.Object);
+            var cuesheet = new Cuesheet(mockTraceChangeManager.Object)
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new("Test audiofile.mp3")
+            };
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 1",
+                Title = "Test title 1",
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 4, 12),
+                Position = 1
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 2",
+                Title = "Test title 2",
+                End = new TimeSpan(0, 8, 32),
+                Position = 2
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 3",
+                Title = "Test title 3",
+                End = new TimeSpan(0, 12, 31),
+                Position = 3
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 4",
+                Title = "Test title 4",
+                End = new TimeSpan(0, 16, 8),
+                Position = 4
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 5",
+                Title = "Test title 5",
+                End = new TimeSpan(0, 21, 54),
+                Position = 5
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 6",
+                Title = "Test title 6",
+                End = new TimeSpan(0, 31, 32),
+                Position = 6
+            });
+            var section1 = cuesheet.AddSection();
+            section1.Begin = TimeSpan.Zero;
+            section1.End = new TimeSpan(0, 10, 0);
+            var section2 = cuesheet.AddSection();
+            section2.Begin = section1.End;
+            section2.End = new TimeSpan(0, 20, 0);
+            var section3 = cuesheet.AddSection();
+            section3.Begin = section2.End;
+            section3.End = new TimeSpan(0, 30, 0);
+            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
-        //    //Test class
-        //    var exportProfile = new Exportprofile
-        //    {
-        //        SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%",
-        //        SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
-        //        SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
-        //    };
-        //    Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
-        //    var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportprofile: exportProfile);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
-        //    var fileContent = generatedFiles.First().Content;
-        //    Assert.IsNotNull(fileContent);
-        //    var tempFile = Path.GetTempFileName();
-        //    File.WriteAllBytes(tempFile, fileContent);
-        //    var content = File.ReadAllLines(tempFile);
-        //    Assert.AreEqual("Demo Artist;Demo Title;0123456789123;Testfile.cdt", content[0]);
-        //    for (int i = 1; i < content.Length - 1; i++)
-        //    {
-        //        Assert.IsFalse(string.IsNullOrEmpty(content[i]));
-        //        Assert.AreNotEqual(content[i], ";;;;;");
-        //        Assert.IsTrue(content[i].StartsWith(cuesheet.Tracks.ToList()[i - 1].Position + ";"));
-        //    }
-        //    Assert.AreEqual(content[^1], "Exported Demo Title from Demo Artist using AudioCuesheetEditor");
+            // Act
+            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
 
-        //    File.Delete(tempFile);
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(3, result.Count);
+            Assert.AreEqual("TestExport(3).txt", result.Last().Name);
+            Assert.AreEqual(section3.Begin, result.Last().Begin);
+            Assert.AreEqual(section3.End, result.Last().End);
+            var content = result.Last().Content;
+            Assert.IsNotNull(content);
+            var contentString = System.Text.Encoding.UTF8.GetString(content);
+            Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
+1 Test artist 5 - Test title 5
+2 Test artist 6 - Test title 6
 
-        //    exportProfile.SchemeHead = "%Track.Position%;%Cuesheet.Artist%;";
-        //    var validationResult = exportProfile.Validate(x => x.SchemeHead);
-        //    Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-        //    Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Parameter != null && x.Parameter.Contains("%Track.Position%")));
+", contentString);
+        }
 
-        //    //Check multiline export
-        //    exportProfile = new Exportprofile
-        //    {
-        //        SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%",
-        //        SchemeTracks = string.Format("%Track.Position%{0}%Track.Artist%{1}%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%", Environment.NewLine, Environment.NewLine),
-        //        SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
-        //    };
-        //    Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
-        //    generator.Exportprofile = exportProfile;
-        //    generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
-        //    fileContent = generatedFiles.First().Content;
-        //    Assert.IsNotNull(fileContent);
-        //    tempFile = Path.GetTempFileName();
-        //    File.WriteAllBytes(tempFile, fileContent);
-        //    content = File.ReadAllLines(tempFile);
-        //    Assert.AreEqual(content[0], "Demo Artist;Demo Title");
-        //    var trackPosition = 0;
-        //    for (int i = 1; i < content.Length - 1; i += 3)
-        //    {
-        //        Assert.IsFalse(string.IsNullOrEmpty(content[i]));
-        //        Assert.AreNotEqual(content[i], ";;;;;");
-        //        var track = cuesheet.Tracks.ToList()[trackPosition];
-        //        Assert.IsNotNull(track.Position);
-        //        var position = track.Position.ToString();
-        //        Assert.IsNotNull(position);
-        //        Assert.IsTrue(content[i].StartsWith(position));
-        //        trackPosition++;
-        //    }
-        //    Assert.AreEqual(content[^1], "Exported Demo Title from Demo Artist using AudioCuesheetEditor");
+        [TestMethod]
+        public void GenerateExportFile_ShouldHandleEmptyProfile()
+        {
+            // Arrange
+            var exportProfile = new Exportprofile();
+            var mockLogger = new Mock<ILogger<TraceChangeManager>>();
+            var mockTraceChangeManager = new Mock<TraceChangeManager>(mockLogger.Object);
+            var cuesheet = new Cuesheet(mockTraceChangeManager.Object)
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new("Test audiofile.mp3")
+            };
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 1",
+                Title = "Test title 1",
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 4, 12),
+                Position = 1
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 2",
+                Title = "Test title 2",
+                End = new TimeSpan(0, 8, 32),
+                Position = 2
+            });
+            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
-        //    File.Delete(tempFile);
+            // Act
+            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
 
-        //    //Test flags
-        //    exportProfile = new Exportprofile
-        //    {
-        //        SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%",
-        //        SchemeTracks = "%Track.Position%;%Track.Flags%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
-        //        SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
-        //    };
-        //    Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
-        //    generator.Exportprofile = exportProfile;
-        //    generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
-        //    fileContent = generatedFiles.First().Content;
-        //    Assert.IsNotNull(fileContent);
-        //    tempFile = Path.GetTempFileName();
-        //    File.WriteAllBytes(tempFile, fileContent);
-        //    content = File.ReadAllLines(tempFile);
-        //    Assert.AreEqual("Demo Artist;Demo Title;0123456789123;Testfile.cdt", content[0]);
-        //    for (int i = 1; i < content.Length - 1; i++)
-        //    {
-        //        Assert.IsFalse(string.IsNullOrEmpty(content[i]));
-        //        Assert.AreNotEqual(content[i], ";;;;;");
-        //        Assert.IsTrue(content[i].StartsWith(cuesheet.Tracks.ToList()[i - 1].Position + ";"));
-        //        if (cuesheet.Tracks.ElementAt(i - 1).Flags.Count > 0)
-        //        {
-        //            var flags = cuesheet.Tracks.ElementAt(i - 1).Flags;
-        //            Assert.IsTrue(content[i].Contains(string.Join(" ", flags.Select(x => x.CuesheetLabel))));
-        //        }
-        //    }
-        //    Assert.AreEqual(content[^1], "Exported Demo Title from Demo Artist using AudioCuesheetEditor");
-        //    File.Delete(tempFile);
-        //}
-
-        //[TestMethod()]
-        //public void GenerateExportfilesWithPregapAndPostgapTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    //Prepare cuesheet
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin,
-        //            PostGap = new TimeSpan(0, 0, 1),
-        //            PreGap = new TimeSpan(0, 0, 3)
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //        var rand = new Random();
-        //        var flagsToAdd = rand.Next(0, 3);
-        //        if (flagsToAdd > 0)
-        //        {
-        //            for (int x = 0; x < flagsToAdd; x++)
-        //            {
-        //                track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
-        //            }
-        //        }
-        //    }
-
-        //    cuesheet.Cataloguenumber.Value = "0123456789123";
-        //    cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
-
-        //    var exportProfile = new Exportprofile
-        //    {
-        //        SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%",
-        //        SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%",
-        //        SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%"
-        //    };
-        //    Assert.AreEqual(ValidationStatus.Success, exportProfile.Validate().Status);
-        //    var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportprofile: exportProfile);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(1, generatedFiles.Count);
-        //    Assert.AreEqual(exportProfile.Filename, generatedFiles.First().Name);
-        //    var fileContent = generatedFiles.First().Content;
-        //    Assert.IsNotNull(fileContent);
-        //    var tempFile = Path.GetTempFileName();
-        //    File.WriteAllBytes(tempFile, fileContent);
-        //    var content = File.ReadAllLines(tempFile);
-        //    Assert.AreEqual("Demo Artist;Demo Title;0123456789123;Testfile.cdt", content[0]);
-        //    for (int i = 1; i < content.Length - 1; i++)
-        //    {
-        //        Assert.IsFalse(string.IsNullOrEmpty(content[i]));
-        //        Assert.AreNotEqual(content[i], ";;;;;");
-        //        Assert.IsTrue(content[i].StartsWith(cuesheet.Tracks.ToList()[i - 1].Position + ";"));
-        //    }
-        //    Assert.AreEqual(content[^1], string.Format("Exported Demo Title from Demo Artist using AudioCuesheetEditor at {0}", DateTime.Now.ToShortDateString()));
-        //    File.Delete(tempFile);
-        //}
-
-        //[TestMethod()]
-        //public void GenerateExportfilesWithSectionsTest()
-        //{
-        //    var testHelper = new TestHelper();
-        //    //Prepare cuesheet
-        //    Cuesheet cuesheet = new()
-        //    {
-        //        Artist = "Demo Artist",
-        //        Title = "Demo Title",
-        //        Audiofile = new Audiofile("Testfile.mp3")
-        //    };
-        //    var begin = TimeSpan.Zero;
-        //    for (int i = 1; i < 25; i++)
-        //    {
-        //        var track = new Track
-        //        {
-        //            Artist = string.Format("Demo Track Artist {0}", i),
-        //            Title = string.Format("Demo Track Title {0}", i),
-        //            Begin = begin
-        //        };
-        //        begin = begin.Add(new TimeSpan(0, i, i));
-        //        track.End = begin;
-        //        cuesheet.AddTrack(track, testHelper.ApplicationOptions);
-        //        var rand = new Random();
-        //        var flagsToAdd = rand.Next(0, 3);
-        //        if (flagsToAdd > 0)
-        //        {
-        //            for (int x = 0; x < flagsToAdd; x++)
-        //            {
-        //                track.SetFlag(Flag.AvailableFlags.ElementAt(x), SetFlagMode.Add);
-        //            }
-        //        }
-        //    }
-
-        //    cuesheet.Cataloguenumber.Value = "0123456789123";
-        //    cuesheet.CDTextfile = new CDTextfile("Testfile.cdt");
-        //    var section = cuesheet.AddSection();
-        //    section.Begin = new TimeSpan(1, 30, 0);
-        //    section.End = new TimeSpan(2, 0, 0);
-        //    section.Title = "Last part";
-        //    section.AudiofileName = "Last part.mp3";
-        //    section = cuesheet.AddSection();
-        //    section.Begin = new TimeSpan(0, 0, 0);
-        //    section.End = new TimeSpan(0, 30, 0);
-        //    section.AudiofileName = "First part.mp3";
-        //    section = cuesheet.AddSection();
-        //    section.Begin = new TimeSpan(0, 30, 0);
-        //    section.End = new TimeSpan(1, 0, 0);
-        //    section.Artist = "Demo Artist Part2";
-        //    section = cuesheet.AddSection();
-        //    section.Artist = "Artist 3";
-        //    section.Title = "Title 3";
-        //    section.AudiofileName = "Part 3.mp3";
-        //    section.Begin = new TimeSpan(1, 0, 0);
-        //    section.End = new TimeSpan(1, 30, 0);
-        //    //Test export
-        //    var exportProfile = new Exportprofile
-        //    {
-        //        SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Audiofile%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%",
-        //        SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
-        //        SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor"
-        //    };
-        //    var generator = new ExportfileGenerator(ExportType.Exportprofile, cuesheet, exportProfile);
-        //    Assert.AreEqual(ValidationStatus.Success, generator.Validate().Status);
-        //    var generatedFiles = generator.GenerateExportfiles();
-        //    Assert.AreEqual(4, generatedFiles.Count);
-
-        //    //Check split according to sections
-        //    Assert.AreEqual(new TimeSpan(0, 0, 0), generatedFiles.First().Begin);
-        //    Assert.AreEqual(new TimeSpan(0, 30, 0), generatedFiles.First().End);
-        //    Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(1).End);
-        //    Assert.AreEqual(new TimeSpan(1, 0, 0), generatedFiles.ElementAt(2).Begin);
-        //    Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.ElementAt(2).End);
-        //    Assert.AreEqual(new TimeSpan(1, 30, 0), generatedFiles.Last().Begin);
-        //    Assert.AreEqual(new TimeSpan(2, 0, 0), generatedFiles.Last().End);
-        //    var counter = 1;
-        //    var position = 1;
-        //    foreach (var generatedFile in generatedFiles)
-        //    {
-        //        Assert.AreEqual(string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(exportProfile.Filename), counter, Path.GetExtension(exportProfile.Filename)), generatedFile.Name);
-        //        counter++;
-        //        var content = generatedFile.Content;
-        //        Assert.IsNotNull(content);
-        //        var fileName = Path.GetTempFileName();
-        //        File.WriteAllBytes(fileName, content);
-        //        var fileContent = File.ReadAllLines(fileName);
-        //        File.Delete(fileName);
-        //        int positionDifference = 1 - position;
-        //        //Check cuesheet header for artist and title
-        //        var sectionForThisFile = cuesheet.Sections.FirstOrDefault(x => x.Begin == generatedFile.Begin);
-        //        if (sectionForThisFile != null)
-        //        {
-        //            Assert.AreEqual(string.Format("{0};{1};{2};0123456789123;Testfile.cdt", sectionForThisFile.Artist, sectionForThisFile.Title, sectionForThisFile.AudiofileName), fileContent[0]);
-        //        }
-        //        else
-        //        {
-        //            var audiofileName = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(cuesheet.Audiofile?.Name), counter - 1, Path.GetExtension(cuesheet.Audiofile?.Name));
-        //            Assert.AreEqual(string.Format("{0};{1};{2};0123456789123;Testfile.cdt", cuesheet.Artist, cuesheet.Title, audiofileName), fileContent[0]);
-        //        }
-        //        //Check for start from position 1 and begin = 00:00:00
-        //        for (int i = 1; i < fileContent.Length - 1; i++)
-        //        {
-        //            var track = cuesheet.Tracks.Single(x => x.Position == position);
-        //            position++;
-        //            var trackBegin = track.Begin;
-        //            var trackEnd = track.End;
-        //            if (generatedFile.Begin != null)
-        //            {
-        //                if (generatedFile.Begin >= track.Begin)
-        //                {
-        //                    trackBegin = TimeSpan.Zero;
-        //                }
-        //                else
-        //                {
-        //                    trackBegin = track.Begin - generatedFile.Begin;
-        //                }
-        //                trackEnd = track.End - generatedFile.Begin;
-        //            }
-        //            Assert.AreEqual(string.Format("{0};{1};{2};{3};{4};{5}", track.Position + positionDifference, track.Artist, track.Title, trackBegin, trackEnd, trackEnd - trackBegin), fileContent[i]);
-        //        }
-        //        if (sectionForThisFile != null)
-        //        {
-        //            Assert.AreEqual(string.Format("Exported {0} from {1} using AudioCuesheetEditor", sectionForThisFile.Title, sectionForThisFile.Artist), fileContent.Last());
-        //        }
-        //        else
-        //        {
-        //            Assert.AreEqual(string.Format("Exported {0} from {1} using AudioCuesheetEditor", cuesheet.Title, cuesheet.Artist), fileContent.Last());
-        //        }
-        //        position--;
-        //    }
-        //}
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(Exportprofile.DefaultFileName, result.First().Name);
+            Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
+            Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
+            Assert.IsNotNull(result.First().Content);
+        }
     }
 }

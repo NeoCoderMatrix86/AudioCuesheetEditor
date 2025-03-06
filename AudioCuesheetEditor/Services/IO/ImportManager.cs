@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
@@ -23,6 +22,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -35,9 +35,9 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TraceChangeManager traceChangeManager)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TraceChangeManager traceChangeManager)
     {
-        private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
 

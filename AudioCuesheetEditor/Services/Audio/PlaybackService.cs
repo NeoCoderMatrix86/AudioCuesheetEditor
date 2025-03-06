@@ -13,16 +13,16 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Services.UI;
 using Howler.Blazor.Components;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
     public class PlaybackService : IDisposable
     {
-        private readonly SessionStateContainer _sessionStateContainer;
+        private readonly ISessionStateContainer _sessionStateContainer;
         private readonly IHowl _howl;
 
         private int? soundId;
@@ -54,7 +54,7 @@ namespace AudioCuesheetEditor.Services.Audio
         public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
         public Boolean NextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < _sessionStateContainer.Cuesheet.Tracks.Count - 1;
 
-        public PlaybackService(SessionStateContainer sessionStateContainer, IHowl howl)
+        public PlaybackService(ISessionStateContainer sessionStateContainer, IHowl howl)
         {
             _sessionStateContainer = sessionStateContainer;
             _howl = howl;
