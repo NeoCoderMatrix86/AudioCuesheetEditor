@@ -41,9 +41,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void AddTrackTest()
         {
             var cuesheet = new Cuesheet();
-            Assert.AreEqual(cuesheet.Tracks.Count, 0);
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
             cuesheet.AddTrack(new Track());
-            Assert.AreEqual(cuesheet.Tracks.Count, 1);
+            Assert.AreEqual(1, cuesheet.Tracks.Count);
         }
 
         [TestMethod()]
@@ -62,7 +62,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void EmptyCuesheetTracksValidationTest()
         {
             var cuesheet = new Cuesheet();
-            Assert.AreEqual(cuesheet.Tracks.Count, 0);
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
             var validationErrorTracks = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Error, validationErrorTracks.Status);
             cuesheet.AddTrack(new Track());
