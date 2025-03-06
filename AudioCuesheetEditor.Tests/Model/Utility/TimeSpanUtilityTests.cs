@@ -23,41 +23,150 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
     public class TimeSpanUtilityTests
     {
         [TestMethod()]
-        public void ParseTimeSpanTest()
+        public void ParseTimeSpan_Valid_HoursMinutesSeconds()
         {
-            var timespan = TimeSpanUtility.ParseTimeSpan("01:23:45");
+            // Arrange
+            string input = "01:23:45";
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(1, 23, 45), timespan);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Valid_MinutesSeconds()
+        {
+            // Arrange
+            string input = "3:12";
             var format = new TimeSpanFormat() { Scheme = "(?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
-            timespan = TimeSpanUtility.ParseTimeSpan("3:12", format);
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(0, 3, 12), timespan);
-            timespan = TimeSpanUtility.ParseTimeSpan("63:12", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Valid_OverflowMinutes()
+        {
+            // Arrange
+            string input = "63:12";
+            var format = new TimeSpanFormat() { Scheme = "(?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(1, 3, 12), timespan);
-            format.Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})";
-            timespan = TimeSpanUtility.ParseTimeSpan("23:12", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Valid_HoursMinutes()
+        {
+            // Arrange
+            string input = "23:12";
+            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(23, 12, 0), timespan);
-            format.Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})";
-            timespan = TimeSpanUtility.ParseTimeSpan("23:45:56", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Valid_FullFormat()
+        {
+            // Arrange
+            string input = "23:45:56";
+            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(0, 23, 45, 56), timespan);
-            format.Scheme = "(?'Days'\\d{1,})[.](?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})";
-            timespan = TimeSpanUtility.ParseTimeSpan("2.23:45:56", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Valid_WithDays()
+        {
+            // Arrange
+            string input = "2.23:45:56";
+            var format = new TimeSpanFormat() { Scheme = "(?'Days'\\d{1,})[.](?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(2, 23, 45, 56), timespan);
-            format.Scheme = "(?'Hours'\\d{1,})[:](?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})[.](?'TimeSpanFormat.Milliseconds'\\d{1,})";
-            timespan = TimeSpanUtility.ParseTimeSpan("23:45:56.599", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Valid_WithMilliseconds()
+        {
+            // Arrange
+            string input = "23:45:56.599";
+            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNotNull(timespan);
             Assert.AreEqual(new TimeSpan(0, 23, 45, 56, 599), timespan);
-            timespan = TimeSpanUtility.ParseTimeSpan("1.2e:45:87.h3a", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Invalid_Format()
+        {
+            // Arrange
+            string input = "1.2e:45:87.h3a";
+            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNull(timespan);
-            timespan = TimeSpanUtility.ParseTimeSpan("Test", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Invalid_Text()
+        {
+            // Arrange
+            string input = "Test";
+            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNull(timespan);
-            format.Scheme = "this is a test";
-            timespan = TimeSpanUtility.ParseTimeSpan("Test", format);
+        }
+
+        [TestMethod()]
+        public void ParseTimeSpan_Invalid_Scheme()
+        {
+            // Arrange
+            string input = "Test";
+            var format = new TimeSpanFormat() { Scheme = "this is a test" };
+
+            // Act
+            var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
+
+            // Assert
             Assert.IsNull(timespan);
         }
     }
+
 }
