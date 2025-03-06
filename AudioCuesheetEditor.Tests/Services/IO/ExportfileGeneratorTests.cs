@@ -24,7 +24,7 @@ using Moq;
 using System;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Tests.Model.IO.Export
+namespace AudioCuesheetEditor.Tests.Services.IO
 {
     [TestClass]
     public class ExportfileGeneratorTests
