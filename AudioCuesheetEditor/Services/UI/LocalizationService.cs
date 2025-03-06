@@ -23,13 +23,15 @@ namespace AudioCuesheetEditor.Services.UI
     {
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
 
+        public const String DefaultCulture = "en-US";
+
         public static IReadOnlyCollection<CultureInfo> AvailableCultures
         {
             get
             {
                 var cultures = new List<CultureInfo>
                 {
-                    new("en-US"),
+                    new(DefaultCulture),
                     new("de-DE")
                 };
                 return cultures.AsReadOnly();

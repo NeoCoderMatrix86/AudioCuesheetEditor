@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Services.UI;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
@@ -33,7 +34,6 @@ namespace AudioCuesheetEditor.Model.Options
     {
         private string? projectFilename = Projectfile.DefaultFilename;
         private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
-        public const String DefaultCultureName = "en-US";
         public String? CuesheetFilename 
         {
             get => cuesheetFilename;
@@ -50,7 +50,7 @@ namespace AudioCuesheetEditor.Model.Options
                 cuesheetFilename = value;
             }
         }
-        public String? CultureName { get; set; } = DefaultCultureName;
+        public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
         [JsonIgnore]
         public CultureInfo Culture
         {
