@@ -15,7 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.Extensions.Logging;

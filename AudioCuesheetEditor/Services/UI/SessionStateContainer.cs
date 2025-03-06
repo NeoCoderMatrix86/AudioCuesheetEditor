@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Services.UI
 {

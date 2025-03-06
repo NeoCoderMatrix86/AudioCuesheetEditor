@@ -17,7 +17,6 @@ using AudioCuesheetEditor;
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.Audio;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;

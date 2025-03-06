@@ -18,7 +18,6 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
@@ -31,7 +30,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Tests.Model.UI
+namespace AudioCuesheetEditor.Tests.Services.UI
 {
     [TestClass()]
     public class TraceChangeManagerTests

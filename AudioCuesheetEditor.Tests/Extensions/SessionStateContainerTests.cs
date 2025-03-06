@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

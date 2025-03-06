@@ -19,7 +19,6 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;

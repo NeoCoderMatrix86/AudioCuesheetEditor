@@ -13,7 +13,9 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.UI
+using AudioCuesheetEditor.Model.UI;
+
+namespace AudioCuesheetEditor.Services.UI
 {
     /// <summary>
     /// Class for tracing changes on an object
@@ -40,7 +42,7 @@ namespace AudioCuesheetEditor.Model.UI
     public class TracedChanges(IEnumerable<TracedChange> changes)
     {
         public List<TracedChange> Changes { get; } = new(changes);
-        public Boolean HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
+        public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
     }
 
     /// <summary>
@@ -59,11 +61,11 @@ namespace AudioCuesheetEditor.Model.UI
         public event EventHandler? UndoDone;
         public event EventHandler? RedoDone;
 
-        public Boolean CurrentlyHandlingRedoOrUndoChanges { get; private set; } = false;
+        public bool CurrentlyHandlingRedoOrUndoChanges { get; private set; } = false;
         /// <summary>
         /// Is Undo() currently possible (are there any changes)?
         /// </summary>
-        public Boolean CanUndo
+        public bool CanUndo
         {
             get
             {
@@ -74,7 +76,7 @@ namespace AudioCuesheetEditor.Model.UI
         /// <summary>
         /// Is Redo() currently possible (are there any changes)?
         /// </summary>
-        public Boolean CanRedo
+        public bool CanRedo
         {
             get
             {
@@ -100,7 +102,7 @@ namespace AudioCuesheetEditor.Model.UI
             {
                 CurrentlyHandlingRedoOrUndoChanges = true; 
                 TracedChanges? changes = null;
-                while ((undoStack.Count > 0) && (changes == null))
+                while (undoStack.Count > 0 && changes == null)
                 {
                     changes = undoStack.Pop();
                     if (changes.HasTraceableObject == false)
@@ -108,7 +110,7 @@ namespace AudioCuesheetEditor.Model.UI
                         changes = null;
                     }
                 }
-                if ((changes != null) && changes.HasTraceableObject)
+                if (changes != null && changes.HasTraceableObject)
                 {
                     var redoChanges = new List<TracedChange>();
                     for (int i = changes.Changes.Count - 1; i >= 0; i--)
@@ -117,7 +119,7 @@ namespace AudioCuesheetEditor.Model.UI
                         var tracedObject = change?.TraceableObject;
                         var traceAbleChange = change?.TraceableChange;
                         _logger.LogDebug("tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}", tracedObject, traceAbleChange);
-                        if ((tracedObject != null) && (traceAbleChange != null))
+                        if (tracedObject != null && traceAbleChange != null)
                         {
                             var propertyInfo = tracedObject.GetType().GetProperty(traceAbleChange.PropertyName);
                             if (propertyInfo != null)
@@ -129,7 +131,7 @@ namespace AudioCuesheetEditor.Model.UI
                             }
                             else
                             {
-                                throw new NullReferenceException(String.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
+                                throw new NullReferenceException(string.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
                             }
                         }
                         if (change != null)
@@ -152,7 +154,7 @@ namespace AudioCuesheetEditor.Model.UI
             {
                 CurrentlyHandlingRedoOrUndoChanges = true;
                 TracedChanges? changes = null;
-                while ((redoStack.Count > 0) && (changes == null))
+                while (redoStack.Count > 0 && changes == null)
                 {
                     changes = redoStack.Pop();
                     if (changes.HasTraceableObject == false)
@@ -160,7 +162,7 @@ namespace AudioCuesheetEditor.Model.UI
                         changes = null;
                     }
                 }
-                if ((changes != null) && changes.HasTraceableObject)
+                if (changes != null && changes.HasTraceableObject)
                 {
                     var undoChanges = new List<TracedChange>();
                     for (int i = changes.Changes.Count - 1;i >= 0; i--) 
@@ -169,7 +171,7 @@ namespace AudioCuesheetEditor.Model.UI
                         var tracedObject = change?.TraceableObject;
                         var traceAbleChange = change?.TraceableChange;
                         _logger.LogDebug("tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}", tracedObject, traceAbleChange);
-                        if ((tracedObject != null) && (traceAbleChange != null))
+                        if (tracedObject != null && traceAbleChange != null)
                         {
                             var propertyInfo = tracedObject.GetType().GetProperty(traceAbleChange.PropertyName);
                             if (propertyInfo != null)
@@ -181,7 +183,7 @@ namespace AudioCuesheetEditor.Model.UI
                             }
                             else
                             {
-                                throw new NullReferenceException(String.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
+                                throw new NullReferenceException(string.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
                             }
                         }
                         if (change != null)
@@ -197,7 +199,7 @@ namespace AudioCuesheetEditor.Model.UI
             }
         }
 
-        public Boolean BulkEdit 
+        public bool BulkEdit 
         {
             get => bulkEditTracedChanges != null;
             set
