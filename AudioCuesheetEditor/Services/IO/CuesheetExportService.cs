@@ -22,7 +22,6 @@ using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    //TODO: Unit Tests
     public class CuesheetExportService(ISessionStateContainer sessionStateContainer)
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
@@ -56,10 +55,10 @@ namespace AudioCuesheetEditor.Services.IO
                         if (section.Validate().Status == ValidationStatus.Success)
                         {
                             content = WriteCuesheet(audioFileName, section);
-                            filename = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, FileExtensions.Cuesheet);
+                            var name = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, FileExtensions.Cuesheet);
                             if (content != null)
                             {
-                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = section.Begin, End = section.End });
+                                exportfiles.Add(new Exportfile() { Name = name, Content = Encoding.UTF8.GetBytes(content), Begin = section.Begin, End = section.End });
                             }
                             counter++;
                         }
