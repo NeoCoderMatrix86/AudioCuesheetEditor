@@ -19,7 +19,6 @@ using AudioCuesheetEditor.Model.IO.Import;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    //TODO: Unit Tests
     public class SessionStateContainer : ISessionStateContainer
     {
         public event EventHandler? CuesheetChanged;
