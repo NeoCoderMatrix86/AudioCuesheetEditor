@@ -41,7 +41,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "3:12";
-            var format = new TimeSpanFormat() { Scheme = "(?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -56,7 +56,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "63:12";
-            var format = new TimeSpanFormat() { Scheme = "(?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -71,7 +71,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "23:12";
-            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -86,7 +86,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "23:45:56";
-            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -101,7 +101,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "2.23:45:56";
-            var format = new TimeSpanFormat() { Scheme = "(?'Days'\\d{1,})[.](?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Days}.{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -116,7 +116,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "23:45:56.599";
-            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}.{TimeSpanFormat.Milliseconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -131,7 +131,8 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "1.2e:45:87.h3a";
-            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})" };
+
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}.{TimeSpanFormat.Milliseconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
@@ -145,7 +146,7 @@ namespace AudioCuesheetEditor.Tests.Model.Utility
         {
             // Arrange
             string input = "Test";
-            var format = new TimeSpanFormat() { Scheme = "(?'Hours'\\d{1,})[:](?'Minutes'\\d{1,})[:](?'Seconds'\\d{1,})[.](?'Milliseconds'\\d{1,})" };
+            var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}.{TimeSpanFormat.Milliseconds}" };
 
             // Act
             var timespan = TimeSpanUtility.ParseTimeSpan(input, format);
