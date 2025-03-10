@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
     @if (FileContentRecognized != null)
     {
-        <MudTabPanel Text="@_localizer["Analyse preview"]">
+        <MudTabPanel Text="@_localizer["Analyse preview"]" Icon="@Icons.Material.Outlined.Analytics">
             <MudField Class="ml-2 mr-2">
                 <pre>                
                     @foreach (var line in FileContentRecognized)
@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                 </pre>
             </MudField>
         </MudTabPanel>
-        <MudTabPanel Text="@_localizer["Edit"]">
+        <MudTabPanel Text="@_localizer["Edit"]" Icon="@Icons.Material.Outlined.Edit">
             <MudTextField Class="ml-2 mr-2" T="string" Lines="@FileContentRecognized.Count()" AutoGrow Text="@FileContent" TextChanged="FileContent_TextChangedAsync" />
         </MudTabPanel>
     }
@@ -41,7 +41,6 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: localize
-    //TODO: icons for preview and edit (glas and pencil)
 
     [Parameter]
     public EventCallback<string> FileContentChanged { get; set; }
