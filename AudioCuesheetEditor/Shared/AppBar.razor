@@ -164,7 +164,7 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            _sessionStateContainer.Cuesheet = new(TraceChangeManager);
+            _sessionStateContainer.Cuesheet = new();
         }
     }
 

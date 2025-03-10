@@ -70,7 +70,11 @@ along with Foobar.  If not, see
         fileInputAudiofileErrorText = null;
         try 
         {
-            Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile);
+            Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile, x => 
+            {
+                Cuesheet.RecalculateLastTrackEnd();
+                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+            });
         }
         catch(ArgumentException ae)
         {

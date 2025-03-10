@@ -45,10 +45,8 @@ namespace AudioCuesheetEditor.Services.UI
         public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
     }
 
-    /// <summary>
-    /// Manager for Undo and Redo operations on objects.
-    /// </summary>
-    public class TraceChangeManager(ILogger<TraceChangeManager> logger)
+    /// <inheritdoc />
+    public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChangeManager
     {
         private readonly ILogger<TraceChangeManager> _logger = logger;
 
@@ -62,9 +60,7 @@ namespace AudioCuesheetEditor.Services.UI
         public event EventHandler? RedoDone;
 
         public bool CurrentlyHandlingRedoOrUndoChanges { get; private set; } = false;
-        /// <summary>
-        /// Is Undo() currently possible (are there any changes)?
-        /// </summary>
+        /// <inheritdoc />
         public bool CanUndo
         {
             get
@@ -72,10 +68,7 @@ namespace AudioCuesheetEditor.Services.UI
                 return undoStack.Count > 0;
             }
         }
-
-        /// <summary>
-        /// Is Redo() currently possible (are there any changes)?
-        /// </summary>
+        /// <inheritdoc />
         public bool CanRedo
         {
             get
@@ -218,14 +211,6 @@ namespace AudioCuesheetEditor.Services.UI
                         bulkEditTracedChanges = null;
                     }
                 }
-            }
-        }
-
-        public TracedChanges? LastEdit
-        {
-            get
-            {
-                return undoStack.Peek();
             }
         }
 

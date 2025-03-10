@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public IEnumerable<Track> Tracks { get; } = tracks;
     }
 
-    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable, ITraceable, ICuesheet
+    public class Cuesheet() : Validateable, ITraceable, ICuesheet
     {
         private readonly Lock syncLock = new();
 
@@ -99,22 +99,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             set 
             {
                 var previousValue = audiofile;
-                if (audiofile != null)
-                {
-                    audiofile.ContentStreamLoaded -= Audiofile_ContentStreamLoaded;
-                }
                 audiofile = value;
-                if (audiofile != null)
-                {
-                    if (audiofile.IsContentStreamLoaded == false)
-                    {
-                        audiofile.ContentStreamLoaded += Audiofile_ContentStreamLoaded;
-                    }
-                    else
-                    {
-                        RecalculateLastTrackEnd();
-                    }
-                }
                 FireEvents(previousValue, propertyName: nameof(Audiofile));
             }
         }
@@ -198,9 +183,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        [JsonIgnore]
-        public TraceChangeManager? TraceChangeManager { get; } = traceChangeManager;
-
         //TODO: Unit Tests
         public CuesheetSection AddSection()
         {
@@ -261,7 +243,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             Track_IsLinkedToPreviousTrackChanged(track, EventArgs.Empty);
             tracks.Add(track);
             track.Cuesheet = this;
-            ReCalculateTrackProperties(track);
+            RecalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
@@ -421,6 +403,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
+        //TODO: Unit Tests
+        public void RecalculateLastTrackEnd()
+        {
+            //Try to recalculate length by recalculating last track
+            var lastTrack = tracks.LastOrDefault();
+            if (lastTrack != null)
+            {
+                RecalculateTrackProperties(lastTrack);
+            }
+        }
+
         public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
@@ -511,12 +504,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return ValidationResult.Create(validationStatus, validationMessages);
         }
 
-        private void ReCalculateTrackProperties(Track trackToCalculate)
+        private void RecalculateTrackProperties(Track trackToCalculate)
         {
             if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
             {
                 trackToCalculate.End = Audiofile.Duration;
-                TraceChangeManager?.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == this && y.TraceableChange.PropertyName == nameof(Audiofile)));
             }
             if (Tracks.Count > 1)
             {
@@ -657,11 +649,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
         }
 
-        private void Audiofile_ContentStreamLoaded(object? sender, EventArgs e)
-        {
-            RecalculateLastTrackEnd();
-        }
-
         private void SwitchTracks(Track track1, Track track2)
         {
             var indexTrack1 = tracks.IndexOf(track1);
@@ -705,16 +692,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                     }
                 }
-            }
-        }
-
-        private void RecalculateLastTrackEnd()
-        {
-            //Try to recalculate length by recalculating last track
-            var lastTrack = tracks.LastOrDefault();
-            if (lastTrack != null)
-            {
-                ReCalculateTrackProperties(lastTrack);
             }
         }
 

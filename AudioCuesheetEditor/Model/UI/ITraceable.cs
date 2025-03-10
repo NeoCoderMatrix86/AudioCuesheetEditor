@@ -13,11 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace AudioCuesheetEditor.Model.UI
 {
     public class TraceableChange
@@ -36,13 +31,9 @@ namespace AudioCuesheetEditor.Model.UI
         public string PropertyName { get; }
     }
 
-    public class TraceablePropertiesChangedEventArgs : EventArgs
+    public class TraceablePropertiesChangedEventArgs(TraceableChange traceableChange) : EventArgs
     {
-        public TraceablePropertiesChangedEventArgs(TraceableChange traceableChange)
-        {
-            TraceableChange = traceableChange;
-        }
-        public TraceableChange TraceableChange { get; }
+        public TraceableChange TraceableChange { get; } = traceableChange;
     }
 
     /// <summary>

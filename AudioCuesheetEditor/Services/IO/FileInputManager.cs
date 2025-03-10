@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
@@ -64,7 +65,7 @@ namespace AudioCuesheetEditor.Services.IO
             return fileMimeTypeMatches;
         }
 
-        public async Task<Audiofile?> CreateAudiofileAsync(String? fileInputId, IBrowserFile? browserFile)
+        public async Task<Audiofile?> CreateAudiofileAsync(String? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null)
         {
             Audiofile? audiofile = null;
             if ((String.IsNullOrEmpty(fileInputId) == false) && (browserFile != null))
@@ -77,7 +78,13 @@ namespace AudioCuesheetEditor.Services.IO
                     audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec);
                     if (String.IsNullOrEmpty(audioFileObjectURL) == false)
                     {
-                        _ = _httpClient.GetStreamAsync(audioFileObjectURL).ContinueWith(x => audiofile.ContentStream = x.Result);
+                        var loadContentStreamTask = _httpClient.GetStreamAsync(audioFileObjectURL)
+                                .ContinueWith(x => audiofile.ContentStream = x.Result);
+                        if (afterContentStreamLoaded != null)
+                        {
+                            _ = loadContentStreamTask
+                                .ContinueWith(afterContentStreamLoaded);
+                        }
                     }
                 }
                 else
@@ -88,13 +95,19 @@ namespace AudioCuesheetEditor.Services.IO
             return audiofile;
         }
 
-        public Audiofile? CreateRecordedAudiofile(String objectUrl)
+        public Audiofile? CreateRecordedAudiofile(String objectUrl, Action<Task<Stream>>? afterContentStreamLoaded = null)
         {
             Audiofile? audiofile = null;
             if (String.IsNullOrEmpty(objectUrl) == false)
             {
                 audiofile = new Audiofile(Audiofile.RecordingFileName, objectUrl, Audiofile.AudioCodecWEBM, true);
-                _ = _httpClient.GetStreamAsync(objectUrl).ContinueWith(x => audiofile.ContentStream = x.Result);
+                var loadContentStreamTask = _httpClient.GetStreamAsync(objectUrl)
+                                .ContinueWith(x => audiofile.ContentStream = x.Result);
+                if (afterContentStreamLoaded != null)
+                {
+                    _ = loadContentStreamTask
+                        .ContinueWith(afterContentStreamLoaded);
+                }
             }
             return audiofile;
         }

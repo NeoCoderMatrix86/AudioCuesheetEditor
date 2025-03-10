@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.Shared
         [Inject]
         protected LocalizationService LocalizationService { get; set; } = default!;
         [Inject]
-        protected TraceChangeManager TraceChangeManager { get; set; } = default!;
+        protected ITraceChangeManager TraceChangeManager { get; set; } = default!;
         [Inject]
         protected ILocalStorageOptionsProvider LocalStorageOptionsProvider { get; set; } = default!;
 

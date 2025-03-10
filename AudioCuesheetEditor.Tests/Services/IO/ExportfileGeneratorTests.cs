@@ -48,9 +48,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
                 Filename = "TestExport.txt"
             };
-            var mockLogger = new Mock<ILogger<TraceChangeManager>>();
-            var mockTraceChangeManager = new Mock<TraceChangeManager>(mockLogger.Object);
-            var cuesheet = new Cuesheet(mockTraceChangeManager.Object)
+            var cuesheet = new Cuesheet()
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
@@ -103,9 +101,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
                 Filename = "TestExport.txt"
             };
-            var mockLogger = new Mock<ILogger<TraceChangeManager>>();
-            var mockTraceChangeManager = new Mock<TraceChangeManager>(mockLogger.Object);
-            var cuesheet = new Cuesheet(mockTraceChangeManager.Object)
+            var cuesheet = new Cuesheet()
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
@@ -189,9 +185,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var exportProfile = new Exportprofile();
-            var mockLogger = new Mock<ILogger<TraceChangeManager>>();
-            var mockTraceChangeManager = new Mock<TraceChangeManager>(mockLogger.Object);
-            var cuesheet = new Cuesheet(mockTraceChangeManager.Object)
+            var cuesheet = new Cuesheet()
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",

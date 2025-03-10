@@ -34,11 +34,11 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TraceChangeManager traceChangeManager)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, ITraceChangeManager traceChangeManager)
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
-        private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
         public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {

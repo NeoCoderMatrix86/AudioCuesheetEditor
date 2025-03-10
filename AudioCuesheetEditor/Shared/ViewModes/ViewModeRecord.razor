@@ -51,10 +51,17 @@ along with Foobar.  If not, see
     //TODO: We need to find a way to make recording mobile friendly (ControlRecording and Track input)
     Boolean cuesheetDataExpanded = false, tracksExpanded = true;
 
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+
     [JSInvokable()]
     public Task AudioRecordingFinished(String objectUrl)
     {
-        _sessionStateContainer.Cuesheet.Audiofile = _fileInputManager.CreateRecordedAudiofile(objectUrl);
+        _sessionStateContainer.Cuesheet.Audiofile = _fileInputManager.CreateRecordedAudiofile(objectUrl, x =>
+        {
+            Cuesheet?.RecalculateLastTrackEnd();
+            TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+        });
         StateHasChanged();
         return Task.CompletedTask;
     }

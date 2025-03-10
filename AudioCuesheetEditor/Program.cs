@@ -45,7 +45,7 @@ builder.Services.AddScoped<ILocalStorageOptionsProvider, LocalStorageOptionsProv
 builder.Services.AddScoped<MusicBrainzDataProvider>();
 
 builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
-builder.Services.AddScoped<TraceChangeManager>();
+builder.Services.AddScoped<ITraceChangeManager, TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();

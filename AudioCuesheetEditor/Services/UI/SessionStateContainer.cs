@@ -25,15 +25,15 @@ namespace AudioCuesheetEditor.Services.UI
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ImportCuesheetChanged;
 
-        private readonly TraceChangeManager _traceChangeManager;
+        private readonly ITraceChangeManager _traceChangeManager;
         private Cuesheet cuesheet;
         private Cuesheet? importCuesheet;
         private Audiofile? importAudiofile;
 
-        public SessionStateContainer(TraceChangeManager traceChangeManager)
+        public SessionStateContainer(ITraceChangeManager traceChangeManager)
         {
             _traceChangeManager = traceChangeManager;
-            cuesheet = new Cuesheet(_traceChangeManager);
+            cuesheet = new Cuesheet();
             SetCuesheetReference(cuesheet);
         }
         public Cuesheet Cuesheet 
