@@ -72,6 +72,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             switch (property)
             {
                 case nameof(SchemeCuesheet):
+                    //TODO: An empty scheme is also valid
                     validationStatus = ValidationStatus.Success;
                     Boolean containsPlaceHolder = false;
                     var enumerator = AvailableSchemeCuesheet.GetEnumerator();
@@ -89,6 +90,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                     }
                     break;
                 case nameof(SchemeTracks):
+                    //TODO: An empty scheme is also valid
                     validationStatus = ValidationStatus.Success;
                     containsPlaceHolder = false;
                     enumerator = AvailableSchemesTrack.GetEnumerator();
