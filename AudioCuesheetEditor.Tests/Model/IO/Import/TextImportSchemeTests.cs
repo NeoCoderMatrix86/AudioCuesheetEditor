@@ -130,5 +130,39 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Import
             Assert.AreEqual("{0} contains no placeholder!", message.Message);
             Assert.AreEqual(nameof(TextImportScheme.SchemeTracks), message.Parameter?.FirstOrDefault());
         }
+
+        [TestMethod]
+        public void Validate_SchemeCuesheetEmpty_ShouldReturnSuccess()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
+            {
+                SchemeCuesheet = string.Empty
+            };
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeCuesheet));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, result.Status);
+            Assert.AreEqual(0, result.ValidationMessages.Count);
+        }
+
+        [TestMethod]
+        public void Validate_SchemeTrackstEmpty_ShouldReturnSuccess()
+        {
+            // Arrange
+            var scheme = new TextImportScheme
+            {
+                SchemeTracks = string.Empty
+            };
+
+            // Act
+            var result = scheme.Validate(nameof(TextImportScheme.SchemeTracks));
+
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, result.Status);
+            Assert.AreEqual(0, result.ValidationMessages.Count);
+        }
     }
 }

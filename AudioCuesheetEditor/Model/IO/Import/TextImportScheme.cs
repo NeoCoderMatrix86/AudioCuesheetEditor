@@ -72,39 +72,43 @@ namespace AudioCuesheetEditor.Model.IO.Import
             switch (property)
             {
                 case nameof(SchemeCuesheet):
-                    //TODO: An empty scheme is also valid
                     validationStatus = ValidationStatus.Success;
-                    Boolean containsPlaceHolder = false;
-                    var enumerator = AvailableSchemeCuesheet.GetEnumerator();
-                    if (enumerator.MoveNext())
+                    if (String.IsNullOrEmpty(SchemeCuesheet) == false)
                     {
-                        do
+                        var containsPlaceHolder = false;
+                        var enumerator = AvailableSchemeCuesheet.GetEnumerator();
+                        if (enumerator.MoveNext())
                         {
-                            containsPlaceHolder = SchemeCuesheet?.Contains(enumerator.Current) == true;
-                        } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
-                    }
-                    if (containsPlaceHolder == false)
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeCuesheet)));
+                            do
+                            {
+                                containsPlaceHolder = SchemeCuesheet?.Contains(enumerator.Current) == true;
+                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                        }
+                        if (containsPlaceHolder == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeCuesheet)));
+                        }
                     }
                     break;
                 case nameof(SchemeTracks):
-                    //TODO: An empty scheme is also valid
                     validationStatus = ValidationStatus.Success;
-                    containsPlaceHolder = false;
-                    enumerator = AvailableSchemesTrack.GetEnumerator();
-                    if (enumerator.MoveNext())
+                    if (String.IsNullOrEmpty(SchemeTracks) == false)
                     {
-                        do
+                        var containsPlaceHolder = false;
+                        var enumerator = AvailableSchemesTrack.GetEnumerator();
+                        if (enumerator.MoveNext())
                         {
-                            containsPlaceHolder = SchemeTracks?.Contains(enumerator.Current) == true;
-                        } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
-                    }
-                    if (containsPlaceHolder == false)
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeTracks)));
+                            do
+                            {
+                                containsPlaceHolder = SchemeTracks?.Contains(enumerator.Current) == true;
+                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                        }
+                        if (containsPlaceHolder == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeTracks)));
+                        }
                     }
                     break;
             }
