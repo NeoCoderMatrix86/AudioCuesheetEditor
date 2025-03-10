@@ -31,7 +31,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         }
 
         public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\w*) - (?'Title'\w*)\t{1,}(?'Audiofile'.*)";
-        public static readonly String DefaultSchemeTracks = @"(?'Artist'.+) - (?'Title'.+)(?:...\t)(?'End'.+)";
+        public static readonly String DefaultSchemeTracks = @"(?'Artist'.+?) - (?'Title'.+?)\s*\t+(?'End'.+)";
 
         public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
