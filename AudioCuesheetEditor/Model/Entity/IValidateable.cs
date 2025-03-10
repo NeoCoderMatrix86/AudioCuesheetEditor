@@ -46,7 +46,7 @@ namespace AudioCuesheetEditor.Model.Entity
             var result = new ValidationResult() { Status = validationStatus };
             if (validationMessages != null) 
             {
-                result.ValidationMessages = validationMessages.ToList();
+                result.ValidationMessages = [.. validationMessages];
             }
             return result;
         }

@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
         public void Create_SuccessWithMessages_ReturnsErrorStatus()
         {
             // Arrange
-            var validationMessages = new List<ValidationMessage> { new ValidationMessage("Testmessage!") };
+            var validationMessages = new List<ValidationMessage> { new("Testmessage!") };
 
             // Act
             var validationResult = ValidationResult.Create(ValidationStatus.Success, validationMessages);
@@ -110,7 +111,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
             validationResult.ValidationMessages = messages;
 
             // Assert
-            Assert.IsNotNull(validationResult.ValidationMessages);
+            CollectionAssert.AreEqual(messages.ToList(), validationResult.ValidationMessages.ToList());
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
         }
     }
