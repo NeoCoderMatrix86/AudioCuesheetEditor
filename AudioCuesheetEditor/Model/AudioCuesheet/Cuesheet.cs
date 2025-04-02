@@ -144,7 +144,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        //TODO: Unit Tests
         public IEnumerable<String> IsRecordingPossible
         {
             get

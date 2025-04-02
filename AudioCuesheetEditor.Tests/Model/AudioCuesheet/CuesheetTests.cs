@@ -521,5 +521,60 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual(track2.Begin, track1.End);
         }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenRecordingIsAlreadyRunning_ReturnsError()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.Contains("Record is already running!", errors);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenCuesheetContainsTracks_ReturnsError()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track());
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.Contains("Cuesheet already contains tracks!", errors);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenRecordingIsAlreadyAvailable_ReturnsError()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.Audiofile = new Audiofile("test", isRecorded: true);
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.Contains("A recording is already available!", errors);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenNoErrors_ReturnsEmpty()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.IsEmpty(errors);
+        }
     }
 }
