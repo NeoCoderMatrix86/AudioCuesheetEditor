@@ -182,7 +182,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        //TODO: Unit Tests
         public CuesheetSection AddSection()
         {
             var previousValue = new List<CuesheetSection>(sections);

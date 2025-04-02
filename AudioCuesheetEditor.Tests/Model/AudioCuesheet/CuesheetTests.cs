@@ -576,5 +576,29 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             // Assert
             Assert.IsEmpty(errors);
         }
+
+        [TestMethod]
+        public void AddSection_WithValidData_FiresEvents()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            bool eventFired = false;
+            cuesheet.TraceablePropertyChanged += (sender, args) =>
+            {
+                if (args.TraceableChange.PropertyName == nameof(Cuesheet.Sections))
+                {
+                    eventFired = true;
+                }
+            };
+
+            // Act
+            var section = cuesheet.AddSection();
+
+            // Assert
+            Assert.IsTrue(eventFired);
+            Assert.IsNotNull(section);
+            Assert.AreEqual(1, cuesheet.Sections.Count);
+            Assert.AreEqual(cuesheet, section.Cuesheet);
+        }
     }
 }
