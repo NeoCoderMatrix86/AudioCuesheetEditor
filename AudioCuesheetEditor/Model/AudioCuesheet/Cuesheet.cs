@@ -191,7 +191,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return section;
         }
 
-        //TODO: Unit Tests
         public void RemoveSections(IEnumerable<CuesheetSection> sectionsToRemove)
         {
             var previousValue = new List<CuesheetSection>(sections);
@@ -200,7 +199,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             OnTraceablePropertyChanged(previousValue, nameof(Sections));
         }
 
-        //TODO: Unit Tests
         public CuesheetSection? GetSection(Track track)
         {
             return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
