@@ -375,7 +375,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        //TODO: Unit Tests
         public void StartRecording()
         {
             if (IsRecordingPossible.Any() == false)

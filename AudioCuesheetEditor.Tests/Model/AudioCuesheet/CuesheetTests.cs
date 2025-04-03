@@ -845,5 +845,85 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
             Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(1));
         }
+
+        [TestMethod]
+        public void StartRecording_WithValidData_ShouldStartRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsTrue(cuesheet.IsRecording);
+            Assert.IsNotNull(cuesheet.RecordingTime);
+        }
+
+        [TestMethod]
+        public void StopRecording_WithRecordingRunning_ShouldStopRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+            var track = new Track();
+            cuesheet.AddTrack(track);
+            bool isRecordingChangedEventFired = false;
+            cuesheet.IsRecordingChanged += (sender, args) => isRecordingChangedEventFired = true;
+
+            // Act
+            cuesheet.StopRecording();
+
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsNull(cuesheet.RecordingTime);
+            Assert.IsTrue(isRecordingChangedEventFired);
+            Assert.IsNotNull(track.End);
+        }
+
+        [TestMethod]
+        public void StartRecording_ShouldNotStartIfAlreadyRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsTrue(cuesheet.IsRecording);
+            Assert.IsNotNull(cuesheet.RecordingTime);
+        }
+
+        [TestMethod]
+        public void StartRecording_WithTrackAlreadyAdded_ShouldNotStartRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track());
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+        }
+
+        [TestMethod]
+        public void StartRecording_WithAudiofile_ShouldNotStartRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = new Audiofile("test", isRecorded: true)
+            };
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+        }
     }
 }
