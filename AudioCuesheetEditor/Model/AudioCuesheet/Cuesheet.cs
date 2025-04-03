@@ -337,7 +337,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 return false;
             }
         }
-        //TODO: Unit Tests
         public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
             lock (syncLock)

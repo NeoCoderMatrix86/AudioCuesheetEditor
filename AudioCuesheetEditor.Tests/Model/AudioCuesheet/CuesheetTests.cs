@@ -757,5 +757,93 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.IsTrue(result);
         }
 
+
+        [TestMethod]
+        public void MoveTracks_Up_Success()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            var track3 = new Track { Position = 3 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+
+            // Act
+            cuesheet.MoveTracks([track2], MoveDirection.Up);
+
+            // Assert
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual((uint)3, cuesheet.Tracks.ElementAt(2).Position);
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
+            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(2));
+        }
+
+        [TestMethod]
+        public void MoveTracks_Down_Success()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            var track3 = new Track { Position = 3 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+
+            // Act
+            cuesheet.MoveTracks([track2], MoveDirection.Down);
+
+            // Assert
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)3, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(2).Position);
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(1));
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(2));
+        }
+
+        [TestMethod]
+        public void MoveTracks_Up_NotPossible()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.MoveTracks([track1], MoveDirection.Up);
+
+            // Assert
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(1));
+        }
+
+        [TestMethod]
+        public void MoveTracks_Down_NotPossible()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.MoveTracks([track2], MoveDirection.Down);
+
+            // Assert
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(1));
+        }
     }
 }
