@@ -314,7 +314,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
-        //TODO: Unit Tests
         public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
             lock (syncLock)

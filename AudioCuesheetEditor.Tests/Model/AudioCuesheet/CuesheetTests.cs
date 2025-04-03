@@ -669,5 +669,93 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             // Assert
             Assert.IsNull(result);
         }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnFalse_WhenNoTracksToMove()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var tracksToMove = new List<Track>();
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Up);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnFalse_WhenMovingUpAndFirstTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track = new Track();
+            cuesheet.AddTrack(track);
+            var tracksToMove = new List<Track> { track };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Up);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnTrue_WhenMovingUpAndNotFirstTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            var tracksToMove = new List<Track> { track2 };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Up);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnFalse_WhenMovingDownAndLastTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            var tracksToMove = new List<Track> { track2 };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Down);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnTrue_WhenMovingDownAndNotLastTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            var track3 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            var tracksToMove = new List<Track> { track2 };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Down);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
     }
 }
