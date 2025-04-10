@@ -126,6 +126,9 @@
   <data name="CD Textfile" xml:space="preserve">
     <value>CD Textdatei</value>
   </data>
+  <data name="Change file name" xml:space="preserve">
+    <value>Datei umbenennen</value>
+  </data>
   <data name="Cuesheet artist" xml:space="preserve">
     <value>Cuesheet Künstler</value>
   </data>
@@ -140,5 +143,11 @@
   </data>
   <data name="Enter the cuesheet title here" xml:space="preserve">
     <value>Geben Sie hier den Titel des Cuesheets ein</value>
+  </data>
+  <data name="Enter the new file name here" xml:space="preserve">
+    <value>Geben Sie hier den neuen Dateinamen an</value>
+  </data>
+  <data name="New file name" xml:space="preserve">
+    <value>Neuer Dateiname</value>
   </data>
 </root>

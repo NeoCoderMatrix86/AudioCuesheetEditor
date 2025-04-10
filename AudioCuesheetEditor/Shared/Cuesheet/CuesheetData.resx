@@ -126,6 +126,9 @@
   <data name="CD Textfile" xml:space="preserve">
     <value>CD Textfile</value>
   </data>
+  <data name="Change file name" xml:space="preserve">
+    <value>Change file name</value>
+  </data>
   <data name="Cuesheet artist" xml:space="preserve">
     <value>Cuesheet artist</value>
   </data>
@@ -140,5 +143,11 @@
   </data>
   <data name="Enter the cuesheet title here" xml:space="preserve">
     <value>Enter the cuesheet title here</value>
+  </data>
+  <data name="Enter the new file name here" xml:space="preserve">
+    <value>Enter the new file name here</value>
+  </data>
+  <data name="New file name" xml:space="preserve">
+    <value>New file name</value>
   </data>
 </root>
