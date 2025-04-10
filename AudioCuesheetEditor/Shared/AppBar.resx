@@ -120,17 +120,44 @@
   <data name="About" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="Are you sure you want reset the application? All information you have not saved are lost!" xml:space="preserve">
+    <value>Are you sure you want reset the application? All information you have not saved are lost!</value>
+  </data>
+  <data name="Are you sure you want reset the cuesheet? All information you have not saved are lost!" xml:space="preserve">
+    <value>Are you sure you want reset the cuesheet? All information you have not saved are lost!</value>
+  </data>
   <data name="Change language" xml:space="preserve">
     <value>Change language</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
   </data>
   <data name="Cuesheet" xml:space="preserve">
     <value>Cuesheet</value>
   </data>
+  <data name="Download cuesheet" xml:space="preserve">
+    <value>Download cuesheet</value>
+  </data>
   <data name="Export" xml:space="preserve">
     <value>Export</value>
   </data>
+  <data name="Export profiles" xml:space="preserve">
+    <value>Export profiles</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
+  </data>
+  <data name="Hotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
   </data>
   <data name="Preview environment" xml:space="preserve">
     <value>Preview environment</value>
@@ -138,7 +165,31 @@
   <data name="Projectfile" xml:space="preserve">
     <value>Projectfile</value>
   </data>
+  <data name="Redo last edit" xml:space="preserve">
+    <value>Redo last edit</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Reset application" xml:space="preserve">
+    <value>Reset application</value>
+  </data>
+  <data name="Reset cuesheet" xml:space="preserve">
+    <value>Reset cuesheet</value>
+  </data>
+  <data name="Save project" xml:space="preserve">
+    <value>Save project</value>
+  </data>
+  <data name="Select file" xml:space="preserve">
+    <value>Select file</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="Textfile" xml:space="preserve">
     <value>Textfile</value>
+  </data>
+  <data name="Undo last edit" xml:space="preserve">
+    <value>Undo last edit</value>
   </data>
 </root>

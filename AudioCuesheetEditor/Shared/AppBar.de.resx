@@ -120,17 +120,44 @@
   <data name="About" xml:space="preserve">
     <value>Über</value>
   </data>
+  <data name="Are you sure you want reset the application? All information you have not saved are lost!" xml:space="preserve">
+    <value>Möchten Sie die Anwendung wirklich zurücksetzen? Alle Änderungen die nicht gespeichert wurden sind verloren!</value>
+  </data>
+  <data name="Are you sure you want reset the cuesheet? All information you have not saved are lost!" xml:space="preserve">
+    <value>Möchten Sie wirklich das Cuesheet zurücksetzen? Alle Änderungen die nicht gespeichert wurden sind verloren!</value>
+  </data>
   <data name="Change language" xml:space="preserve">
     <value>Sprache wechseln</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bestätigen</value>
   </data>
   <data name="Cuesheet" xml:space="preserve">
     <value>Cuesheet</value>
   </data>
+  <data name="Download cuesheet" xml:space="preserve">
+    <value>Cuesheet runterladen</value>
+  </data>
   <data name="Export" xml:space="preserve">
     <value>Export</value>
   </data>
+  <data name="Export profiles" xml:space="preserve">
+    <value>Exportprofile</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
   <data name="Help" xml:space="preserve">
     <value>Hilfe</value>
+  </data>
+  <data name="Hotkeys" xml:space="preserve">
+    <value>Tastenkürzel</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Optionen</value>
   </data>
   <data name="Preview environment" xml:space="preserve">
     <value>Vorschauumgebung</value>
@@ -138,7 +165,31 @@
   <data name="Projectfile" xml:space="preserve">
     <value>Projektdatei</value>
   </data>
+  <data name="Redo last edit" xml:space="preserve">
+    <value>Letzte Änderung wiederherstellen</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
+  <data name="Reset application" xml:space="preserve">
+    <value>Anwendung zurücksetzen</value>
+  </data>
+  <data name="Reset cuesheet" xml:space="preserve">
+    <value>Cuesheet zurücksetzen</value>
+  </data>
+  <data name="Save project" xml:space="preserve">
+    <value>Projekt speichern</value>
+  </data>
+  <data name="Select file" xml:space="preserve">
+    <value>Datei auswählen</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
   <data name="Textfile" xml:space="preserve">
     <value>Textdatei</value>
+  </data>
+  <data name="Undo last edit" xml:space="preserve">
+    <value>Letzte Änderung rückgänging machen</value>
   </data>
 </root>
