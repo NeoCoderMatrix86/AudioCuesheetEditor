@@ -120,6 +120,9 @@
   <data name="Add new track" xml:space="preserve">
     <value>Neuen Titel hinzufügen</value>
   </data>
+  <data name="Copy selected track" xml:space="preserve">
+    <value>Ausgewählten Titel kopieren</value>
+  </data>
   <data name="Delete all tracks" xml:space="preserve">
     <value>Alle Titel löschen</value>
   </data>
@@ -132,10 +135,16 @@
   <data name="Edit selected tracks" xml:space="preserve">
     <value>Ausgewählte Titel bearbeiten</value>
   </data>
+  <data name="Fixed table header" xml:space="preserve">
+    <value>Fester Tabellenkopf</value>
+  </data>
   <data name="Hide selection of tracks" xml:space="preserve">
     <value>Auswahl für Titel ausblenden</value>
   </data>
-  <data name="Pin table header" xml:space="preserve">
-    <value>Tabellenkopf anheften</value>
+  <data name="Move selected tracks down" xml:space="preserve">
+    <value>Ausgewählte Titel nach unten bewegen</value>
+  </data>
+  <data name="Move selected tracks up" xml:space="preserve">
+    <value>Ausgewählte Titel nach oben bewegen</value>
   </data>
 </root>

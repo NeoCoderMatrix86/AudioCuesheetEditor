@@ -120,6 +120,9 @@
   <data name="Add new track" xml:space="preserve">
     <value>Add new track</value>
   </data>
+  <data name="Copy selected track" xml:space="preserve">
+    <value>Copy selected tracks</value>
+  </data>
   <data name="Delete all tracks" xml:space="preserve">
     <value>Delete all tracks</value>
   </data>
@@ -132,10 +135,16 @@
   <data name="Edit selected tracks" xml:space="preserve">
     <value>Edit selected tracks</value>
   </data>
+  <data name="Fixed table header" xml:space="preserve">
+    <value>Fixed table header</value>
+  </data>
   <data name="Hide selection of tracks" xml:space="preserve">
     <value>Hide selection of tracks</value>
   </data>
-  <data name="Pin table header" xml:space="preserve">
-    <value>Pin table header</value>
+  <data name="Move selected tracks down" xml:space="preserve">
+    <value>Move selected tracks down</value>
+  </data>
+  <data name="Move selected tracks up" xml:space="preserve">
+    <value>Move selected tracks up</value>
   </data>
 </root>
