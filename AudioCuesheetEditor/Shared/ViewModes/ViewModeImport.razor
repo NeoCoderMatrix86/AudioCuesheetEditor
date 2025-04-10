@@ -27,7 +27,7 @@ along with Foobar.  If not, see
     </MudStep>
     <MudStep Title="@_localizer["Validate"]" Disabled="!selectFilesStepCompleted" CompletedChanged="CompleteImportAsync">
         <MudExpansionPanels MultiExpansion>
-            <MudExpansionPanel @bind-Expanded="filecontentExpanded">
+            <MudExpansionPanel @bind-Expanded="fileContentExpanded">
                 <TitleContent>
                     <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
                 </TitleContent>
@@ -63,10 +63,8 @@ along with Foobar.  If not, see
 </MudStepper>
 
 @code {
-    //TODO: Localization
-    
     int activeStepIndex;
-    Boolean filecontentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
+    Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
 
     void ImportFileContent_FileContentChanged(string newFileContent)
@@ -86,7 +84,7 @@ along with Foobar.  If not, see
 
     void FilesImported(Dictionary<IBrowserFile, ImportFileType> files)
     {
-        filecontentExpanded = true;
+        fileContentExpanded = true;
         cuesheetDataExpanded = true;
         cuesheetTracksExpanded = true;
         activeStepIndex = 1;
