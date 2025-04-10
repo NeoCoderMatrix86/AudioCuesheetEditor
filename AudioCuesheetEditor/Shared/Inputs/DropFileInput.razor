@@ -20,8 +20,8 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<DropFileInput> _localizer
 
 <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="InputFilesChanged" Hidden="false" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-InputStyle="opacity:0" tabindex="-1" @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass"
-Accept="@Filter">
+               InputStyle="opacity:0" tabindex="-1" @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass"
+               Accept="@Filter">
     <ActivatorContent>
         <MudPaper Height="300px" Outlined Class="@dragClass">
             <MudStack AlignItems="AlignItems.Center">
@@ -35,7 +35,6 @@ Accept="@Filter">
 </MudFileUpload>
 
 @code {
-    //TODO: localize
     [Parameter]
     public String? Filter { get; set; }
 
