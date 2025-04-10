@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
     @if (FileContentRecognized != null)
     {
-        <MudTabPanel Text="@_localizer["Analyse preview"]" Icon="@Icons.Material.Outlined.Analytics">
+        <MudTabPanel Text="@_localizer["Analyzed file content"]" Icon="@Icons.Material.Outlined.Analytics">
             <MudField Class="ml-2 mr-2">
                 <pre>                
                     @foreach (var line in FileContentRecognized)
@@ -40,8 +40,6 @@ along with Foobar.  If not, see
 </MudTabs>
 
 @code {
-    //TODO: localize
-
     [Parameter]
     public EventCallback<string> FileContentChanged { get; set; }
     public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
