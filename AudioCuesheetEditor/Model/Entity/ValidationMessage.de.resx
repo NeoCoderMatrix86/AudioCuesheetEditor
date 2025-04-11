@@ -150,6 +150,12 @@
   <data name="SchemeCuesheet" xml:space="preserve">
     <value>Schema Cuesheet</value>
   </data>
+  <data name="SchemeFooter" xml:space="preserve">
+    <value>Schema Fuß</value>
+  </data>
+  <data name="SchemeHead" xml:space="preserve">
+    <value>Schema Kopf</value>
+  </data>
   <data name="SchemeTracks" xml:space="preserve">
     <value>Schema Titel</value>
   </data>
