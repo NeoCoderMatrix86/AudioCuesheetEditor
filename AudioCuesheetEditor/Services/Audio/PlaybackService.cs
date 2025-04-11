@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.Services.Audio
         private readonly IHowl _howl;
 
         private int? soundId;
-        private Audiofile? currentlyPlayingAudiofile;
+        private IAudiofile? currentlyPlayingAudiofile;
         private Timer? updateTimer;
         private bool disposedValue;
         private readonly Lock timerLock = new();

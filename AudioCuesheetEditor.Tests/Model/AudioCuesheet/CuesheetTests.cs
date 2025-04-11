@@ -925,5 +925,86 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             // Assert
             Assert.IsFalse(cuesheet.IsRecording);
         }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration()
+        {
+            // Arrange
+            var audiofileMock = new Mock<IAudiofile>();
+            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
+
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = audiofileMock.Object
+            };
+            var track = new Track { Position = 1, Begin = TimeSpan.Zero };
+            cuesheet.AddTrack(track);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(5), track.End);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_MultipleTracks_EndSetCorrectly()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
+            var track2 = new Track { Position = 2, Begin = TimeSpan.FromMinutes(2) };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track1.End);
+            Assert.IsNull(track2.End);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_MultipleTracksWithAudiofile_LastTrackEndSetToAudiofileDuration()
+        {
+            // Arrange
+            var audiofileMock = new Mock<IAudiofile>();
+            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
+
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = audiofileMock.Object
+            };
+            var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
+            var track2 = new Track { Position = 2, Begin = TimeSpan.FromMinutes(2) };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track1.End);
+            Assert.AreEqual(TimeSpan.FromMinutes(5), track2.End);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_TracksWithLinkedPreviousTrack_PropertiesRecalculatedCorrectly()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
+            var track2 = new Track { Position = 2, IsLinkedToPreviousTrack = true };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track1.End);
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track2.Begin);
+        }
     }
 }

@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
@@ -52,7 +53,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new("Test audiofile.mp3")
+                Audiofile = new Audiofile("Test audiofile.mp3")
             };
             cuesheet.AddTrack(new Track()
             {
@@ -105,7 +106,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new("Test audiofile.mp3")
+                Audiofile = new Audiofile("Test audiofile.mp3")
             };
             cuesheet.AddTrack(new Track()
             {
@@ -189,7 +190,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new("Test audiofile.mp3")
+                Audiofile = new Audiofile("Test audiofile.mp3")
             };
             cuesheet.AddTrack(new Track()
             {

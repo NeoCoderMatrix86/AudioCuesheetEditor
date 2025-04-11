@@ -13,32 +13,27 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace AudioCuesheetEditor.Extensions
 {
-    public class FlagJsonConverter : JsonConverter<Flag>
+    public class InterfaceConverter<TInterface, TImplementation> : JsonConverter<TInterface> where TImplementation : TInterface
     {
-        public override Flag? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override TInterface? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var json = reader.GetString();
-            if (string.IsNullOrEmpty(json) == false)
+            return JsonSerializer.Deserialize<TImplementation>(ref reader, options);
+        }
+
+        public override void Write(Utf8JsonWriter writer, TInterface value, JsonSerializerOptions options)
+        {
+            if (value != null)
             {
-                return Flag.AvailableFlags.Single(x => x.CuesheetLabel.Equals(json));
+                JsonSerializer.Serialize(writer, (TImplementation)value, options);
             }
             else
             {
-                return null;
-            }
-        }
-
-        public override void Write(Utf8JsonWriter writer, Flag value, JsonSerializerOptions options)
-        {
-            if ((value != null) && (String.IsNullOrEmpty(value.CuesheetLabel) == false))
-            {
-                writer.WriteStringValue(value.CuesheetLabel);
+                writer.WriteNullValue();
             }
         }
     }

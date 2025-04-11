@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
@@ -28,8 +29,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
     [TestClass()]
     public class CuesheetExportServiceTests
     {
-        private Mock<ISessionStateContainer> sessionStateContainerMock;
-        private CuesheetExportService cuesheetExportService;
+        private readonly Mock<ISessionStateContainer> sessionStateContainerMock;
+        private readonly CuesheetExportService cuesheetExportService;
 
         public CuesheetExportServiceTests()
         {
@@ -59,7 +60,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test Artist",
                 Title = "Test Title",
-                Audiofile = new("Audio.mp3")
+                Audiofile = new Audiofile("Audio.mp3")
             };
             cuesheet.AddTrack(new Track());
             sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
@@ -80,7 +81,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new("Test audiofile.mp3")
+                Audiofile = new Audiofile("Test audiofile.mp3")
             };
             cuesheet.AddTrack(new Track()
             {
@@ -140,7 +141,7 @@ FILE ""Test audiofile.mp3"" MP3
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new("Test audiofile.mp3")
+                Audiofile = new Audiofile("Test audiofile.mp3")
             };
             cuesheet.AddTrack(new Track()
             {

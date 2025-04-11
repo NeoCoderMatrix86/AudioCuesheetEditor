@@ -18,7 +18,7 @@ using System.Text.Json.Serialization;
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
     [method: JsonConstructor]
-    public class Audiofile(String name, Boolean isRecorded = false) : IDisposable
+    public class Audiofile(String name, Boolean isRecorded = false) : IDisposable, IAudiofile
     {
         public static readonly String RecordingFileName = $"Recording-{Guid.NewGuid()}.webm";
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             AudioCodec = audioCodec;
         }
 
-        public String Name 
+        public String Name
         {
             get => name;
             set
@@ -75,7 +75,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// Boolean indicating if the stream has fully been loaded
         /// </summary>
         [JsonIgnore]
-        public Boolean IsContentStreamLoaded 
+        public Boolean IsContentStreamLoaded
         {
             get { return ContentStream != null; }
         }
@@ -104,7 +104,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// </summary>
         public TimeSpan? Duration { get; private set; }
 
-        public AudioCodec? AudioCodec 
+        public AudioCodec? AudioCodec
         {
             get { return audioCodec; }
             private set
@@ -121,7 +121,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         [JsonIgnore]
         public String? AudioFileType
         {
-            get 
+            get
             {
                 String? audioFileType = null;
                 if (AudioCodec != null)

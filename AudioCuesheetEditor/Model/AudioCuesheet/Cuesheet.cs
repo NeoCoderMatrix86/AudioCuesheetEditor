@@ -39,7 +39,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Track> tracks = [];
         private String? artist;
         private String? title;
-        private Audiofile? audiofile;
+        private IAudiofile? audiofile;
         private CDTextfile? cDTextfile;
         private String? catalogueNumber;
         private DateTime? recordingStart;
@@ -91,7 +91,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 FireEvents(previousValue, propertyName: nameof(Title));
             }
         }
-        public Audiofile? Audiofile
+        public IAudiofile? Audiofile
         {
             get => audiofile;
             set 
@@ -394,7 +394,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        //TODO: Unit Tests
         public void RecalculateLastTrackEnd()
         {
             //Try to recalculate length by recalculating last track
