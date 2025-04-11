@@ -22,9 +22,10 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 
-@{
+@if (Cuesheet?.IsRecording == false)
+{
     var recordingPossibleMessages = Cuesheet?.IsRecordingPossible;
-    if ((Cuesheet?.IsRecording == false) && (Cuesheet?.Audiofile?.IsRecorded == false) && (recordingPossibleMessages?.Any() == true))
+    if (recordingPossibleMessages?.Any() == true)
     {
         <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
             <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
@@ -77,7 +78,6 @@ along with Foobar.  If not, see
 </MudCard>
 
 @code {
-    //TODO: Bug: When a track is already existing I can't start recording but there is also no validation error!
     Timer updateGUITimer = new(500);
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
