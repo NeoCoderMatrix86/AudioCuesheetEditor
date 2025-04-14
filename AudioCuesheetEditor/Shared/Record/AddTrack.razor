@@ -39,7 +39,7 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => SearchTitle(value, token)" ToStringFunc="(value) => value.Title"
+            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
                              Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="TitleValueChangedAsync"
                              ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
                              ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false">
