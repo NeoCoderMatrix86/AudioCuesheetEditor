@@ -65,7 +65,7 @@ along with Foobar.  If not, see
         {
             <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
         }
-        <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="help">@_localizer["Help"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/wiki/Help" Target="_blank">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="DisplayHotkeys">@_localizer["Hotkeys"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
@@ -88,7 +88,6 @@ along with Foobar.  If not, see
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKey.Ctrl, Key.z, () => TraceChangeManager.Undo())
             .Add(ModKey.Ctrl, Key.y, () => TraceChangeManager.Redo())
-            .Add(ModKey.Ctrl, Key.h, () => _navigationManager.NavigateTo("help"))
             .Add(ModKey.Ctrl, Key.s, DownloadProjectfileClicked)
             .Add(ModKey.Ctrl, Key.e, DownloadExportClicked)
             .Add(ModKey.Ctrl, Key.u, DownloadCuesheetClicked)

@@ -132,12 +132,6 @@
   <data name="Ctrl + y" xml:space="preserve">
     <value>Strg + y</value>
   </data>
-  <data name="Navigate to help" xml:space="preserve">
-    <value>Zur Hilfe navigieren</value>
-  </data>
-  <data name="Ctrl + h" xml:space="preserve">
-    <value>Strg + h</value>
-  </data>
   <data name="Reset cuesheet" xml:space="preserve">
     <value>Cuesheet zurücksetzen</value>
   </data>
