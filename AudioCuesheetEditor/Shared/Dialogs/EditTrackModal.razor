@@ -101,7 +101,7 @@ along with Foobar.  If not, see
         IEnumerable<MusicBrainzArtist>? artists = null;
         if (!token.IsCancellationRequested)
         {
-            artists = await _musicBrainzDataProvider.SearchArtistAsync(value);
+            artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
             // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
             if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
             {
@@ -116,7 +116,7 @@ along with Foobar.  If not, see
         IEnumerable<MusicBrainzTrack>? tracks = null;
         if (!token.IsCancellationRequested)
         {
-            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, EditedTrack.Artist);
+            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, EditedTrack.Artist, token);
             //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
             if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
             {

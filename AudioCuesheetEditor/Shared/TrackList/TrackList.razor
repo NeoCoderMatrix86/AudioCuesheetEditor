@@ -209,30 +209,22 @@ along with Foobar.  If not, see
 
     async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string? value, CancellationToken token)
     {
-        IEnumerable<MusicBrainzArtist>? artists = null;
-        if (!token.IsCancellationRequested)
+        IEnumerable<MusicBrainzArtist>? artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
+        // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+        if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
         {
-            artists = await _musicBrainzDataProvider.SearchArtistAsync(value);
-            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
-            {
-                artists = artists.Prepend(new() { Name = value });
-            }
+            artists = artists.Prepend(new() { Name = value });
         }
         return artists;
     }
 
     async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string? value, Track currentTrack, CancellationToken token)
     {
-        IEnumerable<MusicBrainzTrack>? tracks = null;
-        if (!token.IsCancellationRequested)
+        IEnumerable<MusicBrainzTrack>? tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentTrack.Artist, token);
+        //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+        if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
         {
-            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentTrack.Artist);
-            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
-            {
-                tracks = tracks.Prepend(new() { Artist = currentTrack.Artist, Title = value });
-            }
+            tracks = tracks.Prepend(new() { Artist = currentTrack.Artist, Title = value });
         }
         return tracks;
     }

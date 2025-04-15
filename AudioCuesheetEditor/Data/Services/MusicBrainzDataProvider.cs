@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Data.Services
 
         private String? applicationVersion = null;
 
-        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString)
+        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString, CancellationToken token)
         {
             List<MusicBrainzArtist> artistSearchResult = [];
             try
@@ -51,9 +51,13 @@ namespace AudioCuesheetEditor.Data.Services
                 if (String.IsNullOrEmpty(searchString) == false)
                 {
                     using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                    var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true);
+                    var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true, cancellationToken: token);
                     artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("Request was canceled");
             }
             catch (HttpRequestException hre)
             {
@@ -62,7 +66,7 @@ namespace AudioCuesheetEditor.Data.Services
             return artistSearchResult.AsReadOnly();
         }
 
-        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist = null)
+        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist, CancellationToken token)
         {
             List<MusicBrainzTrack> titleSearchResult = [];
             try
@@ -73,11 +77,11 @@ namespace AudioCuesheetEditor.Data.Services
                     ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
                     if (String.IsNullOrEmpty(artist))
                     {
-                        findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true);
+                        findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
                     }
                     else
                     {
-                        findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
+                        findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
                     }
                     foreach (var result in findRecordingsResult.Results)
                     {
@@ -104,7 +108,11 @@ namespace AudioCuesheetEditor.Data.Services
                     }
                 }
             }
-            catch(HttpRequestException hre)
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("Request was canceled");
+            }
+            catch (HttpRequestException hre)
             {
                 _logger.LogError(hre, "Error getting response from MusicBrainz");
             }
