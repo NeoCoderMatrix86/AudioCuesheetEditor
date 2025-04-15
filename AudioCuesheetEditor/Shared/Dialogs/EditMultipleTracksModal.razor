@@ -19,7 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<EditMultipleTracksModal> _localizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
-@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
 <MudDialog>
@@ -51,7 +51,7 @@ along with Foobar.  If not, see
                 <MudFlexBreak />
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackArtist" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
-                    <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name"
+                    <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
                                      Text="@EditedTrack.Artist" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable
                                      SelectValueOnTab ShowProgressIndicator Disabled="!editTrackArtist" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist)))"
                                      ErrorText="@GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist))" MaxItems="null">
@@ -70,7 +70,7 @@ along with Foobar.  If not, see
                 <MudFlexBreak />
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackTitle" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
-                    <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
+                    <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
                                      Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="(value) => EditedTrack.Title = value?.Title" ResetValueOnEmptyText Clearable
                                      SelectValueOnTab ShowProgressIndicator Disabled="!editTrackTitle" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title)))"
                                      ErrorText="@GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title))" MaxItems="null">
@@ -187,36 +187,6 @@ along with Foobar.  If not, see
 
     Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap;
     DynamicEditValue editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackPregap, editModeTrackPostgap;
-
-    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string? value, CancellationToken token)
-    {
-        IEnumerable<MusicBrainzArtist>? artists = null;
-        if (!token.IsCancellationRequested)
-        {
-            artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
-            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
-            {
-                artists = artists.Prepend(new() { Name = value });
-            }
-        }
-        return artists;
-    }
-
-    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string? value, CancellationToken token)
-    {
-        IEnumerable<MusicBrainzTrack>? tracks = null;
-        if (!token.IsCancellationRequested)
-        {
-            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, EditedTrack.Artist, token);
-            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
-            {
-                tracks = tracks.Prepend(new() { Artist = EditedTrack.Artist, Title = value });
-            }
-        }
-        return tracks;
-    }
 
     void SaveClick()
     {

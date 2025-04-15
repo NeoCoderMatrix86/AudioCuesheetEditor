@@ -57,6 +57,7 @@ builder.Services.AddScoped<FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
 builder.Services.AddScoped<EditTrackModalManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
+builder.Services.AddScoped<AutocompleteManager>();
 
 builder.Services.AddLogging();
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

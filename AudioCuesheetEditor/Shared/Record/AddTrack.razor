@@ -18,13 +18,13 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<AddTrack> _localizer
-@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
 <MudCard Outlined>
     <MudCardContent>
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
-            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Text="@currentRecordingTrack.Artist"
+            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" Text="@currentRecordingTrack.Artist"
                              ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null">
@@ -39,7 +39,7 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
+            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value.Title"
                              Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="TitleValueChangedAsync"
                              ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
                              ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false" MaxItems="null">
@@ -91,36 +91,6 @@ along with Foobar.  If not, see
     MudAutocomplete<MusicBrainzArtist>? artistInput;
     MudAutocomplete<MusicBrainzTrack>? titleInput;
     MudButton? addButton;
-
-    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string? value, CancellationToken token)
-    {
-        IEnumerable<MusicBrainzArtist>? artists = null;
-        if (!token.IsCancellationRequested)
-        {
-            artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
-            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
-            {
-                artists = artists.Prepend(new() { Name = value });
-            }
-        }
-        return artists;
-    }
-
-    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string? value, CancellationToken token)
-    {
-        IEnumerable<MusicBrainzTrack>? tracks = null;
-        if (!token.IsCancellationRequested)
-        {
-            tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentRecordingTrack.Artist, token);
-            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
-            {
-                tracks = tracks.Prepend(new() { Artist = currentRecordingTrack.Artist, Title = value });
-            }
-        }
-        return tracks;
-    }
 
     String? GetValidationErrorMessage(object model, string propertyName)
     {

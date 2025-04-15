@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<TrackList> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
-@inject MusicBrainzDataProvider _musicBrainzDataProvider
+@inject AutocompleteManager _autocompleteManager
 @inject EditTrackModalManager _editTrackModalManager
 @inject ValidationService _validationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
@@ -66,7 +66,7 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
-                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }" 
+                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" Value="new() { Name = context.Item.Artist }"
                                  ValueChanged="(value) => context.Item.Artist = value?.Name" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
                                  Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))" MaxItems="null">
                     <ItemTemplate Context="autocompleteContext">
@@ -84,7 +84,7 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
-                <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => SearchTitle(value, context.Item, token)" ToStringFunc="(value) => value.Title" 
+                <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, context.Item.Artist, token)" ToStringFunc="(value) => value.Title"
                                  Value="new() { Artist = context.Item.Artist, Title = context.Item.Title }" ValueChanged="(value) => TitleSelected(context.Item, value)"
                                  ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
                                  ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))" MaxItems="null">
@@ -202,51 +202,6 @@ along with Foobar.  If not, see
         {
             Cuesheet?.RemoveTracks(Cuesheet.Tracks);
             selectedTracks.Clear();
-        }
-    }
-
-    async Task<IEnumerable<MusicBrainzArtist>> SearchArtist(string? value, CancellationToken token)
-    {
-        //TODO: move this method to a service (maybe the _musicBrainzDataProvider and use it in AddTrack, TrackList, EditMultipleTracksModal and EditTrackModal)
-        try
-        {
-            IEnumerable<MusicBrainzArtist> artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
-            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (artists.Any(x => x.Name == value) == false))
-            {
-                artists = artists.Prepend(new() { Name = value });
-            }
-            return artists;
-        }
-        catch (TaskCanceledException)
-        {
-            return Enumerable.Empty<MusicBrainzArtist>();
-        }
-        catch (OperationCanceledException)
-        {
-            return Enumerable.Empty<MusicBrainzArtist>();
-        }
-    }
-
-    async Task<IEnumerable<MusicBrainzTrack>> SearchTitle(string? value, Track currentTrack, CancellationToken token)
-    {
-        try
-        {
-            IEnumerable<MusicBrainzTrack> tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentTrack.Artist, token);
-            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-            if ((String.IsNullOrEmpty(value) == false) && (tracks.Any(x => x.Title == value) == false))
-            {
-                tracks = tracks.Prepend(new() { Artist = currentTrack.Artist, Title = value });
-            }
-            return tracks;
-        }
-        catch (TaskCanceledException)
-        {
-            return Enumerable.Empty<MusicBrainzTrack>();
-        }
-        catch (OperationCanceledException)
-        {
-            return Enumerable.Empty<MusicBrainzTrack>();
         }
     }
 
