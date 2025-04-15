@@ -55,10 +55,6 @@ namespace AudioCuesheetEditor.Data.Services
                     artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
                 }
             }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Request was canceled");
-            }
             catch (HttpRequestException hre)
             {
                 _logger.LogError(hre, "Error getting response from MusicBrainz");
@@ -107,10 +103,6 @@ namespace AudioCuesheetEditor.Data.Services
                         });
                     }
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Request was canceled");
             }
             catch (HttpRequestException hre)
             {

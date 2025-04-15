@@ -147,9 +147,6 @@ along with Foobar.  If not, see
 </MudMenu>
 
 @code {
-    //TODO: Currently loading of autocomplete is needed to enter a free value
-    //TODO: Bug: Currently no artist or title can be entered
-
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
@@ -208,26 +205,49 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task<IEnumerable<MusicBrainzArtist>?> SearchArtist(string? value, CancellationToken token)
+    async Task<IEnumerable<MusicBrainzArtist>> SearchArtist(string? value, CancellationToken token)
     {
-        IEnumerable<MusicBrainzArtist>? artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
-        // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-        if ((String.IsNullOrEmpty(value) == false) && (artists.Count(x => x.Name == value) == 0))
+        //TODO: move this method to a service (maybe the _musicBrainzDataProvider and use it in AddTrack, TrackList, EditMultipleTracksModal and EditTrackModal)
+        try
         {
-            artists = artists.Prepend(new() { Name = value });
+            IEnumerable<MusicBrainzArtist> artists = await _musicBrainzDataProvider.SearchArtistAsync(value, token);
+            // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+            if ((String.IsNullOrEmpty(value) == false) && (artists.Any(x => x.Name == value) == false))
+            {
+                artists = artists.Prepend(new() { Name = value });
+            }
+            return artists;
         }
-        return artists;
+        catch (TaskCanceledException)
+        {
+            return Enumerable.Empty<MusicBrainzArtist>();
+        }
+        catch (OperationCanceledException)
+        {
+            return Enumerable.Empty<MusicBrainzArtist>();
+        }
     }
 
-    async Task<IEnumerable<MusicBrainzTrack>?> SearchTitle(string? value, Track currentTrack, CancellationToken token)
+    async Task<IEnumerable<MusicBrainzTrack>> SearchTitle(string? value, Track currentTrack, CancellationToken token)
     {
-        IEnumerable<MusicBrainzTrack>? tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentTrack.Artist, token);
-        //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-        if ((String.IsNullOrEmpty(value) == false) && (tracks.Count(x => x.Title == value) == 0))
+        try
         {
-            tracks = tracks.Prepend(new() { Artist = currentTrack.Artist, Title = value });
+            IEnumerable<MusicBrainzTrack> tracks = await _musicBrainzDataProvider.SearchTitleAsync(value, currentTrack.Artist, token);
+            //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
+            if ((String.IsNullOrEmpty(value) == false) && (tracks.Any(x => x.Title == value) == false))
+            {
+                tracks = tracks.Prepend(new() { Artist = currentTrack.Artist, Title = value });
+            }
+            return tracks;
         }
-        return tracks;
+        catch (TaskCanceledException)
+        {
+            return Enumerable.Empty<MusicBrainzTrack>();
+        }
+        catch (OperationCanceledException)
+        {
+            return Enumerable.Empty<MusicBrainzTrack>();
+        }
     }
 
     void TitleSelected(Track track, MusicBrainzTrack? musicBrainzTrack)
