@@ -54,7 +54,7 @@ along with Foobar.  If not, see
                     <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name"
                                      Text="@EditedTrack.Artist" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable
                                      SelectValueOnTab ShowProgressIndicator Disabled="!editTrackArtist" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist)))"
-                                     ErrorText="@GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist))">
+                                     ErrorText="@GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist))" MaxItems="null">
                         <ItemTemplate Context="autocompleteContext">
                             @if (autocompleteContext.Disambiguation != null)
                             {
@@ -73,7 +73,7 @@ along with Foobar.  If not, see
                     <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
                                      Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="(value) => EditedTrack.Title = value?.Title" ResetValueOnEmptyText Clearable
                                      SelectValueOnTab ShowProgressIndicator Disabled="!editTrackTitle" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title)))"
-                                     ErrorText="@GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title))">
+                                     ErrorText="@GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title))" MaxItems="null">
                         <ItemTemplate Context="autocompleteContext">
                             @if (autocompleteContext.Disambiguation != null)
                             {

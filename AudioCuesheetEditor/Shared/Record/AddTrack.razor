@@ -27,7 +27,7 @@ along with Foobar.  If not, see
             <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="SearchArtist" ToStringFunc="(value) => value.Name" Text="@currentRecordingTrack.Artist"
                              ValueChanged="ArtistValueChangedAsync" ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
-                             Disabled="Cuesheet?.IsRecording == false">
+                             Disabled="Cuesheet?.IsRecording == false" MaxItems="null">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -42,7 +42,7 @@ along with Foobar.  If not, see
             <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="SearchTitle" ToStringFunc="(value) => value.Title"
                              Value="new() { Artist = currentRecordingTrack.Artist, Title = currentRecordingTrack.Title }" ValueChanged="TitleValueChangedAsync"
                              ResetValueOnEmptyText Clearable SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))"
-                             ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false">
+                             ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" Disabled="Cuesheet?.IsRecording == false" MaxItems="null">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
