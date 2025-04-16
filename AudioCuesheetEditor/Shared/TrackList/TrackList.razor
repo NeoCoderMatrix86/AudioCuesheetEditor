@@ -67,7 +67,7 @@ along with Foobar.  If not, see
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" Text="@context.Item.Artist"
-                                 TextChanged="(newValue) => context.Item.Artist = newValue" ResetValueOnEmptyText Clearable ShowProgressIndicator 
+                                 TextChanged="(newValue) => context.Item.Artist = newValue" Clearable ShowProgressIndicator 
                                  Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))" 
                                  MaxItems="null" CoerceText="false">
                     <ItemTemplate Context="autocompleteContext">
