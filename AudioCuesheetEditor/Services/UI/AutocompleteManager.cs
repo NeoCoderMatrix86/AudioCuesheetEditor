@@ -25,12 +25,7 @@ namespace AudioCuesheetEditor.Services.UI
         {
             try
             {
-                IEnumerable<MusicBrainzArtist> artists = await _musicBrainzDataProvider.SearchArtistAsync(searchString, cancellationToken);
-                // Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-                if ((String.IsNullOrEmpty(searchString) == false) && (artists.Any(x => x.Name == searchString) == false))
-                {
-                    artists = artists.Prepend(new() { Name = searchString });
-                }
+                var artists = await _musicBrainzDataProvider.SearchArtistAsync(searchString, cancellationToken);
                 return artists;
             }
             catch (TaskCanceledException)
@@ -47,12 +42,7 @@ namespace AudioCuesheetEditor.Services.UI
         {
             try
             {
-                IEnumerable<MusicBrainzTrack> tracks = await _musicBrainzDataProvider.SearchTitleAsync(searchString, artist, cancellationToken);
-                //Add an element that is exactly the entered value, as otherwise the user can not enter a value, that is not available on musicbrainz
-                if ((String.IsNullOrEmpty(searchString) == false) && (tracks.Any(x => x.Title == searchString) == false))
-                {
-                    tracks = tracks.Prepend(new() { Artist = artist, Title = searchString });
-                }
+                var tracks = await _musicBrainzDataProvider.SearchTitleAsync(searchString, artist, cancellationToken);
                 return tracks;
             }
             catch (TaskCanceledException)
