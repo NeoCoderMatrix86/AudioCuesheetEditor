@@ -33,9 +33,8 @@ along with Foobar.  If not, see
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
                           ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" />
             <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
-                             Value="new() { Name = EditedTrack.Artist }" ValueChanged="(value) => EditedTrack.Artist = value?.Name" ResetValueOnEmptyText Clearable 
-                             SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
-                             ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))" MaxItems="null">
+                             @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
+                             ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -48,9 +47,8 @@ along with Foobar.  If not, see
                 </ItemTemplate>
             </MudAutocomplete>
             <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
-                             Value="new() { Artist = EditedTrack.Artist, Title = EditedTrack.Title }" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable
-                             SelectValueOnTab ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))"
-                             ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))" MaxItems="null">
+                             @bind-Text="EditedTrack.Title" Value="autocompleteTrack" ValueChanged="TitleSelected" Clearable ShowProgressIndicator 
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -89,7 +87,11 @@ along with Foobar.  If not, see
 </MudDialog>
 
 @code {
-    //TODO: use Autocomplete like in TrackList
+    //TODO: Bug: Editing a track that has already an artist or title set doesn't display these values
+    // We need to save these values otherwise the autocomplete opens every time
+    MusicBrainzArtist? autocompleteArtist;
+    MusicBrainzTrack? autocompleteTrack;
+
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
 
