@@ -101,7 +101,7 @@ along with Foobar.  If not, see
 
     void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
     {
-        EditedTrack.Title = musicBrainzTrack?.Title;
+        autocompleteTrack = musicBrainzTrack;
         if ((String.IsNullOrEmpty(EditedTrack.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
         {
             EditedTrack.Artist = musicBrainzTrack.Artist;
