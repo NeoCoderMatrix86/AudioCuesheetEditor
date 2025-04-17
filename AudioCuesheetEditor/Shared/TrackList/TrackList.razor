@@ -147,6 +147,7 @@ along with Foobar.  If not, see
 </MudMenu>
 
 @code {
+    //TODO: Bug: Changing a track outside this component doesn't refresh the artist and title (importing, recording, etc.)
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
