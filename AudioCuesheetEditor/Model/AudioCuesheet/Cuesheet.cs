@@ -127,6 +127,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public bool IsRecording => RecordingTime.HasValue;
 
+        //TODO: Remove this property and make recordingStart public
         public TimeSpan? RecordingTime
         {
             get 
