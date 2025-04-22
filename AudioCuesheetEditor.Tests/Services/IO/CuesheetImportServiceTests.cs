@@ -207,8 +207,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PREGAP 00:04:00")), importFile.FileContentRecognized?.ElementAt(35));
             Assert.AreEqual(8, importFile.AnalysedCuesheet.Tracks.Count);
             Assert.IsNotNull(importFile.AnalysedCuesheet.CDTextfile);
-            Assert.AreEqual(4, importFile.AnalysedCuesheet.Tracks.ElementAt(0).Flags.Count);
-            Assert.AreEqual(2, importFile.AnalysedCuesheet.Tracks.ElementAt(1).Flags.Count);
+            Assert.AreEqual(4, importFile.AnalysedCuesheet.Tracks.ElementAt(0).Flags.Count());
+            Assert.AreEqual(2, importFile.AnalysedCuesheet.Tracks.ElementAt(1).Flags.Count());
             Assert.IsNotNull(importFile.AnalysedCuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "DCP"));
             Assert.IsNotNull(importFile.AnalysedCuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
             Assert.AreEqual(new TimeSpan(0, 0, 2), importFile.AnalysedCuesheet.Tracks.ElementAt(4).PostGap);

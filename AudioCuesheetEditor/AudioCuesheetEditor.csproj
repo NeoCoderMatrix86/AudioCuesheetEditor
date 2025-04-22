@@ -15,138 +15,22 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Content Remove="Resources\Localization\About\de.json" />
-    <Content Remove="Resources\Localization\About\en.json" />
-    <Content Remove="Resources\Localization\AudioPlayer\de.json" />
-    <Content Remove="Resources\Localization\AudioPlayer\en.json" />
-    <Content Remove="Resources\Localization\CatalogueNumber\de.json" />
-    <Content Remove="Resources\Localization\CatalogueNumber\en.json" />
-    <Content Remove="Resources\Localization\CuesheetData\de.json" />
-    <Content Remove="Resources\Localization\CuesheetData\en.json" />
-    <Content Remove="Resources\Localization\EditSections\de.json" />
-    <Content Remove="Resources\Localization\EditSections\en.json" />
-    <Content Remove="Resources\Localization\EditTrackModal\de.json" />
-    <Content Remove="Resources\Localization\EditTrackModal\en.json" />
-    <Content Remove="Resources\Localization\ImportFileView\de.json" />
-    <Content Remove="Resources\Localization\ImportFileView\en.json" />
-    <Content Remove="Resources\Localization\MainLayout\de.json" />
-    <Content Remove="Resources\Localization\MainLayout\en.json" />
-    <Content Remove="Resources\Localization\ModalDialog\de.json" />
-    <Content Remove="Resources\Localization\ModalDialog\en.json" />
-    <Content Remove="Resources\Localization\ModalExportdialog\de.json" />
-    <Content Remove="Resources\Localization\ModalExportdialog\en.json" />
-    <Content Remove="Resources\Localization\OptionsDialog\de.json" />
-    <Content Remove="Resources\Localization\OptionsDialog\en.json" />
-    <Content Remove="Resources\Localization\RecordControl\de.json" />
-    <Content Remove="Resources\Localization\RecordControl\en.json" />
-    <Content Remove="Resources\Localization\EditRecordOptions\de.json" />
-    <Content Remove="Resources\Localization\EditRecordOptions\en.json" />
-    <Content Remove="Resources\Localization\CultureSelector\de.json" />
-    <Content Remove="Resources\Localization\CultureSelector\en.json" />
-    <Content Remove="Resources\Localization\FileEdit\de.json" />
-    <Content Remove="Resources\Localization\FileEdit\en.json" />
-    <Content Remove="Resources\Localization\Help\de.json" />
-    <Content Remove="Resources\Localization\Help\en.json" />
-    <Content Remove="Resources\Localization\Index\de.json" />
-    <Content Remove="Resources\Localization\Index\en.json" />
-    <Content Remove="Resources\Localization\TrackLinkControl\de.json" />
-    <Content Remove="Resources\Localization\TrackLinkControl\en.json" />
-    <Content Remove="Resources\Localization\TrackListControlButtons\de.json" />
-    <Content Remove="Resources\Localization\TrackListControlButtons\en.json" />
-    <Content Remove="Resources\Localization\TrackListItemControlColumn\de.json" />
-    <Content Remove="Resources\Localization\TrackListItemControlColumn\en.json" />
-    <Content Remove="Resources\Localization\TrackListItem\de.json" />
-    <Content Remove="Resources\Localization\TrackListItem\en.json" />
-    <Content Remove="Resources\Localization\TrackList\de.json" />
-    <Content Remove="Resources\Localization\TrackList\en.json" />
-    <Content Remove="Resources\Localization\TrackSelection\de.json" />
-    <Content Remove="Resources\Localization\TrackSelection\en.json" />
-    <Content Remove="Resources\Localization\ValidationMessage\de.json" />
-    <Content Remove="Resources\Localization\ValidationMessage\en.json" />
-    <Content Remove="Resources\Localization\EditImportOptions\de.json" />
-    <Content Remove="Resources\Localization\EditImportOptions\en.json" />
-    <Content Remove="Resources\Localization\ViewModeImport\de.json" />
-    <Content Remove="Resources\Localization\ViewModeImport\en.json" />
-    <Content Remove="Resources\Localization\ViewModeRecord\de.json" />
-    <Content Remove="Resources\Localization\ViewModeRecord\en.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Localization\About\de.json" />
-    <EmbeddedResource Include="Resources\Localization\About\en.json" />
-    <EmbeddedResource Include="Resources\Localization\AudioPlayer\en.json" />
-    <EmbeddedResource Include="Resources\Localization\AudioPlayer\de.json" />
-    <EmbeddedResource Include="Resources\Localization\CatalogueNumber\en.json" />
-    <EmbeddedResource Include="Resources\Localization\CatalogueNumber\de.json" />
-    <EmbeddedResource Include="Resources\Localization\CuesheetData\de.json" />
-    <EmbeddedResource Include="Resources\Localization\CuesheetData\en.json" />
-    <EmbeddedResource Include="Resources\Localization\EditSections\de.json" />
-    <EmbeddedResource Include="Resources\Localization\EditSections\en.json" />
-    <EmbeddedResource Include="Resources\Localization\EditTrackModal\de.json" />
-    <EmbeddedResource Include="Resources\Localization\EditTrackModal\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ImportFileView\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ImportFileView\en.json" />
-    <EmbeddedResource Include="Resources\Localization\MainLayout\en.json" />
-    <EmbeddedResource Include="Resources\Localization\MainLayout\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ModalDialog\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ModalDialog\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ModalExportdialog\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ModalExportdialog\en.json" />
-    <EmbeddedResource Include="Resources\Localization\OptionsDialog\de.json" />
-    <EmbeddedResource Include="Resources\Localization\OptionsDialog\en.json" />
-    <EmbeddedResource Include="Resources\Localization\RecordControl\de.json" />
-    <EmbeddedResource Include="Resources\Localization\RecordControl\en.json" />
-    <EmbeddedResource Include="Resources\Localization\EditRecordOptions\de.json" />
-    <EmbeddedResource Include="Resources\Localization\EditRecordOptions\en.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackLinkControl\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackLinkControl\en.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackListControlButtons\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackListControlButtons\en.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackListItemControlColumn\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackListItemControlColumn\en.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackListItem\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackListItem\en.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackList\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackList\en.json" />
-    <EmbeddedResource Include="Resources\Localization\CultureSelector\de.json" />
-    <EmbeddedResource Include="Resources\Localization\CultureSelector\en.json" />
-    <EmbeddedResource Include="Resources\Localization\FileEdit\de.json" />
-    <EmbeddedResource Include="Resources\Localization\FileEdit\en.json" />
-    <EmbeddedResource Include="Resources\Localization\Help\de.json" />
-    <EmbeddedResource Include="Resources\Localization\Help\en.json" />
-    <EmbeddedResource Include="Resources\Localization\Index\en.json" />
-    <EmbeddedResource Include="Resources\Localization\Index\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackSelection\de.json" />
-    <EmbeddedResource Include="Resources\Localization\TrackSelection\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ValidationMessage\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ValidationMessage\en.json" />
-    <EmbeddedResource Include="Resources\Localization\EditImportOptions\de.json" />
-    <EmbeddedResource Include="Resources\Localization\EditImportOptions\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ViewModeImport\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ViewModeImport\en.json" />
-    <EmbeddedResource Include="Resources\Localization\ViewModeRecord\de.json" />
-    <EmbeddedResource Include="Resources\Localization\ViewModeRecord\en.json" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\Licence.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.1" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.1" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.4" PrivateAssets="all" />
     <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
-    <PackageReference Include="Blazorise.Components" Version="1.7.1" />
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
-    <PackageReference Include="Markdig" Version="0.39.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="9.0.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="5.1.0" />
-    <PackageReference Include="z440.atl.core" Version="6.10.0" />
+    <PackageReference Include="Markdig" Version="0.40.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="9.0.4" />
+    <PackageReference Include="MudBlazor" Version="8.5.1" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.0.1" />
+    <PackageReference Include="z440.atl.core" Version="6.20.0" />
   </ItemGroup>
   
   <ItemGroup>

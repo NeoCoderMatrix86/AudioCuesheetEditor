@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
 
@@ -33,31 +32,21 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public IEnumerable<Track> Tracks { get; } = tracks;
     }
 
-    public class CuesheetSectionAddRemoveEventArgs(CuesheetSection section) : EventArgs
+    public class Cuesheet() : Validateable, ITraceable, ICuesheet
     {
-        public CuesheetSection Section { get; } = section;
-    }
-
-    public class Cuesheet(TraceChangeManager? traceChangeManager = null) : Validateable<Cuesheet>, ITraceable, ICuesheet
-    {
-        private readonly object syncLock = new();
+        private readonly Lock syncLock = new();
 
         private List<Track> tracks = [];
         private String? artist;
         private String? title;
-        private Audiofile? audiofile;
+        private IAudiofile? audiofile;
         private CDTextfile? cDTextfile;
-        private Cataloguenumber catalogueNumber = new();
-        private DateTime? recordingStart;
+        private String? catalogueNumber;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
         private List<CuesheetSection> sections = [];
 
-        public event EventHandler? AudioFileChanged;
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-        public event EventHandler<TracksAddedRemovedEventArgs>? TracksAdded;
-        public event EventHandler<TracksAddedRemovedEventArgs>? TracksRemoved;
-        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionAdded;
-        public event EventHandler<CuesheetSectionAddRemoveEventArgs>? SectionRemoved;
+        public event EventHandler? IsRecordingChanged;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -101,29 +90,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 FireEvents(previousValue, propertyName: nameof(Title));
             }
         }
-        public Audiofile? Audiofile
+        public IAudiofile? Audiofile
         {
             get => audiofile;
             set 
             {
                 var previousValue = audiofile;
-                if (audiofile != null)
-                {
-                    audiofile.ContentStreamLoaded -= Audiofile_ContentStreamLoaded;
-                }
                 audiofile = value;
-                if (audiofile != null)
-                {
-                    if (audiofile.IsContentStreamLoaded == false)
-                    {
-                        audiofile.ContentStreamLoaded += Audiofile_ContentStreamLoaded;
-                    }
-                    else
-                    {
-                        RecalculateLastTrackEnd();
-                    }
-                }
-                FireEvents(previousValue, fireAudioFileChanged: true, propertyName: nameof(Audiofile));
+                FireEvents(previousValue, propertyName: nameof(Audiofile));
             }
         }
 
@@ -138,35 +112,42 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public Cataloguenumber Cataloguenumber 
+        public String? Cataloguenumber 
         {
             get => catalogueNumber;
             set
             {
                 var previousValue = catalogueNumber;
                 catalogueNumber = value;
-                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(Cataloguenumber));
+                FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
             }
         }
 
         [JsonIgnore]
-        public bool IsRecording
-        {
-            get { return RecordingTime.HasValue; }
-        }
+        public bool IsRecording => RecordingStart.HasValue;
+        
+        [JsonIgnore]
+        public DateTime? RecordingStart { get; set; }
 
-        public TimeSpan? RecordingTime
+        [JsonIgnore]
+        public IEnumerable<String> IsRecordingPossible
         {
-            get 
-            { 
-                if (recordingStart.HasValue == true)
+            get
+            {
+                var errors = new List<String>();
+                if (IsRecording)
                 {
-                    return DateTime.UtcNow - recordingStart;
+                    errors.Add("Record is already running!");
                 }
-                else
+                if (Tracks.Count != 0)
                 {
-                    return null;
+                    errors.Add("Cuesheet already contains tracks!");
                 }
+                if (Audiofile?.IsRecorded == true)
+                {
+                    errors.Add("A recording is already available!");
+                }
+                return errors;
             }
         }
 
@@ -187,30 +168,24 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        [JsonIgnore]
-        public TraceChangeManager? TraceChangeManager { get; } = traceChangeManager;
-
         public CuesheetSection AddSection()
         {
             var previousValue = new List<CuesheetSection>(sections);
             var section = new CuesheetSection(this);
             sections.Add(section);
-            SectionAdded?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
             OnTraceablePropertyChanged(previousValue, nameof(Sections));
             return section;
         }
 
-        public void RemoveSection(CuesheetSection section)
+        public void RemoveSections(IEnumerable<CuesheetSection> sectionsToRemove)
         {
             var previousValue = new List<CuesheetSection>(sections);
-            if (sections.Remove(section))
-            {
-                OnTraceablePropertyChanged(previousValue, nameof(Sections));
-                SectionRemoved?.Invoke(this, new CuesheetSectionAddRemoveEventArgs(section));
-            }
+            var intersection = sections.Intersect(sectionsToRemove);
+            sections = [.. sections.Except(intersection)];
+            OnTraceablePropertyChanged(previousValue, nameof(Sections));
         }
 
-        public CuesheetSection? GetSectionAtTrack(Track track)
+        public CuesheetSection? GetSection(Track track)
         {
             return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
         }
@@ -234,7 +209,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return previousLinkedTrack;
         }
 
-        public void AddTrack(Track track, ApplicationOptions? applicationOptions = null, RecordOptions? recordOptions = null)
+        public void AddTrack(Track track)
         {
             if (track.IsCloned)
             {
@@ -242,25 +217,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             var previousValue = new List<Track>(tracks);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
-            if (IsRecording && recordingStart.HasValue)
+            if (IsRecording && RecordingStart.HasValue)
             {
-                ArgumentNullException.ThrowIfNull(recordOptions);
-                track.Begin = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
+                track.Begin = DateTime.UtcNow - RecordingStart.Value;
             }
-            //When no applications are available (because of used by import for example) we don't try to calculate properties
-            if (applicationOptions != null)
-            {
-                track.IsLinkedToPreviousTrack = applicationOptions.LinkTracksWithPreviousOne;
-            }
+            //Fire the event manually since we don't know if the track is already linked to previous one
+            Track_IsLinkedToPreviousTrackChanged(track, EventArgs.Empty);
             tracks.Add(track);
             track.Cuesheet = this;
-            ReCalculateTrackProperties(track);
+            RecalculateTrackProperties(track);
             track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            if (IsImporting == false)
-            {
-                TracksAdded?.Invoke(this, new TracksAddedRemovedEventArgs([track]));
-            }
         }
 
         public void RemoveTrack(Track track)
@@ -299,7 +266,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs([track]));
         }
 
         /// <summary>
@@ -313,7 +279,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
             var intersection = tracks.Intersect(tracksToRemove);
-            tracks = tracks.Except(intersection).ToList();
+            tracks = [.. tracks.Except(intersection)];
             foreach (var track in tracks)
             {
                 if (track.IsLinkedToPreviousTrack)
@@ -333,79 +299,100 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
-            TracksRemoved?.Invoke(this, new TracksAddedRemovedEventArgs(intersection));
         }
-
-        public Boolean MoveTrackPossible(Track track, MoveDirection moveDirection)
+        public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
-            Boolean movePossible = false;
             lock (syncLock)
             {
-                var index = Tracks.ToList().IndexOf(track);
+                var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
+
+                if (trackIndices.Count == 0)
+                {
+                    return false;
+                }
+
                 if (moveDirection == MoveDirection.Up)
                 {
-                    if (index > 0)
-                    {
-                        movePossible = true;
-                    }
+                    return trackIndices.First() > 0;
                 }
                 if (moveDirection == MoveDirection.Down)
                 {
-                    if ((index + 1) < Tracks.Count)
+                    return trackIndices.Last() < Tracks.Count - 1;
+                }
+
+                return false;
+            }
+        }
+        public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
+        {
+            lock (syncLock)
+            {
+                if (!MoveTracksPossible(tracksToMove, moveDirection))
+                {
+                    return;
+                }
+                var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
+
+                var previousValue = new List<Track>(Tracks);
+
+                if (moveDirection == MoveDirection.Up)
+                {
+                    foreach (var index in trackIndices)
                     {
-                        movePossible = true;
+                        if (index > 0)
+                        {
+                            SwitchTracks(tracks[index], tracks[index - 1]);
+                        }
                     }
                 }
-            }
-            return movePossible;
-        }
+                else if (moveDirection == MoveDirection.Down)
+                {
+                    for (int i = trackIndices.Count - 1; i >= 0; i--)
+                    {
+                        int index = trackIndices[i];
+                        if (index < Tracks.Count - 1)
+                        {
+                            SwitchTracks(tracks[index], tracks[index + 1]);
+                        }
+                    }
+                }
 
-        public void MoveTrack(Track track, MoveDirection moveDirection)
-        {
-            var index = tracks.IndexOf(track);
-            Track? currentTrack = null;
-            switch (moveDirection)
-            {
-                case MoveDirection.Up:
-                    if (index > 0)
-                    {
-                        currentTrack = tracks.ElementAt(index - 1);
-                    }
-                    break;
-                case MoveDirection.Down:
-                    if ((index + 1) < Tracks.Count)
-                    {
-                        currentTrack = tracks.ElementAt(index + 1);
-                    }
-                    break;
-                default:
-                    throw new ArgumentException("Invalid enum value for MoveDirection!", nameof(moveDirection));
-            }
-            if (currentTrack != null)
-            {
-                var previousValue = new List<Track>(tracks);
-                SwitchTracks(track, currentTrack);
                 OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
         }
 
         public void StartRecording()
         {
-            recordingStart = DateTime.UtcNow;
+            if (IsRecordingPossible.Any() == false)
+            {
+                RecordingStart = DateTime.UtcNow;
+                IsRecordingChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
-        public void StopRecording(RecordOptions recordOptions)
+        public void StopRecording()
         {
             //Set end of last track
             var lastTrack = Tracks.LastOrDefault();
-            if ((lastTrack != null) && (recordingStart.HasValue))
+            if ((lastTrack != null) && (RecordingStart.HasValue))
             {
-                lastTrack.End = CalculateTimeSpanWithSensitivity(DateTime.UtcNow - recordingStart.Value, recordOptions.RecordTimeSensitivity);
+                lastTrack.End = DateTime.UtcNow - RecordingStart.Value;
             }
-            recordingStart = null;
+            RecordingStart = null;
+            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        protected override ValidationResult Validate(string property)
+        public void RecalculateLastTrackEnd()
+        {
+            //Try to recalculate length by recalculating last track
+            var lastTrack = tracks.LastOrDefault();
+            if (lastTrack != null)
+            {
+                RecalculateTrackProperties(lastTrack);
+            }
+        }
+
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
@@ -475,16 +462,31 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
                     }
                     break;
+                case nameof(Cataloguenumber):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Cataloguenumber) == false)
+                    {
+                        if (Cataloguenumber.All(Char.IsDigit) == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} must only contain numbers!", nameof(Cataloguenumber)));
+                        }
+                        if (Cataloguenumber.Length != 13)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} has an invalid length. Allowed length is {1}!", nameof(Cataloguenumber), 13));
+                        }
+                    }
+                    break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }
 
-        private void ReCalculateTrackProperties(Track trackToCalculate)
+        private void RecalculateTrackProperties(Track trackToCalculate)
         {
             if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
             {
                 trackToCalculate.End = Audiofile.Duration;
-                TraceChangeManager?.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == this && y.TraceableChange.PropertyName == nameof(Audiofile)));
             }
             if (Tracks.Count > 1)
             {
@@ -625,11 +627,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
         }
 
-        private void Audiofile_ContentStreamLoaded(object? sender, EventArgs e)
-        {
-            RecalculateLastTrackEnd();
-        }
-
         private void SwitchTracks(Track track1, Track track2)
         {
             var indexTrack1 = tracks.IndexOf(track1);
@@ -676,52 +673,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        private static TimeSpan CalculateTimeSpanWithSensitivity(TimeSpan inputTimeSpan, TimeSensitivityMode sensitivityMode)
-        {
-            TimeSpan timeSpan;
-            switch (sensitivityMode)
-            {
-                default:
-                case TimeSensitivityMode.Full:
-                    timeSpan = inputTimeSpan;
-                    break;
-                case TimeSensitivityMode.Seconds:
-                    timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes, inputTimeSpan.Seconds);
-                    break;
-                case TimeSensitivityMode.Minutes:
-                    if (inputTimeSpan.Seconds >= 30)
-                    {
-                        timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes + 1, 0);
-                    }
-                    else
-                    {
-                        timeSpan = new TimeSpan(inputTimeSpan.Days, inputTimeSpan.Hours, inputTimeSpan.Minutes, 0);
-                    }
-                    break;
-            }
-            return timeSpan;
-        }
-
-        private void RecalculateLastTrackEnd()
-        {
-            //Try to recalculate length by recalculating last track
-            var lastTrack = tracks.LastOrDefault();
-            if (lastTrack != null)
-            {
-                ReCalculateTrackProperties(lastTrack);
-            }
-        }
-
         /// <summary>
         /// Method for checking if fire of events should be done
         /// </summary>
         /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireAudioFileChanged">Fire AudioFileChanged?</param>
         /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
         /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
         /// <param name="propertyName">Property firing the event</param>
         /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireAudioFileChanged = false, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
+        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             var propertyInfo = GetType().GetProperty(propertyName);
             if (propertyInfo != null)
@@ -729,10 +689,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var propertyValue = propertyInfo.GetValue(this);
                 if (Equals(propertyValue, previousValue) == false)
                 {
-                    if (fireAudioFileChanged)
-                    {
-                        AudioFileChanged?.Invoke(this, EventArgs.Empty);
-                    }
                     if (fireValidateablePropertyChanged)
                     {
                         OnValidateablePropertyChanged(propertyName);

@@ -18,9 +18,9 @@ using System.Text.Json.Serialization;
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
     [method: JsonConstructor]
-    public class Audiofile(String name, Boolean isRecorded = false) : IDisposable
+    public class Audiofile(String name, Boolean isRecorded = false) : IDisposable, IAudiofile
     {
-        public static readonly String RecordingFileName = "Recording.webm";
+        public static readonly String RecordingFileName = $"Recording-{Guid.NewGuid()}.webm";
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
         public static readonly List<AudioCodec> AudioCodecs =
@@ -36,11 +36,13 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         ];
 
         private AudioCodec? audioCodec;
+        private Stream? contentStream;
+        private String name = name;
         private bool disposedValue;
 
         public event EventHandler? ContentStreamLoaded;
 
-        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, HttpClient httpClient, Boolean isRecorded = false) : this(name, isRecorded)
+        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, Boolean isRecorded = false) : this(name, isRecorded)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
@@ -48,17 +50,32 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
-            HttpClient = httpClient;
         }
 
-        public String Name { get; private set; } = name;
+        public String Name
+        {
+            get => name;
+            set
+            {
+                if (String.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+                var extension = Path.GetExtension(value);
+                if (extension.Equals(audioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
+                {
+                    value = $"{value}{audioCodec?.FileExtension}";
+                }
+                name = value;
+            }
+        }
         [JsonIgnore]
         public String? ObjectURL { get; private set; }
         /// <summary>
         /// Boolean indicating if the stream has fully been loaded
         /// </summary>
         [JsonIgnore]
-        public Boolean IsContentStreamLoaded 
+        public Boolean IsContentStreamLoaded
         {
             get { return ContentStream != null; }
         }
@@ -66,17 +83,28 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         /// File content stream. Be carefull, this stream is loaded asynchronously. Connect to the StreamLoaded for checking if loading has already been done!
         /// </summary>
         [JsonIgnore]
-        public Stream? ContentStream { get; private set; }
+        public Stream? ContentStream
+        {
+            get => contentStream;
+            set
+            {
+                contentStream = value;
+                if ((ContentStream != null) && (AudioCodec != null))
+                {
+                    var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
+                    Duration = new TimeSpan(0, 0, track.Duration);
+                    ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
         [JsonIgnore]
         public Boolean IsRecorded { get; private set; } = isRecorded;
         /// <summary>
         /// Duration of the audio file
         /// </summary>
         public TimeSpan? Duration { get; private set; }
-        [JsonIgnore]
-        public HttpClient? HttpClient { get; set; }
 
-        public AudioCodec? AudioCodec 
+        public AudioCodec? AudioCodec
         {
             get { return audioCodec; }
             private set
@@ -93,7 +121,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         [JsonIgnore]
         public String? AudioFileType
         {
-            get 
+            get
             {
                 String? audioFileType = null;
                 if (AudioCodec != null)
@@ -117,17 +145,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                     playbackPossible = true;
                 }
                 return playbackPossible;
-            }
-        }
-
-        public async Task LoadContentStream()
-        {
-            if ((ContentStream == null) && (String.IsNullOrEmpty(ObjectURL) == false) && (AudioCodec != null) && (HttpClient != null))
-            {
-                ContentStream = await HttpClient.GetStreamAsync(ObjectURL);
-                var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
-                Duration = new TimeSpan(0, 0, track.Duration);
-                ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
             }
         }
 

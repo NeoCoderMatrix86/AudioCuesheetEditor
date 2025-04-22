@@ -2,7 +2,6 @@ name: Run unit tests
 
 # Run workflow on every push to the master branch
 on:
-  push:
   pull_request:
 
 jobs:    

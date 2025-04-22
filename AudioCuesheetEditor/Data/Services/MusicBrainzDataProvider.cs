@@ -16,21 +16,19 @@
 using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace AudioCuesheetEditor.Data.Services
 {
     public class MusicBrainzArtist
     {
-        public Guid Id { get; init; }
+        public Guid? Id { get; init; }
         public String? Name { get; init; }
         public String? Disambiguation { get; init; }
     }
     public class MusicBrainzTrack
     {
-        public Guid Id { get; init; }
+        public Guid? Id { get; init; }
         public String? Artist { get; init; }
         public String? Title { get; init; }
         public TimeSpan? Length { get; init; }
@@ -45,7 +43,7 @@ namespace AudioCuesheetEditor.Data.Services
 
         private String? applicationVersion = null;
 
-        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String searchString)
+        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString, CancellationToken token)
         {
             List<MusicBrainzArtist> artistSearchResult = [];
             try
@@ -53,7 +51,7 @@ namespace AudioCuesheetEditor.Data.Services
                 if (String.IsNullOrEmpty(searchString) == false)
                 {
                     using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                    var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true);
+                    var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true, cancellationToken: token);
                     artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
                 }
             }
@@ -64,7 +62,7 @@ namespace AudioCuesheetEditor.Data.Services
             return artistSearchResult.AsReadOnly();
         }
 
-        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String searchString, String? artist = null)
+        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist, CancellationToken token)
         {
             List<MusicBrainzTrack> titleSearchResult = [];
             try
@@ -75,11 +73,11 @@ namespace AudioCuesheetEditor.Data.Services
                     ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
                     if (String.IsNullOrEmpty(artist))
                     {
-                        findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true);
+                        findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
                     }
                     else
                     {
-                        findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist));
+                        findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
                     }
                     foreach (var result in findRecordingsResult.Results)
                     {
@@ -106,45 +104,11 @@ namespace AudioCuesheetEditor.Data.Services
                     }
                 }
             }
-            catch(HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Error getting response from MusicBrainz");
-            }
-            return titleSearchResult.AsReadOnly();
-        }
-
-        public async Task<MusicBrainzTrack?> GetDetailsAsync(Guid id)
-        {
-            MusicBrainzTrack? track = null;
-            try
-            {
-                if (id != Guid.Empty)
-                {
-                    var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                    var recording = await query.LookupRecordingAsync(id, Include.Artists);
-                    if (recording != null)
-                    {
-                        String artist = String.Empty;
-                        if (recording.ArtistCredit != null)
-                        {
-                            foreach (var artistCredit in recording.ArtistCredit)
-                            {
-                                artist += artistCredit.Name;
-                                if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
-                                {
-                                    artist += artistCredit.JoinPhrase;
-                                }
-                            }
-                        }
-                        track = new MusicBrainzTrack() { Id = recording.Id, Title = recording.Title, Artist = artist, Length = recording.Length };
-                    }
-                }
-            }
             catch (HttpRequestException hre)
             {
                 _logger.LogError(hre, "Error getting response from MusicBrainz");
             }
-            return track;
+            return titleSearchResult.AsReadOnly();
         }
 
         private String? ApplicationVersion

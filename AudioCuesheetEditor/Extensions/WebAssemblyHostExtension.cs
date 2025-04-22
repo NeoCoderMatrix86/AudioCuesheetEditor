@@ -13,22 +13,17 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using System.Globalization;
 
 namespace AudioCuesheetEditor.Extensions
 {
     public static class WebAssemblyHostExtension
     {
-        public async static Task SetDefaultCulture(this WebAssemblyHost host)
+        public async static Task SetCultureFromConfigurationAsync(this WebAssemblyHost host)
         {
-            var localStorageOptionsProvider = host.Services.GetRequiredService<ILocalStorageOptionsProvider>();
-            var options = await localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-
-            CultureInfo.DefaultThreadCurrentCulture = options.Culture;
-            CultureInfo.DefaultThreadCurrentUICulture = options.Culture;
+            var localizationService = host.Services.GetRequiredService<LocalizationService>();
+            await localizationService.SetCultureFromConfigurationAsync();
         }
     }
 }

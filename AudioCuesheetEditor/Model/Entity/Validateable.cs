@@ -13,42 +13,22 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
-    public abstract class Validateable<T> : IValidateable<T>
+    public abstract class Validateable : IValidateable
     {
         public event EventHandler<String>? ValidateablePropertyChanged;
-
-        public ValidationResult Validate<TProperty>(Expression<Func<T, TProperty>> expression)
-        {
-            if (expression.Body is MemberExpression memberExpression)
-            {
-                return Validate(memberExpression.Member.Name);
-            }
-            else if (expression.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression unaryMemberExpression)
-            {
-                return Validate(unaryMemberExpression.Member.Name);
-            }
-            else
-            {
-                throw new ArgumentException("The provided expression does not reference a valid property.");
-            }
-        }
 
         public ValidationResult Validate()
         {
             ValidationResult validationResult = new() { Status = ValidationStatus.NoValidation };
-            foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            List<ValidationMessage> validationMessages = [];
+            foreach (var property in this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var result = Validate(property.Name);
-                if (result.ValidationMessages != null)
-                {
-                    validationResult.ValidationMessages ??= [];
-                    validationResult.ValidationMessages.AddRange(result.ValidationMessages);
-                }
+                validationMessages.AddRange(result.ValidationMessages);
                 switch (validationResult.Status)
                 {
                     case ValidationStatus.NoValidation:
@@ -66,14 +46,15 @@ namespace AudioCuesheetEditor.Model.Entity
                         break;
                 }
             }
+            validationResult.ValidationMessages = validationMessages;
             return validationResult;
         }
+
+        public abstract ValidationResult Validate(String property);
 
         protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
         {
             ValidateablePropertyChanged?.Invoke(this, propertyName);
         }
-
-        protected abstract ValidationResult Validate(String property);
     }
 }

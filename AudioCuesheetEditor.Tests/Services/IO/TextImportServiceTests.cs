@@ -15,7 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Tests.Properties;
@@ -46,17 +45,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "Sample Artist 7 - Sample Title 7				00:45:54",
                 "Sample Artist 8 - Sample Title 8				01:15:54"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -85,17 +80,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "7|Sample Artist 7 - Sample Title 7				00:45:54",
                 "8|Sample Artist 8 - Sample Title 8				01:15:54"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'.{1,})",
-                    SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
-                }
+                SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'.{1,})",
+                SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNotNull(importfile.AnalyseException);
         }
@@ -116,17 +107,49 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "7|Sample Artist 7 - Sample Title 7				00:45:54",
                 "8|Sample Artist 8 - Sample Title 8				01:15:54"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'.{1,})",
-                    SchemeTracks = @"(?'Track.Position'\d{1,})[|](?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
-                }
+                SchemeCuesheet = @"(?'Artist'\A.*)[|](?'Title'\w{1,})\t{1,}(?'CDTextfile'.{1,})",
+                SchemeTracks = @"(?'Position'\d{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})"
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
+            // Assert
+            Assert.IsNull(importfile.AnalyseException);
+            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
+            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalysedCuesheet.CDTextfile);
+            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
+            Assert.AreEqual((uint)6, importfile.AnalysedCuesheet.Tracks.ElementAt(5).Position);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
+        }
+
+        [TestMethod()]
+        public void Analyse_InputfileWithSimplifiedScheme_CreatesValidCuesheet()
+        {
+            // Arrange
+            var fileContent = new List<string>
+            {
+                "CuesheetArtist|CuesheetTitle				c:\\tmp\\TestTextFile.cdt",
+                "1|Sample Artist 1 - Sample Title 1				00:05:00",
+                "2|Sample Artist 2 - Sample Title 2				00:09:23",
+                "3|Sample Artist 3 - Sample Title 3				00:15:54",
+                "4|Sample Artist 4 - Sample Title 4				00:20:13",
+                "5|Sample Artist 5 - Sample Title 5				00:24:54",
+                "6|Sample Artist 6 - Sample Title 6				00:31:54",
+                "7|Sample Artist 7 - Sample Title 7				00:45:54",
+                "8|Sample Artist 8 - Sample Title 8				01:15:54"
+            };
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = @"Artist|Title	CDTextfile",
+                SchemeTracks = @"Position|Artist - Title	End"
+            };
+            // Act
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -164,17 +187,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 string.Empty,
                 string.Empty
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cuesheet.Cataloguenumber'.{1,})",
-                    SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
-                }
+                SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cuesheet.Cataloguenumber'.{1,})",
+                SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNotNull(importfile.AnalyseException);
         }
@@ -203,17 +222,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 string.Empty,
                 string.Empty
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = @"(?'Cuesheet.Artist'\A.*)[|](?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cuesheet.Cataloguenumber'.{1,})",
-                    SchemeTracks = @"(?'Track.Position'.{1,})[|](?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
-                }
+                SchemeCuesheet = @"(?'Artist'\A.*)[|](?'Title'\w{1,})\t{1,}(?'CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cataloguenumber'.{1,})",
+                SchemeTracks = @"(?'Position'.{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})"
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -244,17 +259,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "Sample Artist 8 - Sample Title 8				01:15:54",
                 "Sample Artist 9 - Sample Title 9"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = null,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -276,18 +287,14 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 lines.Add(reader.ReadLine());
             }
             var fileContent = lines.AsReadOnly();
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions()
+            var timeSpanFormat = new TimeSpanFormat() { Scheme = "Minutes:Seconds" };
+            var textImportScheme = new TextImportScheme()
             {
-                TimeSpanFormat = new TimeSpanFormat() { Scheme = "(?'TimeSpanFormat.Minutes'\\d{1,})[:](?'TimeSpanFormat.Seconds'\\d{1,})" },
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = null,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent, timeSpanFormat);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -310,17 +317,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "Sample Artist 7 - Sample Title 7				00:45:54",
                 "Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = null,
-                    SchemeTracks = "(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Track.Flags'[a-zA-Z 0-9,]{1,})"
-                }
+                SchemeCuesheet = null,
+                SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Flags'[a-zA-Z 0-9,]{1,})"
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -353,17 +356,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "Sample Artist 7 - Sample Title 7		00:00:00		00:45:54		00:00:00",
                 "Sample Artist 8 - Sample Title 8		00:00:02		01:15:54		00:00:00"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = null,
-                    SchemeTracks = "(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'Track.PreGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Track.End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'Track.PostGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})"
-                }
+                SchemeCuesheet = null,
+                SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'PreGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'PostGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})"
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -402,17 +401,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "Sample Artist 7 - Sample Title 7				00:45:54",
                 "Sample Artist 8 - Sample Title 8				01:15:54"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = null
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = null
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -451,17 +446,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 "Sample Artist 7 - Sample Title 7				00:45:54",
                 "Sample Artist 8 - Sample Title 8				01:15:54"
             };
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
@@ -488,17 +479,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 lines.Add(reader.ReadLine());
             }
             var fileContent = lines.AsReadOnly();
-            var importService = new TextImportService();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = null,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             // Act
-            var importfile = importService.Analyse(importOptions, fileContent);
+            var importfile = TextImportService.Analyse(textImportScheme, fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);

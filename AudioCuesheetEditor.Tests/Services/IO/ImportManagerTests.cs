@@ -15,28 +15,28 @@
 //<http: //www.gnu.org/licenses />.
 
 using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Services.IO.Tests
+namespace AudioCuesheetEditor.Tests.Services.IO
 {
     [TestClass()]
     public class ImportManagerTests
     {
         [TestMethod()]
-        public async Task ImportTextAsync_TextfileWithStartDateTime_CreatesValidCuesheetAsync()
+        public void ImportTextAsync_TextfileWithStartDateTime_CreatesValidCuesheet()
         {
             // Arrange
-            var fileContent = new List<String>
+            var fileContent = new List<string>
             {
                 "Innellea~The Golden Fort~02.08.2024 20:10:48",
                 "Nora En Pure~Diving with Whales (Daniel Portman Remix)~02.08.2024 20:15:21",
@@ -73,20 +73,18 @@ namespace AudioCuesheetEditor.Services.IO.Tests
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = null,
-                    SchemeTracks = @"(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,'*-?:]{1,})~(?'Track.Title'[a-zA-Z0-9_ .();äöü&'*-?:Ü]{1,})~(?'Track.StartDateTime'.{1,})"
-                }
+                SchemeCuesheet = null,
+                SchemeTracks = @"(?'Artist'[a-zA-Z0-9_ .();äöü&:,'*-?:]{1,})~(?'Title'[a-zA-Z0-9_ .();äöü&'*-?:Ü]{1,})~(?'StartDateTime'.{1,})"
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             var testHelper = new TestHelper();
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);

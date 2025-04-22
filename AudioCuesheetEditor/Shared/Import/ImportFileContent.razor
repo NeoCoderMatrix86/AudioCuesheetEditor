@@ -1,0 +1,63 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ImportFileContent> _localizer
+@inject ISessionStateContainer _sessionStateContainer
+
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
+    @if (FileContentRecognized != null)
+    {
+        <MudTabPanel Text="@_localizer["Analyzed file content"]" Icon="@Icons.Material.Outlined.Analytics">
+            <MudField Class="ml-2 mr-2">
+                <pre>                
+                    @foreach (var line in FileContentRecognized)
+                    {
+                        @((MarkupString)String.Format("{0}<br />", line))
+                    }
+                </pre>
+            </MudField>
+        </MudTabPanel>
+        <MudTabPanel Text="@_localizer["Edit"]" Icon="@Icons.Material.Outlined.Edit">
+            <MudTextField Class="ml-2 mr-2" T="string" Lines="@FileContentRecognized.Count()" AutoGrow Text="@FileContent" TextChanged="FileContent_TextChangedAsync" />
+        </MudTabPanel>
+    }
+</MudTabs>
+
+@code {
+    [Parameter]
+    public EventCallback<string> FileContentChanged { get; set; }
+    public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
+    public String FileContent
+    {
+        get
+        {
+            String fileContent = String.Empty;
+            if (_sessionStateContainer.Importfile?.FileContent != null)
+            {
+                fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContent);
+            }
+            return fileContent;
+        }
+    }
+
+    async Task FileContent_TextChangedAsync(string newFileContent)
+    {
+        await FileContentChanged.InvokeAsync(newFileContent);
+    }
+}

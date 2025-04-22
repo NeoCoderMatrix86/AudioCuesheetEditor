@@ -1,0 +1,96 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<SelectImportFiles> _localizer
+@inject ISessionStateContainer _sessionStateContainer
+@inject ImportManager _importManager
+@inject FileInputManager _fileInputManager
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@_localizer["Select files for import"]</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent id="@dropFileInputId">
+        <DropFileInput OnFilesSelected="InputFilesChanged" Filter="@FileMimeTypes.Text" />
+        @foreach (var invalidFileName in invalidDropFileNames)
+        {
+            <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ShowCloseIcon CloseIconClicked="() => CloseInvalidFileClicked(invalidFileName)">
+                @String.Format(_localizer["You dropped an invalid file ({0}) that can not be processed."], invalidFileName)
+            </MudAlert>
+        }
+    </MudCardContent>
+</MudCard>
+
+@code {
+    string dropFileInputId = "dropFileInputId";
+    List<String> invalidDropFileNames = new();
+
+    [Parameter]
+    public EventCallback<Dictionary<IBrowserFile, ImportFileType>> FilesImported { get; set; }
+
+    [Parameter]
+    public EventCallback<List<String>> InvalidFilesChanged { get; set; }
+
+    async Task InputFilesChanged(IReadOnlyCollection<IBrowserFile> files)
+    {
+        invalidDropFileNames.Clear();
+        foreach (var file in files)
+        {
+            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
+                && (FileInputManager.GetAudioCodec(file) == null))
+            {
+                invalidDropFileNames.Add(file.Name);
+            }
+        }
+        if (invalidDropFileNames.Count == 0)
+        {
+            await ImportFiles(files);
+        }
+        else
+        {
+            await InvalidFilesChanged.InvokeAsync(invalidDropFileNames);
+        }
+    }
+
+    async Task ImportFiles(IReadOnlyCollection<IBrowserFile> files)
+    {
+        _sessionStateContainer.ResetImport();
+        var importedFiles = await _importManager.ImportFilesAsync(files);
+        // Audio file is handled seperatly
+        foreach (var file in files)
+        {
+            var codec = FileInputManager.GetAudioCodec(file);
+            if (codec != null)
+            {
+                var audiofile = await _fileInputManager.CreateAudiofileAsync(dropFileInputId, file);
+                _sessionStateContainer.ImportAudiofile = audiofile;
+                importedFiles.Add(file, ImportFileType.Audiofile);
+            }
+        }
+        await FilesImported.InvokeAsync(importedFiles);
+    }
+
+    async Task CloseInvalidFileClicked(string invalidFile)
+    {
+        invalidDropFileNames.Remove(invalidFile);
+        await InvalidFilesChanged.InvokeAsync(invalidDropFileNames);
+    }
+}

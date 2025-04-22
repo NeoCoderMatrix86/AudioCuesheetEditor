@@ -13,14 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using AudioCuesheetEditor.Model.IO.Audio;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Model.IO.Audio.Tests
+namespace AudioCuesheetEditor.Tests.Model.IO.Audio
 {
     [TestClass()]
     public class AudiofileTests
@@ -34,18 +31,17 @@ namespace AudioCuesheetEditor.Model.IO.Audio.Tests
             Assert.IsNotNull(audioFile.Name);
             Assert.AreEqual(audioFile.AudioFileType, "MP3");
             audioFile = new Audiofile("Test");
-            Assert.AreEqual(audioFile.AudioFileType, String.Empty);
+            Assert.AreEqual(audioFile.AudioFileType, string.Empty);
             Assert.IsNotNull(audioFile.Name);
             var codec = Audiofile.AudioCodecs.Single(x => x.FileExtension == ".ogg");
-            var httpClient = new System.Net.Http.HttpClient();
-            audioFile = new Audiofile("test", "TestobjectURL", codec, httpClient);
+            audioFile = new Audiofile("test", "TestobjectURL", codec);
             Assert.IsNotNull(audioFile.Name);
             Assert.AreEqual("test.ogg", audioFile.Name);
             Assert.AreEqual(audioFile.AudioFileType, "OGG");
             Assert.IsNotNull(audioFile.ObjectURL);
             Assert.IsTrue(audioFile.PlaybackPossible);
             codec = Audiofile.AudioCodecs.Single(x => x.FileExtension == ".mp3");
-            var audioFile2 = new Audiofile(audioFile.Name, "TestObjectURL2", codec, httpClient);
+            var audioFile2 = new Audiofile(audioFile.Name, "TestObjectURL2", codec);
             Assert.AreEqual("test.mp3", audioFile2.Name);
         }
     }

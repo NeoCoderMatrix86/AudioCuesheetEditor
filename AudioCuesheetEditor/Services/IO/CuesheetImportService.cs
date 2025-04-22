@@ -184,7 +184,7 @@ namespace AudioCuesheetEditor.Services.IO
                                 var flagList = Flag.AvailableFlags.Where(x => flags.Contains(x.CuesheetLabel));
                                 if (track != null)
                                 {
-                                    track.SetFlags(flagList);
+                                    track.Flags = flagList;
                                 }
                                 else
                                 {

@@ -13,7 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using Blazorise.Localization;
+using Microsoft.Extensions.Localization;
 
 namespace AudioCuesheetEditor.Model.Entity
 {
@@ -30,8 +30,8 @@ namespace AudioCuesheetEditor.Model.Entity
         }
         public String Message { get; private set; }
         public object[]? Parameter { get; private set; }
-        
-        public String GetMessageLocalized(ITextLocalizer<ValidationMessage> localizer)
+
+        public String GetMessageLocalized(IStringLocalizer<ValidationMessage> localizer)
         {
             object[]? arguments = null;
             if (Parameter != null)
@@ -48,8 +48,9 @@ namespace AudioCuesheetEditor.Model.Entity
                         arguments[i] = localizer[(String)arguments[i]];
                     }
                 }
+                return localizer[Message, arguments];
             }
-            return localizer[Message, arguments];
+            return localizer[Message];
         }
     }
 }

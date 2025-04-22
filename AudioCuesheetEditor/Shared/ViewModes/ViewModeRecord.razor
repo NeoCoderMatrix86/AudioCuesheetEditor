@@ -1,0 +1,81 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ViewModeRecord> _localizer
+@inject IJSRuntime _jsRuntime
+@inject ISessionStateContainer _sessionStateContainer
+@inject FileInputManager _fileInputManager
+
+<ControlRecording />
+<br />
+<AddTrack />
+<br/>
+<MudExpansionPanels MultiExpansion>
+    <MudExpansionPanel @bind-Expanded="tracksExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <TrackList />
+        </ChildContent>
+    </MudExpansionPanel>
+    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+        <TitleContent>
+            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+        </TitleContent>
+        <ChildContent>
+            <CuesheetData />
+        </ChildContent>
+    </MudExpansionPanel>
+</MudExpansionPanels>
+
+@code {
+    //TODO: maybe customize a bit more (background color, etc.)
+    //TODO: We need to find a way to make recording mobile friendly (ControlRecording and Track input)
+    Boolean cuesheetDataExpanded = false, tracksExpanded = true;
+
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+
+    [JSInvokable()]
+    public Task AudioRecordingFinished(String objectUrl)
+    {
+        _sessionStateContainer.Cuesheet.Audiofile = _fileInputManager.CreateRecordedAudiofile(objectUrl, x =>
+        {
+            Cuesheet?.RecalculateLastTrackEnd();
+            TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+        });
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _jsRuntime.InvokeVoidAsync("closeAudioRecording");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var dotNetReference = DotNetObjectReference.Create(this);
+        await _jsRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
+        await _jsRuntime.InvokeVoidAsync("setupAudioRecording");
+    }
+}

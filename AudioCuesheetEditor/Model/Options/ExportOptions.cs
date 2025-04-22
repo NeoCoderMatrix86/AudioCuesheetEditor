@@ -54,7 +54,7 @@ namespace AudioCuesheetEditor.Model.Options
         public ExportOptions() 
         {
             ExportProfiles = DefaultExportProfiles;
-            SelectedProfileId = ExportProfiles.First().Id;
+            SelectedProfileId = DefaultSelectedExportProfile.Id;
         }
         [JsonConstructor]
         public ExportOptions(ICollection<Exportprofile> exportProfiles, Guid? selectedProfileId = null)

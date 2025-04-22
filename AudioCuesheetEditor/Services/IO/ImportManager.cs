@@ -14,15 +14,15 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Model.Utility;
-using Blazorise;
+using AudioCuesheetEditor.Services.UI;
+using Microsoft.AspNetCore.Components.Forms;
 
 namespace AudioCuesheetEditor.Services.IO
 {
@@ -34,29 +34,28 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(SessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, TextImportService textImportService, TraceChangeManager traceChangeManager)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, ITraceChangeManager traceChangeManager)
     {
-        private readonly SessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
-        private readonly TextImportService _textImportService = textImportService;
-        private readonly TraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
-        public async Task<Dictionary<IFileEntry, ImportFileType>> ImportFilesAsync(IEnumerable<IFileEntry> files)
+        public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
-            Dictionary<IFileEntry, ImportFileType> importFileTypes = [];
+            Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
             foreach (var file in files)
             {
-                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
+                if (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
                     if (cuesheet != null)
                     {
-                        _sessionStateContainer.ImportCuesheet = cuesheet;
+                        _sessionStateContainer.Cuesheet = cuesheet;
                     }
                     importFileTypes.Add(file, ImportFileType.ProjectFile);
                 }
-                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
+                if (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -66,10 +65,10 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         lines.Add(reader.ReadLine());
                     }
-                    await ImportCuesheetAsync(lines);
+                    ImportCuesheet(lines);
                     importFileTypes.Add(file, ImportFileType.Cuesheet);
                 }
-                if (IOUtility.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
+                if (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -79,48 +78,45 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         lines.Add(reader.ReadLine());
                     }
-                    await ImportTextAsync([.. lines]);
+                    var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                    ImportText([.. lines], options.ImportScheme, options.ImportTimeSpanFormat);
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }
             }
             return importFileTypes;
         }
 
-        public async Task ImportTextAsync(IEnumerable<String?> fileContent)
+        public void ImportText(IEnumerable<String?> fileContent, TextImportScheme textImportScheme, TimeSpanFormat timeSpanFormat)
         {
-            var options = await _localStorageOptionsProvider.GetOptions<ImportOptions>();
-            _sessionStateContainer.Importfile = _textImportService.Analyse(options, fileContent);
+            _sessionStateContainer.Importfile = TextImportService.Analyse(textImportScheme, fileContent, timeSpanFormat);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
                 var importCuesheet = new Cuesheet();
-                await CopyCuesheetAsync(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
         }
 
-        public async Task ImportCuesheetAsync()
+        public void ImportCuesheet()
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
                 _traceChangeManager.BulkEdit = true;
-                await CopyCuesheetAsync(_sessionStateContainer.Cuesheet, _sessionStateContainer.ImportCuesheet);
+                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.ImportCuesheet);
                 _traceChangeManager.BulkEdit = false;
             }
             _sessionStateContainer.ResetImport();
         }
 
-        private async Task ImportCuesheetAsync(IEnumerable<String?> fileContent)
+        private void ImportCuesheet(IEnumerable<String?> fileContent)
         {
             _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
-                var importCuesheet = new Cuesheet();
-                await CopyCuesheetAsync(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
-                _sessionStateContainer.ImportCuesheet = importCuesheet;
+                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
             }
         }
-
-        private static async Task<MemoryStream> ReadFileContentAsync(IFileEntry file)
+        private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)
         {
             var fileContent = new MemoryStream();
             var stream = file.OpenReadStream();
@@ -129,11 +125,12 @@ namespace AudioCuesheetEditor.Services.IO
             return fileContent;
         }
 
-        private async Task CopyCuesheetAsync(Cuesheet target, ICuesheet cuesheetToCopy)
+        private static void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
         {
             target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
+            target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
             IEnumerable<ITrack>? tracks = null;
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
@@ -159,14 +156,9 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
                 }
-                target.Cataloguenumber = new Cataloguenumber()
-                {
-                    Value = importCuesheet.Cataloguenumber
-                };
             }
             if (tracks != null)
             {
-                var applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
                 var begin = TimeSpan.Zero;
                 for (int i = 0; i < tracks.Count(); i++)
                 {
@@ -190,7 +182,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    target.AddTrack(track, applicationOptions);
+                    target.AddTrack(track);
                 }
             }
             else
@@ -198,7 +190,6 @@ namespace AudioCuesheetEditor.Services.IO
                 throw new NullReferenceException();
             }
             target.IsImporting = false;
-            _sessionStateContainer.FireCuesheetImported();
         }
     }
 }

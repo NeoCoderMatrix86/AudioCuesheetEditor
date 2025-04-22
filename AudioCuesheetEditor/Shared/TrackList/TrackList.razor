@@ -15,426 +15,283 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
+@inherits BaseLocalizedComponent
 
-@implements IDisposable
-
-@inject ITextLocalizer<TrackList> _localizer
-@inject SessionStateContainer _sessionStateContainer
+@inject IStringLocalizer<TrackList> _localizer
+@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject AutocompleteManager _autocompleteManager
+@inject EditTrackModalManager _editTrackModalManager
+@inject ValidationService _validationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
-@inject TraceChangeManager _traceChangeManager
-@inject ILogger<TrackList> _logger
-@inject ITextLocalizerService _localizationService
-@inject ITextLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject PlaybackService _playbackService
+@inject IDialogService _dialogService
 
-<Validations @ref="validations">
-    @if (_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull)
+@if (CurrentViewMode == ViewMode.DetailView)
+{
+    var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
+    if (validationResult?.Status == ValidationStatus.Error)
     {
-        var validationResult = Cuesheet?.Validate(x => x.Tracks);
-        <Alert Color="Color.Danger" Visible="validationResult?.Status == Model.Entity.ValidationStatus.Error">
-            <Heading Size="HeadingSize.Is4">
-                @_localizer["Validation errors"]
-            </Heading>
-            @if (validationResult?.ValidationMessages != null)
+        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+            <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
+            @foreach (var message in validationResult.ValidationMessages)
             {
-                @foreach(var message in validationResult.ValidationMessages)
-                {
-                    <Paragraph>@message.GetMessageLocalized(_validationMessageLocalizer)</Paragraph>
-                }
+                <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
             }
-        </Alert>
-        <TrackListControlButtons 
-            SelectedTracks="selectedTracks" 
-            AddButtonClicked="OnAddTrackClicked" 
-            EditSelectedTracksClicked="EditSelectedTracksClicked" 
-            DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" 
-            DeleteAllTracksClicked="OnDeleteAllTracksClicked"
-            FixedTableHeader="PinnedTableHeader"
-            FixedTableHeaderChanged="(newValue) => PinnedTableHeader = newValue"
-            TrackSelectionVisible="TrackSelectionVisible" 
-            TrackSelectionVisibleChanged="(newValue) => TrackSelectionVisible = newValue" />
+        </MudAlert>
     }
+    <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0" 
+                             DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+                             DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
+                             MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
+                             MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
+                             CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                             FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.FixedTracksTableHeader, !ApplicationOptions?.FixedTracksTableHeader)" />
+}
 
-    <Table Bordered Resizable ResizeMode="TableResizeMode.Columns" Narrow FixedHeader="PinnedTableHeader" FixedHeaderTableHeight="" FixedHeaderTableMaxHeight="70vh">
-        <TableHeader ThemeContrast="ThemeContrast.Light">
-            <TableRow>
-                @if ((_sessionStateContainer.CurrentViewMode == ViewMode.ViewModeFull) && (TrackSelectionVisible))
-                {
-                    <TableHeaderCell>
-                        <Div Class="d-flex align-items-center">
-                            @if (Cuesheet?.Tracks.Count > 0)
-                            {
-                                <Tooltip Placement="TooltipPlacement.Right" Text="@_localizer["Select all"]">
-                                    <Check TValue="bool" CheckedChanged="OnSelectAllTracks" Checked="AllTracksSelected" Indeterminate="SelectAllIndeterminate" />
-                                </Tooltip>
-                            }
-                            @_localizer["Selection"]
-                        </Div>
-                    </TableHeaderCell>
+<MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(ApplicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true">
+    <Columns>
+        <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
+        <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
+            <EditTemplate>
+                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
+            </EditTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <EditTemplate>
+                <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
+            <EditTemplate>
+                @{
+                    MusicBrainzArtist? autocompleteArtist = new()
+                    {
+                        Name = context.Item.Artist
+                    };
                 }
-                @switch (_sessionStateContainer.CurrentViewMode)
-                {
-                    case ViewMode.ViewModeFull:
-                    case ViewMode.ViewModeImport:
-                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                        break;
-                    case ViewMode.ViewModeRecord:
-                        <TableHeaderCell>@_localizer["Controls"]</TableHeaderCell>
-                        break;
+                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="context.Item.Artist"
+                                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" 
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
+                    <ItemTemplate Context="autocompleteContext">
+                        @if (autocompleteContext.Disambiguation != null)
+                        {
+                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@autocompleteContext.Name</MudText>
+                        }
+                    </ItemTemplate>
+                </MudAutocomplete>
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
+            <EditTemplate>
+                @{
+                    MusicBrainzTrack? autocompleteTrack = new()
+                    {
+                        Artist = context.Item.Artist,
+                        Title = context.Item.Title
+                    };
                 }
-                <TableHeaderCell>#</TableHeaderCell>
-                <TableHeaderCell>@_localizer["Artist"]</TableHeaderCell>
-                <TableHeaderCell>@_localizer["Title"]</TableHeaderCell>
-                <TableHeaderCell>@_localizer["Begin"]</TableHeaderCell>
-                <TableHeaderCell>@_localizer["End"]</TableHeaderCell>
-                <TableHeaderCell Display="Display.TableCell.OnDesktop.None.OnTablet.None.OnMobile">@_localizer["Length"]</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
-            <TrackListItem AudioPlayer="AudioPlayer" SelectedTracks="selectedTracks" TrackSelectionVisible="TrackSelectionVisible" SelectedTracksChanged="(newSelectedTracks) => selectedTracks = newSelectedTracks" />
-        </TableBody>
-    </Table>
-</Validations>
+                <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, context.Item.Artist, token)" ToStringFunc="(value) => value.Title"
+                                 @bind-Text="context.Item.Title" Value="autocompleteTrack" ValueChanged="(value) => TitleSelected(context.Item, value)"
+                                 ResetValueOnEmptyText Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
+                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))" MaxItems="null" CoerceText="false">
+                    <ItemTemplate Context="autocompleteContext">
+                        @if (autocompleteContext.Disambiguation != null)
+                        {
+                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                        }
+                        else
+                        {
+                            <MudText>@autocompleteContext.Title</MudText>
+                        }
+                    </ItemTemplate>
+                </MudAutocomplete>
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
+            <EditTemplate>
+                @if (_playbackService.CurrentlyPlayingTrack == context.Item)
+                {
+                    <MudIcon Icon="@Icons.Material.Outlined.Audiotrack" Title="@_localizer["Currently playing this track"]" />
+                }
+                @if (Cuesheet?.GetSection(context.Item) != null)
+                {
+                    <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
+                }
+                @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
+                {
+                    <MudIconButton Icon="@GetLinkedTrackIcon(context.Item)" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
+                }
+            </EditTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
 
-<ModalDialog @ref="modalDialog" />
-<EditTrackModal @ref="modalTrackEdit" SaveClicked="() => StateHasChanged()" />
+<MudMenu PositionAtCursor @ref="trackContextMenu">
+    @if (contextMenuTrack != null)
+    {
+        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
+    }
+</MudMenu>
 
 @code {
-    ModalDialog? modalDialog;
-    EditTrackModal? modalTrackEdit;
-    List<Track> selectedTracks = new();
-    Validations? validations;
-    Boolean revalidate = false;
-    List<Track> TracksAttachedToValidateablePropertyChanged = new();
-    ApplicationOptions? applicationOptions;
+    HashSet<Track> selectedTracks = new();
+    MudMenu? trackContextMenu;
+    Track? contextMenuTrack;
 
-    [Parameter]
-    public AudioPlayer? AudioPlayer { get; set; }
+    [CascadingParameter]
+    public ViewMode CurrentViewMode { get; set; }
 
-    public Cuesheet? Cuesheet
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+
+    protected override void Dispose(bool disposing)
     {
-        get
-        {
-            Cuesheet? cuesheet;
-            switch (_sessionStateContainer.CurrentViewMode)
-            {
-                case ViewMode.ViewModeImport:
-                    cuesheet = _sessionStateContainer.ImportCuesheet;
-                    break;
-                default:
-                    cuesheet = _sessionStateContainer.Cuesheet;
-                    break;
-            }
-            return cuesheet;
-        }
+        base.Dispose(disposing);
+        _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
     }
 
-    public Boolean TrackSelectionVisible
+    protected override void OnInitialized()
     {
-        get
-        {
-            if (applicationOptions != null)
-            {
-                return applicationOptions.TracksTableSelectionVisible;
-            }
-            return false;
-        }
-        set
-        {
-            _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TracksTableSelectionVisible, value);
-            selectedTracks = new();
-        }
+        base.OnInitialized();
+        _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
     }
 
-    public Boolean PinnedTableHeader
+    void AddTrackClicked()
     {
-        get
+        var newTrack = new Track()
         {
-            if (applicationOptions != null)
-            {
-                return applicationOptions.TracksTableHeaderPinned;
-            }
-            return false;
-        }
-        set
-        {
-            _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TracksTableHeaderPinned, value);
-        }
-    }
-
-    public void Dispose()
-    {
-        _localizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
-        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
-        _sessionStateContainer.Cuesheet.TracksRemoved -= Cuesheet_TracksRemoved;
-        _sessionStateContainer.Cuesheet.TracksAdded -= Cuesheet_TracksAdded;
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionsSaved;
-        DetachTrackFromValidateablePropertyChanged();
-        DetachCuesheetFromSplitPointsAddedRemoved();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        _localizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
-
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
-
-        _sessionStateContainer.Cuesheet.TracksAdded += Cuesheet_TracksAdded;
-        _sessionStateContainer.Cuesheet.TracksRemoved += Cuesheet_TracksRemoved;
-
-        AttachTracksToValidateablePropertyChanged();
-        AttachCuesheetToSplitPointsAddedRemoved();
-
-        applicationOptions = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionsSaved;
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-        _logger.LogDebug("OnAfterRenderAsync({firstRender})", firstRender);
-        if ((revalidate) && (validations != null))
-        {
-            await validations.ValidateAll();
-            revalidate = false;
-        }
-    }
-
-    void OnAddTrackClicked()
-    {
-        var newTrack = new Track();
-        Cuesheet?.AddTrack(newTrack, applicationOptions);
-        _traceChangeManager.TraceChanges(newTrack);
+            IsLinkedToPreviousTrack = ApplicationOptions!.LinkTracks
+        };
+        Cuesheet?.AddTrack(newTrack);
+        TraceChangeManager.TraceChanges(newTrack);
     }
 
     async Task EditSelectedTracksClicked()
     {
-        if (modalTrackEdit != null)
-        {
-            modalTrackEdit.TracksToEdit = selectedTracks;
-            await modalTrackEdit.Show();
-        }
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(selectedTracks);
     }
 
-    private void DeleteSelectedTracksClicked()
+    void DeleteSelectedTracksClicked()
     {
-        Cuesheet?.RemoveTracks(selectedTracks.AsReadOnly());
+        Cuesheet?.RemoveTracks(selectedTracks.ToList());
         selectedTracks.Clear();
     }
 
     async Task OnDeleteAllTracksClicked()
     {
-        _logger.LogInformation("OnDeleteAllTracksClicked");
-        //Display a confirm warning
-        if (modalDialog != null)
+        var parameters = new DialogParameters<ConfirmDialog>
         {
-            modalDialog.Title = _localizer["Confirmation required"];
-            modalDialog.Text = _localizer["Do you really want to delete all tracks?"];
-            modalDialog.ModalSize = ModalSize.Small;
-            modalDialog.Mode = ModalDialog.DialogMode.Confirm;
-            void deleteTracksDelegate(object? sender, EventArgs args)
-            {
-                _logger.LogInformation("deleteTracksDelegate");
-                Cuesheet?.RemoveTracks(Cuesheet.Tracks);
-                selectedTracks.Clear();
-                modalDialog.Confirmed -= deleteTracksDelegate;
-                StateHasChanged();
-            };
-            modalDialog.Confirmed += deleteTracksDelegate;
-            await modalDialog.ShowModal();
-        }
-    }
-
-    private String? GetLocalizedString(Boolean expressionToCheck, String localizedStringName)
-    {
-        if (expressionToCheck == true)
+            { x => x.ConfirmText, _localizer["Are you sure you want to remove all tracks?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
         {
-            return _localizer[localizedStringName];
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    bool SelectAllIndeterminate
-    {
-        get => selectedTracks.Count > 0 && selectedTracks.Count < Cuesheet?.Tracks.Count;
-    }
-
-    private void OnSelectAllTracks(bool select)
-    {
-        if (select)
-        {
-            if (Cuesheet != null)
-            {
-                foreach (var track in Cuesheet.Tracks)
-                {
-                    if (!selectedTracks.Contains(track))
-                    {
-                        selectedTracks.Add(track);
-                    }
-                }
-            }
-        }
-        else
-        {
+            Cuesheet?.RemoveTracks(Cuesheet.Tracks);
             selectedTracks.Clear();
         }
     }
 
-    bool AllTracksSelected
+    void TitleSelected(Track track, MusicBrainzTrack? musicBrainzTrack)
     {
-        get => selectedTracks.Count > 0 && selectedTracks.Count == Cuesheet?.Tracks.Count;
-    }
-
-    private void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-        validations?.ValidateAll();
-    }
-
-    private MarkupString GetMarkupString(String? stringValue)
-    {
-        MarkupString result = new MarkupString(String.Empty);
-        if (stringValue != null)
+        track.Title = musicBrainzTrack?.Title;
+        switch (CurrentViewMode)
         {
-            result = new MarkupString(stringValue);
-        }
-        return result;
-    }
-
-    private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        DetachTrackFromValidateablePropertyChanged();
-        DetachCuesheetFromSplitPointsAddedRemoved();
-        selectedTracks.Clear();
-        StateHasChanged();
-        AttachTracksToValidateablePropertyChanged();
-        AttachCuesheetToSplitPointsAddedRemoved();
-    }
-
-    private void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        // Unsubscribe to previous attached events
-        DetachCuesheetFromSplitPointsAddedRemoved();
-        var tracks = TracksAttachedToValidateablePropertyChanged.Except(_sessionStateContainer.Cuesheet.Tracks);
-        for (int i = tracks.Count() - 1; i >= 0; i--)
-        {
-            var track = tracks.ElementAt(i);
-            DetachTrackFromValidateablePropertyChanged(track);
-            TracksAttachedToValidateablePropertyChanged.Remove(track);
-        }
-        // Reattach if needed
-        AttachTracksToValidateablePropertyChanged();
-        AttachCuesheetToSplitPointsAddedRemoved();
-        revalidate = true;
-        StateHasChanged();
-    }
-
-    void Cuesheet_TracksAdded(object? sender, TracksAddedRemovedEventArgs args)
-    {
-        StateHasChanged();
-        AttachTracksToValidateablePropertyChanged();
-        revalidate = true;
-    }
-
-    void Cuesheet_TracksRemoved(object? sender, TracksAddedRemovedEventArgs args)
-    {
-        foreach(var track in args.Tracks)
-        {
-            DetachTrackFromValidateablePropertyChanged(track);
-        }
-        revalidate = true;
-    }
-
-    void AttachTracksToValidateablePropertyChanged()
-    {
-        if (Cuesheet != null)
-        {
-            foreach (var track in Cuesheet.Tracks)
-            {
-                if (TracksAttachedToValidateablePropertyChanged.Contains(track) == false)
+            case ViewMode.DetailView:
+            case ViewMode.ImportView:
+                if ((String.IsNullOrEmpty(track.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
                 {
-                    track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
-                    TracksAttachedToValidateablePropertyChanged.Add(track);
+                    track.Artist = musicBrainzTrack.Artist;
                 }
-            }
-        }
-    }
-
-    void DetachTrackFromValidateablePropertyChanged(Track? track = null)
-    {
-        if (track == null)
-        {
-            foreach (var trackCurrentlyAttached in TracksAttachedToValidateablePropertyChanged)
-            {
-                trackCurrentlyAttached.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;            
-            }
-        }
-        else
-        {
-            track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
-        }
-    }
-
-    void Track_ValidateablePropertyChanged(object? sender, string property)
-    {
-        if (validations != null)
-        {
-            validations.ValidateAll().GetAwaiter().GetResult();
-        }
-        StateHasChanged();
-    }
-
-    void AttachCuesheetToSplitPointsAddedRemoved()
-    {
-        if (Cuesheet != null)
-        {
-            Cuesheet.SectionAdded += Cuesheet_SectionAdded;
-            Cuesheet.SectionRemoved += Cuesheet_SectionRemoved;
-        }
-    }
-
-    void DetachCuesheetFromSplitPointsAddedRemoved()
-    {
-        if (Cuesheet != null)
-        {
-            Cuesheet.SectionAdded -= Cuesheet_SectionAdded;
-            Cuesheet.SectionRemoved -= Cuesheet_SectionRemoved;
-        }
-    }
-
-    void Cuesheet_SectionAdded(object? sender, CuesheetSectionAddRemoveEventArgs args)
-    {
-        args.Section.ValidateablePropertyChanged += Section_ValidateablePropertyChanged;
-    }
-
-    void Cuesheet_SectionRemoved(object? sender, CuesheetSectionAddRemoveEventArgs args)
-    {
-        args.Section.ValidateablePropertyChanged -= Section_ValidateablePropertyChanged;
-    }
-
-    void Section_ValidateablePropertyChanged(object? sender, string property)
-    {
-        switch (property)
-        {
-            case nameof(CuesheetSection.Begin):
-            case nameof(CuesheetSection.End):
-                StateHasChanged();
+                if ((track.Length.HasValue == false) && (musicBrainzTrack?.Length.HasValue == true))
+                {
+                    track.Length = musicBrainzTrack?.Length;
+                }
                 break;
         }
     }
 
-    void LocalStorageOptionsProvider_OptionsSaved(object? sender, IOptions options)
+    String? GetValidationErrorMessage(object model, string propertyName)
     {
-        if (options is ApplicationOptions applicationOption)
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
         {
-            applicationOptions = applicationOption;
-            StateHasChanged();
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
         }
+        return validationErrorMessage;
+    }
+
+    async Task CopyTrackClicked(Track? trackToCopy = null)
+    {
+        var trackThatWillBeCopied = trackToCopy;
+        if (trackThatWillBeCopied == null)
+        {
+            trackThatWillBeCopied = selectedTracks.FirstOrDefault();
+        }
+        if (trackThatWillBeCopied != null)
+        {
+            var copy = new Track(trackThatWillBeCopied);
+            Cuesheet?.AddTrack(copy);
+            TraceChangeManager.TraceChanges(copy);
+            await EditTrackModalClicked(copy);
+        }
+    }
+
+    async Task EditTrackModalClicked(Track trackToEdit)
+    {
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync([trackToEdit]);
+    }
+
+    async Task OpenMenuContent(DataGridRowClickEventArgs<Track> args)
+    {
+        contextMenuTrack = args.Item;
+        if (trackContextMenu != null)
+        {
+            await trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
+        }
+    }
+
+    String GetLinkedTrackIcon(Track track)
+    {
+        if (track.IsLinkedToPreviousTrack)
+        {
+            return @Icons.Material.Outlined.Height;
+        }
+        else
+        {
+            return @Icons.Material.Outlined.VerticalAlignCenter;
+        }
+    }
+
+    void PlaybackService_CurrentPositionChanged()
+    {
+        StateHasChanged();
     }
 }

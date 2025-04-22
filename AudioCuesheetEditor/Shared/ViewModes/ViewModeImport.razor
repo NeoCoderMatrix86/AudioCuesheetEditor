@@ -1,0 +1,114 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ViewModeImport> _localizer
+@inject ISessionStateContainer _sessionStateContainer
+@inject ImportManager _importManager
+
+<MudStepper NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
+    <MudStep Title="@_localizer["Select inputfiles"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
+        <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
+    </MudStep>
+    <MudStep Title="@_localizer["Validate"]" Disabled="!selectFilesStepCompleted" CompletedChanged="CompleteImportAsync">
+        <MudExpansionPanels MultiExpansion>
+            <MudExpansionPanel @bind-Expanded="fileContentExpanded">
+                <TitleContent>
+                    <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
+                </TitleContent>
+                <ChildContent>
+                    <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
+                    <ImportSchemes ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
+                    @if (_sessionStateContainer.Importfile?.AnalyseException != null)
+                    {
+                        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                            @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
+                        </MudAlert>
+                    }
+                </ChildContent>
+            </MudExpansionPanel>
+            <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+                <TitleContent>
+                    <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+                </TitleContent>
+                <ChildContent>
+                    <CuesheetData />
+                </ChildContent>
+            </MudExpansionPanel>
+            <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
+                <TitleContent>
+                    <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+                </TitleContent>
+                <ChildContent>
+                    <TrackList />
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </MudStep>
+</MudStepper>
+
+@code {
+    int activeStepIndex;
+    Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
+    Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
+
+    void ImportFileContent_FileContentChanged(string newFileContent)
+    {
+        var textToAnalyse = newFileContent.Split(Environment.NewLine);
+        _importManager.ImportText(textToAnalyse, ApplicationOptions!.ImportScheme, ApplicationOptions!.ImportTimeSpanFormat);
+    }
+
+    void ReanalyseImportfile()
+    {
+        var fileContent = _sessionStateContainer.Importfile?.FileContent;
+        if (fileContent != null)
+        {
+            _importManager.ImportText(fileContent, ApplicationOptions!.ImportScheme, ApplicationOptions.ImportTimeSpanFormat);
+        }
+    }
+
+    void FilesImported(Dictionary<IBrowserFile, ImportFileType> files)
+    {
+        fileContentExpanded = true;
+        cuesheetDataExpanded = true;
+        cuesheetTracksExpanded = true;
+        activeStepIndex = 1;
+        selectFilesStepCompleted = true;
+        selectFilesStepError = false;
+    }
+
+    async Task CompleteImportAsync()
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
+        _importManager.ImportCuesheet();
+    }
+
+    Task PreviewInteraction(StepperInteractionEventArgs arg)
+    {
+        if (arg.StepIndex == 0)
+        {
+            arg.Cancel = (selectFilesStepCompleted == false) || (selectFilesStepError == true);
+        }
+        return Task.CompletedTask;
+    }
+
+    void InvalidFilesDropped(List<string> files)
+    {
+        selectFilesStepError = files.Any();
+    }
+}

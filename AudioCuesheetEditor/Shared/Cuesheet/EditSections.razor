@@ -1,0 +1,144 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<EditSections> _localizer
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject ValidationService _validationService
+@inject IDialogService _dialogService
+
+<MudButtonGroup OverrideStyles="false">
+    <MudTooltip Text="@_localizer["Add new section"]">
+        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddSectionClicked" Icon="@Icons.Material.Outlined.Add" />
+    </MudTooltip>
+    <MudTooltip Text="@_localizer["Delete selected sections"]">
+        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedSections" StartIcon="@Icons.Material.Outlined.Delete" Disabled="selectedSections.Any() == false">@_localizer["Delete selected sections"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedSections" Icon="@Icons.Material.Outlined.Delete" Disabled="selectedSections.Any() == false" />
+        </MudHidden>
+    </MudTooltip>
+    <MudTooltip Text="@_localizer["Delete all sections"]">
+        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllSections" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="Cuesheet?.Sections.Any() == false">@_localizer["Delete all sections"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+            <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllSections" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="Cuesheet?.Sections.Any() == false" />
+        </MudHidden>
+    </MudTooltip>
+</MudButtonGroup>
+
+<MudDataGrid Items="Cuesheet?.Sections" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column"
+MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedSections">
+    <Columns>
+        <SelectColumn />
+        <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.Begin, value)"
+                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.End" Title="@_localizer["End"]">
+            <EditTemplate>
+                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.End, value)" 
+                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Cuesheet artist"]">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Artist" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Artist)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Artist))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Title" Title="@_localizer["Cuesheet title"]">
+            <EditTemplate>
+                <MudTextField @bind-Value="context.Item.Title" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Title)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Title))" />
+            </EditTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.AudiofileName" Title="@_localizer["Audio file"]">
+            <EditTemplate>
+                <FileInput Label="@_localizer["Audiofile"]" FileName="@context.Item.AudiofileName" OnFileSelected="(file) => AudiofileSelected(context.Item, file)" Error="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.AudiofileName))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
+                DisplayMenu="false" />
+            </EditTemplate>
+        </PropertyColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    HashSet<CuesheetSection> selectedSections = new();
+
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+
+    void AddSectionClicked()
+    {
+        if (Cuesheet != null)
+        {
+            var section = Cuesheet.AddSection();
+            TraceChangeManager.TraceChanges(section);
+        }
+    }
+
+    String? GetValidationErrorMessage(object model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
+        {
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+        }
+        return validationErrorMessage;
+    }
+
+    void DeleteSelectedSections()
+    {
+        Cuesheet?.RemoveSections(selectedSections);
+        selectedSections.Clear();
+    }
+
+    async Task DeleteAllSections()
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want to remove all sections?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            Cuesheet?.RemoveSections(Cuesheet.Sections);
+            selectedSections.Clear();
+        }
+    }
+
+    void AudiofileSelected(CuesheetSection section, IBrowserFile? browserFile)
+    {
+        if (browserFile != null)
+        {
+            var codec = FileInputManager.GetAudioCodec(browserFile);
+            if (codec != null)
+            {
+                section.AudiofileName = browserFile?.Name;
+            }
+        }
+        else
+        {
+            section.AudiofileName = null;
+        }
+    }
+}

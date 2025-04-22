@@ -1,0 +1,195 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inherits BaseLocalizedComponent
+
+@inject NavigationManager _navigationManager
+@inject IStringLocalizer<AppBar> _localizer
+@inject IDialogService _dialogService
+@inject ISessionStateContainer _sessionStateContainer
+@inject IJSRuntime _jsRuntime
+@inject HotKeys _hotKeys
+
+<MudAppBar Elevation="1" Color="Color.Dark" Fixed>
+    <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
+        <MudHidden Breakpoint="Breakpoint.Xs">
+            <MudText Typo="Typo.h6">AudioCuesheetEditor</MudText>
+        </MudHidden>
+    </MudButton>
+    @if (DisplayUndoRedoButtonGroup)
+    {
+        <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
+            <MudTooltip Text="@_localizer["Undo last edit"]">
+                <MudIconButton Icon="@Icons.Material.Outlined.Undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()" />
+            </MudTooltip>
+            <MudTooltip Text="@_localizer["Redo last edit"]">
+                <MudIconButton Icon="@Icons.Material.Outlined.Redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()" />
+            </MudTooltip>
+        </MudButtonGroup>
+    }
+    <MudSpacer />
+    @if (DisplayFileMenu)
+    {
+        <MudMenu Label="@_localizer["File"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.ImportExport">
+            <MudMenuItem Icon="@Icons.Material.Outlined.FileOpen" OnClick="OpenFileClicked">@_localizer["Open"]</MudMenuItem>
+            <MudMenu Label="@_localizer["Export"]" StartIcon="@Icons.Material.Outlined.FileDownload">
+                <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadCuesheetClicked">@_localizer["Cuesheet"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="DownloadProjectfileClicked">@_localizer["Projectfile"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport" OnClick="DownloadExportClicked">@_localizer["Textfile"]</MudMenuItem>
+            </MudMenu>
+        </MudMenu>
+    }
+    <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
+        @foreach (var culture in LocalizationService.AvailableCultures)
+        {
+            <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@culture.DisplayName</MudMenuItem>
+        }
+    </MudMenu>
+    <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+        @if (DisplaySettings) 
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
+        }
+        <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/wiki/Help" Target="_blank">@_localizer["Help"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="DisplayHotkeys">@_localizer["Hotkeys"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
+        @if (DisplayReset)
+        {
+            <MudMenu Label="@_localizer["Reset"]">
+                <MudMenuItem Icon="@Icons.Material.Outlined.NotStarted" OnClick="ResetCuesheetClicked">@_localizer["Reset cuesheet"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.RestartAlt" OnClick="ResetApplicationClicked">@_localizer["Reset application"]</MudMenuItem>
+            </MudMenu>
+        }
+    </MudMenu>
+</MudAppBar>
+
+@code {
+    HotKeysContext? hotKeysContext;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKey.Ctrl, Key.z, () => TraceChangeManager.Undo())
+            .Add(ModKey.Ctrl, Key.y, () => TraceChangeManager.Redo())
+            .Add(ModKey.Ctrl, Key.s, DownloadProjectfileClicked)
+            .Add(ModKey.Ctrl, Key.e, DownloadExportClicked)
+            .Add(ModKey.Ctrl, Key.u, DownloadCuesheetClicked)
+            .Add(ModKey.Ctrl, Key.r, ResetCuesheetClicked);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        hotKeysContext?.DisposeAsync();
+    }
+
+    [Parameter]
+    public Boolean DisplayUndoRedoButtonGroup { get; set; }
+
+    [Parameter]
+    public Boolean DisplayFileMenu { get; set; }
+
+    [Parameter]
+    public Boolean DisplaySettings { get; set; }
+
+    [Parameter]
+    public Boolean DisplayReset { get; set; }
+
+    async Task SelectedCultureChanged(string name)
+    {
+        await base.LocalizationService.ChangeLanguageAsync(name);
+    }
+
+    String GetStyle(CultureInfo cultureInfo)
+    {
+        String style = "white-space: nowrap;";
+        if (cultureInfo.Name == base.LocalizationService.SelectedCulture.Name)
+        {
+            style += "background-color: var(--mud-palette-info-lighten);";
+        }
+        return style;
+    }
+
+    async Task DownloadProjectfileClicked() 
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
+        await _dialogService.ShowAsync<DownloadProjectfileDialog>(_localizer["Save project"], options);
+    }
+
+    async Task DownloadCuesheetClicked()
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true };
+        await _dialogService.ShowAsync<GenerateCuesheetDialog>(_localizer["Download cuesheet"], options);
+    }
+
+    async Task DownloadExportClicked()
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
+        await _dialogService.ShowAsync<GenerateExportDialog>(_localizer["Export profiles"], options);
+    }
+
+    async Task SettingsClicked()
+    {
+        var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
+        await _dialogService.ShowAsync<OptionsDialog>(_localizer["Options"], options);
+    }
+
+    async Task ResetCuesheetClicked() 
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want reset the cuesheet? All information you have not saved are lost!"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            _sessionStateContainer.Cuesheet = new();
+        }
+    }
+
+    async Task ResetApplicationClicked()
+    {
+        var parameters = new DialogParameters<ConfirmDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want reset the application? All information you have not saved are lost!"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            await _jsRuntime.InvokeVoidAsync("resetLocalStorage");
+            await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+            _navigationManager.NavigateTo(_navigationManager.Uri, true);
+        }
+    }
+
+    async Task OpenFileClicked() 
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
+        await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
+    }
+
+    async Task DisplayHotkeys()
+    {
+        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
+        await _dialogService.ShowAsync<DisplayHotkeysDialog>(_localizer["Hotkeys"], options);
+    }
+}
