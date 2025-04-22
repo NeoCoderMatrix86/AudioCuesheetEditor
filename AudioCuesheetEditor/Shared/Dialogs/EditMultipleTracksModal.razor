@@ -51,6 +51,12 @@ along with Foobar.  If not, see
                 <MudFlexBreak />
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackArtist" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
+                    @{
+                        MusicBrainzArtist? autocompleteArtist = new()
+                        {
+                            Name = EditedTrack.Artist
+                        };
+                    }
                     <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
                                      @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Disabled="!editTrackArtist"
                                      Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist))" 
@@ -70,6 +76,13 @@ along with Foobar.  If not, see
                 <MudFlexBreak />
                 <MudItem xs="2"><MudSwitch @bind-Value="editTrackTitle" Color="Color.Primary" /></MudItem>
                 <MudItem xs="7">
+                    @{
+                        MusicBrainzTrack? autocompleteTrack = new()
+                        {
+                            Artist = EditedTrack.Artist,
+                            Title = EditedTrack.Title
+                        };
+                    }
                     <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
                                      @bind-Text="EditedTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator Disabled="!editTrackTitle"
                                      Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title))" 
@@ -187,9 +200,6 @@ along with Foobar.  If not, see
 
     Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap;
     DynamicEditValue editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackPregap, editModeTrackPostgap;
-    // We need to save these values otherwise the autocomplete opens every time
-    MusicBrainzArtist? autocompleteArtist;
-    MusicBrainzTrack? autocompleteTrack;
 
     void SaveClick()
     {

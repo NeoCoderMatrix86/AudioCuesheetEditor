@@ -66,6 +66,12 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
+                @{
+                    MusicBrainzArtist? autocompleteArtist = new()
+                    {
+                        Name = context.Item.Artist
+                    };
+                }
                 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="context.Item.Artist"
                                  @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" 
                                  ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
@@ -84,6 +90,14 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
+                @{
+                    MusicBrainzTrack? autocompleteTrack = new()
+                    {
+                        Artist = context.Item.Artist,
+                        Title = context.Item.Title
+                    };
+
+                }
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, context.Item.Artist, token)" ToStringFunc="(value) => value.Title"
                                  @bind-Text="context.Item.Title" Value="autocompleteTrack" ValueChanged="(value) => TitleSelected(context.Item, value)"
                                  ResetValueOnEmptyText Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
@@ -147,13 +161,9 @@ along with Foobar.  If not, see
 </MudMenu>
 
 @code {
-    //TODO: Bug: Changing a track outside this component doesn't refresh the artist and title (importing, recording, etc.)
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
-    // We need to save these values otherwise the autocomplete opens every time
-    MusicBrainzArtist? autocompleteArtist;
-    MusicBrainzTrack? autocompleteTrack;
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -175,8 +185,6 @@ along with Foobar.  If not, see
 
     void AddTrackClicked()
     {
-        autocompleteArtist = null;
-        autocompleteTrack = null;
         var newTrack = new Track()
         {
             IsLinkedToPreviousTrack = ApplicationOptions!.LinkTracks

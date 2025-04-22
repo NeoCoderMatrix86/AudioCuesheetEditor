@@ -32,6 +32,12 @@ along with Foobar.  If not, see
                        ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack))" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
                           ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" />
+            @{
+                MusicBrainzArtist? autocompleteArtist = new()
+                {
+                    Name = EditedTrack.Artist
+                };
+            }
             <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
                              @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
                              ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
@@ -46,6 +52,13 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
+            @{
+                MusicBrainzTrack? autocompleteTrack = new()
+                {
+                    Artist = EditedTrack.Artist,
+                    Title = EditedTrack.Title
+                };
+            }
             <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
                              @bind-Text="EditedTrack.Title" Value="autocompleteTrack" ValueChanged="TitleSelected" Clearable ShowProgressIndicator 
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))" MaxItems="null" CoerceText="false">
@@ -87,11 +100,6 @@ along with Foobar.  If not, see
 </MudDialog>
 
 @code {
-    //TODO: Bug: Editing a track that has already an artist or title set doesn't display these values
-    // We need to save these values otherwise the autocomplete opens every time
-    MusicBrainzArtist? autocompleteArtist;
-    MusicBrainzTrack? autocompleteTrack;
-
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
 
@@ -101,7 +109,6 @@ along with Foobar.  If not, see
 
     void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
     {
-        autocompleteTrack = musicBrainzTrack;
         if ((String.IsNullOrEmpty(EditedTrack.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
         {
             EditedTrack.Artist = musicBrainzTrack.Artist;
