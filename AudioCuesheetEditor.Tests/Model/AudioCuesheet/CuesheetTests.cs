@@ -158,10 +158,10 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         {
             var cuesheet = new Cuesheet();
             Assert.IsFalse(cuesheet.IsRecording);
-            Assert.IsNull(cuesheet.RecordingTime);
+            Assert.IsNull(cuesheet.RecordingStart);
             cuesheet.StartRecording();
             Assert.IsTrue(cuesheet.IsRecording);
-            Assert.IsNotNull(cuesheet.RecordingTime);
+            Assert.IsNotNull(cuesheet.RecordingStart);
             var track = new Track();
             Assert.IsNull(track.Begin);
             Assert.IsNull(track.End);
@@ -857,7 +857,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 
             // Assert
             Assert.IsTrue(cuesheet.IsRecording);
-            Assert.IsNotNull(cuesheet.RecordingTime);
+            Assert.IsNotNull(cuesheet.RecordingStart);
         }
 
         [TestMethod]
@@ -876,7 +876,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 
             // Assert
             Assert.IsFalse(cuesheet.IsRecording);
-            Assert.IsNull(cuesheet.RecordingTime);
+            Assert.IsNull(cuesheet.RecordingStart);
             Assert.IsTrue(isRecordingChangedEventFired);
             Assert.IsNotNull(track.End);
         }
@@ -893,7 +893,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 
             // Assert
             Assert.IsTrue(cuesheet.IsRecording);
-            Assert.IsNotNull(cuesheet.RecordingTime);
+            Assert.IsNotNull(cuesheet.RecordingStart);
         }
 
         [TestMethod]

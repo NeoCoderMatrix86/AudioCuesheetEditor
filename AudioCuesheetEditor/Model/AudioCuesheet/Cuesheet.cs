@@ -42,7 +42,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private IAudiofile? audiofile;
         private CDTextfile? cDTextfile;
         private String? catalogueNumber;
-        private DateTime? recordingStart;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
         private List<CuesheetSection> sections = [];
 
@@ -125,24 +124,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         [JsonIgnore]
-        public bool IsRecording => RecordingTime.HasValue;
+        public bool IsRecording => RecordingStart.HasValue;
+        
+        [JsonIgnore]
+        public DateTime? RecordingStart { get; set; }
 
-        //TODO: Remove this property and make recordingStart public
-        public TimeSpan? RecordingTime
-        {
-            get 
-            { 
-                if (recordingStart.HasValue == true)
-                {
-                    return DateTime.UtcNow - recordingStart;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
+        [JsonIgnore]
         public IEnumerable<String> IsRecordingPossible
         {
             get
@@ -230,9 +217,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             var previousValue = new List<Track>(tracks);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
-            if (IsRecording && recordingStart.HasValue)
+            if (IsRecording && RecordingStart.HasValue)
             {
-                track.Begin = DateTime.UtcNow - recordingStart.Value;
+                track.Begin = DateTime.UtcNow - RecordingStart.Value;
             }
             //Fire the event manually since we don't know if the track is already linked to previous one
             Track_IsLinkedToPreviousTrackChanged(track, EventArgs.Empty);
@@ -378,7 +365,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             if (IsRecordingPossible.Any() == false)
             {
-                recordingStart = DateTime.UtcNow;
+                RecordingStart = DateTime.UtcNow;
                 IsRecordingChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -387,11 +374,11 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         {
             //Set end of last track
             var lastTrack = Tracks.LastOrDefault();
-            if ((lastTrack != null) && (recordingStart.HasValue))
+            if ((lastTrack != null) && (RecordingStart.HasValue))
             {
-                lastTrack.End = DateTime.UtcNow - recordingStart.Value;
+                lastTrack.End = DateTime.UtcNow - RecordingStart.Value;
             }
-            recordingStart = null;
+            RecordingStart = null;
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 

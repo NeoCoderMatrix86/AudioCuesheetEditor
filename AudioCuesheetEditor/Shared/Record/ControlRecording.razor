@@ -57,9 +57,11 @@ along with Foobar.  If not, see
                     <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
             </MudButtonGroup>
-            @if ((Cuesheet?.IsRecording == true) && (Cuesheet?.RecordingTime.HasValue == true))
+            @if (Cuesheet?.RecordingStart.HasValue == true)
             {
-                <MudText Typo="Typo.h5">@Cuesheet.RecordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, Cuesheet.RecordingTime.Value.Milliseconds))</MudText>
+                var recordingTime = DateTime.UtcNow - Cuesheet.RecordingStart;
+                recordingTime = recordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, recordingTime.Value.Milliseconds));
+                <MudText Typo="Typo.h5">@recordingTime</MudText>
             }
             else
             {
