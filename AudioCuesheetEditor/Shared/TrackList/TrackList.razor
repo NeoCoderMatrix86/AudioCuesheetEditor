@@ -96,7 +96,6 @@ along with Foobar.  If not, see
                         Artist = context.Item.Artist,
                         Title = context.Item.Title
                     };
-
                 }
                 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, context.Item.Artist, token)" ToStringFunc="(value) => value.Title"
                                  @bind-Text="context.Item.Title" Value="autocompleteTrack" ValueChanged="(value) => TitleSelected(context.Item, value)"
