@@ -38,7 +38,11 @@ along with Foobar.  If not, see
             {
                 <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.PlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" />
+            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.PlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" ValueLabel>
+                <ValueLabelContent>
+                    @GetSliderTimeValue()
+                </ValueLabelContent>
+            </MudSlider>
             @if (_playbackService.TotalTime.HasValue)
             {
                 @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
@@ -68,8 +72,6 @@ along with Foobar.  If not, see
 </MudCard>
 
 @code {
-    //TODO: Slider should display the value in tooltip (like vlc does)
-
     double sliderValue;
     HotKeysContext? hotKeysContext;
 
@@ -134,5 +136,18 @@ along with Foobar.  If not, see
             sliderValue = 0.0;
         }
         InvokeAsync(StateHasChanged);
+    }
+
+    string GetSliderTimeValue()
+    {
+        var time = sliderValue * _playbackService.TotalTime / 100.0;
+        if (time.HasValue)
+        {
+            return time.Value.ToString(@"hh\:mm\:ss");
+        }
+        else
+        {
+            return string.Empty;
+        }
     }
 }
