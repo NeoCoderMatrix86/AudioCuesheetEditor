@@ -226,7 +226,7 @@ namespace AudioCuesheetEditor.Services.Audio
             updateTimer?.Dispose();
             updateTimer = null;
         }
-
+        //TODO: Deleting the audio file doesn't stop the playback
         private async void UpdateCurrentPosition(object? state)
         {
             // Thread-safe access
