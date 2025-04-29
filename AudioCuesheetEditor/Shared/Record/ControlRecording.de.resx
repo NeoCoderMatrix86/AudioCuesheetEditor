@@ -139,7 +139,7 @@
     <value>Die Aufnahme startet in {0} Sekunden!</value>
   </data>
   <data name="Recording!" xml:space="preserve">
-    <value>Aufnahme läuft!</value>
+    <value>Aufnahme aktiv!</value>
   </data>
   <data name="Start recording" xml:space="preserve">
     <value>Aufnahme starten</value>
