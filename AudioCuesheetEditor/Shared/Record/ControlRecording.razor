@@ -52,7 +52,12 @@ along with Foobar.  If not, see
         }
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
+                <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+                    <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
+                </MudHidden>
+                <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync" />
+                </MudHidden>
                 <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
                     <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
@@ -67,7 +72,12 @@ along with Foobar.  If not, see
             {
                 <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
-            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync">@_localizer["Stop recording"]</MudButton>
+            <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync">@_localizer["Stop recording"]</MudButton>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync" />
+            </MudHidden>
         </MudStack>
         @if (Cuesheet?.Audiofile?.IsRecorded == true)
         {
