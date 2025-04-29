@@ -67,7 +67,12 @@ along with Foobar.  If not, see
                     }
                 </ItemTemplate>
             </MudAutocomplete>
-            <MudButton @ref="addButton" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false">@_localizer["Add track"]</MudButton>
+            <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false">@_localizer["Add track"]</MudButton>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false" />
+            </MudHidden>
         </MudStack>
     </MudCardContent>
 </MudCard>
@@ -101,7 +106,6 @@ along with Foobar.  If not, see
     Track currentRecordingTrack = new Track();
     MudAutocomplete<MusicBrainzArtist>? artistInput;
     MudAutocomplete<MusicBrainzTrack>? titleInput;
-    MudButton? addButton;
 
     String? GetValidationErrorMessage(object model, string propertyName)
     {
