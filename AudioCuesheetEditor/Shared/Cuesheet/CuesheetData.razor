@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 
 @if (Cuesheet != null)
 {
-    <MudForm Model="Cuesheet">
+    <MudForm @ref="form" Model="Cuesheet">
         <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
         <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
         @switch(CurrentViewMode)
@@ -51,6 +51,7 @@ along with Foobar.  If not, see
     string? fileInputAudiofileId;
     string? fileInputAudiofileErrorText;
     string? fileInputCDTextfileErrorText;
+    MudForm? form;
 
     protected override void OnInitialized()
     {
@@ -58,6 +59,16 @@ along with Foobar.  If not, see
         if (fileInputAudiofileId == null)
         {
             fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (form != null)
+        {
+            await form.Validate();
+            SetAudiofileValidationText();
         }
     }
 
@@ -83,15 +94,24 @@ along with Foobar.  If not, see
         // Just validate the cuesheet if there is no error already
         if (fileInputAudiofileErrorText == null)
         {
-            var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
-            if (validationMessages.Count() > 0)
-            {
-                fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
-            }
-            else
-            {
-                fileInputAudiofileErrorText = null;
-            }
+            SetAudiofileValidationText();
+        }
+    }
+
+    void SetAudiofileValidationText()
+    {
+        if (Cuesheet == null)
+        {
+            return;
+        }
+        var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
+        if (validationMessages.Count() > 0)
+        {
+            fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
+        }
+        else
+        {
+            fileInputAudiofileErrorText = null;
         }
     }
 
