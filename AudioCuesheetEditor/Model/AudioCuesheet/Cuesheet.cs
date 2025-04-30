@@ -47,6 +47,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler? IsRecordingChanged;
+        public event EventHandler? AudiofileChanged;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -98,6 +99,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var previousValue = audiofile;
                 audiofile = value;
                 FireEvents(previousValue, propertyName: nameof(Audiofile));
+                AudiofileChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

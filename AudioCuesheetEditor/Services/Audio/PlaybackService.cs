@@ -31,6 +31,7 @@ namespace AudioCuesheetEditor.Services.Audio
         private bool disposedValue;
         private readonly Lock timerLock = new();
         private TimeSpan? currentPosition;
+        private Cuesheet cuesheet;
 
         public event Action? CurrentPositionChanged;
 
@@ -46,17 +47,20 @@ namespace AudioCuesheetEditor.Services.Audio
                 }
             }
         }
-        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
-        public TimeSpan? TotalTime => _sessionStateContainer.Cuesheet.Audiofile?.Duration;
+        public Track? CurrentlyPlayingTrack => cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
+        public TimeSpan? TotalTime => cuesheet.Audiofile?.Duration;
         public Boolean IsPlaying { get; private set; } = false;
         //Refer to Cuesheet (not ImportCuesheet) since playback will always be done on the imported cuesheet
-        public Boolean PlaybackPossible => _sessionStateContainer.Cuesheet.Audiofile != null && _sessionStateContainer.Cuesheet.Audiofile.PlaybackPossible;
-        public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
-        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < _sessionStateContainer.Cuesheet.Tracks.Count - 1;
+        public Boolean PlaybackPossible => cuesheet.Audiofile != null && cuesheet.Audiofile.PlaybackPossible;
+        public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
+        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < cuesheet.Tracks.Count - 1;
 
         public PlaybackService(ISessionStateContainer sessionStateContainer, IHowl howl)
         {
             _sessionStateContainer = sessionStateContainer;
+            cuesheet = _sessionStateContainer.Cuesheet;
+            cuesheet.AudiofileChanged += Cuesheet_AudiofileChanged;
+            _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
             _howl = howl;
             _howl.OnPlay += Howl_OnPlay;
             _howl.OnPause += Howl_OnPause;
@@ -67,7 +71,7 @@ namespace AudioCuesheetEditor.Services.Audio
         public async Task PlayOrPauseAsync()
         {
             //Reset if the last played audiofile is not the current one
-            if (currentlyPlayingAudiofile != _sessionStateContainer.Cuesheet.Audiofile)
+            if (currentlyPlayingAudiofile !=cuesheet.Audiofile)
             {
                 soundId = null;
             }
@@ -82,13 +86,13 @@ namespace AudioCuesheetEditor.Services.Audio
                 {
                     string[]? sources = null;
                     string[]? formats = null;
-                    if (_sessionStateContainer.Cuesheet.Audiofile?.ObjectURL != null)
+                    if (cuesheet.Audiofile?.ObjectURL != null)
                     {
-                        sources = [_sessionStateContainer.Cuesheet.Audiofile.ObjectURL];
+                        sources = [cuesheet.Audiofile.ObjectURL];
                     }
-                    if (_sessionStateContainer.Cuesheet.Audiofile?.AudioFileType != null)
+                    if (cuesheet.Audiofile?.AudioFileType != null)
                     {
-                        formats = [_sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower()];
+                        formats = [cuesheet.Audiofile.AudioFileType.ToLower()];
                     }
                     var options = new HowlOptions
                     {
@@ -97,7 +101,7 @@ namespace AudioCuesheetEditor.Services.Audio
                         Html5 = true
                     };
                     soundId = await _howl.Play(options);
-                    currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
+                    currentlyPlayingAudiofile = cuesheet.Audiofile;
                 }
             }
         }
@@ -129,8 +133,8 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (CurrentlyPlayingTrack != null)
             {
-                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index + 1);
+                var index = cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                var trackToPlay = cuesheet.Tracks.ElementAtOrDefault(index + 1);
                 if (trackToPlay != null)
                 {
                     await PlayAsync(trackToPlay);
@@ -142,8 +146,8 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (CurrentlyPlayingTrack != null)
             {
-                var index = _sessionStateContainer.Cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
-                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.ElementAtOrDefault(index - 1);
+                var index = cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack);
+                var trackToPlay = cuesheet.Tracks.ElementAtOrDefault(index - 1);
                 if (trackToPlay != null)
                 {
                     await PlayAsync(trackToPlay);
@@ -180,6 +184,8 @@ namespace AudioCuesheetEditor.Services.Audio
             {
                 if (disposing)
                 {
+                    cuesheet.AudiofileChanged -= Cuesheet_AudiofileChanged;
+                    _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
                     _howl.OnPlay -= Howl_OnPlay;
                     _howl.OnPause -= Howl_OnPause;
                     _howl.OnEnd -= Howl_OnEnd;
@@ -235,6 +241,19 @@ namespace AudioCuesheetEditor.Services.Audio
                 if (soundId == null || !IsPlaying) return;
             }
             CurrentPosition = await _howl.GetCurrentTime(soundId.Value);
+        }
+
+        private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
+        {
+            _ = StopAsync();
+            cuesheet.AudiofileChanged -= Cuesheet_AudiofileChanged;
+            cuesheet = _sessionStateContainer.Cuesheet;
+            cuesheet.AudiofileChanged += Cuesheet_AudiofileChanged;
+        }
+
+        private void Cuesheet_AudiofileChanged(object? sender, EventArgs e)
+        {
+            _ = StopAsync();
         }
     }
 }

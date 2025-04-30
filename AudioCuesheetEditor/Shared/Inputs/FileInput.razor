@@ -24,8 +24,7 @@ along with Foobar.  If not, see
     <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
                    @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
         <ActivatorContent>
-            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile"
-                          Error="!String.IsNullOrEmpty(Error)" ErrorText="@Error" />
+            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
@@ -43,6 +42,10 @@ along with Foobar.  If not, see
         </MudMenu>
     }
 </MudStack>
+@if(String.IsNullOrEmpty(Error) == false)
+{
+    <MudText Color="Color.Error" Typo="@Typo.caption">@Error</MudText>
+}
 
 @code {
     [Parameter]
@@ -102,6 +105,5 @@ along with Foobar.  If not, see
         selectedFile = browserFile;
         FileName = selectedFile?.Name;
         await OnFileSelected.InvokeAsync(selectedFile);
-
     }
 }
