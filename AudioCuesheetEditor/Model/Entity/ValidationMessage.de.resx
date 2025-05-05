@@ -126,6 +126,9 @@
   <data name="Begin" xml:space="preserve">
     <value>Beginn</value>
   </data>
+  <data name="Cataloguenumber" xml:space="preserve">
+    <value>Katalognummer</value>
+  </data>
   <data name="CuesheetFilename" xml:space="preserve">
     <value>Cuesheetdateiname</value>
   </data>
@@ -181,7 +184,7 @@
     <value>{0} hat ungültige Anzahl ({1})!</value>
   </data>
   <data name="{0} has no value!" xml:space="preserve">
-    <value>{0} hat keinen wert!</value>
+    <value>{0} hat keinen Wert!</value>
   </data>
   <data name="{0} may not be 0!" xml:space="preserve">
     <value>{0} darf nicht 0 sein!</value>
