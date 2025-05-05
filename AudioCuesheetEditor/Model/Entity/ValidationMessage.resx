@@ -126,6 +126,9 @@
   <data name="Begin" xml:space="preserve">
     <value>Begin</value>
   </data>
+  <data name="Cataloguenumber" xml:space="preserve">
+    <value>Cataloguenumber</value>
+  </data>
   <data name="CuesheetFilename" xml:space="preserve">
     <value>CuesheetFilename</value>
   </data>
