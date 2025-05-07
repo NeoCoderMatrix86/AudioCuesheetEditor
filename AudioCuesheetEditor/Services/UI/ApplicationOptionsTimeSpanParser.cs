@@ -56,6 +56,24 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
+        //TODO: Unit Tests
+        public string? GetTimespanFormatted(TimeSpan? timeSpan)
+        {
+            string? formatted = null;
+            if (timeSpan.HasValue)
+            {
+                try
+                {
+                    formatted = timeSpan.Value.ToString(applicationOptions?.DisplayTimeSpanFormat);
+                }
+                catch (FormatException)
+                {
+                    formatted = timeSpan.Value.ToString();
+                }
+            }
+            return formatted;
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

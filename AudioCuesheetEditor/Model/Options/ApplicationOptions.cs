@@ -105,6 +105,7 @@ namespace AudioCuesheetEditor.Model.Options
         public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
         public uint RecordCountdownTimer { get; set; } = 5;
         public Boolean FixedTracksTableHeader { get; set; } = false;
+        public String? DisplayTimeSpanFormat { get; set; }
 
         public override ValidationResult Validate(string property)
         {

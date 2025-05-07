@@ -45,19 +45,19 @@ along with Foobar.  If not, see
 </MudButtonGroup>
 
 <MudDataGrid Items="Cuesheet?.Sections" ReadOnly="false" Bordered EditTrigger="DataGridEditTrigger.OnRowClick" EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column"
-MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedSections">
+             MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedSections">
     <Columns>
         <SelectColumn />
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.Begin, value)"
-                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin))" />
+                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.Begin, value)"
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.Begin))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.End" Title="@_localizer["End"]">
             <EditTemplate>
-                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.End, value)" 
-                Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End))" />
+                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<CuesheetSection, TimeSpan?>(context.Item, x => x.End, value)" 
+                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.End))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Cuesheet artist"]">
@@ -73,7 +73,7 @@ MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedSections">
         <PropertyColumn Property="x => x.AudiofileName" Title="@_localizer["Audio file"]">
             <EditTemplate>
                 <FileInput Label="@_localizer["Audiofile"]" FileName="@context.Item.AudiofileName" OnFileSelected="(file) => AudiofileSelected(context.Item, file)" Error="@GetValidationErrorMessage(context.Item, nameof(CuesheetSection.AudiofileName))" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
-                DisplayMenu="false" />
+                           DisplayMenu="false" />
             </EditTemplate>
         </PropertyColumn>
     </Columns>
