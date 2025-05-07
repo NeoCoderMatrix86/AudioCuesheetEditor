@@ -126,6 +126,9 @@
   <data name="Days" xml:space="preserve">
     <value>Tage</value>
   </data>
+  <data name="Display" xml:space="preserve">
+    <value>Anzeige</value>
+  </data>
   <data name="Hours" xml:space="preserve">
     <value>Stunden</value>
   </data>
@@ -141,7 +144,13 @@
   <data name="Seconds" xml:space="preserve">
     <value>Sekunden</value>
   </data>
+  <data name="Time display format" xml:space="preserve">
+    <value>Anzeigeformat Zeit</value>
+  </data>
   <data name="Time input format" xml:space="preserve">
     <value>Eingabeformat Zeit</value>
+  </data>
+  <data name="Uses .NET format, check help for more information" xml:space="preserve">
+    <value>Benutzt .NET format, bitte prüfen sie die Hilfe für mehr Informationen</value>
   </data>
 </root>

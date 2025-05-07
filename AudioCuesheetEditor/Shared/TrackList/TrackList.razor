@@ -115,20 +115,29 @@ along with Foobar.  If not, see
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <CellTemplate>
+                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)
+            </CellTemplate>
             <EditTemplate>
-                <MudTextField Value="@context.Item.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
+                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
                               Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <CellTemplate>
+                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)
+            </CellTemplate>
             <EditTemplate>
-                <MudTextField Value="@context.Item.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
+                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
                               Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <CellTemplate>
+                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)
+            </CellTemplate>
             <EditTemplate>
-                <MudTextField Value="@context.Item.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
+                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
                               Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
             </EditTemplate>
         </PropertyColumn>
