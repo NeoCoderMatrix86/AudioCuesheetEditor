@@ -156,9 +156,6 @@
   <data name="Open" xml:space="preserve">
     <value>Öffnen</value>
   </data>
-  <data name="Options" xml:space="preserve">
-    <value>Optionen</value>
-  </data>
   <data name="Preview environment" xml:space="preserve">
     <value>Vorschauumgebung</value>
   </data>

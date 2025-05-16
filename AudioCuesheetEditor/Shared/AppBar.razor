@@ -148,7 +148,7 @@ along with Foobar.  If not, see
     async Task SettingsClicked()
     {
         var options = new DialogOptions() { CloseButton = true, CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
-        await _dialogService.ShowAsync<OptionsDialog>(_localizer["Options"], options);
+        await _dialogService.ShowAsync<SettingsDialog>(_localizer["Settings"], options);
     }
 
     async Task ResetCuesheetClicked() 
