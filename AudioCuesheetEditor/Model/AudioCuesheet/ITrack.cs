@@ -23,9 +23,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         TimeSpan? Begin { get; set; }
         TimeSpan? End { get; set; }
         TimeSpan? Length { get; set; }
-        IReadOnlyCollection<Flag> Flags { get; }
+        IEnumerable<Flag> Flags { get; set; }
         TimeSpan? PreGap { get; set; }
         TimeSpan? PostGap { get; set; }
-        void SetFlags(IEnumerable<Flag> flags);
     }
 }

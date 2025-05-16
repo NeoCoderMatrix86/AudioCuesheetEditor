@@ -1,0 +1,191 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<CuesheetData> _localizer
+@inject ValidationService _validationService
+@inject FileInputManager _fileInputManager
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject IDialogService _dialogService
+
+@if (Cuesheet != null)
+{
+    <MudForm @ref="form" Model="Cuesheet">
+        <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
+        @switch(CurrentViewMode)
+        {
+            case ViewMode.ImportView:
+            case ViewMode.DetailView:
+                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile OnDownloadFileClicked="DownloadAudio" OnFileRenameClicked="AudioFileRename" />
+                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" />
+                <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
+                break;
+        }
+
+    </MudForm>
+}
+@code {
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+
+    [CascadingParameter]
+    public ViewMode CurrentViewMode { get; set; }
+
+    string? fileInputAudiofileId;
+    string? fileInputAudiofileErrorText;
+    string? fileInputCDTextfileErrorText;
+    MudForm? form;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (fileInputAudiofileId == null)
+        {
+            fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (form != null)
+        {
+            await form.Validate();
+            SetAudiofileValidationText();
+        }
+    }
+
+    async Task OnAudiofileSelected(IBrowserFile? browserFile)
+    {
+        if (Cuesheet == null)
+        {
+            return;
+        }
+        fileInputAudiofileErrorText = null;
+        try 
+        {
+            Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile, x => 
+            {
+                Cuesheet.RecalculateLastTrackEnd();
+                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+            });
+        }
+        catch(ArgumentException ae)
+        {
+            fileInputAudiofileErrorText = ae.Message;
+        }
+        // Just validate the cuesheet if there is no error already
+        if (fileInputAudiofileErrorText == null)
+        {
+            SetAudiofileValidationText();
+        }
+    }
+
+    void SetAudiofileValidationText()
+    {
+        if (Cuesheet == null)
+        {
+            return;
+        }
+        var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
+        if (validationMessages.Count() > 0)
+        {
+            fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
+        }
+        else
+        {
+            fileInputAudiofileErrorText = null;
+        }
+    }
+
+    void OnCDTextfileSelected(IBrowserFile? browserFile)
+    {
+        if (Cuesheet == null)
+        {
+            return;
+        }
+        fileInputCDTextfileErrorText = null;
+        try
+        {
+            Cuesheet.CDTextfile = FileInputManager.CreateCDTextfile(browserFile);
+        }
+        catch (ArgumentException ae)
+        {
+            fileInputCDTextfileErrorText = ae.Message;
+        }
+    }
+
+    async Task DownloadAudio()
+    {
+        var audioFile = Cuesheet?.Audiofile;
+        if (audioFile != null)
+        {
+            await _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
+        }
+    }
+
+    async Task CDTextFileRename()
+    {
+        var newFileName = await ShowInputDialog(Cuesheet?.CDTextfile?.Name);
+        if (String.IsNullOrEmpty(newFileName) == false)
+        {
+            var cdTextFile = Cuesheet?.CDTextfile;
+            if (cdTextFile != null)
+            {
+                cdTextFile.Name = newFileName;
+            }
+        }
+    }
+
+    async Task AudioFileRename()
+    {
+        var newFileName = await ShowInputDialog(Cuesheet?.Audiofile?.Name);
+        if (String.IsNullOrEmpty(newFileName) == false)
+        {
+            var audioFile = Cuesheet?.Audiofile;
+            if (audioFile != null)
+            {
+                audioFile.Name = newFileName;
+            }
+        }
+    }
+
+    async Task<String?> ShowInputDialog(string? initialValue)
+    {
+        var parameters = new DialogParameters<InputTextDialog>
+        {
+            { x => x.Placeholder, _localizer["Enter the new file name here"] },
+            { x => x.Label, _localizer["New file name"] },
+            { x => x.InitialValue, initialValue }
+        };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
+        var result = await dialog.Result;
+        var newFileName = result?.Data as string;
+        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
+        {
+            return newFileName;
+        }
+        else
+        {
+            return null;
+        }
+    }
+}

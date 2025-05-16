@@ -22,17 +22,7 @@ namespace AudioCuesheetEditor.Tests.Utility
 {
     internal class TestHelper
     {
-        public TestHelper()
-        {
-            ApplicationOptions = new ApplicationOptions
-            {
-                LinkTracksWithPreviousOne = false
-            };
-            RecordOptions = new();
-        }
-
-        public ApplicationOptions ApplicationOptions { get; private set; }
-        public RecordOptions RecordOptions { get; private set; }
+        public ApplicationOptions ApplicationOptions { get; private set; } = new();
         public static ILogger<T> CreateLogger<T>()
         {
             var serviceProvider = new ServiceCollection()

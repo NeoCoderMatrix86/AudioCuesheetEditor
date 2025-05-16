@@ -1,0 +1,163 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ControlRecording> _localizer
+@inject IJSRuntime _jsRuntime
+@inject IDialogService _dialogService
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+
+@if (Cuesheet?.IsRecording == false)
+{
+    var recordingPossibleMessages = Cuesheet?.IsRecordingPossible;
+    if (recordingPossibleMessages?.Any() == true)
+    {
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
+            <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
+            @foreach (var recordingPossibleMessage in recordingPossibleMessages)
+            {
+                <MudText>@_localizer[recordingPossibleMessage]</MudText>
+            }
+        </MudAlert>
+    }
+}
+<MudCard Outlined>
+    <MudCardContent>
+        @if (Cuesheet?.IsRecording == true)
+        {
+            <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
+            <br />
+        }
+        @if (startRecordTimer?.Enabled == true)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => startRecordTimer.Dispose()">
+                @_localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]
+            </MudAlert>
+            <br />
+        }
+        <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+            <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+                <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+                    <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
+                </MudHidden>
+                <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync" />
+                </MudHidden>
+                <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
+                    <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
+                </MudMenu>
+            </MudButtonGroup>
+            @if (Cuesheet?.RecordingStart.HasValue == true)
+            {
+                var recordingTime = DateTime.UtcNow - Cuesheet.RecordingStart;
+                recordingTime = recordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, recordingTime.Value.Milliseconds));
+                <MudText Typo="Typo.h5">@recordingTime</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+            }
+            <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync">@_localizer["Stop recording"]</MudButton>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync" />
+            </MudHidden>
+        </MudStack>
+        @if (Cuesheet?.Audiofile?.IsRecorded == true)
+        {
+            <br />
+            <MudStack Row Justify="Justify.FlexEnd">
+                <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadAudio">@_localizer["Download recorded audio file"]</MudButton>
+            </MudStack>
+        }
+    </MudCardContent>
+</MudCard>
+
+@code {
+    Timer updateGUITimer = new(500);
+    Timer? startRecordTimer;
+    DateTime recordTimerStarted;
+
+    [CascadingParameter]
+    public Cuesheet? Cuesheet { get; set; }
+
+    public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecordingPossible.Any() == true;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        updateGUITimer.AutoReset = true;
+        updateGUITimer.Elapsed += delegate
+        {
+            StateHasChanged();
+            Boolean startRecordTimeEnabled = false;
+            if (startRecordTimer != null)
+            {
+                startRecordTimeEnabled = startRecordTimer.Enabled;
+            }
+            if ((startRecordTimeEnabled == false) && (Cuesheet?.IsRecording == false))
+            {
+                updateGUITimer.Stop();
+            }
+        };
+    }
+
+    async Task StartRecordingAsync()
+    {
+        Cuesheet?.StartRecording();
+        updateGUITimer.Start();
+        await _jsRuntime.InvokeVoidAsync("startAudioRecording");
+        Cuesheet!.Audiofile = null;
+    }
+
+    async Task StopRecordingAsync() 
+    {
+        Cuesheet?.StopRecording();
+        await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
+    }
+
+    async Task DisplayStartCountdownDialog()
+    {
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false };
+        var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(null, options);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            startRecordTimer = new Timer(ApplicationOptions!.RecordCountdownTimer * 1000);
+            startRecordTimer.Elapsed += async delegate
+            {
+                await StartRecordingAsync();
+                startRecordTimer.Stop();
+                startRecordTimer.Dispose();
+            };
+            startRecordTimer.Start();
+            updateGUITimer.Start();
+            recordTimerStarted = DateTime.Now;
+        }
+    }
+
+    void DownloadAudio() 
+    {
+        var audioFile = Cuesheet?.Audiofile;
+        if (audioFile != null)
+        {
+            _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
+        }
+    }
+}

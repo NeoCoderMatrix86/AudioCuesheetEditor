@@ -1,0 +1,106 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<DisplayHotkeysDialog> _localizer
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.h6"><b>@_localizer["Common"]</b></MudText>
+        <MudGrid>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Undo the last edit"]</MudText>
+                    <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + z"]</MudChip>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Redo the last edit"]</MudText>
+                    <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + y"]</MudChip>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Reset cuesheet"]</MudText>
+                    <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + r"]</MudChip>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+        <MudText Typo="Typo.h6"><b>@_localizer["Save"]</b></MudText>
+        <MudGrid>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Download project file"]</MudText>
+                    <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + s"]</MudChip>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Download text export"]</MudText>
+                    <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + e"]</MudChip>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Download cuesheet"]</MudText>
+                    <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + u"]</MudChip>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+        <MudText Typo="Typo.h6"><b>@_localizer["Audio"]</b></MudText>
+        <MudGrid>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Start/pause playback"]</MudText>
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + p"]</MudChip>
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["MediaPlayPause"]</MudChip>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Jump to previous track"]</MudText>
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + Left"]</MudChip>
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["MediaTrackPrevious"]</MudChip>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Jump to next track"]</MudText>
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + Right"]</MudChip>
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["MediaTrackNext"]</MudChip>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+            <MudItem md="12" lg="6">
+                <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+                    <MudText>@_localizer["Stop playback"]</MudText>
+                    <MudStack Row AlignItems="AlignItems.Baseline">
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["Ctrl + b"]</MudChip>
+                        <MudChip T="string" Variant="Variant.Text">@_localizer["MediaStop"]</MudChip>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </DialogContent>
+</MudDialog>

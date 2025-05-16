@@ -16,64 +16,22 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
-using Blazorise.Localization;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class TextImportScheme : Validateable<TextImportScheme>
+    public class TextImportScheme : Validateable
     {
-        public const String EnterRegularExpressionHere = "ENTER REGULAR EXPRESSION HERE";
-
-        public static readonly IReadOnlyDictionary<String, String> AvailableSchemeCuesheet;
-        public static readonly IReadOnlyDictionary<String, String> AvailableSchemesTrack;
-
-        public static ITextLocalizer? TextLocalizer { get; set; }
+        public static readonly IEnumerable<String> AvailableSchemeCuesheet;
+        public static readonly IEnumerable<String> AvailableSchemesTrack;
 
         static TextImportScheme()
         {
-            var schemeCuesheetArtist = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Artist), EnterRegularExpressionHere);
-            var schemeCuesheetTitle = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Title), EnterRegularExpressionHere);
-            var schemeCuesheetAudioFile = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Audiofile), EnterRegularExpressionHere);
-            var schemeCuesheetCDTextfile = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.CDTextfile), EnterRegularExpressionHere);
-            var schemeCuesheetCatalogueNumber = String.Format("(?'{0}.{1}'{2})", nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), EnterRegularExpressionHere);
-
-            AvailableSchemeCuesheet = new Dictionary<string, string>
-            {
-                {nameof(Cuesheet.Artist), schemeCuesheetArtist },
-                {nameof(Cuesheet.Title), schemeCuesheetTitle },
-                {nameof(Cuesheet.Audiofile), schemeCuesheetAudioFile },
-                {nameof(Cuesheet.Cataloguenumber), schemeCuesheetCatalogueNumber },
-                {nameof(Cuesheet.CDTextfile), schemeCuesheetCDTextfile }
-            };
-
-            var schemeTrackArtist = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Artist), EnterRegularExpressionHere);
-            var schemeTrackTitle = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Title), EnterRegularExpressionHere);
-            var schemeTrackBegin = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Begin), EnterRegularExpressionHere);
-            var schemeTrackEnd = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.End), EnterRegularExpressionHere);
-            var schemeTrackLength = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Length), EnterRegularExpressionHere);
-            var schemeTrackPosition = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Position), EnterRegularExpressionHere);
-            var schemeTrackFlags = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.Flags), EnterRegularExpressionHere);
-            var schemeTrackPreGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PreGap), EnterRegularExpressionHere);
-            var schemeTrackPostGap = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(Track.PostGap), EnterRegularExpressionHere);
-            var schemeTrackStartDateTime = String.Format("(?'{0}.{1}'{2})", nameof(Track), nameof(ImportTrack.StartDateTime), EnterRegularExpressionHere);
-
-            AvailableSchemesTrack = new Dictionary<string, string>
-            {
-                { nameof(Track.Position), schemeTrackPosition },
-                { nameof(Track.Artist), schemeTrackArtist },
-                { nameof(Track.Title), schemeTrackTitle },
-                { nameof(Track.Begin), schemeTrackBegin },
-                { nameof(Track.End), schemeTrackEnd },
-                { nameof(Track.Length), schemeTrackLength },
-                { nameof(Track.Flags), schemeTrackFlags },
-                { nameof(Track.PreGap), schemeTrackPreGap },
-                { nameof(Track.PostGap), schemeTrackPostGap },
-                { nameof(ImportTrack.StartDateTime), schemeTrackStartDateTime }
-            };
+            AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.Audiofile), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
+            AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
         }
 
-        public static readonly String DefaultSchemeCuesheet = @"(?'Cuesheet.Artist'\A.*) - (?'Cuesheet.Title'\w{1,})\t{1,}(?'Cuesheet.Audiofile'.{1,})";
-        public static readonly String DefaultSchemeTracks = @"(?'Track.Artist'[a-zA-Z0-9_ .();äöü&:,'*-?:]{1,}) - (?'Track.Title'[a-zA-Z0-9_ .();äöü&'*-?:]{1,})\t{0,}(?'Track.End'.{1,})";
+        public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\w*) - (?'Title'\w*)\t{1,}(?'Audiofile'.*)";
+        public static readonly String DefaultSchemeTracks = @"(?'Artist'.+?) - (?'Title'.+?)\s*\t+(?'End'.+)";
 
         public static readonly TextImportScheme DefaultTextImportScheme = new()
         { 
@@ -107,51 +65,50 @@ namespace AudioCuesheetEditor.Model.IO.Import
                 OnValidateablePropertyChanged();
             }
         }
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;
-            String enterRegularExpression = EnterRegularExpressionHere;
-            if (TextLocalizer != null)
-            {
-                enterRegularExpression = TextLocalizer[EnterRegularExpressionHere];
-            }
             switch (property)
             {
                 case nameof(SchemeCuesheet):
                     validationStatus = ValidationStatus.Success;
-                    foreach (var availableScheme in AvailableSchemesTrack)
+                    if (String.IsNullOrEmpty(SchemeCuesheet) == false)
                     {
-                        if (SchemeCuesheet?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
+                        var containsPlaceHolder = false;
+                        var enumerator = AvailableSchemeCuesheet.GetEnumerator();
+                        if (enumerator.MoveNext())
                         {
-                            var startIndex = SchemeCuesheet.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-                            var realRegularExpression = SchemeCuesheet.Substring(startIndex, (SchemeCuesheet.IndexOf(')', startIndex) + 1) - startIndex);
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeCuesheet), realRegularExpression));
+                            do
+                            {
+                                containsPlaceHolder = SchemeCuesheet?.Contains(enumerator.Current) == true;
+                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
                         }
-                    }
-                    if (SchemeCuesheet?.Contains(enterRegularExpression) == true)
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
+                        if (containsPlaceHolder == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeCuesheet)));
+                        }
                     }
                     break;
                 case nameof(SchemeTracks):
                     validationStatus = ValidationStatus.Success;
-                    foreach (var availableScheme in AvailableSchemeCuesheet)
+                    if (String.IsNullOrEmpty(SchemeTracks) == false)
                     {
-                        if (SchemeTracks?.Contains(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere))) == true)
+                        var containsPlaceHolder = false;
+                        var enumerator = AvailableSchemesTrack.GetEnumerator();
+                        if (enumerator.MoveNext())
                         {
-                            var startIndex = SchemeTracks.IndexOf(availableScheme.Value.Substring(0, availableScheme.Value.IndexOf(EnterRegularExpressionHere)));
-                            var realRegularExpression = SchemeTracks.Substring(startIndex, (SchemeTracks.IndexOf(')', startIndex) + 1) - startIndex);
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} contains placeholders that can not be solved! Please remove invalid placeholder '{1}'.", nameof(SchemeTracks), realRegularExpression));
+                            do
+                            {
+                                containsPlaceHolder = SchemeTracks?.Contains(enumerator.Current) == true;
+                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
                         }
-                    }
-                    if (SchemeTracks?.Contains(enterRegularExpression) == true)
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("Replace '{0}' by a regular expression!", enterRegularExpression));
+                        if (containsPlaceHolder == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeTracks)));
+                        }
                     }
                     break;
             }

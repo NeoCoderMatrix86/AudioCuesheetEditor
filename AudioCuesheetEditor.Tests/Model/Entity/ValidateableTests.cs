@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace AudioCuesheetEditor.Tests.Model.Entity
 {
-    public class ValidateableTestClass : Validateable<ValidateableTestClass>
+    public class ValidateableTestClass : Validateable
     {
         private string? testProperty;
         private int? testProperty2;
@@ -42,7 +42,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
                 OnValidateablePropertyChanged();
             }
         }
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;

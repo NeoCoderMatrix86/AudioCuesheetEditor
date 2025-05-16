@@ -16,47 +16,41 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Services.UI;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
-    /// <summary>
-    /// Enum for setting desired GUI mode
-    /// </summary>
     public enum ViewMode
     {
-        ViewModeFull = 0,
-        ViewModeRecord = 1,
-        ViewModeImport = 2
+        DetailView = 0,
+        RecordView = 1,
+        ImportView = 2
     }
-
-    public enum TimeSensitivityMode
+    public class ApplicationOptions : Validateable, IOptions
     {
-        Full = 0,
-        Seconds = 1,
-        Minutes = 2
-    }
-
-    public class ApplicationOptions : Validateable<ApplicationOptions>, IOptions
-    {
-        public const String DefaultCultureName = "en-US";
-
-        public static IReadOnlyCollection<CultureInfo> AvailableCultures
+        private string? projectFilename = Projectfile.DefaultFilename;
+        private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
+        public String? CuesheetFilename 
         {
-            get
+            get => cuesheetFilename;
+            set
             {
-                var cultures = new List<CultureInfo>
+                if (String.IsNullOrEmpty(value) == false)
                 {
-                    new("en-US"),
-                    new("de-DE")
-                };
-                return cultures.AsReadOnly();
+                    var extension = Path.GetExtension(value);
+                    if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        value = $"{value}{FileExtensions.Cuesheet}";
+                    }
+                }
+                cuesheetFilename = value;
             }
         }
-        public String? CuesheetFilename { get; set; } = Exportfile.DefaultCuesheetFilename;
-        public String? CultureName { get; set; } = DefaultCultureName;
+        public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
         [JsonIgnore]
         public CultureInfo Culture
         {
@@ -73,15 +67,15 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         [JsonIgnore]
-        public ViewMode ViewMode { get; set; }
-        public String? ViewModename 
+        public ViewMode ActiveTab { get; set; }
+        public String? ActiveTabName
         {
-            get { return Enum.GetName(typeof(ViewMode), ViewMode); }
-            set 
+            get => Enum.GetName(ActiveTab);
+            set
             {
                 if (value != null)
                 {
-                    ViewMode = (ViewMode)Enum.Parse(typeof(ViewMode), value);
+                    ActiveTab = Enum.Parse<ViewMode>(value);
                 }
                 else
                 {
@@ -89,13 +83,31 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        public Boolean LinkTracksWithPreviousOne { get; set; } = true;
-        public String? ProjectFilename { get; set; } = Projectfile.DefaultFilename;
+        public String? ProjectFilename
+        { 
+            get => projectFilename;
+            set
+            {
+                if (String.IsNullOrEmpty(value) == false)
+                {
+                    var extension = Path.GetExtension(value);
+                    if (extension?.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        value = $"{value}{FileExtensions.Projectfile}";
+                    }
+                }
+                projectFilename = value;
+            }
+        }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
-        public Boolean TracksTableSelectionVisible { get; set; } = false;
-        public Boolean TracksTableHeaderPinned { get; set; } = false;
+        public Boolean LinkTracks { get; set; } = true;
+        public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
+        public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
+        public uint RecordCountdownTimer { get; set; } = 5;
+        public Boolean FixedTracksTableHeader { get; set; } = false;
+        public String? DisplayTimeSpanFormat { get; set; }
 
-        protected override ValidationResult Validate(string property)
+        public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
             List<ValidationMessage>? validationMessages = null;

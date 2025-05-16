@@ -14,11 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
@@ -28,19 +24,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <summary>
         /// 4CH (Four channel audio)
         /// </summary>
-        public static readonly Flag FourCH = new("4CH", "4CH");
+        public static readonly Flag FourCH = new("4 channel audio (4CH)", "4CH");
         /// <summary>
         /// DCP (Digital copy permitted)
         /// </summary>
-        public static readonly Flag DCP = new("DCP", "DCP");
+        public static readonly Flag DCP = new("Digital copy permitted (DCP)", "DCP");
         /// <summary>
         /// PRE (Pre-emphasis enabled)
         /// </summary>
-        public static readonly Flag PRE = new("PRE", "PRE");
+        public static readonly Flag PRE = new("Pre-emphasis enabled (PRE)", "PRE");
         /// <summary>
         /// SCMS (Serial copy management system)
         /// </summary>
-        public static readonly Flag SCMS = new("SCMS", "SCMS");
+        public static readonly Flag SCMS = new("Serial copy management system (SCMS)", "SCMS");
 
         public static readonly IReadOnlyCollection<Flag> AvailableFlags;
         static Flag()

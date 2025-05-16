@@ -1,0 +1,133 @@
+﻿@using System.Linq.Expressions
+<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ImportSchemes> _localizer
+@inject ValidationService _validationService
+@inject IDialogService _dialogService
+
+<MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+    <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>
+    <MudIconButton Icon="@Icons.Material.Outlined.LockReset" Color="Color.Warning" Variant="Variant.Filled" OnClick="ResetSchemes" />
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Baseline">
+    <MudTextField T="string" @ref="importSchemeCuesheetTextField" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" 
+                  TextChanged="ImportSchemeCuesheetTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))) == false" 
+                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))" />
+    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+        @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
+        {
+            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importSchemeCuesheetTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+        }
+    </MudMenu>
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Baseline">
+    <MudTextField T="string" @ref="importSchemeTracksTextField" Label="@_localizer["Textimport scheme tracks"]" Text="@ApplicationOptions?.ImportScheme.SchemeTracks" 
+                  TextChanged="ImportSchemeTracksTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeTracks))) == false"
+                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeTracks))" />
+    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+        @foreach (var scheme in TextImportScheme.AvailableSchemesTrack)
+        {
+            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importSchemeTracksTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+        }
+    </MudMenu>
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Baseline">
+    <MudTextField T="string" @ref="importTimeInputFormatTextField" Label="@_localizer["Time input format for import"]" Text="@ApplicationOptions?.ImportTimeSpanFormat?.Scheme" 
+                  TextChanged="ImportTimeInputFormatChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportTimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
+                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportTimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
+    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
+        @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
+        {
+            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importTimeInputFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+        }
+    </MudMenu>
+</MudStack>
+
+@code {
+    [Parameter]
+    public EventCallback<string> ImportSchemeCuesheetChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ImportSchemeTracksChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ImportTimeInputFormatChanged { get; set; }
+
+    MudTextField<string>? importSchemeCuesheetTextField, importSchemeTracksTextField, importTimeInputFormatTextField;
+
+    void AppendPlaceholderToTextField(MudTextField<string>? mudTextField, string placeholder)
+    {
+        mudTextField?.SetText($"{mudTextField.Text}{placeholder}");
+    }
+
+    async Task ImportSchemeCuesheetTextChangedAsync(string newScheme)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
+        await ImportSchemeCuesheetChanged.InvokeAsync(newScheme);
+    }
+
+    async Task ImportSchemeTracksTextChangedAsync(string newScheme)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeTracks, newScheme);
+        await ImportSchemeTracksChanged.InvokeAsync(newScheme);
+    }
+
+    async Task ImportTimeInputFormatChangedAsync(string newScheme)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportTimeSpanFormat.Scheme, newScheme);
+        await ImportTimeInputFormatChanged.InvokeAsync(newScheme);
+    }
+
+    String? GetValidationErrorMessage(object? model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        if (model != null)
+        {
+            var validationMessages = _validationService.Validate(model, propertyName);
+            if (validationMessages.Count() > 0)
+            {
+                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+            }
+        }
+        return validationErrorMessage;
+    }
+
+    async Task ResetSchemes()
+    {
+        if (ApplicationOptions != null)
+        {
+            var parameters = new DialogParameters<ConfirmDialog>
+            {
+                { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
+            };
+            var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+            var result = await dialog.Result;
+            if (result?.Canceled == false)
+            {
+                ApplicationOptions.ImportScheme = TextImportScheme.DefaultTextImportScheme;
+                ApplicationOptions.ImportTimeSpanFormat = new();
+                await LocalStorageOptionsProvider.SaveOptions(ApplicationOptions);
+                await ImportSchemeCuesheetChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeCuesheet);
+                await ImportSchemeTracksChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeTracks);
+                await ImportTimeInputFormatChanged.InvokeAsync(ApplicationOptions.ImportTimeSpanFormat.Scheme);
+            }
+        }
+    }
+}

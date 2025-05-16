@@ -37,18 +37,18 @@ namespace AudioCuesheetEditor.Data.Options
         {
             var type = typeof(T);
             IOptions? options = (IOptions?)Activator.CreateInstance(type);
-            String optionsJson = await _jsRuntime.InvokeAsync<String>(String.Format("{0}.get", type.Name));
+            String optionsJson = await _jsRuntime.InvokeAsync<String>("AppSettings.get", type.Name);
             if (String.IsNullOrEmpty(optionsJson) == false)
             {
                 try
                 {
-                    options = (IOptions?)JsonSerializer.Deserialize(optionsJson, typeof(T));
-                    options ??= (IOptions?)Activator.CreateInstance(typeof(T));
+                    options = JsonSerializer.Deserialize<T>(optionsJson);
+                    options ??= Activator.CreateInstance<T>();
                 }
                 catch (JsonException)
                 {
                     //nothing to do, we can not deserialize
-                    options = (IOptions?)Activator.CreateInstance(typeof(T));
+                    options = Activator.CreateInstance<T>();
                 }
             }
             if (options != null)
@@ -63,51 +63,94 @@ namespace AudioCuesheetEditor.Data.Options
 
         public async Task SaveOptions(IOptions options)
         {
-            var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
-            await _jsRuntime.InvokeVoidAsync(String.Format("{0}.set", options.GetType().Name), optionsJson);
-            OptionSaved?.Invoke(this, options);
+            bool saveOptions = true;
+            if (options is IValidateable validateable)
+            {
+                saveOptions = validateable.Validate().Status != ValidationStatus.Error;
+            }
+            if (saveOptions)
+            {
+                var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
+                await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
+                OptionSaved?.Invoke(this, options);
+            }
         }
 
-        public async Task SaveOptionsValue<T>(Expression<Func<T, object>> propertyExpression, object value) where T : class, IOptions, new()
+        public async Task SaveOptionsValue<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
         {
             var options = await GetOptions<T>();
+            PropertyInfo? propertyInfo = null;
+            object? targetObject = options;
+
             if (propertyExpression.Body is MemberExpression memberExpression)
             {
-                var propertyInfo = memberExpression.Member as PropertyInfo;
-                if (propertyInfo != null)
-                {
-                    propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType));
-                }
-                else
-                {
-                    throw new ArgumentException("The provided expression does not reference a valid property.");
-                }
+                propertyInfo = ResolveNestedProperty(memberExpression, ref targetObject);
             }
             else if (propertyExpression.Body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression unaryMemberExpression)
             {
-                var propertyInfo = unaryMemberExpression.Member as PropertyInfo;
-                if (propertyInfo != null)
-                {
-                    propertyInfo.SetValue(options, Convert.ChangeType(value, propertyInfo.PropertyType));
-                }
-                else
-                {
-                    throw new ArgumentException("The provided expression does not reference a valid property.");
-                }
+                propertyInfo = ResolveNestedProperty(unaryMemberExpression, ref targetObject);
+            }
+
+            if (propertyInfo != null && targetObject != null)
+            {
+                propertyInfo.SetValue(targetObject, Convert.ChangeType(value, propertyInfo.PropertyType));
             }
             else
             {
                 throw new ArgumentException("The provided expression does not reference a valid property.");
             }
-            Boolean saveOptions = true;
-            if (options is IValidateable<T> validateable)
+            await SaveOptions(options);
+        }
+
+        public async Task SaveNestedOptionValue<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new()
+        {
+            var options = await GetOptions<T>();
+
+            if (nestedPropertyExpression.Body is not MemberExpression memberExpression)
             {
-                saveOptions = validateable.Validate(propertyExpression).Status != ValidationStatus.Error;
+                throw new ArgumentException("The provided nested property expression does not reference a member!");
             }
-            if (saveOptions)
+
+            var nestedProperty = typeof(T).GetProperty(memberExpression.Member.Name) ?? throw new ArgumentException("The provided nested property expression does not reference a valid property.");
+            var nestedInstance = nestedProperty.GetValue(options) ?? throw new InvalidOperationException("The nested property is null.");
+            var valueProperty = ResolveNestedProperty(valuePropertyExpression.Body as MemberExpression, ref nestedInstance) ?? throw new ArgumentException("The provided value property expression does not reference a valid property.");
+            valueProperty.SetValue(nestedInstance, Convert.ChangeType(value, valueProperty.PropertyType));
+
+            await SaveOptions(options);
+        }
+
+        private static PropertyInfo? ResolveNestedProperty(MemberExpression? memberExpression, ref object? targetObject)
+        {
+            PropertyInfo? propertyInfo = null;
+            var members = new Stack<MemberExpression>();
+
+            while (memberExpression != null)
             {
-                await SaveOptions(options);
+                members.Push(memberExpression);
+                if (memberExpression.Expression is MemberExpression parentMember)
+                {
+                    memberExpression = parentMember;
+                }
+                else
+                {
+                    memberExpression = null;
+                }
             }
+
+            while (members.Count > 0 && targetObject != null)
+            {
+                memberExpression = members.Pop();
+                propertyInfo = targetObject.GetType().GetProperty(memberExpression.Member.Name);
+                if (propertyInfo != null)
+                {
+                    if (members.Count > 0)
+                    {
+                        targetObject = propertyInfo.GetValue(targetObject);
+                    }
+                }
+            }
+
+            return propertyInfo;
         }
     }
 }

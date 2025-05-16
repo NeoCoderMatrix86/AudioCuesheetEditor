@@ -13,7 +13,9 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -27,7 +29,12 @@ namespace AudioCuesheetEditor.Model.IO
         public static readonly JsonSerializerOptions Options = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            Converters =
+            {
+                new JsonStringEnumConverter(),
+                new InterfaceConverter<IAudiofile, Audiofile>() // Add a custom converter for IAudiofile  
+            }
         };
 
         public static Cuesheet? ImportFile(byte[] fileContent)

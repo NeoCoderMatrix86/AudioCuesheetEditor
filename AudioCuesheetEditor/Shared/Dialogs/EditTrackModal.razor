@@ -1,0 +1,132 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<EditTrackModal> _localizer
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject AutocompleteManager _autocompleteManager
+@inject ValidationService _validationService
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h5">@_localizer["Edit track details"]</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm Model="EditedTrack">
+            <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack)))"
+                       ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack))" />
+            <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
+                          ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" />
+            @{
+                MusicBrainzArtist? autocompleteArtist = new()
+                {
+                    Name = EditedTrack.Artist
+                };
+            }
+            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
+                             @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
+                             ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Name</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            @{
+                MusicBrainzTrack? autocompleteTrack = new()
+                {
+                    Artist = EditedTrack.Artist,
+                    Title = EditedTrack.Title
+                };
+            }
+            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
+                             @bind-Text="EditedTrack.Title" Value="autocompleteTrack" ValueChanged="TitleSelected" Clearable ShowProgressIndicator 
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))" MaxItems="null" CoerceText="false">
+                <ItemTemplate Context="autocompleteContext">
+                    @if (autocompleteContext.Disambiguation != null)
+                    {
+                        <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
+                    }
+                    else
+                    {
+                        <MudText>@autocompleteContext.Title</MudText>
+                    }
+                </ItemTemplate>
+            </MudAutocomplete>
+            <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" 
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Begin))" />
+            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.End))" />
+            <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Length))" />
+            <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Flags)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Flags))">
+                <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info">
+                    @foreach(var flag in Flag.AvailableFlags)
+                    {
+                        <MudChip Value="flag">@flag.Name</MudChip>
+                    }
+                </MudChipSet>
+            </MudField>
+            <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.PreGap)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.PreGap))" />
+            <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.PostGap)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.PostGap))" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => MudDialog?.Close(DialogResult.Ok(EditedTrack))">@_localizer["Save changes"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(args) => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public Track EditedTrack { get; set; } = null!;
+
+    void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
+    {
+        if ((String.IsNullOrEmpty(EditedTrack.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
+        {
+            EditedTrack.Artist = musicBrainzTrack.Artist;
+        }
+        if ((EditedTrack.Length.HasValue == false) && (musicBrainzTrack?.Length.HasValue == true))
+        {
+            EditedTrack.Length = musicBrainzTrack?.Length;
+        }
+    }
+
+    String? GetValidationErrorMessage(object model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        var validationMessages = _validationService.Validate(model, propertyName);
+        if (validationMessages.Count() > 0)
+        {
+            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+        }
+        return validationErrorMessage;
+    }
+}

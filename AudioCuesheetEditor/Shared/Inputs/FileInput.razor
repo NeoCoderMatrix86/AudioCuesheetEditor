@@ -1,0 +1,109 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<FileInput> _localizer
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+
+<MudStack Row StretchItems="StretchItems.Start" id="@Id">
+    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                   @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
+        <ActivatorContent>
+            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
+        </ActivatorContent>
+    </MudFileUpload>
+    <MudHidden Breakpoint="Breakpoint.Xs">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Search"]</MudButton>
+    </MudHidden>
+    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
+    @if (DisplayMenu)
+    {
+        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
+            @if (DisplayDownloadFile)
+            {
+                <MudMenuItem Icon="@Icons.Material.Outlined.FileDownload" Disabled="selectedFile == null" OnClick="() => OnDownloadFileClicked.InvokeAsync(selectedFile)">@_localizer["Download file"]</MudMenuItem>
+            }
+            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="selectedFile == null" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)">@_localizer["Rename file"]</MudMenuItem>
+        </MudMenu>
+    }
+</MudStack>
+@if(String.IsNullOrEmpty(Error) == false)
+{
+    <MudText Color="Color.Error" Typo="@Typo.caption">@Error</MudText>
+}
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public String? Label { get; set; }
+
+    [Parameter]
+    public EventCallback<IBrowserFile?> OnFileSelected { get; set; }
+
+    [Parameter]
+    public EventCallback<IBrowserFile?> OnDownloadFileClicked { get; set; }
+
+    [Parameter]
+    public EventCallback<IBrowserFile?> OnFileRenameClicked { get; set; }
+
+    [Parameter]
+    public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";
+
+    [Parameter]
+    public String? Error { get; set; }
+
+    [Parameter]
+    public String? Filter { get; set; }
+
+    [Parameter]
+    public String? FileName { get; set; }
+
+    [Parameter]
+    public Boolean DisplayDownloadFile { get; set; } = false;
+
+    [Parameter]
+    public Boolean DisplayMenu { get; set; } = true;
+
+    IBrowserFile? selectedFile;
+    MudFileUpload<IBrowserFile>? fileUpload;
+    string? fieldClass;
+    String TextFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
+
+    void SetDragClass() => fieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
+
+    void ClearDragClass() => fieldClass = null;
+
+    async Task PickFilesClickedAsync()
+    {
+        await (fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
+    }
+
+    async Task ClearClickedAsync()
+    {
+        await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
+        await SetSelectedFileAsync(null);
+        ClearDragClass();
+    }
+
+    async Task SetSelectedFileAsync(IBrowserFile? browserFile)
+    {
+        selectedFile = browserFile;
+        FileName = selectedFile?.Name;
+        await OnFileSelected.InvokeAsync(selectedFile);
+    }
+}

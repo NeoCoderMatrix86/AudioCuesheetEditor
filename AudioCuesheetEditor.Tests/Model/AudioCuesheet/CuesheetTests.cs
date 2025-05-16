@@ -14,14 +14,15 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Properties;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,7 +32,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 {
@@ -41,183 +41,38 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void AddTrackTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
-            AutoResetEvent tracksAddedEvent = new(false);
-            cuesheet.TracksAdded += (object? sender, TracksAddedRemovedEventArgs args) => tracksAddedEvent.Set();
-            Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
-            Assert.AreEqual(cuesheet.Tracks.Count, 1);
-            Assert.IsTrue(tracksAddedEvent.WaitOne(1000));
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            cuesheet.AddTrack(new Track());
+            Assert.AreEqual(1, cuesheet.Tracks.Count);
         }
 
         [TestMethod()]
         public void CuesheetTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.IsNull(cuesheet.Audiofile);
-            var validationErrorAudioFile = cuesheet.Validate(x => x.Audiofile);
+            var validationErrorAudioFile = cuesheet.Validate(nameof(Cuesheet.Audiofile));
             Assert.AreEqual(ValidationStatus.Error, validationErrorAudioFile.Status);
             cuesheet.Audiofile = new Audiofile("AudioFile01.ogg");
-            validationErrorAudioFile = cuesheet.Validate(x => x.Audiofile);
+            validationErrorAudioFile = cuesheet.Validate(nameof(Cuesheet.Audiofile));
             Assert.AreEqual(ValidationStatus.Success, validationErrorAudioFile.Status);
         }
 
         [TestMethod()]
         public void EmptyCuesheetTracksValidationTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
-            Assert.AreEqual(cuesheet.Tracks.Count, 0);
-            var validationErrorTracks = cuesheet.Validate(x => x.Tracks);
+            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            var validationErrorTracks = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Error, validationErrorTracks.Status);
-            cuesheet.AddTrack(new Track(), testHelper.ApplicationOptions);
-            validationErrorTracks = cuesheet.Validate(x => x.Tracks);
+            cuesheet.AddTrack(new Track());
+            validationErrorTracks = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Success, validationErrorTracks.Status);
         }
 
         [TestMethod()]
-        public void MoveTrackTest()
-        {
-            var testHelper = new TestHelper();
-            var cuesheet = new Cuesheet();
-            var track1 = new Track();
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            var track2 = new Track();
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            var track3 = new Track();
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
-            Assert.AreEqual(cuesheet.Tracks.Count, 3);
-            Assert.AreEqual((uint)1, track1.Position);
-            cuesheet.MoveTrack(track1, MoveDirection.Up);
-            Assert.AreEqual((uint)1, track1.Position);
-            Assert.AreEqual((uint)3, track3.Position);
-            cuesheet.MoveTrack(track3, MoveDirection.Down);
-            Assert.AreEqual((uint)3, track3.Position);
-            Assert.AreEqual((uint)2, track2.Position);
-            cuesheet.MoveTrack(track2, MoveDirection.Up);
-            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(0));
-            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
-            cuesheet.MoveTrack(track2, MoveDirection.Down);
-            cuesheet.MoveTrack(track2, MoveDirection.Down);
-            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(2));
-            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
-            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(1));
-        }
-
-        [TestMethod()]
-        public void MoveAndDeleteTrackTest()
-        {
-            var testHelper = new TestHelper();
-            var cuesheet = new Cuesheet();
-            var track1 = new Track
-            {
-                Artist = "Track 1",
-                Title = "Track 1"
-            };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            var track2 = new Track
-            {
-                Title = "Track 2",
-                Artist = "Track 2",
-                Begin = new TimeSpan(0, 5, 0)
-            };
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            var track3 = new Track
-            {
-                Artist = "Track 3",
-                Title = "Track 3",
-                Begin = new TimeSpan(0, 10, 0)
-            };
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
-            var track4 = new Track
-            {
-                Artist = "Track 4",
-                Title = "Track 4",
-                Begin = new TimeSpan(0, 15, 0)
-            };
-            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
-            var track5 = new Track
-            {
-                Artist = "Track 5",
-                Title = "Track 5",
-                Begin = new TimeSpan(0, 20, 0)
-            };
-            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
-            cuesheet.RemoveTrack(track2);
-            cuesheet.RemoveTrack(track4);
-            Assert.AreEqual(3, cuesheet.Tracks.Count);
-            track1.IsLinkedToPreviousTrack = true;
-            track3.IsLinkedToPreviousTrack = true;
-            track5.IsLinkedToPreviousTrack = true;
-            var track1End = track1.End;
-            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            cuesheet.MoveTrack(track3, MoveDirection.Up);
-            Assert.AreEqual((uint)1, track3.Position);
-            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(0));
-            Assert.AreEqual(track1, cuesheet.GetPreviousLinkedTrack(track5));
-            Assert.AreEqual(TimeSpan.Zero, track3.Begin.Value);
-            Assert.AreEqual(track1End, track1.Begin);
-            cuesheet.MoveTrack(track5, MoveDirection.Up);
-            Assert.AreEqual((uint)2, track5.Position);
-            Assert.AreEqual(track5, cuesheet.Tracks.ElementAt(1));
-            Assert.AreEqual(track5, cuesheet.GetPreviousLinkedTrack(track1));
-            Assert.IsNull(cuesheet.Tracks.Last().End);
-            //Reset for move down
-            cuesheet.RemoveTracks(cuesheet.Tracks);
-            track1 = new Track
-            {
-                Artist = "Track 1",
-                Title = "Track 1"
-            };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            track2 = new Track
-            {
-                Title = "Track 2",
-                Artist = "Track 2",
-                Begin = new TimeSpan(0, 5, 0)
-            };
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            track3 = new Track
-            {
-                Artist = "Track 3",
-                Title = "Track 3",
-                Begin = new TimeSpan(0, 10, 0)
-            };
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
-            track4 = new Track
-            {
-                Artist = "Track 4",
-                Title = "Track 4",
-                Begin = new TimeSpan(0, 15, 0)
-            };
-            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
-            track5 = new Track
-            {
-                Artist = "Track 5",
-                Title = "Track 5",
-                Begin = new TimeSpan(0, 20, 0)
-            };
-            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
-            cuesheet.RemoveTrack(track2);
-            cuesheet.RemoveTrack(track4);
-            Assert.AreEqual(3, cuesheet.Tracks.Count);
-            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            track3.IsLinkedToPreviousTrack = true;
-            track5.IsLinkedToPreviousTrack = true;
-            track1End = track1.End;
-            cuesheet.MoveTrack(track1, MoveDirection.Down);
-            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
-            Assert.AreEqual(track3, cuesheet.GetPreviousLinkedTrack(track1));
-            Assert.AreEqual((uint)2, track1.Position);
-            Assert.AreEqual((uint)3, track5.Position);
-            Assert.AreEqual(track1, cuesheet.GetPreviousLinkedTrack(track5));
-            Assert.AreEqual(track1End, track3.End);
-        }
-
-        [TestMethod()]
-        public async Task ImportTestAsync()
+        public void ImportTest()
         {
             // Arrange
             var fileContent = new List<string>
@@ -236,20 +91,18 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             var testHelper = new TestHelper();
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
 
             // Assert
             Assert.IsNull(sessionStateContainer.ImportCuesheet?.CDTextfile);
@@ -265,7 +118,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod()]
-        public async Task ImportTestCalculateEndCorrectlyAsync()
+        public void ImportTestCalculateEndCorrectly()
         {
             // Arrange
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug_54);
@@ -280,13 +133,18 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = null;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var options = new ApplicationOptions();
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            options.ImportScheme = textImportScheme;
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var timeSpanFormat = new TimeSpanFormat();
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
@@ -298,54 +156,48 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void RecordTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             Assert.IsFalse(cuesheet.IsRecording);
-            Assert.IsNull(cuesheet.RecordingTime);
+            Assert.IsNull(cuesheet.RecordingStart);
             cuesheet.StartRecording();
             Assert.IsTrue(cuesheet.IsRecording);
-            Assert.IsNotNull(cuesheet.RecordingTime);
+            Assert.IsNotNull(cuesheet.RecordingStart);
             var track = new Track();
             Assert.IsNull(track.Begin);
             Assert.IsNull(track.End);
-            cuesheet.AddTrack(track, testHelper.ApplicationOptions, testHelper.RecordOptions);
+            cuesheet.AddTrack(track);
             Assert.AreEqual(TimeSpan.Zero, track.Begin);
             Assert.IsNull(track.End);
             var track2 = new Track();
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions, testHelper.RecordOptions);
+            cuesheet.AddTrack(track2);
             Assert.IsNotNull(track.End);
             Assert.AreNotEqual(TimeSpan.Zero, track.End);
-            //Now lets test with another RecordTimeSensitivity
             cuesheet = new Cuesheet();
             cuesheet.StartRecording();
             track = new Track();
-            testHelper.RecordOptions.RecordTimeSensitivity = TimeSensitivityMode.Seconds;
-            cuesheet.AddTrack(track, testHelper.ApplicationOptions, testHelper.RecordOptions);
+            cuesheet.AddTrack(track);
             Assert.AreEqual(TimeSpan.Zero, track.Begin);
             Assert.IsNull(track.End);
             Thread.Sleep(3000);
             track2 = new Track();
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions, testHelper.RecordOptions);
+            cuesheet.AddTrack(track2);
             Assert.IsNotNull(track.End);
             Assert.AreNotEqual(TimeSpan.Zero, track.End);
-            Assert.AreEqual(0, track.End.Value.Milliseconds);
-            cuesheet.StopRecording(testHelper.RecordOptions);
+            cuesheet.StopRecording();
             Assert.IsNotNull(track.End);
             Assert.AreEqual(track.End, track2.Begin);
-            Assert.AreEqual(0, track2.End?.Milliseconds);
         }
 
         [TestMethod()]
         public void TrackRecalculationTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
             Assert.AreEqual((uint)1, track1.Position);
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual((uint)3, track3.Position);
@@ -373,13 +225,13 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var track1 = new Track();
             var track2 = new Track();
             var track3 = new Track();
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
             Assert.AreEqual((uint)1, track1.Position);
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual((uint)3, track3.Position);
-            var validationResult = cuesheet.Validate(x => x.Tracks);
+            var validationResult = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
             track1.Position = 1;
             track2.Position = 1;
@@ -389,7 +241,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             track2.End = new TimeSpan(0, 5, 30);
             track3.Begin = new TimeSpan(0, 4, 54);
             track3.End = new TimeSpan(0, 8, 12);
-            validationResult = cuesheet.Validate(x => x.Tracks);
+            validationResult = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
             Assert.AreEqual(7, validationResult.ValidationMessages?.Count);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!" && x.Parameter != null && x.Parameter[2].Equals(track1.Position) && x.Parameter[7].Equals(track1.Begin) && x.Parameter[8].Equals(track1.End)));
@@ -400,14 +252,14 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" && x.Parameter != null && x.Parameter[1].Equals(track2.Position) && x.Parameter[4].Equals(track2.Begin) && x.Parameter[5].Equals(track2.End) && x.Parameter[6].Equals(track3.Position) && x.Parameter[9].Equals(track3.Begin) && x.Parameter[10].Equals(track3.End)));
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" && x.Parameter != null && x.Parameter[1].Equals(track3.Position) && x.Parameter[4].Equals(track3.Begin) && x.Parameter[5].Equals(track3.End) && x.Parameter[6].Equals(track2.Position) && x.Parameter[9].Equals(track2.Begin) && x.Parameter[10].Equals(track2.End)));
             track2.End = new TimeSpan(0, 5, 15);
-            validationResult = cuesheet.Validate(x => x.Tracks);
+            validationResult = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" && x.Parameter != null && x.Parameter[1].Equals(track2.Position) && x.Parameter[4].Equals(track2.Begin) && x.Parameter[5].Equals(track2.End) && x.Parameter[6].Equals(track3.Position) && x.Parameter[9].Equals(track3.Begin) && x.Parameter[10].Equals(track3.End)));
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" && x.Parameter != null && x.Parameter[1].Equals(track3.Position) && x.Parameter[4].Equals(track3.Begin) && x.Parameter[5].Equals(track3.End) && x.Parameter[6].Equals(track2.Position) && x.Parameter[9].Equals(track2.Begin) && x.Parameter[10].Equals(track2.End)));
             track1.Position = 1;
             track2.Position = 2;
             track3.Position = 3;
-            validationResult = cuesheet.Validate(x => x.Tracks);
+            validationResult = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
             Assert.AreEqual(4, validationResult.ValidationMessages?.Count);
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" && x.Parameter != null && x.Parameter[1].Equals(track1.Position) && x.Parameter[4].Equals(track1.Begin) && x.Parameter[5].Equals(track1.End) && x.Parameter[6].Equals(track2.Position) && x.Parameter[9].Equals(track2.Begin) && x.Parameter[10].Equals(track2.End)));
@@ -416,81 +268,85 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" && x.Parameter != null && x.Parameter[1].Equals(track3.Position) && x.Parameter[4].Equals(track3.Begin) && x.Parameter[5].Equals(track3.End) && x.Parameter[6].Equals(track2.Position) && x.Parameter[9].Equals(track2.Begin) && x.Parameter[10].Equals(track2.End)));
             track2.Begin = new TimeSpan(0, 2, 30);
             track3.Begin = new TimeSpan(0, 5, 15);
-            validationResult = cuesheet.Validate(x => x.Tracks);
+            validationResult = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
-
         }
 
         [TestMethod()]
-        public void RemoveTrackTest()
+        public void RemoveTrack_ShouldReCalculate_WithPreviouslyAddedTracks()
         {
-            var testHelper = new TestHelper();
-            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            AutoResetEvent tracksRemovedEvent = new(false);
+            // Arrange
             var cuesheet = new Cuesheet();
-            cuesheet.TracksRemoved += (sender, trackAddRemoveEventArgs) => tracksRemovedEvent.Set();
-            var track1 = new Track() { Artist = "1", Title = "1" };
-            var track2 = new Track() { Artist = "2", Title = "2" };
-            var track3 = new Track() { Artist = "3", Title = "3" };
-            var track4 = new Track() { Artist = "4", Title = "4" };
-            var track5 = new Track() { Artist = "5", Title = "5" };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
+            var track1 = new Track() { Artist = "1", Title = "1", IsLinkedToPreviousTrack = true };
+            var track2 = new Track() { Artist = "2", Title = "2", IsLinkedToPreviousTrack = true };
+            var track3 = new Track() { Artist = "3", Title = "3" , IsLinkedToPreviousTrack = true };
+            var track4 = new Track() { Artist = "4", Title = "4" , IsLinkedToPreviousTrack = true };
+            var track5 = new Track() { Artist = "5", Title = "5" , IsLinkedToPreviousTrack = true };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            cuesheet.AddTrack(track4);
+            cuesheet.AddTrack(track5);
             track1.End = new TimeSpan(0, 5, 0);
             track2.End = new TimeSpan(0, 10, 0);
             track3.End = new TimeSpan(0, 15, 0);
             track4.End = new TimeSpan(0, 20, 0);
             track5.End = new TimeSpan(0, 25, 0);
-            Assert.AreEqual(5, cuesheet.Tracks.Count);
+            // Act
             cuesheet.RemoveTrack(track2);
-            Assert.AreEqual(true, tracksRemovedEvent.WaitOne(1000));
+            // Assert
             Assert.AreEqual((uint)2, track3.Position);
             Assert.AreEqual((uint)3, track4.Position);
             Assert.AreEqual((uint)4, track5.Position);
-            testHelper = new TestHelper();
-            testHelper.ApplicationOptions.LinkTracksWithPreviousOne = true;
-            cuesheet = new Cuesheet();
-            cuesheet.TracksRemoved += (sender, trackAddRemoveEventArgs) => tracksRemovedEvent.Set();
-            track1 = new Track
+        }
+
+        [TestMethod()]
+        public void RemoveTracks_ShouldRemoveTracks_WithPreviouslyAddedTracks()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track
             {
                 Artist = "Track 1",
-                Title = "Track 1"
+                Title = "Track 1",
+                IsLinkedToPreviousTrack = true
             };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            track2 = new Track
+            cuesheet.AddTrack(track1);
+            var track2 = new Track
             {
                 Title = "Track 2",
                 Artist = "Track 2",
-                Begin = new TimeSpan(0, 5, 0)
+                Begin = new TimeSpan(0, 5, 0),
+                IsLinkedToPreviousTrack = true
             };
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            track3 = new Track
+            cuesheet.AddTrack(track2);
+            var track3 = new Track
             {
                 Artist = "Track 3",
                 Title = "Track 3",
-                Begin = new TimeSpan(0, 10, 0)
+                Begin = new TimeSpan(0, 10, 0),
+                IsLinkedToPreviousTrack = true
             };
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
-            track4 = new Track
+            cuesheet.AddTrack(track3);
+            var track4 = new Track
             {
                 Artist = "Track 4",
                 Title = "Track 4",
-                Begin = new TimeSpan(0, 15, 0)
+                Begin = new TimeSpan(0, 15, 0),
+                IsLinkedToPreviousTrack = true
             };
-            cuesheet.AddTrack(track4, testHelper.ApplicationOptions);
-            track5 = new Track
+            cuesheet.AddTrack(track4);
+            var track5 = new Track
             {
                 Artist = "Track 5",
                 Title = "Track 5",
-                Begin = new TimeSpan(0, 20, 0)
+                Begin = new TimeSpan(0, 20, 0), IsLinkedToPreviousTrack = true
             };
-            cuesheet.AddTrack(track5, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track5);
             var list = new List<Track>() { track2, track4 };
+            // Act
             cuesheet.RemoveTracks(list.AsReadOnly());
-            Assert.AreEqual(true, tracksRemovedEvent.WaitOne(1000));
+            // Assert
             Assert.AreEqual(3, cuesheet.Tracks.Count);
             Assert.AreEqual(new TimeSpan(0, 5, 0), track3.Begin);
             Assert.AreEqual(new TimeSpan(0, 15, 0), track5.Begin);
@@ -503,7 +359,6 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void UnlickedTrackTest()
         {
             var cuesheet = new Cuesheet();
-            var testHelper = new TestHelper();
             var track1 = new Track
             {
                 Position = 1,
@@ -517,9 +372,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             {
                 Position = 3
             };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track3, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
             Assert.AreEqual(track1.End, track2.Begin);
             Assert.IsNull(track2.End);
             Assert.IsNull(track3.Begin);
@@ -530,7 +385,6 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void TrackPositionChangedTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track
             {
@@ -543,8 +397,8 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 Begin = track1.End,
                 End = new TimeSpan(0, 7, 30)
             };
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track1);
             Assert.AreEqual(track2, cuesheet.Tracks.First());
             Assert.AreEqual(track1, cuesheet.Tracks.Last());
             track1.Position = 1;
@@ -555,12 +409,11 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void TrackLengthChangedWithIsLinkedToPreivousTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track();
             var track2 = new Track();
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
             track1.IsLinkedToPreviousTrack = true;
             track2.IsLinkedToPreviousTrack = true;
             Assert.IsNull(track2.Begin);
@@ -572,7 +425,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.AreEqual(editedTrack.End, track2.Begin);
         }
         [TestMethod()]
-        public async Task ImportSamplesTestAsync()
+        public void ImportSamplesTest()
         {
             // Arrange
             var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt");
@@ -580,19 +433,17 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions
+            var textImportScheme = new TextImportScheme()
             {
-                TextImportScheme = new TextImportScheme()
-                {
-                    SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
-                    SchemeTracks = TextImportScheme.DefaultSchemeTracks
-                }
+                SchemeCuesheet = TextImportScheme.DefaultSchemeCuesheet,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions();
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
@@ -603,7 +454,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod()]
-        public async Task ImportSamples2TestAsync()
+        public void ImportSamples2Test()
         {
             // Arrange
             var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt");
@@ -611,13 +462,20 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var importOptions = new ImportOptions();
-            importOptions.TextImportScheme.SchemeCuesheet = null;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ImportOptions>()).ReturnsAsync(importOptions);
-            var textImportService = new TextImportService();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, textImportService, traceChangeManager);
+            var textImportScheme = new TextImportScheme()
+            {
+                SchemeCuesheet = null,
+                SchemeTracks = TextImportScheme.DefaultSchemeTracks
+            };
+            var timeSpanFormat = new TimeSpanFormat();
+            var options = new ApplicationOptions
+            {
+                ImportScheme = textImportScheme
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
             // Act
-            await importManager.ImportTextAsync(fileContent);
+            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
             Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
@@ -631,22 +489,18 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void ValidateTest()
         {
             var cuesheet = new Cuesheet();
-            Assert.AreEqual(ValidationStatus.Error, cuesheet.Validate(x => x.Artist).Status);
+            Assert.AreEqual(ValidationStatus.Error, cuesheet.Validate(nameof(Cuesheet.Artist)).Status);
             cuesheet.Artist = "Testartist";
-            Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(x => x.Artist).Status);
-            Assert.AreEqual(ValidationStatus.Error, cuesheet.Validate(x => x.Title).Status);
+            Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(nameof(Cuesheet.Artist)).Status);
+            Assert.AreEqual(ValidationStatus.Error, cuesheet.Validate(nameof(Cuesheet.Title)).Status);
             cuesheet.Title = "Testtitle";
-            Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(x => x.Title).Status);
+            Assert.AreEqual(ValidationStatus.Success, cuesheet.Validate(nameof(Cuesheet.Title)).Status);
         }
 
         [TestMethod()]
         public void IsLinkedToPreviousTrack_ChangedLastTrackBegin_SetsTrackProperties()
         {
             //Arrange
-            var applicationOptions = new ApplicationOptions()
-            {
-                LinkTracksWithPreviousOne = false
-            };
             var cuesheet = new Cuesheet();
             var track1 = new Track()
             {
@@ -659,14 +513,498 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 Title = "Track2 Title",
                 End = new TimeSpan(0, 9, 12)
             };
-            cuesheet.AddTrack(track1, applicationOptions);
-            cuesheet.AddTrack(track2, applicationOptions);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
             track2.Begin = new TimeSpan(0, 4, 23);
             //Act
             track2.IsLinkedToPreviousTrack = true;
             //Assert
             Assert.AreEqual((uint)2, track2.Position);
             Assert.AreEqual(track2.Begin, track1.End);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenRecordingIsAlreadyRunning_ReturnsError()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.Contains("Record is already running!", errors);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenCuesheetContainsTracks_ReturnsError()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track());
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.Contains("Cuesheet already contains tracks!", errors);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenRecordingIsAlreadyAvailable_ReturnsError()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = new Audiofile("test", isRecorded: true)
+            };
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.Contains("A recording is already available!", errors);
+        }
+
+        [TestMethod()]
+        public void IsRecordingPossible_WhenNoErrors_ReturnsEmpty()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+
+            // Act
+            var errors = cuesheet.IsRecordingPossible.ToList();
+
+            // Assert
+            Assert.IsEmpty(errors);
+        }
+
+        [TestMethod]
+        public void AddSection_WithValidData_FiresEvents()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            bool eventFired = false;
+            cuesheet.TraceablePropertyChanged += (sender, args) =>
+            {
+                if (args.TraceableChange.PropertyName == nameof(Cuesheet.Sections))
+                {
+                    eventFired = true;
+                }
+            };
+
+            // Act
+            var section = cuesheet.AddSection();
+
+            // Assert
+            Assert.IsTrue(eventFired);
+            Assert.IsNotNull(section);
+            Assert.AreEqual(1, cuesheet.Sections.Count);
+            Assert.AreEqual(cuesheet, section.Cuesheet);
+        }
+
+        [TestMethod()]
+        public void RemoveSections_RemovesSpecifiedSections()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var section1 = cuesheet.AddSection();
+            var section2 = cuesheet.AddSection();
+            var section3 = cuesheet.AddSection();
+            var sectionsToRemove = new List<CuesheetSection> { section1, section3 };
+            bool eventFired = false;
+            cuesheet.TraceablePropertyChanged += (sender, args) =>
+            {
+                if (args.TraceableChange.PropertyName == nameof(Cuesheet.Sections))
+                {
+                    eventFired = true;
+                }
+            };
+
+            // Act
+            cuesheet.RemoveSections(sectionsToRemove);
+
+            // Assert
+            Assert.IsTrue(eventFired);
+            Assert.AreEqual(1, cuesheet.Sections.Count);
+            Assert.IsTrue(cuesheet.Sections.Contains(section2));
+            Assert.IsFalse(cuesheet.Sections.Contains(section1));
+            Assert.IsFalse(cuesheet.Sections.Contains(section3));
+        }
+
+        [TestMethod()]
+        public void GetSection_ReturnsCorrectSection()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var section1 = cuesheet.AddSection();
+            section1.Begin = TimeSpan.Zero;
+            section1.End = TimeSpan.FromSeconds(120);
+            cuesheet.AddSection();
+            var track = new Track { Begin = TimeSpan.Zero, End = TimeSpan.FromSeconds(83) };
+            cuesheet.AddTrack(track);
+
+            // Act
+            var result = cuesheet.GetSection(track);
+
+            // Assert
+            Assert.AreEqual(section1, result);
+        }
+
+        [TestMethod()]
+        public void GetSection_ReturnsNullIfNoMatchingSection()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var section1 = cuesheet.AddSection();
+            section1.Begin = TimeSpan.Zero;
+            section1.End = TimeSpan.FromHours(1.5);
+            var track = new Track { Begin = section1.End + TimeSpan.FromSeconds(1), End = section1.End + TimeSpan.FromSeconds(2) };
+            cuesheet.AddTrack(track);
+
+            // Act
+            var result = cuesheet.GetSection(track);
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnFalse_WhenNoTracksToMove()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var tracksToMove = new List<Track>();
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Up);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnFalse_WhenMovingUpAndFirstTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track = new Track();
+            cuesheet.AddTrack(track);
+            var tracksToMove = new List<Track> { track };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Up);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnTrue_WhenMovingUpAndNotFirstTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            var tracksToMove = new List<Track> { track2 };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Up);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnFalse_WhenMovingDownAndLastTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            var tracksToMove = new List<Track> { track2 };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Down);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+
+        [TestMethod]
+        public void MoveTracksPossible_ShouldReturnTrue_WhenMovingDownAndNotLastTrack()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track();
+            var track2 = new Track();
+            var track3 = new Track();
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+            var tracksToMove = new List<Track> { track2 };
+
+            // Act
+            var result = cuesheet.MoveTracksPossible(tracksToMove, MoveDirection.Down);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+
+        [TestMethod]
+        public void MoveTracks_Up_Success()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            var track3 = new Track { Position = 3 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+
+            // Act
+            cuesheet.MoveTracks([track2], MoveDirection.Up);
+
+            // Assert
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual((uint)3, cuesheet.Tracks.ElementAt(2).Position);
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(1));
+            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(2));
+        }
+
+        [TestMethod]
+        public void MoveTracks_Down_Success()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            var track3 = new Track { Position = 3 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            cuesheet.AddTrack(track3);
+
+            // Act
+            cuesheet.MoveTracks([track2], MoveDirection.Down);
+
+            // Assert
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)3, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(2).Position);
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track3, cuesheet.Tracks.ElementAt(1));
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(2));
+        }
+
+        [TestMethod]
+        public void MoveTracks_Up_NotPossible()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.MoveTracks([track1], MoveDirection.Up);
+
+            // Assert
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(1));
+        }
+
+        [TestMethod]
+        public void MoveTracks_Down_NotPossible()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1 };
+            var track2 = new Track { Position = 2 };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.MoveTracks([track2], MoveDirection.Down);
+
+            // Assert
+            Assert.AreEqual((uint)1, cuesheet.Tracks.ElementAt(0).Position);
+            Assert.AreEqual((uint)2, cuesheet.Tracks.ElementAt(1).Position);
+            Assert.AreEqual(track1, cuesheet.Tracks.ElementAt(0));
+            Assert.AreEqual(track2, cuesheet.Tracks.ElementAt(1));
+        }
+
+        [TestMethod]
+        public void StartRecording_WithValidData_ShouldStartRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsTrue(cuesheet.IsRecording);
+            Assert.IsNotNull(cuesheet.RecordingStart);
+        }
+
+        [TestMethod]
+        public void StopRecording_WithRecordingRunning_ShouldStopRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+            var track = new Track();
+            cuesheet.AddTrack(track);
+            bool isRecordingChangedEventFired = false;
+            cuesheet.IsRecordingChanged += (sender, args) => isRecordingChangedEventFired = true;
+
+            // Act
+            cuesheet.StopRecording();
+
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsNull(cuesheet.RecordingStart);
+            Assert.IsTrue(isRecordingChangedEventFired);
+            Assert.IsNotNull(track.End);
+        }
+
+        [TestMethod]
+        public void StartRecording_ShouldNotStartIfAlreadyRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.StartRecording();
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsTrue(cuesheet.IsRecording);
+            Assert.IsNotNull(cuesheet.RecordingStart);
+        }
+
+        [TestMethod]
+        public void StartRecording_WithTrackAlreadyAdded_ShouldNotStartRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            cuesheet.AddTrack(new Track());
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+        }
+
+        [TestMethod]
+        public void StartRecording_WithAudiofile_ShouldNotStartRecording()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = new Audiofile("test", isRecorded: true)
+            };
+
+            // Act
+            cuesheet.StartRecording();
+
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration()
+        {
+            // Arrange
+            var audiofileMock = new Mock<IAudiofile>();
+            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
+
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = audiofileMock.Object
+            };
+            var track = new Track { Position = 1, Begin = TimeSpan.Zero };
+            cuesheet.AddTrack(track);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(5), track.End);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_MultipleTracks_EndSetCorrectly()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
+            var track2 = new Track { Position = 2, Begin = TimeSpan.FromMinutes(2) };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track1.End);
+            Assert.IsNull(track2.End);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_MultipleTracksWithAudiofile_LastTrackEndSetToAudiofileDuration()
+        {
+            // Arrange
+            var audiofileMock = new Mock<IAudiofile>();
+            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
+
+            var cuesheet = new Cuesheet
+            {
+                Audiofile = audiofileMock.Object
+            };
+            var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
+            var track2 = new Track { Position = 2, Begin = TimeSpan.FromMinutes(2) };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track1.End);
+            Assert.AreEqual(TimeSpan.FromMinutes(5), track2.End);
+        }
+
+        [TestMethod]
+        public void RecalculateLastTrackEnd_TracksWithLinkedPreviousTrack_PropertiesRecalculatedCorrectly()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
+            var track2 = new Track { Position = 2, IsLinkedToPreviousTrack = true };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+
+            // Act
+            cuesheet.RecalculateLastTrackEnd();
+
+            // Assert
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track1.End);
+            Assert.AreEqual(TimeSpan.FromMinutes(2), track2.Begin);
         }
     }
 }

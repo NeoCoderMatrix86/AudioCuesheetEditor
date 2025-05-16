@@ -97,7 +97,6 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void CheckPositionInCuesheetTest()
         {
-            var testHelper = new TestHelper();
             var cuesheet = new Cuesheet();
             var track1 = new Track
             {
@@ -110,22 +109,22 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 Begin = track1.End,
                 End = new TimeSpan(0, 8, 23)
             };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
-            var validationResult = track1.Validate(x => x.Position);
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            var validationResult = track1.Validate(nameof(Track.Position));
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
                 && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
             track1.Position = 1;
-            validationResult = track1.Validate(x => x.Position);
+            validationResult = track1.Validate(nameof(Track.Position));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
-            validationResult = track2.Validate(x => x.Position);
+            validationResult = track2.Validate(nameof(Track.Position));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
             track1.Position = 3;
             track2.Position = 5;
-            validationResult = track1.Validate(x => x.Position);
+            validationResult = track1.Validate(nameof(Track.Position));
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
                 && x.Parameter != null && x.Parameter[0].Equals(track1.Position) && x.Parameter[3].Equals(track1.Begin) && x.Parameter[4].Equals(track1.End) && x.Parameter[5].Equals(1)));
-            validationResult = track2.Validate(x => x.Position);
+            validationResult = track2.Validate(nameof(Track.Position));
             Assert.IsTrue(validationResult.ValidationMessages?.Any(x => x.Message == "Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!"
                 && x.Parameter != null && x.Parameter[0].Equals(track2.Position) && x.Parameter[3].Equals(track2.Begin) && x.Parameter[4].Equals(track2.End) && x.Parameter[5].Equals(2)));
             cuesheet = new Cuesheet();
@@ -134,20 +133,20 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 Artist = "Testartist 1",
                 Title = "Testtitle 1"
             };
-            cuesheet.AddTrack(track1, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track1);
             track2 = new Track()
             {
                 Artist = "Testartist 2",
                 Title = "Testtitle 2"
             };
-            cuesheet.AddTrack(track2, testHelper.ApplicationOptions);
+            cuesheet.AddTrack(track2);
             Assert.IsNotNull(track1.Begin);
             Assert.IsNull(track1.End);
             Assert.IsNull(track2.Begin);
             Assert.IsNull(track2.End);
-            validationResult = track1.Validate(x => x.Position);
+            validationResult = track1.Validate(nameof(Track.Position));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
-            validationResult = track2.Validate(x => x.Position);
+            validationResult = track2.Validate(nameof(Track.Position));
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
         }
 
@@ -235,7 +234,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 End = new TimeSpan(0, 1, 15)
             };
             // Act
-            var endValidationResult = track.Validate(x => x.End);
+            var endValidationResult = track.Validate(nameof(Track.End));
             // Assert
             Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
         }
@@ -250,7 +249,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 End = new TimeSpan(0, 3, 15)
             };
             // Act
-            var endValidationResult = track.Validate(x => x.Begin);
+            var endValidationResult = track.Validate(nameof(Track.Begin));
             // Assert
             Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
         }

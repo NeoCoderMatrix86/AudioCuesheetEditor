@@ -1,0 +1,153 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<AudioPlayer> _localizer
+@inject PlaybackService _playbackService
+@inject HotKeys _hotKeys
+
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@_localizer["Playback"]</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
+            @if (_playbackService.CurrentPosition.HasValue)
+            {
+                <MudText>@_playbackService.CurrentPosition.Value.ToString("hh\\:mm\\:ss")</MudText>
+            }
+            else
+            {
+                <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+            }
+            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.PlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" ValueLabel>
+                <ValueLabelContent>
+                    @GetSliderTimeValue()
+                </ValueLabelContent>
+            </MudSlider>
+            @if (_playbackService.TotalTime.HasValue)
+            {
+                @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
+            }
+            else
+            {
+                <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+            }
+        </MudStack>
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+            <MudTooltip Text="@_localizer["Play or pause the current audio"]">
+                <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.PlaybackPossible" OnClick="OnPlayOrPauseClicked" />
+            </MudTooltip>
+            <MudButtonGroup OverrideStyles="false">
+                <MudTooltip Text="@_localizer["Jump to previous track"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.PreviousPossible" OnClick="PlayPreviousTrackAsync" />
+                </MudTooltip>
+                <MudTooltip Text="@_localizer["Stop the current playback"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="StopAsync" Disabled="!_playbackService.PlaybackPossible" />
+                </MudTooltip>
+                <MudTooltip Text="@_localizer["Jump to next track"]">
+                    <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.NextPossible" OnClick="PlayNextTrackAsync" />
+                </MudTooltip>
+            </MudButtonGroup>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    double sliderValue;
+    HotKeysContext? hotKeysContext;
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
+        hotKeysContext?.DisposeAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
+        hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKey.Ctrl, Key.p, OnPlayOrPauseClicked)
+            .Add(ModKey.Ctrl, Key.ArrowRight, PlayNextTrackAsync)
+            .Add(ModKey.Ctrl, Key.ArrowLeft, PlayPreviousTrackAsync)
+            .Add(ModKey.Ctrl, Key.b, StopAsync)
+            .Add(Key.MediaPlayPause, OnPlayOrPauseClicked)
+            .Add(Key.MediaTrackNext, PlayNextTrackAsync)
+            .Add(Key.MediaTrackPrevious, PlayPreviousTrackAsync)
+            .Add(Key.MediaStop, StopAsync);
+    }
+
+    async Task OnPlayOrPauseClicked()
+    {
+        await _playbackService.PlayOrPauseAsync();
+    }
+
+    async Task PlayPreviousTrackAsync()
+    {
+        await _playbackService.PlayPreviousTrackAsync();
+    }
+
+    async Task PlayNextTrackAsync()
+    {
+        await _playbackService.PlayNextTrackAsync();
+    }
+    async Task StopAsync()
+    {
+        await _playbackService.StopAsync();
+    }
+
+    async Task OnSliderValueChanged(double newValue)
+    {
+        if (_playbackService.TotalTime.HasValue)
+        {
+            var newPosition = newValue * _playbackService.TotalTime.Value / 100.0;
+            await _playbackService.SeekAsync(newPosition);
+        }
+    }
+
+    void PlaybackService_CurrentPositionChanged()
+    {
+        if ((_playbackService.CurrentPosition.HasValue) && (_playbackService.TotalTime.HasValue))
+        {
+            sliderValue = (_playbackService.CurrentPosition.Value / _playbackService.TotalTime.Value) * 100.0;
+        }
+        else
+        {
+            sliderValue = 0.0;
+        }
+        InvokeAsync(StateHasChanged);
+    }
+
+    string GetSliderTimeValue()
+    {
+        var time = sliderValue * _playbackService.TotalTime / 100.0;
+        if (time.HasValue)
+        {
+            return time.Value.ToString(@"hh\:mm\:ss");
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+}

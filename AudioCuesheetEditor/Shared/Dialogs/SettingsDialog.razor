@@ -1,0 +1,89 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<SettingsDialog> _localizer
+@inject ValidationService _validationService
+
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.subtitle1"><b>@_localizer["Input"]</b></MudText>
+        <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" 
+                   Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
+        <MudStack Row AlignItems="AlignItems.Baseline">
+            <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
+                          Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
+                          ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" Variant="Variant.Outlined" />
+            <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
+                @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
+                {
+                    <MudMenuItem OnClick="() => AppendPlaceholderToTimeInputFormatTextField(scheme)">@_localizer[scheme]</MudMenuItem>
+                }
+            </MudMenu>
+        </MudStack>
+        <MudText Typo="Typo.subtitle1"><b>@_localizer["Display"]</b></MudText>
+        <MudTextField T="string" Label="@_localizer["Time display format"]" Text="@ApplicationOptions?.DisplayTimeSpanFormat" TextChanged="DisplayTimeSpanFormatChangedAsync" 
+                      Clearable Variant="Variant.Outlined" HelperText="@_localizer["Uses .NET format, check help for more information"]" />
+    </DialogContent>
+</MudDialog>
+
+@code {
+    MudTextField<string>? timeInputFormatTextField;
+
+    async Task TimeInputFormatChangedAsync(string newValue)
+    {
+        TimeSpanFormat? timeSpanFormat = ApplicationOptions?.TimeSpanFormat;
+        if (string.IsNullOrEmpty(newValue))
+        {
+            timeSpanFormat = null;
+        }
+        else
+        {
+            if (timeSpanFormat == null)
+            {
+                timeSpanFormat = new();
+            }
+            timeSpanFormat.Scheme = newValue;
+        }
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TimeSpanFormat!, timeSpanFormat);
+    }
+
+    async Task DisplayTimeSpanFormatChangedAsync(string newValue)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.DisplayTimeSpanFormat, newValue);
+    }
+
+    void AppendPlaceholderToTimeInputFormatTextField(string placeholder)
+    {
+        timeInputFormatTextField?.SetText($"{timeInputFormatTextField.Text}{placeholder}");
+    }
+
+    String? GetValidationErrorMessage(object? model, string propertyName)
+    {
+        String? validationErrorMessage = null;
+        if (model != null)
+        {
+            var validationMessages = _validationService.Validate(model, propertyName);
+            if (validationMessages.Count() > 0)
+            {
+                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
+            }
+        }
+        return validationErrorMessage;
+    }
+}
