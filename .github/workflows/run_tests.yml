@@ -24,6 +24,6 @@ jobs:
     - name: Ensure browsers are installed
       run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net8.0/playwright.ps1 install --with-deps
     - name: Start App
-      run: dotnet run --project AudioCuesheetEditor
+      run: dotnet run --project AudioCuesheetEditor &
     - name: Run tests
       run: dotnet test
