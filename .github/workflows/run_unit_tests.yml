@@ -17,10 +17,11 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.101'
-    
     - name: Install wasm-tools
       run: dotnet workload install wasm-tools
-      
-    # Only publish when unit tests are ok
+    - name: Build & Install
+      run: dotnet build
+    - name: Ensure browsers are installed
+      run: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
     - name: Run Unit Tests
       run: dotnet test
