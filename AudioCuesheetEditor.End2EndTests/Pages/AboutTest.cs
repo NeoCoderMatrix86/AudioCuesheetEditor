@@ -9,7 +9,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         [TestMethod]
         public async Task HasTitle()
         {
-            await Page.GotoAsync("https://localhost:7132/about");
+            await Page.GotoAsync("http://localhost:5132/about");
             await Expect(Page).ToHaveTitleAsync("AudioCuesheetEditor");
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "About AudioCuesheetEditor" })).ToBeVisibleAsync();
         }
