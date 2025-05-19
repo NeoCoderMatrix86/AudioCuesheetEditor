@@ -13,5 +13,10 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page).ToHaveTitleAsync("AudioCuesheetEditor");
             await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "AudioCuesheetEditor" })).ToBeVisibleAsync();
         }
+
+        //TODO: Change language test
+        //TODO: Switch view test
+        //TODO: Settings test
+        //TODO: Import sample cuesheet test
     }
 }
