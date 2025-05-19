@@ -1,11 +1,11 @@
-name: Run unit tests
+name: Run tests
 
 # Run workflow on every push to the master branch
 on:
   pull_request:
 
 jobs:    
-  run-unit-tests:
+  run-tests:
     # use ubuntu-latest image to run steps on
     runs-on: ubuntu-latest
     steps:
@@ -23,5 +23,5 @@ jobs:
       run: dotnet build
     - name: Ensure browsers are installed
       run: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
-    - name: Run Unit Tests
+    - name: Run tests
       run: dotnet test
