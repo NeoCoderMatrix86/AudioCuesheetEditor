@@ -1,12 +1,10 @@
 name: Run tests
 
-# Run workflow on every push to the master branch
 on:
   pull_request:
 
 jobs:    
   run-tests:
-    # use ubuntu-latest image to run steps on
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.2.2
@@ -22,7 +20,7 @@ jobs:
     - name: Build & Install
       run: dotnet build
     - name: Ensure browsers are installed
-      run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net8.0/playwright.ps1 install --with-deps
+      run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright.ps1 install --with-deps
     - name: Start App
       run: dotnet run --project AudioCuesheetEditor &
     - name: Run tests
