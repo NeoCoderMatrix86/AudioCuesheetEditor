@@ -50,8 +50,32 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Settings$") }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
         }
+
+        [TestMethod]
+        public async Task Record()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByText("Record view").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Start recording" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).ClickAsync();
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync("Test Track 1 Artist");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync("Test Track 1 Title");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Add track" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync("Test Track 2 Artist");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync("Test Track 2 Title");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Add track" }).ClickAsync();
+            await Page.Locator(".mud-overlay").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Stop recording" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Artist Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Title Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Artist Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Title Clear" })).ToBeVisibleAsync();
+        }
         //TODO: Change language test
-        //TODO: Switch view test
         //TODO: Import sample cuesheet test
     }
 }
