@@ -25,3 +25,9 @@ jobs:
       run: dotnet run --project AudioCuesheetEditor &
     - name: Run tests
       run: dotnet test
+    - name: Upload traces
+      uses: actions/upload-artifact@v4
+      with:
+        name: traces
+        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright-traces/
+        if-no-files-found: ignore
