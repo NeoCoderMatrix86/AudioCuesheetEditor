@@ -75,7 +75,19 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Artist Clear" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Title Clear" })).ToBeVisibleAsync();
         }
-        //TODO: Change language test
+
+        [TestMethod]
+        public async Task ChangeLanguage()
+        {
+            // We need to use a new context because the default one doesn't work with changing a language
+            var context = await Browser.NewContextAsync();
+            var page = await context.NewPageAsync();
+            await page.GotoAsync("http://localhost:5132/");
+            await page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
+            await page.Locator("div").Filter(new() { HasTextRegex = new Regex("^German \\(Germany\\)$") }).ClickAsync();
+            await Expect(page.Locator("#app")).ToContainTextAsync("Allgemeine Informationen");
+        }
+
         //TODO: Import sample cuesheet test
     }
 }
