@@ -88,6 +88,21 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(page.Locator("#app")).ToContainTextAsync("Allgemeine Informationen");
         }
 
-        //TODO: Import sample cuesheet test
+        [TestMethod]
+        public async Task Import()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByText("Import view").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt" });
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 1 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":20:13" }).Nth(1)).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("CuesheetArtist");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]")).ToBeEmptyAsync();
+        }
+
+        //TODO: Generate cuesheet
     }
 }
