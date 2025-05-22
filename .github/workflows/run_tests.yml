@@ -9,6 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4.2.2
 
+    - name: Set timestamp variable
+      id: timestamp
+      run: echo "datetime=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -23,12 +26,6 @@ jobs:
       run: dotnet run --project AudioCuesheetEditor &
     - name: Run tests
       run: dotnet test
-
-    # Add this step to generate a timestamp and set it as an output
-    - name: Set timestamp variable
-      id: timestamp
-      run: echo "datetime=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
-
     - name: Upload traces
       if: always()
       uses: actions/upload-artifact@v4
