@@ -21,16 +21,13 @@ jobs:
     - name: Install wasm-tools
       run: dotnet workload install wasm-tools
 
-    - name: Restore & Build
+    - name: Build & Install
       run: dotnet build
-
-    - name: Install Playwright Browsers
-      run: |
-        dotnet tool restore
-        dotnet playwright install --with-deps
+    - name: Ensure browsers are installed
+      run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright.ps1 install --with-deps
 
     - name: Start App
-      run: ASPNETCORE_ENVIRONMENT=Development dotnet run --project AudioCuesheetEditor &
+      run: dotnet run --project AudioCuesheetEditor &
     
     - name: Wait for app to be ready
       run: |
