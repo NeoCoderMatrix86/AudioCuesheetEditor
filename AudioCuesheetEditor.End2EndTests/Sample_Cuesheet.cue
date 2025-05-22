@@ -1,0 +1,35 @@
+﻿PERFORMER "Sample CD Artist"
+TITLE "Sample CD Title"
+FILE "Sample.mp3" MP3
+TRACK 01 AUDIO
+	PERFORMER "Sample Artist 1"
+	TITLE "Sample Title 1"
+	INDEX 01 00:00:00
+TRACK 02 AUDIO
+	PERFORMER "Sample Artist 2"
+	TITLE "Sample Title 2"
+	INDEX 01 05:00:00
+TRACK 03 AUDIO
+	PERFORMER "Sample Artist 3"
+	TITLE "Sample Title 3"
+	INDEX 01 09:23:00
+TRACK 04 AUDIO
+	PERFORMER "Sample Artist 4"
+	TITLE "Sample Title 4"
+	INDEX 01 15:54:00
+TRACK 05 AUDIO
+	PERFORMER "Sample Artist 5"
+	TITLE "Sample Title 5"
+	INDEX 01 20:13:00
+TRACK 06 AUDIO
+	PERFORMER "Sample Artist 6"
+	TITLE "Sample Title 6"
+	INDEX 01 24:54:00
+TRACK 07 AUDIO
+	PERFORMER "Sample Artist 7"
+	TITLE "Sample Title 7"
+	INDEX 01 31:54:00
+TRACK 08 AUDIO
+	PERFORMER "Sample Artist 8"
+	TITLE "Sample Title 8"
+	INDEX 01 45:54:00

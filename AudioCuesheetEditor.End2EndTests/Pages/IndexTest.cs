@@ -110,7 +110,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
             await Page.GetByText("Open").ClickAsync();
             await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
-            await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Cuesheet.cue" });
+            await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Cuesheet.cue" });
             await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("Sample CD Artist");
             await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToHaveValueAsync("Sample CD Title");
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 6" }).GetByRole(AriaRole.Textbox)).ToHaveValueAsync("Sample Artist 6");
