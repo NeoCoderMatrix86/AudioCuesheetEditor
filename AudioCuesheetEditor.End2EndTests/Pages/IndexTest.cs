@@ -22,13 +22,15 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         [TestCleanup]
         public async Task TestCleanup()
         {
+            var failed = new[] { UnitTestOutcome.Failed, UnitTestOutcome.Error, UnitTestOutcome.Timeout, UnitTestOutcome.Aborted }.Contains(TestContext.CurrentTestOutcome);
+
             await Context.Tracing.StopAsync(new()
             {
-                Path = Path.Combine(
+                Path = failed ? Path.Combine(
                     Environment.CurrentDirectory,
                     "playwright-traces",
                     $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
-                )
+                ) : null,
             });
         }
 
