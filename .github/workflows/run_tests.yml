@@ -12,20 +12,38 @@ jobs:
     - name: Set timestamp variable
       id: timestamp
       run: echo "datetime=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '9.0.101'
+
     - name: Install wasm-tools
       run: dotnet workload install wasm-tools
-    - name: Build & Install
+
+    - name: Restore & Build
       run: dotnet build
-    - name: Ensure browsers are installed
-      run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright.ps1 install --with-deps
+
+    - name: Install Playwright Browsers
+      run: |
+        dotnet tool restore
+        dotnet playwright install --with-deps
+
     - name: Start App
-      run: dotnet run --project AudioCuesheetEditor &
+      run: ASPNETCORE_ENVIRONMENT=Development dotnet run --project AudioCuesheetEditor &
+    
+    - name: Wait for app to be ready
+      run: |
+        for i in {1..30}; do
+          curl -sSf http://localhost:5132/ && echo "App is up!" && exit 0
+          echo "Waiting for app..."
+          sleep 2
+        done
+        echo "App failed to start" && exit 1
+
     - name: Run tests
       run: dotnet test
+
     - name: Upload traces
       if: always()
       uses: actions/upload-artifact@v4
