@@ -5,7 +5,7 @@ on:
 
 jobs:    
   run-tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4.2.2
 
@@ -37,5 +37,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: playwright-traces-${{ steps.timestamp.outputs.datetime }}
-        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright-traces/
+        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright-traces/*
         if-no-files-found: ignore
