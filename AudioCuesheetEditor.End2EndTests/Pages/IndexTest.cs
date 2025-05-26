@@ -128,10 +128,9 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
 
         //TODO
         [TestMethod]
-        public async Task GenerateCuesheet()
+        public async Task GenerateCuesheetFromProject()
         {
             await Page.GotoAsync("http://localhost:5132/");
-            await Page.PauseAsync();
             await Page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
             await Page.GetByText("Open").ClickAsync();
             await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
