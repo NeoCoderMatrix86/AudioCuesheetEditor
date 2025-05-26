@@ -99,7 +99,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
                 Path = Path.Combine(
                     Environment.CurrentDirectory,
                     "playwright-traces",
-                    $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
+                    $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}-{Guid.NewGuid()}.zip"
                 )
             });
             await context.CloseAsync();
