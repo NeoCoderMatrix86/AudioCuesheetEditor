@@ -86,6 +86,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await page.Locator("div").Filter(new() { HasTextRegex = new Regex("^German \\(Germany\\)$") }).ClickAsync();
             await Expect(page.Locator("#app")).ToContainTextAsync("Allgemeine Informationen");
+            await context.CloseAsync();
         }
 
         [TestMethod]
@@ -93,7 +94,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByText("Import view").ClickAsync();
-            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
             await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt" });
             await Page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 1 Clear" })).ToBeVisibleAsync();
