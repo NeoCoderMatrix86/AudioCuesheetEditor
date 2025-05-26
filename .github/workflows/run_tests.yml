@@ -12,11 +12,12 @@ jobs:
     - name: Set timestamp variable
       id: timestamp
       run: echo "datetime=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
-
+    
+    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/9.0
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.101'
+        dotnet-version: 9.0.x
 
     - name: Install wasm-tools
       run: dotnet workload install wasm-tools
@@ -37,5 +38,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: playwright-traces-${{ steps.timestamp.outputs.datetime }}
-        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright-traces/*
+        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright-traces/
         if-no-files-found: ignore
