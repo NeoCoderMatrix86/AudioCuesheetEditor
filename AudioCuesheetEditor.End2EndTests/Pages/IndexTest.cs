@@ -79,13 +79,29 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         [TestMethod]
         public async Task ChangeLanguage()
         {
+            //TODO: Doesn't work in CI and using a new context conflicts tracing the default one
             // We need to use a new context because the default one doesn't work with changing a language
             var context = await Browser.NewContextAsync();
+            await context.Tracing.StartAsync(new()
+            {
+                Title = $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}",
+                Screenshots = true,
+                Snapshots = true,
+                Sources = true
+            });
             var page = await context.NewPageAsync();
             await page.GotoAsync("http://localhost:5132/");
             await page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await page.Locator("div").Filter(new() { HasTextRegex = new Regex("^German \\(Germany\\)$") }).ClickAsync();
             await Expect(page.Locator("#app")).ToContainTextAsync("Allgemeine Informationen");
+            await context.Tracing.StopAsync(new()
+            {
+                Path = Path.Combine(
+                    Environment.CurrentDirectory,
+                    "playwright-traces",
+                    $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
+                )
+            });
             await context.CloseAsync();
         }
 
