@@ -17,9 +17,13 @@ Simply open the link https://audiocuesheeteditor.netlify.app/ on any browser
 
 ### Production
 
+[![App depyloment Status](https://api.netlify.com/api/v1/badges/77d12db9-0a35-4d13-826c-5a0e6c05600f/deploy-status)](https://app.netlify.com/projects/audiocuesheeteditor/deploys)
+
 The current stable version can be found here: https://audiocuesheeteditor.netlify.app/
 
 ### Preview
+
+[![Preview Status](https://api.netlify.com/api/v1/badges/c7654cfa-e17d-4215-b3fd-9914b622cacc/deploy-status)](https://app.netlify.com/projects/preview-audiocuesheeteditor/deploys)
 
 The next release candidate version can be found here: https://preview-audiocuesheeteditor.netlify.app/
 
