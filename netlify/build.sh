@@ -11,11 +11,11 @@ popd
 ## Install wasm-tools
 dotnet workload install wasm-tools
 
+## Install playwright browsers for .NET (kein pwsh nötig!)
+dotnet playwright install --with-deps
+
 ## Build
 dotnet build
-
-## Install playwright
-pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright.ps1 install --with-deps
 
 ## Start Server for tests
 dotnet run --project AudioCuesheetEditor &
