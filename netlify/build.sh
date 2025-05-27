@@ -35,7 +35,7 @@ done
 ## Run Unit and End2End Tests
 dotnet test
 
-# Server beenden
+## Stop server
 kill $SERVER_PID
 
 ## publish project to known location for subsequent deployment by Netlify
