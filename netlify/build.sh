@@ -11,13 +11,18 @@ popd
 ## Install wasm-tools
 dotnet workload install wasm-tools
 
+## Build
+dotnet build
 
-# Start Server for tests
+## Install playwright
+pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright.ps1 install --with-deps
+
+## Start Server for tests
 dotnet run --project AudioCuesheetEditor &
 
 SERVER_PID=$!
 
-# Auf Server warten (max 30 Sekunden)
+## Wait for server to start
 echo "Waiting for server to start..."
 for i in {1..30}; do
     if curl -s http://localhost:5132 > /dev/null; then
@@ -27,7 +32,7 @@ for i in {1..30}; do
     sleep 1
 done
 
-# Run Unit and End2End Tests
+## Run Unit and End2End Tests
 dotnet test
 
 # Server beenden
