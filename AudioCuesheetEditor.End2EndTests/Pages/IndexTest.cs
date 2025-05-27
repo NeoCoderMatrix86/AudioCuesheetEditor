@@ -68,7 +68,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync("Test Track 2 Title");
             await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
             await Page.GetByRole(AriaRole.Button, new() { Name = "Add track" }).ClickAsync();
-            await Page.Locator(".mud-overlay").ClickAsync();
             await Page.GetByRole(AriaRole.Button, new() { Name = "Stop recording" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Artist Clear" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Title Clear" })).ToBeVisibleAsync();
