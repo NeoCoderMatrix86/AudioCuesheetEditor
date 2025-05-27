@@ -11,8 +11,27 @@ popd
 ## Install wasm-tools
 dotnet workload install wasm-tools
 
-## Run Unit Test
+
+# Start Server for tests
+dotnet run --project AudioCuesheetEditor &
+
+SERVER_PID=$!
+
+# Auf Server warten (max 30 Sekunden)
+echo "Waiting for server to start..."
+for i in {1..30}; do
+    if curl -s http://localhost:5132 > /dev/null; then
+        echo "Server is up!"
+        break
+    fi
+    sleep 1
+done
+
+# Run Unit and End2End Tests
 dotnet test
+
+# Server beenden
+kill $SERVER_PID
 
 ## publish project to known location for subsequent deployment by Netlify
 dotnet publish -c Release -o release
