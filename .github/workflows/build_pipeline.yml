@@ -28,7 +28,7 @@ jobs:
       run: dotnet workload install wasm-tools
 
     - name: Build release
-      run: dotnet publish -c Release
+      run: dotnet publish --project AudioCuesheetEditor --configuration Release --output release
 
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v3
