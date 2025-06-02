@@ -17,6 +17,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/9.0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Install wasm-tools
+      run: dotnet workload install wasm-tools
+
     - name: Build release
       run: dotnet publish -c Release -o release
 
