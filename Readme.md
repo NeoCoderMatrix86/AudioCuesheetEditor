@@ -17,13 +17,13 @@ Simply open the link https://audiocuesheeteditor.netlify.app/ on any browser
 
 ### Production
 
-[![App depyloment Status](https://api.netlify.com/api/v1/badges/77d12db9-0a35-4d13-826c-5a0e6c05600f/deploy-status)](https://app.netlify.com/projects/audiocuesheeteditor/deploys)
+[![Build & Deploy](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/actions/workflows/build_pipeline.yml/badge.svg?branch=master)](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/actions/workflows/build_pipeline.yml)
 
 The current stable version can be found here: https://audiocuesheeteditor.netlify.app/
 
 ### Preview
 
-[![Preview Status](https://api.netlify.com/api/v1/badges/c7654cfa-e17d-4215-b3fd-9914b622cacc/deploy-status)](https://app.netlify.com/projects/preview-audiocuesheeteditor/deploys)
+[![Build & Deploy](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/actions/workflows/build_pipeline.yml/badge.svg?branch=development)](https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/actions/workflows/build_pipeline.yml)
 
 The next release candidate version can be found here: https://preview-audiocuesheeteditor.netlify.app/
 
