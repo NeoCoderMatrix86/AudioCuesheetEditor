@@ -48,7 +48,7 @@ jobs:
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v3
       with:
-        publish-dir: './release/wwwroot'
+        publish-dir: './wwwroot'
         production-deploy: true
         fails-without-credentials: true
       env:
