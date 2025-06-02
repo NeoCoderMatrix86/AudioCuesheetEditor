@@ -28,12 +28,23 @@ jobs:
 
     - name: Build release
       run: dotnet publish AudioCuesheetEditor --configuration Release --output release
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AudioCuesheetEditor-Release
+        path: ./release
+        retention-days: 1
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
     environment: Preview
     steps:
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: AudioCuesheetEditor-Release
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v3
       with:
