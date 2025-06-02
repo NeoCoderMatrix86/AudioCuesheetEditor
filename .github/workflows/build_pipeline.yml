@@ -35,6 +35,7 @@ jobs:
         publish-dir: './release/wwwroot'
         production-deploy: true
         fails-without-credentials: true
+        github-deployment-environment: Preview
       env:
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
