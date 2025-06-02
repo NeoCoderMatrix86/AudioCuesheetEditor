@@ -1,0 +1,56 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches:
+      - development
+      - master
+  pull_request:
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/run_tests.yml
+  build:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/9.0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Install wasm-tools
+      run: dotnet workload install wasm-tools
+
+    - name: Build release
+      run: dotnet publish AudioCuesheetEditor --configuration Release --output release
+      
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: AudioCuesheetEditor-Release
+        path: ./release
+        retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: Preview
+    steps:
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: AudioCuesheetEditor-Release
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v3
+      with:
+        publish-dir: './wwwroot'
+        production-deploy: true
+        fails-without-credentials: true
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
