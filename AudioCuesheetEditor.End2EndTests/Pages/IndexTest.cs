@@ -8,7 +8,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
     public class IndexTest : PageTest
     {
         [TestInitialize]
-        public async Task TestInitialize()
+        public async Task TestInitializeAsync()
         {
             await Context.Tracing.StartAsync(new()
             {
@@ -20,7 +20,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestCleanup]
-        public async Task TestCleanup()
+        public async Task TestCleanupAsync()
         {
             var failed = new[] { UnitTestOutcome.Failed, UnitTestOutcome.Error, UnitTestOutcome.Timeout, UnitTestOutcome.Aborted }.Contains(TestContext.CurrentTestOutcome);
 
@@ -35,7 +35,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task HasTitle()
+        public async Task HasTitleAsync()
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Expect(Page).ToHaveTitleAsync("AudioCuesheetEditor");
@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task CheckSettings()
+        public async Task CheckSettingsAsync()
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button).Filter(new() { HasTextRegex = new Regex("^$") }).Nth(3).ClickAsync();
@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task Record()
+        public async Task RecordAsync()
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByText("Record view").ClickAsync();
@@ -76,7 +76,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task Import()
+        public async Task ImportAsync()
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByText("Import view").ClickAsync();
@@ -87,6 +87,19 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("CuesheetArtist");
             await Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]")).ToBeEmptyAsync();
+        }
+
+        [TestMethod]
+        public async Task ChangeLanguageAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
+            await Page.GetByText("German (Germany)").ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Abschnitte" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Allgemeine Informationen" })).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
     public class AboutTest : PageTest
     {
         [TestInitialize]
-        public async Task TestInitialize()
+        public async Task TestInitializeAsync()
         {
             await Context.Tracing.StartAsync(new()
             {
@@ -19,7 +19,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestCleanup]
-        public async Task TestCleanup()
+        public async Task TestCleanupAsync()
         {
             var failed = new[] { UnitTestOutcome.Failed, UnitTestOutcome.Error, UnitTestOutcome.Timeout, UnitTestOutcome.Aborted }.Contains(TestContext.CurrentTestOutcome);
 
@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task HasTitle()
+        public async Task HasTitleAsync()
         {
             await Page.GotoAsync("http://localhost:5132/about");
             await Expect(Page).ToHaveTitleAsync("AudioCuesheetEditor");
