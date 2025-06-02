@@ -1,0 +1,28 @@
+name: Build, Test & Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - development
+      - master
+
+jobs:
+  run-tests:
+    uses: ./.github/workflows/run_tests.yml
+
+  build-test-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build release
+      run: dotnet publish -c Release -o release
+
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v3
+      with:
+        publish-dir: ./release/wwwroot
+        production-deploy: true
+        deploy-message: "Deploy from GitHub Actions"
+        netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
