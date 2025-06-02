@@ -14,6 +14,7 @@ jobs:
   build-test-deploy:
     needs: run-tests
     runs-on: ubuntu-latest
+    environment: Preview
     steps:
     - uses: actions/checkout@v4
 
@@ -35,7 +36,6 @@ jobs:
         publish-dir: './release/wwwroot'
         production-deploy: true
         fails-without-credentials: true
-        github-deployment-environment: Preview
       env:
         NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
