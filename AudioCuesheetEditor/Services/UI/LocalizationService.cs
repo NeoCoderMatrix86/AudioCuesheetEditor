@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Services.UI
 
         public event EventHandler? LocalizationChanged;
 
-        public CultureInfo SelectedCulture { get; private set; } = CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
+        public CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
 
         public async Task SetCultureFromConfigurationAsync()
         {
@@ -58,14 +58,13 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        private Boolean ChangeLanguage(string name)
+        private static Boolean ChangeLanguage(string name)
         {
             var newCulture = AvailableCultures.SingleOrDefault(c => c.Name == name);
             if (newCulture != null)
             {
-                SelectedCulture = newCulture;
-                CultureInfo.DefaultThreadCurrentUICulture = SelectedCulture;
-                CultureInfo.CurrentUICulture = SelectedCulture;
+                CultureInfo.DefaultThreadCurrentUICulture = newCulture;
+                CultureInfo.CurrentUICulture = newCulture;
             }
             return newCulture != null;
         }

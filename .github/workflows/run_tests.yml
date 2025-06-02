@@ -1,6 +1,7 @@
-name: Run tests
+name: Run Tests
 
 on:
+  workflow_call:
   pull_request:
 
 jobs:    
