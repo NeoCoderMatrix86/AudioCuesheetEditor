@@ -34,12 +34,15 @@ jobs:
       with:
         name: AudioCuesheetEditor-Release
         path: ./release
-        retention-days: 1
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: Preview
+    environment: |-
+      ${{
+         github.ref_name == 'master' && 'Production'
+      ||                                'Preview'
+      }}
     steps:
     - name: Download Build Artifact
       uses: actions/download-artifact@v4
