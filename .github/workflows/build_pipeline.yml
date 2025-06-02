@@ -10,11 +10,10 @@ on:
 jobs:
   run-tests:
     uses: ./.github/workflows/run_tests.yml
-
-  deploy:
+  build:
     needs: run-tests
     runs-on: ubuntu-latest
-    environment: Preview
+    
     steps:
     - uses: actions/checkout@v4
 
@@ -30,6 +29,11 @@ jobs:
     - name: Build release
       run: dotnet publish AudioCuesheetEditor --configuration Release --output release
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: Preview
+    steps:
     - name: Deploy to Netlify
       uses: nwtgck/actions-netlify@v3
       with:
