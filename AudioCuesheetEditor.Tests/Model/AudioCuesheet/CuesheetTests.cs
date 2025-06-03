@@ -99,7 +99,8 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var testHelper = new TestHelper();
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
@@ -141,7 +142,8 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             };
             options.ImportScheme = textImportScheme;
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var timeSpanFormat = new TimeSpanFormat();
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
@@ -441,7 +443,8 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
@@ -473,7 +476,8 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 ImportScheme = textImportScheme
             };
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert

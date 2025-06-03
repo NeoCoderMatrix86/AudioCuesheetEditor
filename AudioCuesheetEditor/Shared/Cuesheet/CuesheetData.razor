@@ -124,7 +124,7 @@ along with Foobar.  If not, see
         fileInputCDTextfileErrorText = null;
         try
         {
-            Cuesheet.CDTextfile = FileInputManager.CreateCDTextfile(browserFile);
+            Cuesheet.CDTextfile = _fileInputManager.CreateCDTextfile(browserFile);
         }
         catch (ArgumentException ae)
         {

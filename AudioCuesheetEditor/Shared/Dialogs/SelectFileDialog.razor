@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<SelectFileDialog> _localizer
 @inject ImportManager _importManager
+@inject FileInputManager _fileInputManager
 
 <MudDialog>
     <DialogContent>
@@ -50,8 +51,8 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in files)
         {
-            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
-                && (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false))
+            if ((_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
+                && (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false))
             {
                 invalidDropFileNames.Add(file.Name);
             }

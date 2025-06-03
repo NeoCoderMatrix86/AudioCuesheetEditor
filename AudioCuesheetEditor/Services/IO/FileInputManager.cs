@@ -21,10 +21,11 @@ using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    public class FileInputManager(IJSRuntime jsRuntime, HttpClient httpClient)
+    public class FileInputManager(IJSRuntime jsRuntime, HttpClient httpClient, ILogger<FileInputManager> logger) : IFileInputManager
     {
         private readonly IJSRuntime _jsRuntime = jsRuntime;
         private readonly HttpClient _httpClient = httpClient;
+        private readonly ILogger<FileInputManager> _logger = logger;
 
         public static AudioCodec? GetAudioCodec(IBrowserFile browserFile)
         {
@@ -45,8 +46,9 @@ namespace AudioCuesheetEditor.Services.IO
             return foundAudioCodec;
         }
 
-        public static Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
+        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
         {
+            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtension: '{FileExtension}'", file.Name, file.ContentType, mimeType, fileExtension);
             Boolean fileMimeTypeMatches = false;
             if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
             {
@@ -111,7 +113,7 @@ namespace AudioCuesheetEditor.Services.IO
             return audiofile;
         }
 
-        public static CDTextfile? CreateCDTextfile(IBrowserFile? browserFile)
+        public CDTextfile? CreateCDTextfile(IBrowserFile? browserFile)
         {
             CDTextfile? cdTextfile = null;
             if (browserFile != null)

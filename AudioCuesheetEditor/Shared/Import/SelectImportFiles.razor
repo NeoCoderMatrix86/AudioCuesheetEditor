@@ -54,7 +54,7 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in files)
         {
-            if ((FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
+            if ((_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
                 && (FileInputManager.GetAudioCodec(file) == null))
             {
                 invalidDropFileNames.Add(file.Name);

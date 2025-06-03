@@ -187,7 +187,8 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
@@ -222,7 +223,8 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             importManager.ImportCuesheet();
             // Act
@@ -259,7 +261,8 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
             localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             traceChangeManager.Undo();
             // Act

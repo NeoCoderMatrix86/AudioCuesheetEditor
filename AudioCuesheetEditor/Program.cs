@@ -55,7 +55,7 @@ builder.Services.AddScoped<CuesheetExportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
-builder.Services.AddScoped<FileInputManager>();
+builder.Services.AddScoped<IFileInputManager, FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
 builder.Services.AddScoped<EditTrackModalManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
