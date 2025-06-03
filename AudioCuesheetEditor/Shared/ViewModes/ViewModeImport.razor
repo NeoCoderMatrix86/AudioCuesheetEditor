@@ -21,7 +21,7 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
 
-<MudStepper NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
+<MudStepper @ref="mudStepper" NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
     <MudStep Title="@_localizer["Select inputfiles"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
         <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
     </MudStep>
@@ -63,6 +63,7 @@ along with Foobar.  If not, see
 </MudStepper>
 
 @code {
+    MudStepper? mudStepper;
     int activeStepIndex;
     Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
@@ -94,8 +95,10 @@ along with Foobar.  If not, see
 
     async Task CompleteImportAsync()
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
         _importManager.ImportCuesheet();
+        await ResetAsync();
+        // Don't await since otherwise the rendering will stop and this view will not be reset
+        _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 
     Task PreviewInteraction(StepperInteractionEventArgs arg)
@@ -110,5 +113,16 @@ along with Foobar.  If not, see
     void InvalidFilesDropped(List<string> files)
     {
         selectFilesStepError = files.Any();
+    }
+
+    async Task ResetAsync()
+    {
+        activeStepIndex = 0;
+        selectFilesStepCompleted = false; 
+        selectFilesStepError = false;
+        if (mudStepper != null)
+        {
+            await mudStepper.ResetAsync(true);
+        }
     }
 }
