@@ -430,7 +430,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void ImportSamplesTest()
         {
             // Arrange
-            var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt");
+            var fileContent = File.ReadAllLines("Sample_Inputfile.txt");
             var testHelper = new TestHelper();
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
@@ -460,7 +460,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void ImportSamples2Test()
         {
             // Arrange
-            var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt");
+            var fileContent = File.ReadAllLines("Sample_Inputfile2.txt");
             var testHelper = new TestHelper();
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
