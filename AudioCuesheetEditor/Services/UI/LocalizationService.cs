@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Services.UI
 
         public event EventHandler? LocalizationChanged;
 
-        public CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
+        public static CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
 
         public async Task SetCultureFromConfigurationAsync()
         {

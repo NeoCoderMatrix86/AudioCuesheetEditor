@@ -120,7 +120,7 @@ along with Foobar.  If not, see
     String GetStyle(CultureInfo cultureInfo)
     {
         String style = "white-space: nowrap;";
-        if (cultureInfo.Name == base.LocalizationService.SelectedCulture.Name)
+        if (cultureInfo.Name == LocalizationService.SelectedCulture.Name)
         {
             style += "background-color: var(--mud-palette-info-lighten);";
         }
