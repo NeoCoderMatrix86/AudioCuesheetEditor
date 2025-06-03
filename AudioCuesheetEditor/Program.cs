@@ -17,6 +17,7 @@ using AudioCuesheetEditor;
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Audio;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
@@ -26,8 +27,10 @@ using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.Reflection;
+using System.Reflection.Emit;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -62,7 +65,10 @@ builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 
 builder.Services.AddLogging();
-builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+// Read out configuration for loglevel
+var localStorageOptionsProvider = builder.Services.BuildServiceProvider().GetRequiredService<ILocalStorageOptionsProvider>();
+var options = await localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+builder.Logging.SetMinimumLevel(options.MinimumLogLevel);
 
 builder.Services.AddHotKeys2();
 

@@ -138,6 +138,9 @@
   <data name="Milliseconds" xml:space="preserve">
     <value>Millisekunden</value>
   </data>
+  <data name="Minimum Loglevel" xml:space="preserve">
+    <value>Minimale Protokollebene</value>
+  </data>
   <data name="Minutes" xml:space="preserve">
     <value>Minuten</value>
   </data>
