@@ -42,6 +42,7 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
+    //TODO: Undoing & Redoing the audiofile doesn't set the validation error correctly
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
@@ -83,8 +84,10 @@ along with Foobar.  If not, see
         {
             Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile, x => 
             {
-                Cuesheet.RecalculateLastTrackEnd();
-                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                if (Cuesheet.RecalculateLastTrackEnd())
+                {
+                    TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                }
             });
         }
         catch(ArgumentException ae)
