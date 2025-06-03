@@ -56,7 +56,7 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
                 }
-                else
+                if (fileMimeTypeMatches == false)
                 {
                     //Try to find by file extension
                     var extension = Path.GetExtension(file.Name);
