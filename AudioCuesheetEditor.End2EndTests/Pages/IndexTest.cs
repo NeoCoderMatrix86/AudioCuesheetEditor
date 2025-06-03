@@ -87,6 +87,8 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("CuesheetArtist");
             await Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]")).ToBeEmptyAsync();
+            await Page.GetByText("Import view").ClickAsync();
+            await Expect(Page.GetByText("PreviousNext")).ToBeVisibleAsync();
         }
 
         [TestMethod]
