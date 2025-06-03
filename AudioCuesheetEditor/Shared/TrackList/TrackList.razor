@@ -46,7 +46,7 @@ along with Foobar.  If not, see
                              MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
                              MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
                              CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                             FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.FixedTracksTableHeader, !ApplicationOptions?.FixedTracksTableHeader)" />
+                             FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !ApplicationOptions?.FixedTracksTableHeader)" />
 }
 
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"

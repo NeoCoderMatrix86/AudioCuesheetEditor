@@ -41,7 +41,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             };
             var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
             mockOptionsProvider
-                .Setup(p => p.GetOptions<ApplicationOptions>())
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
             await Task.Delay(50);
@@ -64,7 +64,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             };
             var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
             mockOptionsProvider
-                .Setup(p => p.GetOptions<ApplicationOptions>())
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
             await Task.Delay(50);
@@ -85,7 +85,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             };
             var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
             mockOptionsProvider
-                .Setup(p => p.GetOptions<ApplicationOptions>())
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
             await Task.Delay(50);
@@ -105,7 +105,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             };
             var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
             mockOptionsProvider
-                .Setup(p => p.GetOptions<ApplicationOptions>())
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
             await Task.Delay(50);

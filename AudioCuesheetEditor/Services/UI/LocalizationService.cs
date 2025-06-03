@@ -40,11 +40,11 @@ namespace AudioCuesheetEditor.Services.UI
 
         public event EventHandler? LocalizationChanged;
 
-        public CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
+        public static CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
 
         public async Task SetCultureFromConfigurationAsync()
         {
-            var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
 
             ChangeLanguage(options.Culture.Name);
         }
@@ -53,7 +53,7 @@ namespace AudioCuesheetEditor.Services.UI
         {
             if (ChangeLanguage(name))
             {
-                await _localStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.CultureName!, name);
+                await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, name);
                 LocalizationChanged?.Invoke(this, new EventArgs());
             }
         }

@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<CuesheetData> _localizer
 @inject ValidationService _validationService
-@inject FileInputManager _fileInputManager
+@inject IFileInputManager _fileInputManager
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IDialogService _dialogService
 
@@ -124,7 +124,7 @@ along with Foobar.  If not, see
         fileInputCDTextfileErrorText = null;
         try
         {
-            Cuesheet.CDTextfile = FileInputManager.CreateCDTextfile(browserFile);
+            Cuesheet.CDTextfile = _fileInputManager.CreateCDTextfile(browserFile);
         }
         catch (ArgumentException ae)
         {

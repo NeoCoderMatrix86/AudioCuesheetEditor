@@ -34,18 +34,19 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, ITraceChangeManager traceChangeManager)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager)
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly IFileInputManager _fileInputManager = fileInputManager;
 
         public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
             Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
             foreach (var file in files)
             {
-                if (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
@@ -55,7 +56,7 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     importFileTypes.Add(file, ImportFileType.ProjectFile);
                 }
-                if (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -68,7 +69,7 @@ namespace AudioCuesheetEditor.Services.IO
                     ImportCuesheet(lines);
                     importFileTypes.Add(file, ImportFileType.Cuesheet);
                 }
-                if (FileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -78,7 +79,7 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         lines.Add(reader.ReadLine());
                     }
-                    var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                    var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
                     ImportText([.. lines], options.ImportScheme, options.ImportTimeSpanFormat);
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }

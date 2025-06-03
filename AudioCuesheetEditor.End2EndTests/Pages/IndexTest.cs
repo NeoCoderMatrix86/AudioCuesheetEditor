@@ -80,7 +80,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByText("Import view").ClickAsync();
-            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt" });
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Inputfile.txt" });
             await Page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 1 Clear" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":20:13" }).Nth(1)).ToBeVisibleAsync();
@@ -100,6 +100,35 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task OpenSampleCuesheetAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await Page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Open$") }).ClickAsync();
+            await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
+            await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Cuesheet.cue" });
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("Sample CD Artist");
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToHaveValueAsync("Sample CD Title");
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 3 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":45:54" }).Nth(1)).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task OpenProjectFileAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await Page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Open$") }).ClickAsync();
+            await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
+            await Page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Project.ace" });
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("Sample CD Artist");
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToHaveValueAsync("Sample CD Title");
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Title 2 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":09:23" }).Nth(1)).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":45:54" }).First).ToBeVisibleAsync();
         }
     }
 }

@@ -13,13 +13,18 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.IO
+
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
+using Microsoft.AspNetCore.Components.Forms;
+
+namespace AudioCuesheetEditor.Services.IO
 {
-    public static class FileMimeTypes
+    public interface IFileInputManager
     {
-        public const string Text = "text/plain";
-        public const string Projectfile = "application/x-ace";
-        public const string Cuesheet = "application/x-cue";
-        public const string CDTextfile = "text/*";
+        bool CheckFileMimeType(IBrowserFile file, string mimeType, string fileExtension);
+        Task<Audiofile?> CreateAudiofileAsync(string? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null);
+        CDTextfile? CreateCDTextfile(IBrowserFile? browserFile);
+        Audiofile? CreateRecordedAudiofile(string objectUrl, Action<Task<Stream>>? afterContentStreamLoaded = null);
     }
 }

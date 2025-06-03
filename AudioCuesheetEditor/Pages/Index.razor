@@ -65,7 +65,7 @@ along with Foobar.  If not, see
     async Task ActiveTabIndexChanged(int tabIndex)
     {
         var activeViewMode = (ViewMode)tabIndex;
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, activeViewMode);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, activeViewMode);
     }
 
     void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)

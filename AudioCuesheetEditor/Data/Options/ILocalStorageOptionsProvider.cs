@@ -21,9 +21,9 @@ namespace AudioCuesheetEditor.Data.Options
     public interface ILocalStorageOptionsProvider
     {
         event EventHandler<IOptions>? OptionSaved;
-        Task<T> GetOptions<T>() where T : IOptions;
-        Task SaveOptions(IOptions options);
-        Task SaveOptionsValue<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new();
-        Task SaveNestedOptionValue<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new();
+        Task<T> GetOptionsAsync<T>() where T : IOptions;
+        Task SaveOptionsAsync(IOptions options);
+        Task SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new();
+        Task SaveNestedOptionValueAsync<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new();
     }
 }

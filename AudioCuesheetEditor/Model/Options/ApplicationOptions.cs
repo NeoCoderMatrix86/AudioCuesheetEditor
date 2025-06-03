@@ -32,6 +32,7 @@ namespace AudioCuesheetEditor.Model.Options
     }
     public class ApplicationOptions : Validateable, IOptions
     {
+        public const LogLevel DefaultLogLevel = LogLevel.Information;
         private string? projectFilename = Projectfile.DefaultFilename;
         private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
         public String? CuesheetFilename 
@@ -106,6 +107,7 @@ namespace AudioCuesheetEditor.Model.Options
         public uint RecordCountdownTimer { get; set; } = 5;
         public Boolean FixedTracksTableHeader { get; set; } = false;
         public String? DisplayTimeSpanFormat { get; set; }
+        public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
 
         public override ValidationResult Validate(string property)
         {

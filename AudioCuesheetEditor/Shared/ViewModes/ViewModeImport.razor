@@ -94,7 +94,7 @@ along with Foobar.  If not, see
 
     async Task CompleteImportAsync()
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
         _importManager.ImportCuesheet();
     }
 
