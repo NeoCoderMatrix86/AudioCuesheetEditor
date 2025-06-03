@@ -62,12 +62,11 @@ along with Foobar.  If not, see
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnParametersSet()
     {
-        await base.OnAfterRenderAsync(firstRender);
-        if (form != null)
+        base.OnParametersSet();
+        if (form?.IsTouched == true)
         {
-            await form.Validate();
             SetAudiofileValidationText();
         }
     }
@@ -83,8 +82,10 @@ along with Foobar.  If not, see
         {
             Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile, x => 
             {
-                Cuesheet.RecalculateLastTrackEnd();
-                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                if (Cuesheet.RecalculateLastTrackEnd())
+                {
+                    TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                }
             });
         }
         catch(ArgumentException ae)

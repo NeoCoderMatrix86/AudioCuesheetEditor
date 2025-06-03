@@ -217,14 +217,11 @@ namespace AudioCuesheetEditor.Services.UI
         public void MergeLastEditWithEdit(Func<TracedChanges, bool> targetEdit)
         {
             var edit = undoStack.FirstOrDefault(targetEdit);
-            if (edit != null)
+            if ((edit != null) && (undoStack.Count > 0))
             {
-                if (undoStack.Count > 0)
-                {
-                    var lastEdits = undoStack.Pop();
-                    edit.Changes.AddRange(lastEdits.Changes);
-                    UndoDone?.Invoke(this, EventArgs.Empty);
-                }
+                var lastEdits = undoStack.Pop();
+                edit.Changes.AddRange(lastEdits.Changes);
+                UndoDone?.Invoke(this, EventArgs.Empty);
             }
         }
 
