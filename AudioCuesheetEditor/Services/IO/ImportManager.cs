@@ -79,7 +79,7 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         lines.Add(reader.ReadLine());
                     }
-                    var options = await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+                    var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
                     ImportText([.. lines], options.ImportScheme, options.ImportTimeSpanFormat);
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }

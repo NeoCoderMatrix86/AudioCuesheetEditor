@@ -89,7 +89,7 @@ along with Foobar.  If not, see
 
     async Task CuesheetFilenameChanged(string newFilename)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.CuesheetFilename, newFilename);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CuesheetFilename, newFilename);
         exportfiles = _cuesheetExportService.GenerateExportfiles(ApplicationOptions?.CuesheetFilename);
     }
 }

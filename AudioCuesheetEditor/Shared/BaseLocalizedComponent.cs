@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.Shared
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            ApplicationOptions = await LocalStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            ApplicationOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
             LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         }
 

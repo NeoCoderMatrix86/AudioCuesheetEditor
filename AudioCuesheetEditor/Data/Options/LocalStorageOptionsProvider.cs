@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Data.Options
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        public async Task<T> GetOptions<T>() where T : IOptions
+        public async Task<T> GetOptionsAsync<T>() where T : IOptions
         {
             var type = typeof(T);
             IOptions? options = (IOptions?)Activator.CreateInstance(type);
@@ -61,7 +61,7 @@ namespace AudioCuesheetEditor.Data.Options
             }
         }
 
-        public async Task SaveOptions(IOptions options)
+        public async Task SaveOptionsAsync(IOptions options)
         {
             bool saveOptions = true;
             if (options is IValidateable validateable)
@@ -76,9 +76,9 @@ namespace AudioCuesheetEditor.Data.Options
             }
         }
 
-        public async Task SaveOptionsValue<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
+        public async Task SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
         {
-            var options = await GetOptions<T>();
+            var options = await GetOptionsAsync<T>();
             PropertyInfo? propertyInfo = null;
             object? targetObject = options;
 
@@ -99,12 +99,12 @@ namespace AudioCuesheetEditor.Data.Options
             {
                 throw new ArgumentException("The provided expression does not reference a valid property.");
             }
-            await SaveOptions(options);
+            await SaveOptionsAsync(options);
         }
 
-        public async Task SaveNestedOptionValue<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new()
+        public async Task SaveNestedOptionValueAsync<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new()
         {
-            var options = await GetOptions<T>();
+            var options = await GetOptionsAsync<T>();
 
             if (nestedPropertyExpression.Body is not MemberExpression memberExpression)
             {
@@ -116,7 +116,7 @@ namespace AudioCuesheetEditor.Data.Options
             var valueProperty = ResolveNestedProperty(valuePropertyExpression.Body as MemberExpression, ref nestedInstance) ?? throw new ArgumentException("The provided value property expression does not reference a valid property.");
             valueProperty.SetValue(nestedInstance, Convert.ChangeType(value, valueProperty.PropertyType));
 
-            await SaveOptions(options);
+            await SaveOptionsAsync(options);
         }
 
         private static PropertyInfo? ResolveNestedProperty(MemberExpression? memberExpression, ref object? targetObject)

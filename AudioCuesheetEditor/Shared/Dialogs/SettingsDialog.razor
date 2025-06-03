@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 <MudDialog>
     <DialogContent>
         <MudText Typo="Typo.subtitle1"><b>@_localizer["Input"]</b></MudText>
-        <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.LinkTracks, newValue)" 
+        <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.LinkTracks, newValue)" 
                    Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
         <MudStack Row AlignItems="AlignItems.Baseline">
             <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
@@ -60,12 +60,12 @@ along with Foobar.  If not, see
             }
             timeSpanFormat.Scheme = newValue;
         }
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.TimeSpanFormat!, timeSpanFormat);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.TimeSpanFormat!, timeSpanFormat);
     }
 
     async Task DisplayTimeSpanFormatChangedAsync(string newValue)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.DisplayTimeSpanFormat, newValue);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.DisplayTimeSpanFormat, newValue);
     }
 
     void AppendPlaceholderToTimeInputFormatTextField(string placeholder)

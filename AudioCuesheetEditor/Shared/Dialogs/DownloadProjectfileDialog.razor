@@ -47,7 +47,7 @@ along with Foobar.  If not, see
 
     async Task FilenameChanged(string newFilename)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ProjectFilename, newFilename);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ProjectFilename, newFilename);
     }
 
     String? GetValidationErrorMessage()

@@ -89,7 +89,7 @@ namespace AudioCuesheetEditor.Services.UI
 
         private async Task InitAsync()
         {
-            applicationOptions ??= await _localStorageOptionsProvider.GetOptions<ApplicationOptions>();
+            applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         }
 
         private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)

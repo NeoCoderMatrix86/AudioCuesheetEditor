@@ -98,7 +98,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             };
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
             var fileInputManagerMock = new Mock<IFileInputManager>();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var testHelper = new TestHelper();
@@ -141,7 +141,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             options.ImportScheme = textImportScheme;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
             var fileInputManagerMock = new Mock<IFileInputManager>();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var timeSpanFormat = new TimeSpanFormat();
@@ -442,7 +442,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             };
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
             var fileInputManagerMock = new Mock<IFileInputManager>();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
@@ -475,7 +475,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             {
                 ImportScheme = textImportScheme
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
             var fileInputManagerMock = new Mock<IFileInputManager>();
             var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
