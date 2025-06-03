@@ -42,7 +42,6 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
-    //TODO: Undoing & Redoing the audiofile doesn't set the validation error correctly
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
 
@@ -63,12 +62,11 @@ along with Foobar.  If not, see
         }
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnParametersSet()
     {
-        await base.OnAfterRenderAsync(firstRender);
-        if (form != null)
+        base.OnParametersSet();
+        if (form?.IsTouched == true)
         {
-            await form.Validate();
             SetAudiofileValidationText();
         }
     }
