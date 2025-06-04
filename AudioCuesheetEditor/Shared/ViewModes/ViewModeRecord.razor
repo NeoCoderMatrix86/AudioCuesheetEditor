@@ -56,8 +56,10 @@ along with Foobar.  If not, see
     {
         _sessionStateContainer.Cuesheet.Audiofile = _fileInputManager.CreateRecordedAudiofile(objectUrl, x =>
         {
-            Cuesheet?.RecalculateLastTrackEnd();
-            TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+            if (Cuesheet?.RecalculateLastTrackEnd() == true)
+            {
+                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+            }
         });
         StateHasChanged();
         return Task.CompletedTask;
