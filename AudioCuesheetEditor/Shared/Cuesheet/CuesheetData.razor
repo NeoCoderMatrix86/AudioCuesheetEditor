@@ -33,8 +33,9 @@ along with Foobar.  If not, see
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile OnDownloadFileClicked="DownloadAudio" OnFileRenameClicked="AudioFileRename" />
-                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" />
+                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile
+                           OnDownloadFileClicked="DownloadAudio" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" FileDownloadDisabled="Cuesheet.Audiofile != null ? Cuesheet.Audiofile.IsContentStreamLoaded == false : true" />
+                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
                 <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
                 break;
         }
@@ -86,6 +87,7 @@ along with Foobar.  If not, see
                 {
                     TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
                 }
+                StateHasChanged();
             });
         }
         catch(ArgumentException ae)
@@ -135,10 +137,10 @@ along with Foobar.  If not, see
 
     async Task DownloadAudio()
     {
-        var audioFile = Cuesheet?.Audiofile;
-        if (audioFile != null)
+        var contentStream = Cuesheet?.Audiofile?.ContentStream;
+        if (contentStream != null)
         {
-            await _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
+            await _blazorDownloadFileService.DownloadFile(Cuesheet?.Audiofile?.Name, contentStream, Cuesheet?.Audiofile?.AudioCodec?.MimeType);
         }
     }
 

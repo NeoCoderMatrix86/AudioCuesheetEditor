@@ -132,5 +132,22 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":09:23" }).Nth(1)).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":45:54" }).First).ToBeVisibleAsync();
         }
+
+        [TestMethod]
+        public async Task RenameAudiofileTestAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).GetByRole(AriaRole.Button).Nth(3).ClickAsync();
+            await Expect(Page.GetByText("Download file Rename file")).ToMatchAriaSnapshotAsync("- paragraph: Download file\n- paragraph: Rename file");
+            await Page.Locator("[id^='overlay']").ClickAsync();
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]").ClickAsync();
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]").SetInputFilesAsync(new[] { "Kalimba.mp3" });
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).GetByRole(AriaRole.Button).Nth(3).ClickAsync();
+            await Expect(Page.GetByText("Download file Rename file")).ToMatchAriaSnapshotAsync("- paragraph: Download file\n- paragraph: Rename file");
+            await Page.GetByText("Rename file").ClickAsync();
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" }).FillAsync("Kalimba test 123.mp3");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
+            await Expect(Page.Locator("#app")).ToMatchAriaSnapshotAsync("- textbox \"Cuesheet artist\"\n- group \"Cuesheet artist\"\n- text: Cuesheet artist\n- textbox \"Cuesheet title\"\n- group \"Cuesheet title\"\n- text: Cuesheet title\n- group:\n  - button \"Choose File\"\n  - textbox \"Audiofile\": /Kalimba test \\d+\\.mp3/\n  - group \"Audiofile\"\n  - text: Audiofile\n  - button \"Search\"\n  - button\n  - button\n- group:\n  - button \"Choose File\"\n  - textbox \"CD Textfile\": No file selected\n  - group \"CD Textfile\"\n  - text: CD Textfile\n  - button \"Search\"\n  - button [disabled]\n  - button\n- textbox \"Cataloguenumber\"\n- group \"Cataloguenumber\"\n- text: Cataloguenumber");
+        }
     }
 }

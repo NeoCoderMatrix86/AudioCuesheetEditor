@@ -36,9 +36,9 @@ along with Foobar.  If not, see
         <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
             @if (DisplayDownloadFile)
             {
-                <MudMenuItem Icon="@Icons.Material.Outlined.FileDownload" Disabled="selectedFile == null" OnClick="() => OnDownloadFileClicked.InvokeAsync(selectedFile)">@_localizer["Download file"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.FileDownload" Disabled="FileDownloadDisabled" OnClick="() => OnDownloadFileClicked.InvokeAsync(selectedFile)">@_localizer["Download file"]</MudMenuItem>
             }
-            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="selectedFile == null" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)">@_localizer["Rename file"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)">@_localizer["Rename file"]</MudMenuItem>
         </MudMenu>
     }
 </MudStack>
@@ -60,6 +60,12 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback<IBrowserFile?> OnFileRenameClicked { get; set; }
+
+    [Parameter]
+    public Boolean FileRenameDisabled { get; set; }
+
+    [Parameter]
+    public Boolean FileDownloadDisabled { get; set; }
 
     [Parameter]
     public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";
