@@ -50,32 +50,4 @@ along with Foobar.  If not, see
 
     [CascadingParameter]
     public Cuesheet? Cuesheet { get; set; }
-
-    [JSInvokable()]
-    public Task AudioRecordingFinished(String objectUrl)
-    {
-        _sessionStateContainer.Cuesheet.Audiofile = _fileInputManager.CreateRecordedAudiofile(objectUrl, x =>
-        {
-            if (Cuesheet?.RecalculateLastTrackEnd() == true)
-            {
-                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
-            }
-        });
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        _jsRuntime.InvokeVoidAsync("closeAudioRecording");
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        var dotNetReference = DotNetObjectReference.Create(this);
-        await _jsRuntime.InvokeVoidAsync("GLOBAL.SetViewModeRecordReference", dotNetReference);
-        await _jsRuntime.InvokeVoidAsync("setupAudioRecording");
-    }
 }

@@ -140,7 +140,6 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", cuesheet.Title);
             Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile?.Name);
-            Assert.IsFalse(cuesheet.Audiofile?.IsRecorded);
             Assert.AreEqual("A123", cuesheet.Cataloguenumber);
             Assert.AreEqual(2, cuesheet.Validate(nameof(Cuesheet.Cataloguenumber)).ValidationMessages?.Count);
             Assert.AreEqual(10, cuesheet.Tracks.Count);
@@ -166,7 +165,6 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             Assert.AreEqual("CuesheetArtist", cuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", cuesheet.Title);
             Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile?.Name);
-            Assert.IsFalse(cuesheet.Audiofile?.IsRecorded);
             Assert.AreEqual("A123", cuesheet.Cataloguenumber);
             Assert.AreEqual(2, cuesheet.Validate(nameof(Cuesheet.Cataloguenumber)).ValidationMessages?.Count);
             Assert.AreEqual(10, cuesheet.Tracks.Count);

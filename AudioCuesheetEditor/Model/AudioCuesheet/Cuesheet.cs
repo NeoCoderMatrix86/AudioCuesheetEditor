@@ -145,10 +145,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     errors.Add("Cuesheet already contains tracks!");
                 }
-                if (Audiofile?.IsRecorded == true)
-                {
-                    errors.Add("A recording is already available!");
-                }
                 return errors;
             }
         }

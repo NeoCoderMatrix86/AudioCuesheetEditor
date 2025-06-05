@@ -25,6 +25,5 @@ namespace AudioCuesheetEditor.Services.IO
         bool CheckFileMimeType(IBrowserFile file, string mimeType, string fileExtension);
         Task<Audiofile?> CreateAudiofileAsync(string? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null);
         CDTextfile? CreateCDTextfile(IBrowserFile? browserFile);
-        Audiofile? CreateRecordedAudiofile(string objectUrl, Action<Task<Stream>>? afterContentStreamLoaded = null);
     }
 }

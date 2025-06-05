@@ -96,23 +96,6 @@ namespace AudioCuesheetEditor.Services.IO
             return audiofile;
         }
 
-        public Audiofile? CreateRecordedAudiofile(String objectUrl, Action<Task<Stream>>? afterContentStreamLoaded = null)
-        {
-            Audiofile? audiofile = null;
-            if (String.IsNullOrEmpty(objectUrl) == false)
-            {
-                audiofile = new Audiofile(Audiofile.RecordingFileName, objectUrl, Audiofile.AudioCodecWEBM, true);
-                var loadContentStreamTask = _httpClient.GetStreamAsync(objectUrl)
-                                .ContinueWith(x => audiofile.ContentStream = x.Result);
-                if (afterContentStreamLoaded != null)
-                {
-                    _ = loadContentStreamTask
-                        .ContinueWith(afterContentStreamLoaded);
-                }
-            }
-            return audiofile;
-        }
-
         public CDTextfile? CreateCDTextfile(IBrowserFile? browserFile)
         {
             CDTextfile? cdTextfile = null;
