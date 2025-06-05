@@ -40,14 +40,16 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             // Arrange
             var newCuesheet = new Cuesheet();
             bool eventTriggered = false;
+            bool traceablePropertyChangedFired = false;
             sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
+            sessionStateContainer.TraceablePropertyChanged += (sender, args) => traceablePropertyChangedFired = true;
 
             // Act
             sessionStateContainer.Cuesheet = newCuesheet;
 
             // Assert
             Assert.IsTrue(eventTriggered);
-            traceChangeManagerMock.Verify(m => m.Reset(), Times.Exactly(2));
+            Assert.IsTrue(traceablePropertyChangedFired);
             traceChangeManagerMock.Verify(m => m.TraceChanges(newCuesheet), Times.Once);
         }
 
