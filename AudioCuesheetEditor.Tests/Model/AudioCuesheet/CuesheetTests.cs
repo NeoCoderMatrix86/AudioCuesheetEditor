@@ -556,22 +556,6 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod()]
-        public void IsRecordingPossible_WhenRecordingIsAlreadyAvailable_ReturnsError()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet
-            {
-                Audiofile = new Audiofile("test", isRecorded: true)
-            };
-
-            // Act
-            var errors = cuesheet.IsRecordingPossible.ToList();
-
-            // Assert
-            Assert.Contains("A recording is already available!", errors);
-        }
-
-        [TestMethod()]
         public void IsRecordingPossible_WhenNoErrors_ReturnsEmpty()
         {
             // Arrange
@@ -915,19 +899,19 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod]
-        public void StartRecording_WithAudiofile_ShouldNotStartRecording()
+        public void StartRecording_WithAudiofile_ShouldStartRecording()
         {
             // Arrange
             var cuesheet = new Cuesheet
             {
-                Audiofile = new Audiofile("test", isRecorded: true)
+                Audiofile = new Audiofile("test")
             };
 
             // Act
             cuesheet.StartRecording();
 
             // Assert
-            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsTrue(cuesheet.IsRecording);
         }
 
         [TestMethod]

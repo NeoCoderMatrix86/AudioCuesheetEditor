@@ -22,7 +22,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         Stream? ContentStream { get; set; }
         TimeSpan? Duration { get; }
         bool IsContentStreamLoaded { get; }
-        bool IsRecorded { get; }
         string Name { get; set; }
         string? ObjectURL { get; }
         bool PlaybackPossible { get; }

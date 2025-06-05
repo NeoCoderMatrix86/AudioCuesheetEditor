@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="A recording is already available!" xml:space="preserve">
-    <value>Eine Aufnahme ist bereits verfügbar!</value>
-  </data>
   <data name="Cuesheet already contains tracks!" xml:space="preserve">
     <value>Das Cuesheet enthält bereits Titel!</value>
   </data>
