@@ -18,8 +18,8 @@ namespace AudioCuesheetEditor.Model.IO
     public static class FileMimeTypes
     {
         public const string Text = "text/plain";
-        public const string Projectfile = "text/*";
-        public const string Cuesheet = "text/*";
+        public const string Projectfile = "application/x-ace";
+        public const string Cuesheet = "application/x-cue";
         public const string CDTextfile = "text/*";
     }
 }

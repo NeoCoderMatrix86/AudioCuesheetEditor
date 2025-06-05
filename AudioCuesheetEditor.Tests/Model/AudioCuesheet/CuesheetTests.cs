@@ -98,8 +98,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             };
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var testHelper = new TestHelper();
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
@@ -140,8 +141,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
                 SchemeTracks = TextImportScheme.DefaultSchemeTracks
             };
             options.ImportScheme = textImportScheme;
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var timeSpanFormat = new TimeSpanFormat();
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
@@ -428,7 +430,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void ImportSamplesTest()
         {
             // Arrange
-            var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile.txt");
+            var fileContent = File.ReadAllLines("Sample_Inputfile.txt");
             var testHelper = new TestHelper();
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
@@ -440,8 +442,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             };
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
@@ -457,7 +460,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void ImportSamples2Test()
         {
             // Arrange
-            var fileContent = File.ReadAllLines("../../../../AudioCuesheetEditor/wwwroot/samples/Sample_Inputfile2.txt");
+            var fileContent = File.ReadAllLines("Sample_Inputfile2.txt");
             var testHelper = new TestHelper();
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
@@ -472,8 +475,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             {
                 ImportScheme = textImportScheme
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
             // Assert
@@ -549,22 +553,6 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 
             // Assert
             Assert.Contains("Cuesheet already contains tracks!", errors);
-        }
-
-        [TestMethod()]
-        public void IsRecordingPossible_WhenRecordingIsAlreadyAvailable_ReturnsError()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet
-            {
-                Audiofile = new Audiofile("test", isRecorded: true)
-            };
-
-            // Act
-            var errors = cuesheet.IsRecordingPossible.ToList();
-
-            // Assert
-            Assert.Contains("A recording is already available!", errors);
         }
 
         [TestMethod()]
@@ -911,19 +899,19 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod]
-        public void StartRecording_WithAudiofile_ShouldNotStartRecording()
+        public void StartRecording_WithAudiofile_ShouldStartRecording()
         {
             // Arrange
             var cuesheet = new Cuesheet
             {
-                Audiofile = new Audiofile("test", isRecorded: true)
+                Audiofile = new Audiofile("test")
             };
 
             // Act
             cuesheet.StartRecording();
 
             // Assert
-            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsTrue(cuesheet.IsRecording);
         }
 
         [TestMethod]

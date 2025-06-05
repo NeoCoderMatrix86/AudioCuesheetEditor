@@ -80,8 +80,9 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             };
             var timeSpanFormat = new TimeSpanFormat();
             var options = new ApplicationOptions();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptions<ApplicationOptions>()).ReturnsAsync(options);
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
             var testHelper = new TestHelper();
             // Act
             importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);

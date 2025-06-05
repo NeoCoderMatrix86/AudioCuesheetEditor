@@ -17,6 +17,7 @@ using AudioCuesheetEditor;
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Audio;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
@@ -26,6 +27,10 @@ using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using System.ComponentModel.Design;
+using System.Globalization;
+using System.Reflection;
+using System.Reflection.Emit;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -53,16 +58,40 @@ builder.Services.AddScoped<CuesheetExportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
 builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
-builder.Services.AddScoped<FileInputManager>();
+builder.Services.AddScoped<IFileInputManager, FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
 builder.Services.AddScoped<EditTrackModalManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 
 builder.Services.AddLogging();
-builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+// Read out configuration for loglevel
+var localStorageOptionsProvider = builder.Services.BuildServiceProvider().GetRequiredService<ILocalStorageOptionsProvider>();
+var options = await localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+builder.Logging.SetMinimumLevel(options.MinimumLogLevel);
 
 builder.Services.AddHotKeys2();
+
+// TODO: Remove this when https://github.com/dotnet/aspnetcore/issues/56824 is fixed
+
+// Get current localization culture
+var currentCulture = CultureInfo.DefaultThreadCurrentCulture;
+
+// Get WASM culture provider via reflection
+var type = Assembly.GetAssembly(typeof(WebAssemblyHost))!.GetType("Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyCultureProvider");
+var instance = type
+    !.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static)
+    ?.GetValue(null);
+
+// Swap out the "current culture" for the UI (localization) culture
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("de-DE");
+// Load the satellite assemblies
+await (ValueTask)instance!
+    .GetType()
+    .GetMethod("LoadCurrentCultureResourcesAsync", BindingFlags.Public | BindingFlags.Instance)!
+    .Invoke(instance, [])!;
+// Swap the culture back
+CultureInfo.DefaultThreadCurrentCulture = currentCulture;
 
 var host = builder.Build();
 

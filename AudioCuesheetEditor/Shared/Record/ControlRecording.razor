@@ -18,7 +18,6 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ControlRecording> _localizer
-@inject IJSRuntime _jsRuntime
 @inject IDialogService _dialogService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 
@@ -53,10 +52,10 @@ along with Foobar.  If not, see
         <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
             <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
                 <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                    <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync">@_localizer["Start recording"]</MudButton>
+                    <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording">@_localizer["Start recording"]</MudButton>
                 </MudHidden>
                 <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                    <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecordingAsync" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" />
                 </MudHidden>
                 <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
                     <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
@@ -73,19 +72,12 @@ along with Foobar.  If not, see
                 <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
             <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync">@_localizer["Stop recording"]</MudButton>
+                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecording">@_localizer["Stop recording"]</MudButton>
             </MudHidden>
             <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecordingAsync" />
+                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecording" />
             </MudHidden>
         </MudStack>
-        @if (Cuesheet?.Audiofile?.IsRecorded == true)
-        {
-            <br />
-            <MudStack Row Justify="Justify.FlexEnd">
-                <MudButton Color="Color.Success" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadAudio">@_localizer["Download recorded audio file"]</MudButton>
-            </MudStack>
-        }
     </MudCardContent>
 </MudCard>
 
@@ -118,18 +110,16 @@ along with Foobar.  If not, see
         };
     }
 
-    async Task StartRecordingAsync()
+    void StartRecording()
     {
         Cuesheet?.StartRecording();
         updateGUITimer.Start();
-        await _jsRuntime.InvokeVoidAsync("startAudioRecording");
         Cuesheet!.Audiofile = null;
     }
 
-    async Task StopRecordingAsync() 
+    void StopRecording() 
     {
         Cuesheet?.StopRecording();
-        await _jsRuntime.InvokeVoidAsync("stopAudioRecording");
     }
 
     async Task DisplayStartCountdownDialog()
@@ -140,9 +130,9 @@ along with Foobar.  If not, see
         if (result?.Canceled == false)
         {
             startRecordTimer = new Timer(ApplicationOptions!.RecordCountdownTimer * 1000);
-            startRecordTimer.Elapsed += async delegate
+            startRecordTimer.Elapsed += delegate
             {
-                await StartRecordingAsync();
+                StartRecording();
                 startRecordTimer.Stop();
                 startRecordTimer.Dispose();
             };

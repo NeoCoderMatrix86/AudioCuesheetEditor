@@ -26,7 +26,7 @@ along with Foobar.  If not, see
             @_localizer["Start record countdown timer"]
         </TitleContent>
         <DialogContent>
-            <MudNumericField T="uint" Placeholder="@_localizer["Seconds till record starts"]" Label="@_localizer["Record countdown in sconds"]" Variant="Variant.Outlined" Value="ApplicationOptions.RecordCountdownTimer" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.RecordCountdownTimer, newValue)" />
+            <MudNumericField T="uint" Placeholder="@_localizer["Seconds till record starts"]" Label="@_localizer["Record countdown in sconds"]" Variant="Variant.Outlined" Value="ApplicationOptions.RecordCountdownTimer" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.RecordCountdownTimer, newValue)" />
         </DialogContent>
         <DialogActions>
             <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close()">@_localizer["Start countdown"]</MudButton>

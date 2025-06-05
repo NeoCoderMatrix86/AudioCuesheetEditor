@@ -145,10 +145,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     errors.Add("Cuesheet already contains tracks!");
                 }
-                if (Audiofile?.IsRecorded == true)
-                {
-                    errors.Add("A recording is already available!");
-                }
                 return errors;
             }
         }
@@ -384,14 +380,16 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public void RecalculateLastTrackEnd()
+        public Boolean RecalculateLastTrackEnd()
         {
             //Try to recalculate length by recalculating last track
             var lastTrack = tracks.LastOrDefault();
             if (lastTrack != null)
             {
                 RecalculateTrackProperties(lastTrack);
+                return true;
             }
+            return false;
         }
 
         public override ValidationResult Validate(string property)

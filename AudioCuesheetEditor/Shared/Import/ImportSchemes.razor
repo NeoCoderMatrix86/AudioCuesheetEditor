@@ -79,19 +79,19 @@ along with Foobar.  If not, see
 
     async Task ImportSchemeCuesheetTextChangedAsync(string newScheme)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
         await ImportSchemeCuesheetChanged.InvokeAsync(newScheme);
     }
 
     async Task ImportSchemeTracksTextChangedAsync(string newScheme)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportScheme.SchemeTracks, newScheme);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ImportScheme.SchemeTracks, newScheme);
         await ImportSchemeTracksChanged.InvokeAsync(newScheme);
     }
 
     async Task ImportTimeInputFormatChangedAsync(string newScheme)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValue<ApplicationOptions>(x => x.ImportTimeSpanFormat.Scheme, newScheme);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ImportTimeSpanFormat.Scheme, newScheme);
         await ImportTimeInputFormatChanged.InvokeAsync(newScheme);
     }
 
@@ -123,7 +123,7 @@ along with Foobar.  If not, see
             {
                 ApplicationOptions.ImportScheme = TextImportScheme.DefaultTextImportScheme;
                 ApplicationOptions.ImportTimeSpanFormat = new();
-                await LocalStorageOptionsProvider.SaveOptions(ApplicationOptions);
+                await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
                 await ImportSchemeCuesheetChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeCuesheet);
                 await ImportSchemeTracksChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeTracks);
                 await ImportTimeInputFormatChanged.InvokeAsync(ApplicationOptions.ImportTimeSpanFormat.Scheme);
