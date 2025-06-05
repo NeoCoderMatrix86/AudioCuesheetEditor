@@ -162,6 +162,7 @@ along with Foobar.  If not, see
         if (result?.Canceled == false)
         {
             _sessionStateContainer.Cuesheet = new();
+            TraceChangeManager.Reset();
         }
     }
 

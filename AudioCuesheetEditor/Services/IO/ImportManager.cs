@@ -48,6 +48,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
                 {
+                    //TODO: can not be undone
                     var fileContent = await ReadFileContentAsync(file);
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
                     if (cuesheet != null)
@@ -114,7 +115,9 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
+                _traceChangeManager.BulkEdit = true;
                 CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                _traceChangeManager.BulkEdit = false;
             }
         }
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)
