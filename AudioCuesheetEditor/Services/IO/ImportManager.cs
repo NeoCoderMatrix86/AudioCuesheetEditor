@@ -48,7 +48,6 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
                 {
-                    //TODO: can not be undone
                     var fileContent = await ReadFileContentAsync(file);
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
                     if (cuesheet != null)
