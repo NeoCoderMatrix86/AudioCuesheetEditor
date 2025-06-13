@@ -511,6 +511,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Act
             var importfile = TextImportService.Analyse(fileContent, profile);
             // Assert
+            //TODO: Check importfile.FileContentRecognized
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
             Assert.IsNull(importfile.AnalysedCuesheet.Artist);
@@ -522,6 +523,36 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual("Inache", importfile.AnalysedCuesheet.Tracks.Last().Artist);
             Assert.AreEqual("Andale (MONTA (TN) Remix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
             Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importfile.AnalysedCuesheet.Tracks.Last().StartDateTime);
+        }
+
+        [TestMethod()]
+        public void Analyse_WithoutRegularExpression_ReturnsCuesheet()
+        {
+            // Arrange
+            var profile = new Importprofile()
+            {
+                UseRegularExpression = false,
+                SchemeCuesheet = "Artist - Title - Cataloguenumber",
+                SchemeTracks = "Artist - Title\tBegin"
+            };
+            var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
+            var reader = new StreamReader(textImportMemoryStream);
+            var fileContent = reader.ReadToEnd();
+            // Act
+            var importfile = TextImportService.Analyse(fileContent, profile);
+            // Assert
+            Assert.IsNull(importfile.AnalyseException);
+            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            //TODO: Check importfile.FileContentRecognized
+            Assert.AreEqual("DJFreezeT", importfile.AnalysedCuesheet.Artist);
+            Assert.AreEqual("Rabbit Hole Mix", importfile.AnalysedCuesheet.Title);
+            Assert.AreEqual("0123456789123", importfile.AnalysedCuesheet.Cataloguenumber);
+            Assert.AreEqual("Adriatique", importfile.AnalysedCuesheet.Tracks.First().Artist);
+            Assert.AreEqual("X.", importfile.AnalysedCuesheet.Tracks.First().Title);
+            Assert.AreEqual(new TimeSpan(0, 0, 5, 24, 250), importfile.AnalysedCuesheet.Tracks.First().Begin);
+            Assert.AreEqual("Nikolay Kirov", importfile.AnalysedCuesheet.Tracks.Last().Artist);
+            Assert.AreEqual("Chasing the Sun (Original Mix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
+            Assert.IsNull(importfile.AnalysedCuesheet.Tracks.Last().Begin);
         }
     }
 }

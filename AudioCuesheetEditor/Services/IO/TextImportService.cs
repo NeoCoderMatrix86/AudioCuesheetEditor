@@ -52,6 +52,39 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 else
                 {
+                    Regex? regExCuesheet = null, regExTracks = null;
+                    if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
+                    {
+                        regExCuesheet = CreateCuesheetRegexPattern(importprofile.SchemeCuesheet);
+                    }
+                    if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
+                    {
+                        regExTracks = CreateTrackRegexPattern(importprofile.SchemeTracks);
+                    }
+                    Boolean cuesheetRecognized = false;
+                    foreach (var line in fileContent.Split(Environment.NewLine))
+                    {
+                        var recognizedLine = line;
+                        if (String.IsNullOrEmpty(line) == false)
+                        {
+                            Boolean recognized = false;
+                            if ((recognized == false) && (cuesheetRecognized == false) && (regExCuesheet != null))
+                            {
+                                recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet, importprofile.TimeSpanFormat);
+                                recognized = recognizedLine != null;
+                                cuesheetRecognized = recognizedLine != null;
+                            }
+                            if ((recognized == false) && (regExTracks != null))
+                            {
+                                var track = new ImportTrack();
+                                recognizedLine = AnalyseLine(line, track, regExTracks, importprofile.TimeSpanFormat);
+                                recognized = recognizedLine != null;
+                                importfile.AnalysedCuesheet.Tracks.Add(track);
+                            }
+                        }
+                        //TODO
+                        //recognizedFileContent.Add(recognizedLine);
+                    }
                     //TODO
                 }
             }
@@ -262,7 +295,7 @@ namespace AudioCuesheetEditor.Services.IO
             var match = regex.Match(fileContent);
             if (match.Success)
             {
-                var entity = new ImportTrack();
+                var entity = importfile.AnalysedCuesheet;
                 for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
                 {
                     var key = match.Groups.Keys.ElementAt(groupCounter);
@@ -288,7 +321,6 @@ namespace AudioCuesheetEditor.Services.IO
                         throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
                     }
                 }
-                importfile.AnalysedCuesheet!.Tracks.Add(entity);
             }
         }
 
