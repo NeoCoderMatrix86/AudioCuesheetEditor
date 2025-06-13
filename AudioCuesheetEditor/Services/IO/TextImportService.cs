@@ -42,46 +42,12 @@ namespace AudioCuesheetEditor.Services.IO
                     if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
                     {
                         var regExCuesheet = new Regex(importprofile.SchemeCuesheet);
-                        //TODO
+                        SearchFilecontentForCuesheetData(ref importfile, fileContent, importprofile.TimeSpanFormat, regExCuesheet);
                     }
                     if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
                     {
                         var regExTracks = new Regex(importprofile.SchemeTracks);
-                        var matches = regExTracks.Matches(fileContent);
-                        for (int matchCounter = 0; matchCounter < matches.Count; matchCounter++)
-                        {
-                            var match = matches[matchCounter];
-                            if (match.Success)
-                            {
-                                var track = new ImportTrack();
-                                for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
-                                {
-                                    var key = match.Groups.Keys.ElementAt(groupCounter);
-                                    var group = match.Groups.GetValueOrDefault(key);
-                                    if (group?.Success == true)
-                                    {
-                                        var property = track.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                                        if (property != null)
-                                        {
-                                            SetValue(track, property, group.Value, importprofile.TimeSpanFormat);
-                                            //TODO: Mark the found entry
-                                            //recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
-                                            //    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
-                                            //    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
-                                        }
-                                        else
-                                        {
-                                            throw new NullReferenceException(String.Format("Property '{0}' was not found", key));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
-                                    }
-                                }
-                                importfile.AnalysedCuesheet.Tracks.Add(track);
-                            }
-                        }
+                        SearchFilecontentForTracks(ref importfile, fileContent, importprofile.TimeSpanFormat, regExTracks);
                     }
                 }
                 else
@@ -288,6 +254,80 @@ namespace AudioCuesheetEditor.Services.IO
                 regexString = regexString.Replace("\\t", "(?:...\\t)");
 
                 return new Regex(regexString);
+            }
+        }
+
+        private static void SearchFilecontentForCuesheetData(ref Importfile importfile, string fileContent, TimeSpanFormat? timeSpanFormat, Regex regex)
+        {
+            var match = regex.Match(fileContent);
+            if (match.Success)
+            {
+                var entity = new ImportTrack();
+                for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
+                {
+                    var key = match.Groups.Keys.ElementAt(groupCounter);
+                    var group = match.Groups.GetValueOrDefault(key);
+                    if (group?.Success == true)
+                    {
+                        var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (property != null)
+                        {
+                            SetValue(entity, property, group.Value, timeSpanFormat);
+                            //TODO: Mark the found entry
+                            //recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
+                            //    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
+                            //    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(String.Format("Property '{0}' was not found", key));
+                        }
+                    }
+                    else
+                    {
+                        throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
+                    }
+                }
+                importfile.AnalysedCuesheet!.Tracks.Add(entity);
+            }
+        }
+
+        private static void SearchFilecontentForTracks(ref Importfile importfile, string fileContent, TimeSpanFormat? timeSpanFormat, Regex regex)
+        {
+            var matches = regex.Matches(fileContent);
+            for (int matchCounter = 0; matchCounter < matches.Count; matchCounter++)
+            {
+                var match = matches[matchCounter];
+                if (match.Success)
+                {
+                    var entity = new ImportTrack();
+                    for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
+                    {
+                        var key = match.Groups.Keys.ElementAt(groupCounter);
+                        var group = match.Groups.GetValueOrDefault(key);
+                        if (group?.Success == true)
+                        {
+                            var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                            if (property != null)
+                            {
+                                SetValue(entity, property, group.Value, timeSpanFormat);
+                                //TODO: Mark the found entry
+                                //recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
+                                //    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
+                                //    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
+                            }
+                            else
+                            {
+                                throw new NullReferenceException(String.Format("Property '{0}' was not found", key));
+                            }
+                        }
+                        else
+                        {
+                            throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
+                        }
+                    }
+                    importfile.AnalysedCuesheet!.Tracks.Add(entity);
+                }
             }
         }
     }
