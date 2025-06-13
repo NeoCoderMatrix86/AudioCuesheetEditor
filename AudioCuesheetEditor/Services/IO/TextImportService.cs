@@ -176,9 +176,13 @@ namespace AudioCuesheetEditor.Services.IO
                             if (property != null)
                             {
                                 SetValue(entity, property, group.Value, timeSpanFormat);
-                                recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
-                                    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
-                                    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
+                                // Mark the found entry
+                                var matchRecognized = regex.Match(recognizedLine);
+                                var groupRecognized = matchRecognized.Groups[key];
+                                var firstPart = recognizedLine.Substring(0, groupRecognized.Index);
+                                var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
+                                var lastPart = recognizedLine.Substring(groupRecognized.Index + groupRecognized.Length);
+                                recognizedLine = string.Concat(firstPart, replace, lastPart);
                             }
                             else
                             {
@@ -311,9 +315,7 @@ namespace AudioCuesheetEditor.Services.IO
                             var firstPart = importfile.FileContentRecognized.Substring(0, groupRecognized.Index);
                             var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
                             var lastPart = importfile.FileContentRecognized.Substring(groupRecognized.Index + groupRecognized.Length);
-                            importfile.FileContentRecognized = string.Concat(firstPart
-                                , replace
-                                , lastPart);
+                            importfile.FileContentRecognized = string.Concat(firstPart, replace, lastPart);
                         }
                         else
                         {
@@ -354,9 +356,7 @@ namespace AudioCuesheetEditor.Services.IO
                                 var firstPart = importfile.FileContentRecognized.Substring(0, groupRecognized.Index);
                                 var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
                                 var lastPart = importfile.FileContentRecognized.Substring(groupRecognized.Index + groupRecognized.Length);
-                                importfile.FileContentRecognized = string.Concat(firstPart
-                                    , replace
-                                    , lastPart);
+                                importfile.FileContentRecognized = string.Concat(firstPart, replace, lastPart);
                             }
                             else
                             {
