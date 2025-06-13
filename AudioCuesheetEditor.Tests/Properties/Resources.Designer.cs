@@ -129,5 +129,15 @@ namespace AudioCuesheetEditor.Tests.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] Traktor_Export {
+            get {
+                object obj = ResourceManager.GetObject("Traktor Export", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

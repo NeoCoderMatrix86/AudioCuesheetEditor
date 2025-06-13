@@ -26,6 +26,81 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public class TextImportService
     {
+        public static IImportfile Analyse(string fileContent, Importprofile importprofile)
+        {
+            Importfile importfile = new()
+            {
+                FileType = ImportFileType.Textfile
+            };
+            try
+            {
+                //TODO
+                //importfile.FileContent = fileContent;
+                importfile.AnalysedCuesheet = new ImportCuesheet();
+                if (importprofile.UseRegularExpression)
+                {
+                    if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
+                    {
+                        var regExCuesheet = new Regex(importprofile.SchemeCuesheet);
+                        //TODO
+                    }
+                    if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
+                    {
+                        var regExTracks = new Regex(importprofile.SchemeTracks);
+                        var matches = regExTracks.Matches(fileContent);
+                        for (int matchCounter = 0; matchCounter < matches.Count; matchCounter++)
+                        {
+                            var match = matches[matchCounter];
+                            if (match.Success)
+                            {
+                                var track = new ImportTrack();
+                                for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
+                                {
+                                    var key = match.Groups.Keys.ElementAt(groupCounter);
+                                    var group = match.Groups.GetValueOrDefault(key);
+                                    if (group?.Success == true)
+                                    {
+                                        var property = track.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                                        if (property != null)
+                                        {
+                                            SetValue(track, property, group.Value, importprofile.TimeSpanFormat);
+                                            //TODO: Mark the found entry
+                                            //recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
+                                            //    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
+                                            //    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
+                                        }
+                                        else
+                                        {
+                                            throw new NullReferenceException(String.Format("Property '{0}' was not found", key));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
+                                    }
+                                }
+                                importfile.AnalysedCuesheet.Tracks.Add(track);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //TODO
+                }
+            }
+            catch (Exception ex)
+            {
+                //TODO:
+                //importfile.FileContent = fileContent;
+                //importfile.FileContentRecognized = fileContent;
+                importfile.AnalyseException = ex;
+                importfile.AnalysedCuesheet = null;
+            }
+            return importfile;
+        }
+
+        [Obsolete("Will be deleted")]
         public static IImportfile Analyse(TextImportScheme textImportScheme, IEnumerable<String?> fileContent, TimeSpanFormat? timeSpanFormat = null)
         {
             Importfile importfile = new()

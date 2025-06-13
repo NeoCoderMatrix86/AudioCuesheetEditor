@@ -27,10 +27,8 @@ using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using System.ComponentModel.Design;
 using System.Globalization;
 using System.Reflection;
-using System.Reflection.Emit;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);

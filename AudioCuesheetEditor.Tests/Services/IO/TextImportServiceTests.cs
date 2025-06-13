@@ -495,5 +495,33 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), importfile.FileContentRecognized.ElementAt(53));
         }
+
+        [TestMethod()]
+        public void Analyse_WithRegularExpression_ReturnsCuesheet()
+        {
+            // Arrange
+            var profile = new Importprofile()
+            {
+                UseRegularExpression = true,
+                SchemeTracks = "<tr>\\s*<td>\\d+</td>\\s*<td>(?<Artist>.*?)</td>\\s*<td>(?<Title>.*?)</td>\\s*<td>(?<StartDateTime>.*?)</td>\\s*</tr>"
+            };
+            var textImportMemoryStream = new MemoryStream(Resources.Traktor_Export);
+            var reader = new StreamReader(textImportMemoryStream);
+            var fileContent = reader.ReadToEnd();
+            // Act
+            var importfile = TextImportService.Analyse(fileContent, profile);
+            // Assert
+            Assert.IsNull(importfile.AnalyseException);
+            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            Assert.IsNull(importfile.AnalysedCuesheet.Artist);
+            Assert.IsNull(importfile.AnalysedCuesheet.Title);
+            Assert.AreEqual(41, importfile.AnalysedCuesheet.Tracks.Count);
+            Assert.AreEqual("Nachap", importfile.AnalysedCuesheet.Tracks.First().Artist);
+            Assert.AreEqual("Glass", importfile.AnalysedCuesheet.Tracks.First().Title);
+            Assert.AreEqual(new DateTime(2025, 1, 29, 18, 52, 10), importfile.AnalysedCuesheet.Tracks.First().StartDateTime);
+            Assert.AreEqual("Inache", importfile.AnalysedCuesheet.Tracks.Last().Artist);
+            Assert.AreEqual("Andale (MONTA (TN) Remix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
+            Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importfile.AnalysedCuesheet.Tracks.Last().StartDateTime);
+        }
     }
 }
