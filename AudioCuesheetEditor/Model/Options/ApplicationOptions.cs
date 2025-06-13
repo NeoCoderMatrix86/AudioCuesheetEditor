@@ -102,12 +102,33 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
         public Boolean LinkTracks { get; set; } = true;
+        [Obsolete("Will be deleted!")]
         public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
+        [Obsolete("Will be deleted!")]
         public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
         public uint RecordCountdownTimer { get; set; } = 5;
         public Boolean FixedTracksTableHeader { get; set; } = false;
         public String? DisplayTimeSpanFormat { get; set; }
         public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
+        public Guid? SelectedImportProfileId { get; private set; }
+        //TODO: Default profiles
+        public IEnumerable<Importprofile> ImportProfiles { get; set; } = [];
+        [JsonIgnore]
+        public Importprofile? SelectedImportProfile
+        {
+            get => SelectedImportProfileId.HasValue ? ImportProfiles.FirstOrDefault(x => x.Id == SelectedImportProfileId) : null;
+            set
+            {
+                if (ImportProfiles.Any(x => x.Id == value?.Id) == false)
+                {
+                    if (value != null)
+                    {
+                        ImportProfiles = ImportProfiles.Append(value);
+                    }
+                }
+                SelectedImportProfileId = value?.Id;
+            }
+        }
 
         public override ValidationResult Validate(string property)
         {

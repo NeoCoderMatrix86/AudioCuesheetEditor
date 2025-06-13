@@ -13,16 +13,20 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
 {
@@ -497,19 +501,27 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod()]
-        public void Analyse_WithRegularExpression_ReturnsCuesheet()
+        public async Task Analyse_WithRegularExpression_ReturnsCuesheetAsync()
         {
             // Arrange
             var profile = new Importprofile()
             {
+                Id = Guid.NewGuid(),
                 UseRegularExpression = true,
                 SchemeTracks = "<tr>\\s*<td>\\d+</td>\\s*<td>(?<Artist>.*?)</td>\\s*<td>(?<Title>.*?)</td>\\s*<td>(?<StartDateTime>.*?)</td>\\s*</tr>"
             };
             var textImportMemoryStream = new MemoryStream(Resources.Traktor_Export);
             var reader = new StreamReader(textImportMemoryStream);
             var fileContent = reader.ReadToEnd();
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var options = new ApplicationOptions
+            {
+                SelectedImportProfile = profile
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
-            var importfile = TextImportService.Analyse(fileContent, profile);
+            var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.AreEqual(fileContent, importfile.FileContent);
             Assert.IsNull(importfile.AnalyseException);
@@ -529,11 +541,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod()]
-        public void Analyse_WithoutRegularExpression_ReturnsCuesheet()
+        public async Task Analyse_WithoutRegularExpression_ReturnsCuesheetAsync()
         {
             // Arrange
             var profile = new Importprofile()
             {
+                Id = Guid.NewGuid(),
                 UseRegularExpression = false,
                 SchemeCuesheet = "Artist - Title - Cataloguenumber",
                 SchemeTracks = "Artist - Title\tBegin"
@@ -541,8 +554,15 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
             var reader = new StreamReader(textImportMemoryStream);
             var fileContent = reader.ReadToEnd();
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var options = new ApplicationOptions
+            {
+                SelectedImportProfile = profile
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
-            var importfile = TextImportService.Analyse(fileContent, profile);
+            var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);

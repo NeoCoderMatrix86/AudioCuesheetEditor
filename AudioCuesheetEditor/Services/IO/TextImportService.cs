@@ -14,19 +14,23 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    public class TextImportService
+    public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsProvider)
     {
-        public static IImportfile Analyse(string fileContent, Importprofile importprofile)
+        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
+
+        public async Task<IImportfile> AnalyseAsync(string fileContent)
         {
             Importfile importfile = new()
             {
@@ -35,58 +39,63 @@ namespace AudioCuesheetEditor.Services.IO
             try
             {
                 //TODO: Refactoring
-                importfile.FileContent = fileContent;
-                importfile.AnalysedCuesheet = new ImportCuesheet();
-                importfile.FileContentRecognized = fileContent;
-                if (importprofile.UseRegularExpression)
+                var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+                var importprofile = options.SelectedImportProfile;
+                if (importprofile != null)
                 {
-                    if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
+                    importfile.FileContent = fileContent;
+                    importfile.AnalysedCuesheet = new ImportCuesheet();
+                    importfile.FileContentRecognized = fileContent;
+                    if (importprofile.UseRegularExpression)
                     {
-                        var regExCuesheet = new Regex(importprofile.SchemeCuesheet);
-                        SearchFilecontentForCuesheetData(ref importfile, fileContent, importprofile.TimeSpanFormat, regExCuesheet);
-                    }
-                    if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
-                    {
-                        var regExTracks = new Regex(importprofile.SchemeTracks);
-                        SearchFilecontentForTracks(ref importfile, fileContent, importprofile.TimeSpanFormat, regExTracks);
-                    }
-                }
-                else
-                {
-                    Regex? regExCuesheet = null, regExTracks = null;
-                    if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
-                    {
-                        regExCuesheet = CreateCuesheetRegexPattern(importprofile.SchemeCuesheet);
-                    }
-                    if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
-                    {
-                        regExTracks = CreateTrackRegexPattern(importprofile.SchemeTracks);
-                    }
-                    Boolean cuesheetRecognized = false;
-                    List<String?> recognizedFileContent = [];
-                    foreach (var line in fileContent.Split(Environment.NewLine))
-                    {
-                        var recognizedLine = line;
-                        if (String.IsNullOrEmpty(line) == false)
+                        if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
                         {
-                            Boolean recognized = false;
-                            if ((recognized == false) && (cuesheetRecognized == false) && (regExCuesheet != null))
-                            {
-                                recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet, importprofile.TimeSpanFormat);
-                                recognized = recognizedLine != null;
-                                cuesheetRecognized = recognizedLine != null;
-                            }
-                            if ((recognized == false) && (regExTracks != null))
-                            {
-                                var track = new ImportTrack();
-                                recognizedLine = AnalyseLine(line, track, regExTracks, importprofile.TimeSpanFormat);
-                                recognized = recognizedLine != null;
-                                importfile.AnalysedCuesheet.Tracks.Add(track);
-                            }
+                            var regExCuesheet = new Regex(importprofile.SchemeCuesheet);
+                            SearchFilecontentForCuesheetData(ref importfile, fileContent, importprofile.TimeSpanFormat, regExCuesheet);
                         }
-                        recognizedFileContent.Add(recognizedLine);
+                        if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
+                        {
+                            var regExTracks = new Regex(importprofile.SchemeTracks);
+                            SearchFilecontentForTracks(ref importfile, fileContent, importprofile.TimeSpanFormat, regExTracks);
+                        }
                     }
-                    importfile.FileContentRecognized = String.Join(Environment.NewLine, recognizedFileContent);
+                    else
+                    {
+                        Regex? regExCuesheet = null, regExTracks = null;
+                        if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
+                        {
+                            regExCuesheet = CreateCuesheetRegexPattern(importprofile.SchemeCuesheet);
+                        }
+                        if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
+                        {
+                            regExTracks = CreateTrackRegexPattern(importprofile.SchemeTracks);
+                        }
+                        Boolean cuesheetRecognized = false;
+                        List<String?> recognizedFileContent = [];
+                        foreach (var line in fileContent.Split(Environment.NewLine))
+                        {
+                            var recognizedLine = line;
+                            if (String.IsNullOrEmpty(line) == false)
+                            {
+                                Boolean recognized = false;
+                                if ((recognized == false) && (cuesheetRecognized == false) && (regExCuesheet != null))
+                                {
+                                    recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet, importprofile.TimeSpanFormat);
+                                    recognized = recognizedLine != null;
+                                    cuesheetRecognized = recognizedLine != null;
+                                }
+                                if ((recognized == false) && (regExTracks != null))
+                                {
+                                    var track = new ImportTrack();
+                                    recognizedLine = AnalyseLine(line, track, regExTracks, importprofile.TimeSpanFormat);
+                                    recognized = recognizedLine != null;
+                                    importfile.AnalysedCuesheet.Tracks.Add(track);
+                                }
+                            }
+                            recognizedFileContent.Add(recognizedLine);
+                        }
+                        importfile.FileContentRecognized = String.Join(Environment.NewLine, recognizedFileContent);
+                    }
                 }
             }
             catch (Exception ex)
