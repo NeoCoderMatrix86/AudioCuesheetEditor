@@ -511,7 +511,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Act
             var importfile = TextImportService.Analyse(fileContent, profile);
             // Assert
-            //TODO: Check importfile.FileContentRecognized
+            Assert.AreEqual(fileContent, importfile.FileContent);
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
             Assert.IsNull(importfile.AnalysedCuesheet.Artist);
@@ -523,6 +523,9 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual("Inache", importfile.AnalysedCuesheet.Tracks.Last().Artist);
             Assert.AreEqual("Andale (MONTA (TN) Remix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
             Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importfile.AnalysedCuesheet.Tracks.Last().StartDateTime);
+            Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Sasha Fashion")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "2025/1/29 21:48:55")));
         }
 
         [TestMethod()]
