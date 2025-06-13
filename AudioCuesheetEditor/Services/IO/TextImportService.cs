@@ -63,6 +63,7 @@ namespace AudioCuesheetEditor.Services.IO
                         regExTracks = CreateTrackRegexPattern(importprofile.SchemeTracks);
                     }
                     Boolean cuesheetRecognized = false;
+                    List<String?> recognizedFileContent = [];
                     foreach (var line in fileContent.Split(Environment.NewLine))
                     {
                         var recognizedLine = line;
@@ -83,9 +84,9 @@ namespace AudioCuesheetEditor.Services.IO
                                 importfile.AnalysedCuesheet.Tracks.Add(track);
                             }
                         }
-                        //TODO
-                        //recognizedFileContent.Add(recognizedLine);
+                        recognizedFileContent.Add(recognizedLine);
                     }
+                    importfile.FileContentRecognized = String.Join(Environment.NewLine, recognizedFileContent);
                 }
             }
             catch (Exception ex)
