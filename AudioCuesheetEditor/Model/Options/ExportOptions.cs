@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Model.IO.Import;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
@@ -67,7 +68,17 @@ namespace AudioCuesheetEditor.Model.Options
         public Exportprofile? SelectedExportProfile
         {
             get => SelectedProfileId.HasValue ? ExportProfiles.FirstOrDefault(x => x.Id == SelectedProfileId) : null;
-            set => SelectedProfileId = value?.Id;
+            set
+            {
+                if (ExportProfiles.Any(x => x.Id == value?.Id) == false)
+                {
+                    if (value != null)
+                    {
+                        ExportProfiles.Add(value);
+                    }
+                }
+                SelectedProfileId = value?.Id;
+            }
         }
         public Guid? SelectedProfileId { get; private set; }
     }
