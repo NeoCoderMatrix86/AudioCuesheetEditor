@@ -76,7 +76,7 @@ along with Foobar.  If not, see
 
     void ReanalyseImportfile()
     {
-        var fileContent = _sessionStateContainer.Importfile?.FileContent;
+        var fileContent = _sessionStateContainer.Importfile?.FileContentLines;
         if (fileContent != null)
         {
             _importManager.ImportText(fileContent, ApplicationOptions!.ImportScheme, ApplicationOptions.ImportTimeSpanFormat);

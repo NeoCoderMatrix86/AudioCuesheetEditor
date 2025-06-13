@@ -411,23 +411,23 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsNotNull(importfile.FileContentRecognizedLines);
             Assert.AreEqual(string.Format("{0} - {1}				{2}",
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"),
-                string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), importfile.FileContentRecognized.First());
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), importfile.FileContentRecognizedLines.First());
             Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
             Assert.AreEqual("c:\\tmp\\Testfile.mp3", importfile.AnalysedCuesheet.Audiofile);
             Assert.AreEqual(0, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual("Sample Artist 1 - Sample Title 1				00:05:00", importfile.FileContentRecognized.ElementAt(1));
-            Assert.AreEqual("Sample Artist 2 - Sample Title 2				00:09:23", importfile.FileContentRecognized.ElementAt(2));
-            Assert.AreEqual("Sample Artist 3 - Sample Title 3				00:15:54", importfile.FileContentRecognized.ElementAt(3));
-            Assert.AreEqual("Sample Artist 4 - Sample Title 4				00:20:13", importfile.FileContentRecognized.ElementAt(4));
-            Assert.AreEqual("Sample Artist 5 - Sample Title 5				00:24:54", importfile.FileContentRecognized.ElementAt(5));
-            Assert.AreEqual("Sample Artist 6 - Sample Title 6				00:31:54", importfile.FileContentRecognized.ElementAt(6));
-            Assert.AreEqual("Sample Artist 7 - Sample Title 7				00:45:54", importfile.FileContentRecognized.ElementAt(7));
-            Assert.AreEqual("Sample Artist 8 - Sample Title 8				01:15:54", importfile.FileContentRecognized.ElementAt(8));
+            Assert.AreEqual("Sample Artist 1 - Sample Title 1				00:05:00", importfile.FileContentRecognizedLines.ElementAt(1));
+            Assert.AreEqual("Sample Artist 2 - Sample Title 2				00:09:23", importfile.FileContentRecognizedLines.ElementAt(2));
+            Assert.AreEqual("Sample Artist 3 - Sample Title 3				00:15:54", importfile.FileContentRecognizedLines.ElementAt(3));
+            Assert.AreEqual("Sample Artist 4 - Sample Title 4				00:20:13", importfile.FileContentRecognizedLines.ElementAt(4));
+            Assert.AreEqual("Sample Artist 5 - Sample Title 5				00:24:54", importfile.FileContentRecognizedLines.ElementAt(5));
+            Assert.AreEqual("Sample Artist 6 - Sample Title 6				00:31:54", importfile.FileContentRecognizedLines.ElementAt(6));
+            Assert.AreEqual("Sample Artist 7 - Sample Title 7				00:45:54", importfile.FileContentRecognizedLines.ElementAt(7));
+            Assert.AreEqual("Sample Artist 8 - Sample Title 8				01:15:54", importfile.FileContentRecognizedLines.ElementAt(8));
         }
 
         [TestMethod()]
@@ -456,7 +456,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsNotNull(importfile.FileContentRecognizedLines);
             Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
             Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
             Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
@@ -464,7 +464,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(string.Format("{0} - {1}				{2}",
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"),
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Title 8"),
-                string.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), importfile.FileContentRecognized.Last());
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), importfile.FileContentRecognizedLines.Last());
         }
 
         [TestMethod()]
@@ -489,11 +489,11 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsNotNull(importfile.FileContentRecognizedLines);
             Assert.AreEqual(string.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "Age Of Love"),
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
-                string.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), importfile.FileContentRecognized.ElementAt(53));
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), importfile.FileContentRecognizedLines.ElementAt(53));
         }
 
         [TestMethod()]

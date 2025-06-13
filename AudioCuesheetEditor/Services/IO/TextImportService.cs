@@ -34,9 +34,10 @@ namespace AudioCuesheetEditor.Services.IO
             };
             try
             {
-                //TODO
-                //importfile.FileContent = fileContent;
+                //TODO: Refactoring
+                importfile.FileContent = fileContent;
                 importfile.AnalysedCuesheet = new ImportCuesheet();
+                importfile.FileContentRecognized = fileContent;
                 if (importprofile.UseRegularExpression)
                 {
                     if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
@@ -85,14 +86,12 @@ namespace AudioCuesheetEditor.Services.IO
                         //TODO
                         //recognizedFileContent.Add(recognizedLine);
                     }
-                    //TODO
                 }
             }
             catch (Exception ex)
             {
-                //TODO:
-                //importfile.FileContent = fileContent;
-                //importfile.FileContentRecognized = fileContent;
+                importfile.FileContent = fileContent;
+                importfile.FileContentRecognized = fileContent;
                 importfile.AnalyseException = ex;
                 importfile.AnalysedCuesheet = null;
             }
@@ -108,7 +107,7 @@ namespace AudioCuesheetEditor.Services.IO
             };
             try
             {
-                importfile.FileContent = fileContent;
+                importfile.FileContentLines = fileContent;
                 importfile.AnalysedCuesheet = new ImportCuesheet();
                 Boolean cuesheetRecognized = false;
                 List<String?> recognizedFileContent = [];
@@ -145,13 +144,13 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 if (recognizedFileContent.Count > 0)
                 {
-                    importfile.FileContentRecognized = recognizedFileContent.AsReadOnly();
+                    importfile.FileContentRecognizedLines = recognizedFileContent.AsReadOnly();
                 }
             }
             catch (Exception ex)
             {
-                importfile.FileContent = fileContent;
-                importfile.FileContentRecognized = fileContent;
+                importfile.FileContentLines = fileContent;
+                importfile.FileContentRecognizedLines = fileContent;
                 importfile.AnalyseException = ex;
                 importfile.AnalysedCuesheet = null;
             }
@@ -306,10 +305,15 @@ namespace AudioCuesheetEditor.Services.IO
                         if (property != null)
                         {
                             SetValue(entity, property, group.Value, timeSpanFormat);
-                            //TODO: Mark the found entry
-                            //recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
-                            //    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
-                            //    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
+                            // Mark the found entry
+                            var matchRecognized = regex.Match(importfile.FileContentRecognized);
+                            var groupRecognized = matchRecognized.Groups[key];
+                            var firstPart = importfile.FileContentRecognized.Substring(0, groupRecognized.Index);
+                            var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
+                            var lastPart = importfile.FileContentRecognized.Substring(groupRecognized.Index + groupRecognized.Length);
+                            importfile.FileContentRecognized = string.Concat(firstPart
+                                , replace
+                                , lastPart);
                         }
                         else
                         {
@@ -343,10 +347,16 @@ namespace AudioCuesheetEditor.Services.IO
                             if (property != null)
                             {
                                 SetValue(entity, property, group.Value, timeSpanFormat);
-                                //TODO: Mark the found entry
-                                //recognizedLine = string.Concat(recognizedLine.AsSpan(0, group.Index + (13 * (groupCounter - 1)))
-                                //    , String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value)
-                                //    , recognizedLine.AsSpan(group.Index + (13 * (groupCounter - 1)) + group.Length));
+                                // Mark the found entry
+                                var matchesRecognized = regex.Matches(importfile.FileContentRecognized);
+                                var matchRecognized = matchesRecognized[matchCounter];
+                                var groupRecognized = matchRecognized.Groups[key];
+                                var firstPart = importfile.FileContentRecognized.Substring(0, groupRecognized.Index);
+                                var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
+                                var lastPart = importfile.FileContentRecognized.Substring(groupRecognized.Index + groupRecognized.Length);
+                                importfile.FileContentRecognized = string.Concat(firstPart
+                                    , replace
+                                    , lastPart);
                             }
                             else
                             {

@@ -279,14 +279,14 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     recognizedLines.Add(recognizedLine);
                 }
-                importfile.FileContent = lines.AsReadOnly();
-                importfile.FileContentRecognized = recognizedLines.AsReadOnly();
+                importfile.FileContentLines = lines.AsReadOnly();
+                importfile.FileContentRecognizedLines = recognizedLines.AsReadOnly();
             }
             catch (Exception ex)
             {
                 importfile.AnalyseException = ex;
                 importfile.AnalysedCuesheet = null;
-                importfile.FileContentRecognized = fileContent;
+                importfile.FileContentRecognizedLines = fileContent;
             }
             return importfile;
         }

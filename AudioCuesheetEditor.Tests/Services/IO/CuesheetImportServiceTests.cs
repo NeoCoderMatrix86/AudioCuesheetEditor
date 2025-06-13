@@ -78,15 +78,15 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalysedCuesheet);
             Assert.AreEqual(8, importFile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "PERFORMER \"Sample CD Artist\""), importFile.FileContentRecognized?.ElementAt(0));
-            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "TITLE \"Sample CD Title\""), importFile.FileContentRecognized?.ElementAt(1));
-            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "FILE \"AC DC - TNT.mp3\" MP3"), importFile.FileContentRecognized?.ElementAt(2));
-            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "CDTEXTFILE \"Testfile.cdt\""), importFile.FileContentRecognized?.ElementAt(3));
-            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "CATALOG 0123456789012"), importFile.FileContentRecognized?.ElementAt(4));
-            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "TRACK 01 AUDIO"), importFile.FileContentRecognized?.ElementAt(5));
-            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PERFORMER \"Sample Artist 1\"")), importFile.FileContentRecognized?.ElementAt(6));
-            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "TITLE \"Sample Title 1\"")), importFile.FileContentRecognized?.ElementAt(7));
-            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "INDEX 01 00:00:00")), importFile.FileContentRecognized?.ElementAt(8));
+            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "PERFORMER \"Sample CD Artist\""), importFile.FileContentRecognizedLines?.ElementAt(0));
+            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "TITLE \"Sample CD Title\""), importFile.FileContentRecognizedLines?.ElementAt(1));
+            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "FILE \"AC DC - TNT.mp3\" MP3"), importFile.FileContentRecognizedLines?.ElementAt(2));
+            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "CDTEXTFILE \"Testfile.cdt\""), importFile.FileContentRecognizedLines?.ElementAt(3));
+            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "CATALOG 0123456789012"), importFile.FileContentRecognizedLines?.ElementAt(4));
+            Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "TRACK 01 AUDIO"), importFile.FileContentRecognizedLines?.ElementAt(5));
+            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PERFORMER \"Sample Artist 1\"")), importFile.FileContentRecognizedLines?.ElementAt(6));
+            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "TITLE \"Sample Title 1\"")), importFile.FileContentRecognizedLines?.ElementAt(7));
+            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "INDEX 01 00:00:00")), importFile.FileContentRecognizedLines?.ElementAt(8));
         }
 
         [TestMethod()]
@@ -203,8 +203,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalysedCuesheet);
-            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "FLAGS 4CH DCP PRE SCMS")), importFile.FileContentRecognized?.ElementAt(8));
-            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PREGAP 00:04:00")), importFile.FileContentRecognized?.ElementAt(35));
+            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "FLAGS 4CH DCP PRE SCMS")), importFile.FileContentRecognizedLines?.ElementAt(8));
+            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PREGAP 00:04:00")), importFile.FileContentRecognizedLines?.ElementAt(35));
             Assert.AreEqual(8, importFile.AnalysedCuesheet.Tracks.Count);
             Assert.IsNotNull(importFile.AnalysedCuesheet.CDTextfile);
             Assert.AreEqual(4, importFile.AnalysedCuesheet.Tracks.ElementAt(0).Flags.Count());

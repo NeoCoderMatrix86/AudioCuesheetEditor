@@ -42,15 +42,15 @@ along with Foobar.  If not, see
 @code {
     [Parameter]
     public EventCallback<string> FileContentChanged { get; set; }
-    public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
+    public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognizedLines;
     public String FileContent
     {
         get
         {
             String fileContent = String.Empty;
-            if (_sessionStateContainer.Importfile?.FileContent != null)
+            if (_sessionStateContainer.Importfile?.FileContentLines != null)
             {
-                fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContent);
+                fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContentLines);
             }
             return fileContent;
         }
