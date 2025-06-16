@@ -37,7 +37,7 @@ along with Foobar.  If not, see
     </MudSelect>
     <MudTextField T="string" Value="ApplicationOptions.SelectedImportProfile?.Name" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))" Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
     <MudStack Row>
-        <MudTextField T="string" Value="ApplicationOptions.SelectedImportProfile?.SchemeCuesheet" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeCuesheet, newValue)"
+        <MudTextField T="string" Text="@ApplicationOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeCuesheet, newValue)"
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))" 
                       Label="@_localizer["Scheme cuesheet"]" Placeholder="@_localizer["Enter the cuesheet scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
@@ -57,7 +57,7 @@ along with Foobar.  If not, see
         </MudMenu>
     </MudStack>
     <MudStack Row>
-        <MudTextField T="string" Value="ApplicationOptions.SelectedImportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeTracks, newValue)"
+        <MudTextField T="string" Text="@ApplicationOptions.SelectedImportProfile?.SchemeTracks" TextChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeTracks, newValue)"
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))"
                       Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the track scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
@@ -73,44 +73,22 @@ along with Foobar.  If not, see
                 }">
                     @_localizer[scheme]
                 </MudMenuItem>
-                }
+            }
         </MudMenu>
     </MudStack>
-    //TODO: Add time span format here
+    <MudStack Row>
+        <MudTextField T="string" @ref="importTimeInputFormatTextField" Text="@ApplicationOptions.SelectedImportProfile?.TimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync"
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))"
+                      Label="@_localizer["Time input format for import"]" Placeholder="@_localizer["Enter the time format for this profile here"]" Variant="Variant.Outlined"
+                      Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
+        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Disabled="ApplicationOptions.SelectedImportProfile == null">
+            @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
+            {
+                <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importTimeInputFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+            }
+        </MudMenu>
+    </MudStack>
 }
-<MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" @ref="importSchemeCuesheetTextField" Label="@_localizer["Textimport scheme cuesheet"]" Text="@ApplicationOptions?.ImportScheme.SchemeCuesheet" 
-                  TextChanged="ImportSchemeCuesheetTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))) == false" 
-                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeCuesheet))" />
-    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
-        @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
-        {
-            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importSchemeCuesheetTextField, scheme)">@_localizer[scheme]</MudMenuItem>
-        }
-    </MudMenu>
-</MudStack>
-<MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" @ref="importSchemeTracksTextField" Label="@_localizer["Textimport scheme tracks"]" Text="@ApplicationOptions?.ImportScheme.SchemeTracks" 
-                  TextChanged="ImportSchemeTracksTextChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeTracks))) == false"
-                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportScheme, nameof(TextImportScheme.SchemeTracks))" />
-    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
-        @foreach (var scheme in TextImportScheme.AvailableSchemesTrack)
-        {
-            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importSchemeTracksTextField, scheme)">@_localizer[scheme]</MudMenuItem>
-        }
-    </MudMenu>
-</MudStack>
-<MudStack Row AlignItems="AlignItems.Baseline">
-    <MudTextField T="string" @ref="importTimeInputFormatTextField" Label="@_localizer["Time input format for import"]" Text="@ApplicationOptions?.ImportTimeSpanFormat?.Scheme" 
-                  TextChanged="ImportTimeInputFormatChangedAsync" Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.ImportTimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
-                  ErrorText="@GetValidationErrorMessage(ApplicationOptions?.ImportTimeSpanFormat, nameof(TimeSpanFormat.Scheme))" />
-    <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown">
-        @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
-        {
-            <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importTimeInputFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
-        }
-    </MudMenu>
-</MudStack>
 
 @code {
     //TODO: Make header import profiles (naming)
@@ -123,29 +101,30 @@ along with Foobar.  If not, see
     [Parameter]
     public EventCallback<string> ImportTimeInputFormatChanged { get; set; }
 
-    MudTextField<string>? importSchemeCuesheetTextField, importSchemeTracksTextField, importTimeInputFormatTextField;
+    MudTextField<string>? importTimeInputFormatTextField;
 
     void AppendPlaceholderToTextField(MudTextField<string>? mudTextField, string placeholder)
     {
         mudTextField?.SetText($"{mudTextField.Text}{placeholder}");
     }
 
-    async Task ImportSchemeCuesheetTextChangedAsync(string newScheme)
-    {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ImportScheme.SchemeCuesheet, newScheme);
-        await ImportSchemeCuesheetChanged.InvokeAsync(newScheme);
-    }
-
-    async Task ImportSchemeTracksTextChangedAsync(string newScheme)
-    {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ImportScheme.SchemeTracks, newScheme);
-        await ImportSchemeTracksChanged.InvokeAsync(newScheme);
-    }
-
     async Task ImportTimeInputFormatChangedAsync(string newScheme)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ImportTimeSpanFormat.Scheme, newScheme);
-        await ImportTimeInputFormatChanged.InvokeAsync(newScheme);
+        var profile = ApplicationOptions?.SelectedImportProfile;
+        if (profile != null)
+        {
+            TimeSpanFormat? format = null;
+            if (string.IsNullOrEmpty(newScheme))
+            {
+                format = null;
+            }
+            else
+            {
+                format = new() { Scheme = newScheme };
+            }
+            await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.SelectedImportProfile!.TimeSpanFormat, format);
+            await ImportTimeInputFormatChanged.InvokeAsync(newScheme);
+        }
     }
 
     String? GetValidationErrorMessage(object? model, string propertyName)
