@@ -13,14 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -34,12 +30,12 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService)
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
-        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
+        private readonly ITextImportService _textImportService = textImportService;
 
         public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
@@ -74,22 +70,18 @@ namespace AudioCuesheetEditor.Services.IO
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
-                    List<String?> lines = [];
-                    while (reader.EndOfStream == false)
-                    {
-                        lines.Add(reader.ReadLine());
-                    }
-                    var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-                    ImportText([.. lines], options.ImportScheme, options.ImportTimeSpanFormat);
+                    var stringFileContent = reader.ReadToEnd();
+                    await ImportTextAsync(stringFileContent);
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }
             }
             return importFileTypes;
         }
 
-        public void ImportText(IEnumerable<String?> fileContent, TextImportScheme textImportScheme, TimeSpanFormat timeSpanFormat)
+        //TODO: Test
+        public async Task ImportTextAsync(string fileContent)
         {
-            _sessionStateContainer.Importfile = TextImportService.Analyse(textImportScheme, fileContent, timeSpanFormat);
+            _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
                 var importCuesheet = new Cuesheet();

@@ -68,18 +68,17 @@ along with Foobar.  If not, see
     Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
 
-    void ImportFileContent_FileContentChanged(string newFileContent)
+    async Task ImportFileContent_FileContentChanged(string newFileContent)
     {
-        var textToAnalyse = newFileContent.Split(Environment.NewLine);
-        _importManager.ImportText(textToAnalyse, ApplicationOptions!.ImportScheme, ApplicationOptions!.ImportTimeSpanFormat);
+        await _importManager.ImportTextAsync(newFileContent);
     }
 
-    void ReanalyseImportfile()
+    async Task ReanalyseImportfile()
     {
-        var fileContent = _sessionStateContainer.Importfile?.FileContentLines;
+        var fileContent = _sessionStateContainer.Importfile?.FileContent;
         if (fileContent != null)
         {
-            _importManager.ImportText(fileContent, ApplicationOptions!.ImportScheme, ApplicationOptions.ImportTimeSpanFormat);
+            await _importManager.ImportTextAsync(fileContent);
         }
     }
 
