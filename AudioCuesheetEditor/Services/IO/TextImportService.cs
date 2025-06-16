@@ -91,7 +91,7 @@ namespace AudioCuesheetEditor.Services.IO
             });
         }
 
-        private void SearchForCuesheetData(ref Importfile importfile, string fileContent, Importprofile importprofile)
+        private static void SearchForCuesheetData(ref Importfile importfile, string fileContent, Importprofile importprofile)
         {
             if (string.IsNullOrWhiteSpace(importprofile.SchemeCuesheet) == false)
             {
@@ -126,7 +126,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private void SearchForTrackData(ref Importfile importfile, string fileContent, Importprofile importprofile)
+        private static void SearchForTrackData(ref Importfile importfile, string fileContent, Importprofile importprofile)
         {
             if (string.IsNullOrWhiteSpace(importprofile.SchemeTracks) == false)
             {
