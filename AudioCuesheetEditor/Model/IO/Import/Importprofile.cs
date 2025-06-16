@@ -21,6 +21,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
     {
         //TODO: validate?
         public Guid Id { get; init; }
+        public String? Name { get; set; }
         public Boolean UseRegularExpression { get; set; }
         public String? SchemeCuesheet { get; set; }
         public String? SchemeTracks { get; set; }

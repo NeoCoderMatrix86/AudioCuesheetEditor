@@ -112,7 +112,7 @@ namespace AudioCuesheetEditor.Model.Options
         public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
         public Guid? SelectedImportProfileId { get; private set; }
         //TODO: Default profiles
-        public IEnumerable<Importprofile> ImportProfiles { get; set; } = [];
+        public ICollection<Importprofile> ImportProfiles { get; set; } = [];
         [JsonIgnore]
         public Importprofile? SelectedImportProfile
         {
@@ -123,7 +123,7 @@ namespace AudioCuesheetEditor.Model.Options
                 {
                     if (value != null)
                     {
-                        ImportProfiles = ImportProfiles.Append(value);
+                        ImportProfiles.Add(value);
                     }
                 }
                 SelectedImportProfileId = value?.Id;
