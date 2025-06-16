@@ -50,7 +50,7 @@ builder.Services.AddScoped<MusicBrainzDataProvider>();
 builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
 builder.Services.AddScoped<ITraceChangeManager, TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
-builder.Services.AddScoped<TextImportService>();
+builder.Services.AddScoped<ITextImportService, TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<CuesheetExportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
