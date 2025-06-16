@@ -22,6 +22,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -34,78 +35,146 @@ namespace AudioCuesheetEditor.Services.IO
         {
             Importfile importfile = new()
             {
+                FileContent = fileContent,
+                AnalysedCuesheet = new ImportCuesheet(),
                 FileType = ImportFileType.Textfile
             };
             try
             {
-                //TODO: Refactoring
                 var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-                var importprofile = options.SelectedImportProfile;
-                if (importprofile != null)
-                {
-                    importfile.FileContent = fileContent;
-                    importfile.AnalysedCuesheet = new ImportCuesheet();
-                    importfile.FileContentRecognized = fileContent;
-                    if (importprofile.UseRegularExpression)
-                    {
-                        if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
-                        {
-                            var regExCuesheet = new Regex(importprofile.SchemeCuesheet);
-                            SearchFilecontentForCuesheetData(ref importfile, fileContent, importprofile.TimeSpanFormat, regExCuesheet);
-                        }
-                        if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
-                        {
-                            var regExTracks = new Regex(importprofile.SchemeTracks);
-                            SearchFilecontentForTracks(ref importfile, fileContent, importprofile.TimeSpanFormat, regExTracks);
-                        }
-                    }
-                    else
-                    {
-                        Regex? regExCuesheet = null, regExTracks = null;
-                        if (String.IsNullOrEmpty(importprofile.SchemeCuesheet) == false)
-                        {
-                            regExCuesheet = CreateCuesheetRegexPattern(importprofile.SchemeCuesheet);
-                        }
-                        if (String.IsNullOrEmpty(importprofile.SchemeTracks) == false)
-                        {
-                            regExTracks = CreateTrackRegexPattern(importprofile.SchemeTracks);
-                        }
-                        Boolean cuesheetRecognized = false;
-                        List<String?> recognizedFileContent = [];
-                        foreach (var line in fileContent.Split(Environment.NewLine))
-                        {
-                            var recognizedLine = line;
-                            if (String.IsNullOrEmpty(line) == false)
-                            {
-                                Boolean recognized = false;
-                                if ((recognized == false) && (cuesheetRecognized == false) && (regExCuesheet != null))
-                                {
-                                    recognizedLine = AnalyseLine(line, importfile.AnalysedCuesheet, regExCuesheet, importprofile.TimeSpanFormat);
-                                    recognized = recognizedLine != null;
-                                    cuesheetRecognized = recognizedLine != null;
-                                }
-                                if ((recognized == false) && (regExTracks != null))
-                                {
-                                    var track = new ImportTrack();
-                                    recognizedLine = AnalyseLine(line, track, regExTracks, importprofile.TimeSpanFormat);
-                                    recognized = recognizedLine != null;
-                                    importfile.AnalysedCuesheet.Tracks.Add(track);
-                                }
-                            }
-                            recognizedFileContent.Add(recognizedLine);
-                        }
-                        importfile.FileContentRecognized = String.Join(Environment.NewLine, recognizedFileContent);
-                    }
-                }
+                var importprofile = options.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
+                SearchForCuesheetData(ref importfile, fileContent, importprofile);
+                SearchForTrackData(ref importfile, fileContent, importprofile);
             }
             catch (Exception ex)
             {
-                importfile.FileContent = fileContent;
                 importfile.FileContentRecognized = fileContent;
                 importfile.AnalyseException = ex;
                 importfile.AnalysedCuesheet = null;
             }
             return importfile;
+        }
+
+        private static string ApplyRegexAndMarkGroups(object entity, Regex regex, string input, TimeSpanFormat? timeSpanFormat)
+        {
+            return regex.Replace(input, match =>
+            {
+                string result = match.Value;
+                var groupInfos = new List<(int RelIndex, int Length, string Value, string Key)>();
+                for (int matchCounter = 1; matchCounter < match.Groups.Count; matchCounter++)
+                {
+                    var group = match.Groups[matchCounter];
+                    var key = regex.GroupNameFromNumber(matchCounter);
+                    if (!string.IsNullOrEmpty(key) && key != matchCounter.ToString())
+                    {
+                        var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                        if (property != null)
+                        {
+                            SetValue(entity, property, group.Value, timeSpanFormat);
+                        }
+                        int relIndex = group.Index - match.Index;
+                        groupInfos.Add((relIndex, group.Length, group.Value, key));
+                    }
+                }
+                if (groupInfos.Count == 0)
+                {
+                    return result;
+                }
+                groupInfos.Sort((a, b) => b.RelIndex.CompareTo(a.RelIndex));
+                var sb = new StringBuilder(result);
+                foreach (var (RelIndex, Length, Value, Key) in groupInfos)
+                {
+                    sb.Remove(RelIndex, Length);
+                    sb.Insert(RelIndex, string.Format(CuesheetConstants.RecognizedMarkHTML, Value));
+                }
+                return sb.ToString();
+            });
+        }
+
+        private void SearchForCuesheetData(ref Importfile importfile, string fileContent, Importprofile importprofile)
+        {
+            if (string.IsNullOrWhiteSpace(importprofile.SchemeCuesheet) == false)
+            {
+                var cuesheet = importfile.AnalysedCuesheet;
+                Regex regex;
+                if (importprofile.UseRegularExpression == true)
+                {
+                    regex = new Regex(importprofile.SchemeCuesheet, RegexOptions.Multiline);
+                }
+                else
+                {
+                    regex = CreateCuesheetRegexPattern(importprofile.SchemeCuesheet);
+                }
+
+                if (importprofile.UseRegularExpression)
+                {
+                    importfile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importprofile.TimeSpanFormat);
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    using (var reader = new StringReader(fileContent))
+                    {
+                        string? line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            sb.AppendLine(ApplyRegexAndMarkGroups(cuesheet!, regex, line, importprofile.TimeSpanFormat));
+                        }
+                    }
+                    importfile.FileContentRecognized = sb.ToString();
+                }
+            }
+        }
+
+        private void SearchForTrackData(ref Importfile importfile, string fileContent, Importprofile importprofile)
+        {
+            if (string.IsNullOrWhiteSpace(importprofile.SchemeTracks) == false)
+            {
+                Regex regex;
+                if (importprofile.UseRegularExpression == true)
+                {
+                    regex = new Regex(importprofile.SchemeTracks, RegexOptions.Multiline);
+                }
+                else
+                {
+                    regex = CreateTrackRegexPattern(importprofile.SchemeTracks);
+                }
+
+                var cuesheet = importfile.AnalysedCuesheet;
+
+                if (importprofile.UseRegularExpression)
+                {
+                    importfile.FileContentRecognized ??= fileContent;
+                    importfile.FileContentRecognized = regex.Replace(importfile.FileContentRecognized,
+                        match =>
+                        {
+                            var track = new ImportTrack();
+                            string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importprofile.TimeSpanFormat);
+                            cuesheet!.Tracks.Add(track);
+                            return marked;
+                        }
+                    );
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    using (var reader = new StringReader(fileContent))
+                    {
+                        string? line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            var track = new ImportTrack();
+                            var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importprofile.TimeSpanFormat);
+                            if (!string.Equals(markedLine, line))
+                            {
+                                cuesheet!.Tracks.Add(track);
+                            }
+                            sb.AppendLine(markedLine);
+                        }
+                    }
+                    importfile.FileContentRecognized = sb.ToString();
+                }
+            }
         }
 
         [Obsolete("Will be deleted")]
@@ -300,86 +369,6 @@ namespace AudioCuesheetEditor.Services.IO
                 regexString = regexString.Replace("\\t", "(?:...\\t)");
 
                 return new Regex(regexString);
-            }
-        }
-
-        private static void SearchFilecontentForCuesheetData(ref Importfile importfile, string fileContent, TimeSpanFormat? timeSpanFormat, Regex regex)
-        {
-            var match = regex.Match(fileContent);
-            if (match.Success)
-            {
-                var entity = importfile.AnalysedCuesheet;
-                for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
-                {
-                    var key = match.Groups.Keys.ElementAt(groupCounter);
-                    var group = match.Groups.GetValueOrDefault(key);
-                    if (group?.Success == true)
-                    {
-                        var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                        if (property != null)
-                        {
-                            SetValue(entity, property, group.Value, timeSpanFormat);
-                            // Mark the found entry
-                            var matchRecognized = regex.Match(importfile.FileContentRecognized);
-                            var groupRecognized = matchRecognized.Groups[key];
-                            var firstPart = importfile.FileContentRecognized.Substring(0, groupRecognized.Index);
-                            var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
-                            var lastPart = importfile.FileContentRecognized.Substring(groupRecognized.Index + groupRecognized.Length);
-                            importfile.FileContentRecognized = string.Concat(firstPart, replace, lastPart);
-                        }
-                        else
-                        {
-                            throw new NullReferenceException(String.Format("Property '{0}' was not found", key));
-                        }
-                    }
-                    else
-                    {
-                        throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
-                    }
-                }
-            }
-        }
-
-        private static void SearchFilecontentForTracks(ref Importfile importfile, string fileContent, TimeSpanFormat? timeSpanFormat, Regex regex)
-        {
-            var matches = regex.Matches(fileContent);
-            for (int matchCounter = 0; matchCounter < matches.Count; matchCounter++)
-            {
-                var match = matches[matchCounter];
-                if (match.Success)
-                {
-                    var entity = new ImportTrack();
-                    for (int groupCounter = 1; groupCounter < match.Groups.Count; groupCounter++)
-                    {
-                        var key = match.Groups.Keys.ElementAt(groupCounter);
-                        var group = match.Groups.GetValueOrDefault(key);
-                        if (group?.Success == true)
-                        {
-                            var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                            if (property != null)
-                            {
-                                SetValue(entity, property, group.Value, timeSpanFormat);
-                                // Mark the found entry
-                                var matchesRecognized = regex.Matches(importfile.FileContentRecognized);
-                                var matchRecognized = matchesRecognized[matchCounter];
-                                var groupRecognized = matchRecognized.Groups[key];
-                                var firstPart = importfile.FileContentRecognized.Substring(0, groupRecognized.Index);
-                                var replace = String.Format(CuesheetConstants.RecognizedMarkHTML, group.Value);
-                                var lastPart = importfile.FileContentRecognized.Substring(groupRecognized.Index + groupRecognized.Length);
-                                importfile.FileContentRecognized = string.Concat(firstPart, replace, lastPart);
-                            }
-                            else
-                            {
-                                throw new NullReferenceException(String.Format("Property '{0}' was not found", key));
-                            }
-                        }
-                        else
-                        {
-                            throw new NullReferenceException(String.Format("Group '{0}' could not be found!", key));
-                        }
-                    }
-                    importfile.AnalysedCuesheet!.Tracks.Add(entity);
-                }
             }
         }
     }
