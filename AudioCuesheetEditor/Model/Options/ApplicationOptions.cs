@@ -33,6 +33,18 @@ namespace AudioCuesheetEditor.Model.Options
     public class ApplicationOptions : Validateable, IOptions
     {
         public const LogLevel DefaultLogLevel = LogLevel.Information;
+        public static readonly Importprofile DefaultSelectedImportprofile = new()
+        {
+            Name = "Textfile with cuesheet data",
+            UseRegularExpression = false,
+            SchemeCuesheet = @"(?'Artist'\w*) - (?'Title'\w*)\t{1,}(?'Audiofile'.*)",
+            SchemeTracks = @"(?'Artist'.+?) - (?'Title'.+?)\s*\t+(?'End'.+)"
+        };
+        public static readonly ICollection<Importprofile> DefaultImportprofiles =
+        [
+            DefaultSelectedImportprofile,
+            //TODO
+        ];
         private string? projectFilename = Projectfile.DefaultFilename;
         private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
         public String? CuesheetFilename 
@@ -110,9 +122,9 @@ namespace AudioCuesheetEditor.Model.Options
         public Boolean FixedTracksTableHeader { get; set; } = false;
         public String? DisplayTimeSpanFormat { get; set; }
         public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
+        [JsonInclude]
         public Guid? SelectedImportProfileId { get; private set; }
-        //TODO: Default profiles
-        public ICollection<Importprofile> ImportProfiles { get; set; } = [];
+        public ICollection<Importprofile> ImportProfiles { get; set; } = DefaultImportprofiles;
         [JsonIgnore]
         public Importprofile? SelectedImportProfile
         {
