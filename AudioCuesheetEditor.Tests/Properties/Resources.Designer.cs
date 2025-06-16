@@ -125,7 +125,7 @@ namespace AudioCuesheetEditor.Tests.Properties {
         /// </summary>
         internal static byte[] Textimport_with_Cuesheetdata {
             get {
-                object obj = ResourceManager.GetObject("Textimport_with_Cuesheetdata", resourceCulture);
+                object obj = ResourceManager.GetObject("Textimport with Cuesheetdata", resourceCulture);
                 return ((byte[])(obj));
             }
         }

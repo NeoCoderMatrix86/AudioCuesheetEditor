@@ -344,32 +344,71 @@ namespace AudioCuesheetEditor.Services.IO
 
         private static Regex CreateTrackRegexPattern(string scheme)
         {
-            var regex = new Regex(scheme);
-            var groupNames = regex.GetGroupNames();
-            //GroupNames always has a group "0", so we count for more than one group
-            if (groupNames.Any(x => x != "0"))
+            string[] fieldNames =
+            [
+                nameof(ImportTrack.Artist),
+                nameof(ImportTrack.Title),
+                nameof(ImportTrack.Begin),
+                nameof(ImportTrack.End),
+                nameof(ImportTrack.Length),
+                nameof(ImportTrack.Position),
+                nameof(ImportTrack.Flags),
+                nameof(ImportTrack.PreGap),
+                nameof(ImportTrack.PostGap),
+                nameof(ImportTrack.StartDateTime)
+            ];
+            var parts = new List<string>();
+            int idx = 0;
+            while (idx < scheme.Length)
             {
-                return regex;
+                var field = fieldNames.FirstOrDefault(fn => scheme.IndexOf(fn, idx, StringComparison.Ordinal) == idx);
+                if (field != null)
+                {
+                    parts.Add(field);
+                    idx += field.Length;
+                }
+                else
+                {
+                    int nextFieldIdx = scheme.Length;
+                    foreach (var fn in fieldNames)
+                    {
+                        int pos = scheme.IndexOf(fn, idx, StringComparison.Ordinal);
+                        if (pos >= 0 && pos < nextFieldIdx)
+                        {
+                            nextFieldIdx = pos;
+                        }
+                    }
+                    string separator = scheme.Substring(idx, nextFieldIdx - idx);
+                    parts.Add(separator);
+                    idx = nextFieldIdx;
+                }
             }
-            else
+
+            var regexBuilder = new StringBuilder("^");
+            for (int i = 0; i < parts.Count; i++)
             {
-                var regexString = Regex.Escape(scheme);
-
-                regexString = regexString.Replace(nameof(ImportTrack.Artist), $"(?<{nameof(ImportTrack.Artist)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.Title), $"(?<{nameof(ImportTrack.Title)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.Begin), $"(?<{nameof(ImportTrack.Begin)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.End), $"(?<{nameof(ImportTrack.End)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.Length), $"(?<{nameof(ImportTrack.Length)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.Position), $"(?<{nameof(ImportTrack.Position)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.Flags), $"(?<{nameof(ImportTrack.Flags)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.PreGap), $"(?<{nameof(ImportTrack.PreGap)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.PostGap), $"(?<{nameof(ImportTrack.PostGap)}>.+)");
-                regexString = regexString.Replace(nameof(ImportTrack.StartDateTime), $"(?<{nameof(ImportTrack.StartDateTime)}>.+)");
-                //Replace tab with non matching group
-                regexString = regexString.Replace("\\t", "(?:...\\t)");
-
-                return new Regex(regexString);
+                var part = parts[i];
+                if (fieldNames.Contains(part))
+                {
+                    bool isLast = i == parts.Count - 1 || parts.Skip(i + 1).All(p => !fieldNames.Contains(p));
+                    if (isLast)
+                    {
+                        regexBuilder.Append($@"(?<{part}>.+)");
+                    }
+                    else
+                    {
+                        regexBuilder.Append($@"(?<{part}>.+?)");
+                    }
+                }
+                else
+                {
+                    string sep = Regex.Escape(part).Replace("\\t", @"\t");
+                    regexBuilder.Append(sep);
+                }
             }
+            regexBuilder.Append('$');
+
+            return new Regex(regexBuilder.ToString());
         }
     }
 }
