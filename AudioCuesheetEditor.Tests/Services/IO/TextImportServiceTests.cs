@@ -566,7 +566,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Assert
             Assert.IsNull(importfile.AnalyseException);
             Assert.IsNotNull(importfile.AnalysedCuesheet);
-            //TODO: Check importfile.FileContentRecognized
             Assert.AreEqual("DJFreezeT", importfile.AnalysedCuesheet.Artist);
             Assert.AreEqual("Rabbit Hole Mix", importfile.AnalysedCuesheet.Title);
             Assert.AreEqual("0123456789123", importfile.AnalysedCuesheet.Cataloguenumber);
@@ -576,6 +575,11 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual("Nikolay Kirov", importfile.AnalysedCuesheet.Tracks.Last().Artist);
             Assert.AreEqual("Chasing the Sun (Original Mix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
             Assert.IsNull(importfile.AnalysedCuesheet.Tracks.Last().Begin);
+            Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Nikolay Kirov")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Chasing the Sun (Original Mix)")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "SHDW & Obscure Shape")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Wächter der Nacht (Original Mix)")));
         }
     }
 }
