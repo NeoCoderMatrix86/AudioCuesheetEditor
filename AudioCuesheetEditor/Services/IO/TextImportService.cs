@@ -27,7 +27,7 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsProvider)
+    public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsProvider) : ITextImportService
     {
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
 
