@@ -22,9 +22,6 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject IDialogService _dialogService
 
-<MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
-    <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>   
-</MudStack>
 @if (ApplicationOptions != null)
 {
     <MudStack Row>
@@ -46,7 +43,7 @@ along with Foobar.  If not, see
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))" 
                       Label="@_localizer["Scheme cuesheet"]" Placeholder="@_localizer["Enter the cuesheet scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
-        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Disabled="ApplicationOptions.SelectedImportProfile == null">
+        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
             {
                 <MudMenuItem OnClick="() => 
@@ -66,7 +63,7 @@ along with Foobar.  If not, see
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))"
                       Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the track scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
-        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Disabled="ApplicationOptions.SelectedImportProfile == null">
+        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
             {
                 <MudMenuItem OnClick="() =>
@@ -86,7 +83,7 @@ along with Foobar.  If not, see
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))"
                       Label="@_localizer["Time input format for import"]" Placeholder="@_localizer["Enter the time format for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
-        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Disabled="ApplicationOptions.SelectedImportProfile == null">
+        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
             {
                 <MudMenuItem OnClick="() => AppendPlaceholderToTextField(importTimeInputFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
@@ -96,7 +93,6 @@ along with Foobar.  If not, see
 }
 
 @code {
-    //TODO: Make header import profiles (naming)
     //TODO: fire events for scheme changes
     //TODO: Localization
     //TODO: UseRegularExpression of ImportProfile
