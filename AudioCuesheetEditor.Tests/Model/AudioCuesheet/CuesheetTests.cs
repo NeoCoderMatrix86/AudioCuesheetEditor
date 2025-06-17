@@ -429,6 +429,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void ImportSamplesTest()
         {
+            //TODO: Move Sample_Inputfile.txt to resources
             // Arrange
             var fileContent = File.ReadAllLines("Sample_Inputfile.txt");
             var testHelper = new TestHelper();
@@ -459,6 +460,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         [TestMethod()]
         public void ImportSamples2Test()
         {
+            //TODO: Move Sample_Inputfile2.txt to resources
             // Arrange
             var fileContent = File.ReadAllLines("Sample_Inputfile2.txt");
             var testHelper = new TestHelper();
