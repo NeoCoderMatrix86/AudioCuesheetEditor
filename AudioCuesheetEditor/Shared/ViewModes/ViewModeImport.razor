@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                 </TitleContent>
                 <ChildContent>
                     <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
-                    <Importprofiles ImportSchemeCuesheetChanged="ReanalyseImportfile" ImportSchemeTracksChanged="ReanalyseImportfile" ImportTimeInputFormatChanged="ReanalyseImportfile" />
+                    <Importprofiles ImportprofileChanged="ReanalyseImportfile" />
                     @if (_sessionStateContainer.Importfile?.AnalyseException != null)
                     {
                         <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
