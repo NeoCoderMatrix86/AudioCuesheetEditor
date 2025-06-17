@@ -38,11 +38,11 @@ along with Foobar.  If not, see
         </MudButtonGroup>
     </MudStack>
     <MudTextField T="string" Value="ApplicationOptions.SelectedImportProfile?.Name" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))" Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
-    <MudSwitch T="Boolean?" Color="Color.Secondary" Value="ApplicationOptions.SelectedImportProfile?.UseRegularExpression" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="UseRegularExpressionChangedAsync" Label="@_localizer["Use regular expressions"]" />
+    <MudSwitch T="Boolean?" Color="Color.Secondary" Value="ApplicationOptions.SelectedImportProfile?.UseRegularExpression" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="UseRegularExpressionChangedAsync" Label="@_localizer["Search using regular expressions"]" />
     <MudStack Row>
         <MudTextField T="string" @ref="schemeCuesheetTextField" Text="@ApplicationOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="SchemeCuesheetChangedAsync"
-                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))" 
-                      Label="@_localizer["Scheme cuesheet"]" Placeholder="@_localizer["Enter the cuesheet scheme for this profile here"]" Variant="Variant.Outlined"
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))"
+                      Label="@_localizer["Scheme common data"]" Placeholder="@_localizer["Enter the common data scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
         <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
@@ -78,8 +78,6 @@ along with Foobar.  If not, see
 }
 
 @code {
-    //TODO: Localization
-
     [Parameter]
     public EventCallback ImportprofileChanged { get; set; }
 
@@ -151,7 +149,7 @@ along with Foobar.  If not, see
     {
         var parameters = new DialogParameters<ConfirmDialog>
         {
-            { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
+            { x => x.ConfirmText, _localizer["Are you sure you want to reset the import profiles to factory default?"] },
         };
         var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
         var result = await dialog.Result;
