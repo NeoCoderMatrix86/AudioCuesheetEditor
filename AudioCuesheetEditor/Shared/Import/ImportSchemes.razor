@@ -23,18 +23,23 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 
 <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
-    <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>
-    <MudIconButton Icon="@Icons.Material.Outlined.LockReset" Color="Color.Warning" Variant="Variant.Filled" OnClick="ResetSchemes" />
+    <MudText Typo="Typo.h5">@_localizer["Import schemes"]</MudText>   
 </MudStack>
 @if (ApplicationOptions != null)
 {
-    //TODO: Add buttons for reset, add profile, delete profile
-    <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Select import profile"]" Value="ApplicationOptions.SelectedImportProfile" ValueChanged="(newSelectedProfile) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.SelectedImportProfile, newSelectedProfile)">
-        @foreach (var profile in ApplicationOptions.ImportProfiles)
-        {
-            <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
-        }
-    </MudSelect>
+    <MudStack Row>
+        <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Select import profile"]" Value="ApplicationOptions.SelectedImportProfile" ValueChanged="(newSelectedProfile) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.SelectedImportProfile, newSelectedProfile)">
+            @foreach (var profile in ApplicationOptions.ImportProfiles)
+            {
+                <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
+            }
+        </MudSelect>
+        <MudButtonGroup OverrideStyles="false" Class="mt-2" Style="height: 56px;">
+            <MudIconButton Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Add" OnClick="AddImportprofileClick" />
+            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Delete" Disabled="ApplicationOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" />
+            <MudIconButton Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.LockReset" OnClick="ResetSchemes" />
+        </MudButtonGroup>
+    </MudStack>
     <MudTextField T="string" Value="ApplicationOptions.SelectedImportProfile?.Name" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))" Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
     <MudStack Row>
         <MudTextField T="string" Text="@ApplicationOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeCuesheet, newValue)"
@@ -93,6 +98,8 @@ along with Foobar.  If not, see
 @code {
     //TODO: Make header import profiles (naming)
     //TODO: fire events for scheme changes
+    //TODO: Localization
+    //TODO: UseRegularExpression of ImportProfile
     [Parameter]
     public EventCallback<string> ImportSchemeCuesheetChanged { get; set; }
 
@@ -144,23 +151,40 @@ along with Foobar.  If not, see
 
     async Task ResetSchemes()
     {
-        if (ApplicationOptions != null)
+        var parameters = new DialogParameters<ConfirmDialog>
         {
-            var parameters = new DialogParameters<ConfirmDialog>
+            { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            ApplicationOptions!.ImportProfiles = ApplicationOptions.DefaultImportprofiles;
+            ApplicationOptions!.SelectedImportProfile = ApplicationOptions.DefaultSelectedImportprofile;
+            await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
+            //TODO: fire events for scheme changes
+        }
+    }
+
+    async Task AddImportprofileClick()
+    {
+        var profile = new Importprofile();
+        ApplicationOptions!.SelectedImportProfile = profile;
+        await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
+    }
+
+    async Task DeleteImportprofileClick()
+    {
+        var selectedProfile = ApplicationOptions?.SelectedImportProfile;
+        if (selectedProfile != null)
+        {
+            ApplicationOptions!.ImportProfiles.Remove(selectedProfile);
+            var lastProfile = ApplicationOptions.ImportProfiles.LastOrDefault();
+            if (lastProfile != null)
             {
-                { x => x.ConfirmText, _localizer["Are you sure you want to reset the import schemes to factory default?"] },
-            };
-            var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
-            var result = await dialog.Result;
-            if (result?.Canceled == false)
-            {
-                ApplicationOptions.ImportScheme = TextImportScheme.DefaultTextImportScheme;
-                ApplicationOptions.ImportTimeSpanFormat = new();
-                await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
-                await ImportSchemeCuesheetChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeCuesheet);
-                await ImportSchemeTracksChanged.InvokeAsync(ApplicationOptions.ImportScheme.SchemeTracks);
-                await ImportTimeInputFormatChanged.InvokeAsync(ApplicationOptions.ImportTimeSpanFormat.Scheme);
+                ApplicationOptions!.SelectedImportProfile = lastProfile;
             }
+            await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
         }
     }
 }
