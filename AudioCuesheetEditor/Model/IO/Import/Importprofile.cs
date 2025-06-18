@@ -36,7 +36,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public String? SchemeCuesheet { get; set; }
         public String? SchemeTracks { get; set; }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
-        //TODO: Test
         public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
