@@ -650,5 +650,38 @@ Local Singles~Voices~02.08.2024 22:25:59";
             Assert.AreEqual("Voices", importfile.AnalysedCuesheet.Tracks.ElementAt(29).Title);
             Assert.AreEqual(new DateTime(2024, 8, 2, 22, 25, 59), importfile.AnalysedCuesheet.Tracks.ElementAt(29).StartDateTime);
         }
+
+        [TestMethod()]
+        public async Task AnalyseAsync_WithCommonDataMatchingMultipleLines_SetsCommonDataOnceAsync()
+        {
+            // Arrange
+            var profile = new Importprofile()
+            {
+                Id = Guid.NewGuid(),
+                UseRegularExpression = false,
+                SchemeCuesheet = "Artist - Title\tAudiofile",
+                SchemeTracks = "Artist - Title\tBegin"
+            };
+            var textImportMemoryStream = new MemoryStream(Resources.Sample_Inputfile);
+            var reader = new StreamReader(textImportMemoryStream);
+            var fileContent = reader.ReadToEnd();
+            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
+            var options = new ApplicationOptions
+            {
+                SelectedImportProfile = profile
+            };
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            var service = new TextImportService(localStorageOptionsProviderMock.Object);
+            // Act
+            var importfile = await service.AnalyseAsync(fileContent);
+            // Assert
+            Assert.IsNull(importfile.AnalyseException);
+            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
+            Assert.AreEqual("c:\\AudioFile.mp3", importfile.AnalysedCuesheet.Audiofile);
+            Assert.AreEqual(7, importfile.AnalysedCuesheet.Tracks.Count);
+            //TODO: Check FileContentRecognized
+        }
     }
 }
