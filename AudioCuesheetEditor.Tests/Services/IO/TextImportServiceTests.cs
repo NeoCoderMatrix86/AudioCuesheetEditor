@@ -680,8 +680,12 @@ Local Singles~Voices~02.08.2024 22:25:59";
             Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
             Assert.AreEqual("c:\\AudioFile.mp3", importfile.AnalysedCuesheet.Audiofile);
-            Assert.AreEqual(7, importfile.AnalysedCuesheet.Tracks.Count);
-            //TODO: Check FileContentRecognized
+            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
+            Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\AudioFile.mp3")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8")));
         }
     }
 }
