@@ -403,7 +403,7 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 else
                 {
-                    string sep = Regex.Escape(part).Replace("\\t", @"\t");
+                    string sep = Regex.Escape(part).Replace("\\t", @"\t{1,}");
                     regexBuilder.Append(sep);
                 }
             }
