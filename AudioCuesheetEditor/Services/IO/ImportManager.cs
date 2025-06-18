@@ -79,7 +79,6 @@ namespace AudioCuesheetEditor.Services.IO
             return importFileTypes;
         }
 
-        //TODO: Test
         public async Task ImportTextAsync(string fileContent)
         {
             _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
