@@ -172,13 +172,21 @@ namespace AudioCuesheetEditor.Services.IO
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var track = new ImportTrack();
-                            var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importprofile.TimeSpanFormat);
-                            if (!string.Equals(markedLine, line))
+                            // Check if this line is already analysed
+                            if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
                             {
-                                cuesheet!.Tracks.Add(track);
+                                var track = new ImportTrack();
+                                var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importprofile.TimeSpanFormat);
+                                if (!string.Equals(markedLine, line))
+                                {
+                                    cuesheet!.Tracks.Add(track);
+                                }
+                                sb.AppendLine(markedLine);
                             }
-                            sb.AppendLine(markedLine);
+                            else
+                            {
+                                sb.AppendLine(line);
+                            }
                         }
                     }
                     importfile.FileContentRecognized = sb.ToString();
@@ -328,27 +336,66 @@ namespace AudioCuesheetEditor.Services.IO
 
         private static Regex CreateCuesheetRegexPattern(string scheme)
         {
-            var regex = new Regex(scheme);
-            var groupNames = regex.GetGroupNames();
-            //GroupNames always has a group "0", so we count for more than one group
-            if (groupNames.Any(x => x != "0"))
+            string[] fieldNames =
+            [
+                nameof(ImportCuesheet.Artist),
+                nameof(ImportCuesheet.Title),
+                nameof(ImportCuesheet.Audiofile),
+                nameof(ImportCuesheet.CDTextfile),
+                nameof(ImportCuesheet.Cataloguenumber)
+            ];
+            var parts = new List<string>();
+            int idx = 0;
+            while (idx < scheme.Length)
             {
-                return regex;
+                var field = fieldNames.FirstOrDefault(fn => scheme.IndexOf(fn, idx, StringComparison.Ordinal) == idx);
+                if (field != null)
+                {
+                    parts.Add(field);
+                    idx += field.Length;
+                }
+                else
+                {
+                    int nextFieldIdx = scheme.Length;
+                    foreach (var fn in fieldNames)
+                    {
+                        int pos = scheme.IndexOf(fn, idx, StringComparison.Ordinal);
+                        if (pos >= 0 && pos < nextFieldIdx)
+                        {
+                            nextFieldIdx = pos;
+                        }
+                    }
+                    string separator = scheme.Substring(idx, nextFieldIdx - idx);
+                    parts.Add(separator);
+                    idx = nextFieldIdx;
+                }
             }
-            else
+
+            var regexBuilder = new StringBuilder("^");
+            for (int i = 0; i < parts.Count; i++)
             {
-                var regexString = Regex.Escape(scheme);
-
-                regexString = regexString.Replace(nameof(Cuesheet.Artist), $"(?<{nameof(Cuesheet.Artist)}>.+)");
-                regexString = regexString.Replace(nameof(Cuesheet.Title), $"(?<{nameof(Cuesheet.Title)}>.+)");
-                regexString = regexString.Replace(nameof(Cuesheet.Audiofile), $"(?<{nameof(Cuesheet.Audiofile)}>.+)");
-                regexString = regexString.Replace(nameof(Cuesheet.CDTextfile), $"(?<{nameof(Cuesheet.CDTextfile)}>.+)");
-                regexString = regexString.Replace(nameof(Cuesheet.Cataloguenumber), $"(?<{nameof(Cuesheet.Cataloguenumber)}>.+)");
-                //Replace tab with non matching group
-                regexString = regexString.Replace("\\t", "(?:...\\t)");
-
-                return new Regex(regexString);
+                var part = parts[i];
+                if (fieldNames.Contains(part))
+                {
+                    bool isLast = i == parts.Count - 1 || parts.Skip(i + 1).All(p => !fieldNames.Contains(p));
+                    if (isLast)
+                    {
+                        regexBuilder.Append($@"(?<{part}>.+)");
+                    }
+                    else
+                    {
+                        regexBuilder.Append($@"(?<{part}>.+?)");
+                    }
+                }
+                else
+                {
+                    string sep = Regex.Escape(part).Replace("\\t", @"\t{1,}");
+                    regexBuilder.Append(sep);
+                }
             }
+            regexBuilder.Append('$');
+
+            return new Regex(regexBuilder.ToString());
         }
 
         private static Regex CreateTrackRegexPattern(string scheme)
