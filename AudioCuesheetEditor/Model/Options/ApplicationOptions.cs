@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
@@ -35,15 +36,32 @@ namespace AudioCuesheetEditor.Model.Options
         public const LogLevel DefaultLogLevel = LogLevel.Information;
         public static readonly Importprofile DefaultSelectedImportprofile = new()
         {
-            Name = "Textfile with cuesheet data",
+            Name = "Textfile (common data in first line)",
             UseRegularExpression = false,
-            SchemeCuesheet = @"(?'Artist'\w*) - (?'Title'\w*)\t{1,}(?'Audiofile'.*)",
-            SchemeTracks = @"(?'Artist'.+?) - (?'Title'.+?)\s*\t+(?'End'.+)"
+            SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}\t{nameof(ImportCuesheet.Audiofile)}",
+            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
         };
         public static readonly ICollection<Importprofile> DefaultImportprofiles =
         [
             DefaultSelectedImportprofile,
-            //TODO
+            new()
+            {
+                Name = "Textfile (just track data)",
+                UseRegularExpression = false,
+                SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
+            },
+            new()
+            {
+                Name = "Textfile (track data seperated by ~)",
+                UseRegularExpression = false,
+                SchemeTracks = $"{nameof(ImportTrack.Artist)}~{nameof(ImportTrack.Title)}~{nameof(ImportTrack.StartDateTime)}"
+            },
+            new()
+            {
+                Name = "Traktor history",
+                UseRegularExpression = true,
+                SchemeTracks = @$"<tr>\s*<td>(?<{nameof(ImportTrack.Position)}>\d+)</td>\s*<td>(?<{nameof(ImportTrack.Artist)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.Title)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.StartDateTime)}>.*?)</td>\s*</tr>"
+            }
         ];
         private string? projectFilename = Projectfile.DefaultFilename;
         private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
