@@ -65,6 +65,7 @@ namespace AudioCuesheetEditor.Services.IO
                     ImportCuesheet(lines);
                     importFileTypes.Add(file, ImportFileType.Cuesheet);
                 }
+                //TODO: Enable all kinds of text files
                 if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
                 {
                     var fileContent = await ReadFileContentAsync(file);

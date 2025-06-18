@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Services.IO
             Importfile importfile = new()
             {
                 FileContent = fileContent,
+                FileContentRecognized = fileContent,
                 AnalysedCuesheet = new ImportCuesheet(),
                 FileType = ImportFileType.Textfile
             };
