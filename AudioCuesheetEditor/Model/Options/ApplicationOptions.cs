@@ -141,7 +141,7 @@ namespace AudioCuesheetEditor.Model.Options
         public String? DisplayTimeSpanFormat { get; set; }
         public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
         [JsonInclude]
-        public Guid? SelectedImportProfileId { get; private set; }
+        public Guid? SelectedImportProfileId { get; private set; } = DefaultSelectedImportprofile.Id;
         public ICollection<Importprofile> ImportProfiles { get; set; } = DefaultImportprofiles;
         [JsonIgnore]
         public Importprofile? SelectedImportProfile

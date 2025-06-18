@@ -167,6 +167,7 @@ along with Foobar.  If not, see
         var profile = new Importprofile();
         ApplicationOptions!.SelectedImportProfile = profile;
         await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
+        await ImportprofileChanged.InvokeAsync();
     }
 
     async Task DeleteImportprofileClick()
