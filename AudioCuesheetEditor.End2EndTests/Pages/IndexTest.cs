@@ -153,5 +153,31 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
             await Expect(Page.Locator("#app")).ToMatchAriaSnapshotAsync("- textbox \"Cuesheet artist\"\n- group \"Cuesheet artist\"\n- text: Cuesheet artist\n- textbox \"Cuesheet title\"\n- group \"Cuesheet title\"\n- text: Cuesheet title\n- group:\n  - button \"Choose File\"\n  - textbox \"Audiofile\": /Kalimba test \\d+\\.mp3/\n  - group \"Audiofile\"\n  - text: Audiofile\n  - button \"Search\"\n  - button\n  - button\n- group:\n  - button \"Choose File\"\n  - textbox \"CD Textfile\": No file selected\n  - group \"CD Textfile\"\n  - text: CD Textfile\n  - button \"Search\"\n  - button [disabled]\n  - button\n- textbox \"Cataloguenumber\"\n- group \"Cataloguenumber\"\n- text: Cataloguenumber");
         }
+
+        [TestMethod]
+        public async Task ImportUndoRedoTestAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByText("Import view").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Textimport with Cuesheetdata.txt" });
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync("Artist - Title - ");
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Scheme common dataScheme" }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
+            await Page.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Cataloguenumber" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Toolbar)).ToMatchAriaSnapshotAsync("- button \"undo\" [disabled]");
+            await Expect(Page.GetByRole(AriaRole.Toolbar)).ToMatchAriaSnapshotAsync("- button \"redo\" [disabled]");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "undo" })).ToMatchAriaSnapshotAsync("- button \"undo\"");
+            await Expect(Page.GetByRole(AriaRole.Toolbar)).ToMatchAriaSnapshotAsync("- button \"redo\" [disabled]");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "undo" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Toolbar)).ToMatchAriaSnapshotAsync("- button \"undo\" [disabled]");
+            await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "redo" })).ToMatchAriaSnapshotAsync("- button \"redo\"");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "redo" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("DJFreezeT");
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToHaveValueAsync("Rabbit Hole Mix");
+            await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cataloguenumber" })).ToHaveValueAsync("0123456789123");
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Einmusik Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Missing Path (Original Mix)" })).ToBeVisibleAsync();
+        }
     }
 }
