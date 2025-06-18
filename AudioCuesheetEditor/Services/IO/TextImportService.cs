@@ -119,7 +119,15 @@ namespace AudioCuesheetEditor.Services.IO
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            sb.AppendLine(ApplyRegexAndMarkGroups(cuesheet!, regex, line, importprofile.TimeSpanFormat));
+                            var markedLine = ApplyRegexAndMarkGroups(cuesheet!, regex, line, importprofile.TimeSpanFormat);
+                            sb.AppendLine(markedLine);
+                            if (!string.Equals(markedLine, line))
+                            {
+                                //We found the first occurence, break the loop
+                                //Attach the rest of the file to FileContentRecognized
+                                sb.Append(reader.ReadToEnd());
+                                break;
+                            }
                         }
                     }
                     importfile.FileContentRecognized = sb.ToString();
