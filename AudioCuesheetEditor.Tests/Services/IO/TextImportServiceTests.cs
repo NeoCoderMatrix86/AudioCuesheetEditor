@@ -577,6 +577,9 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual("Chasing the Sun (Original Mix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
             Assert.IsNull(importfile.AnalysedCuesheet.Tracks.Last().Begin);
             Assert.IsNotNull(importfile.FileContentRecognized);
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "DJFreezeT")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Rabbit Hole Mix")));
+            Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "0123456789123")));
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Nikolay Kirov")));
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Chasing the Sun (Original Mix)")));
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "SHDW & Obscure Shape")));

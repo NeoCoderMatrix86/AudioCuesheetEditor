@@ -142,10 +142,10 @@ namespace AudioCuesheetEditor.Services.IO
                 }
 
                 var cuesheet = importfile.AnalysedCuesheet;
-
+                importfile.FileContentRecognized ??= fileContent;
                 if (importprofile.UseRegularExpression)
                 {
-                    importfile.FileContentRecognized ??= fileContent;
+                    
                     importfile.FileContentRecognized = regex.Replace(importfile.FileContentRecognized,
                         match =>
                         {
@@ -159,7 +159,7 @@ namespace AudioCuesheetEditor.Services.IO
                 else
                 {
                     var sb = new StringBuilder();
-                    using (var reader = new StringReader(fileContent))
+                    using (var reader = new StringReader(importfile.FileContentRecognized))
                     {
                         string? line;
                         while ((line = reader.ReadLine()) != null)
