@@ -172,7 +172,7 @@ namespace AudioCuesheetEditor.Services.IO
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            // Check if this line is already analysed
+                            // Check if this line is already analyzed
                             if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
                             {
                                 var track = new ImportTrack();
