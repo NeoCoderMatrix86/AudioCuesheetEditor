@@ -351,7 +351,7 @@ Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS";
             var profile = new Importprofile()
             {
                 UseRegularExpression = true,
-                SchemeTracks = "^(?<Artist>[a-zA-Z0-9_ .();äöü&:,]+) - (?<Title>[a-zA-Z0-9_ .();äöü]+)\t+(?<End>[0-9]{2}:[0-9]{2}:[0-9]{2})(?:\t+(?<Flags>[A-Z0-9 ,]+))?$"
+                SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]+) - (?'Title'[a-zA-Z0-9_ .();äöü]+)[\t ]+(?'End'[0-9]{2}:[0-9]{2}:[0-9]{2})(?:[\t ]+(?'Flags'[A-Za-z0-9 ,]+))?(?=[\t ]*(?:\r?\n|$))"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ApplicationOptions
