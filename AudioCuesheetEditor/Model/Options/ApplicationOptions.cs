@@ -132,10 +132,6 @@ namespace AudioCuesheetEditor.Model.Options
         }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
         public Boolean LinkTracks { get; set; } = true;
-        [Obsolete("Will be deleted!")]
-        public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
-        [Obsolete("Will be deleted!")]
-        public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
         public uint RecordCountdownTimer { get; set; } = 5;
         public Boolean FixedTracksTableHeader { get; set; } = false;
         public String? DisplayTimeSpanFormat { get; set; }
