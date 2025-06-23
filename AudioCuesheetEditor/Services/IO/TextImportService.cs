@@ -189,7 +189,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    importfile.FileContentRecognized = sb.ToString();
+                    importfile.FileContentRecognized = sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
                 }
             }
         }
