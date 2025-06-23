@@ -57,12 +57,8 @@ namespace AudioCuesheetEditor.Services.IO
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
-                    List<String?> lines = [];
-                    while (reader.EndOfStream == false)
-                    {
-                        lines.Add(reader.ReadLine());
-                    }
-                    ImportCuesheet(lines);
+                    var stringFileContent = reader.ReadToEnd();
+                    ImportCuesheet(stringFileContent);
                     importFileTypes.Add(file, ImportFileType.Cuesheet);
                 }
                 //TODO: Enable all kinds of text files
@@ -101,7 +97,7 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.ResetImport();
         }
 
-        private void ImportCuesheet(IEnumerable<String?> fileContent)
+        private void ImportCuesheet(String fileContent)
         {
             _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)

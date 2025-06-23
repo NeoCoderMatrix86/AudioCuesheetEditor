@@ -21,10 +21,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
     public class Importfile : IImportfile
     {
         /// <inheritdoc />
-        public IEnumerable<String?>? FileContentLines { get; set; }
-        /// <inheritdoc />
-        public IEnumerable<String?>? FileContentRecognizedLines { get; set; }
-        /// <inheritdoc />
         public Exception? AnalyseException { get; set; }
         /// <inheritdoc />
         public ImportCuesheet? AnalysedCuesheet { get; set; }

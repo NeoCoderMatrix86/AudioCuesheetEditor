@@ -25,16 +25,6 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// </summary>
         String? FileContent { get; set; }
         /// <summary>
-        /// File content (each element is a file line)
-        /// </summary>
-        [Obsolete("Will be a string!")]
-        IEnumerable<String?>? FileContentLines { get; set; }
-        /// <summary>
-        /// File content with marking which passages has been reconized by scheme
-        /// </summary>
-        [Obsolete("Will be a string!")]
-        IEnumerable<String?>? FileContentRecognizedLines { get; set; }
-        /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
         String? FileContentRecognized { get; set; }
