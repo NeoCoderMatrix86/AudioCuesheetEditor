@@ -45,7 +45,7 @@ along with Foobar.  If not, see
                       Label="@_localizer["Scheme common data"]" Placeholder="@_localizer["Enter the common data scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
         <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
-            @foreach (var scheme in TextImportScheme.AvailableSchemeCuesheet)
+            @foreach (var scheme in Importprofile.AvailableSchemeCuesheet)
             {
                 <MudMenuItem OnClick="() => AppendPlaceholderToTextField(schemeCuesheetTextField, scheme)">@_localizer[scheme]</MudMenuItem>
             }
@@ -57,7 +57,7 @@ along with Foobar.  If not, see
                       Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the track scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
         <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
-            @foreach (var scheme in TextImportScheme.AvailableSchemesTrack)
+            @foreach (var scheme in Importprofile.AvailableSchemesTrack)
             {
                 <MudMenuItem OnClick="() => AppendPlaceholderToTextField(schemeTracksTextField, scheme)">@_localizer[scheme]</MudMenuItem>
             }
