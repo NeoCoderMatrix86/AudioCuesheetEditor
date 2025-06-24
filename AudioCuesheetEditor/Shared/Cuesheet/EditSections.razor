@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject ValidationService _validationService
 @inject IDialogService _dialogService
+@inject IFileInputManager _fileInputManager
 
 <MudButtonGroup OverrideStyles="false">
     <MudTooltip Text="@_localizer["Add new section"]">
@@ -128,13 +129,9 @@ along with Foobar.  If not, see
 
     void AudiofileSelected(CuesheetSection section, IBrowserFile? browserFile)
     {
-        if (browserFile != null)
+        if ((browserFile != null) && (_fileInputManager.IsValidAudiofile(browserFile) == true))
         {
-            var codec = FileInputManager.GetAudioCodec(browserFile);
-            if (codec != null)
-            {
-                section.AudiofileName = browserFile?.Name;
-            }
+            section.AudiofileName = browserFile?.Name;
         }
         else
         {

@@ -16,55 +16,26 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.Utility;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
-    public class TextImportScheme : Validateable
+    public class Importprofile : Validateable
     {
         public static readonly IEnumerable<String> AvailableSchemeCuesheet;
         public static readonly IEnumerable<String> AvailableSchemesTrack;
 
-        static TextImportScheme()
+        static Importprofile()
         {
             AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.Audiofile), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
             AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
         }
-
-        public static readonly String DefaultSchemeCuesheet = @"(?'Artist'\w*) - (?'Title'\w*)\t{1,}(?'Audiofile'.*)";
-        public static readonly String DefaultSchemeTracks = @"(?'Artist'.+?) - (?'Title'.+?)\s*\t+(?'End'.+)";
-
-        public static readonly TextImportScheme DefaultTextImportScheme = new()
-        { 
-            SchemeCuesheet = DefaultSchemeCuesheet,
-            SchemeTracks = DefaultSchemeTracks
-        };
-
-        private string? schemeTracks;
-        private string? schemeCuesheet;
-
-        public event EventHandler<String>? SchemeChanged;
-
-        public String? SchemeTracks
-        {
-            get { return schemeTracks; }
-            set
-            {
-                schemeTracks = value;
-                SchemeChanged?.Invoke(this, nameof(SchemeTracks));
-                OnValidateablePropertyChanged();
-            }
-        }
-
-        public String? SchemeCuesheet
-        {
-            get { return schemeCuesheet; }
-            set
-            {
-                schemeCuesheet = value;
-                SchemeChanged?.Invoke(this, nameof(SchemeCuesheet));
-                OnValidateablePropertyChanged();
-            }
-        }
+        public Guid Id { get; init; } = Guid.NewGuid();
+        public String? Name { get; set; }
+        public Boolean UseRegularExpression { get; set; }
+        public String? SchemeCuesheet { get; set; }
+        public String? SchemeTracks { get; set; }
+        public TimeSpanFormat? TimeSpanFormat { get; set; }
         public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
