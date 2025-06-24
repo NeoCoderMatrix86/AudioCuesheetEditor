@@ -130,13 +130,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod()]
-        public void IsValidAudiofile_ReturnsFalse_WithInvalidAudiocodec()
+        public void IsValidAudiofile_ReturnsFalse_WithInvalidAudiocodecAndExtension()
         {
             // Arrange
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.wav", "just a fantasy");
+            var file = CreateBrowserFile("test.mock", "just a fantasy");
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
