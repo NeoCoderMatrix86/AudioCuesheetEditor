@@ -52,21 +52,29 @@ namespace AudioCuesheetEditor.Services.IO
             return codec != null;
         }
 
-        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
+        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, IEnumerable<String> fileExtensions)
         {
-            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtension: '{FileExtension}'", file.Name, file.ContentType, mimeType, fileExtension);
+            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
             Boolean fileMimeTypeMatches = false;
-            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
+            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false))
             {
                 if (String.IsNullOrEmpty(file.ContentType) == false)
                 {
-                    fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
+                    if (mimeType.EndsWith("/*"))
+                    {
+                        var mainType = mimeType.Substring(0, mimeType.Length - 1);
+                        fileMimeTypeMatches = file.ContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
+                    }
+                    else
+                    {
+                        fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
+                    }
                 }
-                if (fileMimeTypeMatches == false)
+                if ((fileMimeTypeMatches == false) && (fileExtensions.Any()))
                 {
                     //Try to find by file extension
                     var extension = Path.GetExtension(file.Name);
-                    fileMimeTypeMatches = extension.Equals(fileExtension, StringComparison.CurrentCultureIgnoreCase);
+                    fileMimeTypeMatches = fileExtensions.Any(x => x.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
                 }
             }
             return fileMimeTypeMatches;
@@ -107,7 +115,7 @@ namespace AudioCuesheetEditor.Services.IO
             CDTextfile? cdTextfile = null;
             if (browserFile != null)
             {
-                if (CheckFileMimeType(browserFile, FileMimeTypes.CDTextfile, FileExtensions.CDTextfile))
+                if (CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.CDTextfile]))
                 {
                     cdTextfile = new CDTextfile(browserFile.Name);
                 }
@@ -117,6 +125,12 @@ namespace AudioCuesheetEditor.Services.IO
                 }
             }
             return cdTextfile;
+        }
+
+        /// <inheritdoc/>
+        public bool IsValidForImportView(IBrowserFile browserFile)
+        {
+            return CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
         }
     }
 }

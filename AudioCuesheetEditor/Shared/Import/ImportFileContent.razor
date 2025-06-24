@@ -37,6 +37,7 @@ along with Foobar.  If not, see
 </MudTabs>
 
 @code {
+    //TODO: When HTML is in FileContentRecognized it is interpreted
     [Parameter]
     public EventCallback<string> FileContentChanged { get; set; }
     public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;

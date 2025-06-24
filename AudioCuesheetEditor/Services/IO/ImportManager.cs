@@ -42,7 +42,7 @@ namespace AudioCuesheetEditor.Services.IO
             Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
             foreach (var file in files)
             {
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     importFileTypes.Add(file, ImportFileType.ProjectFile);
                 }
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
@@ -61,8 +61,7 @@ namespace AudioCuesheetEditor.Services.IO
                     ImportCuesheet(stringFileContent);
                     importFileTypes.Add(file, ImportFileType.Cuesheet);
                 }
-                //TODO: Enable all kinds of text files
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
+                if (_fileInputManager.IsValidForImportView(file))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;

@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/mpeg", ".mp3");
+            var result = manager.CheckFileMimeType(file, "audio/mpeg", [".mp3"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -55,7 +55,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/mpeg", ".mp3");
+            var result = manager.CheckFileMimeType(file, "audio/mpeg", [".mp3", ".txt"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -72,7 +72,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/flac", ".mp3");
+            var result = manager.CheckFileMimeType(file, "audio/flac", [".mp3"]);
 
             // Assert
             Assert.IsFalse(result);
@@ -89,7 +89,24 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/wave", ".wav");
+            var result = manager.CheckFileMimeType(file, "audio/wave", [".wav"]);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void CheckFileMimeType_ReturnsTrue_WhenContentMainTypeMatch()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("history.txt", "text/plain");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.CheckFileMimeType(file, "text/*", [".txt", ".text"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -180,6 +197,40 @@ namespace AudioCuesheetEditor.Tests.Services.IO
 
             // Assert
             Assert.IsNull(result);
+        }
+
+        [TestMethod()]
+        public void IsValidForImportView_ReturnsTrue_WhenFileIsHtml()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.html", "text/html");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.IsValidForImportView(file);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void IsValidForImportView_ReturnsFalse_WhenFileIsBinary()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.dat", "application/octet-stream");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.IsValidForImportView(file);
+
+            // Assert
+            Assert.IsFalse(result);
         }
 
         private static IBrowserFile CreateBrowserFile(string name, string contentType)
