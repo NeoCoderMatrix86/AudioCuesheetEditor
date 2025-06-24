@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly HttpClient _httpClient = httpClient;
         private readonly ILogger<FileInputManager> _logger = logger;
 
-        public static AudioCodec? GetAudioCodec(IBrowserFile browserFile)
+        public AudioCodec? GetAudioCodec(IBrowserFile browserFile)
         {
             AudioCodec? foundAudioCodec = null;
             var extension = Path.GetExtension(browserFile.Name);
@@ -37,13 +37,19 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 foundAudioCodec = audioCodecsFound.FirstOrDefault();
             }
-            else
+            if (foundAudioCodec == null)
             {
                 // Second search with mime type or file extension
                 audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
                 foundAudioCodec = audioCodecsFound.FirstOrDefault();
             }
             return foundAudioCodec;
+        }
+
+        public bool IsValidAudiofile(IBrowserFile browserFile)
+        {
+            var codec = GetAudioCodec(browserFile);
+            return codec != null;
         }
 
         public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)

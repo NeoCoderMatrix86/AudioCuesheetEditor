@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.IO;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
@@ -92,6 +93,93 @@ namespace AudioCuesheetEditor.Tests.Services.IO
 
             // Assert
             Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void IsValidAudiofile_ReturnsTrue_WithValidAudiocodec()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.wav", "audio/wav");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.IsValidAudiofile(file);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod()]
+        public void IsValidAudiofile_ReturnsFalse_WithInvalidAudiocodec()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.wav", "just a fantasy");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.IsValidAudiofile(file);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod()]
+        public void GetAudioCodec_ReturnsAudiocodec_WhenContentTypeMatches()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.wbem", "audio/webm");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.GetAudioCodec(file);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(Audiofile.AudioCodecWEBM, result);
+        }
+
+        [TestMethod()]
+        public void GetAudioCodec_ReturnsAudiocodec_WhenContentTypeAndFileExtensionMatches()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.webm", "audio/webm");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.GetAudioCodec(file);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(Audiofile.AudioCodecWEBM, result);
+        }
+
+        [TestMethod()]
+        public void GetAudioCodec_ReturnsNull_WhenContentTypeAndFileExtensionNotMatch()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var file = CreateBrowserFile("test.acx", "fantasy stuff");
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+
+            // Act
+            var result = manager.GetAudioCodec(file);
+
+            // Assert
+            Assert.IsNull(result);
         }
 
         private static IBrowserFile CreateBrowserFile(string name, string contentType)

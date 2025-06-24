@@ -22,6 +22,8 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public interface IFileInputManager
     {
+        bool IsValidAudiofile(IBrowserFile browserFile);
+        AudioCodec? GetAudioCodec(IBrowserFile browserFile);
         bool CheckFileMimeType(IBrowserFile file, string mimeType, string fileExtension);
         Task<Audiofile?> CreateAudiofileAsync(string? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null);
         CDTextfile? CreateCDTextfile(IBrowserFile? browserFile);
