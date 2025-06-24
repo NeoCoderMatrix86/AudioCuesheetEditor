@@ -31,7 +31,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
             AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
         }
         public Guid Id { get; init; } = Guid.NewGuid();
-        public String? Name { get; set; } = $"{nameof(Importprofile)} {Guid.NewGuid()}";
+        public String? Name { get; set; }
         public Boolean UseRegularExpression { get; set; }
         public String? SchemeCuesheet { get; set; }
         public String? SchemeTracks { get; set; }

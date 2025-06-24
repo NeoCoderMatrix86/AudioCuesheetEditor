@@ -162,6 +162,9 @@
   <data name="Hours" xml:space="preserve">
     <value>Stunden</value>
   </data>
+  <data name="Import profile" xml:space="preserve">
+    <value>Import Profil</value>
+  </data>
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
   </data>
@@ -174,6 +177,9 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="New import profile" xml:space="preserve">
+    <value>Neues Importprofil</value>
+  </data>
   <data name="Position" xml:space="preserve">
     <value>Position</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="PreGap" xml:space="preserve">
     <value>Vorlücke</value>
+  </data>
+  <data name="Profile name" xml:space="preserve">
+    <value>Profil Name</value>
   </data>
   <data name="Scheme common data" xml:space="preserve">
     <value>Schema Allgemeine Informationen</value>
@@ -194,9 +203,6 @@
   </data>
   <data name="Seconds" xml:space="preserve">
     <value>Sekunden</value>
-  </data>
-  <data name="Select import profile" xml:space="preserve">
-    <value>Import Profil auswählen</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
     <value>Startzeitpunkt</value>
