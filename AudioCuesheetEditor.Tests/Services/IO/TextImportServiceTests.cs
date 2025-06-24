@@ -631,36 +631,36 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         public async Task AnalyseAsync_TextfileWithStartDateTime_CreatesValidCuesheetAsync()
         {
             // Arrange
-            var fileContent = @"Innellea~The Golden Fort~02.08.2024 20:10:48
-Nora En Pure~Diving with Whales (Daniel Portman Remix)~02.08.2024 20:15:21
-WhoMadeWho & Adriatique~Miracle (RÜFÜS DU SOL Remix)~02.08.2024 20:20:42
-Ella Wild~Poison D'araignee (Original Mix)~02.08.2024 20:28:03
-Stil & Bense~On The Edge (Original Mix)~02.08.2024 20:32:42
-Nebula~Clairvoyant Dreams~02.08.2024 20:39:01
-Valentina Black~I'm a Tree (Extended Mix)~02.08.2024 20:47:08
-Nebula~Clairvoyant Dreams~02.08.2024 20:53:20
-Kiko & Dave Davis feat. Phoebe~Living in Space (Dub Mix)~02.08.2024 20:58:11
-Lilly Palmer~Before Acid~02.08.2024 21:03:53
-Sofi Tukker~Drinkee (Vintage Culture & John Summit Extended Mix)~02.08.2024 21:09:52
-CID & Truth x Lies~Caroline (Extended Mix)~02.08.2024 21:14:09
-Moby~Why Does My Heart Feel So Bad? (Oxia Remix)~02.08.2024 21:17:15
-Ammo Avenue~Little Gurl (Extended Mix)~02.08.2024 21:22:46
-James Hurr & Smokin Jo & Stealth~Beggin' For Change~02.08.2024 21:28:37
-Kristine Blond~Love Shy (Sam Divine & CASSIMM Extended Remix)~02.08.2024 21:30:47
-Vanilla Ace~Work On You (Original Mix)~02.08.2024 21:36:28
-Truth X Lies~Like This~02.08.2024 21:42:05
-Terri-Anne~Round Round~02.08.2024 21:44:07
-Joanna Magik~Maneater~02.08.2024 21:46:32
-Jen Payne & Kevin McKay~Feed Your Soul~02.08.2024 21:48:45
-Kevin McKay & Eppers & Notelle~On My Own~02.08.2024 21:51:37
-Nader Razdar & Kevin McKay~Get Ur Freak On (Kevin McKay Extended Mix)~02.08.2024 21:53:49
-Philip Z~Yala (Extended Mix)~02.08.2024 21:59:40
-Kyle Kinch & Kevin McKay~Hella~02.08.2024 22:05:53
-Roze Wild~B-O-D-Y~02.08.2024 22:08:26
-Jey Kurmis~Snoop~02.08.2024 22:11:09
-Bootie Brown & Tame Impala & Gorillaz~New Gold (Dom Dolla Remix Extended)~02.08.2024 22:16:23
-Eli Brown & Love Regenerator~Don't You Want Me (Original Mix)~02.08.2024 22:21:23
-Local Singles~Voices~02.08.2024 22:25:59";
+            var fileContent = @"Innellea~The Golden Fort~14.08.2024 20:10:48
+Nora En Pure~Diving with Whales (Daniel Portman Remix)~14.08.2024 20:15:21
+WhoMadeWho & Adriatique~Miracle (RÜFÜS DU SOL Remix)~14.08.2024 20:20:42
+Ella Wild~Poison D'araignee (Original Mix)~14.08.2024 20:28:03
+Stil & Bense~On The Edge (Original Mix)~14.08.2024 20:32:42
+Nebula~Clairvoyant Dreams~14.08.2024 20:39:01
+Valentina Black~I'm a Tree (Extended Mix)~14.08.2024 20:47:08
+Nebula~Clairvoyant Dreams~14.08.2024 20:53:20
+Kiko & Dave Davis feat. Phoebe~Living in Space (Dub Mix)~14.08.2024 20:58:11
+Lilly Palmer~Before Acid~14.08.2024 21:03:53
+Sofi Tukker~Drinkee (Vintage Culture & John Summit Extended Mix)~14.08.2024 21:09:52
+CID & Truth x Lies~Caroline (Extended Mix)~14.08.2024 21:14:09
+Moby~Why Does My Heart Feel So Bad? (Oxia Remix)~14.08.2024 21:17:15
+Ammo Avenue~Little Gurl (Extended Mix)~14.08.2024 21:22:46
+James Hurr & Smokin Jo & Stealth~Beggin' For Change~14.08.2024 21:28:37
+Kristine Blond~Love Shy (Sam Divine & CASSIMM Extended Remix)~14.08.2024 21:30:47
+Vanilla Ace~Work On You (Original Mix)~14.08.2024 21:36:28
+Truth X Lies~Like This~14.08.2024 21:42:05
+Terri-Anne~Round Round~14.08.2024 21:44:07
+Joanna Magik~Maneater~14.08.2024 21:46:32
+Jen Payne & Kevin McKay~Feed Your Soul~14.08.2024 21:48:45
+Kevin McKay & Eppers & Notelle~On My Own~14.08.2024 21:51:37
+Nader Razdar & Kevin McKay~Get Ur Freak On (Kevin McKay Extended Mix)~14.08.2024 21:53:49
+Philip Z~Yala (Extended Mix)~14.08.2024 21:59:40
+Kyle Kinch & Kevin McKay~Hella~14.08.2024 22:05:53
+Roze Wild~B-O-D-Y~14.08.2024 22:08:26
+Jey Kurmis~Snoop~14.08.2024 22:11:09
+Bootie Brown & Tame Impala & Gorillaz~New Gold (Dom Dolla Remix Extended)~14.08.2024 22:16:23
+Eli Brown & Love Regenerator~Don't You Want Me (Original Mix)~14.08.2024 22:21:23
+Local Singles~Voices~14.08.2024 22:25:59";
 
             var profile = new Importprofile()
             {
@@ -682,13 +682,13 @@ Local Singles~Voices~02.08.2024 22:25:59";
             Assert.AreEqual(30, importfile.AnalysedCuesheet.Tracks.Count);
             Assert.AreEqual("Innellea", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
             Assert.AreEqual("The Golden Fort", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new DateTime(2024, 8, 2, 20, 10, 48), importfile.AnalysedCuesheet.Tracks.ElementAt(0).StartDateTime);
+            Assert.AreEqual(new DateTime(2024, 8, 14, 20, 10, 48), importfile.AnalysedCuesheet.Tracks.ElementAt(0).StartDateTime);
             Assert.AreEqual("Nora En Pure", importfile.AnalysedCuesheet.Tracks.ElementAt(1).Artist);
             Assert.AreEqual("Diving with Whales (Daniel Portman Remix)", importfile.AnalysedCuesheet.Tracks.ElementAt(1).Title);
-            Assert.AreEqual(new DateTime(2024, 8, 2, 20, 15, 21), importfile.AnalysedCuesheet.Tracks.ElementAt(1).StartDateTime);
+            Assert.AreEqual(new DateTime(2024, 8, 14, 20, 15, 21), importfile.AnalysedCuesheet.Tracks.ElementAt(1).StartDateTime);
             Assert.AreEqual("Local Singles", importfile.AnalysedCuesheet.Tracks.ElementAt(29).Artist);
             Assert.AreEqual("Voices", importfile.AnalysedCuesheet.Tracks.ElementAt(29).Title);
-            Assert.AreEqual(new DateTime(2024, 8, 2, 22, 25, 59), importfile.AnalysedCuesheet.Tracks.ElementAt(29).StartDateTime);
+            Assert.AreEqual(new DateTime(2024, 8, 14, 22, 25, 59), importfile.AnalysedCuesheet.Tracks.ElementAt(29).StartDateTime);
         }
 
         [TestMethod()]
