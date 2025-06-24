@@ -26,7 +26,7 @@ along with Foobar.  If not, see
             <pre>
                 @if (FileContentRecognized != null)
                 {
-                    @((MarkupString)FileContentRecognized)
+                    @((MarkupString)SanitizeHTML(FileContentRecognized))
                 }
             </pre>
         </MudField>
@@ -37,7 +37,6 @@ along with Foobar.  If not, see
 </MudTabs>
 
 @code {
-    //TODO: When HTML is in FileContentRecognized it is interpreted
     [Parameter]
     public EventCallback<string> FileContentChanged { get; set; }
     public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
@@ -45,5 +44,11 @@ along with Foobar.  If not, see
     async Task FileContent_TextChangedAsync(string newFileContent)
     {
         await FileContentChanged.InvokeAsync(newFileContent);
+    }
+
+    string SanitizeHTML(string input)
+    {
+        var sanitizer = new HtmlSanitizer();
+        return sanitizer.Sanitize(input);
     }
 }
