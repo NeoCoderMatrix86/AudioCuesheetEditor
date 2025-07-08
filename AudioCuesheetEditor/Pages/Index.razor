@@ -45,6 +45,7 @@ along with Foobar.  If not, see
 
 @code{
     //TODO: do NOT use CascadingValue foc Cuesheet, since every change will cause a rerendering of all components below
+    //TODO: Move ViewMode to await from ApplicationOptions to reduce reloading of ApplicationOptions in all child components
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
