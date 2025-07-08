@@ -97,7 +97,7 @@ along with Foobar.  If not, see
         _importManager.ImportCuesheet();
         await ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
-        _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, ViewMode.DetailView);
+        _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 
     Task PreviewInteraction(StepperInteractionEventArgs arg)

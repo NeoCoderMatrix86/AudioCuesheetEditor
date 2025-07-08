@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 
 @inject ISessionStateContainer _sessionStateContainer
 @inject IStringLocalizer<Index> _localizer
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>
     <CascadingValue Value="GetViewMode()">
@@ -45,12 +46,13 @@ along with Foobar.  If not, see
 
 @code{
     //TODO: do NOT use CascadingValue foc Cuesheet, since every change will cause a rerendering of all components below
-    //TODO: Move ViewMode to await from ApplicationOptions to reduce reloading of ApplicationOptions in all child components
+    ViewOptions? options;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        options = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
     }
 
     protected override void Dispose(bool disposing)
@@ -58,34 +60,32 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         if (disposing)
         {
-            _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
-            _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+            _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
         }
     }
 
     async Task ActiveTabIndexChanged(int tabIndex)
     {
         var activeViewMode = (ViewMode)tabIndex;
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, activeViewMode);
-    }
-
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, activeViewMode);
     }
 
     ViewMode GetViewMode()
     {
         ViewMode viewMode = ViewMode.DetailView;
-        if (ApplicationOptions != null)
+        if (options != null)
         {
-            viewMode = ApplicationOptions.ActiveTab;
+            viewMode = options.ActiveTab;
         }
         return viewMode;
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ViewOptions viewOptions)
+        {
+            options = viewOptions;
+            StateHasChanged();
+        }
     }
 }
