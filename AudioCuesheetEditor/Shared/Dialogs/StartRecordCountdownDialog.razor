@@ -20,22 +20,19 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<StartRecordCountdownDialog> _localizer
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
-@if (ApplicationOptions != null)
-{
-    <MudDialog>
-        <TitleContent>
-            @_localizer["Start record countdown timer"]
-        </TitleContent>
-        <DialogContent>
-            <MudNumericField T="uint?" Placeholder="@_localizer["Seconds till record starts"]" Label="@_localizer["Record countdown in sconds"]" Variant="Variant.Outlined" 
-                             Value="options?.RecordCountdownTimer" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<RecordOptions>(x => x.RecordCountdownTimer, newValue)" />
-        </DialogContent>
-        <DialogActions>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close(DialogResult.Ok(options?.RecordCountdownTimer))">@_localizer["Start countdown"]</MudButton>
-            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
-        </DialogActions>
-    </MudDialog>
-}
+<MudDialog>
+    <TitleContent>
+        @_localizer["Start record countdown timer"]
+    </TitleContent>
+    <DialogContent>
+        <MudNumericField T="uint?" Placeholder="@_localizer["Seconds till record starts"]" Label="@_localizer["Record countdown in sconds"]" Variant="Variant.Outlined" 
+                            Value="options?.RecordCountdownTimer" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<RecordOptions>(x => x.RecordCountdownTimer, newValue)" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close(DialogResult.Ok(options?.RecordCountdownTimer))">@_localizer["Start countdown"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
+    </DialogActions>
+</MudDialog>
 
 @code {
     RecordOptions? options;
