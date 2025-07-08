@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject CuesheetExportService _cuesheetExportService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudDialog>
     <DialogContent>
@@ -32,7 +33,7 @@ along with Foobar.  If not, see
                 @((MarkupString)GetGenerationValidationMessages()!)
             </MudAlert>
         }
-        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@ApplicationOptions?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
+        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@options?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
         <br />
         <MudTable Items="exportfiles">
@@ -55,19 +56,28 @@ along with Foobar.  If not, see
 
 @code {
     IEnumerable<Exportfile> exportfiles = [];
+    DownloadOptions? options;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        exportfiles = _cuesheetExportService.GenerateExportfiles(ApplicationOptions?.CuesheetFilename);
+        options = await _localStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        exportfiles = _cuesheetExportService.GenerateExportfiles(options?.CuesheetFilename);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     String? GetValidationErrorMessage()
     {
         String? validationErrorMessage = null;
-        if (ApplicationOptions != null)
+        if (options != null)
         {
-            var validationMessages = _validationService.Validate(ApplicationOptions, nameof(ApplicationOptions.CuesheetFilename));
+            var validationMessages = _validationService.Validate(options, nameof(DownloadOptions.CuesheetFilename));
             if (validationMessages.Count() > 0)
             {
                 validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
@@ -79,7 +89,7 @@ along with Foobar.  If not, see
     String? GetGenerationValidationMessages()
     {
         String? validationErrorMessage = null;
-        var messages = _cuesheetExportService.CanGenerateExportfiles(ApplicationOptions?.CuesheetFilename);
+        var messages = _cuesheetExportService.CanGenerateExportfiles(options?.CuesheetFilename);
         if (messages.Count() > 0)
         {
             validationErrorMessage = String.Join("<br />", messages.Select(x => x.GetMessageLocalized(_validationMessageLocalizer)));
@@ -89,7 +99,16 @@ along with Foobar.  If not, see
 
     async Task CuesheetFilenameChanged(string newFilename)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CuesheetFilename, newFilename);
-        exportfiles = _cuesheetExportService.GenerateExportfiles(ApplicationOptions?.CuesheetFilename);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, newFilename);
+        exportfiles = _cuesheetExportService.GenerateExportfiles(options?.CuesheetFilename);
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is DownloadOptions downloadOptions)
+        {
+            options = downloadOptions;
+            StateHasChanged();
+        }
     }
 }

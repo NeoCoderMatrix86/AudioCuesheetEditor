@@ -14,9 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
-using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO;
-using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.UI;
@@ -25,7 +22,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
-    public class ApplicationOptions : Validateable, IOptions
+    public class ApplicationOptions : IOptions
     {
         public const LogLevel DefaultLogLevel = LogLevel.Information;
         public static readonly Importprofile DefaultSelectedImportprofile = new()
@@ -57,24 +54,6 @@ namespace AudioCuesheetEditor.Model.Options
                 SchemeTracks = @$"<tr>\s*<td>(?<{nameof(ImportTrack.Position)}>\d+)</td>\s*<td>(?<{nameof(ImportTrack.Artist)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.Title)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.StartDateTime)}>.*?)</td>\s*</tr>"
             }
         ];
-        private string? projectFilename = Projectfile.DefaultFilename;
-        private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
-        public String? CuesheetFilename 
-        {
-            get => cuesheetFilename;
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-                    {
-                        value = $"{value}{FileExtensions.Cuesheet}";
-                    }
-                }
-                cuesheetFilename = value;
-            }
-        }
         public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
         [JsonIgnore]
         public CultureInfo Culture
@@ -89,23 +68,6 @@ namespace AudioCuesheetEditor.Model.Options
                 {
                     return CultureInfo.CurrentCulture;
                 }
-            }
-        }
-        
-        public String? ProjectFilename
-        { 
-            get => projectFilename;
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (extension?.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
-                    {
-                        value = $"{value}{FileExtensions.Projectfile}";
-                    }
-                }
-                projectFilename = value;
             }
         }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
@@ -132,62 +94,6 @@ namespace AudioCuesheetEditor.Model.Options
                 }
                 SelectedImportProfileId = value?.Id;
             }
-        }
-
-        public override ValidationResult Validate(string property)
-        {
-            ValidationStatus validationStatus = ValidationStatus.NoValidation;
-            List<ValidationMessage>? validationMessages = null;
-            switch (property)
-            {
-                case nameof(CuesheetFilename):
-                    validationStatus = ValidationStatus.Success;
-                    if (string.IsNullOrEmpty(CuesheetFilename))
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(CuesheetFilename)));
-                    }
-                    else
-                    {
-                        var extension = Path.GetExtension(CuesheetFilename);
-                        if (extension.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(CuesheetFilename), FileExtensions.Cuesheet));
-                        }
-                        var filenameWithoutExtension = Path.GetFileNameWithoutExtension(CuesheetFilename);
-                        if (string.IsNullOrEmpty(filenameWithoutExtension))
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(CuesheetFilename)));
-                        }
-                    }
-                    break;
-                case nameof(ProjectFilename):
-                    validationStatus = ValidationStatus.Success;
-                    if (String.IsNullOrEmpty(ProjectFilename))
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ProjectFilename)));
-                    }
-                    else
-                    {
-                        var extension = Path.GetExtension(ProjectFilename);
-                        if (extension.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), FileExtensions.Projectfile));
-                        }
-                        var filename = Path.GetFileNameWithoutExtension(ProjectFilename);
-                        if (String.IsNullOrEmpty(filename))
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ProjectFilename)));
-                        }
-                    }
-                    break;
-            }
-            return ValidationResult.Create(validationStatus, validationMessages);
         }
     }
 }
