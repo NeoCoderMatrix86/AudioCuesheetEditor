@@ -44,6 +44,7 @@ along with Foobar.  If not, see
 </MudTabs>
 
 @code{
+    //TODO: do NOT use CascadingValue foc Cuesheet, since every change will cause a rerendering of all components below
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
