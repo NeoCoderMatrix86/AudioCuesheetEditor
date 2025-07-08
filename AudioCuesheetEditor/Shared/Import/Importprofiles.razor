@@ -21,30 +21,31 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Importprofiles> _localizer
 @inject ValidationService _validationService
 @inject IDialogService _dialogService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
-@if (ApplicationOptions != null)
+@if (importOptions != null)
 {
     <MudStack Row>
-        <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Import profile"]" Value="ApplicationOptions.SelectedImportProfile" ValueChanged="SelectedImportProfileChangedAsync">
-            @foreach (var profile in ApplicationOptions.ImportProfiles)
+        <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Import profile"]" Value="importOptions.SelectedImportProfile" ValueChanged="SelectedImportProfileChangedAsync">
+            @foreach (var profile in importOptions.ImportProfiles)
             {
                 <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
             }
         </MudSelect>
         <MudButtonGroup OverrideStyles="false" Class="mt-2" Style="height: 56px;">
             <MudIconButton Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Add" OnClick="AddImportprofileClick" />
-            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Delete" Disabled="ApplicationOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" />
+            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Delete" Disabled="importOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" />
             <MudIconButton Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.LockReset" OnClick="ResetSchemes" />
         </MudButtonGroup>
     </MudStack>
-    <MudTextField T="string" Value="ApplicationOptions.SelectedImportProfile?.Name" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.Name))" Label="@_localizer["Profile name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
-    <MudSwitch T="Boolean?" Color="Color.Secondary" Value="ApplicationOptions.SelectedImportProfile?.UseRegularExpression" Disabled="ApplicationOptions.SelectedImportProfile == null" ValueChanged="UseRegularExpressionChangedAsync" Label="@_localizer["Search using regular expressions"]" />
+    <MudTextField T="string" Value="importOptions.SelectedImportProfile?.Name" Disabled="importOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ImportOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(importOptions.SelectedImportProfile, nameof(Importprofile.Name))) == false" ErrorText="@GetValidationErrorMessage(importOptions.SelectedImportProfile, nameof(Importprofile.Name))" Label="@_localizer["Profile name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
+    <MudSwitch T="Boolean?" Color="Color.Secondary" Value="importOptions.SelectedImportProfile?.UseRegularExpression" Disabled="importOptions.SelectedImportProfile == null" ValueChanged="UseRegularExpressionChangedAsync" Label="@_localizer["Search using regular expressions"]" />
     <MudStack Row>
-        <MudTextField T="string" @ref="schemeCuesheetTextField" Text="@ApplicationOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="SchemeCuesheetChangedAsync"
-                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))"
+        <MudTextField T="string" @ref="schemeCuesheetTextField" Text="@importOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="SchemeCuesheetChangedAsync"
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))) == false" ErrorText="@GetValidationErrorMessage(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))"
                       Label="@_localizer["Scheme common data"]" Placeholder="@_localizer["Enter the common data scheme for this profile here"]" Variant="Variant.Outlined"
-                      Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
-        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
+                      Clearable Disabled="importOptions.SelectedImportProfile == null" />
+        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="importOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in Importprofile.AvailableSchemeCuesheet)
             {
                 <MudMenuItem OnClick="() => AppendPlaceholderToTextField(schemeCuesheetTextField, scheme)">@_localizer[scheme]</MudMenuItem>
@@ -52,11 +53,11 @@ along with Foobar.  If not, see
         </MudMenu>
     </MudStack>
     <MudStack Row>
-        <MudTextField T="string" @ref="schemeTracksTextField" Text="@ApplicationOptions.SelectedImportProfile?.SchemeTracks" TextChanged="SchemeTracksChangedAsync"
-                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))"
+        <MudTextField T="string" @ref="schemeTracksTextField" Text="@importOptions.SelectedImportProfile?.SchemeTracks" TextChanged="SchemeTracksChangedAsync"
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))) == false" ErrorText="@GetValidationErrorMessage(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))"
                       Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the track scheme for this profile here"]" Variant="Variant.Outlined"
-                      Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
-        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
+                      Clearable Disabled="importOptions.SelectedImportProfile == null" />
+        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="importOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in Importprofile.AvailableSchemesTrack)
             {
                 <MudMenuItem OnClick="() => AppendPlaceholderToTextField(schemeTracksTextField, scheme)">@_localizer[scheme]</MudMenuItem>
@@ -64,11 +65,11 @@ along with Foobar.  If not, see
         </MudMenu>
     </MudStack>
     <MudStack Row>
-        <MudTextField T="string" @ref="timeSpanFormatTextField" Text="@ApplicationOptions.SelectedImportProfile?.TimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync"
-                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false" ErrorText="@GetValidationErrorMessage(ApplicationOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))"
+        <MudTextField T="string" @ref="timeSpanFormatTextField" Text="@importOptions.SelectedImportProfile?.TimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync"
+                      Error="String.IsNullOrEmpty(GetValidationErrorMessage(importOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false" ErrorText="@GetValidationErrorMessage(importOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))"
                       Label="@_localizer["Time input format for import"]" Placeholder="@_localizer["Enter the time format for this profile here"]" Variant="Variant.Outlined"
-                      Clearable Disabled="ApplicationOptions.SelectedImportProfile == null" />
-        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="ApplicationOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
+                      Clearable Disabled="importOptions.SelectedImportProfile == null" />
+        <MudMenu Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" Disabled="importOptions.SelectedImportProfile == null" Class="mt-1" Style="height: 56px;">
             @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
             {
                 <MudMenuItem OnClick="() => AppendPlaceholderToTextField(timeSpanFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
@@ -78,6 +79,21 @@ along with Foobar.  If not, see
 }
 
 @code {
+    ImportOptions? importOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        importOptions = await _localStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
     [Parameter]
     public EventCallback ImportprofileChanged { get; set; }
 
@@ -90,31 +106,31 @@ along with Foobar.  If not, see
 
     async Task SelectedImportProfileChangedAsync(Importprofile? newSelectedProfile)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.SelectedImportProfile, newSelectedProfile);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ImportOptions>(x => x.SelectedImportProfile, newSelectedProfile);
         await ImportprofileChanged.InvokeAsync();
     }
 
     async Task UseRegularExpressionChangedAsync(Boolean? newValue)
     {
-        await LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, Boolean>(x => x.SelectedImportProfile, x => x!.UseRegularExpression, newValue!.Value);
+        await LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ImportOptions, Importprofile?, Boolean>(x => x.SelectedImportProfile, x => x!.UseRegularExpression, newValue!.Value);
         await ImportprofileChanged.InvokeAsync();
     }
 
     async Task SchemeCuesheetChangedAsync(string newScheme)
     {
-        await LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeCuesheet, newScheme);
+        await LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ImportOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeCuesheet, newScheme);
         await ImportprofileChanged.InvokeAsync();
     }
 
     async Task SchemeTracksChangedAsync(string newScheme)
     {
-        await LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ApplicationOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeTracks, newScheme);
+        await LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ImportOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.SchemeTracks, newScheme);
         await ImportprofileChanged.InvokeAsync();
     }
 
     async Task ImportTimeInputFormatChangedAsync(string newScheme)
     {
-        var profile = ApplicationOptions?.SelectedImportProfile;
+        var profile = importOptions?.SelectedImportProfile;
         if (profile != null)
         {
             TimeSpanFormat? format = null;
@@ -126,7 +142,7 @@ along with Foobar.  If not, see
             {
                 format = new() { Scheme = newScheme };
             }
-            await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.SelectedImportProfile!.TimeSpanFormat, format);
+            await LocalStorageOptionsProvider.SaveOptionsValueAsync<ImportOptions>(x => x.SelectedImportProfile!.TimeSpanFormat, format);
             await ImportprofileChanged.InvokeAsync();
         }
     }
@@ -155,16 +171,16 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            ApplicationOptions!.ImportProfiles = ApplicationOptions.DefaultImportprofiles;
-            ApplicationOptions!.SelectedImportProfile = ApplicationOptions.DefaultSelectedImportprofile;
-            await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
+            importOptions!.ImportProfiles = ImportOptions.DefaultImportprofiles;
+            importOptions!.SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile;
+            await LocalStorageOptionsProvider.SaveOptionsAsync(importOptions);
             await ImportprofileChanged.InvokeAsync();
         }
     }
 
     async Task AddImportprofileClick()
     {
-        var newProfilesNames = ApplicationOptions!.ImportProfiles.Where(x => x.Name?.StartsWith(_localizer["New import profile"]) == true).Select(x => x.Name);
+        var newProfilesNames = importOptions!.ImportProfiles.Where(x => x.Name?.StartsWith(_localizer["New import profile"]) == true).Select(x => x.Name);
         var regex = new System.Text.RegularExpressions.Regex(@"(\d+)$");
         int maxNumber = newProfilesNames
             .Select(name =>
@@ -178,23 +194,32 @@ along with Foobar.  If not, see
         {
             Name = $"{_localizer["New import profile"]} {maxNumber + 1}"
         };
-        ApplicationOptions!.SelectedImportProfile = profile;
-        await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
+        importOptions!.SelectedImportProfile = profile;
+        await LocalStorageOptionsProvider.SaveOptionsAsync(importOptions);
         await ImportprofileChanged.InvokeAsync();
     }
 
     async Task DeleteImportprofileClick()
     {
-        var selectedProfile = ApplicationOptions?.SelectedImportProfile;
-        if (selectedProfile != null)
+        var selectedProfile = importOptions?.SelectedImportProfile;
+        if ((selectedProfile != null) && (importOptions != null))
         {
-            ApplicationOptions!.ImportProfiles.Remove(selectedProfile);
-            var lastProfile = ApplicationOptions.ImportProfiles.LastOrDefault();
+            importOptions.ImportProfiles.Remove(selectedProfile);
+            var lastProfile = importOptions.ImportProfiles.LastOrDefault();
             if (lastProfile != null)
             {
-                ApplicationOptions!.SelectedImportProfile = lastProfile;
+                importOptions.SelectedImportProfile = lastProfile;
             }
-            await LocalStorageOptionsProvider.SaveOptionsAsync(ApplicationOptions);
+            await LocalStorageOptionsProvider.SaveOptionsAsync(importOptions);
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ImportOptions importOption)
+        {
+            importOptions = importOption;
+            StateHasChanged();
         }
     }
 }
