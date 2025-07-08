@@ -18,6 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<StartRecordCountdownDialog> _localizer
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 @if (ApplicationOptions != null)
 {
@@ -26,16 +27,41 @@ along with Foobar.  If not, see
             @_localizer["Start record countdown timer"]
         </TitleContent>
         <DialogContent>
-            <MudNumericField T="uint" Placeholder="@_localizer["Seconds till record starts"]" Label="@_localizer["Record countdown in sconds"]" Variant="Variant.Outlined" Value="ApplicationOptions.RecordCountdownTimer" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.RecordCountdownTimer, newValue)" />
+            <MudNumericField T="uint?" Placeholder="@_localizer["Seconds till record starts"]" Label="@_localizer["Record countdown in sconds"]" Variant="Variant.Outlined" 
+                             Value="options?.RecordCountdownTimer" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<RecordOptions>(x => x.RecordCountdownTimer, newValue)" />
         </DialogContent>
         <DialogActions>
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close()">@_localizer["Start countdown"]</MudButton>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close(DialogResult.Ok(options?.RecordCountdownTimer))">@_localizer["Start countdown"]</MudButton>
             <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
         </DialogActions>
     </MudDialog>
 }
 
 @code {
+    RecordOptions? options;
+
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        options = await _localStorageOptionsProvider.GetOptionsAsync<RecordOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is RecordOptions recordOptions)
+        {
+            options = recordOptions;
+            StateHasChanged();
+        }
+    }
 }
