@@ -26,6 +26,7 @@ along with Foobar.  If not, see
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
+@inject ISessionStateContainer _sessionStateContainer
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -174,11 +175,20 @@ along with Foobar.  If not, see
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
 
-    [CascadingParameter]
-    public ViewMode CurrentViewMode { get; set; }
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
 
     [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
+    public ViewMode CurrentViewMode { get; set; }
 
     protected override void Dispose(bool disposing)
     {

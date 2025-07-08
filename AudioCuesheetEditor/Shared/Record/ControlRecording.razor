@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ControlRecording> _localizer
 @inject IDialogService _dialogService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject ISessionStateContainer _sessionStateContainer
 
 @if (Cuesheet?.IsRecording == false)
 {
@@ -86,8 +87,20 @@ along with Foobar.  If not, see
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
 
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
+
     [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
+    public ViewMode CurrentViewMode { get; set; }
 
     public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecordingPossible.Any() == true;
 

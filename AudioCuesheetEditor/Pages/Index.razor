@@ -27,25 +27,18 @@ along with Foobar.  If not, see
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>
     <CascadingValue Value="GetViewMode()">
         <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
-            <CascadingValue Value="_sessionStateContainer.Cuesheet">
-                <ViewModeFull />
-            </CascadingValue>
+            <ViewModeFull />
         </MudTabPanel>
         <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
-            <CascadingValue Value="_sessionStateContainer.Cuesheet">
-                <ViewModeRecord />
-            </CascadingValue>
+            <ViewModeRecord />
         </MudTabPanel>
         <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
-            <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
-                <ViewModeImport />
-            </CascadingValue>
+            <ViewModeImport />
         </MudTabPanel>
     </CascadingValue>
 </MudTabs>
 
 @code{
-    //TODO: do NOT use CascadingValue foc Cuesheet, since every change will cause a rerendering of all components below
     ViewOptions? options;
 
     protected override async Task OnInitializedAsync()

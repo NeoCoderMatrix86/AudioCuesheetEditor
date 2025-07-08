@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<AddTrack> _localizer
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
+@inject ISessionStateContainer _sessionStateContainer
 
 <MudCard Outlined>
     <MudCardContent>
@@ -79,7 +80,19 @@ along with Foobar.  If not, see
 
 @code {
     [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
+    public ViewMode CurrentViewMode { get; set; }
+
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
 
     protected override void OnParametersSet()
     {

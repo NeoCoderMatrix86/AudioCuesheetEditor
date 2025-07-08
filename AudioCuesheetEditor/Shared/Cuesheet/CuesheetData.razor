@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject IFileInputManager _fileInputManager
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IDialogService _dialogService
+@inject ISessionStateContainer _sessionStateContainer
 
 @if (Cuesheet != null)
 {
@@ -43,8 +44,17 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
-    [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
