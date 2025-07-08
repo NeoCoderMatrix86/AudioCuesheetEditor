@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Shared
         protected ITraceChangeManager TraceChangeManager { get; set; } = default!;
         [Inject]
         protected ILocalStorageOptionsProvider LocalStorageOptionsProvider { get; set; } = default!;
-
+        //TODO: Remove this, since a rerendering costs performance
         public ApplicationOptions? ApplicationOptions { get; private set; }
 
         protected override void OnInitialized()
