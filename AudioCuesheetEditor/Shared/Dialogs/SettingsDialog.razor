@@ -24,7 +24,7 @@ along with Foobar.  If not, see
 <MudDialog>
     <DialogContent>
         <MudText Typo="Typo.subtitle1"><b>@_localizer["Input"]</b></MudText>
-        <MudSwitch T="Boolean?" Value="applicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.LinkTracks, newValue)"
+        <MudSwitch T="Boolean?" Value="applicationOptions?.DefaultIsLinkedToPreviousTrack" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.DefaultIsLinkedToPreviousTrack, newValue)"
                    Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
         <MudStack Row AlignItems="AlignItems.Baseline">
             <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@applicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync"

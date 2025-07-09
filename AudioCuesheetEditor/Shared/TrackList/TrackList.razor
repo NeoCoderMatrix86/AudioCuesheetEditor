@@ -206,7 +206,7 @@ along with Foobar.  If not, see
     {
         var newTrack = new Track()
         {
-            IsLinkedToPreviousTrack = ApplicationOptions!.LinkTracks
+            IsLinkedToPreviousTrack = ApplicationOptions!.DefaultIsLinkedToPreviousTrack
         };
         Cuesheet?.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);

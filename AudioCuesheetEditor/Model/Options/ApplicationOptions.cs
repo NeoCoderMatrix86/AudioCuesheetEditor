@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Model.Options
             }
         }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
-        public Boolean LinkTracks { get; set; } = true;
+        public Boolean DefaultIsLinkedToPreviousTrack { get; set; } = true;
         public Boolean FixedTracksTableHeader { get; set; } = false;
         public String? DisplayTimeSpanFormat { get; set; }
         public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
