@@ -30,8 +30,6 @@ namespace AudioCuesheetEditor.Shared
         protected ITraceChangeManager TraceChangeManager { get; set; } = default!;
         [Inject]
         protected ILocalStorageOptionsProvider LocalStorageOptionsProvider { get; set; } = default!;
-        //TODO: Remove this, since a rerendering costs performance
-        public ApplicationOptions? ApplicationOptions { get; private set; }
 
         protected override void OnInitialized()
         {
@@ -40,22 +38,6 @@ namespace AudioCuesheetEditor.Shared
             TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
             TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
             TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            await base.OnInitializedAsync();
-            ApplicationOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-            LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        }
-
-        void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
-        {
-            if (option is ApplicationOptions applicationOptions)
-            {
-                ApplicationOptions = applicationOptions;
-                StateHasChanged();
-            }
         }
 
         void TraceChangeManager_RedoDone(object? sender, EventArgs e)
@@ -87,7 +69,6 @@ namespace AudioCuesheetEditor.Shared
                     LocalizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
                     TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
                     TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
-                    LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
                 }
 
                 disposedValue = true;
