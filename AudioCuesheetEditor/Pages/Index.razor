@@ -39,6 +39,7 @@ along with Foobar.  If not, see
 </MudTabs>
 
 @code{
+    //TODO: Keeping the panels alive will cause non seen components to rerender every time an update to entities is done. We need to get away from KeepPanelsAlive because this kills renderperformance
     ViewOptions? options;
 
     protected override async Task OnInitializedAsync()
