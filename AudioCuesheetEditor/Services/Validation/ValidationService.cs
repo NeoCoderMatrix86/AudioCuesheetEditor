@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Services.Validation
 
         public IEnumerable<string> Validate(object model, string propertyName)
         {
-            List<string> errors = [];
+            IEnumerable<string> errors = [];
             if (model is IValidateable validateable)
             {
                 var validationResult = validateable.Validate(propertyName);
@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Services.Validation
                         break;
 
                     case ValidationStatus.Error:
-                        errors = validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer)).ToList();
+                        errors = [.. validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer))];
                         break;
 
                     default:
@@ -48,7 +48,7 @@ namespace AudioCuesheetEditor.Services.Validation
             {
                 throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
             }
-            return errors.AsEnumerable();
+            return errors;
         }
     }
 }
