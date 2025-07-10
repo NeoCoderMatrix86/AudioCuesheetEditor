@@ -104,10 +104,6 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
             <EditTemplate>
-                @if (_playbackService.CurrentlyPlayingTrack == context.Item)
-                {
-                    <MudIcon Icon="@Icons.Material.Outlined.Audiotrack" Title="@_localizer["Currently playing this track"]" />
-                }
                 @if (Cuesheet?.GetSection(context.Item) != null)
                 {
                     <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
@@ -157,7 +153,6 @@ along with Foobar.  If not, see
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
         _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
@@ -166,7 +161,6 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         applicationOptions = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
     }
 
     void AddTrackClicked()
@@ -275,11 +269,6 @@ along with Foobar.  If not, see
         {
             return @Icons.Material.Outlined.VerticalAlignCenter;
         }
-    }
-
-    void PlaybackService_CurrentPositionChanged()
-    {
-        StateHasChanged();
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)

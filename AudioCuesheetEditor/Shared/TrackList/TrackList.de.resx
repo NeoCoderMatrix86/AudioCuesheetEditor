@@ -141,9 +141,6 @@
   <data name="Remarks" xml:space="preserve">
     <value>Bemerkungen</value>
   </data>
-  <data name="Currently playing this track" xml:space="preserve">
-    <value>Dieser Titel wird gerade abgespielt</value>
-  </data>
   <data name="A section is beginning inside this track" xml:space="preserve">
     <value>Ein Abschnitt beginnt innerhalb dieses Titels</value>
   </data>
