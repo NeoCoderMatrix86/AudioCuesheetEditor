@@ -48,11 +48,11 @@ Sample Artist 6 - Sample Title 6				00:31:54
 Sample Artist 7 - Sample Title 7				00:45:54
 Sample Artist 8 - Sample Title 8				01:15:54";
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
-                SelectedImportProfile = ApplicationOptions.DefaultSelectedImportprofile
+                SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -88,11 +88,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -120,11 +120,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = @"(?'Position'\d{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -160,11 +160,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = @"Position|Artist - Title	End"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -210,11 +210,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = @"(?'Track.Position'.{1,})|(?'Track.Artist'.{1,}) - (?'Track.Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Track.End'.{1,})"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -251,11 +251,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = @"(?'Position'.{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -291,11 +291,11 @@ Sample Artist 9 - Sample Title 9				";
                 SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -321,11 +321,11 @@ Sample Artist 9 - Sample Title 9				";
                 TimeSpanFormat = new() { Scheme = $"{nameof(TimeSpanFormat.Minutes)}:{nameof(TimeSpanFormat.Seconds)}" }
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -354,11 +354,11 @@ Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS";
                 SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]+) - (?'Title'[a-zA-Z0-9_ .();äöü]+)[\t ]+(?'End'[0-9]{2}:[0-9]{2}:[0-9]{2})(?:[\t ]+(?'Flags'[A-Za-z0-9 ,]+))?(?=[\t ]*(?:\r?\n|$))"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -397,11 +397,11 @@ Sample Artist 8 - Sample Title 8		00:00:02		01:15:54		00:00:00";
                 SchemeTracks = "(?'Artist'[a-zA-Z0-9_ .();äöü&:,]{1,}) - (?'Title'[a-zA-Z0-9_ .();äöü]{1,})\t{1,}(?'PreGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'End'[0-9]{2}[:][0-9]{2}[:][0-9]{2})\t{1,}(?'PostGap'[0-9]{2}[:][0-9]{2}[:][0-9]{2})"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -445,11 +445,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}\t{nameof(ImportCuesheet.Audiofile)}"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -490,11 +490,11 @@ Sample Artist 6 - Sample Title 6				00:31:54
 Sample Artist 7 - Sample Title 7				00:45:54
 Sample Artist 8 - Sample Title 8				01:15:54";
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
-                SelectedImportProfile = ApplicationOptions.DefaultSelectedImportprofile
+                SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -525,11 +525,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             using var reader = new StreamReader(textImportMemoryStream);            
             var fileContent = reader.ReadToEnd();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -557,11 +557,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var reader = new StreamReader(textImportMemoryStream);
             var fileContent = reader.ReadToEnd();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -597,11 +597,11 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var reader = new StreamReader(textImportMemoryStream);
             var fileContent = reader.ReadToEnd();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -668,11 +668,11 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
                 SchemeTracks = $"{nameof(ImportTrack.Artist)}~{nameof(ImportTrack.Title)}~{nameof(ImportTrack.StartDateTime)}"
             };
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
@@ -705,11 +705,11 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
             var reader = new StreamReader(textImportMemoryStream);
             var fileContent = reader.ReadToEnd();
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var options = new ApplicationOptions
+            var options = new ImportOptions
             {
                 SelectedImportProfile = profile
             };
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
+            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
             var importfile = await service.AnalyseAsync(fileContent);
