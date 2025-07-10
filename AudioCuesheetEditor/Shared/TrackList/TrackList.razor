@@ -67,52 +67,12 @@ along with Foobar.  If not, see
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
             <EditTemplate>
-                @{
-                    MusicBrainzArtist? autocompleteArtist = new()
-                    {
-                        Name = context.Item.Artist
-                    };
-                }
-                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="context.Item.Artist"
-                                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
-                    <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Name</MudText>
-                        }
-                    </ItemTemplate>
-                </MudAutocomplete>
+                <ArtistColumn Track="context.Item" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
             <EditTemplate>
-                @{
-                    MusicBrainzTrack? autocompleteTrack = new()
-                    {
-                        Artist = context.Item.Artist,
-                        Title = context.Item.Title
-                    };
-                }
-                <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, context.Item.Artist, token)" ToStringFunc="(value) => value.Title"
-                                 @bind-Text="context.Item.Title" Value="autocompleteTrack" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                                 ResetValueOnEmptyText Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))" MaxItems="null" CoerceText="false">
-                    <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Title</MudText>
-                        }
-                    </ItemTemplate>
-                </MudAutocomplete>
+                <TitleColumn Track="context.Item" CurrentViewMode="CurrentViewMode" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -171,6 +131,9 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Redesign in order to increase render performance
+    //TODO: Cache error messages to increase render performance
+    //TODO: Remove status for playing track
+    //TODO: Make Remarks to status and use Chips
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;

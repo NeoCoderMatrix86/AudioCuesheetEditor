@@ -1,0 +1,82 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject AutocompleteManager _autocompleteManager
+@inject ValidationService _validationService
+
+<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="Track.Artist"
+                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(ErrorMessage)"
+                 ErrorText="@ErrorMessage" MaxItems="null" CoerceText="false">
+    <ItemTemplate>
+        @if (context.Disambiguation != null)
+        {
+            <MudText>@String.Format("{0} ({1})", context.Name, context.Disambiguation)</MudText>
+        }
+        else
+        {
+            <MudText>@context.Name</MudText>
+        }
+    </ItemTemplate>
+</MudAutocomplete>
+
+@code {
+    [Parameter] 
+    [EditorRequired]
+    public Track Track { get; set; } = default!;
+
+    MusicBrainzArtist? autocompleteArtist;
+    string? ErrorMessage;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
+        SetErrorMessage();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        autocompleteArtist = new() { Name = Track.Artist };
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        Track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
+    }
+
+    void SetErrorMessage()
+    {
+        var validationMessages = _validationService.Validate(Track, nameof(Track.Artist));
+        if (validationMessages.Count() > 0)
+        {
+            ErrorMessage = string.Join(Environment.NewLine, validationMessages);
+        }
+        ErrorMessage = null;
+    }
+
+    void Track_ValidateablePropertyChanged(object? sender, string? propertyName)
+    {
+        if (propertyName == nameof(Track.Artist))
+        {
+            SetErrorMessage();
+        }
+    }
+}
