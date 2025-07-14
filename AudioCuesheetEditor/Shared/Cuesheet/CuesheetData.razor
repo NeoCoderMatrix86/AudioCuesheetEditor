@@ -71,6 +71,15 @@ along with Foobar.  If not, see
         {
             fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
         }
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
     protected override void OnParametersSet()
@@ -200,5 +209,15 @@ along with Foobar.  If not, see
         {
             return null;
         }
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
