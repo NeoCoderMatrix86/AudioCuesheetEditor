@@ -138,9 +138,6 @@
   <data name="Length" xml:space="preserve">
     <value>Length</value>
   </data>
-  <data name="Remarks" xml:space="preserve">
-    <value>Remarks</value>
-  </data>
   <data name="A section is beginning inside this track" xml:space="preserve">
     <value>A section is beginning inside this track</value>
   </data>
@@ -155,5 +152,17 @@
   </data>
   <data name="Confirm" xml:space="preserve">
     <value>Confirm</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Section" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="Unlink this track from previous track" xml:space="preserve">
+    <value>Unlink this track from previous track</value>
+  </data>
+  <data name="Link this track to previous track" xml:space="preserve">
+    <value>Link this track to previous track</value>
   </data>
 </root>
