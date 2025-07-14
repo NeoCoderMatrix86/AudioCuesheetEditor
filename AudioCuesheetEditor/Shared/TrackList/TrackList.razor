@@ -50,7 +50,6 @@ along with Foobar.  If not, see
                              FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
 }
 
-
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
              EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" FixedHeader="applicationOptions?.FixedTracksTableHeader == true">
     <Columns>
@@ -117,7 +116,6 @@ along with Foobar.  If not, see
     </Columns>
 </MudDataGrid>
 
-
 <MudMenu PositionAtCursor @ref="trackContextMenu">
     @if (contextMenuTrack != null)
     {
@@ -133,7 +131,8 @@ along with Foobar.  If not, see
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
     ApplicationOptions? applicationOptions;
-    
+    MudDataGrid<Track>? dataGrid;
+
     public Cuesheet? Cuesheet
     {
         get
