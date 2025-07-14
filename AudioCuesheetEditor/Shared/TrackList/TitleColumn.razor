@@ -21,9 +21,8 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 
 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(value) => value.Title"
-                 @bind-Text="Track.Title" Value="autocompleteTrack" ValueChanged="TitleSelected"
-                 ResetValueOnEmptyText Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(ErrorMessage)"
-                 ErrorText="@ErrorMessage" MaxItems="null" CoerceText="false">
+                 @bind-Text="Track.Title" Value="autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator 
+                 Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false">
     <ItemTemplate Context="autocompleteContext">
         @if (autocompleteContext.Disambiguation != null)
         {
@@ -45,35 +44,11 @@ along with Foobar.  If not, see
     public ViewMode CurrentViewMode { get; set; }
 
     MusicBrainzTrack? autocompleteTrack;
-    string? ErrorMessage;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
-        SetErrorMessage();
-    }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         autocompleteTrack = new() { Artist = Track.Artist, Title = Track.Title };
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        Track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
-    }
-
-    void SetErrorMessage()
-    {
-        var validationMessages = _validationService.Validate(Track, nameof(Track.Title));
-        if (validationMessages.Count() > 0)
-        {
-            ErrorMessage = string.Join(Environment.NewLine, validationMessages);
-        }
-        ErrorMessage = null;
     }
 
     void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
@@ -92,14 +67,6 @@ along with Foobar.  If not, see
                     Track.Length = musicBrainzTrack?.Length;
                 }
                 break;
-        }
-    }
-
-    void Track_ValidateablePropertyChanged(object? sender, string? propertyName)
-    {
-        if (propertyName == nameof(Track.Title))
-        {
-            SetErrorMessage();
         }
     }
 }

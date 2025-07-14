@@ -50,6 +50,7 @@ along with Foobar.  If not, see
                              FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
 }
 
+
 <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
              EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" FixedHeader="applicationOptions?.FixedTracksTableHeader == true">
     <Columns>
@@ -61,8 +62,7 @@ along with Foobar.  If not, see
         </TemplateColumn>
         <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
             <EditTemplate>
-                <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
+                <MudNumericField Validation="(uint? newPosition) => _validationService.Validate(context.Item, nameof(Track.Position))" @bind-Value="context.Item.Position" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
@@ -81,7 +81,7 @@ along with Foobar.  If not, see
             </CellTemplate>
             <EditTemplate>
                 <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
-                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
+                              Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -90,7 +90,7 @@ along with Foobar.  If not, see
             </CellTemplate>
             <EditTemplate>
                 <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
-                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
+                              Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" />
             </EditTemplate>
         </PropertyColumn>
         <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -99,7 +99,7 @@ along with Foobar.  If not, see
             </CellTemplate>
             <EditTemplate>
                 <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
-                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
+                              Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" />
             </EditTemplate>
         </PropertyColumn>
         <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
@@ -117,6 +117,7 @@ along with Foobar.  If not, see
     </Columns>
 </MudDataGrid>
 
+
 <MudMenu PositionAtCursor @ref="trackContextMenu">
     @if (contextMenuTrack != null)
     {
@@ -126,14 +127,13 @@ along with Foobar.  If not, see
 </MudMenu>
 
 @code {
-    //TODO: Redesign in order to increase render performance
-    //TODO: Cache error messages to increase render performance
     //TODO: Make Remarks to status and use Chips
+    //TODO: Also validate begin/End/Length of previous and following track when using linked tracks
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
     ApplicationOptions? applicationOptions;
-
+    
     public Cuesheet? Cuesheet
     {
         get

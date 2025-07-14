@@ -21,8 +21,8 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 
 <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="Track.Artist"
-                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(ErrorMessage)"
-                 ErrorText="@ErrorMessage" MaxItems="null" CoerceText="false">
+                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
+                 MaxItems="null" CoerceText="false">
     <ItemTemplate>
         @if (context.Disambiguation != null)
         {
@@ -41,42 +41,10 @@ along with Foobar.  If not, see
     public Track Track { get; set; } = default!;
 
     MusicBrainzArtist? autocompleteArtist;
-    string? ErrorMessage;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        Track.ValidateablePropertyChanged += Track_ValidateablePropertyChanged;
-        SetErrorMessage();
-    }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         autocompleteArtist = new() { Name = Track.Artist };
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        Track.ValidateablePropertyChanged -= Track_ValidateablePropertyChanged;
-    }
-
-    void SetErrorMessage()
-    {
-        var validationMessages = _validationService.Validate(Track, nameof(Track.Artist));
-        if (validationMessages.Count() > 0)
-        {
-            ErrorMessage = string.Join(Environment.NewLine, validationMessages);
-        }
-        ErrorMessage = null;
-    }
-
-    void Track_ValidateablePropertyChanged(object? sender, string? propertyName)
-    {
-        if (propertyName == nameof(Track.Artist))
-        {
-            SetErrorMessage();
-        }
     }
 }
