@@ -23,8 +23,8 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Index> _localizer
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>
-    <CascadingValue Value="GetViewMode()">
+<CascadingValue Value="currentViewmode">
+    <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>
         <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
             <ViewModeFull />
         </MudTabPanel>
@@ -34,17 +34,19 @@ along with Foobar.  If not, see
         <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
             <ViewModeImport />
         </MudTabPanel>
-    </CascadingValue>
-</MudTabs>
+    </MudTabs>
+</CascadingValue>
 
 @code{
     //TODO: Keeping the panels alive will cause non seen components to rerender every time an update to entities is done. We need to get away from KeepPanelsAlive because this kills renderperformance
     ViewOptions? options;
+    ViewMode currentViewmode = ViewMode.DetailView;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         options = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        currentViewmode = options.ActiveTab;
         _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
     }
 
@@ -59,18 +61,8 @@ along with Foobar.  If not, see
 
     async Task ActiveTabIndexChanged(int tabIndex)
     {
-        var activeViewMode = (ViewMode)tabIndex;
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, activeViewMode);
-    }
-
-    ViewMode GetViewMode()
-    {
-        ViewMode viewMode = ViewMode.DetailView;
-        if (options != null)
-        {
-            viewMode = options.ActiveTab;
-        }
-        return viewMode;
+        currentViewmode = (ViewMode)tabIndex;
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, currentViewmode);
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
@@ -78,6 +70,7 @@ along with Foobar.  If not, see
         if (option is ViewOptions viewOptions)
         {
             options = viewOptions;
+            currentViewmode = options.ActiveTab;
             StateHasChanged();
         }
     }
