@@ -217,17 +217,6 @@ along with Foobar.  If not, see
         }
     }
 
-    String? GetValidationErrorMessage(object model, string propertyName)
-    {
-        String? validationErrorMessage = null;
-        var validationMessages = _validationService.Validate(model, propertyName);
-        if (validationMessages.Count() > 0)
-        {
-            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
-        }
-        return validationErrorMessage;
-    }
-
     async Task CopyTrackClicked(Track? trackToCopy = null)
     {
         var trackThatWillBeCopied = trackToCopy;
