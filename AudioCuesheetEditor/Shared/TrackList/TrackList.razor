@@ -49,72 +49,75 @@ along with Foobar.  If not, see
                              CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
                              FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
 }
-
-<MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" FixedHeader="applicationOptions?.FixedTracksTableHeader == true">
-    <Columns>
-        <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
-        <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
-            <EditTemplate>
-                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
-            </EditTemplate>
-        </TemplateColumn>
-        <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <EditTemplate>
-                <MudNumericField Validation="(uint? newPosition) => _validationService.Validate(context.Item, nameof(Track.Position))" @bind-Value="context.Item.Position" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
-            <EditTemplate>
-                <ArtistColumn Track="context.Item" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
-            <EditTemplate>
-                <TitleColumn Track="context.Item" CurrentViewMode="CurrentViewMode" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <CellTemplate>
-                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)
-            </CellTemplate>
-            <EditTemplate>
-                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
-                              Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <CellTemplate>
-                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)
-            </CellTemplate>
-            <EditTemplate>
-                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
-                              Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <CellTemplate>
-                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)
-            </CellTemplate>
-            <EditTemplate>
-                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
-                              Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
-            <EditTemplate>
-                @if (Cuesheet?.GetSection(context.Item) != null)
-                {
-                    <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
-                }
-                @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
-                {
-                    <MudIconButton Icon="@GetLinkedTrackIcon(context.Item)" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
-                }
-            </EditTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+<MudForm @ref="form">
+    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
+                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" Validator="form">
+        <Columns>
+            <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
+            <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
+                <EditTemplate>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
+                </EditTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <EditTemplate>
+                    <MudNumericField Validation="(uint? newPosition) => _validationService.Validate(context.Item, nameof(Track.Position))" Value="context.Item.Position"
+                                     ValueChanged="(uint? newPosition) => PositionChanged(context.Item, newPosition)" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
+                <EditTemplate>
+                    <ArtistColumn Track="context.Item" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
+                <EditTemplate>
+                    <TitleColumn Track="context.Item" CurrentViewMode="CurrentViewMode" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Begin, value)"
+                                  Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.End, value)"
+                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Length, value)"
+                                  Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" />
+                </EditTemplate>
+            </PropertyColumn>
+            <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
+                <EditTemplate>
+                    @if (Cuesheet?.GetSection(context.Item) != null)
+                    {
+                        <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
+                    }
+                    @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
+                    {
+                        <MudIconButton Icon="@GetLinkedTrackIcon(context.Item)" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
+                    }
+                </EditTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudForm>
 
 <MudMenu PositionAtCursor @ref="trackContextMenu">
     @if (contextMenuTrack != null)
@@ -126,12 +129,11 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Make Remarks to status and use Chips
-    //TODO: Also validate begin/End/Length of previous and following track when using linked tracks
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
     ApplicationOptions? applicationOptions;
-    MudDataGrid<Track>? dataGrid;
+    MudForm? form;
 
     public Cuesheet? Cuesheet
     {
@@ -264,6 +266,24 @@ along with Foobar.  If not, see
         {
             applicationOptions = applicationOption;
             StateHasChanged();
+        }
+    }
+
+    async Task PositionChanged(Track track, uint? newPosition)
+    {
+        track.Position = newPosition;
+        if (form != null)
+        {
+            await form.Validate();
+        }
+    }
+
+    async Task TimespanChanged<TProperty>(Track track, System.Linq.Expressions.Expression<Func<Track, TProperty>> expression, String value)
+    {
+        await _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TProperty>(track, expression, value);
+        if (form != null)
+        {
+            await form.Validate();
         }
     }
 }
