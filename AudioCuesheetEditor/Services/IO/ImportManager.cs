@@ -95,6 +95,7 @@ namespace AudioCuesheetEditor.Services.IO
 
         public void ImportCuesheet()
         {
+            var stopwatch = Stopwatch.StartNew();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
                 _traceChangeManager.BulkEdit = true;
@@ -102,6 +103,8 @@ namespace AudioCuesheetEditor.Services.IO
                 _traceChangeManager.BulkEdit = false;
             }
             _sessionStateContainer.ResetImport();
+            stopwatch.Stop();
+            _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
         private void ImportCuesheet(String fileContent)
