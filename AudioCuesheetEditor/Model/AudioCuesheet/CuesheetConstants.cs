@@ -31,6 +31,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public static readonly String Tab = "\t";
         public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
         public static readonly String CuesheetCatalogueNumber = "CATALOG";
-        public static readonly String RecognizedMarkHTML = "<Mark>{0}</Mark>";
+        public static readonly String MarkHTMLStart = "<Mark>";
+        public static readonly String RecognizedMarkHTML = MarkHTMLStart + "{0}" + "</Mark>";
     }
 }

@@ -14,18 +14,17 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-using AudioCuesheetEditor.Data.Options;
+using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
 {
@@ -33,78 +32,86 @@ namespace AudioCuesheetEditor.Tests.Services.IO
     public class ImportManagerTests
     {
         [TestMethod()]
-        public void ImportTextAsync_TextfileWithStartDateTime_CreatesValidCuesheet()
+        public async Task ImportTextAsync_WithAnalysedCuesheet_SetsImportCuesheet()
         {
             // Arrange
-            var fileContent = new List<string>
-            {
-                "Innellea~The Golden Fort~02.08.2024 20:10:48",
-                "Nora En Pure~Diving with Whales (Daniel Portman Remix)~02.08.2024 20:15:21",
-                "WhoMadeWho & Adriatique~Miracle (RÜFÜS DU SOL Remix)~02.08.2024 20:20:42",
-                "Ella Wild~Poison D'araignee (Original Mix)~02.08.2024 20:28:03",
-                "Stil & Bense~On The Edge (Original Mix)~02.08.2024 20:32:42",
-                "Nebula~Clairvoyant Dreams~02.08.2024 20:39:01",
-                "Valentina Black~I'm a Tree (Extended Mix)~02.08.2024 20:47:08",
-                "Nebula~Clairvoyant Dreams~02.08.2024 20:53:20",
-                "Kiko & Dave Davis feat. Phoebe~Living in Space (Dub Mix)~02.08.2024 20:58:11",
-                "Lilly Palmer~Before Acid~02.08.2024 21:03:53",
-                "Sofi Tukker~Drinkee (Vintage Culture & John Summit Extended Mix)~02.08.2024 21:09:52",
-                "CID & Truth x Lies~Caroline (Extended Mix)~02.08.2024 21:14:09",
-                "Moby~Why Does My Heart Feel So Bad? (Oxia Remix)~02.08.2024 21:17:15",
-                "Ammo Avenue~Little Gurl (Extended Mix)~02.08.2024 21:22:46",
-                "James Hurr & Smokin Jo & Stealth~Beggin' For Change~02.08.2024 21:28:37",
-                "Kristine Blond~Love Shy (Sam Divine & CASSIMM Extended Remix)~02.08.2024 21:30:47",
-                "Vanilla Ace~Work On You (Original Mix)~02.08.2024 21:36:28",
-                "Truth X Lies~Like This~02.08.2024 21:42:05",
-                "Terri-Anne~Round Round~02.08.2024 21:44:07",
-                "Joanna Magik~Maneater~02.08.2024 21:46:32",
-                "Jen Payne & Kevin McKay~Feed Your Soul~02.08.2024 21:48:45",
-                "Kevin McKay & Eppers & Notelle~On My Own~02.08.2024 21:51:37",
-                "Nader Razdar & Kevin McKay~Get Ur Freak On (Kevin McKay Extended Mix)~02.08.2024 21:53:49",
-                "Philip Z~Yala (Extended Mix)~02.08.2024 21:59:40",
-                "Kyle Kinch & Kevin McKay~Hella~02.08.2024 22:05:53",
-                "Roze Wild~B-O-D-Y~02.08.2024 22:08:26",
-                "Jey Kurmis~Snoop~02.08.2024 22:11:09",
-                "Bootie Brown & Tame Impala & Gorillaz~New Gold (Dom Dolla Remix Extended)~02.08.2024 22:16:23",
-                "Eli Brown & Love Regenerator~Don't You Want Me (Original Mix)~02.08.2024 22:21:23",
-                "Local Singles~Voices~02.08.2024 22:25:59"
-            };
-
+            var fileContent = "This is just a test";
             var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
             var sessionStateContainer = new SessionStateContainer(traceChangeManager);
-            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
-            var textImportScheme = new TextImportScheme()
-            {
-                SchemeCuesheet = null,
-                SchemeTracks = @"(?'Artist'[a-zA-Z0-9_ .();äöü&:,'*-?:]{1,})~(?'Title'[a-zA-Z0-9_ .();äöü&'*-?:Ü]{1,})~(?'StartDateTime'.{1,})"
-            };
-            var timeSpanFormat = new TimeSpanFormat();
-            var options = new ApplicationOptions();
-            localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(options);
             var fileInputManagerMock = new Mock<IFileInputManager>();
-            var importManager = new ImportManager(sessionStateContainer, localStorageOptionsProviderMock.Object, traceChangeManager, fileInputManagerMock.Object);
+            var textImportServiceMock = new Mock<ITextImportService>();
+            var importCuesheet = new ImportCuesheet()
+            {
+                Artist = "Test Cuesheet Artist",
+                Title = "Test Cuesheet Title",
+                Audiofile = "Test Cuesheet Audiofile",
+                Cataloguenumber = "Test Cuesheet Cataloguenumber",
+                CDTextfile = "Test Cuesheet CDTextfile"
+            };
+            importCuesheet.Tracks.Add(new()
+            {
+                Artist = "Test Track Artist 1",
+                Title = "Test Track Title 1",
+                Begin = new TimeSpan(0, 3, 20),
+                End = new TimeSpan(0, 7, 43),
+                Flags = [Flag.DCP],
+                Position = 1,
+                PreGap = new TimeSpan(0, 0, 2),
+                PostGap = new TimeSpan(0, 0, 4)
+            });
+            var importfile = new Importfile()
+            {
+                FileContent = fileContent,
+                FileType = ImportFileType.Textfile,
+                AnalysedCuesheet = importCuesheet
+            };
+            textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object);
             var testHelper = new TestHelper();
             // Act
-            importManager.ImportText(fileContent, textImportScheme, timeSpanFormat);
+            await importManager.ImportTextAsync(fileContent);
             // Assert
-            Assert.IsNull(sessionStateContainer.Importfile?.AnalyseException);
+            Assert.AreEqual(importfile, sessionStateContainer.Importfile);
             Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
-            Assert.AreEqual(30, sessionStateContainer.ImportCuesheet.Tracks.Count);
-            Assert.AreEqual("Innellea", sessionStateContainer.ImportCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("The Golden Fort", sessionStateContainer.ImportCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(TimeSpan.Zero, sessionStateContainer.ImportCuesheet.Tracks.ElementAt(0).Begin);
-            Assert.AreEqual(new TimeSpan(0, 4, 33), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(0).End);
-            Assert.AreEqual(new TimeSpan(0, 4, 33), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(0).Length);
-            Assert.AreEqual("Nora En Pure", sessionStateContainer.ImportCuesheet.Tracks.ElementAt(1).Artist);
-            Assert.AreEqual("Diving with Whales (Daniel Portman Remix)", sessionStateContainer.ImportCuesheet.Tracks.ElementAt(1).Title);
-            Assert.AreEqual(new TimeSpan(0, 4, 33), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(1).Begin);
-            Assert.AreEqual(new TimeSpan(0, 9, 54), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(1).End);
-            Assert.AreEqual(new TimeSpan(0, 5, 21), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(1).Length);
-            Assert.AreEqual("Local Singles", sessionStateContainer.ImportCuesheet.Tracks.ElementAt(29).Artist);
-            Assert.AreEqual("Voices", sessionStateContainer.ImportCuesheet.Tracks.ElementAt(29).Title);
-            Assert.AreEqual(new TimeSpan(2, 15, 11), sessionStateContainer.ImportCuesheet.Tracks.ElementAt(29).Begin);
-            Assert.IsNull(sessionStateContainer.ImportCuesheet.Tracks.ElementAt(29).End);
-            Assert.IsNull(sessionStateContainer.ImportCuesheet.Tracks.ElementAt(29).Length);
+            Assert.AreEqual(importCuesheet.Artist, sessionStateContainer.ImportCuesheet.Artist);
+            Assert.AreEqual(importCuesheet.Title, sessionStateContainer.ImportCuesheet.Title);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet.Audiofile);
+            Assert.AreEqual(importCuesheet.Audiofile, sessionStateContainer.ImportCuesheet.Audiofile.Name);
+            Assert.AreEqual(importCuesheet.Cataloguenumber, sessionStateContainer.ImportCuesheet.Cataloguenumber);
+            Assert.IsNotNull(sessionStateContainer.ImportCuesheet.CDTextfile);
+            Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainer.ImportCuesheet.CDTextfile.Name);
+            Assert.AreEqual(importCuesheet.Tracks.First().Artist, sessionStateContainer.ImportCuesheet.Tracks.First().Artist);
+            Assert.AreEqual(importCuesheet.Tracks.First().Title, sessionStateContainer.ImportCuesheet.Tracks.First().Title);
+            Assert.AreEqual(importCuesheet.Tracks.First().Begin, sessionStateContainer.ImportCuesheet.Tracks.First().Begin);
+            Assert.AreEqual(importCuesheet.Tracks.First().End, sessionStateContainer.ImportCuesheet.Tracks.First().End);
+            CollectionAssert.AreEquivalent(importCuesheet.Tracks.First().Flags.ToList(), sessionStateContainer.ImportCuesheet.Tracks.First().Flags.ToList());
+            Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainer.ImportCuesheet.Tracks.First().Position);
+            Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainer.ImportCuesheet.Tracks.First().PreGap);
+            Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainer.ImportCuesheet.Tracks.First().PostGap);
+        }
+
+        [TestMethod()]
+        public async Task ImportTextAsync_WithoutAnalysedCuesheet_DoesNothing()
+        {
+            // Arrange
+            var fileContent = "This is just a test";
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var textImportServiceMock = new Mock<ITextImportService>();
+            var importfile = new Importfile()
+            {
+                FileContent = fileContent,
+                FileType = ImportFileType.Textfile,
+            };
+            textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object);
+            var testHelper = new TestHelper();
+            // Act
+            await importManager.ImportTextAsync(fileContent);
+            // Assert
+            Assert.AreEqual(importfile, sessionStateContainer.Importfile);
+            Assert.IsNull(sessionStateContainer.ImportCuesheet);
         }
     }
 }
