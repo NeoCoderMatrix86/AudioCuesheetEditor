@@ -21,34 +21,43 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
-    <MudTabPanel Text="@_localizer["Analyzed file content"]" Icon="@Icons.Material.Outlined.Analytics">
-        <MudField Class="ml-2 mr-2">
-            <pre>
-                @if (FileContentRecognized != null)
-                {
-                    @((MarkupString)SanitizeHTML(FileContentRecognized))
-                }
-            </pre>
-        </MudField>
-    </MudTabPanel>
-    <MudTabPanel Text="@_localizer["Edit"]" Icon="@Icons.Material.Outlined.Edit">
-        <MudTextField Class="ml-2 mr-2" T="string" AutoGrow Text="@_sessionStateContainer.Importfile?.FileContent" TextChanged="FileContent_TextChangedAsync" />
-    </MudTabPanel>
+    @if (FileContentRecognized != null)
+    {
+        <MudTabPanel Text="@_localizer["Analyzed file content"]" Icon="@Icons.Material.Outlined.Analytics">
+            <MudField Class="ml-2 mr-2">
+                <pre>                
+                    @foreach (var line in FileContentRecognized)
+                    {
+                        @((MarkupString)String.Format("{0}<br />", line))
+                    }
+                </pre>
+            </MudField>
+        </MudTabPanel>
+        <MudTabPanel Text="@_localizer["Edit"]" Icon="@Icons.Material.Outlined.Edit">
+            <MudTextField Class="ml-2 mr-2" T="string" Lines="@FileContentRecognized.Count()" AutoGrow Text="@FileContent" TextChanged="FileContent_TextChangedAsync" />
+        </MudTabPanel>
+    }
 </MudTabs>
 
 @code {
     [Parameter]
     public EventCallback<string> FileContentChanged { get; set; }
-    public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
+    public IEnumerable<String?>? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
+    public String FileContent
+    {
+        get
+        {
+            String fileContent = String.Empty;
+            if (_sessionStateContainer.Importfile?.FileContent != null)
+            {
+                fileContent = String.Join(Environment.NewLine, _sessionStateContainer.Importfile.FileContent);
+            }
+            return fileContent;
+        }
+    }
 
     async Task FileContent_TextChangedAsync(string newFileContent)
     {
         await FileContentChanged.InvokeAsync(newFileContent);
-    }
-
-    string SanitizeHTML(string input)
-    {
-        var sanitizer = new HtmlSanitizer();
-        return sanitizer.Sanitize(input);
     }
 }

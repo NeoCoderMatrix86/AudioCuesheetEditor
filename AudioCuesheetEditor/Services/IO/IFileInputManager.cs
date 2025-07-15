@@ -22,16 +22,8 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public interface IFileInputManager
     {
-        bool IsValidAudiofile(IBrowserFile browserFile);
-        AudioCodec? GetAudioCodec(IBrowserFile browserFile);
-        bool CheckFileMimeType(IBrowserFile file, string mimeType, IEnumerable<string> fileExtensions);
+        bool CheckFileMimeType(IBrowserFile file, string mimeType, string fileExtension);
         Task<Audiofile?> CreateAudiofileAsync(string? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null);
         CDTextfile? CreateCDTextfile(IBrowserFile? browserFile);
-        /// <summary>
-        /// Checks if the file can be used for the import view
-        /// </summary>
-        /// <param name="browserFile"></param>
-        /// <returns></returns>
-        bool IsValidForImportView(IBrowserFile browserFile);
     }
 }

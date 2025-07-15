@@ -93,16 +93,6 @@ namespace AudioCuesheetEditor.Tests.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
-        internal static byte[] Sample_Inputfile {
-            get {
-                object obj = ResourceManager.GetObject("Sample_Inputfile", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
         internal static byte[] Textimport_Bug__233 {
             get {
                 object obj = ResourceManager.GetObject("Textimport_Bug__233", resourceCulture);
@@ -135,17 +125,7 @@ namespace AudioCuesheetEditor.Tests.Properties {
         /// </summary>
         internal static byte[] Textimport_with_Cuesheetdata {
             get {
-                object obj = ResourceManager.GetObject("Textimport with Cuesheetdata", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
-        /// </summary>
-        internal static byte[] Traktor_Export {
-            get {
-                object obj = ResourceManager.GetObject("Traktor Export", resourceCulture);
+                object obj = ResourceManager.GetObject("Textimport_with_Cuesheetdata", resourceCulture);
                 return ((byte[])(obj));
             }
         }

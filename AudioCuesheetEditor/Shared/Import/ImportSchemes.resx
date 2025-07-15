@@ -117,100 +117,79 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Are you sure you want to reset the import profiles to factory default?" xml:space="preserve">
-    <value>Möchten Sie wirklich die Importprofile auf Werkseinstellungen zurücksetzen?</value>
+  <data name="Add placeholder" xml:space="preserve">
+    <value>Add placeholder</value>
+  </data>
+  <data name="Are you sure you want to reset the import schemes to factory default?" xml:space="preserve">
+    <value>Are you sure you want to reset the import schemes to factory default?</value>
   </data>
   <data name="Artist" xml:space="preserve">
-    <value>Künstler</value>
+    <value>Artist</value>
   </data>
   <data name="Audiofile" xml:space="preserve">
-    <value>Audiodatei</value>
+    <value>Audiofile</value>
   </data>
   <data name="Begin" xml:space="preserve">
-    <value>Beginn</value>
+    <value>Begin</value>
   </data>
   <data name="Cataloguenumber" xml:space="preserve">
-    <value>Katalognummer</value>
+    <value>Cataloguenumber</value>
   </data>
   <data name="CDTextfile" xml:space="preserve">
-    <value>CD-Textdatei</value>
+    <value>CDTextfile</value>
   </data>
   <data name="Confirm" xml:space="preserve">
-    <value>Bestätigen</value>
+    <value>Confirm</value>
   </data>
   <data name="Days" xml:space="preserve">
-    <value>Tage</value>
+    <value>Days</value>
   </data>
   <data name="End" xml:space="preserve">
-    <value>Ende</value>
-  </data>
-  <data name="Enter the common data scheme for this profile here" xml:space="preserve">
-    <value>Geben Sie hier das Allgemeine Informationen Schema für das Profil an</value>
-  </data>
-  <data name="Enter the name for this profile here" xml:space="preserve">
-    <value>Geben Sie hier den Namen für das Profil an</value>
-  </data>
-  <data name="Enter the time format for this profile here" xml:space="preserve">
-    <value>Geben Sie hier das Zeitformat für das Profil an</value>
-  </data>
-  <data name="Enter the track scheme for this profile here" xml:space="preserve">
-    <value>Geben Sie hier das Titel Schema für das Profil an</value>
+    <value>End</value>
   </data>
   <data name="Flags" xml:space="preserve">
-    <value>Markierungen</value>
+    <value>Flags</value>
   </data>
   <data name="Hours" xml:space="preserve">
-    <value>Stunden</value>
+    <value>Hours</value>
   </data>
-  <data name="Import profile" xml:space="preserve">
-    <value>Import Profil</value>
+  <data name="Import schemes" xml:space="preserve">
+    <value>Import schemes</value>
   </data>
   <data name="Length" xml:space="preserve">
-    <value>Länge</value>
+    <value>Length</value>
   </data>
   <data name="Milliseconds" xml:space="preserve">
-    <value>Millisekunden</value>
+    <value>Milliseconds</value>
   </data>
   <data name="Minutes" xml:space="preserve">
-    <value>Minuten</value>
-  </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="New import profile" xml:space="preserve">
-    <value>Neues Importprofil</value>
+    <value>Minutes</value>
   </data>
   <data name="Position" xml:space="preserve">
     <value>Position</value>
   </data>
   <data name="PostGap" xml:space="preserve">
-    <value>Nachlücke</value>
+    <value>PostGap</value>
   </data>
   <data name="PreGap" xml:space="preserve">
-    <value>Vorlücke</value>
-  </data>
-  <data name="Profile name" xml:space="preserve">
-    <value>Profil Name</value>
-  </data>
-  <data name="Scheme common data" xml:space="preserve">
-    <value>Schema Allgemeine Informationen</value>
-  </data>
-  <data name="Scheme tracks" xml:space="preserve">
-    <value>Schema Titel</value>
-  </data>
-  <data name="Search using regular expressions" xml:space="preserve">
-    <value>Suche mit regulären Ausdrücken</value>
+    <value>PreGap</value>
   </data>
   <data name="Seconds" xml:space="preserve">
-    <value>Sekunden</value>
+    <value>Seconds</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
-    <value>Startzeitpunkt</value>
+    <value>StartDateTime</value>
+  </data>
+  <data name="Textimport scheme cuesheet" xml:space="preserve">
+    <value>Textimport scheme cuesheet</value>
+  </data>
+  <data name="Textimport scheme tracks" xml:space="preserve">
+    <value>Textimport scheme tracks</value>
   </data>
   <data name="Time input format for import" xml:space="preserve">
-    <value>Zeitformat für den Import</value>
+    <value>Time input format for import</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Titel</value>
+    <value>Title</value>
   </data>
 </root>
