@@ -38,6 +38,7 @@ namespace AudioCuesheetEditor.Services.IO
                 validationMessages.Add(new ValidationMessage("No exportprofile selected!"));
             }
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
             return validationMessages;
         }
 
