@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly HttpClient _httpClient = httpClient;
         private readonly ILogger<FileInputManager> _logger = logger;
 
-        public AudioCodec? GetAudioCodec(IBrowserFile browserFile)
+        public static AudioCodec? GetAudioCodec(IBrowserFile browserFile)
         {
             AudioCodec? foundAudioCodec = null;
             var extension = Path.GetExtension(browserFile.Name);
@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 foundAudioCodec = audioCodecsFound.FirstOrDefault();
             }
-            if (foundAudioCodec == null)
+            else
             {
                 // Second search with mime type or file extension
                 audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
@@ -46,35 +46,21 @@ namespace AudioCuesheetEditor.Services.IO
             return foundAudioCodec;
         }
 
-        public bool IsValidAudiofile(IBrowserFile browserFile)
+        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, String fileExtension)
         {
-            var codec = GetAudioCodec(browserFile);
-            return codec != null;
-        }
-
-        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, IEnumerable<String> fileExtensions)
-        {
-            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
+            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtension: '{FileExtension}'", file.Name, file.ContentType, mimeType, fileExtension);
             Boolean fileMimeTypeMatches = false;
-            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false))
+            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false) && (String.IsNullOrEmpty(fileExtension) == false))
             {
                 if (String.IsNullOrEmpty(file.ContentType) == false)
                 {
-                    if (mimeType.EndsWith("/*"))
-                    {
-                        var mainType = mimeType.Substring(0, mimeType.Length - 1);
-                        fileMimeTypeMatches = file.ContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
-                    }
-                    else
-                    {
-                        fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
-                    }
+                    fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
                 }
-                if ((fileMimeTypeMatches == false) && (fileExtensions.Any()))
+                if (fileMimeTypeMatches == false)
                 {
                     //Try to find by file extension
                     var extension = Path.GetExtension(file.Name);
-                    fileMimeTypeMatches = fileExtensions.Any(x => x.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
+                    fileMimeTypeMatches = extension.Equals(fileExtension, StringComparison.CurrentCultureIgnoreCase);
                 }
             }
             return fileMimeTypeMatches;
@@ -115,7 +101,7 @@ namespace AudioCuesheetEditor.Services.IO
             CDTextfile? cdTextfile = null;
             if (browserFile != null)
             {
-                if (CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.CDTextfile]))
+                if (CheckFileMimeType(browserFile, FileMimeTypes.CDTextfile, FileExtensions.CDTextfile))
                 {
                     cdTextfile = new CDTextfile(browserFile.Name);
                 }
@@ -125,12 +111,6 @@ namespace AudioCuesheetEditor.Services.IO
                 }
             }
             return cdTextfile;
-        }
-
-        /// <inheritdoc/>
-        public bool IsValidForImportView(IBrowserFile browserFile)
-        {
-            return CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
         }
     }
 }
