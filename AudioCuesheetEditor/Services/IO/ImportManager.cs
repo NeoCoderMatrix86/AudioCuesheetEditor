@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Diagnostics;
 
 namespace AudioCuesheetEditor.Services.IO
 {
@@ -30,8 +31,9 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ILogger<ImportManager> logger)
     {
+        private readonly ILogger<ImportManager> _logger = logger;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
@@ -39,6 +41,7 @@ namespace AudioCuesheetEditor.Services.IO
 
         public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
+            var stopwatch = Stopwatch.StartNew();
             Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
             foreach (var file in files)
             {
@@ -71,11 +74,14 @@ namespace AudioCuesheetEditor.Services.IO
                     importFileTypes.Add(file, ImportFileType.Textfile);
                 }
             }
+            stopwatch.Stop();
+            _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
             return importFileTypes;
         }
 
         public async Task ImportTextAsync(string fileContent)
         {
+            var stopwatch = Stopwatch.StartNew();
             _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
             if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
             {
@@ -83,6 +89,8 @@ namespace AudioCuesheetEditor.Services.IO
                 CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
                 _sessionStateContainer.ImportCuesheet = importCuesheet;
             }
+            stopwatch.Stop();
+            _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
         public void ImportCuesheet()
@@ -106,6 +114,7 @@ namespace AudioCuesheetEditor.Services.IO
                 _traceChangeManager.BulkEdit = false;
             }
         }
+
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)
         {
             var fileContent = new MemoryStream();
