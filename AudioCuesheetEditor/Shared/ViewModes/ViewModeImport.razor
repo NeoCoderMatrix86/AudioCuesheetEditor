@@ -17,6 +17,7 @@ along with Foobar.  If not, see
 -->
 @inherits BaseLocalizedComponent
 
+@inject ILogger<ViewModeImport> _logger
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject ISessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
@@ -67,10 +68,22 @@ along with Foobar.  If not, see
     int activeStepIndex;
     Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
+    long? renderBegin;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (renderBegin.HasValue)
+        {
+            var renderDuration = System.Diagnostics.Stopwatch.GetElapsedTime(renderBegin.Value);
+            _logger.LogDebug("ViewModeImport render duration: {renderDuration}", renderDuration);
+        }
+        base.OnAfterRender(firstRender);
+    }
 
     async Task ImportFileContent_FileContentChanged(string newFileContent)
     {
         await _importManager.ImportTextAsync(newFileContent);
+        renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
     }
 
     async Task ReanalyseImportfile()
@@ -79,6 +92,7 @@ along with Foobar.  If not, see
         if (fileContent != null)
         {
             await _importManager.ImportTextAsync(fileContent);
+            renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
         }
     }
 
@@ -90,6 +104,7 @@ along with Foobar.  If not, see
         activeStepIndex = 1;
         selectFilesStepCompleted = true;
         selectFilesStepError = false;
+        renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
     }
 
     async Task CompleteImportAsync()
