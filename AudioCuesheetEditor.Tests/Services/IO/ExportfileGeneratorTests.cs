@@ -220,5 +220,44 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
             Assert.IsNotNull(result.First().Content);
         }
+
+        [TestMethod]
+        public void GenerateExportFile_ReturnsEmpty_WithInvalidTracks()
+        {
+            // Arrange
+            var exportProfile = new Exportprofile
+            {
+                Name = "TestProfile",
+                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
+                Filename = "TestExport.txt"
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new Audiofile("Test audiofile.mp3")
+            };
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 1",
+                Title = "Test title 1",
+                Begin = TimeSpan.Zero,
+                Position = 1
+            });
+            cuesheet.AddTrack(new Track()
+            {
+                Artist = "Test artist 2",
+                Title = "Test title 2",
+                Position = 2
+            });
+            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+
+            // Act
+            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
     }
 }
