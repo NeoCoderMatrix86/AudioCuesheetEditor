@@ -62,7 +62,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 Title = "Test Title",
                 Audiofile = new Audiofile("Audio.mp3")
             };
-            cuesheet.AddTrack(new Track());
+            cuesheet.AddTrack(new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 43)
+            });
             sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
