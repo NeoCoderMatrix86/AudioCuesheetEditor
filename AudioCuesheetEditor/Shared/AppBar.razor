@@ -35,10 +35,10 @@ along with Foobar.  If not, see
     {
         <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled" OverrideStyles>
             <MudTooltip Text="@_localizer["Undo last edit"]">
-                <MudIconButton Icon="@Icons.Material.Outlined.Undo" aria-label="undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()" />
+                <MudIconButton Icon="@Icons.Material.Outlined.Undo" Disabled="!TraceChangeManager.CanUndo" OnClick="() => TraceChangeManager.Undo()" />
             </MudTooltip>
             <MudTooltip Text="@_localizer["Redo last edit"]">
-                <MudIconButton Icon="@Icons.Material.Outlined.Redo" aria-label="redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()" />
+                <MudIconButton Icon="@Icons.Material.Outlined.Redo" Disabled="!TraceChangeManager.CanRedo" OnClick="() => TraceChangeManager.Redo()" />
             </MudTooltip>
         </MudButtonGroup>
     }

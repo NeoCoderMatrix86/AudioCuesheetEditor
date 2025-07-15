@@ -51,8 +51,8 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in files)
         {
-            if ((_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]) == false)
-                && (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]) == false))
+            if ((_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile) == false)
+                && (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet) == false))
             {
                 invalidDropFileNames.Add(file.Name);
             }

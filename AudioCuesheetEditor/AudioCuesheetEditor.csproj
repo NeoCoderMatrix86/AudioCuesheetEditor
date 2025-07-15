@@ -7,7 +7,7 @@
 	<ImplicitUsings>enable</ImplicitUsings>
 	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
 	<RazorLangVersion>3.0</RazorLangVersion>
-	<Version>9.1.0</Version>
+	<Version>9.2.0</Version>
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	<PublishTrimmed>true</PublishTrimmed>
 	<RunAOTCompilation>true</RunAOTCompilation>
@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HtmlSanitizer" Version="9.0.886" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.5" PrivateAssets="all" />

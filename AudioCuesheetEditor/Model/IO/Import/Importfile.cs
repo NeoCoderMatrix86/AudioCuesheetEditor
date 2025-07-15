@@ -21,13 +21,13 @@ namespace AudioCuesheetEditor.Model.IO.Import
     public class Importfile : IImportfile
     {
         /// <inheritdoc />
+        public IEnumerable<String?>? FileContent { get; set; }
+        /// <inheritdoc />
+        public IEnumerable<String?>? FileContentRecognized { get; set; }
+        /// <inheritdoc />
         public Exception? AnalyseException { get; set; }
         /// <inheritdoc />
         public ImportCuesheet? AnalysedCuesheet { get; set; }
         public ImportFileType FileType { get; set; }
-        /// <inheritdoc />
-        public string? FileContentRecognized { get; set; }
-        /// <inheritdoc />
-        public string? FileContent { get; set; }
     }
 }

@@ -62,7 +62,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 Title = "Test Title",
                 Audiofile = new Audiofile("Audio.mp3")
             };
-            cuesheet.AddTrack(new Track());
+            cuesheet.AddTrack(new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 43)
+            });
             sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -220,6 +225,36 @@ FILE ""Test audiofile.mp3"" MP3
 		PERFORMER ""Test artist 6""
 		INDEX 01 01:54:00
 ", contentString);
+        }
+
+        [TestMethod]
+        public void GenerateExportfiles_WithInvalidTracks_ReturnsEmpty()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet()
+            {
+                Artist = "Test Artist",
+                Title = "Test Title",
+                Audiofile = new Audiofile("Audio.mp3")
+            };
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+            };
+            cuesheet.AddTrack(track1);
+            cuesheet.AddTrack(track2);
+            sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+
+            // Act
+            var result = cuesheetExportService.GenerateExportfiles("test.cue");
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
         }
     }
 }

@@ -16,18 +16,16 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Import;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Services.IO
 {
     public class CuesheetImportService
     {
-        public static IImportfile Analyse(string fileContent)
+        public static IImportfile Analyse(IEnumerable<String?> fileContent)
         {
             Importfile importfile = new()
             {
-                FileContent = fileContent,
                 FileType = ImportFileType.Cuesheet
             };
             try
@@ -57,9 +55,11 @@ namespace AudioCuesheetEditor.Services.IO
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
                 ImportTrack? track = null;
-                StringBuilder recognizedContent = new();
-                foreach (var line in fileContent.Split(Environment.NewLine))
+                List<String?> lines = [];
+                List<String?>? recognizedLines = [];
+                foreach (var line in fileContent)
                 {
+                    lines.Add(line);
                     String? recognizedLine = line;
                     if (String.IsNullOrEmpty(line) == false)
                     {
@@ -277,9 +277,10 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    recognizedContent.AppendLine(recognizedLine);
+                    recognizedLines.Add(recognizedLine);
                 }
-                importfile.FileContentRecognized = recognizedContent.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                importfile.FileContent = lines.AsReadOnly();
+                importfile.FileContentRecognized = recognizedLines.AsReadOnly();
             }
             catch (Exception ex)
             {
