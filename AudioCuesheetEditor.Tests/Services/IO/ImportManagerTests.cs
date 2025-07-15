@@ -20,6 +20,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -66,7 +67,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 AnalysedCuesheet = importCuesheet
             };
             textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object);
+            var loggerMock = new Mock<ILogger<ImportManager>>();
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
             var testHelper = new TestHelper();
             // Act
             await importManager.ImportTextAsync(fileContent);
@@ -105,7 +107,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 FileType = ImportFileType.Textfile,
             };
             textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object);
+            var loggerMock = new Mock<ILogger<ImportManager>>();
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
             var testHelper = new TestHelper();
             // Act
             await importManager.ImportTextAsync(fileContent);
