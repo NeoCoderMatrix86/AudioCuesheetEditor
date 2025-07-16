@@ -52,7 +52,7 @@ along with Foobar.  If not, see
 <MudForm @ref="form">
     <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
                  EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
-                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" Validator="form">
+                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" Validator="form" Virtualize>
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
