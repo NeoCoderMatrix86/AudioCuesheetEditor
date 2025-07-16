@@ -16,16 +16,18 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Import;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Services.IO
 {
     public class CuesheetImportService
     {
-        public static IImportfile Analyse(IEnumerable<String?> fileContent)
+        public static IImportfile Analyse(string fileContent)
         {
             Importfile importfile = new()
             {
+                FileContent = fileContent,
                 FileType = ImportFileType.Cuesheet
             };
             try
@@ -55,11 +57,9 @@ namespace AudioCuesheetEditor.Services.IO
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
                 ImportTrack? track = null;
-                List<String?> lines = [];
-                List<String?>? recognizedLines = [];
-                foreach (var line in fileContent)
+                StringBuilder recognizedContent = new();
+                foreach (var line in fileContent.Split(Environment.NewLine))
                 {
-                    lines.Add(line);
                     String? recognizedLine = line;
                     if (String.IsNullOrEmpty(line) == false)
                     {
@@ -277,10 +277,9 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    recognizedLines.Add(recognizedLine);
+                    recognizedContent.AppendLine(recognizedLine);
                 }
-                importfile.FileContent = lines.AsReadOnly();
-                importfile.FileContentRecognized = recognizedLines.AsReadOnly();
+                importfile.FileContentRecognized = recognizedContent.ToString().TrimEnd(Environment.NewLine.ToCharArray());
             }
             catch (Exception ex)
             {

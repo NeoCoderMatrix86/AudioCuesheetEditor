@@ -29,7 +29,7 @@ along with Foobar.  If not, see
         </CardHeaderContent>
     </MudCardHeader>
     <MudCardContent id="@dropFileInputId">
-        <DropFileInput OnFilesSelected="InputFilesChanged" Filter="@FileMimeTypes.Text" />
+        <DropFileInput OnFilesSelected="InputFilesChanged" Filter="@FileMimeTypes.TextPlain" />
         @foreach (var invalidFileName in invalidDropFileNames)
         {
             <MudAlert Variant="Variant.Filled" Severity="Severity.Error" ShowCloseIcon CloseIconClicked="() => CloseInvalidFileClicked(invalidFileName)">
@@ -54,8 +54,7 @@ along with Foobar.  If not, see
         invalidDropFileNames.Clear();
         foreach (var file in files)
         {
-            if ((_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text) == false)
-                && (FileInputManager.GetAudioCodec(file) == null))
+            if (_fileInputManager.IsValidForImportView(file) == false)
             {
                 invalidDropFileNames.Add(file.Name);
             }
@@ -77,7 +76,7 @@ along with Foobar.  If not, see
         // Audio file is handled seperatly
         foreach (var file in files)
         {
-            var codec = FileInputManager.GetAudioCodec(file);
+            var codec = _fileInputManager.GetAudioCodec(file);
             if (codec != null)
             {
                 var audiofile = await _fileInputManager.CreateAudiofileAsync(dropFileInputId, file);

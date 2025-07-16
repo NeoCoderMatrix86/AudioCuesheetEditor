@@ -136,7 +136,13 @@
   <data name="Textimport_Bug__233" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Textimport_Bug_#233.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="Textimport_with_Cuesheetdata" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Traktor Export" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Traktor Export.html;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Textimport with Cuesheetdata" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Textimport with Cuesheetdata.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Sample_Inputfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Sample_Inputfile.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
