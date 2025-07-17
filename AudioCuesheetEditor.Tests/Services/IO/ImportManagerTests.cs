@@ -207,7 +207,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(ImportFileType.Textfile, sessionStateContainer.Importfile.FileType);
         }
 
-        private IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
+        private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
         {
             var fileMock = new Mock<IBrowserFile>();
             fileMock.Setup(f => f.Name).Returns(name);
