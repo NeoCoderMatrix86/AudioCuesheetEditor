@@ -22,6 +22,13 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
 
+<MudOverlay Visible="isAnalyzing" DarkBackground="true" ZIndex="3000">
+    <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;">
+        <MudProgressCircular Size="Size.Large" Indeterminate />
+        <MudText Typo="Typo.h6" Class="mt-4">@_localizer["Analysing file, please wait..."]</MudText>
+    </div>
+</MudOverlay>
+
 <MudStepper @ref="mudStepper" NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
     <MudStep Title="@_localizer["Select inputfiles"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
         <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
@@ -69,13 +76,14 @@ along with Foobar.  If not, see
     Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
     long? renderBegin;
+    bool isAnalyzing;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
         {
-            FilesImported();
+            await FilesImported();
         }
     }
 
@@ -97,20 +105,31 @@ along with Foobar.  If not, see
 
     async Task AnalyseImportfile()
     {
+        await Task.Delay(5000);
         await _importManager.AnalyseImportfile();
         renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
     }
 
-    void FilesImported()
+    async Task FilesImported()
     {
+        isAnalyzing = true;
+        StateHasChanged();
+        try
+        {
+            await AnalyseImportfile();
+        }
+        finally
+        {
+            isAnalyzing = false;
+        }
         fileContentExpanded = true;
         cuesheetDataExpanded = true;
         cuesheetTracksExpanded = true;
         activeStepIndex = 1;
         selectFilesStepCompleted = true;
         selectFilesStepError = false;
+        //TODO: Zeit anpassen?
         renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
-        //TODO: We need to run an analyse with a loading screen
     }
 
     async Task CompleteImportAsync()

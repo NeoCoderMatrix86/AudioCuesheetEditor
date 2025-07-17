@@ -20,7 +20,7 @@ using MudBlazor;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class EditTrackModalManager(IDialogService dialogService, ITraceChangeManager traceChangeManager)
+    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager)
     {
         private readonly IDialogService _dialogService = dialogService;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
