@@ -21,13 +21,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject ISessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
-
-<MudOverlay Visible="isAnalyzing" DarkBackground="true" ZIndex="3000">
-    <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;">
-        <MudProgressCircular Size="Size.Large" Indeterminate />
-        <MudText Typo="Typo.h6" Class="mt-4">@_localizer["Analysing file, please wait..."]</MudText>
-    </div>
-</MudOverlay>
+@inject DialogManager _dialogManager
 
 <MudStepper @ref="mudStepper" NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
     <MudStep Title="@_localizer["Select inputfiles"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
@@ -76,7 +70,6 @@ along with Foobar.  If not, see
     Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
     long? renderBegin;
-    bool isAnalyzing;
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,22 +98,20 @@ along with Foobar.  If not, see
 
     async Task AnalyseImportfile()
     {
-        await Task.Delay(5000);
         await _importManager.AnalyseImportfile();
         renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
     }
 
     async Task FilesImported()
     {
-        isAnalyzing = true;
-        StateHasChanged();
+        await _dialogManager.ShowLoadingDialogAsync();
         try
         {
             await AnalyseImportfile();
         }
         finally
         {
-            isAnalyzing = false;
+            _dialogManager.HideLoadingDialog();
         }
         fileContentExpanded = true;
         cuesheetDataExpanded = true;
@@ -128,7 +119,6 @@ along with Foobar.  If not, see
         activeStepIndex = 1;
         selectFilesStepCompleted = true;
         selectFilesStepError = false;
-        //TODO: Zeit anpassen?
         renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
     }
 
