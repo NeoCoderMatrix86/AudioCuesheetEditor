@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Services.IO
                 validationMessages.Add(new ValidationMessage("File extension is not '{0}'", FileExtensions.Cuesheet));
             }
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
             return validationMessages;
         }
 
