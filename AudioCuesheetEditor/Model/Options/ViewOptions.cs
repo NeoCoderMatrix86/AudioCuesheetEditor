@@ -13,36 +13,34 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.Utility;
-using AudioCuesheetEditor.Services.UI;
-using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
-    public class ApplicationOptions : IOptions
+    public enum ViewMode
     {
-        public const LogLevel DefaultLogLevel = LogLevel.Information;
-        public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
+        DetailView = 0,
+        RecordView = 1,
+        ImportView = 2
+    }
+    public class ViewOptions : IOptions
+    {
         [JsonIgnore]
-        public CultureInfo Culture
+        public ViewMode ActiveTab { get; set; }
+        public String? ActiveTabName
         {
-            get
+            get => Enum.GetName(ActiveTab);
+            set
             {
-                if (String.IsNullOrEmpty(CultureName) == false)
+                if (value != null)
                 {
-                    return new CultureInfo(CultureName);
+                    ActiveTab = Enum.Parse<ViewMode>(value);
                 }
                 else
                 {
-                    return CultureInfo.CurrentCulture;
+                    throw new ArgumentNullException(nameof(value));
                 }
             }
         }
-        public TimeSpanFormat? TimeSpanFormat { get; set; }
-        public Boolean DefaultIsLinkedToPreviousTrack { get; set; } = true;
-        public Boolean FixedTracksTableHeader { get; set; } = false;
-        public String? DisplayTimeSpanFormat { get; set; }
-        public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
     }
 }

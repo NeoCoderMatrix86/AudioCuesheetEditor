@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ControlRecording> _localizer
 @inject IDialogService _dialogService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject ISessionStateContainer _sessionStateContainer
 
 @if (Cuesheet?.IsRecording == false)
 {
@@ -86,8 +87,20 @@ along with Foobar.  If not, see
     Timer? startRecordTimer;
     DateTime recordTimerStarted;
 
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
+
     [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
+    public ViewMode CurrentViewMode { get; set; }
 
     public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecordingPossible.Any() == true;
 
@@ -127,9 +140,10 @@ along with Foobar.  If not, see
         var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false };
         var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(null, options);
         var result = await dialog.Result;
-        if (result?.Canceled == false)
+        var recordCountdownTimer = result?.Data as uint?;
+        if ((result?.Canceled == false) && (recordCountdownTimer.HasValue))
         {
-            startRecordTimer = new Timer(ApplicationOptions!.RecordCountdownTimer * 1000);
+            startRecordTimer = new Timer(recordCountdownTimer.Value * 1000);
             startRecordTimer.Elapsed += delegate
             {
                 StartRecording();

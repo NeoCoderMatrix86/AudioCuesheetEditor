@@ -42,7 +42,7 @@ namespace AudioCuesheetEditor.Services.IO
             };
             try
             {
-                var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+                var options = await _localStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
                 var importprofile = options.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
                 SearchForCuesheetData(ref importfile, fileContent, importprofile);
                 SearchForTrackData(ref importfile, fileContent, importprofile);

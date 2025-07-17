@@ -19,16 +19,17 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<SettingsDialog> _localizer
 @inject ValidationService _validationService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudDialog>
     <DialogContent>
         <MudText Typo="Typo.subtitle1"><b>@_localizer["Input"]</b></MudText>
-        <MudSwitch T="Boolean?" Value="ApplicationOptions?.LinkTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.LinkTracks, newValue)" 
-        Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
+        <MudSwitch T="Boolean?" Value="applicationOptions?.DefaultIsLinkedToPreviousTrack" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.DefaultIsLinkedToPreviousTrack, newValue)"
+                   Label="@_localizer["Automatically link tracks"]" Color="Color.Primary" />
         <MudStack Row AlignItems="AlignItems.Baseline">
-            <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@ApplicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync" 
-            Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
-            ErrorText="@GetValidationErrorMessage(ApplicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" Variant="Variant.Outlined" />
+            <MudTextField T="string" @ref="timeInputFormatTextField" Label="@_localizer["Time input format"]" Text="@applicationOptions?.TimeSpanFormat?.Scheme" TextChanged="TimeInputFormatChangedAsync"
+                          Clearable Error="String.IsNullOrEmpty(GetValidationErrorMessage(applicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))) == false"
+                          ErrorText="@GetValidationErrorMessage(applicationOptions?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))" Variant="Variant.Outlined" />
             <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                 @foreach(var scheme in TimeSpanFormat.AvailableTimespanScheme)
                 {
@@ -37,9 +38,9 @@ along with Foobar.  If not, see
             </MudMenu>
         </MudStack>
         <MudText Typo="Typo.subtitle1"><b>@_localizer["Display"]</b></MudText>
-        <MudTextField T="string" Label="@_localizer["Time display format"]" Text="@ApplicationOptions?.DisplayTimeSpanFormat" TextChanged="DisplayTimeSpanFormatChangedAsync" 
-        Clearable Variant="Variant.Outlined" HelperText="@_localizer["Uses .NET format, check help for more information"]" />
-        <MudSelect T="LogLevel" Label="@_localizer["Minimum Loglevel"]" Variant="Variant.Outlined" Value="ApplicationOptions != null ? ApplicationOptions.MinimumLogLevel : ApplicationOptions.DefaultLogLevel" ValueChanged="LogLevelChanged">
+        <MudTextField T="string" Label="@_localizer["Time display format"]" Text="@applicationOptions?.DisplayTimeSpanFormat" TextChanged="DisplayTimeSpanFormatChangedAsync"
+                      Clearable Variant="Variant.Outlined" HelperText="@_localizer["Uses .NET format, check help for more information"]" />
+        <MudSelect T="LogLevel" Label="@_localizer["Minimum Loglevel"]" Variant="Variant.Outlined" Value="applicationOptions != null ? applicationOptions.MinimumLogLevel : ApplicationOptions.DefaultLogLevel" ValueChanged="LogLevelChanged">
             @foreach (var level in Enum.GetValues<LogLevel>())
             {
                 <MudSelectItem Value="level">@level</MudSelectItem>
@@ -50,10 +51,24 @@ along with Foobar.  If not, see
 
 @code {
     MudTextField<string>? timeInputFormatTextField;
+    ApplicationOptions? applicationOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        applicationOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
 
     async Task TimeInputFormatChangedAsync(string newValue)
     {
-        TimeSpanFormat? timeSpanFormat = ApplicationOptions?.TimeSpanFormat;
+        TimeSpanFormat? timeSpanFormat = applicationOptions?.TimeSpanFormat;
         if (string.IsNullOrEmpty(newValue))
         {
             timeSpanFormat = null;
@@ -96,5 +111,14 @@ along with Foobar.  If not, see
     async Task LogLevelChanged(LogLevel logLevel)
     {
         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.MinimumLogLevel, logLevel);
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
+            StateHasChanged();
+        }
     }
 }

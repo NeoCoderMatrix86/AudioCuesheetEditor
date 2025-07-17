@@ -17,8 +17,10 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Diagnostics;
 
 namespace AudioCuesheetEditor.Services.IO
 {
@@ -30,27 +32,31 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ILogger<ImportManager> logger)
     {
+        private readonly ILogger<ImportManager> _logger = logger;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
 
-        public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
+        public async Task ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
-            Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
+            var stopwatch = Stopwatch.StartNew();
             foreach (var file in files)
             {
                 if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
                 {
                     var fileContent = await ReadFileContentAsync(file);
-                    var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
-                    if (cuesheet != null)
+                    fileContent.Position = 0;
+                    using var reader = new StreamReader(fileContent);
+                    var stringFileContent = reader.ReadToEnd();
+                    _sessionStateContainer.Importfile = new Importfile()
                     {
-                        _sessionStateContainer.Cuesheet = cuesheet;
-                    }
-                    importFileTypes.Add(file, ImportFileType.ProjectFile);
+                        FileContent = stringFileContent,
+                        FileContentRecognized = stringFileContent,
+                        FileType = ImportFileType.ProjectFile
+                    };
                 }
                 if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]))
                 {
@@ -58,8 +64,12 @@ namespace AudioCuesheetEditor.Services.IO
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
                     var stringFileContent = reader.ReadToEnd();
-                    ImportCuesheet(stringFileContent);
-                    importFileTypes.Add(file, ImportFileType.Cuesheet);
+                    _sessionStateContainer.Importfile = new Importfile()
+                    {
+                        FileContent = stringFileContent,
+                        FileContentRecognized = stringFileContent,
+                        FileType = ImportFileType.Cuesheet
+                    };
                 }
                 if (_fileInputManager.IsValidForImportView(file))
                 {
@@ -67,26 +77,60 @@ namespace AudioCuesheetEditor.Services.IO
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
                     var stringFileContent = reader.ReadToEnd();
-                    await ImportTextAsync(stringFileContent);
-                    importFileTypes.Add(file, ImportFileType.Textfile);
+                    _sessionStateContainer.Importfile = new Importfile()
+                    {
+                        FileContent = stringFileContent,
+                        FileContentRecognized = stringFileContent,
+                        FileType = ImportFileType.Textfile
+                    };
                 }
             }
-            return importFileTypes;
+            stopwatch.Stop();
+            _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
-        public async Task ImportTextAsync(string fileContent)
+        public async Task AnalyseImportfile()
         {
-            _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
-            if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
+            var stopwatch = Stopwatch.StartNew();
+            var fileContent = _sessionStateContainer.Importfile?.FileContent;
+            if (String.IsNullOrEmpty(fileContent) == false)
             {
-                var importCuesheet = new Cuesheet();
-                CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
-                _sessionStateContainer.ImportCuesheet = importCuesheet;
+                switch (_sessionStateContainer.Importfile?.FileType)
+                {
+                    case ImportFileType.ProjectFile:
+                        _sessionStateContainer.Cuesheet = Projectfile.ImportFile(fileContent)!;
+                        break;
+                    case ImportFileType.Textfile:
+                        _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
+                        break;
+                    case ImportFileType.Cuesheet:
+                        _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
+                        break;
+                }
             }
+            if (_sessionStateContainer.Importfile?.AnalysedCuesheet != null)
+            {
+                switch (_sessionStateContainer.Importfile?.FileType)
+                {
+                    case ImportFileType.Textfile:
+                        var importCuesheet = new Cuesheet();
+                        CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                        _sessionStateContainer.ImportCuesheet = importCuesheet;
+                        break;
+                    case ImportFileType.Cuesheet:
+                        _traceChangeManager.BulkEdit = true;
+                        CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                        _traceChangeManager.BulkEdit = false;
+                        break;
+                }
+            }
+            stopwatch.Stop();
+            _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
         public void ImportCuesheet()
         {
+            var stopwatch = Stopwatch.StartNew();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
                 _traceChangeManager.BulkEdit = true;
@@ -94,18 +138,10 @@ namespace AudioCuesheetEditor.Services.IO
                 _traceChangeManager.BulkEdit = false;
             }
             _sessionStateContainer.ResetImport();
+            stopwatch.Stop();
+            _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
-        private void ImportCuesheet(String fileContent)
-        {
-            _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
-            if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
-            {
-                _traceChangeManager.BulkEdit = true;
-                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
-                _traceChangeManager.BulkEdit = false;
-            }
-        }
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)
         {
             var fileContent = new MemoryStream();

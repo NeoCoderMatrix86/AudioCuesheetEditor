@@ -21,10 +21,11 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject ValidationService _validationService
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudDialog>
     <DialogContent>
-        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@ApplicationOptions?.ProjectFilename" TextChanged="FilenameChanged" 
+        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@options?.ProjectFilename" TextChanged="FilenameChanged"
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
     </DialogContent>
     <DialogActions>
@@ -37,30 +38,54 @@ along with Foobar.  If not, see
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
 
+    DownloadOptions? options;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        options = await _localStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
     async Task DownloadProjectClick() 
     {
         MudDialog?.Close();
         var projectFile = new Projectfile(_sessionStateContainer.Cuesheet);
         var fileData = projectFile.GenerateFile();
-        await _blazorDownloadFileService.DownloadFile(ApplicationOptions?.ProjectFilename, fileData, "text/plain");
+        await _blazorDownloadFileService.DownloadFile(options?.ProjectFilename, fileData, "text/plain");
     }
 
     async Task FilenameChanged(string newFilename)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ProjectFilename, newFilename);
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.ProjectFilename, newFilename);
     }
 
     String? GetValidationErrorMessage()
     {
         String? validationErrorMessage = null;
-        if (ApplicationOptions != null)
+        if (options != null)
         {
-            var validationMessages = _validationService.Validate(ApplicationOptions, nameof(ApplicationOptions.ProjectFilename));
+            var validationMessages = _validationService.Validate(options, nameof(options.ProjectFilename));
             if (validationMessages.Count() > 0)
             {
                 validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
             }
         }
         return validationErrorMessage;
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is DownloadOptions downloadOptions)
+        {
+            options = downloadOptions;
+            StateHasChanged();
+        }
     }
 }

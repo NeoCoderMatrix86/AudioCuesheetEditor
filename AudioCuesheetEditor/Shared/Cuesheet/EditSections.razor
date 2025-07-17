@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject IDialogService _dialogService
 @inject IFileInputManager _fileInputManager
+@inject ISessionStateContainer _sessionStateContainer
 
 <MudButtonGroup OverrideStyles="false">
     <MudTooltip Text="@_localizer["Add new section"]">
@@ -84,7 +85,19 @@ along with Foobar.  If not, see
     HashSet<CuesheetSection> selectedSections = new();
 
     [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
+    public ViewMode CurrentViewMode { get; set; }
+
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
 
     void AddSectionClicked()
     {
