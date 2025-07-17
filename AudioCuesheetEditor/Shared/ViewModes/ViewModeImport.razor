@@ -34,7 +34,7 @@ along with Foobar.  If not, see
                 </TitleContent>
                 <ChildContent>
                     <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
-                    <Importprofiles ImportprofileChanged="ReanalyseImportfile" />
+                    <Importprofiles ImportprofileChanged="AnalyseImportfile" />
                     @if (_sessionStateContainer.Importfile?.AnalyseException != null)
                     {
                         <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
@@ -82,21 +82,17 @@ along with Foobar.  If not, see
 
     async Task ImportFileContent_FileContentChanged(string newFileContent)
     {
-        await _importManager.ImportTextAsync(newFileContent);
+        _sessionStateContainer.Importfile!.FileContent = newFileContent;
+        await AnalyseImportfile();
+    }
+
+    async Task AnalyseImportfile()
+    {
+        await _importManager.AnalyseImportfile();
         renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
     }
 
-    async Task ReanalyseImportfile()
-    {
-        var fileContent = _sessionStateContainer.Importfile?.FileContent;
-        if (fileContent != null)
-        {
-            await _importManager.ImportTextAsync(fileContent);
-            renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
-        }
-    }
-
-    void FilesImported(Dictionary<IBrowserFile, ImportFileType> files)
+    void FilesImported()
     {
         fileContentExpanded = true;
         cuesheetDataExpanded = true;
@@ -105,6 +101,7 @@ along with Foobar.  If not, see
         selectFilesStepCompleted = true;
         selectFilesStepError = false;
         renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
+        //TODO: We need to run an analyse with a loading screen
     }
 
     async Task CompleteImportAsync()

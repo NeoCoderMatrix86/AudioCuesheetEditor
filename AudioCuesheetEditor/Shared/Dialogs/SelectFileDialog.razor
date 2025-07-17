@@ -60,6 +60,7 @@ along with Foobar.  If not, see
         if (invalidDropFileNames.Count == 0)
         {
             await _importManager.ImportFilesAsync(files);
+            //TODO: We need to run an analyse with a loading screen
             MudDialog?.Close();
         }
     }
