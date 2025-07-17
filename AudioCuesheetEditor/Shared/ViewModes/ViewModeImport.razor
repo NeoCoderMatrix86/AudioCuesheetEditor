@@ -70,6 +70,15 @@ along with Foobar.  If not, see
     Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
     long? renderBegin;
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
+        {
+            FilesImported();
+        }
+    }
+
     protected override void OnAfterRender(bool firstRender)
     {
         if (renderBegin.HasValue)
