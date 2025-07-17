@@ -24,6 +24,8 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject IJSRuntime _jsRuntime
 @inject HotKeys _hotKeys
+@inject DialogManager _dialogManager
+@inject ImportManager _importManager
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
@@ -185,7 +187,14 @@ along with Foobar.  If not, see
     async Task OpenFileClicked() 
     {
         var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
-        await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
+        var dialog = await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            await _dialogManager.ShowLoadingDialogAsync();
+            await _importManager.AnalyseImportfile();
+            _dialogManager.HideLoadingDialog();
+        }
     }
 
     async Task DisplayHotkeys()
