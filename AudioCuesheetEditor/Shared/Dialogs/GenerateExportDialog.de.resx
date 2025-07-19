@@ -177,4 +177,21 @@
   <data name="Content" xml:space="preserve">
     <value>Inhalt</value>
   </data>
+
+  <data name="Placeholder_Artist" xml:space="preserve">
+    <value>Künstler</value>
+  </data>
+  <data name="Placeholder_Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Placeholder_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+
+  <data name="Placeholder_CuesheetTitle" xml:space="preserve">
+    <value>Cuesheet Titel</value>
+  </data>
+  <data name="Placeholder_Performer" xml:space="preserve">
+    <value>Interpret</value>
+  </data>
 </root>
