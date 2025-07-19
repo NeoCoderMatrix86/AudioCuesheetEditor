@@ -55,14 +55,10 @@ along with Foobar.  If not, see
                         <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                             @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
                             {
-                                <MudMenuItem OnClick="() => 
-                                {
-                                    if (exportOptions.SelectedExportProfile != null)
-                                    {
-                                        exportOptions.SelectedExportProfile.SchemeHead += placeholder.Value;
-                                    }
-                                }">
-                                    @_localizer[placeholder.Key]
+                                <MudMenuItem
+                                    OnClick="() => InsertCuesheetPlaceholder(placeholder.Value)"
+                                    Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
+                                    @_localizer["Placeholder_" + placeholder.Key]
                                 </MudMenuItem>
                             }
                         </MudMenu>
@@ -72,15 +68,12 @@ along with Foobar.  If not, see
                         <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                             @foreach (var placeholder in Exportprofile.AvailableTrackSchemes)
                             {
-                                <MudMenuItem OnClick="() =>
-                                {
-                                    if (exportOptions.SelectedExportProfile != null)
-                                    {
-                                        exportOptions.SelectedExportProfile.SchemeTracks += placeholder.Value;
-                                    }
-                                }">
-                                    @_localizer[placeholder.Key]
+                                <MudMenuItem
+                                    OnClick="() => InsertTrackPlaceholder(placeholder.Value)"
+                                    Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
+                                    @_localizer["Placeholder_" + placeholder.Key]
                                 </MudMenuItem>
+
                             }
                         </MudMenu>
                     </MudStack>
@@ -89,14 +82,10 @@ along with Foobar.  If not, see
                         <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                             @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
                             {
-                                <MudMenuItem OnClick="() =>
-                                {
-                                    if (exportOptions.SelectedExportProfile != null)
-                                    {
-                                        exportOptions.SelectedExportProfile.SchemeFooter += placeholder.Value;
-                                    }
-                                }">
-                                    @_localizer[placeholder.Key]
+                                <MudMenuItem
+                                    OnClick="() => InsertCuesheetPlaceholder(placeholder.Value)"
+                                    Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
+                                    @_localizer["Placeholder_" + placeholder.Key]
                                 </MudMenuItem>
                             }
                         </MudMenu>
@@ -125,7 +114,7 @@ along with Foobar.  If not, see
 
 @code {
     ExportOptions? exportOptions;
-    IEnumerable<Exportfile> exportFiles = [];
+    IEnumerable<Exportfile> exportFiles = Array.Empty<Exportfile>();
     Boolean configureExportCompleted = false;
 
     protected override void Dispose(bool disposing)
@@ -213,4 +202,17 @@ along with Foobar.  If not, see
             configureExportCompleted = exportFiles.Any();
         }
     }
+
+    void InsertTrackPlaceholder(string token)
+    {
+        if (exportOptions?.SelectedExportProfile != null)
+            exportOptions.SelectedExportProfile.SchemeTracks += token;
+    }
+
+    void InsertCuesheetPlaceholder(string token)
+    {
+        if (exportOptions?.SelectedExportProfile != null)
+            exportOptions.SelectedExportProfile.SchemeHead += token;
+    }
+
 }
