@@ -223,5 +223,36 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Space Yoda (Snyl Remix) Clear" })).ToBeVisibleAsync();
         }
+
+        [TestMethod]
+        public async Task EditTrackModalUndoRedoTestAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Edit selected tracks Copy" }).GetByRole(AriaRole.Button).First.ClickAsync();
+            await Page.GetByRole(AriaRole.Row, new() { Name = "Increment Decrement 00:00:" }).GetByLabel("", new() { Exact = true }).CheckAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync("Test Track Artist 1");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync("Test Track Title 1");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "End" }).FillAsync("00:02:23");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "channel audio (4CH)" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Serial copy management system" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track Artist 1 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track Title 1 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":02:23" }).First).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":02:23" }).Nth(1)).ToBeVisibleAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "undo" }).ClickAsync();
+            await Expect(Page.Locator("td:nth-child(3)")).ToBeVisibleAsync();
+            await Expect(Page.Locator("td:nth-child(4)")).ToBeVisibleAsync();
+            await Expect(Page.Locator("td:nth-child(6)")).ToBeVisibleAsync();
+            await Expect(Page.Locator("td:nth-child(7)")).ToBeVisibleAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "redo" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track Artist 1 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Test Track Title 1 Clear" })).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":02:23" }).First).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":02:23" }).Nth(1)).ToBeVisibleAsync();
+        }
     }
 }
