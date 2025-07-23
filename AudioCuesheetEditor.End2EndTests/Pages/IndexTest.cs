@@ -254,5 +254,39 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":02:23" }).First).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = ":02:23" }).Nth(1)).ToBeVisibleAsync();
         }
+
+        [TestMethod]
+        public async Task UndoRedoTrackTableTestAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Edit selected tracks Copy" }).GetByRole(AriaRole.Button).First.ClickAsync();
+            await Page.Locator("td:nth-child(3)").ClickAsync();
+            await Page.GetByRole(AriaRole.Row, new() { Name = "Increment Decrement 00:00:" }).GetByRole(AriaRole.Textbox).First.FillAsync("Test Artist 1");
+            await Page.Locator(".mud-overlay").ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Button, new() { Name = "undo" })).ToBeEnabledAsync();
+            await Page.Locator("td:nth-child(4)").ClickAsync();
+            await Page.GetByRole(AriaRole.Row, new() { Name = "Increment Decrement Test" }).GetByRole(AriaRole.Textbox).Nth(1).FillAsync("Test Title 1");
+            await Page.Locator(".mud-overlay").ClickAsync();
+            await Page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "undo" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "undo" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- cell:\n  - textbox\n  - button");
+            await Expect(Page.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- cell:\n  - textbox\n  - button");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "redo" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "redo" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- cell \"Test Artist 1 Clear\":\n  - textbox: Test Artist 1\n  - button \"Clear\"\n  - button");
+            await Expect(Page.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- cell \"Test Title 1 Clear\":\n  - textbox: Test Title 1\n  - button \"Clear\"\n  - button");
+            await Page.GetByRole(AriaRole.Cell, new() { Name = "Test Title 1 Clear" }).GetByLabel("Clear").ClickAsync();
+            await Page.Locator("td:nth-child(3)").ClickAsync();
+            await Page.Locator(".mud-overlay").ClickAsync();
+            await Page.GetByRole(AriaRole.Cell, new() { Name = "Test Artist 1 Clear" }).GetByRole(AriaRole.Textbox).First.FillAsync("Mozart");
+            await Page.Locator(".mud-overlay").ClickAsync();
+            await Page.Locator("td:nth-child(4)").ClickAsync();
+            await Page.GetByRole(AriaRole.Row, new() { Name = "Increment Decrement Mozart" }).GetByRole(AriaRole.Textbox).Nth(1).FillAsync("Eine kleine Nachtmusik");
+            await Page.GetByText("Eine kleine Nachtmusik", new() { Exact = true }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "undo" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "undo" }).ClickAsync();
+            await Expect(Page.Locator("#app")).ToMatchAriaSnapshotAsync("- group:\n  - button\n  - button \"Edit selected tracks\" [disabled]\n  - button \"Copy selected tracks\" [disabled]\n  - button \"Delete selected tracks\" [disabled]\n  - button \"Delete all tracks\"\n- group:\n  - button [disabled]\n  - button [disabled]\n- button\n- table:\n  - rowgroup:\n    - row \"# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status\":\n      - columnheader:\n        - checkbox\n      - columnheader \"# Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Artist Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Title Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Begin Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"End Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Length Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Status\"\n  - rowgroup:\n    - row /Increment Decrement Test Artist 1 Clear \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"1\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Test Artist 1 Clear\":\n        - textbox: Test Artist 1\n        - button \"Clear\"\n        - button\n      - cell:\n        - textbox\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell:\n        - textbox\n      - cell:\n        - textbox\n      - cell\n  - rowgroup:\n    - row");
+        }
     }
 }

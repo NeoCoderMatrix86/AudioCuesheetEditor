@@ -21,8 +21,8 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 
 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(value) => value.Title"
-                 @bind-Text="Track.Title" Value="autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator 
-                 Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false">
+                 @bind-Text="title" Value="autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator
+                 Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false" OnBlur="OnBlur">
     <ItemTemplate Context="autocompleteContext">
         @if (autocompleteContext.Disambiguation != null)
         {
@@ -39,34 +39,60 @@ along with Foobar.  If not, see
     [Parameter] 
     [EditorRequired]
     public Track Track { get; set; } = default!;
+
     [Parameter]
     [EditorRequired]
     public ViewMode CurrentViewMode { get; set; }
 
     MusicBrainzTrack? autocompleteTrack;
+    string? title;
+    Timer? debounceTimer;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         autocompleteTrack = new() { Artist = Track.Artist, Title = Track.Title };
+        title = autocompleteTrack?.Title;
     }
 
-    void TitleSelected(MusicBrainzTrack? musicBrainzTrack)
+    void TitleSelected(MusicBrainzTrack? newValue)
     {
-        Track.Title = musicBrainzTrack?.Title;
+        autocompleteTrack = newValue;
+        title = autocompleteTrack?.Title;
+        StartChangeTimer();
+    }
+
+    void OnBlur(FocusEventArgs args)
+    {
+        StartChangeTimer();
+    }
+
+    void StartChangeTimer()
+    {
+        debounceTimer = new Timer(100);
+        debounceTimer.Elapsed += ChangeTitle;
+        debounceTimer.AutoReset = false;
+        debounceTimer.Start();
+    }
+
+    void ChangeTitle(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        base.TraceChangeManager.BulkEdit = true;
+        Track.Title = title;
         switch (CurrentViewMode)
         {
             case ViewMode.DetailView:
             case ViewMode.ImportView:
-                if ((String.IsNullOrEmpty(Track.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
+                if ((String.IsNullOrEmpty(Track.Artist)) && (String.IsNullOrEmpty(autocompleteTrack?.Artist) == false))
                 {
-                    Track.Artist = musicBrainzTrack.Artist;
+                    Track.Artist = autocompleteTrack.Artist;
                 }
-                if ((Track.Length.HasValue == false) && (musicBrainzTrack?.Length.HasValue == true))
+                if ((Track.Length.HasValue == false) && (autocompleteTrack?.Length.HasValue == true))
                 {
-                    Track.Length = musicBrainzTrack?.Length;
+                    Track.Length = autocompleteTrack?.Length;
                 }
                 break;
         }
+        base.TraceChangeManager.BulkEdit = false;
     }
 }
