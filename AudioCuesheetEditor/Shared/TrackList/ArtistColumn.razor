@@ -20,9 +20,9 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
-<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="Track.Artist"
-                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
-                 MaxItems="null" CoerceText="false">
+<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="artist"
+                 Value="autocompleteArtist" ValueChanged="ValueChanged" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
+                 MaxItems="null" CoerceText="false" OnBlur="OnBlur">
     <ItemTemplate>
         @if (context.Disambiguation != null)
         {
@@ -41,10 +41,38 @@ along with Foobar.  If not, see
     public Track Track { get; set; } = default!;
 
     MusicBrainzArtist? autocompleteArtist;
+    string? artist;
+    Timer? debounceTimer;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
         autocompleteArtist = new() { Name = Track.Artist };
+        artist = autocompleteArtist.Name;
+    }
+
+    void ValueChanged(MusicBrainzArtist? newValue)
+    {
+        autocompleteArtist = newValue;
+        artist = autocompleteArtist?.Name;
+        StartChangeTimer();
+    }
+
+    void OnBlur(FocusEventArgs args)
+    {
+        StartChangeTimer();
+    }
+
+    void StartChangeTimer()
+    {
+        debounceTimer = new Timer(100);
+        debounceTimer.Elapsed += ChangeArtist;
+        debounceTimer.AutoReset = false;
+        debounceTimer.Start();
+    }
+
+    void ChangeArtist(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        Track.Artist = artist;
     }
 }
