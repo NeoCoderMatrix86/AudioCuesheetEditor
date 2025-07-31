@@ -48,10 +48,16 @@ along with Foobar.  If not, see
                     </MudButtonGroup>
                     <br />
                     <MudDivider />
-                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.Name" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Name, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.Name))) == false" ErrorText="@GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.Name))" Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
-                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.Filename" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Filename, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.Filename))) == false" ErrorText="@GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.Filename))" Label="@_localizer["Filename"]" Placeholder="@_localizer["Enter the filename for this profile here"]" Variant="Variant.Outlined" />
+                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.Name" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Name, newValue)"
+                                  Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined"
+                                  Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.Name))" />
+                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.Filename" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Filename, newValue)" 
+                                  Label="@_localizer["Filename"]" Placeholder="@_localizer["Enter the filename for this profile here"]" Variant="Variant.Outlined"
+                                  Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.Filename))" />
                     <MudStack Row>
-                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeHead" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeHead, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeHead))) == false" ErrorText="@GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeHead))" Label="@_localizer["Scheme head"]" Placeholder="@_localizer["Enter the header scheme for this profile here"]" Variant="Variant.Outlined" Clearable />
+                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeHead" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeHead, newValue)" 
+                                      Label="@_localizer["Scheme head"]" Placeholder="@_localizer["Enter the header scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                      Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeHead))" />
                         <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                             @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
                             {
@@ -68,7 +74,9 @@ along with Foobar.  If not, see
                         </MudMenu>
                     </MudStack>
                     <MudStack Row>
-                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeTracks, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))) == false" ErrorText="@GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))" Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" Clearable />
+                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeTracks, newValue)" 
+                                      Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                      Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))" />
                         <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                             @foreach (var placeholder in Exportprofile.AvailableTrackSchemes)
                             {
@@ -85,7 +93,9 @@ along with Foobar.  If not, see
                         </MudMenu>
                     </MudStack>
                     <MudStack Row>
-                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeFooter" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeFooter, newValue)" Error="String.IsNullOrEmpty(GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeFooter))) == false" ErrorText="@GetValidationErrorMessage(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeFooter))" Label="@_localizer["Scheme footer"]" Placeholder="@_localizer["Enter the footer scheme for this profile here"]" Variant="Variant.Outlined" Clearable />
+                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeFooter" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeFooter, newValue)" 
+                                      Label="@_localizer["Scheme footer"]" Placeholder="@_localizer["Enter the footer scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                      Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeFooter))" />
                         <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
                             @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
                             {
@@ -169,20 +179,6 @@ along with Foobar.  If not, see
             exportOptions.SelectedExportProfile = exportOptions.ExportProfiles.LastOrDefault();
             await LocalStorageOptionsProvider.SaveOptionsAsync(exportOptions);
         }
-    }
-
-    String? GetValidationErrorMessage(object? model, string propertyName)
-    {
-        String? validationErrorMessage = null;
-        if (model != null)
-        {
-            var validationMessages = _validationService.Validate(model, propertyName);
-            if (validationMessages.Count() > 0)
-            {
-                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
-            }
-        }
-        return validationErrorMessage;
     }
 
     String? GetGenerationValidationMessages()
