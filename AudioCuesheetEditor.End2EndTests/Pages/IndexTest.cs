@@ -161,9 +161,9 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByText("Import view").ClickAsync();
             await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
-            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Textimport with Cuesheetdata.txt" });
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync("Textimport with Cuesheetdata.txt");
             await Page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync("Artist - Title - ");
-            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Scheme common dataScheme" }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
+            await Page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
             await Page.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Cataloguenumber" }).ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Toolbar)).ToMatchAriaSnapshotAsync("- button \"undo\" [disabled]");
             await Expect(Page.GetByRole(AriaRole.Toolbar)).ToMatchAriaSnapshotAsync("- button \"redo\" [disabled]");
@@ -198,8 +198,8 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         {
             await Page.GotoAsync("http://localhost:5132/");
             await Page.GetByText("Import view").ClickAsync();
-            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Inputfile2.txt" });
-            await Page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Scheme common dataScheme" }).GetByLabel("Clear").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync("Sample_Inputfile2.txt");
+            await Page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByLabel("Clear").ClickAsync();
             await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToBeEmptyAsync();
             await Expect(Page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToBeEmptyAsync();
             await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Title 1 Clear" })).ToBeVisibleAsync();
