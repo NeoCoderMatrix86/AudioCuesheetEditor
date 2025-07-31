@@ -54,63 +54,60 @@ along with Foobar.  If not, see
                     <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.Filename" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Filename, newValue)" 
                                   Label="@_localizer["Filename"]" Placeholder="@_localizer["Enter the filename for this profile here"]" Variant="Variant.Outlined"
                                   Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.Filename))" />
-                    <MudStack Row>
-                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeHead" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeHead, newValue)" 
-                                      Label="@_localizer["Scheme head"]" Placeholder="@_localizer["Enter the header scheme for this profile here"]" Variant="Variant.Outlined" Clearable
-                                      Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeHead))" />
-                        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
-                            @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
+                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeHead" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeHead, newValue)" 
+                                  Label="@_localizer["Scheme head"]" Placeholder="@_localizer["Enter the header scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                  Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeHead))"
+                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(schemeHeadMenu, args)" />
+                    <MudMenu @ref="schemeHeadMenu" PositionAtCursor>
+                        @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
+                        {
+                            <MudMenuItem OnClick="() => 
                             {
-                                <MudMenuItem OnClick="() => 
+                                if (exportOptions.SelectedExportProfile != null)
                                 {
-                                    if (exportOptions.SelectedExportProfile != null)
-                                    {
-                                        exportOptions.SelectedExportProfile.SchemeHead += placeholder.Value;
-                                    }
-                                }">
-                                    @_localizer[placeholder.Key]
-                                </MudMenuItem>
-                            }
-                        </MudMenu>
-                    </MudStack>
-                    <MudStack Row>
-                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeTracks, newValue)" 
-                                      Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" Clearable
-                                      Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))" />
-                        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
-                            @foreach (var placeholder in Exportprofile.AvailableTrackSchemes)
+                                    exportOptions.SelectedExportProfile.SchemeHead += placeholder.Value;
+                                }
+                            }">
+                                @_localizer[placeholder.Key]
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
+                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeTracks, newValue)" 
+                                  Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                  Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))"
+                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(schemeTracksMenu, args)" />
+                    <MudMenu @ref="schemeTracksMenu" PositionAtCursor>
+                        @foreach (var placeholder in Exportprofile.AvailableTrackSchemes)
+                        {
+                            <MudMenuItem OnClick="() =>
                             {
-                                <MudMenuItem OnClick="() =>
+                                if (exportOptions.SelectedExportProfile != null)
                                 {
-                                    if (exportOptions.SelectedExportProfile != null)
-                                    {
-                                        exportOptions.SelectedExportProfile.SchemeTracks += placeholder.Value;
-                                    }
-                                }">
-                                    @_localizer[placeholder.Key]
-                                </MudMenuItem>
-                            }
-                        </MudMenu>
-                    </MudStack>
-                    <MudStack Row>
-                        <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeFooter" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeFooter, newValue)" 
-                                      Label="@_localizer["Scheme footer"]" Placeholder="@_localizer["Enter the footer scheme for this profile here"]" Variant="Variant.Outlined" Clearable
-                                      Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeFooter))" />
-                        <MudMenu Label="@_localizer["Add placeholder"]" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Outlined.KeyboardArrowDown" Class="mt-1" Style="height: 56px;">
-                            @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
+                                    exportOptions.SelectedExportProfile.SchemeTracks += placeholder.Value;
+                                }
+                            }">
+                                @_localizer[placeholder.Key]
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
+                    <MudTextField T="string" Value="exportOptions.SelectedExportProfile?.SchemeFooter" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeFooter, newValue)" 
+                                  Label="@_localizer["Scheme footer"]" Placeholder="@_localizer["Enter the footer scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                  Validation="(string? newValue) => _validationService.Validate(exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeFooter))"
+                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(schemeFooterMenu, args)" />
+                    <MudMenu @ref="schemeFooterMenu" PositionAtCursor>
+                        @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
+                        {
+                            <MudMenuItem OnClick="() =>
                             {
-                                <MudMenuItem OnClick="() =>
+                                if (exportOptions.SelectedExportProfile != null)
                                 {
-                                    if (exportOptions.SelectedExportProfile != null)
-                                    {
-                                        exportOptions.SelectedExportProfile.SchemeFooter += placeholder.Value;
-                                    }
-                                }">
-                                    @_localizer[placeholder.Key]
-                                </MudMenuItem>
-                            }
-                        </MudMenu>
-                    </MudStack>
+                                    exportOptions.SelectedExportProfile.SchemeFooter += placeholder.Value;
+                                }
+                            }">
+                                @_localizer[placeholder.Key]
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
                 </MudStep>
                 <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false">
                     <MudTable Items="exportFiles">
@@ -137,6 +134,7 @@ along with Foobar.  If not, see
     ExportOptions? exportOptions;
     IEnumerable<Exportfile> exportFiles = [];
     Boolean configureExportCompleted = false;
+    MudMenu? schemeHeadMenu, schemeTracksMenu, schemeFooterMenu;
 
     protected override void Dispose(bool disposing)
     {
@@ -207,6 +205,14 @@ along with Foobar.  If not, see
         {
             exportFiles = _exportfileGenerator.GenerateExportfiles(exportOptions?.SelectedExportProfile);
             configureExportCompleted = exportFiles.Any();
+        }
+    }
+
+    async Task AdornmentClickAsync(MudMenu? menu, MouseEventArgs args)
+    {
+        if (menu != null)
+        {
+            await menu.OpenMenuAsync(args);
         }
     }
 }
