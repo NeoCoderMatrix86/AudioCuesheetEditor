@@ -45,7 +45,7 @@ along with Foobar.  If not, see
     <MudTextField T="string" @ref="schemeCuesheetTextField" Text="@importOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="SchemeCuesheetChangedAsync"
                   Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))"
                   Label="@_localizer["Scheme common data"]" Placeholder="@_localizer["Enter the common data scheme for this profile here"]" Variant="Variant.Outlined"
-                  Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Add"
+                  Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddCircleOutline"
                   OnAdornmentClick="(args) => AdornmentClickAsync(schemeCuesheetMenu, args)" />
     <MudMenu @ref="schemeCuesheetMenu" Disabled="importOptions.SelectedImportProfile == null" PositionAtCursor>
         @foreach (var scheme in Importprofile.AvailableSchemeCuesheet)
@@ -56,7 +56,7 @@ along with Foobar.  If not, see
     <MudTextField T="string" @ref="schemeTracksTextField" Text="@importOptions.SelectedImportProfile?.SchemeTracks" TextChanged="SchemeTracksChangedAsync"
                   Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))"
                   Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the track scheme for this profile here"]" Variant="Variant.Outlined"
-                  Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Add"
+                  Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddCircleOutline"
                   OnAdornmentClick="(args) => AdornmentClickAsync(schemeTracksMenu, args)" />
     <MudMenu @ref="schemeTracksMenu" Disabled="importOptions.SelectedImportProfile == null" PositionAtCursor>
         @foreach (var scheme in Importprofile.AvailableSchemesTrack)
@@ -67,7 +67,7 @@ along with Foobar.  If not, see
     <MudTextField T="string" @ref="timeSpanFormatTextField" Text="@importOptions.SelectedImportProfile?.TimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync"
                   Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))"
                   Label="@_localizer["Time input format for import"]" Placeholder="@_localizer["Enter the time format for this profile here"]" Variant="Variant.Outlined"
-                  Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Add"
+                  Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddCircleOutline"
                   OnAdornmentClick="(args) => AdornmentClickAsync(timeSpanFormatMenu, args)" />
     <MudMenu @ref="timeSpanFormatMenu" Disabled="importOptions.SelectedImportProfile == null" PositionAtCursor>
         @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
