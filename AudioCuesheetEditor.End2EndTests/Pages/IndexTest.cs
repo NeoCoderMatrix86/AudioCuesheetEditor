@@ -1,4 +1,4 @@
-﻿using Microsoft.Playwright;
+using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 using System.Text.RegularExpressions;
 
@@ -103,6 +103,17 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
+            
+            // Test export placeholder localisation
+            await Page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await Page.GetByText("Export").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Hinzufügen" }).ClickAsync();
+            await Page.Keyboard.PressAsync("Escape");
+            await Expect(Page.GetByText("Künstler")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Titel")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Album")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Cuesheet Titel")).ToBeVisibleAsync();
+            await Expect(Page.GetByText("Interpret")).ToBeVisibleAsync();
         }
 
         [TestMethod]

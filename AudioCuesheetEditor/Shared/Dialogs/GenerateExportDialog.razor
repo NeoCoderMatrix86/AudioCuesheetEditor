@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -67,7 +67,8 @@ along with Foobar.  If not, see
                                 {
                                     exportOptions.SelectedExportProfile.SchemeHead += placeholder.Value;
                                 }
-                            }">
+                            }"
+                            Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
                                 @_localizer[placeholder.Key]
                             </MudMenuItem>
                         }
@@ -85,7 +86,8 @@ along with Foobar.  If not, see
                                 {
                                     exportOptions.SelectedExportProfile.SchemeTracks += placeholder.Value;
                                 }
-                            }">
+                            }"
+                            Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
                                 @_localizer[placeholder.Key]
                             </MudMenuItem>
                         }
@@ -103,7 +105,8 @@ along with Foobar.  If not, see
                                 {
                                     exportOptions.SelectedExportProfile.SchemeFooter += placeholder.Value;
                                 }
-                            }">
+                            }"
+                            Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
                                 @_localizer[placeholder.Key]
                             </MudMenuItem>
                         }
