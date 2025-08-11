@@ -178,20 +178,20 @@
     <value>Inhalt</value>
   </data>
 
-  <data name="Placeholder_Artist" xml:space="preserve">
+  <data name="Artist" xml:space="preserve">
     <value>Künstler</value>
   </data>
-  <data name="Placeholder_Title" xml:space="preserve">
+  <data name="Title" xml:space="preserve">
     <value>Titel</value>
   </data>
-  <data name="Placeholder_Album" xml:space="preserve">
+  <data name="Album" xml:space="preserve">
     <value>Album</value>
   </data>
 
-  <data name="Placeholder_CuesheetTitle" xml:space="preserve">
+  <data name="CuesheetTitle" xml:space="preserve">
     <value>Cuesheet Titel</value>
   </data>
-  <data name="Placeholder_Performer" xml:space="preserve">
+  <data name="Performer" xml:space="preserve">
     <value>Interpret</value>
   </data>
 </root>

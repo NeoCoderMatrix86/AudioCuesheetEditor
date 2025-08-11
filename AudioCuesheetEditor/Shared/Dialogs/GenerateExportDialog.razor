@@ -58,7 +58,7 @@ along with Foobar.  If not, see
                                 <MudMenuItem
                                     OnClick="() => InsertCuesheetPlaceholder(placeholder.Value)"
                                     Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
-                                    @_localizer["Placeholder_" + placeholder.Key]
+                                    @_localizer[placeholder.Key]
                                 </MudMenuItem>
                             }
                         </MudMenu>
@@ -71,7 +71,7 @@ along with Foobar.  If not, see
                                 <MudMenuItem
                                     OnClick="() => InsertTrackPlaceholder(placeholder.Value)"
                                     Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
-                                    @_localizer["Placeholder_" + placeholder.Key]
+                                    @_localizer[placeholder.Key]
                                 </MudMenuItem>
 
                             }
@@ -85,7 +85,7 @@ along with Foobar.  If not, see
                                 <MudMenuItem
                                     OnClick="() => InsertCuesheetPlaceholder(placeholder.Value)"
                                     Title="@(_localizer["Placeholder_"+placeholder.Key] + " (" + placeholder.Value + ")")">
-                                    @_localizer["Placeholder_" + placeholder.Key]
+                                    @_localizer[placeholder.Key]
                                 </MudMenuItem>
                             }
                         </MudMenu>

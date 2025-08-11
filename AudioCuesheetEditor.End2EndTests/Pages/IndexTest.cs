@@ -1,4 +1,4 @@
-﻿using Microsoft.Playwright;
+using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 using System.Text.RegularExpressions;
 
@@ -102,7 +102,28 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
-        }
+            
+            // Added End2End Test
+            // Test localised export placeholders
+            await Page.GetByText("Exportansicht").ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() {Name = "Exportprofil hinzufügen"}).ClickAsync();
+            
+             // Open placeholder dropdown for tracks 
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Platzhalter hinzufügen"}).First.ClickAsync();
+
+            // Confirm that the German placeholders are visible
+            await Expect(Page.GetByRole(AriaRole.Menuitem, new() { Name = "Künstler"})).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Menuitem, new() {Name = "Titel"})).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Menuitem, new() { Name = "Album"})).ToBeVisibleAsync();
+            
+            // Close dropdown and open cuesheet placeholder dropdown
+            await Page.Keyboard.PressAsync("Escape");
+            await Page.GetByRole(AriaRole.Button, new() {Name = "Platzhalter hinzufügen"}).Last.ClickAsync();
+
+            // Confirm that the German cuesheet placeholders are visible
+            await Expect(Page.GetByRole(AriaRole.Menuitem, new() { Name = "Cuesheet Titel"})).ToBeVisibleAsync();
+            await Expect(Page.GetByRole(AriaRole.Menuitem, new() { Name = "Interpret" })).ToBeVisibleAsync();
+            }     
 
         [TestMethod]
         public async Task OpenSampleCuesheetAsync()
