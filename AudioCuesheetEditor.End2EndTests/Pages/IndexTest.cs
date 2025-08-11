@@ -103,7 +103,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
             await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
             
-            // Added End2End Test
+            
             // Test localised export placeholders
             await Page.GetByText("Exportansicht").ClickAsync();
             await Page.GetByRole(AriaRole.Button, new() {Name = "Exportprofil hinzufügen"}).ClickAsync();
