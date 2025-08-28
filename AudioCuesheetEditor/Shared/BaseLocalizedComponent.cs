@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components;
 
@@ -67,6 +66,7 @@ namespace AudioCuesheetEditor.Shared
                 if (disposing)
                 {
                     LocalizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+                    TraceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
                     TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
                     TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
                 }
