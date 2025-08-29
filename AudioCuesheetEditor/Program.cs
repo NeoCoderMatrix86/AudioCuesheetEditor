@@ -27,10 +27,8 @@ using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using System.ComponentModel.Design;
 using System.Globalization;
 using System.Reflection;
-using System.Reflection.Emit;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -52,7 +50,7 @@ builder.Services.AddScoped<MusicBrainzDataProvider>();
 builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
 builder.Services.AddScoped<ITraceChangeManager, TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
-builder.Services.AddScoped<TextImportService>();
+builder.Services.AddScoped<ITextImportService, TextImportService>();
 builder.Services.AddScoped<CuesheetImportService>();
 builder.Services.AddScoped<CuesheetExportService>();
 builder.Services.AddScoped<ApplicationOptionsTimeSpanParser>();
@@ -60,7 +58,7 @@ builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<IFileInputManager, FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
-builder.Services.AddScoped<EditTrackModalManager>();
+builder.Services.AddScoped<DialogManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 

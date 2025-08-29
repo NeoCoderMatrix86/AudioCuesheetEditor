@@ -13,13 +13,34 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.IO
+using System.Text.Json.Serialization;
+
+namespace AudioCuesheetEditor.Model.Options
 {
-    public static class FileMimeTypes
+    public enum ViewMode
     {
-        public const string TextPlain = "text/plain";
-        public const string Projectfile = "application/x-ace";
-        public const string Cuesheet = "application/x-cue";
-        public const string Text = "text/*";
+        DetailView = 0,
+        RecordView = 1,
+        ImportView = 2
+    }
+    public class ViewOptions : IOptions
+    {
+        [JsonIgnore]
+        public ViewMode ActiveTab { get; set; }
+        public String? ActiveTabName
+        {
+            get => Enum.GetName(ActiveTab);
+            set
+            {
+                if (value != null)
+                {
+                    ActiveTab = Enum.Parse<ViewMode>(value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+            }
+        }
     }
 }

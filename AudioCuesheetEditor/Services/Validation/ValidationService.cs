@@ -23,32 +23,35 @@ namespace AudioCuesheetEditor.Services.Validation
         private readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
         public Func<object, string, Task<IEnumerable<string>>> ValidateProperty => (model, propertyName) => Task.FromResult(Validate(model, propertyName));
 
-        public IEnumerable<string> Validate(object model, string propertyName)
+        public IEnumerable<string> Validate(object? model, string propertyName)
         {
-            List<string> errors = [];
-            if (model is IValidateable validateable)
+            IEnumerable<string> errors = [];
+            if (model != null)
             {
-                var validationResult = validateable.Validate(propertyName);
-                switch (validationResult?.Status)
+                if (model is IValidateable validateable)
                 {
-                    case ValidationStatus.NoValidation:
-                    case ValidationStatus.Success:
-                        // Nothing to do
-                        break;
+                    var validationResult = validateable.Validate(propertyName);
+                    switch (validationResult?.Status)
+                    {
+                        case ValidationStatus.NoValidation:
+                        case ValidationStatus.Success:
+                            // Nothing to do
+                            break;
 
-                    case ValidationStatus.Error:
-                        errors = validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer)).ToList();
-                        break;
+                        case ValidationStatus.Error:
+                            errors = [.. validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer))];
+                            break;
 
-                    default:
-                        throw new InvalidOperationException("Unknown validation status.");
+                        default:
+                            throw new InvalidOperationException("Unknown validation status.");
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
                 }
             }
-            else
-            {
-                throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
-            }
-            return errors.AsEnumerable();
+            return errors;
         }
     }
 }

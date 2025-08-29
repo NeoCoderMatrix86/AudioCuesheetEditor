@@ -21,15 +21,15 @@ namespace AudioCuesheetEditor.Model.IO.Import
     public interface IImportfile
     {
         /// <summary>
-        /// File content (each element is a file line)
+        /// File content
         /// </summary>
-        IEnumerable<String?>? FileContent { get; set; }
+        String? FileContent { get; set; }
         /// <summary>
         /// File content with marking which passages has been reconized by scheme
         /// </summary>
-        IEnumerable<String?>? FileContentRecognized { get; set; }
+        String? FileContentRecognized { get; set; }
         /// <summary>
-        /// Exception that has been thrown while readinng out the file
+        /// Exception that has been thrown while reading out the file
         /// </summary>
         Exception? AnalyseException { get; set; }
         /// <summary>

@@ -13,13 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.IO
+namespace AudioCuesheetEditor.Model.Options
 {
-    public static class FileMimeTypes
+    public class RecordOptions : IOptions
     {
-        public const string TextPlain = "text/plain";
-        public const string Projectfile = "application/x-ace";
-        public const string Cuesheet = "application/x-cue";
-        public const string Text = "text/*";
+        public uint RecordCountdownTimer { get; set; } = 5;
     }
 }

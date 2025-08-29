@@ -20,13 +20,16 @@ using MudBlazor;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class EditTrackModalManager(IDialogService dialogService, ITraceChangeManager traceChangeManager)
+    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager)
     {
         private readonly IDialogService _dialogService = dialogService;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
+        private IDialogReference? loadingDialog;
+
         public async Task ShowAndHandleModalEditDialogAsync(IEnumerable<Track> tracks)
         {
+            _traceChangeManager.BulkEdit = true;
             if (tracks.Count() == 1)
             {
                 var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, tracks.First().Clone() } };
@@ -46,7 +49,6 @@ namespace AudioCuesheetEditor.Services.UI
                 var result = await dialog.Result;
                 if ((result?.Canceled == false) && (result.Data is EditMultipleTracksModalResult editMultipleTracksModalResult))
                 {
-                    _traceChangeManager.BulkEdit = true;
                     foreach (var track in tracks)
                     {
                         var position = editMultipleTracksModalResult.EditedTrack.Position;
@@ -173,8 +175,26 @@ namespace AudioCuesheetEditor.Services.UI
                         //Now copy all values
                         track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: editMultipleTracksModalResult.IsLinkedToPreviousTrackChanged, setPosition: copyTrackPosition, setArtist: editMultipleTracksModalResult.ArtistChanged, setTitle: editMultipleTracksModalResult.TitleChanged, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: editMultipleTracksModalResult.FlagsChanged, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
                     }
-                    _traceChangeManager.BulkEdit = false;
                 }
+            }
+            _traceChangeManager.BulkEdit = false;
+        }
+
+        public async Task ShowLoadingDialogAsync()
+        {
+            if (loadingDialog == null)
+            { 
+                var options = new DialogOptions() { BackdropClick = false, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall, NoHeader = true };
+                loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(null, options);
+            }
+        }
+
+        public void HideLoadingDialog()
+        {
+            if (loadingDialog != null)
+            {
+                loadingDialog.Close();
+                loadingDialog = null;
             }
         }
     }

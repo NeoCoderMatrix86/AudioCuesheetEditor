@@ -117,32 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Playlist_Bug_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Playlist-Bug#30.cue;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Playlist_Bug_57" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Playlist-Bug#57.cue;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Playlist__36_Frames" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Playlist-#36-Frames.cue;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Textimport_Bug_213" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Textimport_Bug_213.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Textimport_Bug_54" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Textimport-Bug-#54.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Textimport_Bug__233" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Textimport_Bug_#233.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Traktor Export" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Traktor Export.html;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Textimport with Cuesheetdata" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Textimport with Cuesheetdata.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Sample_Inputfile" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Sample_Inputfile.txt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Loading ..." xml:space="preserve">
+    <value>Loading ...</value>
   </data>
 </root>

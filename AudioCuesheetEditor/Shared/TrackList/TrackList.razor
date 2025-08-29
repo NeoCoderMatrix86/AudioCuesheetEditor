@@ -21,11 +21,12 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject AutocompleteManager _autocompleteManager
-@inject EditTrackModalManager _editTrackModalManager
+@inject DialogManager _editTrackModalManager
 @inject ValidationService _validationService
 @inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
+@inject ISessionStateContainer _sessionStateContainer
 
 @if (CurrentViewMode == ViewMode.DetailView)
 {
@@ -46,119 +47,81 @@ along with Foobar.  If not, see
                              MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
                              MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
                              CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                             FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !ApplicationOptions?.FixedTracksTableHeader)" />
+                             FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
 }
-
-<MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-             EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(ApplicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" FixedHeader="ApplicationOptions?.FixedTracksTableHeader == true">
-    <Columns>
-        <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
-        <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
-            <EditTemplate>
-                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
-            </EditTemplate>
-        </TemplateColumn>
-        <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <EditTemplate>
-                <MudNumericField @bind-Value="context.Item.Position" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Position)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Position))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
-            <EditTemplate>
-                @{
-                    MusicBrainzArtist? autocompleteArtist = new()
+<MudForm @ref="form">
+    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
+                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" Validator="form" Virtualize>
+        <Columns>
+            <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
+            <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
+                <EditTemplate>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
+                </EditTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <EditTemplate>
+                    <MudNumericField Validation="(uint? newPosition) => _validationService.Validate(context.Item, nameof(Track.Position))" Value="context.Item.Position"
+                                     ValueChanged="(uint? newPosition) => PositionChanged(context.Item, newPosition)" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
+                <EditTemplate>
+                    <ArtistColumn Track="context.Item" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
+                <EditTemplate>
+                    <TitleColumn Track="context.Item" CurrentViewMode="CurrentViewMode" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Begin, value)"
+                                  Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.End, value)"
+                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Length, value)"
+                                  Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" />
+                </EditTemplate>
+            </PropertyColumn>
+            <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
+                <EditTemplate>
+                    @if (Cuesheet?.GetSection(context.Item) != null)
                     {
-                        Name = context.Item.Artist
-                    };
-                }
-                <MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="context.Item.Artist"
-                                 @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Artist)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
-                    <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Name</MudText>
-                        }
-                    </ItemTemplate>
-                </MudAutocomplete>
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
-            <EditTemplate>
-                @{
-                    MusicBrainzTrack? autocompleteTrack = new()
+                        <MudTooltip Text="@_localizer["A section is beginning inside this track"]">
+                            <MudChip Icon="@Icons.Material.Outlined.ContentCut" Color="Color.Info">@_localizer["Section"]</MudChip>
+                        </MudTooltip>
+                    }
+                    @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
                     {
-                        Artist = context.Item.Artist,
-                        Title = context.Item.Title
-                    };
-                }
-                <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, context.Item.Artist, token)" ToStringFunc="(value) => value.Title"
-                                 @bind-Text="context.Item.Title" Value="autocompleteTrack" ValueChanged="(value) => TitleSelected(context.Item, value)"
-                                 ResetValueOnEmptyText Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Title)))" 
-                                 ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Title))" MaxItems="null" CoerceText="false">
-                    <ItemTemplate Context="autocompleteContext">
-                        @if (autocompleteContext.Disambiguation != null)
-                        {
-                            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-                        }
-                        else
-                        {
-                            <MudText>@autocompleteContext.Title</MudText>
-                        }
-                    </ItemTemplate>
-                </MudAutocomplete>
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <CellTemplate>
-                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)
-            </CellTemplate>
-            <EditTemplate>
-                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Begin, value)"
-                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Begin))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <CellTemplate>
-                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)
-            </CellTemplate>
-            <EditTemplate>
-                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.End, value)"
-                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.End))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-            <CellTemplate>
-                @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)
-            </CellTemplate>
-            <EditTemplate>
-                <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(context.Item, x => x.Length, value)"
-                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(context.Item, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(context.Item, nameof(Track.Length))" />
-            </EditTemplate>
-        </PropertyColumn>
-        <TemplateColumn Title="@_localizer["Remarks"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
-            <EditTemplate>
-                @if (_playbackService.CurrentlyPlayingTrack == context.Item)
-                {
-                    <MudIcon Icon="@Icons.Material.Outlined.Audiotrack" Title="@_localizer["Currently playing this track"]" />
-                }
-                @if (Cuesheet?.GetSection(context.Item) != null)
-                {
-                    <MudIcon Icon="@Icons.Material.Outlined.ContentCut" Title="@_localizer["A section is beginning inside this track"]" />
-                }
-                @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
-                {
-                    <MudIconButton Icon="@GetLinkedTrackIcon(context.Item)" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
-                }
-            </EditTemplate>
-        </TemplateColumn>
-    </Columns>
-</MudDataGrid>
+                        <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">
+                            <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
+                        </MudTooltip>
+                    }
+                </EditTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudForm>
 
 <MudMenu PositionAtCursor @ref="trackContextMenu">
     @if (contextMenuTrack != null)
@@ -172,30 +135,46 @@ along with Foobar.  If not, see
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
     Track? contextMenuTrack;
+    ApplicationOptions? applicationOptions;
+    MudForm? form;
+
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (CurrentViewMode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    [CascadingParameter]
-    public Cuesheet? Cuesheet { get; set; }
-
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
+        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
+        await base.OnInitializedAsync();
+        applicationOptions = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
     }
 
     void AddTrackClicked()
     {
         var newTrack = new Track()
         {
-            IsLinkedToPreviousTrack = ApplicationOptions!.LinkTracks
+            IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
         Cuesheet?.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);
@@ -246,17 +225,6 @@ along with Foobar.  If not, see
         }
     }
 
-    String? GetValidationErrorMessage(object model, string propertyName)
-    {
-        String? validationErrorMessage = null;
-        var validationMessages = _validationService.Validate(model, propertyName);
-        if (validationMessages.Count() > 0)
-        {
-            validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
-        }
-        return validationErrorMessage;
-    }
-
     async Task CopyTrackClicked(Track? trackToCopy = null)
     {
         var trackThatWillBeCopied = trackToCopy;
@@ -299,7 +267,51 @@ along with Foobar.  If not, see
         }
     }
 
-    void PlaybackService_CurrentPositionChanged()
+    String GetLinkedTrackTooltip(Track track)
+    {
+        if (track.IsLinkedToPreviousTrack)
+        {
+            return _localizer["Unlink this track from previous track"];
+        }
+        else
+        {
+            return _localizer["Link this track to previous track"];
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
+            StateHasChanged();
+        }
+    }
+
+    async Task PositionChanged(Track track, uint? newPosition)
+    {
+        track.Position = newPosition;
+        if (form != null)
+        {
+            await form.Validate();
+        }
+    }
+
+    async Task TimespanChanged<TProperty>(Track track, System.Linq.Expressions.Expression<Func<Track, TProperty>> expression, String value)
+    {
+        await _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TProperty>(track, expression, value);
+        if (form != null)
+        {
+            await form.Validate();
+        }
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }

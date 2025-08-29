@@ -37,10 +37,9 @@ namespace AudioCuesheetEditor.Model.IO
             }
         };
 
-        public static Cuesheet? ImportFile(byte[] fileContent)
+        public static Cuesheet? ImportFile(string fileContent)
         {
-            var json = Encoding.UTF8.GetString(fileContent);
-            return JsonSerializer.Deserialize<Cuesheet>(json, Options);
+            return JsonSerializer.Deserialize<Cuesheet>(fileContent, Options);
         }
 
         public Cuesheet Cuesheet { get; private set; } = cuesheet;

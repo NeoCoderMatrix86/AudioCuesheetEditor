@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components;
 
@@ -31,8 +30,6 @@ namespace AudioCuesheetEditor.Shared
         [Inject]
         protected ILocalStorageOptionsProvider LocalStorageOptionsProvider { get; set; } = default!;
 
-        public ApplicationOptions? ApplicationOptions { get; private set; }
-
         protected override void OnInitialized()
         {
             base.OnInitialized();
@@ -40,22 +37,6 @@ namespace AudioCuesheetEditor.Shared
             TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
             TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
             TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
-        }
-
-        protected override async Task OnInitializedAsync()
-        {
-            await base.OnInitializedAsync();
-            ApplicationOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-            LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        }
-
-        void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
-        {
-            if (option is ApplicationOptions applicationOptions)
-            {
-                ApplicationOptions = applicationOptions;
-                StateHasChanged();
-            }
         }
 
         void TraceChangeManager_RedoDone(object? sender, EventArgs e)
@@ -85,9 +66,9 @@ namespace AudioCuesheetEditor.Shared
                 if (disposing)
                 {
                     LocalizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
+                    TraceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
                     TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
                     TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
-                    LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
                 }
 
                 disposedValue = true;

@@ -1,0 +1,78 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject AutocompleteManager _autocompleteManager
+@inject ValidationService _validationService
+
+<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="artist"
+                 Value="autocompleteArtist" ValueChanged="ValueChanged" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
+                 MaxItems="null" CoerceText="false" OnBlur="OnBlur">
+    <ItemTemplate>
+        @if (context.Disambiguation != null)
+        {
+            <MudText>@String.Format("{0} ({1})", context.Name, context.Disambiguation)</MudText>
+        }
+        else
+        {
+            <MudText>@context.Name</MudText>
+        }
+    </ItemTemplate>
+</MudAutocomplete>
+
+@code {
+    [Parameter] 
+    [EditorRequired]
+    public Track Track { get; set; } = default!;
+
+    MusicBrainzArtist? autocompleteArtist;
+    string? artist;
+    Timer? debounceTimer;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        autocompleteArtist = new() { Name = Track.Artist };
+        artist = autocompleteArtist.Name;
+    }
+
+    void ValueChanged(MusicBrainzArtist? newValue)
+    {
+        autocompleteArtist = newValue;
+        artist = autocompleteArtist?.Name;
+        StartChangeTimer();
+    }
+
+    void OnBlur(FocusEventArgs args)
+    {
+        StartChangeTimer();
+    }
+
+    void StartChangeTimer()
+    {
+        debounceTimer = new Timer(100);
+        debounceTimer.Elapsed += ChangeArtist;
+        debounceTimer.AutoReset = false;
+        debounceTimer.Start();
+    }
+
+    void ChangeArtist(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        Track.Artist = artist;
+    }
+}

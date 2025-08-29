@@ -20,36 +20,33 @@ along with Foobar.  If not, see
 
 @inherits BaseLocalizedComponent
 
-@inject ISessionStateContainer _sessionStateContainer
 @inject IStringLocalizer<Index> _localizer
+@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)GetViewMode()" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)" KeepPanelsAlive>
-    <CascadingValue Value="GetViewMode()">
+<CascadingValue Value="currentViewmode">
+    <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
         <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
-            <CascadingValue Value="_sessionStateContainer.Cuesheet">
-                <ViewModeFull />
-            </CascadingValue>
+            <ViewModeFull />
         </MudTabPanel>
         <MudTabPanel Text="@_localizer["Record view"]" Icon="@Icons.Material.Outlined.Mic">
-            <CascadingValue Value="_sessionStateContainer.Cuesheet">
-                <ViewModeRecord />
-            </CascadingValue>
+            <ViewModeRecord />
         </MudTabPanel>
         <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
-            <CascadingValue Value="_sessionStateContainer.ImportCuesheet">
-                <ViewModeImport />
-            </CascadingValue>
+            <ViewModeImport />
         </MudTabPanel>
-    </CascadingValue>
-</MudTabs>
+    </MudTabs>
+</CascadingValue>
 
 @code{
+    ViewOptions? options;
+    ViewMode currentViewmode = ViewMode.DetailView;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        StateHasChanged();
+        options = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        currentViewmode = options.ActiveTab;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
     }
 
     protected override void Dispose(bool disposing)
@@ -57,34 +54,23 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         if (disposing)
         {
-            _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
-            _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+            _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
         }
     }
 
     async Task ActiveTabIndexChanged(int tabIndex)
     {
-        var activeViewMode = (ViewMode)tabIndex;
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.ActiveTab, activeViewMode);
+        currentViewmode = (ViewMode)tabIndex;
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, currentViewmode);
     }
 
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
     {
-        StateHasChanged();
-    }
-
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    ViewMode GetViewMode()
-    {
-        ViewMode viewMode = ViewMode.DetailView;
-        if (ApplicationOptions != null)
+        if (option is ViewOptions viewOptions)
         {
-            viewMode = ApplicationOptions.ActiveTab;
+            options = viewOptions;
+            currentViewmode = options.ActiveTab;
+            StateHasChanged();
         }
-        return viewMode;
     }
 }

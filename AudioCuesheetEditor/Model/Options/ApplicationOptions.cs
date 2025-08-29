@@ -13,10 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO;
-using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.UI;
 using System.Globalization;
@@ -24,33 +20,9 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.Options
 {
-    public enum ViewMode
-    {
-        DetailView = 0,
-        RecordView = 1,
-        ImportView = 2
-    }
-    public class ApplicationOptions : Validateable, IOptions
+    public class ApplicationOptions : IOptions
     {
         public const LogLevel DefaultLogLevel = LogLevel.Information;
-        private string? projectFilename = Projectfile.DefaultFilename;
-        private string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
-        public String? CuesheetFilename 
-        {
-            get => cuesheetFilename;
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-                    {
-                        value = $"{value}{FileExtensions.Cuesheet}";
-                    }
-                }
-                cuesheetFilename = value;
-            }
-        }
         public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
         [JsonIgnore]
         public CultureInfo Culture
@@ -67,102 +39,10 @@ namespace AudioCuesheetEditor.Model.Options
                 }
             }
         }
-        [JsonIgnore]
-        public ViewMode ActiveTab { get; set; }
-        public String? ActiveTabName
-        {
-            get => Enum.GetName(ActiveTab);
-            set
-            {
-                if (value != null)
-                {
-                    ActiveTab = Enum.Parse<ViewMode>(value);
-                }
-                else
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-            }
-        }
-        public String? ProjectFilename
-        { 
-            get => projectFilename;
-            set
-            {
-                if (String.IsNullOrEmpty(value) == false)
-                {
-                    var extension = Path.GetExtension(value);
-                    if (extension?.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
-                    {
-                        value = $"{value}{FileExtensions.Projectfile}";
-                    }
-                }
-                projectFilename = value;
-            }
-        }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
-        public Boolean LinkTracks { get; set; } = true;
-        public TextImportScheme ImportScheme { get; set; } = TextImportScheme.DefaultTextImportScheme;
-        public TimeSpanFormat ImportTimeSpanFormat { get; set; } = new();
-        public uint RecordCountdownTimer { get; set; } = 5;
+        public Boolean DefaultIsLinkedToPreviousTrack { get; set; } = true;
         public Boolean FixedTracksTableHeader { get; set; } = false;
         public String? DisplayTimeSpanFormat { get; set; }
         public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
-
-        public override ValidationResult Validate(string property)
-        {
-            ValidationStatus validationStatus = ValidationStatus.NoValidation;
-            List<ValidationMessage>? validationMessages = null;
-            switch (property)
-            {
-                case nameof(CuesheetFilename):
-                    validationStatus = ValidationStatus.Success;
-                    if (string.IsNullOrEmpty(CuesheetFilename))
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(CuesheetFilename)));
-                    }
-                    else
-                    {
-                        var extension = Path.GetExtension(CuesheetFilename);
-                        if (extension.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(CuesheetFilename), FileExtensions.Cuesheet));
-                        }
-                        var filenameWithoutExtension = Path.GetFileNameWithoutExtension(CuesheetFilename);
-                        if (string.IsNullOrEmpty(filenameWithoutExtension))
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(CuesheetFilename)));
-                        }
-                    }
-                    break;
-                case nameof(ProjectFilename):
-                    validationStatus = ValidationStatus.Success;
-                    if (String.IsNullOrEmpty(ProjectFilename))
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ProjectFilename)));
-                    }
-                    else
-                    {
-                        var extension = Path.GetExtension(ProjectFilename);
-                        if (extension.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), FileExtensions.Projectfile));
-                        }
-                        var filename = Path.GetFileNameWithoutExtension(ProjectFilename);
-                        if (String.IsNullOrEmpty(filename))
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ProjectFilename)));
-                        }
-                    }
-                    break;
-            }
-            return ValidationResult.Create(validationStatus, validationMessages);
-        }
     }
 }

@@ -13,16 +13,14 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Diagnostics;
 
 namespace AudioCuesheetEditor.Services.IO
 {
@@ -34,73 +32,105 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ILocalStorageOptionsProvider localStorageOptionsProvider, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ILogger<ImportManager> logger)
     {
+        private readonly ILogger<ImportManager> _logger = logger;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
-        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
+        private readonly ITextImportService _textImportService = textImportService;
 
-        public async Task<Dictionary<IBrowserFile, ImportFileType>> ImportFilesAsync(IEnumerable<IBrowserFile> files)
+        public async Task ImportFilesAsync(IEnumerable<IBrowserFile> files)
         {
-            Dictionary<IBrowserFile, ImportFileType> importFileTypes = [];
+            var stopwatch = Stopwatch.StartNew();
             foreach (var file in files)
             {
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, FileExtensions.Projectfile))
-                {
-                    //TODO: can not be undone
-                    var fileContent = await ReadFileContentAsync(file);
-                    var cuesheet = Projectfile.ImportFile(fileContent.ToArray());
-                    if (cuesheet != null)
-                    {
-                        _sessionStateContainer.Cuesheet = cuesheet;
-                    }
-                    importFileTypes.Add(file, ImportFileType.ProjectFile);
-                }
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, FileExtensions.Cuesheet))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
-                    List<String?> lines = [];
-                    while (reader.EndOfStream == false)
+                    var stringFileContent = reader.ReadToEnd();
+                    _sessionStateContainer.Importfile = new Importfile()
                     {
-                        lines.Add(reader.ReadLine());
-                    }
-                    ImportCuesheet(lines);
-                    importFileTypes.Add(file, ImportFileType.Cuesheet);
+                        FileContent = stringFileContent,
+                        FileContentRecognized = stringFileContent,
+                        FileType = ImportFileType.ProjectFile
+                    };
                 }
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Text, FileExtensions.Text))
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]))
                 {
                     var fileContent = await ReadFileContentAsync(file);
                     fileContent.Position = 0;
                     using var reader = new StreamReader(fileContent);
-                    List<String?> lines = [];
-                    while (reader.EndOfStream == false)
+                    var stringFileContent = reader.ReadToEnd();
+                    _sessionStateContainer.Importfile = new Importfile()
                     {
-                        lines.Add(reader.ReadLine());
-                    }
-                    var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-                    ImportText([.. lines], options.ImportScheme, options.ImportTimeSpanFormat);
-                    importFileTypes.Add(file, ImportFileType.Textfile);
+                        FileContent = stringFileContent,
+                        FileContentRecognized = stringFileContent,
+                        FileType = ImportFileType.Cuesheet
+                    };
+                }
+                if (_fileInputManager.IsValidForImportView(file))
+                {
+                    var fileContent = await ReadFileContentAsync(file);
+                    fileContent.Position = 0;
+                    using var reader = new StreamReader(fileContent);
+                    var stringFileContent = reader.ReadToEnd();
+                    _sessionStateContainer.Importfile = new Importfile()
+                    {
+                        FileContent = stringFileContent,
+                        FileContentRecognized = stringFileContent,
+                        FileType = ImportFileType.Textfile
+                    };
                 }
             }
-            return importFileTypes;
+            stopwatch.Stop();
+            _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
-        public void ImportText(IEnumerable<String?> fileContent, TextImportScheme textImportScheme, TimeSpanFormat timeSpanFormat)
+        public async Task AnalyseImportfile()
         {
-            _sessionStateContainer.Importfile = TextImportService.Analyse(textImportScheme, fileContent, timeSpanFormat);
-            if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
+            var stopwatch = Stopwatch.StartNew();
+            var fileContent = _sessionStateContainer.Importfile?.FileContent;
+            if (String.IsNullOrEmpty(fileContent) == false)
             {
-                var importCuesheet = new Cuesheet();
-                CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
-                _sessionStateContainer.ImportCuesheet = importCuesheet;
+                switch (_sessionStateContainer.Importfile?.FileType)
+                {
+                    case ImportFileType.ProjectFile:
+                        _sessionStateContainer.Cuesheet = Projectfile.ImportFile(fileContent)!;
+                        break;
+                    case ImportFileType.Textfile:
+                        _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
+                        break;
+                    case ImportFileType.Cuesheet:
+                        _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
+                        break;
+                }
             }
+            if (_sessionStateContainer.Importfile?.AnalysedCuesheet != null)
+            {
+                switch (_sessionStateContainer.Importfile?.FileType)
+                {
+                    case ImportFileType.Textfile:
+                        var importCuesheet = new Cuesheet();
+                        CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                        _sessionStateContainer.ImportCuesheet = importCuesheet;
+                        break;
+                    case ImportFileType.Cuesheet:
+                        _traceChangeManager.BulkEdit = true;
+                        CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                        _traceChangeManager.BulkEdit = false;
+                        break;
+                }
+            }
+            stopwatch.Stop();
+            _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
         public void ImportCuesheet()
         {
+            var stopwatch = Stopwatch.StartNew();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
                 _traceChangeManager.BulkEdit = true;
@@ -108,18 +138,10 @@ namespace AudioCuesheetEditor.Services.IO
                 _traceChangeManager.BulkEdit = false;
             }
             _sessionStateContainer.ResetImport();
+            stopwatch.Stop();
+            _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
-        private void ImportCuesheet(IEnumerable<String?> fileContent)
-        {
-            _sessionStateContainer.Importfile = CuesheetImportService.Analyse(fileContent);
-            if (_sessionStateContainer.Importfile.AnalysedCuesheet != null)
-            {
-                _traceChangeManager.BulkEdit = true;
-                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
-                _traceChangeManager.BulkEdit = false;
-            }
-        }
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)
         {
             var fileContent = new MemoryStream();
