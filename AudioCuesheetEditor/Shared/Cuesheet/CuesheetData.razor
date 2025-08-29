@@ -15,7 +15,6 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<CuesheetData> _localizer
@@ -37,7 +36,9 @@ along with Foobar.  If not, see
                 <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile
                            OnDownloadFileClicked="DownloadAudio" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" FileDownloadDisabled="Cuesheet.Audiofile != null ? Cuesheet.Audiofile.IsContentStreamLoaded == false : true" />
                 <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
-                <MudTextField @bind-Value="Cuesheet.Cataloguenumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined" />
+                <MudTextField @ref="catalogueNumberTextField" @bind-Value="catalogueNumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
+                              Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined"
+                              Mask="@(new PatternMask("00 00000 00000 0"))" OnBlur="CataloguenumberOnBlur" />
                 break;
         }
 
@@ -62,7 +63,9 @@ along with Foobar.  If not, see
     string? fileInputAudiofileId;
     string? fileInputAudiofileErrorText;
     string? fileInputCDTextfileErrorText;
+    string? catalogueNumber;
     MudForm? form;
+    MudTextField<string>? catalogueNumberTextField;
 
     protected override void OnInitialized()
     {
@@ -73,6 +76,8 @@ along with Foobar.  If not, see
         }
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
     }
 
     protected override void Dispose(bool disposing)
@@ -80,6 +85,8 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+        TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
     }
 
     protected override void OnParametersSet()
@@ -89,6 +96,7 @@ along with Foobar.  If not, see
         {
             SetAudiofileValidationText();
         }
+        catalogueNumber = Cuesheet?.Cataloguenumber;
     }
 
     async Task OnAudiofileSelected(IBrowserFile? browserFile)
@@ -219,5 +227,25 @@ along with Foobar.  If not, see
     void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
+    }
+
+    void CataloguenumberOnBlur()
+    {
+        if (Cuesheet != null)
+        {
+            Cuesheet.Cataloguenumber = catalogueNumber?.Replace(" ", string.Empty);
+        }
+    }
+
+    void TraceChangeManager_RedoDone(object? sender, EventArgs e)
+    {
+        catalogueNumber = Cuesheet?.Cataloguenumber;
+        catalogueNumberTextField?.ResetAsync();
+    }
+
+    void TraceChangeManager_UndoDone(object? sender, EventArgs e)
+    {
+        catalogueNumber = Cuesheet?.Cataloguenumber;
+        catalogueNumberTextField?.ResetAsync();
     }
 }
