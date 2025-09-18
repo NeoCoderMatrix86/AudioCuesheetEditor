@@ -93,6 +93,21 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
+        public async Task ImportWithEditAsync()
+        {
+            await Page.GotoAsync("http://localhost:5132/");
+            await Page.GetByRole(AriaRole.Tab, new() { Name = "Import view" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync("Sample_Inputfile.txt");
+            await Page.Locator("tr:nth-child(6) > td").First.ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync("Sample Title Edited 5");
+            await Page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
+            await Page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
+            await Expect(Page.GetByRole(AriaRole.Cell, new() { Name = "Sample Title Edited 5 Clear" })).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
         public async Task ChangeLanguageAsync()
         {
             await Page.GotoAsync("http://localhost:5132/");
