@@ -6,6 +6,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
     [TestClass]
     public class IndexTest : PlaywrightTestBase
     {
+        //TODO: Implement Page object models and use inside tests, before adding a mobile test
         [TestMethod]
         public async Task HasTitleAsync()
         {
