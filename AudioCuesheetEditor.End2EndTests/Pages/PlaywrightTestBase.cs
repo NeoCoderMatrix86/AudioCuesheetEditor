@@ -5,7 +5,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
 {
     public abstract class PlaywrightTestBase : PageTest
     {
-        protected IBrowserContext TestContextInstance = null!;
+        private IBrowserContext _testContextInstance = null!;
         protected IPage TestPage = null!;
 
         protected virtual string? DeviceName => null;
@@ -17,15 +17,15 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             if (DeviceName != null)
             {
                 var device = Playwright.Devices[DeviceName];
-                TestContextInstance = await Browser.NewContextAsync(device);
-                TestPage = await TestContextInstance.NewPageAsync();
+                _testContextInstance = await Browser.NewContextAsync(device);
+                TestPage = await _testContextInstance.NewPageAsync();
             }
             else
             {
-                TestContextInstance = Context;
+                _testContextInstance = Context;
                 TestPage = Page;
             }
-            await TestContextInstance.Tracing.StartAsync(new()
+            await _testContextInstance.Tracing.StartAsync(new()
             {
                 Title = $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}",
                 Screenshots = true,
@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
                 UnitTestOutcome.Aborted
             }.Contains(TestContext.CurrentTestOutcome);
 
-            await TestContextInstance.Tracing.StopAsync(new()
+            await _testContextInstance.Tracing.StopAsync(new()
             {
                 Path = failed ? Path.Combine(
                     Environment.CurrentDirectory,
