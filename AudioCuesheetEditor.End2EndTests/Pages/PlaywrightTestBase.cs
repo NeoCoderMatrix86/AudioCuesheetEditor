@@ -5,7 +5,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
 {
     public abstract class PlaywrightTestBase : PageTest
     {
-        protected IBrowserContext? TestContextInstance;
+        protected IBrowserContext TestContextInstance = null!;
         protected IPage TestPage = null!;
 
         protected virtual string? DeviceName => null;
@@ -37,25 +37,22 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         [TestCleanup]
         public async Task TestCleanupAsync()
         {
-            if (TestContextInstance != null)
+            var failed = new[]
             {
-                var failed = new[]
-                {
-                    UnitTestOutcome.Failed,
-                    UnitTestOutcome.Error,
-                    UnitTestOutcome.Timeout,
-                    UnitTestOutcome.Aborted
-                }.Contains(TestContext.CurrentTestOutcome);
+                UnitTestOutcome.Failed,
+                UnitTestOutcome.Error,
+                UnitTestOutcome.Timeout,
+                UnitTestOutcome.Aborted
+            }.Contains(TestContext.CurrentTestOutcome);
 
-                await TestContextInstance.Tracing.StopAsync(new()
-                {
-                    Path = failed ? Path.Combine(
-                        Environment.CurrentDirectory,
-                        "playwright-traces",
-                        $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
-                    ) : null,
-                });
-            }
+            await TestContextInstance.Tracing.StopAsync(new()
+            {
+                Path = failed ? Path.Combine(
+                    Environment.CurrentDirectory,
+                    "playwright-traces",
+                    $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
+                ) : null,
+            });
         }
     }
 }
