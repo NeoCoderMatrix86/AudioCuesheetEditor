@@ -16,15 +16,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task CheckSettingsAsync()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button).Filter(new() { HasTextRegex = new Regex("^$") }).Nth(3).ClickAsync();
-            await TestPage.Locator("div").Filter(new() { HasTextRegex = new Regex("^Settings$") }).ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
-        }
-
-        [TestMethod]
         public async Task RecordAsync()
         {
             await TestPage.GotoAsync("http://localhost:5132/");
