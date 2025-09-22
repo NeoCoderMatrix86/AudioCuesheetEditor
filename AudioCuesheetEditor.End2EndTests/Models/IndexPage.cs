@@ -1,6 +1,6 @@
 ﻿using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Pages
+namespace AudioCuesheetEditor.End2EndTests.Models
 {
     public class IndexPage(IPage page)
     {

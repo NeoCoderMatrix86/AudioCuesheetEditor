@@ -1,7 +1,7 @@
 ﻿using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 
-namespace AudioCuesheetEditor.End2EndTests.Pages
+namespace AudioCuesheetEditor.End2EndTests.Tests
 {
     public abstract class PlaywrightTestBase : PageTest
     {

@@ -1,7 +1,7 @@
-﻿using AudioCuesheetEditor.End2EndTests.Pages;
+﻿using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests
+namespace AudioCuesheetEditor.End2EndTests.Tests
 {
     [TestClass]
     public class SettingsTest : PlaywrightTestBase
@@ -9,9 +9,9 @@ namespace AudioCuesheetEditor.End2EndTests
         [TestMethod]
         public async Task OpenSettingsAsync()
         {
-            var page = new AppBar(TestPage);
-            await page.GotoAsync();
-            await page.OpenSettingsAsync();
+            var bar = new AppBar(TestPage);
+            await bar.GotoAsync();
+            await bar.OpenSettingsAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
         }
     }

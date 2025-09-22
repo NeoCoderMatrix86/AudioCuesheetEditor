@@ -1,7 +1,7 @@
 ﻿using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 
-namespace AudioCuesheetEditor.End2EndTests.Pages
+namespace AudioCuesheetEditor.End2EndTests.Models
 {
     public class AppBar
     {
@@ -32,7 +32,7 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await _page.GetByText("Settings").ClickAsync();
         }
 
-        public async Task ChangeLanguageAsync(String language)
+        public async Task ChangeLanguageAsync(string language)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await _page.GetByText(language).ClickAsync();

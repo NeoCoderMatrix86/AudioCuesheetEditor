@@ -1,7 +1,6 @@
-﻿using AudioCuesheetEditor.End2EndTests.Pages;
-using Microsoft.Playwright;
+﻿using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests
+namespace AudioCuesheetEditor.End2EndTests.Tests
 {
     [TestClass]
     public class LocalizationTest : PlaywrightTestBase
