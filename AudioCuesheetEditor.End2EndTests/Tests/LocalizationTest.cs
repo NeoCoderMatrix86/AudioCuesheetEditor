@@ -1,4 +1,5 @@
-﻿using Microsoft.Playwright;
+﻿using AudioCuesheetEditor.End2EndTests.Models;
+using Microsoft.Playwright;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests
 {
@@ -8,9 +9,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
         [TestMethod]
         public async Task ChangeLanguageAsync()
         {
-            var page = new AppBar(TestPage);
-            await page.GotoAsync();
-            await page.ChangeLanguageAsync("German (Germany)");
+            var bar = new AppBar(TestPage);
+            await bar.GotoAsync();
+            await bar.ChangeLanguageAsync("German (Germany)");
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Abschnitte" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Allgemeine Informationen" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
