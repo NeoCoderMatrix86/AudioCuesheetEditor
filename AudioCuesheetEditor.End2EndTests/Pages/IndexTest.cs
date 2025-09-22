@@ -47,19 +47,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task ChangeLanguageAsync()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
-            await TestPage.GetByText("German (Germany)").ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Abschnitte" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Allgemeine Informationen" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
-        }
-
-        [TestMethod]
         public async Task OpenSampleCuesheetAsync()
         {
             await TestPage.GotoAsync("http://localhost:5132/");

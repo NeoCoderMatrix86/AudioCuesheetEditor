@@ -9,9 +9,9 @@ namespace AudioCuesheetEditor.End2EndTests
         [TestMethod]
         public async Task OpenSettingsAsync()
         {
-            var indexPage = new IndexPage(TestPage);
-            await indexPage.GotoAsync();
-            await indexPage.OpenSettingsAsync();
+            var page = new AppBar(TestPage);
+            await page.GotoAsync();
+            await page.OpenSettingsAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
         }
     }
