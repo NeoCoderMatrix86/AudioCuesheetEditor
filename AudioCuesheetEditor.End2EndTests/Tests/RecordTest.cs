@@ -7,7 +7,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
     public class RecordTest : PlaywrightTestBase
     {
         [TestMethod]
-        public async Task RecordAsync()
+        public async Task Record_ShouldRecordTracks_WhenTracksAdded()
         {
             var recordView = new RecordView(TestPage);
             await recordView.GotoAsync();

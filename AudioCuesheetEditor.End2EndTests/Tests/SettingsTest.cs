@@ -7,7 +7,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
     public class SettingsTest : PlaywrightTestBase
     {
         [TestMethod]
-        public async Task OpenSettingsAsync()
+        public async Task OpenSettings_ShouldDisplaySettings_WhenSelectingSettings()
         {
             var bar = new AppBar(TestPage);
             await bar.GotoAsync();

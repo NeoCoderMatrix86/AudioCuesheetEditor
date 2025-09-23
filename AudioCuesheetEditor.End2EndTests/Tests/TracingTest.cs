@@ -7,7 +7,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
     public class TracingTest : PlaywrightTestBase
     {
         [TestMethod]
-        public async Task UndoRedoTrackTableTestAsync()
+        public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoAndRedoAreUsed()
         {
             var bar = new AppBar(TestPage);
             await bar.GotoAsync();

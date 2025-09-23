@@ -7,7 +7,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
     public class LocalizationTest : PlaywrightTestBase
     {
         [TestMethod]
-        public async Task ChangeLanguageAsync()
+        public async Task ChangeLanguage_ShouldShowGermanHeadings_WhenGermanIsSelected()
         {
             var bar = new AppBar(TestPage);
             await bar.GotoAsync();
