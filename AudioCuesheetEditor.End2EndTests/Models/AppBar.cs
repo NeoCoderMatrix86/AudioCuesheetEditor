@@ -37,5 +37,19 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await _page.GetByText(language).ClickAsync();
         }
+
+        public ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
+
+        public ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
+
+        public async Task UndoAsync()
+        {
+            await UndoButton.ClickAsync();
+        }
+
+        public async Task RedoAsync()
+        {
+            await RedoButton.ClickAsync();
+        }
     }
 }
