@@ -93,21 +93,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task ImportTestSampleInputfile2Async()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByText("Import view").ClickAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync("Sample_Inputfile2.txt");
-            await TestPage.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByLabel("Clear").ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToBeEmptyAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToBeEmptyAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Sample Title 1 Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = ":09:23" }).Nth(1)).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "01:15:" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 8 Clear" })).ToBeVisibleAsync();
-        }
-
-        [TestMethod]
         public async Task ImportTestTraktorAsync()
         {
             await TestPage.GotoAsync("http://localhost:5132/");

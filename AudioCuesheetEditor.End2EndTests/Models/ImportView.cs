@@ -1,5 +1,5 @@
 ﻿using Microsoft.Playwright;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
@@ -9,7 +9,9 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         private readonly IPage _page = page;
 
-        internal ILocator CompleteButton => _page.GetByRole(AriaRole.Button, new() { Name = "Complete" });
+        internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
+
+        internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
 
         internal async Task GotoAsync()
         {
@@ -56,6 +58,22 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         {
             await _page.GetByText("Textfile (common data in").ClickAsync();
             await _page.GetByText(profile).ClickAsync();
+        }
+
+        internal async Task ClearSchemesAsync(Boolean clearCommonData = false, Boolean clearTracks = false, Boolean clearTimeformat = false)
+        {
+            if (clearCommonData)
+            {
+                await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByLabel("Clear").ClickAsync();
+            }
+            if (clearTracks)
+            {
+                await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme tracks$") }).GetByLabel("Clear").ClickAsync();
+            }
+            if (clearTimeformat)
+            {
+                await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Time input format for import$") }).GetByLabel("Clear").ClickAsync();
+            }
         }
     }
 }
