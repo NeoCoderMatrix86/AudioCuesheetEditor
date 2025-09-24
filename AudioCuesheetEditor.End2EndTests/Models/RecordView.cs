@@ -13,11 +13,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GotoAsync(BaseUrl);
             await _page.WaitForURLAsync(BaseUrl);
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.GetByText("Record view").ClickAsync();
         }
 
         internal async Task StartRecordingAsync()
         {
-            await _page.GetByText("Record view").ClickAsync();
             await _page.GetByRole(AriaRole.Button, new() { Name = "Start recording" }).ClickAsync();
         }
 

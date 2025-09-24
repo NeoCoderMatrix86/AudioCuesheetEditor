@@ -8,6 +8,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         private readonly IPage _page = page;
 
+        internal ILocator AudiofileInput => _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]");
+
         internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);

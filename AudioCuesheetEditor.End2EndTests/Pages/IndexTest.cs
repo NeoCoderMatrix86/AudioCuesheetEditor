@@ -17,22 +17,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task ImportAsync()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByText("Import view").ClickAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Inputfile.txt" });
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 1 Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = ":20:13" }).Nth(1)).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("CuesheetArtist");
-            await TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" }).ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]")).ToBeEmptyAsync();
-            await TestPage.GetByText("Import view").ClickAsync();
-            await Expect(TestPage.GetByText("PreviousNext")).ToBeVisibleAsync();
-        }
-
-        [TestMethod]
         public async Task ImportWithEditAsync()
         {
             await TestPage.GotoAsync("http://localhost:5132/");
