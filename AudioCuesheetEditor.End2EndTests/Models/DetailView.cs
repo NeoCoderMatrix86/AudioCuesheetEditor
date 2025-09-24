@@ -74,5 +74,13 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             }
             await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
         }
+
+        internal async Task RenameAudiofileAsync(string filename)
+        {
+            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).GetByRole(AriaRole.Button).Nth(3).ClickAsync();
+            await _page.GetByText("Rename file").ClickAsync();
+            await _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" }).FillAsync(filename);
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
+        }
     }
 }

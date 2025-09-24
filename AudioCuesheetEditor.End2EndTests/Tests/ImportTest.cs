@@ -1,7 +1,5 @@
 ﻿using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
-using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests
 {
