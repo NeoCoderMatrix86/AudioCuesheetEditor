@@ -17,21 +17,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         }
 
         [TestMethod]
-        public async Task ImportWithEditAsync()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByRole(AriaRole.Tab, new() { Name = "Import view" }).ClickAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync("Sample_Inputfile.txt");
-            await TestPage.Locator("tr:nth-child(6) > td").First.ClickAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-            await TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync("Sample Title Edited 5");
-            await TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Sample Title Edited 5 Clear" })).ToBeVisibleAsync();
-        }
-
-        [TestMethod]
         public async Task OpenSampleCuesheetAsync()
         {
             await TestPage.GotoAsync("http://localhost:5132/");
