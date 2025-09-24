@@ -10,6 +10,12 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         private readonly IPage _page;
         private readonly ILocator _menuButton;
 
+        internal ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
+
+        internal ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
+
+        internal ILocator HomeButton => _page.GetByRole(AriaRole.Button, new() { Name = "AudioCuesheetEditor" });
+
         internal AppBar(IPage page)
         {
             _page = page;
@@ -37,10 +43,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await _page.GetByText(language).ClickAsync();
         }
-
-        internal ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
-
-        internal ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
 
         internal async Task UndoAsync()
         {
