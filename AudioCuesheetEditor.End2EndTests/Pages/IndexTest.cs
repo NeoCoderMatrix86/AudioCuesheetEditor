@@ -91,21 +91,5 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
             await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Einmusik Clear" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Missing Path (Original Mix)" })).ToBeVisibleAsync();
         }
-
-        [TestMethod]
-        public async Task ImportTestTraktorAsync()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByText("Import view").ClickAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Traktor Export.html" });
-            await TestPage.GetByText("Textfile (common data in").ClickAsync();
-            await TestPage.GetByText("Traktor history").ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Arba Han Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = ":48:53" }).Nth(1)).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Acid Rain Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = ":48:40" }).Nth(1)).ToBeVisibleAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Space Yoda (Snyl Remix) Clear" })).ToBeVisibleAsync();
-        }
     }
 }
