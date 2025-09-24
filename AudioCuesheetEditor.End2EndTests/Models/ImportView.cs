@@ -1,4 +1,5 @@
 ﻿using Microsoft.Playwright;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
@@ -49,6 +50,12 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync(title);
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
+        }
+
+        internal async Task SwitchImportProfileAsync(string profile)
+        {
+            await _page.GetByText("Textfile (common data in").ClickAsync();
+            await _page.GetByText(profile).ClickAsync();
         }
     }
 }
