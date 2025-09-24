@@ -7,7 +7,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
     public class ImportTest : PlaywrightTestBase
     {
         [TestMethod]
-        public async Task ImportAsync()
+        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
         {
             var importView = new ImportView(TestPage);
             var detailView = new DetailView(TestPage);
