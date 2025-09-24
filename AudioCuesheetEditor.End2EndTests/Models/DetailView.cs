@@ -10,6 +10,10 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator AudiofileInput => _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]");
 
+        internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
+
+        internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
+
         internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);

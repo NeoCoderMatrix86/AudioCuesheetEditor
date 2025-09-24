@@ -1,4 +1,5 @@
 ﻿using Microsoft.Playwright;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
@@ -52,6 +53,14 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task RedoAsync()
         {
             await RedoButton.ClickAsync();
+        }
+
+        internal async Task OpenFileAsync(string file)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Open$") }).ClickAsync();
+            await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
+            await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(file);
         }
     }
 }
