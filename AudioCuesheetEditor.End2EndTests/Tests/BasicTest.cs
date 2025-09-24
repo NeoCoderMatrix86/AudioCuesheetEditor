@@ -1,5 +1,4 @@
 ﻿using AudioCuesheetEditor.End2EndTests.Models;
-using Microsoft.Playwright;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests
 {
