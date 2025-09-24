@@ -244,7 +244,6 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
             await importView.SelectTracksAsync([5]);
             await importView.EditTracksModalAsync("Sample Title Edited 5");
             await importView.CompleteButton.ClickAsync();
-
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
