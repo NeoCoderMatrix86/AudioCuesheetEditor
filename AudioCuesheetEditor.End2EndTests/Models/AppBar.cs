@@ -3,14 +3,14 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    public class AppBar
+    internal class AppBar
     {
-        public const string BaseUrl = "http://localhost:5132/";
+        internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page;
         private readonly ILocator _menuButton;
 
-        public AppBar(IPage page)
+        internal AppBar(IPage page)
         {
             _page = page;
             _menuButton = _page.GetByRole(AriaRole.Toolbar)
@@ -19,35 +19,35 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 .Nth(3);
         }
 
-        public async Task GotoAsync()
+        internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);
             await _page.WaitForURLAsync(BaseUrl);
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
-        public async Task OpenSettingsAsync()
+        internal async Task OpenSettingsAsync()
         {
             await _menuButton.ClickAsync();
             await _page.GetByText("Settings").ClickAsync();
         }
 
-        public async Task ChangeLanguageAsync(string language)
+        internal async Task ChangeLanguageAsync(string language)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await _page.GetByText(language).ClickAsync();
         }
 
-        public ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
+        internal ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
 
-        public ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
+        internal ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
 
-        public async Task UndoAsync()
+        internal async Task UndoAsync()
         {
             await UndoButton.ClickAsync();
         }
 
-        public async Task RedoAsync()
+        internal async Task RedoAsync()
         {
             await RedoButton.ClickAsync();
         }

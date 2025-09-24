@@ -2,20 +2,20 @@
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    public class DetailView(IPage page)
+    internal class DetailView(IPage page)
     {
-        public const string BaseUrl = "http://localhost:5132/";
+        internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
 
-        public async Task GotoAsync()
+        internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);
             await _page.WaitForURLAsync(BaseUrl);
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
-        public async Task AddTrackAsync(string? artist = null)
+        internal async Task AddTrackAsync(string? artist = null)
         {
             await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Edit selected tracks Copy" }).GetByRole(AriaRole.Button).First.ClickAsync();
             if (artist != null)
@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             }
         }
 
-        public async Task EditTrackAsync(string? artist = null, string? title = null)
+        internal async Task EditTrackAsync(string? artist = null, string? title = null)
         {
             if (artist != null)
             {
@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             }
         }
 
-        public async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
+        internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
         {
             foreach (var trackTablePosition in trackTablePositions)
             {
@@ -58,7 +58,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             }
         }
 
-        public async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
+        internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync(artist);

@@ -2,31 +2,31 @@
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    public class RecordView(IPage page)
+    internal class RecordView(IPage page)
     {
-        public const string BaseUrl = "http://localhost:5132/";
+        internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
 
-        public async Task GotoAsync()
+        internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);
             await _page.WaitForURLAsync(BaseUrl);
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
-        public async Task StartRecordingAsync()
+        internal async Task StartRecordingAsync()
         {
             await _page.GetByText("Record view").ClickAsync();
             await _page.GetByRole(AriaRole.Button, new() { Name = "Start recording" }).ClickAsync();
         }
 
-        public async Task StopRecordingAsync()
+        internal async Task StopRecordingAsync()
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Stop recording" }).ClickAsync();
         }
 
-        public async Task AddRecordingTrackAsync(string artist, string title)
+        internal async Task AddRecordingTrackAsync(string artist, string title)
         {
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).ClickAsync();
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync(artist);
