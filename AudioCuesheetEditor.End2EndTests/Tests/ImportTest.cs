@@ -479,7 +479,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
             var importView = new ImportView(TestPage);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile2.txt");
-            await importView.ClearSchemesAsync(true);
+            await importView.ClearSchemeCommonDataAsync();
             await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
             await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:

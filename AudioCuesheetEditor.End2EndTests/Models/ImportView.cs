@@ -13,6 +13,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
 
+        internal ILocator CatalogueNumberInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cataloguenumber" });
+
         internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);
@@ -60,20 +62,20 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByText(profile).ClickAsync();
         }
 
-        internal async Task ClearSchemesAsync(Boolean clearCommonData = false, Boolean clearTracks = false, Boolean clearTimeformat = false)
+        internal async Task ClearSchemeCommonDataAsync()
         {
-            if (clearCommonData)
-            {
-                await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByLabel("Clear").ClickAsync();
-            }
-            if (clearTracks)
-            {
-                await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme tracks$") }).GetByLabel("Clear").ClickAsync();
-            }
-            if (clearTimeformat)
-            {
-                await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Time input format for import$") }).GetByLabel("Clear").ClickAsync();
-            }
+            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByLabel("Clear").ClickAsync();
+        }
+
+        internal async Task SetSchemeCommonDataAsync(string schemeCommonData)
+        {
+            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync(schemeCommonData);
+        }
+
+        internal async Task SelectSchemeCommonDataPlaceholderAsync(string placeholder)
+        {
+            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
+            await _page.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = placeholder }).ClickAsync();
         }
     }
 }
