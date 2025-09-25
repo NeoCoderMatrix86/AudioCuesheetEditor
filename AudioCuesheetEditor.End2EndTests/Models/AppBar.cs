@@ -1,5 +1,4 @@
 ﻿using Microsoft.Playwright;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
