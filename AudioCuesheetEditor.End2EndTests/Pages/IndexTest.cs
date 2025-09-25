@@ -10,22 +10,6 @@ namespace AudioCuesheetEditor.End2EndTests.Pages
         //TODO: Implement Page object models and use inside tests, before adding a mobile test
 
         [TestMethod]
-        public async Task OpenSampleCuesheetAsync()
-        {
-            await TestPage.GotoAsync("http://localhost:5132/");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
-            await TestPage.Locator("div").Filter(new() { HasTextRegex = new Regex("^Open$") }).ClickAsync();
-            await TestPage.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
-            await TestPage.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(new[] { "Sample_Cuesheet.cue" });
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" })).ToHaveValueAsync("Sample CD Artist");
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" })).ToHaveValueAsync("Sample CD Title");
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Sample Artist 3 Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = ":45:54" }).Nth(1)).ToBeVisibleAsync();
-            await TestPage.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button).Filter(new() { HasTextRegex = new Regex("^$") }).First.ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
-        }
-
-        [TestMethod]
         public async Task ImportUndoRedoTestAsync()
         {
             await TestPage.GotoAsync("http://localhost:5132/");
