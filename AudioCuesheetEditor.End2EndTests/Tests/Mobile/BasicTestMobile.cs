@@ -1,11 +1,13 @@
 ﻿using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
+namespace AudioCuesheetEditor.End2EndTests.Tests.Mobile
 {
     [TestClass]
-    public class BasicTest : PlaywrightTestBase
+    public class BasicTestMobile : PlaywrightTestBase
     {
+        protected override string? DeviceName => "iPhone 13";
+
         [TestMethod]
         public async Task Application_HasTitle_WhenBrowsingIndex()
         {

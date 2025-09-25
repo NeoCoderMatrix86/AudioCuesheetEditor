@@ -10,7 +10,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
         {
             var importView = new ImportView(TestPage);
-            var detailView = new DetailView(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
             await importView.CompleteImportAsync();
@@ -1670,7 +1670,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         [TestMethod]
         public async Task Open_ShouldImportProject_WhenUsingProjectfile()
         {
-            var detailView = new DetailView(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
             var appBar = new AppBar(TestPage);
             await detailView.GotoAsync();
             await appBar.OpenFileAsync("Sample_Project.ace");
@@ -1899,7 +1899,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         [TestMethod]
         public async Task Open_ShouldImportCuesheet_WhenUsingCuesheetfile()
         {
-            var detailView = new DetailView(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
             var appBar = new AppBar(TestPage);
             await detailView.GotoAsync();
             await appBar.OpenFileAsync("Sample_Cuesheet.cue");

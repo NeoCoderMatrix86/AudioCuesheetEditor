@@ -2,13 +2,14 @@
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    internal class DetailView(IPage page)
+    internal class DetailView(IPage page, bool mobile)
     {
         internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
+        private readonly bool _isMobile = mobile;
 
-        internal ILocator AudiofileInput => _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).Locator("input[type=\"file\"]");
+        internal ILocator AudiofileInput => _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Locator("input[type=\"file\"]");
 
         internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
 
@@ -81,7 +82,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task RenameAudiofileAsync(string filename)
         {
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile Search" }).GetByRole(AriaRole.Button).Nth(3).ClickAsync();
+            int buttonIndex = _isMobile ? 2 : 3;
+            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).GetByRole(AriaRole.Button).Nth(buttonIndex).ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" }).FillAsync(filename);
             await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();

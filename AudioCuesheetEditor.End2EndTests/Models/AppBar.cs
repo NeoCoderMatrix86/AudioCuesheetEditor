@@ -14,7 +14,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
 
-        internal ILocator HomeButton => _page.GetByRole(AriaRole.Button, new() { Name = "AudioCuesheetEditor" });
+        internal ILocator HomeButton => _page.Locator(".mud-button-root").First;
 
         internal AppBar(IPage page)
         {
