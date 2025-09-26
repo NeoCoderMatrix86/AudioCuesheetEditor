@@ -34,5 +34,14 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await detailView.RenameAudiofileAsync("Kalimba test 123.mp3");
             await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Kalimba test 123.mp3");
         }
+
+        [TestMethod]
+        public async Task OpenSettings_ShouldDisplaySettings_WhenSelectingSettings()
+        {
+            var bar = new AppBar(TestPage);
+            await bar.GotoAsync();
+            await bar.OpenSettingsAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
+        }
     }
 }
