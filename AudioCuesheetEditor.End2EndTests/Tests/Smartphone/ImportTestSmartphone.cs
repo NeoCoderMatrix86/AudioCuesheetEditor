@@ -1,0 +1,2130 @@
+﻿using AudioCuesheetEditor.End2EndTests.Models;
+using Microsoft.Playwright;
+
+namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
+{
+    [TestClass]
+    public class ImportTestSmartphone : PlaywrightTestBase
+    {
+        protected override string? DeviceName => "iPhone 13";
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
+        {
+            var importView = new ImportView(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Status""
+  - rowgroup:
+    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 1 Clear"":
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 1 Clear"":
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell
+    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 2 Clear"":
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 2 Clear"":
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:04:23"":
+        - textbox: 00:04:23
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 3 Clear"":
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 3 Clear"":
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:06:31"":
+        - textbox: 00:06:31
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 4 Clear"":
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 4 Clear"":
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 5 Clear"":
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 5 Clear"":
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:04:41"":
+        - textbox: 00:04:41
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 6 Clear"":
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 6 Clear"":
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:07:00"":
+        - textbox: 00:07:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 7 Clear"":
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 7 Clear"":
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""00:14:00"":
+        - textbox: 00:14:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 8 Clear"":
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 8 Clear"":
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""01:15:54"":
+        - textbox: 01:15:54
+      - cell ""00:30:00"":
+        - textbox: 00:30:00
+      - cell:
+        - button
+  - rowgroup:
+    - row");
+            await Expect(detailView.AudiofileInput).ToBeEmptyAsync();
+            await importView.GotoAsync();
+            await Expect(TestPage.GetByText("PreviousNext")).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldBeEditable_WhenEditingTrack()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.SelectTracksAsync([5]);
+            await importView.EditTracksModalAsync("Sample Title Edited 5");
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Status""
+  - rowgroup:
+    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 1 Clear"":
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 1 Clear"":
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell
+    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 2 Clear"":
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 2 Clear"":
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:04:23"":
+        - textbox: 00:04:23
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 3 Clear"":
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 3 Clear"":
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:06:31"":
+        - textbox: 00:06:31
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 4 Clear"":
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 4 Clear"":
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 5 Clear Sample Title Edited 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 5 Clear"":
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Sample Title Edited 5 Clear"":
+        - textbox: Sample Title Edited 5
+        - button ""Clear""
+        - button
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:04:41"":
+        - textbox: 00:04:41
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 6 Clear"":
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 6 Clear"":
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:07:00"":
+        - textbox: 00:07:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 7 Clear"":
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 7 Clear"":
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""00:14:00"":
+        - textbox: 00:14:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 8 Clear"":
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 8 Clear"":
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""01:15:54"":
+        - textbox: 01:15:54
+      - cell ""00:30:00"":
+        - textbox: 00:30:00
+      - cell:
+        - button
+  - rowgroup:
+    - row");
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WithSpecialTextfile()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Textimport-Bug-#54.txt");
+            await importView.SwitchImportProfileAsync("Textfile (just track data)");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- table:\n  - rowgroup:\n    - row \"# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options\":\n      - columnheader:\n        - checkbox\n      - columnheader \"# Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Artist Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Title Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Begin Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"End Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n      - columnheader \"Length Sort Column options\":\n        - button \"Sort\"\n        - button \"Column options\"\n  - rowgroup:\n    - row /Increment Decrement Adriatique Clear X\\. Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"1\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Adriatique Clear\":\n        - textbox: Adriatique\n        - button \"Clear\"\n        - button\n      - cell \"X. Clear\":\n        - textbox: X.\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Third Harmony Clear Fears And Dreams \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"2\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Third Harmony Clear\":\n        - textbox: Third Harmony\n        - button \"Clear\"\n        - button\n      - cell \"Fears And Dreams (Original Mix) Clear\":\n        - textbox: Fears And Dreams (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Dele Sosimi Afrobeat Orchestra Clear Too Much Information \\(Laolu Remix; Edit\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"3\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Dele Sosimi Afrobeat Orchestra Clear\":\n        - textbox: Dele Sosimi Afrobeat Orchestra\n        - button \"Clear\"\n        - button\n      - cell \"Too Much Information (Laolu Remix; Edit) Clear\":\n        - textbox: Too Much Information (Laolu Remix; Edit)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Edem, Govan Clear Ankh \\(Onetwo MX Remix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"4\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Edem, Govan Clear\":\n        - textbox: Edem, Govan\n        - button \"Clear\"\n        - button\n      - cell \"Ankh (Onetwo MX Remix) Clear\":\n        - textbox: Ankh (Onetwo MX Remix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Jody Wisternoff Clear For All Time \\(feat\\. Hendrik Burkhard\\) \\(Extended Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"5\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Jody Wisternoff Clear\":\n        - textbox: Jody Wisternoff\n        - button \"Clear\"\n        - button\n      - cell \"For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear\":\n        - textbox: For All Time (feat. Hendrik Burkhard) (Extended Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Einmusik Clear Bead \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"6\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Einmusik Clear\":\n        - textbox: Einmusik\n        - button \"Clear\"\n        - button\n      - cell \"Bead (Original Mix) Clear\":\n        - textbox: Bead (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Sebastien Leger Clear La Danse du Scorpion Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"7\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Sebastien Leger Clear\":\n        - textbox: Sebastien Leger\n        - button \"Clear\"\n        - button\n      - cell \"La Danse du Scorpion Clear\":\n        - textbox: La Danse du Scorpion\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Paul Thomas & Solid Stone Clear La Bombo \\(Solid Stone Remix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"8\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Paul Thomas & Solid Stone Clear\":\n        - textbox: Paul Thomas & Solid Stone\n        - button \"Clear\"\n        - button\n      - cell \"La Bombo (Solid Stone Remix) Clear\":\n        - textbox: La Bombo (Solid Stone Remix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement GusGus Clear Crossfade \\(Maceo Plex Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: \"9\"\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"GusGus Clear\":\n        - textbox: GusGus\n        - button \"Clear\"\n        - button\n      - cell \"Crossfade (Maceo Plex Mix) Clear\":\n        - textbox: Crossfade (Maceo Plex Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Klangkarussell Clear Time \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Klangkarussell Clear\":\n        - textbox: Klangkarussell\n        - button \"Clear\"\n        - button\n      - cell \"Time (Original Mix) Clear\":\n        - textbox: Time (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Anysense & Un:said Clear Missing Path \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Anysense & Un:said Clear\":\n        - textbox: Anysense & Un:said\n        - button \"Clear\"\n        - button\n      - cell \"Missing Path (Original Mix) Clear\":\n        - textbox: Missing Path (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Space Food Clear Bombay Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Space Food Clear\":\n        - textbox: Space Food\n        - button \"Clear\"\n        - button\n      - cell \"Bombay Clear\":\n        - textbox: Bombay\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement SHDW & Obscure Shape Clear Wächter der Nacht \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"SHDW & Obscure Shape Clear\":\n        - textbox: SHDW & Obscure Shape\n        - button \"Clear\"\n        - button\n      - cell \"Wächter der Nacht (Original Mix) Clear\":\n        - textbox: Wächter der Nacht (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement HOSH Clear Karma Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"HOSH Clear\":\n        - textbox: HOSH\n        - button \"Clear\"\n        - button\n      - cell \"Karma Clear\":\n        - textbox: Karma\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Alexey Union Clear Olympia \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Alexey Union Clear\":\n        - textbox: Alexey Union\n        - button \"Clear\"\n        - button\n      - cell \"Olympia (Original Mix) Clear\":\n        - textbox: Olympia (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Paul Taylor Clear Afterglow Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Paul Taylor Clear\":\n        - textbox: Paul Taylor\n        - button \"Clear\"\n        - button\n      - cell \"Afterglow Clear\":\n        - textbox: Afterglow\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Philter Clear Stranger Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Philter Clear\":\n        - textbox: Philter\n        - button \"Clear\"\n        - button\n      - cell \"Stranger Clear\":\n        - textbox: Stranger\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Skizologic Clear Hypersphere \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Skizologic Clear\":\n        - textbox: Skizologic\n        - button \"Clear\"\n        - button\n      - cell \"Hypersphere (Original Mix) Clear\":\n        - textbox: Hypersphere (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Thomas Schumacher, Caitlin Clear All of You \\(Remix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Thomas Schumacher, Caitlin Clear\":\n        - textbox: Thomas Schumacher, Caitlin\n        - button \"Clear\"\n        - button\n      - cell \"All of You (Remix) Clear\":\n        - textbox: All of You (Remix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement A\\. Skomoroh Clear White Horse Conquest \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"A. Skomoroh Clear\":\n        - textbox: A. Skomoroh\n        - button \"Clear\"\n        - button\n      - cell \"White Horse Conquest (Original Mix) Clear\":\n        - textbox: White Horse Conquest (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Patrik Berg Clear Bright \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Patrik Berg Clear\":\n        - textbox: Patrik Berg\n        - button \"Clear\"\n        - button\n      - cell \"Bright (Original Mix) Clear\":\n        - textbox: Bright (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Hidden Empire Clear Bengal Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Hidden Empire Clear\":\n        - textbox: Hidden Empire\n        - button \"Clear\"\n        - button\n      - cell \"Bengal Clear\":\n        - textbox: Bengal\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Mario Ochoa Clear Levitate Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Mario Ochoa Clear\":\n        - textbox: Mario Ochoa\n        - button \"Clear\"\n        - button\n      - cell \"Levitate Clear\":\n        - textbox: Levitate\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Raul Facio Clear Eyes Wide Shut \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Raul Facio Clear\":\n        - textbox: Raul Facio\n        - button \"Clear\"\n        - button\n      - cell \"Eyes Wide Shut (Original Mix) Clear\":\n        - textbox: Eyes Wide Shut (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Soolver Clear Regular \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Soolver Clear\":\n        - textbox: Soolver\n        - button \"Clear\"\n        - button\n      - cell \"Regular (Original Mix) Clear\":\n        - textbox: Regular (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Weska Clear EQ64 \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Weska Clear\":\n        - textbox: Weska\n        - button \"Clear\"\n        - button\n      - cell \"EQ64 (Original Mix) Clear\":\n        - textbox: EQ64 (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Tempo Giusto Clear The Fall \\(Extended Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Tempo Giusto Clear\":\n        - textbox: Tempo Giusto\n        - button \"Clear\"\n        - button\n      - cell \"The Fall (Extended Mix) Clear\":\n        - textbox: The Fall (Extended Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Vlind & Asteroid & Gary Leroy Clear Trinity \\(Extended Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Vlind & Asteroid & Gary Leroy Clear\":\n        - textbox: Vlind & Asteroid & Gary Leroy\n        - button \"Clear\"\n        - button\n      - cell \"Trinity (Extended Mix) Clear\":\n        - textbox: Trinity (Extended Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Astral Legacy Clear Vaveyla \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Astral Legacy Clear\":\n        - textbox: Astral Legacy\n        - button \"Clear\"\n        - button\n      - cell \"Vaveyla (Original Mix) Clear\":\n        - textbox: Vaveyla (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Gerrox Clear Chakra \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Gerrox Clear\":\n        - textbox: Gerrox\n        - button \"Clear\"\n        - button\n      - cell \"Chakra (Original Mix) Clear\":\n        - textbox: Chakra (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Charlotte De Witte Clear Pattern Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Charlotte De Witte Clear\":\n        - textbox: Charlotte De Witte\n        - button \"Clear\"\n        - button\n      - cell \"Pattern Clear\":\n        - textbox: Pattern\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Space Food Clear Amabey Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Space Food Clear\":\n        - textbox: Space Food\n        - button \"Clear\"\n        - button\n      - cell \"Amabey Clear\":\n        - textbox: Amabey\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement ARTBAT Clear Papilion \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"ARTBAT Clear\":\n        - textbox: ARTBAT\n        - button \"Clear\"\n        - button\n      - cell \"Papilion (Original Mix) Clear\":\n        - textbox: Papilion (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement PETER PAHN Clear Enjoy Infinity \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"PETER PAHN Clear\":\n        - textbox: PETER PAHN\n        - button \"Clear\"\n        - button\n      - cell \"Enjoy Infinity (Original Mix) Clear\":\n        - textbox: Enjoy Infinity (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Solitek Clear Instinct \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Solitek Clear\":\n        - textbox: Solitek\n        - button \"Clear\"\n        - button\n      - cell \"Instinct (Original Mix) Clear\":\n        - textbox: Instinct (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Veerus Clear Heavy Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Veerus Clear\":\n        - textbox: Veerus\n        - button \"Clear\"\n        - button\n      - cell \"Heavy Clear\":\n        - textbox: Heavy\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Secret Cinema & Reinier Zonneveld Clear Pain Thing \\(Original Mix\\) Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Secret Cinema & Reinier Zonneveld Clear\":\n        - textbox: Secret Cinema & Reinier Zonneveld\n        - button \"Clear\"\n        - button\n      - cell \"Pain Thing (Original Mix) Clear\":\n        - textbox: Pain Thing (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Amelie Lens Clear Hypnotized Clear \\d+:\\d+:\\d+ \\d+:\\d+:\\d+ \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Amelie Lens Clear\":\n        - textbox: Amelie Lens\n        - button \"Clear\"\n        - button\n      - cell \"Hypnotized Clear\":\n        - textbox: Hypnotized\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n    - row /Increment Decrement Nikolay Kirov Clear Chasing the Sun \\(Original Mix\\) Clear \\d+:\\d+:\\d+/:\n      - cell:\n        - checkbox\n      - cell \"Increment Decrement\":\n        - spinbutton: /\\d+/\n        - button \"Increment\"\n        - button \"Decrement\"\n      - cell \"Nikolay Kirov Clear\":\n        - textbox: Nikolay Kirov\n        - button \"Clear\"\n        - button\n      - cell \"Chasing the Sun (Original Mix) Clear\":\n        - textbox: Chasing the Sun (Original Mix)\n        - button \"Clear\"\n        - button\n      - cell /\\d+:\\d+:\\d+/:\n        - textbox: /\\d+:\\d+:\\d+/\n      - cell:\n        - textbox\n      - cell:\n        - textbox\n  - rowgroup:\n    - row");
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile2()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Sample_Inputfile2.txt");
+            await importView.ClearSchemeCommonDataAsync();
+            await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
+            await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+  - rowgroup:
+    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 1 Clear"":
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 1 Clear"":
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 2 Clear"":
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 2 Clear"":
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:04:23"":
+        - textbox: 00:04:23
+    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 3 Clear"":
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 3 Clear"":
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:06:31"":
+        - textbox: 00:06:31
+    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 4 Clear"":
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 4 Clear"":
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 5 Clear"":
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 5 Clear"":
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:04:41"":
+        - textbox: 00:04:41
+    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 6 Clear"":
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 6 Clear"":
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:07:00"":
+        - textbox: 00:07:00
+    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 7 Clear"":
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 7 Clear"":
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""00:14:00"":
+        - textbox: 00:14:00
+    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 8 Clear"":
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 8 Clear"":
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""01:15:54"":
+        - textbox: 01:15:54
+      - cell ""00:30:00"":
+        - textbox: 00:30:00
+  - rowgroup:
+    - row");
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WithTraktorOutput()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Traktor Export.html");
+            await importView.SwitchImportProfileAsync("Traktor history");
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Status""
+  - rowgroup:
+    - row ""Increment Decrement Nachap Clear Glass Clear 00:00:00 00:11:56 00:11:56"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Nachap Clear"":
+        - textbox: Nachap
+        - button ""Clear""
+        - button
+      - cell ""Glass Clear"":
+        - textbox: Glass
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:11:56"":
+        - textbox: 00:11:56
+      - cell ""00:11:56"":
+        - textbox: 00:11:56
+      - cell
+    - row ""Increment Decrement Progressive + Melodic DECK Clear 00:11:56 00:13:31 00:01:35"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell:
+        - textbox
+        - button
+      - cell ""Progressive + Melodic DECK Clear"":
+        - textbox: Progressive + Melodic DECK
+        - button ""Clear""
+        - button
+      - cell ""00:11:56"":
+        - textbox: 00:11:56
+      - cell ""00:13:31"":
+        - textbox: 00:13:31
+      - cell ""00:01:35"":
+        - textbox: 00:01:35
+      - cell:
+        - button
+    - row ""Increment Decrement Nomer 21 Clear Depersonalization Clear 00:13:31 00:19:14 00:05:43"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Nomer 21 Clear"":
+        - textbox: Nomer 21
+        - button ""Clear""
+        - button
+      - cell ""Depersonalization Clear"":
+        - textbox: Depersonalization
+        - button ""Clear""
+        - button
+      - cell ""00:13:31"":
+        - textbox: 00:13:31
+      - cell ""00:19:14"":
+        - textbox: 00:19:14
+      - cell ""00:05:43"":
+        - textbox: 00:05:43
+      - cell:
+        - button
+    - row ""Increment Decrement SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Showing Off Clear 00:19:14 00:24:02 00:04:48"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Showing Off Clear"":
+        - textbox: Showing Off
+        - button ""Clear""
+        - button
+      - cell ""00:19:14"":
+        - textbox: 00:19:14
+      - cell ""00:24:02"":
+        - textbox: 00:24:02
+      - cell ""00:04:48"":
+        - textbox: 00:04:48
+      - cell:
+        - button
+    - row ""Increment Decrement Carlo Whale Clear Unconscious Clear 00:24:02 00:29:37 00:05:35"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Carlo Whale Clear"":
+        - textbox: Carlo Whale
+        - button ""Clear""
+        - button
+      - cell ""Unconscious Clear"":
+        - textbox: Unconscious
+        - button ""Clear""
+        - button
+      - cell ""00:24:02"":
+        - textbox: 00:24:02
+      - cell ""00:29:37"":
+        - textbox: 00:29:37
+      - cell ""00:05:35"":
+        - textbox: 00:05:35
+      - cell:
+        - button
+    - row ""Increment Decrement Arba Han Clear Timelaps Clear 00:29:37 00:33:13 00:03:36"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Arba Han Clear"":
+        - textbox: Arba Han
+        - button ""Clear""
+        - button
+      - cell ""Timelaps Clear"":
+        - textbox: Timelaps
+        - button ""Clear""
+        - button
+      - cell ""00:29:37"":
+        - textbox: 00:29:37
+      - cell ""00:33:13"":
+        - textbox: 00:33:13
+      - cell ""00:03:36"":
+        - textbox: 00:03:36
+      - cell:
+        - button
+    - row ""Increment Decrement Savill Clear Energy Surrounds Clear 00:33:13 00:40:30 00:07:17"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Savill Clear"":
+        - textbox: Savill
+        - button ""Clear""
+        - button
+      - cell ""Energy Surrounds Clear"":
+        - textbox: Energy Surrounds
+        - button ""Clear""
+        - button
+      - cell ""00:33:13"":
+        - textbox: 00:33:13
+      - cell ""00:40:30"":
+        - textbox: 00:40:30
+      - cell ""00:07:17"":
+        - textbox: 00:07:17
+      - cell:
+        - button
+    - row ""Increment Decrement Teklix Clear The Tribal Code Clear 00:40:30 00:48:53 00:08:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Teklix Clear"":
+        - textbox: Teklix
+        - button ""Clear""
+        - button
+      - cell ""The Tribal Code Clear"":
+        - textbox: The Tribal Code
+        - button ""Clear""
+        - button
+      - cell ""00:40:30"":
+        - textbox: 00:40:30
+      - cell ""00:48:53"":
+        - textbox: 00:48:53
+      - cell ""00:08:23"":
+        - textbox: 00:08:23
+      - cell:
+        - button
+    - row ""Increment Decrement Neuralis Clear I'm Looking for Answers Clear 00:48:53 00:54:34 00:05:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""9""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Neuralis Clear"":
+        - textbox: Neuralis
+        - button ""Clear""
+        - button
+      - cell ""I'm Looking for Answers Clear"":
+        - textbox: I'm Looking for Answers
+        - button ""Clear""
+        - button
+      - cell ""00:48:53"":
+        - textbox: 00:48:53
+      - cell ""00:54:34"":
+        - textbox: 00:54:34
+      - cell ""00:05:41"":
+        - textbox: 00:05:41
+      - cell:
+        - button
+    - row ""Increment Decrement Nopopstar &amp; Arsia Clear Dirty Moves Clear 00:54:34 01:00:24 00:05:50"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""10""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Nopopstar &amp; Arsia Clear"":
+        - textbox: Nopopstar &amp; Arsia
+        - button ""Clear""
+        - button
+      - cell ""Dirty Moves Clear"":
+        - textbox: Dirty Moves
+        - button ""Clear""
+        - button
+      - cell ""00:54:34"":
+        - textbox: 00:54:34
+      - cell ""01:00:24"":
+        - textbox: 01:00:24
+      - cell ""00:05:50"":
+        - textbox: 00:05:50
+      - cell:
+        - button
+    - row ""Increment Decrement SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Maze 28 Remix) Clear 01:00:24 01:05:17 00:04:53"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""11""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Lost (Maze 28 Remix) Clear"":
+        - textbox: Lost (Maze 28 Remix)
+        - button ""Clear""
+        - button
+      - cell ""01:00:24"":
+        - textbox: 01:00:24
+      - cell ""01:05:17"":
+        - textbox: 01:05:17
+      - cell ""00:04:53"":
+        - textbox: 00:04:53
+      - cell:
+        - button
+    - row ""Increment Decrement SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Redspace Remix) Clear 01:05:17 01:08:22 00:03:05"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""12""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Lost (Redspace Remix) Clear"":
+        - textbox: Lost (Redspace Remix)
+        - button ""Clear""
+        - button
+      - cell ""01:05:17"":
+        - textbox: 01:05:17
+      - cell ""01:08:22"":
+        - textbox: 01:08:22
+      - cell ""00:03:05"":
+        - textbox: 00:03:05
+      - cell:
+        - button
+    - row ""Increment Decrement Gadoz Clear 5d Clear 01:08:22 01:16:34 00:08:12"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""13""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Gadoz Clear"":
+        - textbox: Gadoz
+        - button ""Clear""
+        - button
+      - cell ""5d Clear"":
+        - textbox: 5d
+        - button ""Clear""
+        - button
+      - cell ""01:08:22"":
+        - textbox: 01:08:22
+      - cell ""01:16:34"":
+        - textbox: 01:16:34
+      - cell ""00:08:12"":
+        - textbox: 00:08:12
+      - cell:
+        - button
+    - row ""Increment Decrement DJ Danzik Clear Out of Space Clear 01:16:34 01:19:22 00:02:48"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""14""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""DJ Danzik Clear"":
+        - textbox: DJ Danzik
+        - button ""Clear""
+        - button
+      - cell ""Out of Space Clear"":
+        - textbox: Out of Space
+        - button ""Clear""
+        - button
+      - cell ""01:16:34"":
+        - textbox: 01:16:34
+      - cell ""01:19:22"":
+        - textbox: 01:19:22
+      - cell ""00:02:48"":
+        - textbox: 00:02:48
+      - cell:
+        - button
+    - row ""Increment Decrement Enis Çoban Clear Internet Clear 01:19:22 01:25:14 00:05:52"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""15""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Enis Çoban Clear"":
+        - textbox: Enis Çoban
+        - button ""Clear""
+        - button
+      - cell ""Internet Clear"":
+        - textbox: Internet
+        - button ""Clear""
+        - button
+      - cell ""01:19:22"":
+        - textbox: 01:19:22
+      - cell ""01:25:14"":
+        - textbox: 01:25:14
+      - cell ""00:05:52"":
+        - textbox: 00:05:52
+      - cell:
+        - button
+    - row ""Increment Decrement Cold Mind &amp; Alex Yikker Clear Rage Clear 01:25:14 01:31:33 00:06:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""16""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Cold Mind &amp; Alex Yikker Clear"":
+        - textbox: Cold Mind &amp; Alex Yikker
+        - button ""Clear""
+        - button
+      - cell ""Rage Clear"":
+        - textbox: Rage
+        - button ""Clear""
+        - button
+      - cell ""01:25:14"":
+        - textbox: 01:25:14
+      - cell ""01:31:33"":
+        - textbox: 01:31:33
+      - cell ""00:06:19"":
+        - textbox: 00:06:19
+      - cell:
+        - button
+    - row ""Increment Decrement Maze 28 Clear Sol (JAHAYA Remix) Clear 01:31:33 01:32:51 00:01:18"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""17""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Maze 28 Clear"":
+        - textbox: Maze 28
+        - button ""Clear""
+        - button
+      - cell ""Sol (JAHAYA Remix) Clear"":
+        - textbox: Sol (JAHAYA Remix)
+        - button ""Clear""
+        - button
+      - cell ""01:31:33"":
+        - textbox: 01:31:33
+      - cell ""01:32:51"":
+        - textbox: 01:32:51
+      - cell ""00:01:18"":
+        - textbox: 00:01:18
+      - cell:
+        - button
+    - row ""Increment Decrement Alex Grafton Clear Hi Baby Clear 01:32:51 01:42:13 00:09:22"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""18""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Alex Grafton Clear"":
+        - textbox: Alex Grafton
+        - button ""Clear""
+        - button
+      - cell ""Hi Baby Clear"":
+        - textbox: Hi Baby
+        - button ""Clear""
+        - button
+      - cell ""01:32:51"":
+        - textbox: 01:32:51
+      - cell ""01:42:13"":
+        - textbox: 01:42:13
+      - cell ""00:09:22"":
+        - textbox: 00:09:22
+      - cell:
+        - button
+    - row ""Increment Decrement Che&amp;Mos &amp; Halo Far Clear Daddy Clear 01:42:13 01:45:22 00:03:09"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""19""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Che&amp;Mos &amp; Halo Far Clear"":
+        - textbox: Che&amp;Mos &amp; Halo Far
+        - button ""Clear""
+        - button
+      - cell ""Daddy Clear"":
+        - textbox: Daddy
+        - button ""Clear""
+        - button
+      - cell ""01:42:13"":
+        - textbox: 01:42:13
+      - cell ""01:45:22"":
+        - textbox: 01:45:22
+      - cell ""00:03:09"":
+        - textbox: 00:03:09
+      - cell:
+        - button
+    - row ""Increment Decrement K KARDEN Clear Acid Rain Clear 01:45:22 01:48:40 00:03:18"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""20""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""K KARDEN Clear"":
+        - textbox: K KARDEN
+        - button ""Clear""
+        - button
+      - cell ""Acid Rain Clear"":
+        - textbox: Acid Rain
+        - button ""Clear""
+        - button
+      - cell ""01:45:22"":
+        - textbox: 01:45:22
+      - cell ""01:48:40"":
+        - textbox: 01:48:40
+      - cell ""00:03:18"":
+        - textbox: 00:03:18
+      - cell:
+        - button
+    - row ""Increment Decrement Dobrov &amp; Gar1sson Clear Analogic (Redspace Remix) Clear 01:48:40 01:56:40 00:08:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""21""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Dobrov &amp; Gar1sson Clear"":
+        - textbox: Dobrov &amp; Gar1sson
+        - button ""Clear""
+        - button
+      - cell ""Analogic (Redspace Remix) Clear"":
+        - textbox: Analogic (Redspace Remix)
+        - button ""Clear""
+        - button
+      - cell ""01:48:40"":
+        - textbox: 01:48:40
+      - cell ""01:56:40"":
+        - textbox: 01:56:40
+      - cell ""00:08:00"":
+        - textbox: 00:08:00
+      - cell:
+        - button
+    - row ""Increment Decrement Gazfluz Clear Vargan Clear 01:56:40 02:00:39 00:03:59"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""22""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Gazfluz Clear"":
+        - textbox: Gazfluz
+        - button ""Clear""
+        - button
+      - cell ""Vargan Clear"":
+        - textbox: Vargan
+        - button ""Clear""
+        - button
+      - cell ""01:56:40"":
+        - textbox: 01:56:40
+      - cell ""02:00:39"":
+        - textbox: 02:00:39
+      - cell ""00:03:59"":
+        - textbox: 00:03:59
+      - cell:
+        - button
+    - row ""Increment Decrement SHKAPOV Clear Control Clear 02:00:39 02:06:47 00:06:08"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""23""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""SHKAPOV Clear"":
+        - textbox: SHKAPOV
+        - button ""Clear""
+        - button
+      - cell ""Control Clear"":
+        - textbox: Control
+        - button ""Clear""
+        - button
+      - cell ""02:00:39"":
+        - textbox: 02:00:39
+      - cell ""02:06:47"":
+        - textbox: 02:06:47
+      - cell ""00:06:08"":
+        - textbox: 00:06:08
+      - cell:
+        - button
+    - row ""Increment Decrement QazaQ Clear On the Line Clear 02:06:47 02:09:09 00:02:22"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""24""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""QazaQ Clear"":
+        - textbox: QazaQ
+        - button ""Clear""
+        - button
+      - cell ""On the Line Clear"":
+        - textbox: On the Line
+        - button ""Clear""
+        - button
+      - cell ""02:06:47"":
+        - textbox: 02:06:47
+      - cell ""02:09:09"":
+        - textbox: 02:09:09
+      - cell ""00:02:22"":
+        - textbox: 00:02:22
+      - cell:
+        - button
+    - row ""Increment Decrement Alex Schaufel Clear Elizabeth (Larsun Hesh Remix) Clear 02:09:09 02:14:18 00:05:09"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""25""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Alex Schaufel Clear"":
+        - textbox: Alex Schaufel
+        - button ""Clear""
+        - button
+      - cell ""Elizabeth (Larsun Hesh Remix) Clear"":
+        - textbox: Elizabeth (Larsun Hesh Remix)
+        - button ""Clear""
+        - button
+      - cell ""02:09:09"":
+        - textbox: 02:09:09
+      - cell ""02:14:18"":
+        - textbox: 02:14:18
+      - cell ""00:05:09"":
+        - textbox: 00:05:09
+      - cell:
+        - button
+    - row ""Increment Decrement Oiro Clear Just Business Clear 02:14:18 02:19:22 00:05:04"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""26""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Oiro Clear"":
+        - textbox: Oiro
+        - button ""Clear""
+        - button
+      - cell ""Just Business Clear"":
+        - textbox: Just Business
+        - button ""Clear""
+        - button
+      - cell ""02:14:18"":
+        - textbox: 02:14:18
+      - cell ""02:19:22"":
+        - textbox: 02:19:22
+      - cell ""00:05:04"":
+        - textbox: 00:05:04
+      - cell:
+        - button
+    - row ""Increment Decrement Molex Clear Mind Split (Redspace Remix) Clear 02:19:22 02:27:48 00:08:26"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""27""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Molex Clear"":
+        - textbox: Molex
+        - button ""Clear""
+        - button
+      - cell ""Mind Split (Redspace Remix) Clear"":
+        - textbox: Mind Split (Redspace Remix)
+        - button ""Clear""
+        - button
+      - cell ""02:19:22"":
+        - textbox: 02:19:22
+      - cell ""02:27:48"":
+        - textbox: 02:27:48
+      - cell ""00:08:26"":
+        - textbox: 00:08:26
+      - cell:
+        - button
+    - row ""Increment Decrement SOLI Clear Give Me Your Mind Clear 02:27:48 02:33:48 00:06:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""28""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""SOLI Clear"":
+        - textbox: SOLI
+        - button ""Clear""
+        - button
+      - cell ""Give Me Your Mind Clear"":
+        - textbox: Give Me Your Mind
+        - button ""Clear""
+        - button
+      - cell ""02:27:48"":
+        - textbox: 02:27:48
+      - cell ""02:33:48"":
+        - textbox: 02:33:48
+      - cell ""00:06:00"":
+        - textbox: 00:06:00
+      - cell:
+        - button
+    - row ""Increment Decrement MANDU Clear Jacky Clear 02:33:48 02:39:05 00:05:17"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""29""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""MANDU Clear"":
+        - textbox: MANDU
+        - button ""Clear""
+        - button
+      - cell ""Jacky Clear"":
+        - textbox: Jacky
+        - button ""Clear""
+        - button
+      - cell ""02:33:48"":
+        - textbox: 02:33:48
+      - cell ""02:39:05"":
+        - textbox: 02:39:05
+      - cell ""00:05:17"":
+        - textbox: 00:05:17
+      - cell:
+        - button
+    - row ""Increment Decrement SOLI Clear Spacetoon Clear 02:39:05 02:41:31 00:02:26"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""30""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""SOLI Clear"":
+        - textbox: SOLI
+        - button ""Clear""
+        - button
+      - cell ""Spacetoon Clear"":
+        - textbox: Spacetoon
+        - button ""Clear""
+        - button
+      - cell ""02:39:05"":
+        - textbox: 02:39:05
+      - cell ""02:41:31"":
+        - textbox: 02:41:31
+      - cell ""00:02:26"":
+        - textbox: 00:02:26
+      - cell:
+        - button
+    - row ""Increment Decrement Sasha Fashion Clear Moqton Clear 02:41:31 02:50:18 00:08:47"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""31""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sasha Fashion Clear"":
+        - textbox: Sasha Fashion
+        - button ""Clear""
+        - button
+      - cell ""Moqton Clear"":
+        - textbox: Moqton
+        - button ""Clear""
+        - button
+      - cell ""02:41:31"":
+        - textbox: 02:41:31
+      - cell ""02:50:18"":
+        - textbox: 02:50:18
+      - cell ""00:08:47"":
+        - textbox: 00:08:47
+      - cell:
+        - button
+    - row ""Increment Decrement NAASA Clear Poison Clear 02:50:18 02:56:45 00:06:27"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""32""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""NAASA Clear"":
+        - textbox: NAASA
+        - button ""Clear""
+        - button
+      - cell ""Poison Clear"":
+        - textbox: Poison
+        - button ""Clear""
+        - button
+      - cell ""02:50:18"":
+        - textbox: 02:50:18
+      - cell ""02:56:45"":
+        - textbox: 02:56:45
+      - cell ""00:06:27"":
+        - textbox: 00:06:27
+      - cell:
+        - button
+    - row ""Increment Decrement Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Nightlong Clear 02:56:45 02:59:14 00:02:29"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""33""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - textbox: Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Nightlong Clear"":
+        - textbox: Nightlong
+        - button ""Clear""
+        - button
+      - cell ""02:56:45"":
+        - textbox: 02:56:45
+      - cell ""02:59:14"":
+        - textbox: 02:59:14
+      - cell ""00:02:29"":
+        - textbox: 00:02:29
+      - cell:
+        - button
+    - row ""Increment Decrement Skillz jay Clear Choir Clear 02:59:14 03:05:49 00:06:35"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""34""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Skillz jay Clear"":
+        - textbox: Skillz jay
+        - button ""Clear""
+        - button
+      - cell ""Choir Clear"":
+        - textbox: Choir
+        - button ""Clear""
+        - button
+      - cell ""02:59:14"":
+        - textbox: 02:59:14
+      - cell ""03:05:49"":
+        - textbox: 03:05:49
+      - cell ""00:06:35"":
+        - textbox: 00:06:35
+      - cell:
+        - button
+    - row ""Increment Decrement Kovax Clear Controller Clear 03:05:49 03:08:31 00:02:42"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""35""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Kovax Clear"":
+        - textbox: Kovax
+        - button ""Clear""
+        - button
+      - cell ""Controller Clear"":
+        - textbox: Controller
+        - button ""Clear""
+        - button
+      - cell ""03:05:49"":
+        - textbox: 03:05:49
+      - cell ""03:08:31"":
+        - textbox: 03:08:31
+      - cell ""00:02:42"":
+        - textbox: 00:02:42
+      - cell:
+        - button
+    - row ""Increment Decrement Mumboi Clear Just a Beat Clear 03:08:31 03:15:18 00:06:47"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""36""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Mumboi Clear"":
+        - textbox: Mumboi
+        - button ""Clear""
+        - button
+      - cell ""Just a Beat Clear"":
+        - textbox: Just a Beat
+        - button ""Clear""
+        - button
+      - cell ""03:08:31"":
+        - textbox: 03:08:31
+      - cell ""03:15:18"":
+        - textbox: 03:15:18
+      - cell ""00:06:47"":
+        - textbox: 00:06:47
+      - cell:
+        - button
+    - row ""Increment Decrement Eclept Clear Sprut Clear 03:15:18 03:20:35 00:05:17"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""37""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Eclept Clear"":
+        - textbox: Eclept
+        - button ""Clear""
+        - button
+      - cell ""Sprut Clear"":
+        - textbox: Sprut
+        - button ""Clear""
+        - button
+      - cell ""03:15:18"":
+        - textbox: 03:15:18
+      - cell ""03:20:35"":
+        - textbox: 03:20:35
+      - cell ""00:05:17"":
+        - textbox: 00:05:17
+      - cell:
+        - button
+    - row ""Increment Decrement Rudensky Clear Dark Escort Clear 03:20:35 03:25:02 00:04:27"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""38""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Rudensky Clear"":
+        - textbox: Rudensky
+        - button ""Clear""
+        - button
+      - cell ""Dark Escort Clear"":
+        - textbox: Dark Escort
+        - button ""Clear""
+        - button
+      - cell ""03:20:35"":
+        - textbox: 03:20:35
+      - cell ""03:25:02"":
+        - textbox: 03:25:02
+      - cell ""00:04:27"":
+        - textbox: 00:04:27
+      - cell:
+        - button
+    - row ""Increment Decrement Alexey Union, Kinky Sound &amp; KOCHETOV Clear Connected Clear 03:25:02 03:32:30 00:07:28"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""39""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Alexey Union, Kinky Sound &amp; KOCHETOV Clear"":
+        - textbox: Alexey Union, Kinky Sound &amp; KOCHETOV
+        - button ""Clear""
+        - button
+      - cell ""Connected Clear"":
+        - textbox: Connected
+        - button ""Clear""
+        - button
+      - cell ""03:25:02"":
+        - textbox: 03:25:02
+      - cell ""03:32:30"":
+        - textbox: 03:32:30
+      - cell ""00:07:28"":
+        - textbox: 00:07:28
+      - cell:
+        - button
+    - row ""Increment Decrement ANMA (MD) Clear Space Yoda (Snyl Remix) Clear 03:32:30 03:37:53 00:05:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""40""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""ANMA (MD) Clear"":
+        - textbox: ANMA (MD)
+        - button ""Clear""
+        - button
+      - cell ""Space Yoda (Snyl Remix) Clear"":
+        - textbox: Space Yoda (Snyl Remix)
+        - button ""Clear""
+        - button
+      - cell ""03:32:30"":
+        - textbox: 03:32:30
+      - cell ""03:37:53"":
+        - textbox: 03:37:53
+      - cell ""00:05:23"":
+        - textbox: 00:05:23
+      - cell:
+        - button
+    - row ""Increment Decrement Inache Clear Andale (MONTA (TN) Remix) Clear 03:37:53"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""41""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Inache Clear"":
+        - textbox: Inache
+        - button ""Clear""
+        - button
+      - cell ""Andale (MONTA (TN) Remix) Clear"":
+        - textbox: Andale (MONTA (TN) Remix)
+        - button ""Clear""
+        - button
+      - cell ""03:37:53"":
+        - textbox: 03:37:53
+      - cell:
+        - textbox
+      - cell:
+        - textbox
+      - cell:
+        - button
+  - rowgroup:
+    - row");
+        }
+
+        [TestMethod]
+        public async Task Open_ShouldImportProject_WhenUsingProjectfile()
+        {
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            var appBar = new AppBar(TestPage);
+            await detailView.GotoAsync();
+            await appBar.OpenFileAsync("Sample_Project.ace");
+            await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
+            await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Status""
+  - rowgroup:
+    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 1 Clear"":
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 1 Clear"":
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell
+    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 2 Clear"":
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 2 Clear"":
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:04:23"":
+        - textbox: 00:04:23
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 3 Clear"":
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 3 Clear"":
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:06:31"":
+        - textbox: 00:06:31
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 4 Clear"":
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 4 Clear"":
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 5 Clear"":
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 5 Clear"":
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:04:41"":
+        - textbox: 00:04:41
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 6 Clear"":
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 6 Clear"":
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:07:00"":
+        - textbox: 00:07:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 7 Clear"":
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 7 Clear"":
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""00:14:00"":
+        - textbox: 00:14:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 8 Clear"":
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 8 Clear"":
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell:
+        - textbox
+      - cell:
+        - textbox
+      - cell:
+        - button
+  - rowgroup:
+    - row");
+            await appBar.UndoAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task Open_ShouldImportCuesheet_WhenUsingCuesheetfile()
+        {
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            var appBar = new AppBar(TestPage);
+            await detailView.GotoAsync();
+            await appBar.OpenFileAsync("Sample_Cuesheet.cue");
+            await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
+            await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Status""
+  - rowgroup:
+    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 1 Clear"":
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 1 Clear"":
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell
+    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 2 Clear"":
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 2 Clear"":
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:04:23"":
+        - textbox: 00:04:23
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 3 Clear"":
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 3 Clear"":
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:06:31"":
+        - textbox: 00:06:31
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 4 Clear"":
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 4 Clear"":
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 5 Clear"":
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 5 Clear"":
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:04:41"":
+        - textbox: 00:04:41
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 6 Clear"":
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 6 Clear"":
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:07:00"":
+        - textbox: 00:07:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 7 Clear"":
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 7 Clear"":
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""00:14:00"":
+        - textbox: 00:14:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 8 Clear"":
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 8 Clear"":
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell:
+        - textbox
+      - cell:
+        - textbox
+      - cell:
+        - button
+  - rowgroup:
+    - row");
+            await appBar.UndoAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+        }
+    }
+}
