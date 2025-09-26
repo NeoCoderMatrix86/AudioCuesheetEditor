@@ -6,6 +6,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
     [TestClass]
     public class LocalizationTestSmartphone : PlaywrightTestBase
     {
+        protected override string? DeviceName => "iPhone 13";
+
         [TestMethod]
         public async Task ChangeLanguage_ShouldShowGermanHeadings_WhenGermanIsSelected()
         {
