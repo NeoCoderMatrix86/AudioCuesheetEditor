@@ -14,7 +14,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             await bar.GotoAsync();
             var detailView = new DetailView(TestPage, DeviceName != null);
-            await detailView.AddTrackAsync("Test Artist 1");
+            await detailView.AddTrackAsync();
+            await detailView.EditTrackAsync("Test Artist 1");
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
             await detailView.EditTrackAsync(title: "Test Title 1");
@@ -62,6 +63,37 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.EditTrackAsync("Mozart", "Eine kleine Nachtmusik");
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
+    - row ""# Increment Decrement Artist Mozart Clear Title Eine kleine Nachtmusik Clear Begin 00:00:00 End Length Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Mozart Clear"":
+        - text: Artist
+        - textbox: Mozart
+        - button ""Clear""
+        - button
+      - cell ""Title Eine kleine Nachtmusik Clear"":
+        - text: Title
+        - textbox: Eine kleine Nachtmusik
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End"":
+        - text: End
+        - textbox
+      - cell ""Length"":
+        - text: Length
+        - textbox
+      - cell ""Status""");
+            await bar.UndoAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
     - row ""# Increment Decrement Artist Mozart Clear Title Test Title 1 Clear Begin 00:00:00 End Length Status"":
       - cell:
         - checkbox
@@ -90,8 +122,6 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - text: Length
         - textbox
       - cell ""Status""");
-            await bar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- cell \"Test Title 1 Clear\":\n  - textbox: Test Title 1\n  - button \"Clear\"\n  - button");
         }
 
         [TestMethod]

@@ -22,14 +22,9 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
-        internal async Task AddTrackAsync(string? artist = null)
+        internal async Task AddTrackAsync()
         {
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "Edit selected tracks Copy" }).GetByRole(AriaRole.Button).First.ClickAsync();
-            if (artist != null)
-            {
-                await _page.Locator("td:nth-child(3)").Last.GetByRole(AriaRole.Textbox).FillAsync(artist);
-                await _page.Locator(".mud-overlay").ClickAsync();
-            }
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).ClickAsync();
         }
 
         internal async Task EditTrackAsync(string? artist = null, string? title = null)
@@ -38,15 +33,25 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             {
                 await _page.Locator("td:nth-child(3)").ClickAsync();
                 await _page.Locator("td:nth-child(3)").Last.GetByRole(AriaRole.Textbox).FillAsync(artist);
-                await _page.Locator(".mud-overlay").ClickAsync();
-                await _page.Locator("td:nth-child(3)").PressAsync("Tab");
+                await _page.Keyboard.PressAsync("Escape");
+                if (await _page.IsVisibleAsync(".mud-overlay"))
+                {
+                    await _page.Locator(".mud-overlay").ClickAsync();
+                }
+                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+                await page.WaitForTimeoutAsync(200);
             }
             if (title != null)
             {
                 await _page.Locator("td:nth-child(4)").ClickAsync();
                 await _page.Locator("td:nth-child(4)").Last.GetByRole(AriaRole.Textbox).FillAsync(title);
-                await _page.Locator(".mud-overlay").ClickAsync();
-                await _page.Locator("td:nth-child(4)").PressAsync("Tab");
+                await _page.Keyboard.PressAsync("Escape");
+                if (await _page.IsVisibleAsync(".mud-overlay"))
+                {
+                    await _page.Locator(".mud-overlay").ClickAsync();
+                }
+                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+                await page.WaitForTimeoutAsync(200);
             }
         }
 
