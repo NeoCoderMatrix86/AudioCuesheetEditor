@@ -39,7 +39,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                     await _page.Locator(".mud-overlay").ClickAsync();
                 }
                 await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
-                await page.WaitForTimeoutAsync(200);
+                await _page.WaitForTimeoutAsync(200);
             }
             if (title != null)
             {
@@ -51,7 +51,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                     await _page.Locator(".mud-overlay").ClickAsync();
                 }
                 await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
-                await page.WaitForTimeoutAsync(200);
+                await _page.WaitForTimeoutAsync(200);
             }
         }
 
