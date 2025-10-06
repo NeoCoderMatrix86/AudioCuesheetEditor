@@ -43,13 +43,15 @@ along with Foobar.  If not, see
                 }
             </MudAlert>
         }
-        <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0"
-                                 DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
-                                 DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                 MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
-                                 MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
-                                 CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
+        <div aria-label="@_localizer["Track table controls"]">
+            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0"
+                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
+                                     MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
+                                     MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
+                                     CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                                     FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
+        </div>
         break;
 }
 

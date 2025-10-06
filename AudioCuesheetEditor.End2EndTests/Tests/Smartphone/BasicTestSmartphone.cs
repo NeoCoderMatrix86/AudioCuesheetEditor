@@ -58,5 +58,24 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
         }
+
+        [TestMethod]
+        public async Task TrackTableControls_ShouldBeEnabled_WhenSelectingFirstTrackAsync()
+        {
+            var bar = new AppBar(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
+            await detailView.AddTrackAsync();
+            await detailView.AddTrackAsync();
+            await detailView.SelectTracksAsync([1]);
+            await bar.ChangeLanguageAsync("German (Germany)");
+            await Expect(TestPage.GetByLabel("Track table controls")).ToMatchAriaSnapshotAsync(@"- group:
+  - button ""Neuen Titel hinzufügen""
+  - button ""Ausgewählte Titel bearbeiten""
+  - button
+  - button ""Alle Titel löschen""
+  - button
+- button ""Fester Tabellenkopf""");
+        }
     }
 }
