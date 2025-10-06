@@ -43,8 +43,18 @@ along with Foobar.  If not, see
                         }
                     </MudSelect>
                     <MudButtonGroup OverrideStyles="false">
-                        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick">@_localizer["Add new export profile"]</MudButton>
-                        <MudButton Color="Color.Error" Variant="Variant.Filled" Disabled="exportOptions.SelectedExportProfile == null" OnClick="DeleteClick">@_localizer["Delete selected export profile"]</MudButton>
+                        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+                            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]">@_localizer["Add new export profile"]</MudButton>
+                        </MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]" />
+                        </MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+                            <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Delete" Disabled="exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]">@_localizer["Delete selected export profile"]</MudButton>
+                        </MudHidden>
+                        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" Variant="Variant.Filled" Disabled="exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]" />
+                        </MudHidden>
                     </MudButtonGroup>
                     <br />
                     <MudDivider />
