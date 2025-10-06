@@ -23,46 +23,59 @@ along with Foobar.  If not, see
         <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add new track"]" />
     </MudTooltip>
     <MudTooltip Text="@_localizer["Edit selected tracks"]">
-        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-            <MudButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled" aria-label="@_localizer["Edit selected tracks"]">@_localizer["Edit selected tracks"]</MudButton>
-        </MudHidden>
-        <MudHidden Breakpoint="Breakpoint.MdAndUp">
-            <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled" aria-label="@_localizer["Edit selected tracks"]" />
-        </MudHidden>
+        <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled" aria-label="@_localizer["Edit selected tracks"]" />
     </MudTooltip>
-    <MudTooltip Text="@_localizer["Copy selected tracks"]">
-        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-            <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" StartIcon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]">@_localizer["Copy selected track"]</MudButton>
-        </MudHidden>
-        <MudHidden Breakpoint="Breakpoint.LgAndUp">
-            <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]" />
-        </MudHidden>
-    </MudTooltip>
-    <MudTooltip Text="@_localizer["Delete selected tracks"]">
-        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-            <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" aria-label="@_localizer["Delete selected tracks"]">@_localizer["Delete selected tracks"]</MudButton>
-        </MudHidden>
-        <MudHidden Breakpoint="Breakpoint.LgAndUp">
-            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" aria-label="@_localizer["Delete selected tracks"]" />
-        </MudHidden>
-    </MudTooltip>
+    <MudHidden Breakpoint="Breakpoint.Xs">
+        <MudTooltip Text="@_localizer["Copy selected tracks"]">
+            <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+                <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" StartIcon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]">@_localizer["Copy selected track"]</MudButton>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.LgAndUp">
+                <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]" />
+            </MudHidden>
+        </MudTooltip>
+        <MudTooltip Text="@_localizer["Delete selected tracks"]">
+            <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+                <MudButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" StartIcon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" aria-label="@_localizer["Delete selected tracks"]">@_localizer["Delete selected tracks"]</MudButton>
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" aria-label="@_localizer["Delete selected tracks"]" />
+            </MudHidden>
+        </MudTooltip>
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.Xs" Invert>
+        <MudMenu Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Filled.ArrowDropDown" Disabled="CopySelectedTracksDisabled && DeleteSelectedTracksDisabled">
+            <MudMenuItem IconColor="Color.Tertiary" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]">@_localizer["Copy selected tracks"]</MudMenuItem>
+            <MudMenuItem IconColor="Color.Warning" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" aria-label="@_localizer["Delete selected tracks"]">@_localizer["Delete selected tracks"]</MudMenuItem>
+        </MudMenu>
+    </MudHidden>
     <MudTooltip Text="@_localizer["Delete all tracks"]">
-        <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
             <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="DeleteAllTracksDisabled" aria-label="@_localizer["Delete all tracks"]">@_localizer["Delete all tracks"]</MudButton>
         </MudHidden>
-        <MudHidden Breakpoint="Breakpoint.LgAndUp">
+        <MudHidden Breakpoint="Breakpoint.MdAndUp">
             <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllTracksClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="DeleteAllTracksDisabled" aria-label="@_localizer["Delete all tracks"]" />
         </MudHidden>
     </MudTooltip>
+    <MudHidden Breakpoint="Breakpoint.Xs" Invert>
+        <MudMenu Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Filled.ArrowDropDown" Disabled="MoveTracksUpDisabled && MoveTracksDownDisabled">
+            <MudMenuItem OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up"]">@_localizer["Move selected tracks up"]</MudMenuItem>
+            <MudMenuItem OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down"]">@_localizer["Move selected tracks down"]</MudMenuItem>
+        </MudMenu>
+    </MudHidden>
 </MudButtonGroup>
-<MudButtonGroup OverrideStyles="false">
-    <MudTooltip Text="@_localizer["Move selected tracks up"]">
-        <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up"]" />
-    </MudTooltip>
-    <MudTooltip Text="@_localizer["Move selected tracks down"]">
-        <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down"]" />
-    </MudTooltip>
-</MudButtonGroup>
+
+<MudHidden Breakpoint="Breakpoint.Xs">
+    <MudButtonGroup OverrideStyles="false">
+        <MudTooltip Text="@_localizer["Move selected tracks up"]">
+            <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up"]" />
+        </MudTooltip>
+        <MudTooltip Text="@_localizer["Move selected tracks down"]">
+            <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down"]" />
+        </MudTooltip>
+    </MudButtonGroup>
+</MudHidden>
+
 <MudTooltip Text="@_localizer["Fixed table header"]">
     <MudToggleIconButton Variant="Variant.Filled" Toggled="FixedHeader" ToggledChanged="FixedHeaderClicked" Icon="@Icons.Material.Outlined.Link" ToggledIcon="@Icons.Material.Outlined.LinkOff" aria-label="@_localizer["Fixed table header"]" />
 </MudTooltip>
