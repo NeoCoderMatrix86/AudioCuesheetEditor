@@ -15,7 +15,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
 
-        //TODO: Remove this method
         internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);

@@ -39,7 +39,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         public async Task OpenSettings_ShouldDisplaySettings_WhenSelectingSettings()
         {
             var bar = new AppBar(TestPage);
-            await bar.GotoAsync();
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
             await bar.OpenSettingsAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
         }
@@ -48,7 +49,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         public async Task ChangeLanguage_ShouldShowGermanHeadings_WhenGermanIsSelected()
         {
             var bar = new AppBar(TestPage);
-            await bar.GotoAsync();
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
             await bar.ChangeLanguageAsync("German (Germany)");
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Abschnitte" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Allgemeine Informationen" })).ToBeVisibleAsync();

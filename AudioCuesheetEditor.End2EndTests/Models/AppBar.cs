@@ -5,8 +5,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 {
     internal class AppBar
     {
-        internal const string BaseUrl = "http://localhost:5132/";
-
         private readonly IPage _page;
         private readonly ILocator _menuButton;
 
@@ -23,13 +21,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 .GetByRole(AriaRole.Button)
                 .Filter(new() { HasTextRegex = new Regex("^$") })
                 .Nth(3);
-        }
-
-        internal async Task GotoAsync()
-        {
-            await _page.GotoAsync(BaseUrl);
-            await _page.WaitForURLAsync(BaseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
         internal async Task OpenSettingsAsync()
