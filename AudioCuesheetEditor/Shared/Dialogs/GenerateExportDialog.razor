@@ -131,7 +131,10 @@ along with Foobar.  If not, see
                             <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
                             <MudTd DataLabel="@_localizer["Begin"]">@context.Begin</MudTd>
                             <MudTd DataLabel="@_localizer["End"]">@context.End</MudTd>
-                            <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFile(context.Name, context.Content, "text/plain")' /></MudTd>
+                            @{
+                                var ariaLabel = $"Download-{context.Name}";
+                                <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFile(context.Name, context.Content, "text/plain")' aria-label="@ariaLabel" /></MudTd>
+                            }
                         </RowTemplate>
                     </MudTable>
                 </MudStep>

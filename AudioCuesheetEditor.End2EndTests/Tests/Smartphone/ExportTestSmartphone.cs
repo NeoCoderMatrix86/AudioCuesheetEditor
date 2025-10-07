@@ -56,6 +56,30 @@ FILE ""Kalimba.mp3"" MP3
             Assert.AreEqual("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofile\":{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"}},\"Sections\":[]}", content);
         }
 
-        //TODO: Test export textfile
+        [TestMethod]
+        public async Task DownloadText_GeneratesTextFile_WhenCuesheetIsValidAsync()
+        {
+            var bar = new AppBar(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
+            await detailView.AddTrackAsync();
+            await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
+            await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
+            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
+            await bar.OpenExportDialogAsync("Textfile");
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next" }).ClickAsync();
+            var downloadTask = TestPage.WaitForDownloadAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download-YouTube.txt" }).ClickAsync();
+            var download = await downloadTask;
+            using var stream = await download.CreateReadStreamAsync();
+            using var reader = new StreamReader(stream);
+            var content = await reader.ReadToEndAsync(TestContext.CancellationTokenSource.Token);
+            content = content.Replace("\n", "\r\n");
+            Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
+Track Artist 1 - Track Title 1 00:00:00
+
+", content);
+        }
     }
 }
