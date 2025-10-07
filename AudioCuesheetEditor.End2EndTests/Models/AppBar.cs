@@ -5,8 +5,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 {
     internal class AppBar
     {
-        internal const string BaseUrl = "http://localhost:5132/";
-
         private readonly IPage _page;
         private readonly ILocator _menuButton;
 
@@ -23,13 +21,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 .GetByRole(AriaRole.Button)
                 .Filter(new() { HasTextRegex = new Regex("^$") })
                 .Nth(3);
-        }
-
-        internal async Task GotoAsync()
-        {
-            await _page.GotoAsync(BaseUrl);
-            await _page.WaitForURLAsync(BaseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         }
 
         internal async Task OpenSettingsAsync()
@@ -60,6 +51,13 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Open$") }).ClickAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(file);
+        }
+
+        internal async Task OpenExportDialogAsync(string exportType)
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await _page.GetByText("Export", new() { Exact = true }).HoverAsync();
+            await _page.GetByText(exportType, new() { Exact = true }).ClickAsync();
         }
     }
 }

@@ -12,8 +12,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoAndRedoAreUsed()
         {
             var bar = new AppBar(TestPage);
-            await bar.GotoAsync();
             var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.EditTrackAsync("Test Artist 1");
             await Expect(bar.UndoButton).ToBeEnabledAsync();
@@ -128,8 +128,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task UndoRedo_ShouldRestoreTrackState_WhenModalEdit()
         {
             var bar = new AppBar(TestPage);
-            await bar.GotoAsync();
-            var detailView = new DetailView(TestPage, DeviceName != null);            
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.SelectTracksAsync([1]);
             await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
