@@ -24,7 +24,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
             var content = await reader.ReadToEndAsync(TestContext.CancellationTokenSource.Token);
-            content = content.Replace("\n", "\r\n");
+            content = content.Replace("\n", Environment.NewLine);
             Assert.AreEqual(@"TITLE ""Cuesheet Title 1""
 PERFORMER ""Cuesheet Artist 1""
 FILE ""Kalimba.mp3"" MP3
@@ -75,7 +75,7 @@ FILE ""Kalimba.mp3"" MP3
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
             var content = await reader.ReadToEndAsync(TestContext.CancellationTokenSource.Token);
-            content = content.Replace("\n", "\r\n");
+            content = content.Replace("\n", Environment.NewLine);
             Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
 Track Artist 1 - Track Title 1 00:00:00
 
