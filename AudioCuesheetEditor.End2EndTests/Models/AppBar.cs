@@ -18,8 +18,11 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    internal class AppBar
+    internal partial class AppBar
     {
+        [GeneratedRegex("^Open$")]
+        private static partial Regex OpenRegex();
+
         private readonly IPage _page;
         private readonly ILocator _menuButton;
 
@@ -63,7 +66,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task OpenFileAsync(string file)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
-            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Open$") }).ClickAsync();
+            await _page.Locator("div").Filter(new() { HasTextRegex = OpenRegex() }).ClickAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(file);
         }
