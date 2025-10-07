@@ -18,8 +18,11 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    internal class ImportView(IPage page)
+    partial class ImportView(IPage page)
     {
+        [GeneratedRegex("^Scheme common data$")]
+        private static partial Regex SchemeCommonData();
+
         internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
@@ -79,7 +82,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task ClearSchemeCommonDataAsync()
         {
-            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByLabel("Clear").ClickAsync();
+            await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByLabel("Clear").ClickAsync();
         }
 
         internal async Task SetSchemeCommonDataAsync(string schemeCommonData)
@@ -89,7 +92,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task SelectSchemeCommonDataPlaceholderAsync(string placeholder)
         {
-            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex("^Scheme common data$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
+            await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
             await _page.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = placeholder }).ClickAsync();
         }
     }
