@@ -61,5 +61,12 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(file);
         }
+
+        internal async Task ExportCuesheetAsync()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await _page.GetByText("Export", new() { Exact = true }).HoverAsync();
+            await _page.GetByText("Cuesheet", new() { Exact = true }).ClickAsync();
+        }
     }
 }
