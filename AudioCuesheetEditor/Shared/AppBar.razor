@@ -62,10 +62,10 @@ along with Foobar.  If not, see
             <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@culture.DisplayName</MudMenuItem>
         }
     </MudMenu>
-    <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+    <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" AriaLabel="More">
         @if (DisplaySettings) 
         {
-            <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked">@_localizer["Settings"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.Settings" OnClick="SettingsClicked" aria-label="@_localizer["Settings"]">@_localizer["Settings"]</MudMenuItem>
         }
         <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/wiki/Help" Target="_blank">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>

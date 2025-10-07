@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    internal partial class AppBar
+    partial class AppBar
     {
         [GeneratedRegex("^Open$")]
         private static partial Regex OpenRegex();
@@ -35,10 +35,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal AppBar(IPage page)
         {
             _page = page;
-            _menuButton = _page.GetByRole(AriaRole.Toolbar)
-                .GetByRole(AriaRole.Button)
-                .Filter(new() { HasTextRegex = new Regex("^$") })
-                .Nth(3);
+            _menuButton = _page.GetByRole(AriaRole.Button, new() { Name = "More" });
         }
 
         internal async Task OpenSettingsAsync()
