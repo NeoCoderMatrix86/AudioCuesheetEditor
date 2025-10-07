@@ -14,22 +14,17 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Microsoft.Playwright;
+using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    internal class About(IPage page)
+    internal class ExportDialog(IPage page)
     {
-        internal const string BaseUrl = "http://localhost:5132/about";
-
         private readonly IPage _page = page;
 
-        internal ILocator AboutHeading => _page.GetByRole(AriaRole.Heading, new() { Name = "About AudioCuesheetEditor" });
-
-        internal async Task GotoAsync()
+        internal async Task OpenSchemeMenuAsync(string schemeHeadMenuName = "Scheme head")
         {
-            await _page.GotoAsync(BaseUrl);
-            await _page.WaitForURLAsync(BaseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex($"^{schemeHeadMenuName}$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
         }
     }
 }
