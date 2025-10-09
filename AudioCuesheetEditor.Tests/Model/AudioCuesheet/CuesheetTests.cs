@@ -13,23 +13,15 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Model.Utility;
-using AudioCuesheetEditor.Services.IO;
-using AudioCuesheetEditor.Services.UI;
-using AudioCuesheetEditor.Tests.Properties;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -42,9 +34,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void AddTrackTest()
         {
             var cuesheet = new Cuesheet();
-            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            Assert.IsEmpty(cuesheet.Tracks);
             cuesheet.AddTrack(new Track());
-            Assert.AreEqual(1, cuesheet.Tracks.Count);
+            Assert.HasCount(1, cuesheet.Tracks);
         }
 
         [TestMethod()]
@@ -63,7 +55,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void EmptyCuesheetTracksValidationTest()
         {
             var cuesheet = new Cuesheet();
-            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            Assert.IsEmpty(cuesheet.Tracks);
             var validationErrorTracks = cuesheet.Validate(nameof(Cuesheet.Tracks));
             Assert.AreEqual(ValidationStatus.Error, validationErrorTracks.Status);
             cuesheet.AddTrack(new Track());
@@ -265,7 +257,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             // Act
             cuesheet.RemoveTracks(list.AsReadOnly());
             // Assert
-            Assert.AreEqual(3, cuesheet.Tracks.Count);
+            Assert.HasCount(3, cuesheet.Tracks);
             Assert.AreEqual(new TimeSpan(0, 5, 0), track3.Begin);
             Assert.AreEqual(new TimeSpan(0, 15, 0), track5.Begin);
             Assert.AreEqual((uint)1, track1.Position);
@@ -442,7 +434,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             // Assert
             Assert.IsTrue(eventFired);
             Assert.IsNotNull(section);
-            Assert.AreEqual(1, cuesheet.Sections.Count);
+            Assert.HasCount(1, cuesheet.Sections);
             Assert.AreEqual(cuesheet, section.Cuesheet);
         }
 
@@ -469,7 +461,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
 
             // Assert
             Assert.IsTrue(eventFired);
-            Assert.AreEqual(1, cuesheet.Sections.Count);
+            Assert.HasCount(1, cuesheet.Sections);
             Assert.IsTrue(cuesheet.Sections.Contains(section2));
             Assert.IsFalse(cuesheet.Sections.Contains(section1));
             Assert.IsFalse(cuesheet.Sections.Contains(section3));
