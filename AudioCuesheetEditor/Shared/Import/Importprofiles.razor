@@ -25,19 +25,27 @@ along with Foobar.  If not, see
 
 @if (importOptions != null)
 {
-    <MudStack Row>
-        <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Import profile"]" Value="importOptions.SelectedImportProfile" ValueChanged="SelectedImportProfileChangedAsync">
-            @foreach (var profile in importOptions.ImportProfiles)
-            {
-                <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
-            }
-        </MudSelect>
-        <MudButtonGroup OverrideStyles="false" Class="mt-2" Style="height: 56px;">
-            <MudIconButton Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Add" OnClick="AddImportprofileClick" />
-            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Delete" Disabled="importOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" />
-            <MudIconButton Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.LockReset" OnClick="ResetSchemes" />
-        </MudButtonGroup>
-    </MudStack>
+    <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Import profile"]" Value="importOptions.SelectedImportProfile" ValueChanged="SelectedImportProfileChangedAsync">
+        @foreach (var profile in importOptions.ImportProfiles)
+        {
+            <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
+        }
+    </MudSelect>
+    <MudButtonGroup OverrideStyles="false">
+        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Add" OnClick="AddImportprofileClick" />
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+            <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Delete" Disabled="importOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" aria-label="@_localizer["Delete selected profile"]">@_localizer["Delete selected profile"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+            <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Delete" Disabled="importOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" aria-label="@_localizer["Delete selected profile"]" />
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.LockReset" OnClick="ResetSchemes" aria-label="@_localizer["Reset import schemes"]">@_localizer["Reset import schemes"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <MudIconButton Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.LockReset" OnClick="ResetSchemes" aria-label="@_localizer["Reset import schemes"]" />
+        </MudHidden>
+    </MudButtonGroup>
     <MudTextField T="string" Value="importOptions.SelectedImportProfile?.Name" Disabled="importOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ImportOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)"
                   Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.Name))"
                   Label="@_localizer["Profile name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />

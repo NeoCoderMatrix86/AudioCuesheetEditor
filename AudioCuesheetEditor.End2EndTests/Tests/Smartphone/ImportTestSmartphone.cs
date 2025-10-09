@@ -1,0 +1,3568 @@
+﻿//This file is part of AudioCuesheetEditor.
+
+//AudioCuesheetEditor is free software: you can redistribute it and/or modify
+//it under the terms of the GNU General Public License as published by
+//the Free Software Foundation, either version 3 of the License, or
+//(at your option) any later version.
+
+//AudioCuesheetEditor is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//GNU General Public License for more details.
+
+//You should have received a copy of the GNU General Public License
+//along with Foobar.  If not, see
+//<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.End2EndTests.Models;
+using Microsoft.Playwright;
+
+namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
+{
+    [TestClass]
+    public class ImportTestSmartphone : PlaywrightTestBase
+    {
+        protected override string? DeviceName => "iPhone 13";
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
+        {
+            var importView = new ImportView(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 1 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 1 Clear"":
+        - text: Title
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:00"":
+        - text: End
+        - textbox: 00:05:00
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Sample Artist 2 Clear Title Sample Title 2 Clear Begin 00:05:00 End 00:09:23 Length 00:04:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 2 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 2 Clear"":
+        - text: Title
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:00"":
+        - text: Begin
+        - textbox: 00:05:00
+      - cell ""End 00:09:23"":
+        - text: End
+        - textbox: 00:09:23
+      - cell ""Length 00:04:23"":
+        - text: Length
+        - textbox: 00:04:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 3 Clear Title Sample Title 3 Clear Begin 00:09:23 End 00:15:54 Length 00:06:31 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 3 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 3 Clear"":
+        - text: Title
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:09:23"":
+        - text: Begin
+        - textbox: 00:09:23
+      - cell ""End 00:15:54"":
+        - text: End
+        - textbox: 00:15:54
+      - cell ""Length 00:06:31"":
+        - text: Length
+        - textbox: 00:06:31
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 4 Clear Title Sample Title 4 Clear Begin 00:15:54 End 00:20:13 Length 00:04:19 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 4 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 4 Clear"":
+        - text: Title
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:15:54"":
+        - text: Begin
+        - textbox: 00:15:54
+      - cell ""End 00:20:13"":
+        - text: End
+        - textbox: 00:20:13
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 5 Clear Title Sample Title 5 Clear Begin 00:20:13 End 00:24:54 Length 00:04:41 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 5 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 5 Clear"":
+        - text: Title
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:20:13"":
+        - text: Begin
+        - textbox: 00:20:13
+      - cell ""End 00:24:54"":
+        - text: End
+        - textbox: 00:24:54
+      - cell ""Length 00:04:41"":
+        - text: Length
+        - textbox: 00:04:41
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 6 Clear Title Sample Title 6 Clear Begin 00:24:54 End 00:31:54 Length 00:07:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 6 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 6 Clear"":
+        - text: Title
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:54"":
+        - text: Begin
+        - textbox: 00:24:54
+      - cell ""End 00:31:54"":
+        - text: End
+        - textbox: 00:31:54
+      - cell ""Length 00:07:00"":
+        - text: Length
+        - textbox: 00:07:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 7 Clear Title Sample Title 7 Clear Begin 00:31:54 End 00:45:54 Length 00:14:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 7 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 7 Clear"":
+        - text: Title
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:31:54"":
+        - text: Begin
+        - textbox: 00:31:54
+      - cell ""End 00:45:54"":
+        - text: End
+        - textbox: 00:45:54
+      - cell ""Length 00:14:00"":
+        - text: Length
+        - textbox: 00:14:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End 01:15:54 Length 00:30:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 8 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 8 Clear"":
+        - text: Title
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:45:54"":
+        - text: Begin
+        - textbox: 00:45:54
+      - cell ""End 01:15:54"":
+        - text: End
+        - textbox: 01:15:54
+      - cell ""Length 00:30:00"":
+        - text: Length
+        - textbox: 00:30:00
+      - cell ""Status"":
+        - text: Status
+        - button");
+            await Expect(detailView.AudiofileInput).ToBeEmptyAsync();
+            await importView.GotoAsync();
+            await Expect(TestPage.GetByText("PreviousNext")).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldBeEditable_WhenEditingTrack()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.SelectTracksAsync([5]);
+            await importView.EditTracksModalAsync("Sample Title Edited 5");
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 1 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 1 Clear"":
+        - text: Title
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:00"":
+        - text: End
+        - textbox: 00:05:00
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Sample Artist 2 Clear Title Sample Title 2 Clear Begin 00:05:00 End 00:09:23 Length 00:04:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 2 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 2 Clear"":
+        - text: Title
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:00"":
+        - text: Begin
+        - textbox: 00:05:00
+      - cell ""End 00:09:23"":
+        - text: End
+        - textbox: 00:09:23
+      - cell ""Length 00:04:23"":
+        - text: Length
+        - textbox: 00:04:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 3 Clear Title Sample Title 3 Clear Begin 00:09:23 End 00:15:54 Length 00:06:31 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 3 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 3 Clear"":
+        - text: Title
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:09:23"":
+        - text: Begin
+        - textbox: 00:09:23
+      - cell ""End 00:15:54"":
+        - text: End
+        - textbox: 00:15:54
+      - cell ""Length 00:06:31"":
+        - text: Length
+        - textbox: 00:06:31
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 4 Clear Title Sample Title 4 Clear Begin 00:15:54 End 00:20:13 Length 00:04:19 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 4 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 4 Clear"":
+        - text: Title
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:15:54"":
+        - text: Begin
+        - textbox: 00:15:54
+      - cell ""End 00:20:13"":
+        - text: End
+        - textbox: 00:20:13
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 5 Clear Title Sample Title Edited 5 Clear Begin 00:20:13 End 00:24:54 Length 00:04:41 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 5 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title Edited 5 Clear"":
+        - text: Title
+        - textbox: Sample Title Edited 5
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:20:13"":
+        - text: Begin
+        - textbox: 00:20:13
+      - cell ""End 00:24:54"":
+        - text: End
+        - textbox: 00:24:54
+      - cell ""Length 00:04:41"":
+        - text: Length
+        - textbox: 00:04:41
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 6 Clear Title Sample Title 6 Clear Begin 00:24:54 End 00:31:54 Length 00:07:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 6 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 6 Clear"":
+        - text: Title
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:54"":
+        - text: Begin
+        - textbox: 00:24:54
+      - cell ""End 00:31:54"":
+        - text: End
+        - textbox: 00:31:54
+      - cell ""Length 00:07:00"":
+        - text: Length
+        - textbox: 00:07:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 7 Clear Title Sample Title 7 Clear Begin 00:31:54 End 00:45:54 Length 00:14:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 7 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 7 Clear"":
+        - text: Title
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:31:54"":
+        - text: Begin
+        - textbox: 00:31:54
+      - cell ""End 00:45:54"":
+        - text: End
+        - textbox: 00:45:54
+      - cell ""Length 00:14:00"":
+        - text: Length
+        - textbox: 00:14:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End 01:15:54 Length 00:30:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 8 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 8 Clear"":
+        - text: Title
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:45:54"":
+        - text: Begin
+        - textbox: 00:45:54
+      - cell ""End 01:15:54"":
+        - text: End
+        - textbox: 01:15:54
+      - cell ""Length 00:30:00"":
+        - text: Length
+        - textbox: 00:30:00
+      - cell ""Status"":
+        - text: Status
+        - button");
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WithSpecialTextfile()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Textimport-Bug-#54.txt");
+            await importView.SwitchImportProfileAsync("Textfile (just track data)");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Adriatique Clear Title X. Clear Begin 00:00:00 End 00:05:24 Length 00:05:24"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Adriatique Clear"":
+        - text: Artist
+        - textbox: Adriatique
+        - button ""Clear""
+        - button
+      - cell ""Title X. Clear"":
+        - text: Title
+        - textbox: X.
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:24"":
+        - text: End
+        - textbox: 00:05:24
+      - cell ""Length 00:05:24"":
+        - text: Length
+        - textbox: 00:05:24
+    - row ""# Increment Decrement Artist Third Harmony Clear Title Fears And Dreams (Original Mix) Clear Begin 00:05:24 End 00:10:39 Length 00:05:15"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Third Harmony Clear"":
+        - text: Artist
+        - textbox: Third Harmony
+        - button ""Clear""
+        - button
+      - cell ""Title Fears And Dreams (Original Mix) Clear"":
+        - text: Title
+        - textbox: Fears And Dreams (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:24"":
+        - text: Begin
+        - textbox: 00:05:24
+      - cell ""End 00:10:39"":
+        - text: End
+        - textbox: 00:10:39
+      - cell ""Length 00:05:15"":
+        - text: Length
+        - textbox: 00:05:15
+    - row ""# Increment Decrement Artist Dele Sosimi Afrobeat Orchestra Clear Title Too Much Information (Laolu Remix; Edit) Clear Begin 00:10:39 End 00:17:06 Length 00:06:27"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Dele Sosimi Afrobeat Orchestra Clear"":
+        - text: Artist
+        - textbox: Dele Sosimi Afrobeat Orchestra
+        - button ""Clear""
+        - button
+      - cell ""Title Too Much Information (Laolu Remix; Edit) Clear"":
+        - text: Title
+        - textbox: Too Much Information (Laolu Remix; Edit)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:10:39"":
+        - text: Begin
+        - textbox: 00:10:39
+      - cell ""End 00:17:06"":
+        - text: End
+        - textbox: 00:17:06
+      - cell ""Length 00:06:27"":
+        - text: Length
+        - textbox: 00:06:27
+    - row ""# Increment Decrement Artist Edem, Govan Clear Title Ankh (Onetwo MX Remix) Clear Begin 00:17:06 End 00:23:21 Length 00:06:15"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Edem, Govan Clear"":
+        - text: Artist
+        - textbox: Edem, Govan
+        - button ""Clear""
+        - button
+      - cell ""Title Ankh (Onetwo MX Remix) Clear"":
+        - text: Title
+        - textbox: Ankh (Onetwo MX Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:17:06"":
+        - text: Begin
+        - textbox: 00:17:06
+      - cell ""End 00:23:21"":
+        - text: End
+        - textbox: 00:23:21
+      - cell ""Length 00:06:15"":
+        - text: Length
+        - textbox: 00:06:15
+    - row ""# Increment Decrement Artist Jody Wisternoff Clear Title For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear Begin 00:23:21 End 00:29:02 Length 00:05:41"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Jody Wisternoff Clear"":
+        - text: Artist
+        - textbox: Jody Wisternoff
+        - button ""Clear""
+        - button
+      - cell ""Title For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear"":
+        - text: Title
+        - textbox: For All Time (feat. Hendrik Burkhard) (Extended Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:23:21"":
+        - text: Begin
+        - textbox: 00:23:21
+      - cell ""End 00:29:02"":
+        - text: End
+        - textbox: 00:29:02
+      - cell ""Length 00:05:41"":
+        - text: Length
+        - textbox: 00:05:41
+    - row ""# Increment Decrement Artist Einmusik Clear Title Bead (Original Mix) Clear Begin 00:29:02 End 00:34:27 Length 00:05:25"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Einmusik Clear"":
+        - text: Artist
+        - textbox: Einmusik
+        - button ""Clear""
+        - button
+      - cell ""Title Bead (Original Mix) Clear"":
+        - text: Title
+        - textbox: Bead (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:29:02"":
+        - text: Begin
+        - textbox: 00:29:02
+      - cell ""End 00:34:27"":
+        - text: End
+        - textbox: 00:34:27
+      - cell ""Length 00:05:25"":
+        - text: Length
+        - textbox: 00:05:25
+    - row ""# Increment Decrement Artist Sebastien Leger Clear Title La Danse du Scorpion Clear Begin 00:34:27 End 00:40:59 Length 00:06:32"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sebastien Leger Clear"":
+        - text: Artist
+        - textbox: Sebastien Leger
+        - button ""Clear""
+        - button
+      - cell ""Title La Danse du Scorpion Clear"":
+        - text: Title
+        - textbox: La Danse du Scorpion
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:34:27"":
+        - text: Begin
+        - textbox: 00:34:27
+      - cell ""End 00:40:59"":
+        - text: End
+        - textbox: 00:40:59
+      - cell ""Length 00:06:32"":
+        - text: Length
+        - textbox: 00:06:32
+    - row ""# Increment Decrement Artist Paul Thomas & Solid Stone Clear Title La Bombo (Solid Stone Remix) Clear Begin 00:40:59 End 00:46:19 Length 00:05:20"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Paul Thomas & Solid Stone Clear"":
+        - text: Artist
+        - textbox: Paul Thomas & Solid Stone
+        - button ""Clear""
+        - button
+      - cell ""Title La Bombo (Solid Stone Remix) Clear"":
+        - text: Title
+        - textbox: La Bombo (Solid Stone Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:40:59"":
+        - text: Begin
+        - textbox: 00:40:59
+      - cell ""End 00:46:19"":
+        - text: End
+        - textbox: 00:46:19
+      - cell ""Length 00:05:20"":
+        - text: Length
+        - textbox: 00:05:20
+    - row ""# Increment Decrement Artist GusGus Clear Title Crossfade (Maceo Plex Mix) Clear Begin 00:46:19 End 00:52:20 Length 00:06:01"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""9""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist GusGus Clear"":
+        - text: Artist
+        - textbox: GusGus
+        - button ""Clear""
+        - button
+      - cell ""Title Crossfade (Maceo Plex Mix) Clear"":
+        - text: Title
+        - textbox: Crossfade (Maceo Plex Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:46:19"":
+        - text: Begin
+        - textbox: 00:46:19
+      - cell ""End 00:52:20"":
+        - text: End
+        - textbox: 00:52:20
+      - cell ""Length 00:06:01"":
+        - text: Length
+        - textbox: 00:06:01
+    - row ""# Increment Decrement Artist Klangkarussell Clear Title Time (Original Mix) Clear Begin 00:52:20 End 00:56:19 Length 00:03:59"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""10""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Klangkarussell Clear"":
+        - text: Artist
+        - textbox: Klangkarussell
+        - button ""Clear""
+        - button
+      - cell ""Title Time (Original Mix) Clear"":
+        - text: Title
+        - textbox: Time (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:52:20"":
+        - text: Begin
+        - textbox: 00:52:20
+      - cell ""End 00:56:19"":
+        - text: End
+        - textbox: 00:56:19
+      - cell ""Length 00:03:59"":
+        - text: Length
+        - textbox: 00:03:59
+    - row ""# Increment Decrement Artist Anysense & Un:said Clear Title Missing Path (Original Mix) Clear Begin 00:56:19 End 01:01:41 Length 00:05:22"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""11""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Anysense & Un:said Clear"":
+        - text: Artist
+        - textbox: Anysense & Un:said
+        - button ""Clear""
+        - button
+      - cell ""Title Missing Path (Original Mix) Clear"":
+        - text: Title
+        - textbox: Missing Path (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:56:19"":
+        - text: Begin
+        - textbox: 00:56:19
+      - cell ""End 01:01:41"":
+        - text: End
+        - textbox: 01:01:41
+      - cell ""Length 00:05:22"":
+        - text: Length
+        - textbox: 00:05:22
+    - row ""# Increment Decrement Artist Space Food Clear Title Bombay Clear Begin 01:01:41 End 01:06:33 Length 00:04:52"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""12""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Space Food Clear"":
+        - text: Artist
+        - textbox: Space Food
+        - button ""Clear""
+        - button
+      - cell ""Title Bombay Clear"":
+        - text: Title
+        - textbox: Bombay
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:01:41"":
+        - text: Begin
+        - textbox: 01:01:41
+      - cell ""End 01:06:33"":
+        - text: End
+        - textbox: 01:06:33
+      - cell ""Length 00:04:52"":
+        - text: Length
+        - textbox: 00:04:52
+    - row ""# Increment Decrement Artist SHDW & Obscure Shape Clear Title Wächter der Nacht (Original Mix) Clear Begin 01:06:33 End 01:11:04 Length 00:04:31"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""13""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SHDW & Obscure Shape Clear"":
+        - text: Artist
+        - textbox: SHDW & Obscure Shape
+        - button ""Clear""
+        - button
+      - cell ""Title Wächter der Nacht (Original Mix) Clear"":
+        - text: Title
+        - textbox: Wächter der Nacht (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:06:33"":
+        - text: Begin
+        - textbox: 01:06:33
+      - cell ""End 01:11:04"":
+        - text: End
+        - textbox: 01:11:04
+      - cell ""Length 00:04:31"":
+        - text: Length
+        - textbox: 00:04:31
+    - row ""# Increment Decrement Artist HOSH Clear Title Karma Clear Begin 01:11:04 End 01:15:28 Length 00:04:24"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""14""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist HOSH Clear"":
+        - text: Artist
+        - textbox: HOSH
+        - button ""Clear""
+        - button
+      - cell ""Title Karma Clear"":
+        - text: Title
+        - textbox: Karma
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:11:04"":
+        - text: Begin
+        - textbox: 01:11:04
+      - cell ""End 01:15:28"":
+        - text: End
+        - textbox: 01:15:28
+      - cell ""Length 00:04:24"":
+        - text: Length
+        - textbox: 00:04:24
+    - row ""# Increment Decrement Artist Alexey Union Clear Title Olympia (Original Mix) Clear Begin 01:15:28 End 01:21:08 Length 00:05:40"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""15""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Alexey Union Clear"":
+        - text: Artist
+        - textbox: Alexey Union
+        - button ""Clear""
+        - button
+      - cell ""Title Olympia (Original Mix) Clear"":
+        - text: Title
+        - textbox: Olympia (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:15:28"":
+        - text: Begin
+        - textbox: 01:15:28
+      - cell ""End 01:21:08"":
+        - text: End
+        - textbox: 01:21:08
+      - cell ""Length 00:05:40"":
+        - text: Length
+        - textbox: 00:05:40
+    - row ""# Increment Decrement Artist Paul Taylor Clear Title Afterglow Clear Begin 01:21:08 End 01:25:38 Length 00:04:30"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""16""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Paul Taylor Clear"":
+        - text: Artist
+        - textbox: Paul Taylor
+        - button ""Clear""
+        - button
+      - cell ""Title Afterglow Clear"":
+        - text: Title
+        - textbox: Afterglow
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:21:08"":
+        - text: Begin
+        - textbox: 01:21:08
+      - cell ""End 01:25:38"":
+        - text: End
+        - textbox: 01:25:38
+      - cell ""Length 00:04:30"":
+        - text: Length
+        - textbox: 00:04:30
+    - row ""# Increment Decrement Artist Philter Clear Title Stranger Clear Begin 01:25:38 End 01:31:52 Length 00:06:14"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""17""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Philter Clear"":
+        - text: Artist
+        - textbox: Philter
+        - button ""Clear""
+        - button
+      - cell ""Title Stranger Clear"":
+        - text: Title
+        - textbox: Stranger
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:25:38"":
+        - text: Begin
+        - textbox: 01:25:38
+      - cell ""End 01:31:52"":
+        - text: End
+        - textbox: 01:31:52
+      - cell ""Length 00:06:14"":
+        - text: Length
+        - textbox: 00:06:14
+    - row ""# Increment Decrement Artist Skizologic Clear Title Hypersphere (Original Mix) Clear Begin 01:31:52 End 01:36:40 Length 00:04:48"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""18""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Skizologic Clear"":
+        - text: Artist
+        - textbox: Skizologic
+        - button ""Clear""
+        - button
+      - cell ""Title Hypersphere (Original Mix) Clear"":
+        - text: Title
+        - textbox: Hypersphere (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:31:52"":
+        - text: Begin
+        - textbox: 01:31:52
+      - cell ""End 01:36:40"":
+        - text: End
+        - textbox: 01:36:40
+      - cell ""Length 00:04:48"":
+        - text: Length
+        - textbox: 00:04:48
+    - row ""# Increment Decrement Artist Thomas Schumacher, Caitlin Clear Title All of You (Remix) Clear Begin 01:36:40 End 01:42:16 Length 00:05:36"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""19""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Thomas Schumacher, Caitlin Clear"":
+        - text: Artist
+        - textbox: Thomas Schumacher, Caitlin
+        - button ""Clear""
+        - button
+      - cell ""Title All of You (Remix) Clear"":
+        - text: Title
+        - textbox: All of You (Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:36:40"":
+        - text: Begin
+        - textbox: 01:36:40
+      - cell ""End 01:42:16"":
+        - text: End
+        - textbox: 01:42:16
+      - cell ""Length 00:05:36"":
+        - text: Length
+        - textbox: 00:05:36
+    - row ""# Increment Decrement Artist A. Skomoroh Clear Title White Horse Conquest (Original Mix) Clear Begin 01:42:16 End 01:47:04 Length 00:04:48"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""20""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist A. Skomoroh Clear"":
+        - text: Artist
+        - textbox: A. Skomoroh
+        - button ""Clear""
+        - button
+      - cell ""Title White Horse Conquest (Original Mix) Clear"":
+        - text: Title
+        - textbox: White Horse Conquest (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:42:16"":
+        - text: Begin
+        - textbox: 01:42:16
+      - cell ""End 01:47:04"":
+        - text: End
+        - textbox: 01:47:04
+      - cell ""Length 00:04:48"":
+        - text: Length
+        - textbox: 00:04:48
+    - row ""# Increment Decrement Artist Patrik Berg Clear Title Bright (Original Mix) Clear Begin 01:47:04 End 01:52:37 Length 00:05:33"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""21""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Patrik Berg Clear"":
+        - text: Artist
+        - textbox: Patrik Berg
+        - button ""Clear""
+        - button
+      - cell ""Title Bright (Original Mix) Clear"":
+        - text: Title
+        - textbox: Bright (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:47:04"":
+        - text: Begin
+        - textbox: 01:47:04
+      - cell ""End 01:52:37"":
+        - text: End
+        - textbox: 01:52:37
+      - cell ""Length 00:05:33"":
+        - text: Length
+        - textbox: 00:05:33
+    - row ""# Increment Decrement Artist Hidden Empire Clear Title Bengal Clear Begin 01:52:37 End 01:58:05 Length 00:05:28"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""22""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Hidden Empire Clear"":
+        - text: Artist
+        - textbox: Hidden Empire
+        - button ""Clear""
+        - button
+      - cell ""Title Bengal Clear"":
+        - text: Title
+        - textbox: Bengal
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:52:37"":
+        - text: Begin
+        - textbox: 01:52:37
+      - cell ""End 01:58:05"":
+        - text: End
+        - textbox: 01:58:05
+      - cell ""Length 00:05:28"":
+        - text: Length
+        - textbox: 00:05:28
+    - row ""# Increment Decrement Artist Mario Ochoa Clear Title Levitate Clear Begin 01:58:05 End 02:03:00 Length 00:04:55"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""23""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Mario Ochoa Clear"":
+        - text: Artist
+        - textbox: Mario Ochoa
+        - button ""Clear""
+        - button
+      - cell ""Title Levitate Clear"":
+        - text: Title
+        - textbox: Levitate
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:58:05"":
+        - text: Begin
+        - textbox: 01:58:05
+      - cell ""End 02:03:00"":
+        - text: End
+        - textbox: 02:03:00
+      - cell ""Length 00:04:55"":
+        - text: Length
+        - textbox: 00:04:55
+    - row ""# Increment Decrement Artist Raul Facio Clear Title Eyes Wide Shut (Original Mix) Clear Begin 02:03:00 End 02:08:21 Length 00:05:21"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""24""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Raul Facio Clear"":
+        - text: Artist
+        - textbox: Raul Facio
+        - button ""Clear""
+        - button
+      - cell ""Title Eyes Wide Shut (Original Mix) Clear"":
+        - text: Title
+        - textbox: Eyes Wide Shut (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:03:00"":
+        - text: Begin
+        - textbox: 02:03:00
+      - cell ""End 02:08:21"":
+        - text: End
+        - textbox: 02:08:21
+      - cell ""Length 00:05:21"":
+        - text: Length
+        - textbox: 00:05:21
+    - row ""# Increment Decrement Artist Soolver Clear Title Regular (Original Mix) Clear Begin 02:08:21 End 02:14:31 Length 00:06:10"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""25""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Soolver Clear"":
+        - text: Artist
+        - textbox: Soolver
+        - button ""Clear""
+        - button
+      - cell ""Title Regular (Original Mix) Clear"":
+        - text: Title
+        - textbox: Regular (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:08:21"":
+        - text: Begin
+        - textbox: 02:08:21
+      - cell ""End 02:14:31"":
+        - text: End
+        - textbox: 02:14:31
+      - cell ""Length 00:06:10"":
+        - text: Length
+        - textbox: 00:06:10
+    - row ""# Increment Decrement Artist Weska Clear Title EQ64 (Original Mix) Clear Begin 02:14:31 End 02:18:35 Length 00:04:04"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""26""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Weska Clear"":
+        - text: Artist
+        - textbox: Weska
+        - button ""Clear""
+        - button
+      - cell ""Title EQ64 (Original Mix) Clear"":
+        - text: Title
+        - textbox: EQ64 (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:14:31"":
+        - text: Begin
+        - textbox: 02:14:31
+      - cell ""End 02:18:35"":
+        - text: End
+        - textbox: 02:18:35
+      - cell ""Length 00:04:04"":
+        - text: Length
+        - textbox: 00:04:04
+    - row ""# Increment Decrement Artist Tempo Giusto Clear Title The Fall (Extended Mix) Clear Begin 02:18:35 End 02:24:12 Length 00:05:37"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""27""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Tempo Giusto Clear"":
+        - text: Artist
+        - textbox: Tempo Giusto
+        - button ""Clear""
+        - button
+      - cell ""Title The Fall (Extended Mix) Clear"":
+        - text: Title
+        - textbox: The Fall (Extended Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:18:35"":
+        - text: Begin
+        - textbox: 02:18:35
+      - cell ""End 02:24:12"":
+        - text: End
+        - textbox: 02:24:12
+      - cell ""Length 00:05:37"":
+        - text: Length
+        - textbox: 00:05:37
+    - row ""# Increment Decrement Artist Vlind & Asteroid & Gary Leroy Clear Title Trinity (Extended Mix) Clear Begin 02:24:12 End 02:29:38 Length 00:05:26"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""28""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Vlind & Asteroid & Gary Leroy Clear"":
+        - text: Artist
+        - textbox: Vlind & Asteroid & Gary Leroy
+        - button ""Clear""
+        - button
+      - cell ""Title Trinity (Extended Mix) Clear"":
+        - text: Title
+        - textbox: Trinity (Extended Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:24:12"":
+        - text: Begin
+        - textbox: 02:24:12
+      - cell ""End 02:29:38"":
+        - text: End
+        - textbox: 02:29:38
+      - cell ""Length 00:05:26"":
+        - text: Length
+        - textbox: 00:05:26
+    - row ""# Increment Decrement Artist Astral Legacy Clear Title Vaveyla (Original Mix) Clear Begin 02:29:38 End 02:32:52 Length 00:03:14"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""29""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Astral Legacy Clear"":
+        - text: Artist
+        - textbox: Astral Legacy
+        - button ""Clear""
+        - button
+      - cell ""Title Vaveyla (Original Mix) Clear"":
+        - text: Title
+        - textbox: Vaveyla (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:29:38"":
+        - text: Begin
+        - textbox: 02:29:38
+      - cell ""End 02:32:52"":
+        - text: End
+        - textbox: 02:32:52
+      - cell ""Length 00:03:14"":
+        - text: Length
+        - textbox: 00:03:14
+    - row ""# Increment Decrement Artist Gerrox Clear Title Chakra (Original Mix) Clear Begin 02:32:52 End 02:37:00 Length 00:04:08"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""30""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Gerrox Clear"":
+        - text: Artist
+        - textbox: Gerrox
+        - button ""Clear""
+        - button
+      - cell ""Title Chakra (Original Mix) Clear"":
+        - text: Title
+        - textbox: Chakra (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:32:52"":
+        - text: Begin
+        - textbox: 02:32:52
+      - cell ""End 02:37:00"":
+        - text: End
+        - textbox: 02:37:00
+      - cell ""Length 00:04:08"":
+        - text: Length
+        - textbox: 00:04:08
+    - row ""# Increment Decrement Artist Charlotte De Witte Clear Title Pattern Clear Begin 02:37:00 End 02:41:55 Length 00:04:55"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""31""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Charlotte De Witte Clear"":
+        - text: Artist
+        - textbox: Charlotte De Witte
+        - button ""Clear""
+        - button
+      - cell ""Title Pattern Clear"":
+        - text: Title
+        - textbox: Pattern
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:37:00"":
+        - text: Begin
+        - textbox: 02:37:00
+      - cell ""End 02:41:55"":
+        - text: End
+        - textbox: 02:41:55
+      - cell ""Length 00:04:55"":
+        - text: Length
+        - textbox: 00:04:55
+    - row ""# Increment Decrement Artist Space Food Clear Title Amabey Clear Begin 02:41:55 End 02:46:55 Length 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""32""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Space Food Clear"":
+        - text: Artist
+        - textbox: Space Food
+        - button ""Clear""
+        - button
+      - cell ""Title Amabey Clear"":
+        - text: Title
+        - textbox: Amabey
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:41:55"":
+        - text: Begin
+        - textbox: 02:41:55
+      - cell ""End 02:46:55"":
+        - text: End
+        - textbox: 02:46:55
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+    - row ""# Increment Decrement Artist ARTBAT Clear Title Papilion (Original Mix) Clear Begin 02:46:55 End 02:51:13 Length 00:04:18"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""33""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist ARTBAT Clear"":
+        - text: Artist
+        - textbox: ARTBAT
+        - button ""Clear""
+        - button
+      - cell ""Title Papilion (Original Mix) Clear"":
+        - text: Title
+        - textbox: Papilion (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:46:55"":
+        - text: Begin
+        - textbox: 02:46:55
+      - cell ""End 02:51:13"":
+        - text: End
+        - textbox: 02:51:13
+      - cell ""Length 00:04:18"":
+        - text: Length
+        - textbox: 00:04:18
+    - row ""# Increment Decrement Artist PETER PAHN Clear Title Enjoy Infinity (Original Mix) Clear Begin 02:51:13 End 02:56:08 Length 00:04:55"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""34""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist PETER PAHN Clear"":
+        - text: Artist
+        - textbox: PETER PAHN
+        - button ""Clear""
+        - button
+      - cell ""Title Enjoy Infinity (Original Mix) Clear"":
+        - text: Title
+        - textbox: Enjoy Infinity (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:51:13"":
+        - text: Begin
+        - textbox: 02:51:13
+      - cell ""End 02:56:08"":
+        - text: End
+        - textbox: 02:56:08
+      - cell ""Length 00:04:55"":
+        - text: Length
+        - textbox: 00:04:55
+    - row ""# Increment Decrement Artist Solitek Clear Title Instinct (Original Mix) Clear Begin 02:56:08 End 03:00:57 Length 00:04:49"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""35""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Solitek Clear"":
+        - text: Artist
+        - textbox: Solitek
+        - button ""Clear""
+        - button
+      - cell ""Title Instinct (Original Mix) Clear"":
+        - text: Title
+        - textbox: Instinct (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:56:08"":
+        - text: Begin
+        - textbox: 02:56:08
+      - cell ""End 03:00:57"":
+        - text: End
+        - textbox: 03:00:57
+      - cell ""Length 00:04:49"":
+        - text: Length
+        - textbox: 00:04:49
+    - row ""# Increment Decrement Artist Veerus Clear Title Heavy Clear Begin 03:00:57 End 03:05:19 Length 00:04:22"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""36""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Veerus Clear"":
+        - text: Artist
+        - textbox: Veerus
+        - button ""Clear""
+        - button
+      - cell ""Title Heavy Clear"":
+        - text: Title
+        - textbox: Heavy
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:00:57"":
+        - text: Begin
+        - textbox: 03:00:57
+      - cell ""End 03:05:19"":
+        - text: End
+        - textbox: 03:05:19
+      - cell ""Length 00:04:22"":
+        - text: Length
+        - textbox: 00:04:22
+    - row ""# Increment Decrement Artist Secret Cinema & Reinier Zonneveld Clear Title Pain Thing (Original Mix) Clear Begin 03:05:19 End 03:09:38 Length 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""37""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Secret Cinema & Reinier Zonneveld Clear"":
+        - text: Artist
+        - textbox: Secret Cinema & Reinier Zonneveld
+        - button ""Clear""
+        - button
+      - cell ""Title Pain Thing (Original Mix) Clear"":
+        - text: Title
+        - textbox: Pain Thing (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:05:19"":
+        - text: Begin
+        - textbox: 03:05:19
+      - cell ""End 03:09:38"":
+        - text: End
+        - textbox: 03:09:38
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+    - row ""# Increment Decrement Artist Amelie Lens Clear Title Hypnotized Clear Begin 03:09:38 End 03:13:13 Length 00:03:35"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""38""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Amelie Lens Clear"":
+        - text: Artist
+        - textbox: Amelie Lens
+        - button ""Clear""
+        - button
+      - cell ""Title Hypnotized Clear"":
+        - text: Title
+        - textbox: Hypnotized
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:09:38"":
+        - text: Begin
+        - textbox: 03:09:38
+      - cell ""End 03:13:13"":
+        - text: End
+        - textbox: 03:13:13
+      - cell ""Length 00:03:35"":
+        - text: Length
+        - textbox: 00:03:35
+    - row ""# Increment Decrement Artist Nikolay Kirov Clear Title Chasing the Sun (Original Mix) Clear Begin 03:13:13 End Length"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""39""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Nikolay Kirov Clear"":
+        - text: Artist
+        - textbox: Nikolay Kirov
+        - button ""Clear""
+        - button
+      - cell ""Title Chasing the Sun (Original Mix) Clear"":
+        - text: Title
+        - textbox: Chasing the Sun (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:13:13"":
+        - text: Begin
+        - textbox: 03:13:13
+      - cell ""End"":
+        - text: End
+        - textbox
+      - cell ""Length"":
+        - text: Length
+        - textbox");
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile2()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Sample_Inputfile2.txt");
+            await importView.ClearSchemeCommonDataAsync();
+            await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
+            await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 1 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 1 Clear"":
+        - text: Title
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:00"":
+        - text: End
+        - textbox: 00:05:00
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+    - row ""# Increment Decrement Artist Sample Artist 2 Clear Title Sample Title 2 Clear Begin 00:05:00 End 00:09:23 Length 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 2 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 2 Clear"":
+        - text: Title
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:00"":
+        - text: Begin
+        - textbox: 00:05:00
+      - cell ""End 00:09:23"":
+        - text: End
+        - textbox: 00:09:23
+      - cell ""Length 00:04:23"":
+        - text: Length
+        - textbox: 00:04:23
+    - row ""# Increment Decrement Artist Sample Artist 3 Clear Title Sample Title 3 Clear Begin 00:09:23 End 00:15:54 Length 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 3 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 3 Clear"":
+        - text: Title
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:09:23"":
+        - text: Begin
+        - textbox: 00:09:23
+      - cell ""End 00:15:54"":
+        - text: End
+        - textbox: 00:15:54
+      - cell ""Length 00:06:31"":
+        - text: Length
+        - textbox: 00:06:31
+    - row ""# Increment Decrement Artist Sample Artist 4 Clear Title Sample Title 4 Clear Begin 00:15:54 End 00:20:13 Length 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 4 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 4 Clear"":
+        - text: Title
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:15:54"":
+        - text: Begin
+        - textbox: 00:15:54
+      - cell ""End 00:20:13"":
+        - text: End
+        - textbox: 00:20:13
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+    - row ""# Increment Decrement Artist Sample Artist 5 Clear Title Sample Title 5 Clear Begin 00:20:13 End 00:24:54 Length 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 5 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 5 Clear"":
+        - text: Title
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:20:13"":
+        - text: Begin
+        - textbox: 00:20:13
+      - cell ""End 00:24:54"":
+        - text: End
+        - textbox: 00:24:54
+      - cell ""Length 00:04:41"":
+        - text: Length
+        - textbox: 00:04:41
+    - row ""# Increment Decrement Artist Sample Artist 6 Clear Title Sample Title 6 Clear Begin 00:24:54 End 00:31:54 Length 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 6 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 6 Clear"":
+        - text: Title
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:54"":
+        - text: Begin
+        - textbox: 00:24:54
+      - cell ""End 00:31:54"":
+        - text: End
+        - textbox: 00:31:54
+      - cell ""Length 00:07:00"":
+        - text: Length
+        - textbox: 00:07:00
+    - row ""# Increment Decrement Artist Sample Artist 7 Clear Title Sample Title 7 Clear Begin 00:31:54 End 00:45:54 Length 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 7 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 7 Clear"":
+        - text: Title
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:31:54"":
+        - text: Begin
+        - textbox: 00:31:54
+      - cell ""End 00:45:54"":
+        - text: End
+        - textbox: 00:45:54
+      - cell ""Length 00:14:00"":
+        - text: Length
+        - textbox: 00:14:00
+    - row ""# Increment Decrement Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End 01:15:54 Length 00:30:00"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 8 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 8 Clear"":
+        - text: Title
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:45:54"":
+        - text: Begin
+        - textbox: 00:45:54
+      - cell ""End 01:15:54"":
+        - text: End
+        - textbox: 01:15:54
+      - cell ""Length 00:30:00"":
+        - text: Length
+        - textbox: 00:30:00");
+        }
+
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WithTraktorOutput()
+        {
+            var importView = new ImportView(TestPage);
+            await importView.GotoAsync();
+            await importView.ImportFileAsync("Traktor Export.html");
+            await importView.SwitchImportProfileAsync("Traktor history");
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Nachap Clear Title Glass Clear Begin 00:00:00 End 00:11:56 Length 00:11:56 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Nachap Clear"":
+        - text: Artist
+        - textbox: Nachap
+        - button ""Clear""
+        - button
+      - cell ""Title Glass Clear"":
+        - text: Title
+        - textbox: Glass
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:11:56"":
+        - text: End
+        - textbox: 00:11:56
+      - cell ""Length 00:11:56"":
+        - text: Length
+        - textbox: 00:11:56
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Title Progressive + Melodic DECK Clear Begin 00:11:56 End 00:13:31 Length 00:01:35 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist"":
+        - text: Artist
+        - textbox
+        - button
+      - cell ""Title Progressive + Melodic DECK Clear"":
+        - text: Title
+        - textbox: Progressive + Melodic DECK
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:11:56"":
+        - text: Begin
+        - textbox: 00:11:56
+      - cell ""End 00:13:31"":
+        - text: End
+        - textbox: 00:13:31
+      - cell ""Length 00:01:35"":
+        - text: Length
+        - textbox: 00:01:35
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Nomer 21 Clear Title Depersonalization Clear Begin 00:13:31 End 00:19:14 Length 00:05:43 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Nomer 21 Clear"":
+        - text: Artist
+        - textbox: Nomer 21
+        - button ""Clear""
+        - button
+      - cell ""Title Depersonalization Clear"":
+        - text: Title
+        - textbox: Depersonalization
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:13:31"":
+        - text: Begin
+        - textbox: 00:13:31
+      - cell ""End 00:19:14"":
+        - text: End
+        - textbox: 00:19:14
+      - cell ""Length 00:05:43"":
+        - text: Length
+        - textbox: 00:05:43
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Title Showing Off Clear Begin 00:19:14 End 00:24:02 Length 00:04:48 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - text: Artist
+        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Title Showing Off Clear"":
+        - text: Title
+        - textbox: Showing Off
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:19:14"":
+        - text: Begin
+        - textbox: 00:19:14
+      - cell ""End 00:24:02"":
+        - text: End
+        - textbox: 00:24:02
+      - cell ""Length 00:04:48"":
+        - text: Length
+        - textbox: 00:04:48
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Carlo Whale Clear Title Unconscious Clear Begin 00:24:02 End 00:29:37 Length 00:05:35 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Carlo Whale Clear"":
+        - text: Artist
+        - textbox: Carlo Whale
+        - button ""Clear""
+        - button
+      - cell ""Title Unconscious Clear"":
+        - text: Title
+        - textbox: Unconscious
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:02"":
+        - text: Begin
+        - textbox: 00:24:02
+      - cell ""End 00:29:37"":
+        - text: End
+        - textbox: 00:29:37
+      - cell ""Length 00:05:35"":
+        - text: Length
+        - textbox: 00:05:35
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Arba Han Clear Title Timelaps Clear Begin 00:29:37 End 00:33:13 Length 00:03:36 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Arba Han Clear"":
+        - text: Artist
+        - textbox: Arba Han
+        - button ""Clear""
+        - button
+      - cell ""Title Timelaps Clear"":
+        - text: Title
+        - textbox: Timelaps
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:29:37"":
+        - text: Begin
+        - textbox: 00:29:37
+      - cell ""End 00:33:13"":
+        - text: End
+        - textbox: 00:33:13
+      - cell ""Length 00:03:36"":
+        - text: Length
+        - textbox: 00:03:36
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Savill Clear Title Energy Surrounds Clear Begin 00:33:13 End 00:40:30 Length 00:07:17 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Savill Clear"":
+        - text: Artist
+        - textbox: Savill
+        - button ""Clear""
+        - button
+      - cell ""Title Energy Surrounds Clear"":
+        - text: Title
+        - textbox: Energy Surrounds
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:33:13"":
+        - text: Begin
+        - textbox: 00:33:13
+      - cell ""End 00:40:30"":
+        - text: End
+        - textbox: 00:40:30
+      - cell ""Length 00:07:17"":
+        - text: Length
+        - textbox: 00:07:17
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Teklix Clear Title The Tribal Code Clear Begin 00:40:30 End 00:48:53 Length 00:08:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Teklix Clear"":
+        - text: Artist
+        - textbox: Teklix
+        - button ""Clear""
+        - button
+      - cell ""Title The Tribal Code Clear"":
+        - text: Title
+        - textbox: The Tribal Code
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:40:30"":
+        - text: Begin
+        - textbox: 00:40:30
+      - cell ""End 00:48:53"":
+        - text: End
+        - textbox: 00:48:53
+      - cell ""Length 00:08:23"":
+        - text: Length
+        - textbox: 00:08:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Neuralis Clear Title I'm Looking for Answers Clear Begin 00:48:53 End 00:54:34 Length 00:05:41 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""9""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Neuralis Clear"":
+        - text: Artist
+        - textbox: Neuralis
+        - button ""Clear""
+        - button
+      - cell ""Title I'm Looking for Answers Clear"":
+        - text: Title
+        - textbox: I'm Looking for Answers
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:48:53"":
+        - text: Begin
+        - textbox: 00:48:53
+      - cell ""End 00:54:34"":
+        - text: End
+        - textbox: 00:54:34
+      - cell ""Length 00:05:41"":
+        - text: Length
+        - textbox: 00:05:41
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Nopopstar &amp; Arsia Clear Title Dirty Moves Clear Begin 00:54:34 End 01:00:24 Length 00:05:50 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""10""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Nopopstar &amp; Arsia Clear"":
+        - text: Artist
+        - textbox: Nopopstar &amp; Arsia
+        - button ""Clear""
+        - button
+      - cell ""Title Dirty Moves Clear"":
+        - text: Title
+        - textbox: Dirty Moves
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:54:34"":
+        - text: Begin
+        - textbox: 00:54:34
+      - cell ""End 01:00:24"":
+        - text: End
+        - textbox: 01:00:24
+      - cell ""Length 00:05:50"":
+        - text: Length
+        - textbox: 00:05:50
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Title Lost (Maze 28 Remix) Clear Begin 01:00:24 End 01:05:17 Length 00:04:53 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""11""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - text: Artist
+        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Title Lost (Maze 28 Remix) Clear"":
+        - text: Title
+        - textbox: Lost (Maze 28 Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:00:24"":
+        - text: Begin
+        - textbox: 01:00:24
+      - cell ""End 01:05:17"":
+        - text: End
+        - textbox: 01:05:17
+      - cell ""Length 00:04:53"":
+        - text: Length
+        - textbox: 00:04:53
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Title Lost (Redspace Remix) Clear Begin 01:05:17 End 01:08:22 Length 00:03:05 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""12""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - text: Artist
+        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Title Lost (Redspace Remix) Clear"":
+        - text: Title
+        - textbox: Lost (Redspace Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:05:17"":
+        - text: Begin
+        - textbox: 01:05:17
+      - cell ""End 01:08:22"":
+        - text: End
+        - textbox: 01:08:22
+      - cell ""Length 00:03:05"":
+        - text: Length
+        - textbox: 00:03:05
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Gadoz Clear Title 5d Clear Begin 01:08:22 End 01:16:34 Length 00:08:12 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""13""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Gadoz Clear"":
+        - text: Artist
+        - textbox: Gadoz
+        - button ""Clear""
+        - button
+      - cell ""Title 5d Clear"":
+        - text: Title
+        - textbox: 5d
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:08:22"":
+        - text: Begin
+        - textbox: 01:08:22
+      - cell ""End 01:16:34"":
+        - text: End
+        - textbox: 01:16:34
+      - cell ""Length 00:08:12"":
+        - text: Length
+        - textbox: 00:08:12
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist DJ Danzik Clear Title Out of Space Clear Begin 01:16:34 End 01:19:22 Length 00:02:48 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""14""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist DJ Danzik Clear"":
+        - text: Artist
+        - textbox: DJ Danzik
+        - button ""Clear""
+        - button
+      - cell ""Title Out of Space Clear"":
+        - text: Title
+        - textbox: Out of Space
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:16:34"":
+        - text: Begin
+        - textbox: 01:16:34
+      - cell ""End 01:19:22"":
+        - text: End
+        - textbox: 01:19:22
+      - cell ""Length 00:02:48"":
+        - text: Length
+        - textbox: 00:02:48
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Enis Çoban Clear Title Internet Clear Begin 01:19:22 End 01:25:14 Length 00:05:52 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""15""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Enis Çoban Clear"":
+        - text: Artist
+        - textbox: Enis Çoban
+        - button ""Clear""
+        - button
+      - cell ""Title Internet Clear"":
+        - text: Title
+        - textbox: Internet
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:19:22"":
+        - text: Begin
+        - textbox: 01:19:22
+      - cell ""End 01:25:14"":
+        - text: End
+        - textbox: 01:25:14
+      - cell ""Length 00:05:52"":
+        - text: Length
+        - textbox: 00:05:52
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Cold Mind &amp; Alex Yikker Clear Title Rage Clear Begin 01:25:14 End 01:31:33 Length 00:06:19 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""16""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Cold Mind &amp; Alex Yikker Clear"":
+        - text: Artist
+        - textbox: Cold Mind &amp; Alex Yikker
+        - button ""Clear""
+        - button
+      - cell ""Title Rage Clear"":
+        - text: Title
+        - textbox: Rage
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:25:14"":
+        - text: Begin
+        - textbox: 01:25:14
+      - cell ""End 01:31:33"":
+        - text: End
+        - textbox: 01:31:33
+      - cell ""Length 00:06:19"":
+        - text: Length
+        - textbox: 00:06:19
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Maze 28 Clear Title Sol (JAHAYA Remix) Clear Begin 01:31:33 End 01:32:51 Length 00:01:18 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""17""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Maze 28 Clear"":
+        - text: Artist
+        - textbox: Maze 28
+        - button ""Clear""
+        - button
+      - cell ""Title Sol (JAHAYA Remix) Clear"":
+        - text: Title
+        - textbox: Sol (JAHAYA Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:31:33"":
+        - text: Begin
+        - textbox: 01:31:33
+      - cell ""End 01:32:51"":
+        - text: End
+        - textbox: 01:32:51
+      - cell ""Length 00:01:18"":
+        - text: Length
+        - textbox: 00:01:18
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Alex Grafton Clear Title Hi Baby Clear Begin 01:32:51 End 01:42:13 Length 00:09:22 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""18""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Alex Grafton Clear"":
+        - text: Artist
+        - textbox: Alex Grafton
+        - button ""Clear""
+        - button
+      - cell ""Title Hi Baby Clear"":
+        - text: Title
+        - textbox: Hi Baby
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:32:51"":
+        - text: Begin
+        - textbox: 01:32:51
+      - cell ""End 01:42:13"":
+        - text: End
+        - textbox: 01:42:13
+      - cell ""Length 00:09:22"":
+        - text: Length
+        - textbox: 00:09:22
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Che&amp;Mos &amp; Halo Far Clear Title Daddy Clear Begin 01:42:13 End 01:45:22 Length 00:03:09 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""19""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Che&amp;Mos &amp; Halo Far Clear"":
+        - text: Artist
+        - textbox: Che&amp;Mos &amp; Halo Far
+        - button ""Clear""
+        - button
+      - cell ""Title Daddy Clear"":
+        - text: Title
+        - textbox: Daddy
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:42:13"":
+        - text: Begin
+        - textbox: 01:42:13
+      - cell ""End 01:45:22"":
+        - text: End
+        - textbox: 01:45:22
+      - cell ""Length 00:03:09"":
+        - text: Length
+        - textbox: 00:03:09
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist K KARDEN Clear Title Acid Rain Clear Begin 01:45:22 End 01:48:40 Length 00:03:18 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""20""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist K KARDEN Clear"":
+        - text: Artist
+        - textbox: K KARDEN
+        - button ""Clear""
+        - button
+      - cell ""Title Acid Rain Clear"":
+        - text: Title
+        - textbox: Acid Rain
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:45:22"":
+        - text: Begin
+        - textbox: 01:45:22
+      - cell ""End 01:48:40"":
+        - text: End
+        - textbox: 01:48:40
+      - cell ""Length 00:03:18"":
+        - text: Length
+        - textbox: 00:03:18
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Dobrov &amp; Gar1sson Clear Title Analogic (Redspace Remix) Clear Begin 01:48:40 End 01:56:40 Length 00:08:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""21""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Dobrov &amp; Gar1sson Clear"":
+        - text: Artist
+        - textbox: Dobrov &amp; Gar1sson
+        - button ""Clear""
+        - button
+      - cell ""Title Analogic (Redspace Remix) Clear"":
+        - text: Title
+        - textbox: Analogic (Redspace Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:48:40"":
+        - text: Begin
+        - textbox: 01:48:40
+      - cell ""End 01:56:40"":
+        - text: End
+        - textbox: 01:56:40
+      - cell ""Length 00:08:00"":
+        - text: Length
+        - textbox: 00:08:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Gazfluz Clear Title Vargan Clear Begin 01:56:40 End 02:00:39 Length 00:03:59 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""22""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Gazfluz Clear"":
+        - text: Artist
+        - textbox: Gazfluz
+        - button ""Clear""
+        - button
+      - cell ""Title Vargan Clear"":
+        - text: Title
+        - textbox: Vargan
+        - button ""Clear""
+        - button
+      - cell ""Begin 01:56:40"":
+        - text: Begin
+        - textbox: 01:56:40
+      - cell ""End 02:00:39"":
+        - text: End
+        - textbox: 02:00:39
+      - cell ""Length 00:03:59"":
+        - text: Length
+        - textbox: 00:03:59
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist SHKAPOV Clear Title Control Clear Begin 02:00:39 End 02:06:47 Length 00:06:08 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""23""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SHKAPOV Clear"":
+        - text: Artist
+        - textbox: SHKAPOV
+        - button ""Clear""
+        - button
+      - cell ""Title Control Clear"":
+        - text: Title
+        - textbox: Control
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:00:39"":
+        - text: Begin
+        - textbox: 02:00:39
+      - cell ""End 02:06:47"":
+        - text: End
+        - textbox: 02:06:47
+      - cell ""Length 00:06:08"":
+        - text: Length
+        - textbox: 00:06:08
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist QazaQ Clear Title On the Line Clear Begin 02:06:47 End 02:09:09 Length 00:02:22 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""24""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist QazaQ Clear"":
+        - text: Artist
+        - textbox: QazaQ
+        - button ""Clear""
+        - button
+      - cell ""Title On the Line Clear"":
+        - text: Title
+        - textbox: On the Line
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:06:47"":
+        - text: Begin
+        - textbox: 02:06:47
+      - cell ""End 02:09:09"":
+        - text: End
+        - textbox: 02:09:09
+      - cell ""Length 00:02:22"":
+        - text: Length
+        - textbox: 00:02:22
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Alex Schaufel Clear Title Elizabeth (Larsun Hesh Remix) Clear Begin 02:09:09 End 02:14:18 Length 00:05:09 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""25""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Alex Schaufel Clear"":
+        - text: Artist
+        - textbox: Alex Schaufel
+        - button ""Clear""
+        - button
+      - cell ""Title Elizabeth (Larsun Hesh Remix) Clear"":
+        - text: Title
+        - textbox: Elizabeth (Larsun Hesh Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:09:09"":
+        - text: Begin
+        - textbox: 02:09:09
+      - cell ""End 02:14:18"":
+        - text: End
+        - textbox: 02:14:18
+      - cell ""Length 00:05:09"":
+        - text: Length
+        - textbox: 00:05:09
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Oiro Clear Title Just Business Clear Begin 02:14:18 End 02:19:22 Length 00:05:04 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""26""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Oiro Clear"":
+        - text: Artist
+        - textbox: Oiro
+        - button ""Clear""
+        - button
+      - cell ""Title Just Business Clear"":
+        - text: Title
+        - textbox: Just Business
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:14:18"":
+        - text: Begin
+        - textbox: 02:14:18
+      - cell ""End 02:19:22"":
+        - text: End
+        - textbox: 02:19:22
+      - cell ""Length 00:05:04"":
+        - text: Length
+        - textbox: 00:05:04
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Molex Clear Title Mind Split (Redspace Remix) Clear Begin 02:19:22 End 02:27:48 Length 00:08:26 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""27""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Molex Clear"":
+        - text: Artist
+        - textbox: Molex
+        - button ""Clear""
+        - button
+      - cell ""Title Mind Split (Redspace Remix) Clear"":
+        - text: Title
+        - textbox: Mind Split (Redspace Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:19:22"":
+        - text: Begin
+        - textbox: 02:19:22
+      - cell ""End 02:27:48"":
+        - text: End
+        - textbox: 02:27:48
+      - cell ""Length 00:08:26"":
+        - text: Length
+        - textbox: 00:08:26
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist SOLI Clear Title Give Me Your Mind Clear Begin 02:27:48 End 02:33:48 Length 00:06:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""28""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SOLI Clear"":
+        - text: Artist
+        - textbox: SOLI
+        - button ""Clear""
+        - button
+      - cell ""Title Give Me Your Mind Clear"":
+        - text: Title
+        - textbox: Give Me Your Mind
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:27:48"":
+        - text: Begin
+        - textbox: 02:27:48
+      - cell ""End 02:33:48"":
+        - text: End
+        - textbox: 02:33:48
+      - cell ""Length 00:06:00"":
+        - text: Length
+        - textbox: 00:06:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist MANDU Clear Title Jacky Clear Begin 02:33:48 End 02:39:05 Length 00:05:17 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""29""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist MANDU Clear"":
+        - text: Artist
+        - textbox: MANDU
+        - button ""Clear""
+        - button
+      - cell ""Title Jacky Clear"":
+        - text: Title
+        - textbox: Jacky
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:33:48"":
+        - text: Begin
+        - textbox: 02:33:48
+      - cell ""End 02:39:05"":
+        - text: End
+        - textbox: 02:39:05
+      - cell ""Length 00:05:17"":
+        - text: Length
+        - textbox: 00:05:17
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist SOLI Clear Title Spacetoon Clear Begin 02:39:05 End 02:41:31 Length 00:02:26 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""30""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist SOLI Clear"":
+        - text: Artist
+        - textbox: SOLI
+        - button ""Clear""
+        - button
+      - cell ""Title Spacetoon Clear"":
+        - text: Title
+        - textbox: Spacetoon
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:39:05"":
+        - text: Begin
+        - textbox: 02:39:05
+      - cell ""End 02:41:31"":
+        - text: End
+        - textbox: 02:41:31
+      - cell ""Length 00:02:26"":
+        - text: Length
+        - textbox: 00:02:26
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sasha Fashion Clear Title Moqton Clear Begin 02:41:31 End 02:50:18 Length 00:08:47 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""31""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sasha Fashion Clear"":
+        - text: Artist
+        - textbox: Sasha Fashion
+        - button ""Clear""
+        - button
+      - cell ""Title Moqton Clear"":
+        - text: Title
+        - textbox: Moqton
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:41:31"":
+        - text: Begin
+        - textbox: 02:41:31
+      - cell ""End 02:50:18"":
+        - text: End
+        - textbox: 02:50:18
+      - cell ""Length 00:08:47"":
+        - text: Length
+        - textbox: 00:08:47
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist NAASA Clear Title Poison Clear Begin 02:50:18 End 02:56:45 Length 00:06:27 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""32""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist NAASA Clear"":
+        - text: Artist
+        - textbox: NAASA
+        - button ""Clear""
+        - button
+      - cell ""Title Poison Clear"":
+        - text: Title
+        - textbox: Poison
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:50:18"":
+        - text: Begin
+        - textbox: 02:50:18
+      - cell ""End 02:56:45"":
+        - text: End
+        - textbox: 02:56:45
+      - cell ""Length 00:06:27"":
+        - text: Length
+        - textbox: 00:06:27
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Title Nightlong Clear Begin 02:56:45 End 02:59:14 Length 00:02:29 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""33""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
+        - text: Artist
+        - textbox: Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - button ""Clear""
+        - button
+      - cell ""Title Nightlong Clear"":
+        - text: Title
+        - textbox: Nightlong
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:56:45"":
+        - text: Begin
+        - textbox: 02:56:45
+      - cell ""End 02:59:14"":
+        - text: End
+        - textbox: 02:59:14
+      - cell ""Length 00:02:29"":
+        - text: Length
+        - textbox: 00:02:29
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Skillz jay Clear Title Choir Clear Begin 02:59:14 End 03:05:49 Length 00:06:35 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""34""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Skillz jay Clear"":
+        - text: Artist
+        - textbox: Skillz jay
+        - button ""Clear""
+        - button
+      - cell ""Title Choir Clear"":
+        - text: Title
+        - textbox: Choir
+        - button ""Clear""
+        - button
+      - cell ""Begin 02:59:14"":
+        - text: Begin
+        - textbox: 02:59:14
+      - cell ""End 03:05:49"":
+        - text: End
+        - textbox: 03:05:49
+      - cell ""Length 00:06:35"":
+        - text: Length
+        - textbox: 00:06:35
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Kovax Clear Title Controller Clear Begin 03:05:49 End 03:08:31 Length 00:02:42 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""35""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Kovax Clear"":
+        - text: Artist
+        - textbox: Kovax
+        - button ""Clear""
+        - button
+      - cell ""Title Controller Clear"":
+        - text: Title
+        - textbox: Controller
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:05:49"":
+        - text: Begin
+        - textbox: 03:05:49
+      - cell ""End 03:08:31"":
+        - text: End
+        - textbox: 03:08:31
+      - cell ""Length 00:02:42"":
+        - text: Length
+        - textbox: 00:02:42
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Mumboi Clear Title Just a Beat Clear Begin 03:08:31 End 03:15:18 Length 00:06:47 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""36""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Mumboi Clear"":
+        - text: Artist
+        - textbox: Mumboi
+        - button ""Clear""
+        - button
+      - cell ""Title Just a Beat Clear"":
+        - text: Title
+        - textbox: Just a Beat
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:08:31"":
+        - text: Begin
+        - textbox: 03:08:31
+      - cell ""End 03:15:18"":
+        - text: End
+        - textbox: 03:15:18
+      - cell ""Length 00:06:47"":
+        - text: Length
+        - textbox: 00:06:47
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Eclept Clear Title Sprut Clear Begin 03:15:18 End 03:20:35 Length 00:05:17 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""37""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Eclept Clear"":
+        - text: Artist
+        - textbox: Eclept
+        - button ""Clear""
+        - button
+      - cell ""Title Sprut Clear"":
+        - text: Title
+        - textbox: Sprut
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:15:18"":
+        - text: Begin
+        - textbox: 03:15:18
+      - cell ""End 03:20:35"":
+        - text: End
+        - textbox: 03:20:35
+      - cell ""Length 00:05:17"":
+        - text: Length
+        - textbox: 00:05:17
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Rudensky Clear Title Dark Escort Clear Begin 03:20:35 End 03:25:02 Length 00:04:27 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""38""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Rudensky Clear"":
+        - text: Artist
+        - textbox: Rudensky
+        - button ""Clear""
+        - button
+      - cell ""Title Dark Escort Clear"":
+        - text: Title
+        - textbox: Dark Escort
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:20:35"":
+        - text: Begin
+        - textbox: 03:20:35
+      - cell ""End 03:25:02"":
+        - text: End
+        - textbox: 03:25:02
+      - cell ""Length 00:04:27"":
+        - text: Length
+        - textbox: 00:04:27
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Alexey Union, Kinky Sound &amp; KOCHETOV Clear Title Connected Clear Begin 03:25:02 End 03:32:30 Length 00:07:28 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""39""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Alexey Union, Kinky Sound &amp; KOCHETOV Clear"":
+        - text: Artist
+        - textbox: Alexey Union, Kinky Sound &amp; KOCHETOV
+        - button ""Clear""
+        - button
+      - cell ""Title Connected Clear"":
+        - text: Title
+        - textbox: Connected
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:25:02"":
+        - text: Begin
+        - textbox: 03:25:02
+      - cell ""End 03:32:30"":
+        - text: End
+        - textbox: 03:32:30
+      - cell ""Length 00:07:28"":
+        - text: Length
+        - textbox: 00:07:28
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist ANMA (MD) Clear Title Space Yoda (Snyl Remix) Clear Begin 03:32:30 End 03:37:53 Length 00:05:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""40""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist ANMA (MD) Clear"":
+        - text: Artist
+        - textbox: ANMA (MD)
+        - button ""Clear""
+        - button
+      - cell ""Title Space Yoda (Snyl Remix) Clear"":
+        - text: Title
+        - textbox: Space Yoda (Snyl Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:32:30"":
+        - text: Begin
+        - textbox: 03:32:30
+      - cell ""End 03:37:53"":
+        - text: End
+        - textbox: 03:37:53
+      - cell ""Length 00:05:23"":
+        - text: Length
+        - textbox: 00:05:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Inache Clear Title Andale (MONTA (TN) Remix) Clear Begin 03:37:53 End Length Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""41""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Inache Clear"":
+        - text: Artist
+        - textbox: Inache
+        - button ""Clear""
+        - button
+      - cell ""Title Andale (MONTA (TN) Remix) Clear"":
+        - text: Title
+        - textbox: Andale (MONTA (TN) Remix)
+        - button ""Clear""
+        - button
+      - cell ""Begin 03:37:53"":
+        - text: Begin
+        - textbox: 03:37:53
+      - cell ""End"":
+        - text: End
+        - textbox
+      - cell ""Length"":
+        - text: Length
+        - textbox
+      - cell ""Status"":
+        - text: Status
+        - button");
+        }
+
+        [TestMethod]
+        public async Task Open_ShouldImportProject_WhenUsingProjectfile()
+        {
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            var appBar = new AppBar(TestPage);
+            await detailView.GotoAsync();
+            await appBar.OpenFileAsync("Sample_Project.ace");
+            await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
+            await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 1 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 1 Clear"":
+        - text: Title
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:00"":
+        - text: End
+        - textbox: 00:05:00
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Sample Artist 2 Clear Title Sample Title 2 Clear Begin 00:05:00 End 00:09:23 Length 00:04:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 2 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 2 Clear"":
+        - text: Title
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:00"":
+        - text: Begin
+        - textbox: 00:05:00
+      - cell ""End 00:09:23"":
+        - text: End
+        - textbox: 00:09:23
+      - cell ""Length 00:04:23"":
+        - text: Length
+        - textbox: 00:04:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 3 Clear Title Sample Title 3 Clear Begin 00:09:23 End 00:15:54 Length 00:06:31 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 3 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 3 Clear"":
+        - text: Title
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:09:23"":
+        - text: Begin
+        - textbox: 00:09:23
+      - cell ""End 00:15:54"":
+        - text: End
+        - textbox: 00:15:54
+      - cell ""Length 00:06:31"":
+        - text: Length
+        - textbox: 00:06:31
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 4 Clear Title Sample Title 4 Clear Begin 00:15:54 End 00:20:13 Length 00:04:19 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 4 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 4 Clear"":
+        - text: Title
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:15:54"":
+        - text: Begin
+        - textbox: 00:15:54
+      - cell ""End 00:20:13"":
+        - text: End
+        - textbox: 00:20:13
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 5 Clear Title Sample Title 5 Clear Begin 00:20:13 End 00:24:54 Length 00:04:41 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 5 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 5 Clear"":
+        - text: Title
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:20:13"":
+        - text: Begin
+        - textbox: 00:20:13
+      - cell ""End 00:24:54"":
+        - text: End
+        - textbox: 00:24:54
+      - cell ""Length 00:04:41"":
+        - text: Length
+        - textbox: 00:04:41
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 6 Clear Title Sample Title 6 Clear Begin 00:24:54 End 00:31:54 Length 00:07:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 6 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 6 Clear"":
+        - text: Title
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:54"":
+        - text: Begin
+        - textbox: 00:24:54
+      - cell ""End 00:31:54"":
+        - text: End
+        - textbox: 00:31:54
+      - cell ""Length 00:07:00"":
+        - text: Length
+        - textbox: 00:07:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 7 Clear Title Sample Title 7 Clear Begin 00:31:54 End 00:45:54 Length 00:14:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 7 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 7 Clear"":
+        - text: Title
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:31:54"":
+        - text: Begin
+        - textbox: 00:31:54
+      - cell ""End 00:45:54"":
+        - text: End
+        - textbox: 00:45:54
+      - cell ""Length 00:14:00"":
+        - text: Length
+        - textbox: 00:14:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End Length Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 8 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 8 Clear"":
+        - text: Title
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:45:54"":
+        - text: Begin
+        - textbox: 00:45:54
+      - cell ""End"":
+        - text: End
+        - textbox
+      - cell ""Length"":
+        - text: Length
+        - textbox
+      - cell ""Status"":
+        - text: Status
+        - button");
+            await appBar.UndoAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task Open_ShouldImportCuesheet_WhenUsingCuesheetfile()
+        {
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            var appBar = new AppBar(TestPage);
+            await detailView.GotoAsync();
+            await appBar.OpenFileAsync("Sample_Cuesheet.cue");
+            await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
+            await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 1 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 1 Clear"":
+        - text: Title
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:00"":
+        - text: End
+        - textbox: 00:05:00
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Sample Artist 2 Clear Title Sample Title 2 Clear Begin 00:05:00 End 00:09:23 Length 00:04:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 2 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 2 Clear"":
+        - text: Title
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:00"":
+        - text: Begin
+        - textbox: 00:05:00
+      - cell ""End 00:09:23"":
+        - text: End
+        - textbox: 00:09:23
+      - cell ""Length 00:04:23"":
+        - text: Length
+        - textbox: 00:04:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 3 Clear Title Sample Title 3 Clear Begin 00:09:23 End 00:15:54 Length 00:06:31 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 3 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 3 Clear"":
+        - text: Title
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:09:23"":
+        - text: Begin
+        - textbox: 00:09:23
+      - cell ""End 00:15:54"":
+        - text: End
+        - textbox: 00:15:54
+      - cell ""Length 00:06:31"":
+        - text: Length
+        - textbox: 00:06:31
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 4 Clear Title Sample Title 4 Clear Begin 00:15:54 End 00:20:13 Length 00:04:19 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 4 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 4 Clear"":
+        - text: Title
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:15:54"":
+        - text: Begin
+        - textbox: 00:15:54
+      - cell ""End 00:20:13"":
+        - text: End
+        - textbox: 00:20:13
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 5 Clear Title Sample Title 5 Clear Begin 00:20:13 End 00:24:54 Length 00:04:41 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 5 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 5 Clear"":
+        - text: Title
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:20:13"":
+        - text: Begin
+        - textbox: 00:20:13
+      - cell ""End 00:24:54"":
+        - text: End
+        - textbox: 00:24:54
+      - cell ""Length 00:04:41"":
+        - text: Length
+        - textbox: 00:04:41
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 6 Clear Title Sample Title 6 Clear Begin 00:24:54 End 00:31:54 Length 00:07:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 6 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 6 Clear"":
+        - text: Title
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:54"":
+        - text: Begin
+        - textbox: 00:24:54
+      - cell ""End 00:31:54"":
+        - text: End
+        - textbox: 00:31:54
+      - cell ""Length 00:07:00"":
+        - text: Length
+        - textbox: 00:07:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 7 Clear Title Sample Title 7 Clear Begin 00:31:54 End 00:45:54 Length 00:14:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 7 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 7 Clear"":
+        - text: Title
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:31:54"":
+        - text: Begin
+        - textbox: 00:31:54
+      - cell ""End 00:45:54"":
+        - text: End
+        - textbox: 00:45:54
+      - cell ""Length 00:14:00"":
+        - text: Length
+        - textbox: 00:14:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End Length Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 8 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 8 Clear"":
+        - text: Title
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:45:54"":
+        - text: Begin
+        - textbox: 00:45:54
+      - cell ""End"":
+        - text: End
+        - textbox
+      - cell ""Length"":
+        - text: Length
+        - textbox
+      - cell ""Status"":
+        - text: Status
+        - button");
+            await appBar.UndoAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+        }
+    }
+}

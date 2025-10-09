@@ -28,27 +28,33 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
 
-@if (CurrentViewMode == ViewMode.DetailView)
+@switch (CurrentViewMode)
 {
-    var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
-    if (validationResult?.Status == ValidationStatus.Error)
-    {
-        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-            <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
-            @foreach (var message in validationResult.ValidationMessages)
-            {
-                <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
-            }
-        </MudAlert>
-    }
-    <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0" 
-                             DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
-                             DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                             MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
-                             MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
-                             CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                             FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
+    case ViewMode.DetailView:
+    case ViewMode.ImportView:
+        var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
+        if (validationResult?.Status == ValidationStatus.Error)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
+                @foreach (var message in validationResult.ValidationMessages)
+                {
+                    <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
+                }
+            </MudAlert>
+        }
+        <div aria-label="@_localizer["Track table controls"]">
+            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0"
+                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
+                                     MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
+                                     MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
+                                     CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                                     FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
+        </div>
+        break;
 }
+
 <MudForm @ref="form">
     <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
                  EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 

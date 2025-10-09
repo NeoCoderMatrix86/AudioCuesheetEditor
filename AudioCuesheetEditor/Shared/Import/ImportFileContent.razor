@@ -49,6 +49,10 @@ along with Foobar.  If not, see
     string SanitizeHTML(string input)
     {
         var sanitizer = new HtmlSanitizer();
-        return sanitizer.Sanitize(input);
+        var sanitized = sanitizer.Sanitize(input);
+        //We use hardcoded new lines here because the file could be from another system
+        var lines = sanitized.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                             .Where(line => !string.IsNullOrWhiteSpace(line));
+        return string.Join(Environment.NewLine, lines);
     }
 }
