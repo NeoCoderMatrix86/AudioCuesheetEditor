@@ -26,12 +26,12 @@ along with Foobar.  If not, see
         <MudIconButton Color="Color.Secondary" Variant="Variant.Filled" OnClick="EditSelectedTracksClicked" Icon="@Icons.Material.Outlined.Edit" Disabled="EditSelectedTracksDisabled" aria-label="@_localizer["Edit selected tracks"]" />
     </MudTooltip>
     <MudHidden Breakpoint="Breakpoint.Xs">
-        <MudTooltip Text="@_localizer["Copy selected tracks"]">
+        <MudTooltip Text="@_localizer["Copy selected track"]">
             <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
-                <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" StartIcon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]">@_localizer["Copy selected track"]</MudButton>
+                <MudButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" StartIcon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected track"]">@_localizer["Copy selected track"]</MudButton>
             </MudHidden>
             <MudHidden Breakpoint="Breakpoint.LgAndUp">
-                <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]" />
+                <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected track"]" />
             </MudHidden>
         </MudTooltip>
         <MudTooltip Text="@_localizer["Delete selected tracks"]">
@@ -45,7 +45,7 @@ along with Foobar.  If not, see
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.Xs" Invert>
         <MudMenu Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Filled.ArrowDropDown" Disabled="CopySelectedTracksDisabled && DeleteSelectedTracksDisabled">
-            <MudMenuItem IconColor="Color.Tertiary" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected tracks"]">@_localizer["Copy selected tracks"]</MudMenuItem>
+            <MudMenuItem IconColor="Color.Tertiary" OnClick="CopySelectedTracksClicked" Icon="@Icons.Material.Outlined.CopyAll" Disabled="CopySelectedTracksDisabled" aria-label="@_localizer["Copy selected track"]">@_localizer["Copy selected track"]</MudMenuItem>
             <MudMenuItem IconColor="Color.Warning" OnClick="DeleteSelectedTracksClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="DeleteSelectedTracksDisabled" aria-label="@_localizer["Delete selected tracks"]">@_localizer["Delete selected tracks"]</MudMenuItem>
         </MudMenu>
     </MudHidden>
