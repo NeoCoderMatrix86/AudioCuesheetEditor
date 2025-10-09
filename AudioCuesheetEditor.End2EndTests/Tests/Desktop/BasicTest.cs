@@ -95,7 +95,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(TestPage.GetByLabel("Track table controls")).ToMatchAriaSnapshotAsync(@"- group:
   - button ""Neuen Titel hinzufügen""
   - button ""Ausgewählte Titel bearbeiten""
-  - button ""Copy selected tracks"": Ausgewählten Titel kopieren
+  - button ""Ausgewählten Titel kopieren""
   - button ""Ausgewählte Titel löschen""
   - button ""Alle Titel löschen""
 - group:
