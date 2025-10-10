@@ -207,8 +207,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(ImportFileType.Textfile, sessionStateContainer.Importfile.FileType);
         }
 
-        //TODO: Add test for checking if tracks are linked default
-
         private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
         {
             var fileMock = new Mock<IBrowserFile>();
