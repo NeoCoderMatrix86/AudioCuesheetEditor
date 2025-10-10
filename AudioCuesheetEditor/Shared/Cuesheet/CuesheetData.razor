@@ -164,6 +164,7 @@ along with Foobar.  If not, see
 
     async Task DownloadAudio()
     {
+        //TODO: Do NOT load the whole content into memory
         var contentStream = Cuesheet?.Audiofile?.ContentStream;
         if (contentStream != null)
         {

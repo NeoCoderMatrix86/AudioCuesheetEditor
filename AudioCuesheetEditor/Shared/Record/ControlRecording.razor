@@ -155,13 +155,4 @@ along with Foobar.  If not, see
             recordTimerStarted = DateTime.Now;
         }
     }
-
-    void DownloadAudio() 
-    {
-        var audioFile = Cuesheet?.Audiofile;
-        if (audioFile != null)
-        {
-            _blazorDownloadFileService.DownloadFile(audioFile.Name, audioFile.ContentStream, audioFile.AudioCodec?.MimeType);
-        }
-    }
 }
