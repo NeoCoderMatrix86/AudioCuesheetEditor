@@ -149,10 +149,10 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             cuesheet.AddTrack(new Track());
             Assert.IsTrue(manager.CanUndo);
             manager.Undo();
-            Assert.AreEqual(0, cuesheet.Tracks.Count);
+            Assert.IsEmpty(cuesheet.Tracks);
             Assert.IsTrue(manager.CanRedo);
             manager.Redo();
-            Assert.AreEqual(1, cuesheet.Tracks.Count);
+            Assert.HasCount(1, cuesheet.Tracks);
             Assert.IsFalse(manager.CanRedo);
         }
 
@@ -202,8 +202,8 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             cuesheet.RemoveTracks(tracksToRemove);
             Assert.IsTrue(manager.CanUndo);
             manager.Undo();
-            Assert.AreEqual(4, cuesheet.Tracks.Count);
-            //We need to set object references back to cuesheet tracks since TraceChangeManager creates new objects
+            Assert.HasCount(4, cuesheet.Tracks);
+            //We need to set object references back to cue sheet tracks since TraceChangeManager creates new objects
             track1 = cuesheet.Tracks.ElementAt(0);
             track2 = cuesheet.Tracks.ElementAt(1);
             track3 = cuesheet.Tracks.ElementAt(2);
