@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// </summary>
         String? FileContent { get; set; }
         /// <summary>
-        /// File content with marking which passages has been reconized by scheme
+        /// File content with marking which passages has been recognized by scheme
         /// </summary>
         String? FileContentRecognized { get; set; }
         /// <summary>
@@ -33,9 +33,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// </summary>
         Exception? AnalyseException { get; set; }
         /// <summary>
-        /// The cuesheet which was created during analysing the <see cref="FileContent"/>
+        /// The cue sheet which was created during analyzing the <see cref="FileContent"/>
         /// </summary>
-        ImportCuesheet? AnalysedCuesheet { get; set; }
+        ImportCuesheet? AnalyzedCuesheet { get; set; }
         ImportFileType FileType { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 FileContent = fileContent,
                 FileContentRecognized = fileContent,
-                AnalysedCuesheet = new ImportCuesheet(),
+                AnalyzedCuesheet = new ImportCuesheet(),
                 FileType = ImportFileType.Textfile
             };
             try
@@ -51,7 +51,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 importfile.FileContentRecognized = fileContent;
                 importfile.AnalyseException = ex;
-                importfile.AnalysedCuesheet = null;
+                importfile.AnalyzedCuesheet = null;
             }
             return importfile;
         }
@@ -96,7 +96,7 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (string.IsNullOrWhiteSpace(importprofile.SchemeCuesheet) == false)
             {
-                var cuesheet = importfile.AnalysedCuesheet;
+                var cuesheet = importfile.AnalyzedCuesheet;
                 Regex regex;
                 if (importprofile.UseRegularExpression == true)
                 {
@@ -149,7 +149,7 @@ namespace AudioCuesheetEditor.Services.IO
                     regex = CreateTrackRegexPattern(importprofile.SchemeTracks);
                 }
 
-                var cuesheet = importfile.AnalysedCuesheet;
+                var cuesheet = importfile.AnalyzedCuesheet;
                 importfile.FileContentRecognized ??= fileContent;
                 if (importprofile.UseRegularExpression)
                 {

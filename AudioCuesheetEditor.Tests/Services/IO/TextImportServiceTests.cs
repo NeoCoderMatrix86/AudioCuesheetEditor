@@ -58,14 +58,14 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\Testfile.mp3", importfile.AnalysedCuesheet.Audiofile);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("c:\\tmp\\Testfile.mp3", importfile.AnalyzedCuesheet.Audiofile);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).End);
         }
 
         [TestMethod()]
@@ -130,15 +130,15 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalysedCuesheet.CDTextfile);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual((uint)6, importfile.AnalysedCuesheet.Tracks.ElementAt(5).Position);
-            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalyzedCuesheet.CDTextfile);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual((uint)6, importfile.AnalyzedCuesheet.Tracks.ElementAt(5).Position);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).End);
         }
         
         [TestMethod()]
@@ -170,15 +170,15 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalysedCuesheet.CDTextfile);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual((uint)6, importfile.AnalysedCuesheet.Tracks.ElementAt(5).Position);
-            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalyzedCuesheet.CDTextfile);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual((uint)6, importfile.AnalyzedCuesheet.Tracks.ElementAt(5).Position);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).End);
         }
 
         [TestMethod()]
@@ -261,16 +261,16 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalysedCuesheet.CDTextfile);
-            Assert.AreEqual("A83412346734", importfile.AnalysedCuesheet.Cataloguenumber);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual((uint)6, importfile.AnalysedCuesheet.Tracks.ElementAt(5).Position);
-            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("c:\\tmp\\TestTextFile.cdt", importfile.AnalyzedCuesheet.CDTextfile);
+            Assert.AreEqual("A83412346734", importfile.AnalyzedCuesheet.Cataloguenumber);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual((uint)6, importfile.AnalyzedCuesheet.Tracks.ElementAt(5).Position);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).End);
         }
 
         [TestMethod()]
@@ -301,11 +301,11 @@ Sample Artist 9 - Sample Title 9				";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual(9, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new TimeSpan(1, 15, 54), importfile.AnalysedCuesheet.Tracks.ElementAt(7).End);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual(9, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(1, 15, 54), importfile.AnalyzedCuesheet.Tracks.ElementAt(7).End);
         }
 
         [TestMethod()]
@@ -331,9 +331,9 @@ Sample Artist 9 - Sample Title 9				";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual(4, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual(new TimeSpan(2, 3, 23), importfile.AnalysedCuesheet.Tracks.ElementAt(3).End);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual(4, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(2, 3, 23), importfile.AnalyzedCuesheet.Tracks.ElementAt(3).End);
         }
 
         [TestMethod()]
@@ -364,19 +364,19 @@ Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(0).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(2).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(2).Flags.Contains(Flag.PRE));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(5).Flags.Contains(Flag.FourCH));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(5).Flags.Contains(Flag.PRE));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(5).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.PRE));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.FourCH));
-            Assert.IsTrue(importfile.AnalysedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.SCMS));
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Flags.Contains(Flag.DCP));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(2).Flags.Contains(Flag.DCP));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(2).Flags.Contains(Flag.PRE));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(5).Flags.Contains(Flag.FourCH));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(5).Flags.Contains(Flag.PRE));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(5).Flags.Contains(Flag.DCP));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.DCP));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.PRE));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.FourCH));
+            Assert.IsTrue(importfile.AnalyzedCuesheet.Tracks.ElementAt(7).Flags.Contains(Flag.SCMS));
         }
 
         [TestMethod()]
@@ -407,24 +407,24 @@ Sample Artist 8 - Sample Title 8		00:00:02		01:15:54		00:00:00";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual(new TimeSpan(0, 0, 2), importfile.AnalysedCuesheet.Tracks.ElementAt(0).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 4), importfile.AnalysedCuesheet.Tracks.ElementAt(1).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(1).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(2).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 2), importfile.AnalysedCuesheet.Tracks.ElementAt(2).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(3).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 3), importfile.AnalysedCuesheet.Tracks.ElementAt(3).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(4).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 4), importfile.AnalysedCuesheet.Tracks.ElementAt(4).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(5).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 1), importfile.AnalysedCuesheet.Tracks.ElementAt(5).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(6).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(6).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 2), importfile.AnalysedCuesheet.Tracks.ElementAt(7).PreGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(7).PostGap);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual(new TimeSpan(0, 0, 2), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 4), importfile.AnalyzedCuesheet.Tracks.ElementAt(1).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(1).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(2).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 2), importfile.AnalyzedCuesheet.Tracks.ElementAt(2).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(3).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 3), importfile.AnalyzedCuesheet.Tracks.ElementAt(3).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(4).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 4), importfile.AnalyzedCuesheet.Tracks.ElementAt(4).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(5).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 1), importfile.AnalyzedCuesheet.Tracks.ElementAt(5).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(6).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(6).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 2), importfile.AnalyzedCuesheet.Tracks.ElementAt(7).PreGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(7).PostGap);
         }
 
         [TestMethod()]
@@ -455,17 +455,17 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
             Assert.IsNotNull(importfile.FileContentRecognized);
             var lines = importfile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format("{0} - {1}				{2}",
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"),
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), lines.First());
-            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("c:\\tmp\\Testfile.mp3", importfile.AnalysedCuesheet.Audiofile);
-            Assert.AreEqual(0, importfile.AnalysedCuesheet.Tracks.Count);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("c:\\tmp\\Testfile.mp3", importfile.AnalyzedCuesheet.Audiofile);
+            Assert.AreEqual(0, importfile.AnalyzedCuesheet.Tracks.Count);
             Assert.AreEqual("Sample Artist 1 - Sample Title 1				00:05:00", lines.ElementAt(1));
             Assert.AreEqual("Sample Artist 2 - Sample Title 2				00:09:23", lines.ElementAt(2));
             Assert.AreEqual("Sample Artist 3 - Sample Title 3				00:15:54", lines.ElementAt(3));
@@ -500,12 +500,12 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
             Assert.IsNotNull(importfile.FileContentRecognized);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual("Sample Artist 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("Sample Title 1", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalysedCuesheet.Tracks.ElementAt(0).End);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).End);
             var lines = importfile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format("{0} - {1}				{2}",
                 string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"),
@@ -535,7 +535,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
             Assert.IsNotNull(importfile.FileContentRecognized);
             var lines = importfile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
@@ -568,16 +568,16 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             // Assert
             Assert.AreEqual(fileContent, importfile.FileContent);
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.IsNull(importfile.AnalysedCuesheet.Artist);
-            Assert.IsNull(importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual(41, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual("Nachap", importfile.AnalysedCuesheet.Tracks.First().Artist);
-            Assert.AreEqual("Glass", importfile.AnalysedCuesheet.Tracks.First().Title);
-            Assert.AreEqual(new DateTime(2025, 1, 29, 18, 52, 10), importfile.AnalysedCuesheet.Tracks.First().StartDateTime);
-            Assert.AreEqual("Inache", importfile.AnalysedCuesheet.Tracks.Last().Artist);
-            Assert.AreEqual("Andale (MONTA (TN) Remix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
-            Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importfile.AnalysedCuesheet.Tracks.Last().StartDateTime);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.IsNull(importfile.AnalyzedCuesheet.Artist);
+            Assert.IsNull(importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual(41, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual("Nachap", importfile.AnalyzedCuesheet.Tracks.First().Artist);
+            Assert.AreEqual("Glass", importfile.AnalyzedCuesheet.Tracks.First().Title);
+            Assert.AreEqual(new DateTime(2025, 1, 29, 18, 52, 10), importfile.AnalyzedCuesheet.Tracks.First().StartDateTime);
+            Assert.AreEqual("Inache", importfile.AnalyzedCuesheet.Tracks.Last().Artist);
+            Assert.AreEqual("Andale (MONTA (TN) Remix)", importfile.AnalyzedCuesheet.Tracks.Last().Title);
+            Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importfile.AnalyzedCuesheet.Tracks.Last().StartDateTime);
             Assert.IsNotNull(importfile.FileContentRecognized);
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Sasha Fashion")));
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "2025/1/29 21:48:55")));
@@ -607,16 +607,16 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual("DJFreezeT", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("Rabbit Hole Mix", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("0123456789123", importfile.AnalysedCuesheet.Cataloguenumber);
-            Assert.AreEqual("Adriatique", importfile.AnalysedCuesheet.Tracks.First().Artist);
-            Assert.AreEqual("X.", importfile.AnalysedCuesheet.Tracks.First().Title);
-            Assert.AreEqual(new TimeSpan(0, 0, 5, 24, 250), importfile.AnalysedCuesheet.Tracks.First().Begin);
-            Assert.AreEqual("Nikolay Kirov", importfile.AnalysedCuesheet.Tracks.Last().Artist);
-            Assert.AreEqual("Chasing the Sun (Original Mix)", importfile.AnalysedCuesheet.Tracks.Last().Title);
-            Assert.IsNull(importfile.AnalysedCuesheet.Tracks.Last().Begin);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual("DJFreezeT", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("Rabbit Hole Mix", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("0123456789123", importfile.AnalyzedCuesheet.Cataloguenumber);
+            Assert.AreEqual("Adriatique", importfile.AnalyzedCuesheet.Tracks.First().Artist);
+            Assert.AreEqual("X.", importfile.AnalyzedCuesheet.Tracks.First().Title);
+            Assert.AreEqual(new TimeSpan(0, 0, 5, 24, 250), importfile.AnalyzedCuesheet.Tracks.First().Begin);
+            Assert.AreEqual("Nikolay Kirov", importfile.AnalyzedCuesheet.Tracks.Last().Artist);
+            Assert.AreEqual("Chasing the Sun (Original Mix)", importfile.AnalyzedCuesheet.Tracks.Last().Title);
+            Assert.IsNull(importfile.AnalyzedCuesheet.Tracks.Last().Begin);
             Assert.IsNotNull(importfile.FileContentRecognized);
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "DJFreezeT")));
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Rabbit Hole Mix")));
@@ -678,17 +678,17 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual(30, importfile.AnalysedCuesheet.Tracks.Count);
-            Assert.AreEqual("Innellea", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Artist);
-            Assert.AreEqual("The Golden Fort", importfile.AnalysedCuesheet.Tracks.ElementAt(0).Title);
-            Assert.AreEqual(new DateTime(2024, 8, 14, 20, 10, 48), importfile.AnalysedCuesheet.Tracks.ElementAt(0).StartDateTime);
-            Assert.AreEqual("Nora En Pure", importfile.AnalysedCuesheet.Tracks.ElementAt(1).Artist);
-            Assert.AreEqual("Diving with Whales (Daniel Portman Remix)", importfile.AnalysedCuesheet.Tracks.ElementAt(1).Title);
-            Assert.AreEqual(new DateTime(2024, 8, 14, 20, 15, 21), importfile.AnalysedCuesheet.Tracks.ElementAt(1).StartDateTime);
-            Assert.AreEqual("Local Singles", importfile.AnalysedCuesheet.Tracks.ElementAt(29).Artist);
-            Assert.AreEqual("Voices", importfile.AnalysedCuesheet.Tracks.ElementAt(29).Title);
-            Assert.AreEqual(new DateTime(2024, 8, 14, 22, 25, 59), importfile.AnalysedCuesheet.Tracks.ElementAt(29).StartDateTime);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual(30, importfile.AnalyzedCuesheet.Tracks.Count);
+            Assert.AreEqual("Innellea", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Artist);
+            Assert.AreEqual("The Golden Fort", importfile.AnalyzedCuesheet.Tracks.ElementAt(0).Title);
+            Assert.AreEqual(new DateTime(2024, 8, 14, 20, 10, 48), importfile.AnalyzedCuesheet.Tracks.ElementAt(0).StartDateTime);
+            Assert.AreEqual("Nora En Pure", importfile.AnalyzedCuesheet.Tracks.ElementAt(1).Artist);
+            Assert.AreEqual("Diving with Whales (Daniel Portman Remix)", importfile.AnalyzedCuesheet.Tracks.ElementAt(1).Title);
+            Assert.AreEqual(new DateTime(2024, 8, 14, 20, 15, 21), importfile.AnalyzedCuesheet.Tracks.ElementAt(1).StartDateTime);
+            Assert.AreEqual("Local Singles", importfile.AnalyzedCuesheet.Tracks.ElementAt(29).Artist);
+            Assert.AreEqual("Voices", importfile.AnalyzedCuesheet.Tracks.ElementAt(29).Title);
+            Assert.AreEqual(new DateTime(2024, 8, 14, 22, 25, 59), importfile.AnalyzedCuesheet.Tracks.ElementAt(29).StartDateTime);
         }
 
         [TestMethod()]
@@ -715,11 +715,11 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
             var importfile = await service.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importfile.AnalyseException);
-            Assert.IsNotNull(importfile.AnalysedCuesheet);
-            Assert.AreEqual("CuesheetArtist", importfile.AnalysedCuesheet.Artist);
-            Assert.AreEqual("CuesheetTitle", importfile.AnalysedCuesheet.Title);
-            Assert.AreEqual("c:\\AudioFile.mp3", importfile.AnalysedCuesheet.Audiofile);
-            Assert.AreEqual(8, importfile.AnalysedCuesheet.Tracks.Count);
+            Assert.IsNotNull(importfile.AnalyzedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importfile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importfile.AnalyzedCuesheet.Title);
+            Assert.AreEqual("c:\\AudioFile.mp3", importfile.AnalyzedCuesheet.Audiofile);
+            Assert.AreEqual(8, importfile.AnalyzedCuesheet.Tracks.Count);
             Assert.IsNotNull(importfile.FileContentRecognized);
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist")));
             Assert.IsTrue(importfile.FileContentRecognized.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle")));

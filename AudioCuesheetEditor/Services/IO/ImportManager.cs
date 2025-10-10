@@ -108,18 +108,18 @@ namespace AudioCuesheetEditor.Services.IO
                         break;
                 }
             }
-            if (_sessionStateContainer.Importfile?.AnalysedCuesheet != null)
+            if (_sessionStateContainer.Importfile?.AnalyzedCuesheet != null)
             {
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
                     case ImportFileType.Textfile:
                         var importCuesheet = new Cuesheet();
-                        CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                        CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
                         break;
                     case ImportFileType.Cuesheet:
                         _traceChangeManager.BulkEdit = true;
-                        CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalysedCuesheet);
+                        CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _traceChangeManager.BulkEdit = false;
                         break;
                 }
