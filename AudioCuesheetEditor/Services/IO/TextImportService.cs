@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Services.IO
 
         public async Task<IImportfile> AnalyseAsync(string fileContent)
         {
-            Importfile importfile = new()
+            Importfile importFile = new()
             {
                 FileContent = fileContent,
                 FileContentRecognized = fileContent,
@@ -43,17 +43,17 @@ namespace AudioCuesheetEditor.Services.IO
             try
             {
                 var options = await _localStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
-                var importprofile = options.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
-                SearchForCuesheetData(ref importfile, fileContent, importprofile);
-                SearchForTrackData(ref importfile, fileContent, importprofile);
+                var importProfile = options.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
+                SearchForCuesheetData(ref importFile, fileContent, importProfile);
+                SearchForTrackData(ref importFile, fileContent, importProfile);
             }
             catch (Exception ex)
             {
-                importfile.FileContentRecognized = fileContent;
-                importfile.AnalyseException = ex;
-                importfile.AnalyzedCuesheet = null;
+                importFile.FileContentRecognized = fileContent;
+                importFile.AnalyseException = ex;
+                importFile.AnalyzedCuesheet = null;
             }
-            return importfile;
+            return importFile;
         }
 
         private static string ApplyRegexAndMarkGroups(object entity, Regex regex, string input, TimeSpanFormat? timeSpanFormat)
@@ -92,24 +92,24 @@ namespace AudioCuesheetEditor.Services.IO
             });
         }
 
-        private static void SearchForCuesheetData(ref Importfile importfile, string fileContent, Importprofile importprofile)
+        private static void SearchForCuesheetData(ref Importfile importFile, string fileContent, Importprofile importProfile)
         {
-            if (string.IsNullOrWhiteSpace(importprofile.SchemeCuesheet) == false)
+            if (string.IsNullOrWhiteSpace(importProfile.SchemeCuesheet) == false)
             {
-                var cuesheet = importfile.AnalyzedCuesheet;
+                var cuesheet = importFile.AnalyzedCuesheet;
                 Regex regex;
-                if (importprofile.UseRegularExpression == true)
+                if (importProfile.UseRegularExpression == true)
                 {
-                    regex = new Regex(importprofile.SchemeCuesheet, RegexOptions.Multiline);
+                    regex = new Regex(importProfile.SchemeCuesheet, RegexOptions.Multiline);
                 }
                 else
                 {
-                    regex = CreateCuesheetRegexPattern(importprofile.SchemeCuesheet);
+                    regex = CreateCuesheetRegexPattern(importProfile.SchemeCuesheet);
                 }
 
-                if (importprofile.UseRegularExpression)
+                if (importProfile.UseRegularExpression)
                 {
-                    importfile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importprofile.TimeSpanFormat);
+                    importFile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importProfile.TimeSpanFormat);
                 }
                 else
                 {
@@ -119,46 +119,44 @@ namespace AudioCuesheetEditor.Services.IO
                         string? line;
                         while ((line = reader.ReadLine()) != null)
                         {
-                            var markedLine = ApplyRegexAndMarkGroups(cuesheet!, regex, line, importprofile.TimeSpanFormat);
+                            var markedLine = ApplyRegexAndMarkGroups(cuesheet!, regex, line, importProfile.TimeSpanFormat);
                             sb.AppendLine(markedLine);
                             if (!string.Equals(markedLine, line))
                             {
-                                //We found the first occurence, break the loop
+                                //We found the first occurrence, break the loop
                                 //Attach the rest of the file to FileContentRecognized
                                 sb.Append(reader.ReadToEnd());
                                 break;
                             }
                         }
                     }
-                    importfile.FileContentRecognized = sb.ToString();
+                    importFile.FileContentRecognized = sb.ToString();
                 }
             }
         }
 
-        private static void SearchForTrackData(ref Importfile importfile, string fileContent, Importprofile importprofile)
+        private static void SearchForTrackData(ref Importfile importFile, string fileContent, Importprofile importProfile)
         {
-            if (string.IsNullOrWhiteSpace(importprofile.SchemeTracks) == false)
+            if (string.IsNullOrWhiteSpace(importProfile.SchemeTracks) == false)
             {
                 Regex regex;
-                if (importprofile.UseRegularExpression == true)
+                if (importProfile.UseRegularExpression == true)
                 {
-                    regex = new Regex(importprofile.SchemeTracks, RegexOptions.Multiline);
+                    regex = new Regex(importProfile.SchemeTracks, RegexOptions.Multiline);
                 }
                 else
                 {
-                    regex = CreateTrackRegexPattern(importprofile.SchemeTracks);
+                    regex = CreateTrackRegexPattern(importProfile.SchemeTracks);
                 }
-
-                var cuesheet = importfile.AnalyzedCuesheet;
-                importfile.FileContentRecognized ??= fileContent;
-                if (importprofile.UseRegularExpression)
+                var cuesheet = importFile.AnalyzedCuesheet;
+                importFile.FileContentRecognized ??= fileContent;
+                if (importProfile.UseRegularExpression)
                 {
-                    
-                    importfile.FileContentRecognized = regex.Replace(importfile.FileContentRecognized,
+                    importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
                             var track = new ImportTrack();
-                            string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importprofile.TimeSpanFormat);
+                            string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
                             cuesheet!.Tracks.Add(track);
                             return marked;
                         }
@@ -167,7 +165,7 @@ namespace AudioCuesheetEditor.Services.IO
                 else
                 {
                     var sb = new StringBuilder();
-                    using (var reader = new StringReader(importfile.FileContentRecognized))
+                    using (var reader = new StringReader(importFile.FileContentRecognized))
                     {
                         string? line;
                         while ((line = reader.ReadLine()) != null)
@@ -176,7 +174,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
                             {
                                 var track = new ImportTrack();
-                                var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importprofile.TimeSpanFormat);
+                                var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importProfile.TimeSpanFormat);
                                 if (!string.Equals(markedLine, line))
                                 {
                                     cuesheet!.Tracks.Add(track);
@@ -189,7 +187,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    importfile.FileContentRecognized = sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                    importFile.FileContentRecognized = sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
                 }
             }
         }
