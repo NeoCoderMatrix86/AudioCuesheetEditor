@@ -42,10 +42,11 @@ namespace AudioCuesheetEditor.Services.IO
             };
             try
             {
-                var options = await _localStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
-                var importProfile = options.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
+                var importOptions = await _localStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
+                var applicationOptions = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+                var importProfile = importOptions.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
                 SearchForCuesheetData(ref importFile, fileContent, importProfile);
-                SearchForTrackData(ref importFile, fileContent, importProfile);
+                SearchForTrackData(ref importFile, fileContent, importProfile, applicationOptions.DefaultIsLinkedToPreviousTrack);
             }
             catch (Exception ex)
             {
@@ -135,7 +136,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private static void SearchForTrackData(ref Importfile importFile, string fileContent, Importprofile importProfile)
+        private static void SearchForTrackData(ref Importfile importFile, string fileContent, Importprofile importProfile, bool defaultIsLinkedToPreviousTrack)
         {
             if (string.IsNullOrWhiteSpace(importProfile.SchemeTracks) == false)
             {
@@ -155,7 +156,7 @@ namespace AudioCuesheetEditor.Services.IO
                     importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
-                            var track = new ImportTrack();
+                            var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
                             string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
                             cuesheet!.Tracks.Add(track);
                             return marked;
@@ -173,7 +174,7 @@ namespace AudioCuesheetEditor.Services.IO
                             // Check if this line is already analyzed
                             if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
                             {
-                                var track = new ImportTrack();
+                                var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
                                 var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importProfile.TimeSpanFormat);
                                 if (!string.Equals(markedLine, line))
                                 {

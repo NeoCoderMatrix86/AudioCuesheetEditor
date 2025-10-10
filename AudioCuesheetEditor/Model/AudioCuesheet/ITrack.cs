@@ -26,5 +26,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         IEnumerable<Flag> Flags { get; set; }
         TimeSpan? PreGap { get; set; }
         TimeSpan? PostGap { get; set; }
+        bool IsLinkedToPreviousTrack { get; set; }
     }
 }
