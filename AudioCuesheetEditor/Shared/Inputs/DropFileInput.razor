@@ -25,10 +25,18 @@ along with Foobar.  If not, see
     <ActivatorContent>
         <MudPaper Height="300px" Outlined Class="@dragClass">
             <MudStack AlignItems="AlignItems.Center">
-                <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Style="font-size: 8rem;" />
-                <MudText Typo="Typo.h4" Align="Align.Center">
-                    @_localizer["Drag and drop files here or click to choose files"]
-                </MudText>
+                <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                    <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Style="font-size: 8rem;" />
+                    <MudText Typo="Typo.h4" Align="Align.Center">
+                        @_localizer["Drag and drop files here or click to choose files"]
+                    </MudText>
+                </MudHidden>
+                <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert>
+                    <MudIcon Icon="@Icons.Material.Outlined.FileUpload" Style="font-size: 4rem;" />
+                    <MudText Typo="Typo.h6" Align="Align.Center">
+                        @_localizer["Drag and drop files here or click to choose files"]
+                    </MudText>
+                </MudHidden>
             </MudStack>
         </MudPaper>
     </ActivatorContent>
