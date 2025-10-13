@@ -23,7 +23,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// <inheritdoc />
         public Exception? AnalyseException { get; set; }
         /// <inheritdoc />
-        public ImportCuesheet? AnalysedCuesheet { get; set; }
+        public ImportCuesheet? AnalyzedCuesheet { get; set; }
         public ImportFileType FileType { get; set; }
         /// <inheritdoc />
         public string? FileContentRecognized { get; set; }
