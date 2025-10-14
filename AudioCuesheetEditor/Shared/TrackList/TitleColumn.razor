@@ -24,13 +24,11 @@ along with Foobar.  If not, see
                  @bind-Text="title" Value="autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator
                  Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false" OnBlur="OnBlur">
     <ItemTemplate Context="autocompleteContext">
+        <MudText>@autocompleteContext.Title</MudText>
         @if (autocompleteContext.Disambiguation != null)
         {
-            <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-        }
-        else
-        {
-            <MudText>@autocompleteContext.Title</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.subtitle2" Color="Color.Secondary">@autocompleteContext.Disambiguation</MudText>
         }
     </ItemTemplate>
 </MudAutocomplete>
