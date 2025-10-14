@@ -142,7 +142,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile?.Name);
             Assert.AreEqual("A123", cuesheet.Cataloguenumber);
             Assert.AreEqual(2, cuesheet.Validate(nameof(Cuesheet.Cataloguenumber)).ValidationMessages?.Count);
-            Assert.AreEqual(10, cuesheet.Tracks.Count);
+            Assert.HasCount(10, cuesheet.Tracks);
             Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.DCP));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
             Assert.AreEqual("Artist 10", cuesheet.Tracks.Last().Artist);
@@ -167,7 +167,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             Assert.AreEqual("AudioFile.mp3", cuesheet.Audiofile?.Name);
             Assert.AreEqual("A123", cuesheet.Cataloguenumber);
             Assert.AreEqual(2, cuesheet.Validate(nameof(Cuesheet.Cataloguenumber)).ValidationMessages?.Count);
-            Assert.AreEqual(10, cuesheet.Tracks.Count);
+            Assert.HasCount(10, cuesheet.Tracks);
             Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.DCP));
             Assert.IsTrue(cuesheet.Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
             Assert.AreEqual("Artist 10", cuesheet.Tracks.Last().Artist);
@@ -175,7 +175,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             Assert.IsTrue(ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
             Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
             Assert.AreEqual((uint)10, cuesheet.Tracks.Last().Position);
-            Assert.AreEqual(2, cuesheet.Sections.Count);
+            Assert.HasCount(2, cuesheet.Sections);
             Assert.AreEqual(new TimeSpan(0, 30, 0), cuesheet.Sections.First().Begin);
             Assert.AreEqual(new TimeSpan(1, 0, 0), cuesheet.Sections.Last().Begin);
         }

@@ -18,20 +18,21 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Text.Json;
 
-namespace AudioCuesheetEditorTests.Model.Options
+namespace AudioCuesheetEditor.Tests.Model.Options
 {
     [TestClass()]
     public class ExportOptionsTest
     {
+        private readonly JsonSerializerOptions serializerOptions = new()
+        {
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
+
         [TestMethod()]
         public void SerializationTest()
         {
-            var options = new ExportOptions();
-            var serializerOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-            };
-            var optionsJson = JsonSerializer.Serialize<object>(options, serializerOptions);
+            var exportOptions = new ExportOptions();
+            var optionsJson = JsonSerializer.Serialize<object>(exportOptions, serializerOptions);
             Assert.IsNotNull(optionsJson);
         }
 
@@ -50,7 +51,7 @@ namespace AudioCuesheetEditorTests.Model.Options
             var optionsJson = "{\"ExportProfiles\":[{\"Name\":\"YouTube\",\"SchemeHead\":\"%Cuesheet.Artist% - %Cuesheet.Title%\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"YouTube.txt\"},{\"Name\":\"Mixcloud\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"Mixcloud.txt\"},{\"Name\":\"CSV Export\",\"SchemeHead\":\"%Cuesheet.Artist%;%Cuesheet.Title%;\",\"SchemeTracks\":\"%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%\",\"SchemeFooter\":\"Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)\",\"Filename\":\"Export.csv\"},{\"Name\":\"Tracks only\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%\",\"SchemeFooter\":\"\",\"Filename\":\"Tracks.txt\"}]}";
             var options = JsonSerializer.Deserialize<ExportOptions>(optionsJson);
             Assert.IsNotNull(options);
-            Assert.AreEqual(4, options.ExportProfiles.Count);
+            Assert.HasCount(4, options.ExportProfiles);
         }
     }
 }

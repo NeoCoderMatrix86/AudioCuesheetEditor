@@ -77,7 +77,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.HasCount(1, result);
             Assert.AreEqual(exportProfile.Filename, result.First().Name);
             Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
@@ -167,7 +167,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(3, result.Count);
+            Assert.HasCount(3, result);
             Assert.AreEqual("TestExport(3).txt", result.Last().Name);
             Assert.AreEqual(section3.Begin, result.Last().Begin);
             Assert.AreEqual(section3.End, result.Last().End);
@@ -214,7 +214,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.Count);
+            Assert.HasCount(1, result);
             Assert.AreEqual(Exportprofile.DefaultFileName, result.First().Name);
             Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
@@ -257,7 +257,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var result = exportfileGenerator.GenerateExportfiles(exportProfile);
 
             // Assert
-            Assert.AreEqual(0, result.Count);
+            Assert.HasCount(0, result);
         }
     }
 }

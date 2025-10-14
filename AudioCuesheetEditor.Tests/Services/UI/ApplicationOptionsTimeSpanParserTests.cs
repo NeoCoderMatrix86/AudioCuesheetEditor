@@ -20,7 +20,6 @@ using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.UI

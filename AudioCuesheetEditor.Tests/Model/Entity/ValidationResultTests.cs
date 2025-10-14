@@ -32,7 +32,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
 
             // Assert
             Assert.AreEqual(ValidationStatus.NoValidation, validationResult.Status);
-            Assert.AreEqual(0, validationResult.ValidationMessages.Count);
+            Assert.IsEmpty(validationResult.ValidationMessages);
         }
 
         [TestMethod]
@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
 
             // Assert
             Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
-            Assert.AreEqual(0, validationResult.ValidationMessages.Count);
+            Assert.IsEmpty(validationResult.ValidationMessages);
         }
 
         [TestMethod]
@@ -54,7 +54,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
 
             // Assert
             Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.AreEqual(0, validationResult.ValidationMessages.Count);
+            Assert.IsEmpty(validationResult.ValidationMessages);
         }
 
         [TestMethod]
@@ -93,7 +93,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
 
             // Assert
             Assert.AreEqual(ValidationStatus.NoValidation, validationResult.Status);
-            Assert.AreEqual(0, validationResult.ValidationMessages.Count);
+            Assert.IsEmpty(validationResult.ValidationMessages);
         }
 
         [TestMethod]
