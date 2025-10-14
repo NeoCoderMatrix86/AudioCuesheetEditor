@@ -26,13 +26,14 @@ namespace AudioCuesheetEditor.Services.UI
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
 
         private ApplicationOptions? applicationOptions;
+        private Task? _initTask;
         private bool disposedValue;
 
         public ApplicationOptionsTimeSpanParser(ILocalStorageOptionsProvider localStorageOptionsProvider)
         {
             _localStorageOptionsProvider = localStorageOptionsProvider;
             _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-            Task.Run(InitAsync);
+            _initTask = InitAsync();
         }
 
         public async Task TimespanTextChanged<T, TProperty>(T entity, Expression<Func<T, TProperty>> expression, String value)
@@ -41,10 +42,7 @@ namespace AudioCuesheetEditor.Services.UI
             {
                 throw new ArgumentException("'expression' should be a member expression");
             }
-            if (applicationOptions == null)
-            {
-                await InitAsync();
-            }
+            await EnsureInitializedAsync();
             TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
             switch (memberExpression.Member.MemberType)
             {
@@ -59,6 +57,7 @@ namespace AudioCuesheetEditor.Services.UI
         public string? GetTimespanFormatted(TimeSpan? timeSpan)
         {
             string? formatted = null;
+            EnsureInitializedAsync().GetAwaiter().GetResult();
             if (timeSpan.HasValue)
             {
                 try
@@ -90,6 +89,14 @@ namespace AudioCuesheetEditor.Services.UI
         private async Task InitAsync()
         {
             applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        }
+
+        private async Task EnsureInitializedAsync()
+        {
+            if (_initTask != null)
+            {
+                await _initTask;
+            }
         }
 
         private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)

@@ -43,7 +43,6 @@ namespace AudioCuesheetEditor.Tests.Services.UI
                 .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
-            await Task.Delay(50);
             var track = new Track();
             // Act
             await parser.TimespanTextChanged(track, x => x.Begin, "92:12");
@@ -66,7 +65,6 @@ namespace AudioCuesheetEditor.Tests.Services.UI
                 .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
-            await Task.Delay(50);
             var track = new Track();
             // Act
             await parser.TimespanTextChanged(track, x => x.End, "not a time");
@@ -75,7 +73,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod()]
-        public async Task GetTimespanFormatted_ValidFormat_ReturnsCorrectString()
+        public void GetTimespanFormatted_ValidFormat_ReturnsCorrectString()
         {
             // Arrange
             var options = new ApplicationOptions()
@@ -87,7 +85,6 @@ namespace AudioCuesheetEditor.Tests.Services.UI
                 .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
-            await Task.Delay(50);
             // Act
             var result = parser.GetTimespanFormatted(new TimeSpan(0, 1, 30, 27, 200, 103));
             // Assert
@@ -95,7 +92,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod()]
-        public async Task GetTimespanFormatted_InvalidFormat_FallbackToDefault()
+        public void GetTimespanFormatted_InvalidFormat_FallbackToDefault()
         {
             // Arrange
             var options = new ApplicationOptions()
@@ -107,7 +104,6 @@ namespace AudioCuesheetEditor.Tests.Services.UI
                 .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
                 .ReturnsAsync(options);
             var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
-            await Task.Delay(50);
             // Act
             var result = parser.GetTimespanFormatted(new TimeSpan(0, 1, 30, 27, 200, 103));
             // Assert
