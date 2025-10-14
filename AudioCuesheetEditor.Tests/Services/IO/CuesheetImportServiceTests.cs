@@ -15,7 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Services.IO;
-using AudioCuesheetEditor.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -91,9 +90,7 @@ TRACK 08 AUDIO
         public void Analyse_WithCuesheetBug30_CreatesValidCuesheet()
         {
             //Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Playlist_Bug_30);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Playlist-Bug#30.cue");
             //Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             //Assert
@@ -105,9 +102,7 @@ TRACK 08 AUDIO
         public void Analyse_WithCuesheetBug57_CreatesValidCuesheet()
         {
             //Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Playlist_Bug_57);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Playlist-Bug#57.cue");
             //Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             //Assert
@@ -121,9 +116,7 @@ TRACK 08 AUDIO
         public void Analyse_WithCuesheetBug36_CreatesValidCuesheet()
         {
             //Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Playlist__36_Frames);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Playlist-#36-Frames.cue");
             //Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             //Assert
