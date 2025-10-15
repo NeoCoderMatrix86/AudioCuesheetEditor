@@ -51,7 +51,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 // Autocomplete overlay will pop up, so we close it
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
-                await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Detached });
+                await Task.WhenAll(
+                [
+                    _page.Locator(".mud-overlay").WaitForAsync(new() { State = WaitForSelectorState.Detached, Timeout = 5000 }),
+                    _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Hidden, Timeout = 5000 }),
+                ]);
                 // Click outside the autocomplete to have an focus lost event for getting the value written to model
                 await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
                 await _page.WaitForTimeoutAsync(100);
@@ -63,7 +67,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 // Autocomplete overlay will pop up, so we close it
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
-                await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Detached });
+                await Task.WhenAll(
+                [
+                    _page.Locator(".mud-overlay").WaitForAsync(new() { State = WaitForSelectorState.Detached, Timeout = 5000 }),
+                    _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Hidden, Timeout = 5000 }),
+                ]);
                 // Click outside the autocomplete to have an focus lost event for getting the value written to model
                 await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
                 await _page.WaitForTimeoutAsync(100);
