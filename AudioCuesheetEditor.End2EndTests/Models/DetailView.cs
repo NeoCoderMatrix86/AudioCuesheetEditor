@@ -48,8 +48,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             {
                 await _page.Locator("td:nth-child(3)").ClickAsync();
                 await _page.Locator("td:nth-child(3)").Last.GetByRole(AriaRole.Textbox).FillAsync(artist);
+                // Autocomplete overlay will pop up, so we close it
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
+                await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Detached });
+                // Click outside the autocomplete to have an focus lost event for getting the value written to model
                 await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
                 await _page.WaitForTimeoutAsync(100);
             }
@@ -57,8 +60,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             {
                 await _page.Locator("td:nth-child(4)").ClickAsync();
                 await _page.Locator("td:nth-child(4)").Last.GetByRole(AriaRole.Textbox).FillAsync(title);
+                // Autocomplete overlay will pop up, so we close it
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
+                await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Detached });
+                // Click outside the autocomplete to have an focus lost event for getting the value written to model
                 await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
                 await _page.WaitForTimeoutAsync(100);
             }
