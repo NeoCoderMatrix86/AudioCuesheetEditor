@@ -52,7 +52,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
                 // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
                 await _page.WaitForTimeoutAsync(100);
             }
             if (title != null)
@@ -63,7 +63,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
                 // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
                 await _page.WaitForTimeoutAsync(100);
             }
         }
