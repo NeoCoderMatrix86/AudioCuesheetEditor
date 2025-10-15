@@ -20,7 +20,6 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.IO;
-using AudioCuesheetEditor.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -327,9 +326,7 @@ Sample Artist 9 - Sample Title 9				";
         public async Task AnalyseAsync_CuesheetBug213_CreatesValidCuesheetAsync()
         {
             // Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug_213);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Textimport_Bug_213.txt");
             var profile = new Importprofile()
             {
                 SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}",
@@ -546,9 +543,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             {
                 SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
             };
-            var textImportMemoryStream = new MemoryStream(Resources.Textimport_Bug__233);
-            using var reader = new StreamReader(textImportMemoryStream);            
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Textimport_Bug_#233.txt");
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {
@@ -580,9 +575,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 UseRegularExpression = true,
                 SchemeTracks = "<tr>\\s*<td>\\d+</td>\\s*<td>(?<Artist>.*?)</td>\\s*<td>(?<Title>.*?)</td>\\s*<td>(?<StartDateTime>.*?)</td>\\s*</tr>"
             };
-            var textImportMemoryStream = new MemoryStream(Resources.Traktor_Export);
-            var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Traktor Export.html");
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {
@@ -622,9 +615,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeCuesheet = "Artist - Title - Cataloguenumber",
                 SchemeTracks = "Artist - Title\tBegin"
             };
-            var textImportMemoryStream = new MemoryStream(Resources.Textimport_with_Cuesheetdata);
-            var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Textimport with Cuesheetdata.txt");
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {
@@ -734,9 +725,7 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
                 SchemeCuesheet = "Artist - Title\tAudiofile",
                 SchemeTracks = "Artist - Title\tBegin"
             };
-            var textImportMemoryStream = new MemoryStream(Resources.Sample_Inputfile);
-            var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Sample_Inputfile.txt");
             var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {

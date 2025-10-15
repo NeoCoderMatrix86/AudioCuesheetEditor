@@ -109,7 +109,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var result = cuesheetExportService.GenerateExportfiles(filename);
 
             // Assert
-            Assert.AreEqual(1, result.Count);
+            Assert.HasCount(1, result);
             Assert.AreEqual(filename, result.First().Name);
             Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
             Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
@@ -206,7 +206,7 @@ FILE ""Test audiofile.mp3"" MP3
             var result = cuesheetExportService.GenerateExportfiles(filename);
 
             // Assert
-            Assert.AreEqual(3, result.Count);
+            Assert.HasCount(3, result);
             Assert.AreEqual("Test valid Filename(3).cue", result.Last().Name);
             Assert.AreEqual(section3.Begin, result.Last().Begin);
             Assert.AreEqual(section3.End, result.Last().End);
@@ -254,7 +254,7 @@ FILE ""Test audiofile.mp3"" MP3
             var result = cuesheetExportService.GenerateExportfiles("test.cue");
 
             // Assert
-            Assert.AreEqual(0, result.Count);
+            Assert.HasCount(0, result);
         }
     }
 }

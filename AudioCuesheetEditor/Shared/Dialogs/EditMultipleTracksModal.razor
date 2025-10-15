@@ -62,13 +62,11 @@ along with Foobar.  If not, see
                                      Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist))" 
                                      MaxItems="null" CoerceText="false">
                         <ItemTemplate Context="autocompleteContext">
+                            <MudText>@autocompleteContext.Name</MudText>
                             @if (autocompleteContext.Disambiguation != null)
                             {
-                                <MudText>@String.Format("{0} ({1})", autocompleteContext.Name, autocompleteContext.Disambiguation)</MudText>
-                            }
-                            else
-                            {
-                                <MudText>@autocompleteContext.Name</MudText>
+                                <MudSpacer />
+                                <MudText Typo="Typo.subtitle2" Color="Color.Secondary">@autocompleteContext.Disambiguation</MudText>
                             }
                         </ItemTemplate>
                     </MudAutocomplete>
@@ -88,13 +86,11 @@ along with Foobar.  If not, see
                                      Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title))" 
                                      MaxItems="null" CoerceText="false">
                         <ItemTemplate Context="autocompleteContext">
+                            <MudText>@autocompleteContext.Title</MudText>
                             @if (autocompleteContext.Disambiguation != null)
                             {
-                                <MudText>@String.Format("{0} ({1})", autocompleteContext.Title, autocompleteContext.Disambiguation)</MudText>
-                            }
-                            else
-                            {
-                                <MudText>@autocompleteContext.Title</MudText>
+                                <MudSpacer />
+                                <MudText Typo="Typo.subtitle2" Color="Color.Secondary">@autocompleteContext.Disambiguation</MudText>
                             }
                         </ItemTemplate>
                     </MudAutocomplete>

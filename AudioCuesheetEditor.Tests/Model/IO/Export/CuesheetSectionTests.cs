@@ -1,9 +1,10 @@
 ﻿using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Export;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace AudioCuesheetEditor.Model.IO.Export.Tests
+namespace AudioCuesheetEditor.Tests.Model.IO.Export
 {
     [TestClass()]
     public class CuesheetSectionTests

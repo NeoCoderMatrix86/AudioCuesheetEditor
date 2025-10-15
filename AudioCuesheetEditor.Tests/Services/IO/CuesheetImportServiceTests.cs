@@ -15,7 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Services.IO;
-using AudioCuesheetEditor.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -73,7 +72,7 @@ TRACK 08 AUDIO
             Assert.IsNotNull(importFile);
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            Assert.AreEqual(8, importFile.AnalyzedCuesheet.Tracks.Count);
+            Assert.HasCount(8, importFile.AnalyzedCuesheet.Tracks);
             Assert.IsNotNull(importFile.FileContentRecognized);
             var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "PERFORMER \"Sample CD Artist\""), lines.ElementAt(0));
@@ -91,9 +90,7 @@ TRACK 08 AUDIO
         public void Analyse_WithCuesheetBug30_CreatesValidCuesheet()
         {
             //Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Playlist_Bug_30);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Playlist-Bug#30.cue");
             //Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             //Assert
@@ -105,15 +102,13 @@ TRACK 08 AUDIO
         public void Analyse_WithCuesheetBug57_CreatesValidCuesheet()
         {
             //Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Playlist_Bug_57);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Playlist-Bug#57.cue");
             //Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             //Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            Assert.AreEqual(39, importFile.AnalyzedCuesheet.Tracks.Count);
+            Assert.HasCount(39, importFile.AnalyzedCuesheet.Tracks);
             Assert.AreEqual(new TimeSpan(2, 8, 21), importFile.AnalyzedCuesheet.Tracks.ElementAt(24).Begin);
         }
 
@@ -121,15 +116,13 @@ TRACK 08 AUDIO
         public void Analyse_WithCuesheetBug36_CreatesValidCuesheet()
         {
             //Arrange
-            var textImportMemoryStream = new MemoryStream(Resources.Playlist__36_Frames);
-            using var reader = new StreamReader(textImportMemoryStream);
-            var fileContent = reader.ReadToEnd();
+            var fileContent = File.ReadAllText("Resources/Playlist-#36-Frames.cue");
             //Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             //Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            Assert.AreEqual(12, importFile.AnalyzedCuesheet.Tracks.Count);
+            Assert.HasCount(12, importFile.AnalyzedCuesheet.Tracks);
             Assert.AreEqual(new TimeSpan(0, 0, 9, 15, 600), importFile.AnalyzedCuesheet.Tracks.ElementAt(2).Begin);
         }
 
@@ -187,7 +180,7 @@ TRACK 08 AUDIO
             var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "FLAGS 4CH DCP PRE SCMS")), lines.ElementAt(8));
             Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PREGAP 00:04:00")), lines.ElementAt(35));
-            Assert.AreEqual(8, importFile.AnalyzedCuesheet.Tracks.Count);
+            Assert.HasCount(8, importFile.AnalyzedCuesheet.Tracks);
             Assert.IsNotNull(importFile.AnalyzedCuesheet.CDTextfile);
             Assert.AreEqual(4, importFile.AnalyzedCuesheet.Tracks.ElementAt(0).Flags.Count());
             Assert.AreEqual(2, importFile.AnalyzedCuesheet.Tracks.ElementAt(1).Flags.Count());

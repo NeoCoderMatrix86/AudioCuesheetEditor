@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Import
             var result = importprofile.Validate();
             // Assert
             Assert.AreEqual(ValidationStatus.Error, result.Status);
-            Assert.AreEqual(2, result.ValidationMessages.Count);
+            Assert.HasCount(2, result.ValidationMessages);
             Assert.AreEqual("{0} contains no placeholder!", result.ValidationMessages.First().Message);
             Assert.AreEqual(nameof(Importprofile.SchemeCuesheet), result.ValidationMessages.First().Parameter?.First().ToString());
             Assert.AreEqual("{0} contains no placeholder!", result.ValidationMessages.Last().Message);
