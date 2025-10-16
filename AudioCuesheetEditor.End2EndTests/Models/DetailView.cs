@@ -30,6 +30,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
 
+        internal ILocator NewFileNameInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" });
+
         internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);
@@ -100,11 +102,16 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task RenameAudiofileAsync(string filename)
         {
+            await OpenRenameAudiofileDialogAsync();
+            await NewFileNameInput.FillAsync(filename);
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
+        }
+
+        internal async Task OpenRenameAudiofileDialogAsync()
+        {
             int buttonIndex = _isMobile ? 2 : 3;
             await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).GetByRole(AriaRole.Button).Nth(buttonIndex).ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" }).FillAsync(filename);
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
         }
     }
 }

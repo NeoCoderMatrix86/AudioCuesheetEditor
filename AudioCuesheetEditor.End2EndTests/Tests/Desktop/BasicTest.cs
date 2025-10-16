@@ -15,6 +15,8 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
 {
@@ -102,6 +104,45 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
   - button ""Ausgewählte Titel nach oben bewegen"" [disabled]
   - button ""Ausgewählte Titel nach unten bewegen""
 - button ""Fester Tabellenkopf""");
+        }
+
+        [TestMethod]
+        public async Task KeyboardCommands_ShouldControlDialogs_WhenUsingEnterOrEscapeAsync()
+        {
+            var bar = new AppBar(TestPage);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await detailView.GotoAsync();
+            await bar.OpenFileDialogAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.Keyboard.PressAsync("Escape");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await bar.OpenExportDialogAsync("Cuesheet");
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.Keyboard.PressAsync("Escape");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await bar.OpenExportDialogAsync("Projectfile");
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.Keyboard.PressAsync("Escape");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await bar.OpenExportDialogAsync("Textfile");
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.Keyboard.PressAsync("Escape");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await bar.OpenSettingsAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.Keyboard.PressAsync("Escape");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await bar.OpenDisplayHotkeysAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.Keyboard.PressAsync("Escape");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.OpenRenameAudiofileDialogAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await detailView.NewFileNameInput.FillAsync("Test 123");
+            await TestPage.Keyboard.PressAsync("Enter");
+            await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
+            await Expect(detailView.AudiofileInput).ToHaveTextAsync("Test 123.mp3");
         }
     }
 }
