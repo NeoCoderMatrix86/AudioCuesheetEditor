@@ -131,19 +131,19 @@ along with Foobar.  If not, see
 
     async Task DownloadProjectfileClicked() 
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
+        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
         await _dialogService.ShowAsync<DownloadProjectfileDialog>(_localizer["Save project"], options);
     }
 
     async Task DownloadCuesheetClicked()
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true };
+        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
         await _dialogService.ShowAsync<GenerateCuesheetDialog>(_localizer["Download cuesheet"], options);
     }
 
     async Task DownloadExportClicked()
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
+        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         await _dialogService.ShowAsync<GenerateExportDialog>(_localizer["Export profiles"], options);
     }
 
@@ -159,7 +159,8 @@ along with Foobar.  If not, see
         {
             { x => x.ConfirmText, _localizer["Are you sure you want reset the cuesheet? All information you have not saved are lost!"] },
         };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var options = new DialogOptions() { BackdropClick = false };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters, options);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
@@ -174,7 +175,8 @@ along with Foobar.  If not, see
         {
             { x => x.ConfirmText, _localizer["Are you sure you want reset the application? All information you have not saved are lost!"] },
         };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var options = new DialogOptions() { BackdropClick = false };
+        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters, options);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
@@ -186,7 +188,7 @@ along with Foobar.  If not, see
 
     async Task OpenFileClicked() 
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseButton = true };
+        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true };
         var dialog = await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
         var result = await dialog.Result;
         if (result?.Canceled == false)
@@ -199,7 +201,7 @@ along with Foobar.  If not, see
 
     async Task DisplayHotkeys()
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
+        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         await _dialogService.ShowAsync<DisplayHotkeysDialog>(_localizer["Hotkeys"], options);
     }
 }
