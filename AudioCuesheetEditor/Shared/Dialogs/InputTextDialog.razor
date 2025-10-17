@@ -18,24 +18,20 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<InputTextDialog> _localizer
+@inject HotKeys _hotKeys
 
 <MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="inputValue" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="inputValue" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="TextFieldKeyDown" />
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="() => MudDialog?.Close(inputValue)">@_localizer["Ok"]</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk">@_localizer["Ok"]</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    private string? inputValue;
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        inputValue = InitialValue;
-    }
+    HotKeysContext? hotKeysContext;
+    string? inputValue;
 
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
@@ -48,4 +44,35 @@ along with Foobar.  If not, see
 
     [Parameter]
     public String? InitialValue { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        hotKeysContext = _hotKeys.CreateContext().Add(ModKey.None, Key.Enter, CloseDialogOk);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        hotKeysContext?.DisposeAsync();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        inputValue = InitialValue;
+    }
+
+    void TextFieldKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            CloseDialogOk();
+        }
+    }
+
+    void CloseDialogOk()
+    {
+        MudDialog?.Close(inputValue);
+    }
 }

@@ -30,7 +30,6 @@ along with Foobar.  If not, see
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="DownloadProjectClick" Disabled="String.IsNullOrEmpty(GetValidationErrorMessage()) == false">@_localizer["Download project"]</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="(args) => MudDialog?.Cancel()">@_localizer["Cancel"]</MudButton>
     </DialogActions>
 </MudDialog>
 
