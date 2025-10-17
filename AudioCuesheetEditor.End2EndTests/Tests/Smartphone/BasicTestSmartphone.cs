@@ -139,7 +139,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.NewFileNameInput.FillAsync("Test 123");
             await TestPage.Keyboard.PressAsync("Enter");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
-            await Expect(detailView.AudiofileInput).ToHaveTextAsync("Test 123.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Test 123.mp3");
         }
     }
 }
