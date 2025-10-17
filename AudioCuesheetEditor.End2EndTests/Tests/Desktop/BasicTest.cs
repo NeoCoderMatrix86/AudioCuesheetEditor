@@ -15,8 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
 {
