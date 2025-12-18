@@ -21,7 +21,6 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Importprofiles> _localizer
 @inject ValidationService _validationService
 @inject IDialogService _dialogService
-@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 @if (importOptions != null)
 {
@@ -96,14 +95,14 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        importOptions = await _localStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        importOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ImportOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
     }
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     void AppendPlaceholderToTextField(MudTextField<string>? mudTextField, string placeholder)
