@@ -107,6 +107,17 @@ along with Foobar.  If not, see
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        currentRecordingTrack = new()
+        {
+            IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+        };
+    }
+
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
@@ -114,11 +125,13 @@ along with Foobar.  If not, see
         {
             Cuesheet.IsRecordingChanged -= Cuesheet_IsRecordingChanged;
         }
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
-    Track currentRecordingTrack = new Track();
+    Track currentRecordingTrack = new();
     MudAutocomplete<MusicBrainzArtist>? artistInput;
     MudAutocomplete<MusicBrainzTrack>? titleInput;
+    ApplicationOptions? applicationOptions;
 
     String? GetValidationErrorMessage(object model, string propertyName)
     {
@@ -136,7 +149,10 @@ along with Foobar.  If not, see
         if (Cuesheet?.IsRecording == true)
         {
             Cuesheet?.AddTrack(currentRecordingTrack);
-            currentRecordingTrack = new();
+            currentRecordingTrack = new()
+            {
+                IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+            };
             if (artistInput != null)
             {
                 await artistInput.FocusAsync();
@@ -149,5 +165,14 @@ along with Foobar.  If not, see
         StateHasChanged();
         artistInput?.ClearAsync();
         titleInput?.ClearAsync();
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
+            StateHasChanged();
+        }
     }
 }
