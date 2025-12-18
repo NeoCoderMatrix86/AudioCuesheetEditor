@@ -21,7 +21,6 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject ValidationService _validationService
-@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudDialog>
     <DialogContent>
@@ -42,14 +41,14 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        options = await _localStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        options = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
     }
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     async Task DownloadProjectClick() 

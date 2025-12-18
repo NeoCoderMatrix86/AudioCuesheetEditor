@@ -22,7 +22,6 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject CuesheetExportService _cuesheetExportService
-@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudDialog>
     <DialogContent>
@@ -64,15 +63,15 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        options = await _localStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        options = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         exportfiles = _cuesheetExportService.GenerateExportfiles(options?.CuesheetFilename);
     }
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     String? GetValidationErrorMessage()
