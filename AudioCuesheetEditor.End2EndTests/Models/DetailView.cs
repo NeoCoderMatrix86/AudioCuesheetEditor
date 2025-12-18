@@ -85,6 +85,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             }
         }
 
+        internal async Task EditSelectedTracksModalAsync()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+        }
+
         internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
