@@ -24,7 +24,7 @@ jobs:
         dotnet-version: 9.0.x
 
     - name: Install wasm-tools
-      run: dotnet workload install wasm-tools9
+      run: dotnet workload install wasm-tools
 
     - name: Build release
       run: dotnet publish AudioCuesheetEditor --configuration Release --output release
