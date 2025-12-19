@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Services.UI
             if (tracks.Count() == 1)
             {
                 var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, tracks.First().Clone() } };
-                var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
+                var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
                 var dialog = await _dialogService.ShowAsync<EditTrackModal>(null, parameters, options);
                 var result = await dialog.Result;
                 if ((result?.Canceled == false) && (result.Data is Track editedTrack))
@@ -44,7 +44,7 @@ namespace AudioCuesheetEditor.Services.UI
             if (tracks.Count() > 1)
             {
                 var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } } };
-                var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true };
+                var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
                 var dialog = await _dialogService.ShowAsync<EditMultipleTracksModal>(null, parameters, options);
                 var result = await dialog.Result;
                 if ((result?.Canceled == false) && (result.Data is EditMultipleTracksModalResult editMultipleTracksModalResult))

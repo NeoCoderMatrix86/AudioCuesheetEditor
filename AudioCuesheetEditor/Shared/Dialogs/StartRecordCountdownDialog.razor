@@ -29,7 +29,6 @@ along with Foobar.  If not, see
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close(DialogResult.Ok(options?.RecordCountdownTimer))">@_localizer["Start countdown"]</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
     </DialogActions>
 </MudDialog>
 
