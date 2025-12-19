@@ -137,7 +137,7 @@ along with Foobar.  If not, see
 
     async Task DisplayStartCountdownDialog()
     {
-        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, CloseButton = true };
         var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(null, options);
         var result = await dialog.Result;
         var recordCountdownTimer = result?.Data as uint?;
