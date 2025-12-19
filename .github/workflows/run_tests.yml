@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 9.0.x
 
     - name: Install wasm-tools
-      run: dotnet workload install wasm-tools
+      run: dotnet workload install wasm-tools-net9
 
     - name: Build & Install
       run: dotnet build
@@ -30,6 +30,21 @@ jobs:
 
     - name: Start App
       run: dotnet run --project AudioCuesheetEditor &
+
+    - name: Wait for app to be ready
+      run: |
+        echo "Waiting for http://localhost:5132 to respond..."
+        for i in {1..60}; do
+          if curl -sSf http://localhost:5132 >/dev/null; then
+            echo "App is ready"
+            exit 0
+          fi
+          echo "Waiting for app to start ($i/60)..."
+          sleep 2
+        done
+        echo "App failed to start after waiting" >&2
+        exit 1
+      shell: bash
 
     - name: Run tests
       run: dotnet test

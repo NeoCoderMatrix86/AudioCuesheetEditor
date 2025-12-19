@@ -29,7 +29,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Audio
             Assert.IsNull(audioFile.ContentStream);
             Assert.IsFalse(audioFile.IsContentStreamLoaded);
             Assert.IsNotNull(audioFile.Name);
-            Assert.AreEqual(audioFile.AudioFileType, "MP3");
+            Assert.AreEqual("MP3", audioFile.AudioFileType);
             audioFile = new Audiofile("Test");
             Assert.AreEqual(audioFile.AudioFileType, string.Empty);
             Assert.IsNotNull(audioFile.Name);
@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Audio
             audioFile = new Audiofile("test", "TestobjectURL", codec);
             Assert.IsNotNull(audioFile.Name);
             Assert.AreEqual("test.ogg", audioFile.Name);
-            Assert.AreEqual(audioFile.AudioFileType, "OGG");
+            Assert.AreEqual("OGG", audioFile.AudioFileType);
             Assert.IsNotNull(audioFile.ObjectURL);
             Assert.IsTrue(audioFile.PlaybackPossible);
             codec = Audiofile.AudioCodecs.Single(x => x.FileExtension == ".mp3");

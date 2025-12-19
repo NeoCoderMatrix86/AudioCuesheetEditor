@@ -18,7 +18,6 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<StartRecordCountdownDialog> _localizer
-@inject ILocalStorageOptionsProvider _localStorageOptionsProvider
 
 <MudDialog>
     <TitleContent>
@@ -30,7 +29,6 @@ along with Foobar.  If not, see
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Timer" OnClick="() => MudDialog?.Close(DialogResult.Ok(options?.RecordCountdownTimer))">@_localizer["Start countdown"]</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()">@_localizer["Abort"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -43,14 +41,14 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        options = await _localStorageOptionsProvider.GetOptionsAsync<RecordOptions>();
-        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        options = await base.LocalStorageOptionsProvider.GetOptionsAsync<RecordOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
     }
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)

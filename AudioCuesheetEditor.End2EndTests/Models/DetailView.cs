@@ -30,6 +30,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
 
+        internal ILocator NewFileNameInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" });
+
         internal async Task GotoAsync()
         {
             await _page.GotoAsync(BaseUrl);
@@ -48,18 +50,22 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             {
                 await _page.Locator("td:nth-child(3)").ClickAsync();
                 await _page.Locator("td:nth-child(3)").Last.GetByRole(AriaRole.Textbox).FillAsync(artist);
+                // Autocomplete overlay will pop up, so we close it
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+                // Click outside the autocomplete to have an focus lost event for getting the value written to model
+                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
                 await _page.WaitForTimeoutAsync(100);
             }
             if (title != null)
             {
                 await _page.Locator("td:nth-child(4)").ClickAsync();
                 await _page.Locator("td:nth-child(4)").Last.GetByRole(AriaRole.Textbox).FillAsync(title);
+                // Autocomplete overlay will pop up, so we close it
                 await _page.Locator(".mud-popover-open").WaitForAsync(new() { State = WaitForSelectorState.Visible });
                 await _page.Keyboard.PressAsync("Escape");
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync();
+                // Click outside the autocomplete to have an focus lost event for getting the value written to model
+                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
                 await _page.WaitForTimeoutAsync(100);
             }
         }
@@ -79,6 +85,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             }
         }
 
+        internal async Task EditSelectedTracksModalAsync()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+        }
+
         internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
@@ -96,11 +107,16 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task RenameAudiofileAsync(string filename)
         {
+            await OpenRenameAudiofileDialogAsync();
+            await NewFileNameInput.FillAsync(filename);
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
+        }
+
+        internal async Task OpenRenameAudiofileDialogAsync()
+        {
             int buttonIndex = _isMobile ? 2 : 3;
             await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).GetByRole(AriaRole.Button).Nth(buttonIndex).ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" }).FillAsync(filename);
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
         }
     }
 }

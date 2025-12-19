@@ -32,7 +32,7 @@ namespace AudioCuesheetEditor.Services.IO
             };
             try
             {
-                importfile.AnalysedCuesheet = new();
+                importfile.AnalyzedCuesheet = new();
                 var cuesheetArtistGroupName = "CuesheetArtist";
                 var cuesheetTitleGroupName = "CuesheetTitle";
                 var cuesheetFileNameGroupName = "CuesheetFileName";
@@ -71,7 +71,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var artist = matchGroup.Value;
-                                importfile.AnalysedCuesheet.Artist = artist;
+                                importfile.AnalyzedCuesheet.Artist = artist;
                             }
                             else
                             {
@@ -86,7 +86,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var title = matchGroup.Value;
-                                importfile.AnalysedCuesheet.Title = title;
+                                importfile.AnalyzedCuesheet.Title = title;
                             }
                             else
                             {
@@ -101,7 +101,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var audioFile = matchGroup.Value;
-                                importfile.AnalysedCuesheet.Audiofile = audioFile;
+                                importfile.AnalyzedCuesheet.Audiofile = audioFile;
                             }
                             else
                             {
@@ -116,7 +116,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var cdTextfile = matchGroup.Value;
-                                importfile.AnalysedCuesheet.CDTextfile = cdTextfile;
+                                importfile.AnalyzedCuesheet.CDTextfile = cdTextfile;
                             }
                             else
                             {
@@ -131,7 +131,7 @@ namespace AudioCuesheetEditor.Services.IO
                             if (matchGroup != null)
                             {
                                 var catalogueNumber = matchGroup.Value;
-                                importfile.AnalysedCuesheet.Cataloguenumber = catalogueNumber;
+                                importfile.AnalyzedCuesheet.Cataloguenumber = catalogueNumber;
                             }
                             else
                             {
@@ -245,7 +245,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                             if (track != null)
                             {
-                                importfile.AnalysedCuesheet.Tracks.Add(track);
+                                importfile.AnalyzedCuesheet.Tracks.Add(track);
                             }
                             else
                             {
@@ -284,7 +284,7 @@ namespace AudioCuesheetEditor.Services.IO
             catch (Exception ex)
             {
                 importfile.AnalyseException = ex;
-                importfile.AnalysedCuesheet = null;
+                importfile.AnalyzedCuesheet = null;
                 importfile.FileContentRecognized = fileContent;
             }
             return importfile;

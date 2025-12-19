@@ -349,15 +349,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     PostGap = track.PostGap;
                 }
             }
-            if (setIsLinkedToPreviousTrack && (track is Track cuesheetTrack2))
+            if (setIsLinkedToPreviousTrack)
             {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(IsLinkedToPreviousTrack))))
+                if (useInternalSetters?.Contains(nameof(IsLinkedToPreviousTrack)) == true)
                 {
-                    isLinkedToPreviousTrack = cuesheetTrack2.IsLinkedToPreviousTrack;
+                    isLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
                 }
                 else
                 {
-                    IsLinkedToPreviousTrack = cuesheetTrack2.IsLinkedToPreviousTrack;
+                    IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
                 }
             }
         }

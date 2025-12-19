@@ -13,19 +13,26 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+using Microsoft.Playwright;
+using System.Text.RegularExpressions;
+
+namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    public interface ITrack
+    internal partial class ViewModes(IPage page, bool mobile)
     {
-        string? Artist { get; set; }
-        string? Title { get; set; }
-        uint? Position { get; set; }
-        TimeSpan? Begin { get; set; }
-        TimeSpan? End { get; set; }
-        TimeSpan? Length { get; set; }
-        IEnumerable<Flag> Flags { get; set; }
-        TimeSpan? PreGap { get; set; }
-        TimeSpan? PostGap { get; set; }
-        bool IsLinkedToPreviousTrack { get; set; }
+        private readonly IPage _page = page;
+        private readonly bool _isMobile = mobile;
+
+        internal async Task SwitchView(string viewMode)
+        {
+            if (_isMobile)
+            {
+                await _page.GetByRole(AriaRole.Button).Filter(new() { HasTextRegex = ViewModeForward() }).Nth(4).ClickAsync();
+            }
+            await _page.GetByText(viewMode).ClickAsync();
+        }
+
+        [GeneratedRegex("^$")]
+        internal static partial Regex ViewModeForward();
     }
 }

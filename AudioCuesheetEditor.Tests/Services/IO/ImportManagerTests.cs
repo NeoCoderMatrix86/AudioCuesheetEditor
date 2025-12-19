@@ -70,7 +70,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 FileContent = fileContent,
                 FileType = ImportFileType.Textfile,
-                AnalysedCuesheet = importCuesheet
+                AnalyzedCuesheet = importCuesheet
             };
             textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
             var loggerMock = new Mock<ILogger<ImportManager>>();

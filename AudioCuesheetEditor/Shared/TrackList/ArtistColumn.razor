@@ -24,13 +24,11 @@ along with Foobar.  If not, see
                  Value="autocompleteArtist" ValueChanged="ValueChanged" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
                  MaxItems="null" CoerceText="false" OnBlur="OnBlur">
     <ItemTemplate>
+        <MudText>@context.Name</MudText>
         @if (context.Disambiguation != null)
         {
-            <MudText>@String.Format("{0} ({1})", context.Name, context.Disambiguation)</MudText>
-        }
-        else
-        {
-            <MudText>@context.Name</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.subtitle2" Color="Color.Secondary">@context.Disambiguation</MudText>
         }
     </ItemTemplate>
 </MudAutocomplete>

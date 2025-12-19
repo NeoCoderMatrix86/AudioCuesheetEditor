@@ -72,7 +72,7 @@ namespace AudioCuesheetEditor.Tests.Model.Entity
             };
             Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
             Assert.IsNotNull(testObject.Validate().ValidationMessages);
-            Assert.IsTrue(testObject.Validate().ValidationMessages?.Count == 1);
+            Assert.AreEqual(1, testObject.Validate().ValidationMessages?.Count);
             testObject.TestProperty = "Test";
             Assert.AreEqual(ValidationStatus.Success, testObject.Validate().Status);
         }

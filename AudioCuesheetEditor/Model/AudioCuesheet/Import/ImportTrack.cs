@@ -28,5 +28,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
         public TimeSpan? PreGap { get; set; }
         public TimeSpan? PostGap { get; set; }
         public DateTime? StartDateTime { get; set; }
+        public bool IsLinkedToPreviousTrack { get; set; }
     }
 }

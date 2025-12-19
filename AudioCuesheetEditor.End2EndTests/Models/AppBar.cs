@@ -62,10 +62,15 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task OpenFileAsync(string file)
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
-            await _page.Locator("div").Filter(new() { HasTextRegex = OpenRegex() }).ClickAsync();
+            await OpenFileDialogAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
             await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(file);
+        }
+
+        internal async Task OpenFileDialogAsync()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "File", Exact = true }).ClickAsync();
+            await _page.Locator("div").Filter(new() { HasTextRegex = OpenRegex() }).ClickAsync();
         }
 
         internal async Task OpenExportDialogAsync(string exportType, string fileMenuName = "File")
@@ -73,6 +78,12 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Button, new() { Name = fileMenuName, Exact = true }).ClickAsync();
             await _page.GetByText("Export", new() { Exact = true }).HoverAsync();
             await _page.GetByText(exportType, new() { Exact = true }).ClickAsync();
+        }
+
+        internal async Task OpenDisplayHotkeysAsync()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "More" }).ClickAsync();
+            await _page.GetByText("Hotkeys").ClickAsync();
         }
     }
 }

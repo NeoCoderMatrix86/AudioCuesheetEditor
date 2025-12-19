@@ -27,15 +27,18 @@ along with Foobar.  If not, see
 @if (Cuesheet != null)
 {
     <MudForm @ref="form" Model="Cuesheet">
-        <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
-        <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="Cuesheet.Artist" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" 
+                      Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
+        <MudTextField @bind-Value="Cuesheet.Title" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]" 
+                      Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
         @switch(CurrentViewMode)
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" DisplayDownloadFile
-                           OnDownloadFileClicked="DownloadAudio" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" FileDownloadDisabled="Cuesheet.Audiofile != null ? Cuesheet.Audiofile.IsContentStreamLoaded == false : true" />
-                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
+                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" 
+                           Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" />
+                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" 
+                           Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
                 <MudTextField @ref="catalogueNumberTextField" @bind-Value="catalogueNumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
                               Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined"
                               Mask="@(new PatternMask("00 00000 00000 0"))" OnBlur="CataloguenumberOnBlur" />
@@ -159,15 +162,6 @@ along with Foobar.  If not, see
         catch (ArgumentException ae)
         {
             fileInputCDTextfileErrorText = ae.Message;
-        }
-    }
-
-    async Task DownloadAudio()
-    {
-        var contentStream = Cuesheet?.Audiofile?.ContentStream;
-        if (contentStream != null)
-        {
-            await _blazorDownloadFileService.DownloadFile(Cuesheet?.Audiofile?.Name, contentStream, Cuesheet?.Audiofile?.AudioCodec?.MimeType);
         }
     }
 
