@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="MSTestSettings.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageReference Include="Microsoft.Playwright.MSTest" Version="1.57.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.10.4" />
