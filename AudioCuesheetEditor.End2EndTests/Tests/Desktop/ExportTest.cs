@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var download = await downloadTask;
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
-            var content = await reader.ReadToEndAsync(TestContext.CancellationTokenSource.Token);
+            var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
             content = content.Replace("\n", Environment.NewLine);
             Assert.AreEqual(@"TITLE ""Cuesheet Title 1""
 PERFORMER ""Cuesheet Artist 1""
@@ -67,7 +67,7 @@ FILE ""Kalimba.mp3"" MP3
             var download = await downloadTask;
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
-            var content = await reader.ReadToEndAsync(TestContext.CancellationTokenSource.Token);
+            var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
             Assert.AreEqual("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofile\":{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"}},\"Sections\":[]}", content);
         }
 
@@ -89,7 +89,7 @@ FILE ""Kalimba.mp3"" MP3
             var download = await downloadTask;
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
-            var content = await reader.ReadToEndAsync(TestContext.CancellationTokenSource.Token);
+            var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
             content = content.Replace("\n", Environment.NewLine);
             Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
 Track Artist 1 - Track Title 1 00:00:00
