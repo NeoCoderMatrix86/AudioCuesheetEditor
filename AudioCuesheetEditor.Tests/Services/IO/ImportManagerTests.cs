@@ -43,8 +43,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var fileContent = "This is just a test";
-            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var traceChangeManagerMock = new Mock<ITraceChangeManager>();
+            var sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
             var fileInputManagerMock = new Mock<IFileInputManager>();
             var textImportServiceMock = new Mock<ITextImportService>();
             var importCuesheet = new ImportCuesheet()
@@ -74,8 +74,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             };
             textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
             var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
-            var testHelper = new TestHelper();
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManagerMock.Object, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
             sessionStateContainer.Importfile = new Importfile()
             {
                 FileContent = "This is just a test",
@@ -101,6 +100,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainer.ImportCuesheet.Tracks.First().Position);
             Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainer.ImportCuesheet.Tracks.First().PreGap);
             Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainer.ImportCuesheet.Tracks.First().PostGap);
+            traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Cuesheet>()));
+            traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Track>()));
         }
 
         [TestMethod()]
@@ -120,7 +121,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
             var loggerMock = new Mock<ILogger<ImportManager>>();
             var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
-            var testHelper = new TestHelper();
             sessionStateContainer.Importfile = importfile;
             // Act
             await importManager.AnalyseImportfile();
@@ -205,6 +205,51 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContent);
             Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContentRecognized);
             Assert.AreEqual(ImportFileType.Textfile, sessionStateContainer.Importfile.FileType);
+        }
+
+        [TestMethod]
+        public void ImportCuesheet_WithImportCuesheetAvailable_ImportsCuesheetData()
+        {
+            // Arrange
+            var traceChangeManagerMock = new Mock<ITraceChangeManager>();
+            var sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
+            var analyzedCuesheet = new Cuesheet()
+            {
+                Artist = "Artist 123",
+                Title = "Title 456"
+            };
+            analyzedCuesheet.AddTrack(new()
+            {
+                Artist = "Track Artist 1",
+                Title = "Track Title 1",
+                End = new TimeSpan(0, 4, 23),
+            });
+            analyzedCuesheet.AddTrack(new()
+            {
+                Artist = "Track Artist 2",
+                Title = "Track Title 2",
+                End = new TimeSpan(0, 8, 54),
+            });
+            sessionStateContainer.ImportCuesheet = analyzedCuesheet;
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var textImportServiceMock = new Mock<ITextImportService>();
+            var loggerMock = new Mock<ILogger<ImportManager>>();
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManagerMock.Object, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            // Act
+            importManager.ImportCuesheet();
+            // Assert
+            Assert.AreEqual(analyzedCuesheet.Artist, sessionStateContainer.Cuesheet.Artist);
+            Assert.AreEqual(analyzedCuesheet.Title, sessionStateContainer.Cuesheet.Title);
+            Assert.AreEqual(analyzedCuesheet.Tracks.First().Artist, sessionStateContainer.Cuesheet.Tracks.First().Artist);
+            Assert.AreEqual(analyzedCuesheet.Tracks.First().Title, sessionStateContainer.Cuesheet.Tracks.First().Title);
+            Assert.AreEqual(analyzedCuesheet.Tracks.First().Begin, sessionStateContainer.Cuesheet.Tracks.First().Begin);
+            Assert.AreEqual(analyzedCuesheet.Tracks.First().End, sessionStateContainer.Cuesheet.Tracks.First().End);
+            Assert.AreEqual(analyzedCuesheet.Tracks.Last().Artist, sessionStateContainer.Cuesheet.Tracks.Last().Artist);
+            Assert.AreEqual(analyzedCuesheet.Tracks.Last().Title, sessionStateContainer.Cuesheet.Tracks.Last().Title);
+            Assert.AreEqual(analyzedCuesheet.Tracks.Last().Begin, sessionStateContainer.Cuesheet.Tracks.Last().Begin);
+            Assert.AreEqual(analyzedCuesheet.Tracks.Last().End, sessionStateContainer.Cuesheet.Tracks.Last().End);
+            traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<Cuesheet>()));
+            traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<Track>()));
         }
 
         private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
