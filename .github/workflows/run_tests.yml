@@ -47,7 +47,7 @@ jobs:
       shell: bash
 
     - name: Run tests
-      run: dotnet test
+      run: dotnet test --no-build
 
     - name: Upload traces
       if: always()
