@@ -228,7 +228,6 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        //TODO: Tests
         public void RemoveTracedChanges(ITraceable traceable)
         {
             undoStack.RemoveAll(x => x.HasTraceableObject == false);
