@@ -50,8 +50,8 @@ namespace AudioCuesheetEditor.Services.UI
     {
         private readonly ILogger<TraceChangeManager> _logger = logger;
 
-        private readonly Stack<TracedChanges> undoStack = new();
-        private readonly Stack<TracedChanges> redoStack = new();
+        private readonly List<TracedChanges> undoStack = [];
+        private readonly List<TracedChanges> redoStack = [];
 
         private List<TracedChange>? bulkEditTracedChanges;
 
@@ -84,8 +84,8 @@ namespace AudioCuesheetEditor.Services.UI
 
         public void Reset()
         {
-            ResetStack(redoStack);
-            ResetStack(undoStack);
+            Reset(redoStack);
+            Reset(undoStack);
         }
 
         public void Undo()
@@ -97,7 +97,8 @@ namespace AudioCuesheetEditor.Services.UI
                 TracedChanges? changes = null;
                 while (undoStack.Count > 0 && changes == null)
                 {
-                    changes = undoStack.Pop();
+                    changes = undoStack[^1];
+                    undoStack.Remove(changes);
                     if (changes.HasTraceableObject == false)
                     {
                         changes = null;
@@ -133,7 +134,7 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                     }
                     //Push the old value to redo stack
-                    redoStack.Push(new TracedChanges(redoChanges));
+                    redoStack.Add(new TracedChanges(redoChanges));
                 }
                 CurrentlyHandlingRedoOrUndoChanges = false;
                 UndoDone?.Invoke(this, EventArgs.Empty);
@@ -149,7 +150,8 @@ namespace AudioCuesheetEditor.Services.UI
                 TracedChanges? changes = null;
                 while (redoStack.Count > 0 && changes == null)
                 {
-                    changes = redoStack.Pop();
+                    changes = redoStack[^1];
+                    redoStack.Remove(changes);
                     if (changes.HasTraceableObject == false)
                     {
                         changes = null;
@@ -185,7 +187,7 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                     }
                     //Push the old value to redo stack
-                    undoStack.Push(new TracedChanges(undoChanges));
+                    undoStack.Add(new TracedChanges(undoChanges));
                 }
                 CurrentlyHandlingRedoOrUndoChanges = false;
                 RedoDone?.Invoke(this, EventArgs.Empty);
@@ -206,7 +208,7 @@ namespace AudioCuesheetEditor.Services.UI
                 {
                     if (bulkEditTracedChanges != null)
                     {
-                        undoStack.Push(new TracedChanges(bulkEditTracedChanges));
+                        undoStack.Add(new TracedChanges(bulkEditTracedChanges));
                         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
                         bulkEditTracedChanges = null;
                     }
@@ -219,17 +221,28 @@ namespace AudioCuesheetEditor.Services.UI
             var edit = undoStack.FirstOrDefault(targetEdit);
             if ((edit != null) && (undoStack.Count > 0))
             {
-                var lastEdits = undoStack.Pop();
+                var lastEdits = undoStack[^1];
+                undoStack.Remove(lastEdits);
                 edit.Changes.AddRange(lastEdits.Changes);
                 UndoDone?.Invoke(this, EventArgs.Empty);
             }
         }
 
-        private void ResetStack(Stack<TracedChanges> stack)
+        public void RemoveTracedChanges(IEnumerable<ITraceable> traceables)
+        {
+            undoStack.RemoveAll(x => x.HasTraceableObject == false);
+            undoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
+            redoStack.RemoveAll(x => x.HasTraceableObject == false);
+            redoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
+            TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void Reset(List<TracedChanges> stack)
         {
             while (stack.Count > 0)
             {
-                var tracedChange = stack.Pop();
+                var tracedChange = stack[^1];
+                stack.Remove(tracedChange);
                 foreach (var change in tracedChange.Changes)
                 {
                     if (change.TraceableObject != null)
@@ -254,7 +267,7 @@ namespace AudioCuesheetEditor.Services.UI
                     {
                         //Single change
                         var changes = new TracedChanges([new((ITraceable)sender, e.TraceableChange)]);
-                        undoStack.Push(changes);
+                        undoStack.Add(changes);
                         redoStack.Clear();
                         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
                     }
