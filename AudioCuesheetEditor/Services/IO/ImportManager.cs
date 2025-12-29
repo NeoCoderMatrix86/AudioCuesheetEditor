@@ -88,9 +88,10 @@ namespace AudioCuesheetEditor.Services.IO
             stopwatch.Stop();
             _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
-
+        //TODO: Tests
         public async Task AnalyseImportfile()
         {
+            ResetTracing();
             var stopwatch = Stopwatch.StartNew();
             var fileContent = _sessionStateContainer.Importfile?.FileContent;
             if (String.IsNullOrEmpty(fileContent) == false)
@@ -116,6 +117,7 @@ namespace AudioCuesheetEditor.Services.IO
                         var importCuesheet = new Cuesheet();
                         CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
+                        StartTracing();
                         break;
                     case ImportFileType.Cuesheet:
                         _traceChangeManager.BulkEdit = true;
@@ -127,10 +129,11 @@ namespace AudioCuesheetEditor.Services.IO
             stopwatch.Stop();
             _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
-
+        //TODO: Tests
         public void ImportCuesheet()
         {
             var stopwatch = Stopwatch.StartNew();
+            ResetTracing();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
                 _traceChangeManager.BulkEdit = true;
@@ -216,6 +219,30 @@ namespace AudioCuesheetEditor.Services.IO
                 throw new NullReferenceException();
             }
             target.IsImporting = false;
+        }
+
+        private void StartTracing()
+        {
+            if (_sessionStateContainer.ImportCuesheet != null)
+            {
+                _traceChangeManager.TraceChanges(_sessionStateContainer.ImportCuesheet);
+                foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
+                {
+                    _traceChangeManager.TraceChanges(track);
+                }
+            }
+        }
+
+        private void ResetTracing()
+        {
+            if (_sessionStateContainer.ImportCuesheet != null)
+            {
+                _traceChangeManager.RemoveTracedChanges(_sessionStateContainer.ImportCuesheet);
+                foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
+                {
+                    _traceChangeManager.RemoveTracedChanges(track);
+                }
+            }
         }
     }
 }
