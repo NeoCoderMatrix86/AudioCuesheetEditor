@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.Services.UI
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
 
         private ApplicationOptions? applicationOptions;
-        private Task? _initTask;
+        private readonly Task? _initTask;
         private bool disposedValue;
 
         public ApplicationOptionsTimeSpanParser(ILocalStorageOptionsProvider localStorageOptionsProvider)
