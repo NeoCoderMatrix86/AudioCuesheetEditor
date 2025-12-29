@@ -228,12 +228,12 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        public void RemoveTracedChanges(ITraceable traceable)
+        public void RemoveTracedChanges(IEnumerable<ITraceable> traceables)
         {
             undoStack.RemoveAll(x => x.HasTraceableObject == false);
-            undoStack.RemoveAll(x => x.Changes.Any(y => y.TraceableObject == traceable));
+            undoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
             redoStack.RemoveAll(x => x.HasTraceableObject == false);
-            redoStack.RemoveAll(x => x.Changes.Any(y => y.TraceableObject == traceable));
+            redoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
             TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
         }
 

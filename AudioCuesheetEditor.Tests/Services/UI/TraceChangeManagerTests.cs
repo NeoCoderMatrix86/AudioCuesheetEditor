@@ -374,7 +374,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
                 tracedObjectHistoryChangedFired = true;
             };
             // Act
-            manager.RemoveTracedChanges(cuesheet1);
+            manager.RemoveTracedChanges([cuesheet1]);
             // Assert
             Assert.IsTrue(tracedObjectHistoryChangedFired);
             Assert.IsTrue(manager.CanUndo);
@@ -400,7 +400,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
                 tracedObjectHistoryChangedFired = true;
             };
             // Act
-            manager.RemoveTracedChanges(cuesheet1);
+            manager.RemoveTracedChanges([cuesheet1]);
             // Assert
             Assert.IsTrue(tracedObjectHistoryChangedFired);
             Assert.IsTrue(manager.CanUndo);

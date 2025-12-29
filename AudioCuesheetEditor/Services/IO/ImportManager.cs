@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Diagnostics;
@@ -237,11 +238,7 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                _traceChangeManager.RemoveTracedChanges(_sessionStateContainer.ImportCuesheet);
-                foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
-                {
-                    _traceChangeManager.RemoveTracedChanges(track);
-                }
+                _traceChangeManager.RemoveTracedChanges([_sessionStateContainer.ImportCuesheet, .. _sessionStateContainer.ImportCuesheet.Tracks]);
             }
         }
     }

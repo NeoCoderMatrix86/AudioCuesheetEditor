@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
@@ -248,8 +249,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(analyzedCuesheet.Tracks.Last().Title, sessionStateContainer.Cuesheet.Tracks.Last().Title);
             Assert.AreEqual(analyzedCuesheet.Tracks.Last().Begin, sessionStateContainer.Cuesheet.Tracks.Last().Begin);
             Assert.AreEqual(analyzedCuesheet.Tracks.Last().End, sessionStateContainer.Cuesheet.Tracks.Last().End);
-            traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<Cuesheet>()));
-            traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<Track>()));
+            traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<ITraceable>>()));
         }
 
         private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
