@@ -1,0 +1,33 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject ILogger<ViewModeImport> _logger
+@inject IStringLocalizer<ViewModeImport> _localizer
+
+<MudPaper Class="pa-4" Elevation="1">
+    <MudTextField Variant="Variant.Outlined" Label="@_localizer["Import data"]" Placeholder="@_localizer["Please enter text or upload a file for import"]"
+                  Lines="15" @bind-Value="importText" FullWidth="true" />
+</MudPaper>
+
+@code {
+    //TODO: Make a new component for new import view, which starts with a text input area (respective file upload)
+    //TODO: Add a preview of parsed data
+
+    private string? importText;
+}
