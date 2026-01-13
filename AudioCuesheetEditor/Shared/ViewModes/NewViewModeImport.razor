@@ -17,21 +17,30 @@ along with Foobar.  If not, see
 -->
 @inherits BaseLocalizedComponent
 
-<MudCard Outlined>
-    <MudCardContent>
-        <MudField Label="Import data" Variant="Variant.Outlined">
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
+    <MudTabPanel Text="Write" Icon="@Icons.Material.Outlined.Edit">
+        <MudField Variant="Variant.Outlined">
             <MudTextField Lines="15" Placeholder="Please enter text or upload a file for import" @bind-Value="importText" FullWidth Underline="false" />
             <MudStack Row Justify="Justify.SpaceBetween">
                 <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">
                     Upload File
                 </MudButton>
-                <MudButton Variant="Variant.Text" EndIcon="@Icons.Material.Outlined.NavigateNext">
-                    Analyse data
-                </MudButton>
             </MudStack>
         </MudField>
-    </MudCardContent>
-</MudCard>
+        <MudStack Row Justify="Justify.FlexEnd">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.NavigateNext">
+                Analyse data
+            </MudButton>
+        </MudStack>
+    </MudTabPanel>
+    <MudTabPanel Text="Preview" Icon="@Icons.Material.Outlined.Analytics">
+        <MudField Class="ml-2 mr-2">
+            <pre>
+                TODO: Enter analyzed content here!
+            </pre>
+        </MudField>
+    </MudTabPanel>
+</MudTabs>
 
 @code {
     //TODO: Localization
