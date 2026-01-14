@@ -17,28 +17,35 @@ along with Foobar.  If not, see
 -->
 @inherits BaseLocalizedComponent
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
-    <MudTabPanel Text="Write" Icon="@Icons.Material.Outlined.Edit">
-        <MudField Variant="Variant.Outlined">
-            <MudTextField Lines="15" Placeholder="Please enter text or upload a file for import" @bind-Value="importText" FullWidth Underline="false" />
-            <MudStack Row Justify="Justify.SpaceBetween">
-                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">
-                    Upload File
-                </MudButton>
-            </MudStack>
-        </MudField>
-        <MudStack Row Justify="Justify.FlexEnd">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.NavigateNext">
-                Analyse data
-            </MudButton>
-        </MudStack>
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2">
+    <MudTabPanel Text="Data" Icon="@Icons.Material.Outlined.Edit">
+        <MudExpansionPanels MultiExpansion>
+            <MudField Variant="Variant.Outlined">
+                <MudTextField Lines="15" Placeholder="Please enter text or upload a file for import" @bind-Value="importText" FullWidth Underline="false" />
+                <MudStack Row Justify="Justify.SpaceBetween">
+                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">
+                        Upload File
+                    </MudButton>
+                </MudStack>
+            </MudField>
+            <MudField Label="Profile" Variant="Variant.Outlined">
+                <MudSelect T="string" Label="Selected profile">
+                    <MudSelectItem T="string">Importprofile 1</MudSelectItem>
+                    <MudSelectItem T="string">Importprofile 2</MudSelectItem>
+                </MudSelect>
+                TODO: All profile related stuff
+            </MudField>
+        </MudExpansionPanels>
+        <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="Analyse" EndIcon="@Icons.Material.Outlined.NavigateNext" />
     </MudTabPanel>
-    <MudTabPanel Text="Preview" Icon="@Icons.Material.Outlined.Analytics">
+    <MudTabPanel Text="Analyzed data" Icon="@Icons.Material.Outlined.Analytics">
         <MudField Class="ml-2 mr-2">
             <pre>
                 TODO: Enter analyzed content here!
             </pre>
         </MudField>
+        TODO: Here comes the analyzed cuesheet
+        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="Import data" EndIcon="@Icons.Material.Outlined.CheckCircleOutline" />
     </MudTabPanel>
 </MudTabs>
 
