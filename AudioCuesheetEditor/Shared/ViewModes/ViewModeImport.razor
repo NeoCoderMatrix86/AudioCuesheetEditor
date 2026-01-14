@@ -17,33 +17,25 @@ along with Foobar.  If not, see
 -->
 @inherits BaseLocalizedComponent
 
-@inject ILogger<ViewModeImport> _logger
 @inject IStringLocalizer<ViewModeImport> _localizer
-@inject ISessionStateContainer _sessionStateContainer
-@inject ImportManager _importManager
-@inject DialogManager _dialogManager
 
-<MudStepper @ref="mudStepper" NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
-    <MudStep Title="@_localizer["Select inputfiles"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
-        <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
-    </MudStep>
-    <MudStep Title="@_localizer["Validate"]" Disabled="!selectFilesStepCompleted" CompletedChanged="CompleteImportAsync">
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2">
+    <MudTabPanel Text="@_localizer["Data"]" Icon="@Icons.Material.Outlined.Edit">
         <MudExpansionPanels MultiExpansion>
-            <MudExpansionPanel @bind-Expanded="fileContentExpanded">
-                <TitleContent>
-                    <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
-                </TitleContent>
-                <ChildContent>
-                    <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
-                    <Importprofiles ImportprofileChanged="AnalyseImportfile" />
-                    @if (_sessionStateContainer.Importfile?.AnalyseException != null)
-                    {
-                        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                            @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
-                        </MudAlert>
-                    }
-                </ChildContent>
-            </MudExpansionPanel>
+            <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" @bind-Text="importText" />
+            <MudField Label="Profile" Variant="Variant.Outlined">
+                <MudSelect T="string" Label="Selected profile">
+                    <MudSelectItem T="string">Importprofile 1</MudSelectItem>
+                    <MudSelectItem T="string">Importprofile 2</MudSelectItem>
+                </MudSelect>
+                TODO: All profile related stuff
+            </MudField>
+        </MudExpansionPanels>
+        <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext" />
+    </MudTabPanel>
+    <MudTabPanel Text="@_localizer["Analyzed data"]" Icon="@Icons.Material.Outlined.Analytics">
+        <DisplayAnalyzedResult />
+        <MudExpansionPanels MultiExpansion>
             <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
                 <TitleContent>
                     <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
@@ -61,97 +53,15 @@ along with Foobar.  If not, see
                 </ChildContent>
             </MudExpansionPanel>
         </MudExpansionPanels>
-    </MudStep>
-</MudStepper>
+        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline" />
+    </MudTabPanel>
+</MudTabs>
 
 @code {
-    MudStepper? mudStepper;
-    int activeStepIndex;
-    Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
-    Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
-    long? renderBegin;
+    //TODO: Localization
+    //TODO: Logic for import
+    //TODO: Preview of analyzed data
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
-        {
-            await FilesImported();
-        }
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (renderBegin.HasValue)
-        {
-            var renderDuration = System.Diagnostics.Stopwatch.GetElapsedTime(renderBegin.Value);
-            _logger.LogDebug("ViewModeImport render duration: {renderDuration}", renderDuration);
-        }
-        base.OnAfterRender(firstRender);
-    }
-
-    async Task ImportFileContent_FileContentChanged(string newFileContent)
-    {
-        _sessionStateContainer.Importfile!.FileContent = newFileContent;
-        await AnalyseImportfile();
-    }
-
-    async Task AnalyseImportfile()
-    {
-        await _importManager.AnalyseImportfile();
-        renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
-    }
-
-    async Task FilesImported()
-    {
-        await _dialogManager.ShowLoadingDialogAsync();
-        try
-        {
-            await AnalyseImportfile();
-        }
-        finally
-        {
-            _dialogManager.HideLoadingDialog();
-        }
-        fileContentExpanded = true;
-        cuesheetDataExpanded = true;
-        cuesheetTracksExpanded = true;
-        activeStepIndex = 1;
-        selectFilesStepCompleted = true;
-        selectFilesStepError = false;
-        renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
-    }
-
-    async Task CompleteImportAsync()
-    {
-        _importManager.ImportCuesheet();
-        await ResetAsync();
-        // Don't await since otherwise the rendering will stop and this view will not be reset
-        _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
-    }
-
-    Task PreviewInteraction(StepperInteractionEventArgs arg)
-    {
-        if (arg.StepIndex == 0)
-        {
-            arg.Cancel = (selectFilesStepCompleted == false) || (selectFilesStepError == true);
-        }
-        return Task.CompletedTask;
-    }
-
-    void InvalidFilesDropped(List<string> files)
-    {
-        selectFilesStepError = files.Any();
-    }
-
-    async Task ResetAsync()
-    {
-        activeStepIndex = 0;
-        selectFilesStepCompleted = false; 
-        selectFilesStepError = false;
-        if (mudStepper != null)
-        {
-            await mudStepper.ResetAsync(true);
-        }
-    }
+    private string? importText;
+    Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
 }

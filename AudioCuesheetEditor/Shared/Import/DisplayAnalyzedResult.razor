@@ -17,34 +17,21 @@ along with Foobar.  If not, see
 -->
 @inherits BaseLocalizedComponent
 
-@inject IStringLocalizer<ImportFileContent> _localizer
+@inject IStringLocalizer<DisplayAnalyzedResult> _localizer
 @inject ISessionStateContainer _sessionStateContainer
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success">
-    <MudTabPanel Text="@_localizer["Analyzed file content"]" Icon="@Icons.Material.Outlined.Analytics">
-        <MudField Class="ml-2 mr-2">
-            <pre>
-                @if (FileContentRecognized != null)
-                {
-                    @((MarkupString)SanitizeHTML(FileContentRecognized))
-                }
-            </pre>
-        </MudField>
-    </MudTabPanel>
-    <MudTabPanel Text="@_localizer["Edit"]" Icon="@Icons.Material.Outlined.Edit">
-        <MudTextField Class="ml-2 mr-2" T="string" AutoGrow Text="@_sessionStateContainer.Importfile?.FileContent" TextChanged="FileContent_TextChangedAsync" />
-    </MudTabPanel>
-</MudTabs>
+<MudField Class="ml-2 mr-2">
+    <pre>
+        @if (FileContentRecognized != null)
+        {
+            @((MarkupString)SanitizeHTML(FileContentRecognized))
+        }
+    </pre>
+</MudField>
 
 @code {
-    [Parameter]
-    public EventCallback<string> FileContentChanged { get; set; }
+    //TODO: Display analyze errors
     public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
-
-    async Task FileContent_TextChangedAsync(string newFileContent)
-    {
-        await FileContentChanged.InvokeAsync(newFileContent);
-    }
 
     string SanitizeHTML(string input)
     {

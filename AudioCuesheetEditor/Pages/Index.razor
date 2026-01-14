@@ -31,14 +31,12 @@ along with Foobar.  If not, see
             <ViewModeRecord />
         </MudTabPanel>
         <MudTabPanel Text="@_localizer["Import view"]" Icon="@Icons.Material.Outlined.ImportExport">
-            @* <ViewModeImport /> *@
-            <NewViewModeImport />
+            <ViewModeImport />
         </MudTabPanel>
     </MudTabs>
 </CascadingValue>
 
 @code{
-    //TODO: Move back to ViewModeImport
     ViewOptions? options;
     ViewMode currentViewmode = ViewMode.DetailView;
 

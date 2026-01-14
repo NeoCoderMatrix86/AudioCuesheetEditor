@@ -117,10 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Select files for import" xml:space="preserve">
-    <value>Datei für Import auswählen</value>
-  </data>
-  <data name="You dropped an invalid file ({0}) that can not be processed." xml:space="preserve">
-    <value>Sie haben eine ungültige Datei ({0}) hinzugefügt die nicht verarbeitet werden kann.</value>
-  </data>
 </root>
