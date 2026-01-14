@@ -23,13 +23,7 @@ along with Foobar.  If not, see
     <MudTabPanel Text="@_localizer["Data"]" Icon="@Icons.Material.Outlined.Edit">
         <MudExpansionPanels MultiExpansion>
             <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" @bind-Text="importText" />
-            <MudField Label="Profile" Variant="Variant.Outlined">
-                <MudSelect T="string" Label="Selected profile">
-                    <MudSelectItem T="string">Importprofile 1</MudSelectItem>
-                    <MudSelectItem T="string">Importprofile 2</MudSelectItem>
-                </MudSelect>
-                TODO: All profile related stuff
-            </MudField>
+            <Importprofiles />
         </MudExpansionPanels>
         <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext" />
     </MudTabPanel>

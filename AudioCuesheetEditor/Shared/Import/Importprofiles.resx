@@ -141,6 +141,9 @@
   <data name="Days" xml:space="preserve">
     <value>Days</value>
   </data>
+  <data name="Delete selected profile" xml:space="preserve">
+    <value>Delete selected profile</value>
+  </data>
   <data name="End" xml:space="preserve">
     <value>End</value>
   </data>
@@ -161,9 +164,6 @@
   </data>
   <data name="Hours" xml:space="preserve">
     <value>Hours</value>
-  </data>
-  <data name="Import profile" xml:space="preserve">
-    <value>Import profile</value>
   </data>
   <data name="Length" xml:space="preserve">
     <value>Length</value>
@@ -189,8 +189,14 @@
   <data name="PreGap" xml:space="preserve">
     <value>PreGap</value>
   </data>
+  <data name="Profile details" xml:space="preserve">
+    <value>Profile details</value>
+  </data>
   <data name="Profile name" xml:space="preserve">
     <value>Profile name</value>
+  </data>
+  <data name="Reset import profiles" xml:space="preserve">
+    <value>Reset import profiles</value>
   </data>
   <data name="Scheme common data" xml:space="preserve">
     <value>Scheme common data</value>
@@ -203,6 +209,9 @@
   </data>
   <data name="Seconds" xml:space="preserve">
     <value>Seconds</value>
+  </data>
+  <data name="Selected profile" xml:space="preserve">
+    <value>Selected profile</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
     <value>StartDateTime</value>
