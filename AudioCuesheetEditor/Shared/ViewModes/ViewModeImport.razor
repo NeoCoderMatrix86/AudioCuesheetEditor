@@ -18,14 +18,17 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeImport> _localizer
+@inject ImportManager _importManager
+@inject DialogManager _dialogManager
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2">
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2" @bind-ActivePanelIndex="activePanelIndex">
     <MudTabPanel Text="@_localizer["Data"]" Icon="@Icons.Material.Outlined.Edit">
         <MudExpansionPanels MultiExpansion>
             <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" @bind-Text="importText" />
             <Importprofiles />
         </MudExpansionPanels>
-        <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext" />
+        <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
+                OnClick="Analyze" />
     </MudTabPanel>
     <MudTabPanel Text="@_localizer["Analyzed data"]" Icon="@Icons.Material.Outlined.Analytics">
         <DisplayAnalyzedResult />
@@ -47,15 +50,49 @@ along with Foobar.  If not, see
                 </ChildContent>
             </MudExpansionPanel>
         </MudExpansionPanels>
-        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline" />
+        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
+                OnClick="ImportData" />
     </MudTabPanel>
 </MudTabs>
 
 @code {
     //TODO: Localization
-    //TODO: Logic for import
-    //TODO: Preview of analyzed data
 
     private string? importText;
     Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
+    int activePanelIndex = 0;
+
+    async Task Analyze()
+    {
+        await _dialogManager.ShowLoadingDialogAsync();
+        try
+        {
+            await AnalyseImportfile();
+        }
+        finally
+        {
+            _dialogManager.HideLoadingDialog();
+        }
+        // Switch to analyzed data
+        activePanelIndex = 1;
+    }
+
+    async Task AnalyseImportfile()
+    {
+        _importManager.ImportData(importText);
+        await _importManager.AnalyseImportfile();
+    }
+
+    void ImportData()
+    {
+        _importManager.ImportCuesheet();
+        ResetAsync();
+        // Don't await since otherwise the rendering will stop and this view will not be reset
+        _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
+    }
+
+    void ResetAsync()
+    {
+        activePanelIndex = 0;
+    }
 }

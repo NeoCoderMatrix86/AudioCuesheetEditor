@@ -71,6 +71,7 @@ namespace AudioCuesheetEditor.Services.IO
                         FileType = ImportFileType.Cuesheet
                     };
                 }
+                //TODO: Check if this is still needed, maybe we can use import for all kinds of data
                 if (_fileInputManager.IsValidForImportView(file))
                 {
                     var fileContent = await ReadFileContentAsync(file);
@@ -87,6 +88,20 @@ namespace AudioCuesheetEditor.Services.IO
             }
             stopwatch.Stop();
             _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+        }
+
+        public void ImportData(String? data)
+        {
+            //TODO: Test
+            var stopwatch = Stopwatch.StartNew();
+            _sessionStateContainer.Importfile = new Importfile()
+            {
+                FileContent = data,
+                FileContentRecognized = data,
+                FileType = ImportFileType.Textfile
+            };
+            stopwatch.Stop();
+            _logger.LogDebug("ImportData duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
         
         public async Task AnalyseImportfile()
