@@ -20,14 +20,7 @@ along with Foobar.  If not, see
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2">
     <MudTabPanel Text="Data" Icon="@Icons.Material.Outlined.Edit">
         <MudExpansionPanels MultiExpansion>
-            <MudField Variant="Variant.Outlined">
-                <MudTextField Lines="15" Placeholder="Please enter text or upload a file for import" @bind-Value="importText" FullWidth Underline="false" />
-                <MudStack Row Justify="Justify.SpaceBetween">
-                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">
-                        Upload File
-                    </MudButton>
-                </MudStack>
-            </MudField>
+            <TextField Placeholder="Please enter text or upload a file for import" @bind-Text="importText" />
             <MudField Label="Profile" Variant="Variant.Outlined">
                 <MudSelect T="string" Label="Selected profile">
                     <MudSelectItem T="string">Importprofile 1</MudSelectItem>
