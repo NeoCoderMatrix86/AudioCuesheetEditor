@@ -40,28 +40,18 @@ along with Foobar.  If not, see
 @code {
     //TODO: Localization
     //TODO: Maybe disable analyzed data tab when no analyze has been done?
-    //TODO: Reset tab when loading initially
 
     private string? importText;
-    ViewOptions? viewOptions;
     int activePanelIndex;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
-        viewOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
-        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        activePanelIndex = (int)viewOptions.ActiveImportTab;
+        base.OnInitialized(); 
+        activePanelIndex = _sessionStateContainer.ImportTabActiveTab;
         if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
         {
             importText = _sessionStateContainer.Importfile.FileContent;
         }
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     void ImportTextChanged(string? newImportText)
@@ -70,9 +60,10 @@ along with Foobar.  If not, see
         _importManager.ImportData(importText);
     }
 
-    async Task ActiveTabIndexChanged(int tabIndex)
+    void ActiveTabIndexChanged(int tabIndex)
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveImportTab, (ImportTab)tabIndex);
+        _sessionStateContainer.ImportTabActiveTab = tabIndex;
+        activePanelIndex = tabIndex;
     }
 
     async Task Analyze()
@@ -87,7 +78,7 @@ along with Foobar.  If not, see
             _dialogManager.HideLoadingDialog();
         }
         // Switch to analyzed data
-        await ActiveTabIndexChanged(1);
+        ActiveTabIndexChanged(1);
     }
 
     async Task AnalyseImportfile()
@@ -95,26 +86,16 @@ along with Foobar.  If not, see
         await _importManager.AnalyseImportfile();
     }
 
-    async Task ImportData()
+    void ImportData()
     {
         _importManager.ImportCuesheet();
-        await ResetAsync();
+        ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
         _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 
-    async Task ResetAsync()
+    void ResetAsync()
     {
-        await ActiveTabIndexChanged(0);
-    }
-
-    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
-    {
-        if (option is ViewOptions newViewOptions)
-        {
-            viewOptions = newViewOptions;
-            activePanelIndex = (int)viewOptions.ActiveImportTab;
-            StateHasChanged();
-        }
+        ActiveTabIndexChanged(0);
     }
 }
