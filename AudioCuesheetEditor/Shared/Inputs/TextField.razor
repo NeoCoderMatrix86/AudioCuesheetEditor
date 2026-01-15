@@ -18,17 +18,21 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<TextField> _localizer
+@inject IFileInputManager _fileInputManager
 
 <MudField Variant="Variant.Outlined">
     <MudTextField Lines="15" Placeholder="@Placeholder" Value="@Text" ValueChanged="EventCallback.Factory.Create<string?>(this, v => TextChanged.InvokeAsync(v))" FullWidth Underline="false" />
     <MudStack Row Justify="Justify.SpaceBetween">
-        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">@_localizer["Upload file"]</MudButton>
+        <MudFileUpload T="IBrowserFile" Accept="@FileMimeTypes.TextPlain" OnFilesChanged="FileUploaded">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">@_localizer["Upload file"]</MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
     </MudStack>
 </MudField>
 
 @code {
     //TODO: Drag n drop file
-    //TODO: Upload file
     //TODO: localization
 
     [Parameter]
@@ -39,4 +43,13 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback<String?> TextChanged { get; set; }
+
+    async Task FileUploaded(InputFileChangeEventArgs e)
+    {
+        if (_fileInputManager.IsValidForImportView(e.File))
+        {
+            var fileContent = await _fileInputManager.ReadFileContentAsync(e.File);
+            await TextChanged.InvokeAsync(fileContent);
+        }
+    }
 }

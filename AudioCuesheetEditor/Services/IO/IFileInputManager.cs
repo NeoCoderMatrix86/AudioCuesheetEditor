@@ -33,5 +33,11 @@ namespace AudioCuesheetEditor.Services.IO
         /// <param name="browserFile"></param>
         /// <returns></returns>
         bool IsValidForImportView(IBrowserFile browserFile);
+        /// <summary>
+        /// Reads the browser file and gets the file content as string
+        /// </summary>
+        /// <param name="browserFile"></param>
+        /// <returns></returns>
+        Task<string> ReadFileContentAsync(IBrowserFile browserFile);
     }
 }
