@@ -23,6 +23,11 @@ namespace AudioCuesheetEditor.Model.Options
         RecordView = 1,
         ImportView = 2
     }
+    public enum ImportTab
+    {
+        Edit = 0,
+        Analyze = 1
+    }
     public class ViewOptions : IOptions
     {
         [JsonIgnore]
@@ -35,6 +40,25 @@ namespace AudioCuesheetEditor.Model.Options
                 if (value != null)
                 {
                     ActiveTab = Enum.Parse<ViewMode>(value);
+                }
+                else
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public ImportTab ActiveImportTab { get; set; }
+
+        public String? ActiveImportTabName
+        {
+            get => Enum.GetName(ActiveImportTab);
+            set
+            {
+                if (value != null)
+                {
+                    ActiveImportTab = Enum.Parse<ImportTab>(value);
                 }
                 else
                 {

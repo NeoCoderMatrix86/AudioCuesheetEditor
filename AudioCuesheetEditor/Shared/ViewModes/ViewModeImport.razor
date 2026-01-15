@@ -20,11 +20,12 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject ImportManager _importManager
 @inject DialogManager _dialogManager
+@inject ISessionStateContainer _sessionStateContainer
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2" @bind-ActivePanelIndex="activePanelIndex">
+<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2" ActivePanelIndex="activePanelIndex" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
     <MudTabPanel Text="@_localizer["Data"]" Icon="@Icons.Material.Outlined.Edit">
         <MudExpansionPanels MultiExpansion>
-            <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" @bind-Text="importText" />
+            <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
             <Importprofiles />
         </MudExpansionPanels>
         <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
@@ -57,11 +58,41 @@ along with Foobar.  If not, see
 
 @code {
     //TODO: Localization
-    //TODO: Save state when switching to details or record view
+    //TODO: Maybe disable analyzed data tab when no analyze has been done?
 
     private string? importText;
     Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
-    int activePanelIndex = 0;
+    ViewOptions? viewOptions;
+    int activePanelIndex;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        viewOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        activePanelIndex = (int)viewOptions.ActiveImportTab;
+        if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
+        {
+            importText = _sessionStateContainer.Importfile.FileContent;
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    void ImportTextChanged(string? newImportText)
+    {
+        importText = newImportText;
+        _importManager.ImportData(importText);
+    }
+
+    async Task ActiveTabIndexChanged(int tabIndex)
+    {
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveImportTab, (ImportTab)tabIndex);
+    }
 
     async Task Analyze()
     {
@@ -75,25 +106,34 @@ along with Foobar.  If not, see
             _dialogManager.HideLoadingDialog();
         }
         // Switch to analyzed data
-        activePanelIndex = 1;
+        await ActiveTabIndexChanged(1);
     }
 
     async Task AnalyseImportfile()
     {
-        _importManager.ImportData(importText);
         await _importManager.AnalyseImportfile();
     }
 
-    void ImportData()
+    async Task ImportData()
     {
         _importManager.ImportCuesheet();
-        ResetAsync();
+        await ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
         _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 
-    void ResetAsync()
+    async Task ResetAsync()
     {
-        activePanelIndex = 0;
+        await ActiveTabIndexChanged(0);
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ViewOptions newViewOptions)
+        {
+            viewOptions = newViewOptions;
+            activePanelIndex = (int)viewOptions.ActiveImportTab;
+            StateHasChanged();
+        }
     }
 }
