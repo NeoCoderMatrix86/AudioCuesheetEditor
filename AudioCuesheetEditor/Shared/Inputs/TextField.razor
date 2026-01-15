@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<TextField> _localizer
 @inject IFileInputManager _fileInputManager
 
-<MudField Variant="Variant.Outlined">
+<MudField Variant="Variant.Outlined" Class="ma-2">
     <MudTextField Lines="15" Placeholder="@Placeholder" Value="@Text" ValueChanged="EventCallback.Factory.Create<string?>(this, v => TextChanged.InvokeAsync(v))" FullWidth Underline="false" />
     <MudStack Row Justify="Justify.SpaceBetween">
         <MudFileUpload T="IBrowserFile" Accept="@FileMimeTypes.TextPlain" OnFilesChanged="FileUploaded">

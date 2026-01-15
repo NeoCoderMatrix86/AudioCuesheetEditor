@@ -24,13 +24,14 @@ along with Foobar.  If not, see
 
 @if (importOptions != null)
 {
-    <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Selected profile"]" Value="importOptions.SelectedImportProfile" ValueChanged="SelectedImportProfileChangedAsync">
+    <MudSelect T="Importprofile" Variant="Variant.Outlined" Label="@_localizer["Selected profile"]" Value="importOptions.SelectedImportProfile" ValueChanged="SelectedImportProfileChangedAsync"
+               Class="mr-2 ml-2">
         @foreach (var profile in importOptions.ImportProfiles)
         {
             <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
         }
     </MudSelect>
-    <MudButtonGroup OverrideStyles="false">
+    <MudButtonGroup OverrideStyles="false" Class="ma-2">
         <MudIconButton Color="Color.Primary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Add" OnClick="AddImportprofileClick" />
         <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
             <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Delete" Disabled="importOptions.SelectedImportProfile == null" OnClick="DeleteImportprofileClick" aria-label="@_localizer["Delete selected profile"]">@_localizer["Delete selected profile"]</MudButton>
@@ -45,7 +46,7 @@ along with Foobar.  If not, see
             <MudIconButton Color="Color.Error" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.LockReset" OnClick="ResetProfiles" aria-label="@_localizer["Reset import profiles"]" />
         </MudHidden>
     </MudButtonGroup>
-    <MudField Label="@_localizer["Profile details"]" Variant="Variant.Outlined">
+    <MudField Label="@_localizer["Profile details"]" Variant="Variant.Outlined" Class="mr-2 ml-2">
         <MudTextField T="string" Value="importOptions.SelectedImportProfile?.Name" Disabled="importOptions.SelectedImportProfile == null" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ImportOptions, Importprofile?, String?>(x => x.SelectedImportProfile, x => x!.Name, newValue)"
                       Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.Name))"
                       Label="@_localizer["Profile name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
