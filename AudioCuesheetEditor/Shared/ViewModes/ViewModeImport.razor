@@ -24,33 +24,14 @@ along with Foobar.  If not, see
 
 <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2" ActivePanelIndex="activePanelIndex" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
     <MudTabPanel Text="@_localizer["Data"]" Icon="@Icons.Material.Outlined.Edit">
-        <MudExpansionPanels MultiExpansion>
-            <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
-            <Importprofiles />
-        </MudExpansionPanels>
+        <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
+        <Importprofiles />
         <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
                 OnClick="Analyze" />
     </MudTabPanel>
     <MudTabPanel Text="@_localizer["Analyzed data"]" Icon="@Icons.Material.Outlined.Analytics">
         <DisplayAnalyzedResult />
-        <MudExpansionPanels MultiExpansion>
-            <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-                <TitleContent>
-                    <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-                </TitleContent>
-                <ChildContent>
-                    <CuesheetData />
-                </ChildContent>
-            </MudExpansionPanel>
-            <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
-                <TitleContent>
-                    <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-                </TitleContent>
-                <ChildContent>
-                    <TrackList />
-                </ChildContent>
-            </MudExpansionPanel>
-        </MudExpansionPanels>
+
         <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
                 OnClick="ImportData" />
     </MudTabPanel>
@@ -59,9 +40,9 @@ along with Foobar.  If not, see
 @code {
     //TODO: Localization
     //TODO: Maybe disable analyzed data tab when no analyze has been done?
+    //TODO: Reset tab when loading initially
 
     private string? importText;
-    Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
     ViewOptions? viewOptions;
     int activePanelIndex;
 

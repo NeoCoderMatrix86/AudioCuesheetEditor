@@ -28,9 +28,37 @@ along with Foobar.  If not, see
         }
     </pre>
 </MudField>
+@if (_sessionStateContainer.Importfile?.AnalyseException != null)
+{
+    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+        @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
+    </MudAlert>
+}
+else
+{
+    <MudExpansionPanels MultiExpansion>
+        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <CuesheetData />
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <TrackList />
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
 
 @code {
-    //TODO: Display analyze errors
+    Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
+
     public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
 
     string SanitizeHTML(string input)
