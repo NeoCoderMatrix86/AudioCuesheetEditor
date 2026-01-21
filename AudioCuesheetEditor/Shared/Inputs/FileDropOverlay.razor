@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @implements IAsyncDisposable
 
 @inject IJSRuntime _jsRuntime
-@inject IStringLocalizer<TextField> _localizer
+@inject IStringLocalizer<FileDropOverlay> _localizer
 
 <MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" Absolute ZIndex="9999" Modal>
     <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
@@ -90,7 +90,7 @@ along with Foobar.  If not, see
     public async ValueTask DisposeAsync()
     {
         if (_disposed) 
-        { 
+        {
             return; 
         }
 
