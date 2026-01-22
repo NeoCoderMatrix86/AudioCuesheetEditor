@@ -21,6 +21,8 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<Index> _localizer
+@inject ImportManager _importManager
+@inject ISessionStateContainer _sessionStateContainer
 
 <CascadingValue Value="currentViewmode">
     <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
@@ -46,6 +48,7 @@ along with Foobar.  If not, see
         options = await base.LocalStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
         currentViewmode = options.ActiveTab;
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _importManager.UploadFilesFinished += ImportManager_UploadFilesFinished;
     }
 
     protected override void Dispose(bool disposing)
@@ -54,6 +57,7 @@ along with Foobar.  If not, see
         if (disposing)
         {
             base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+            _importManager.UploadFilesFinished -= ImportManager_UploadFilesFinished;
         }
     }
 
@@ -71,5 +75,21 @@ along with Foobar.  If not, see
             currentViewmode = options.ActiveTab;
             StateHasChanged();
         }
+    }
+
+    void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
+    {
+        //TODO: Dialog asking for overwrite?
+        switch (_sessionStateContainer.Importfile?.FileType)
+        {
+            case ImportFileType.ProjectFile:
+            case ImportFileType.Cuesheet:
+                _importManager.AnalyseImportfile();
+                break;
+            case ImportFileType.Textfile:
+                LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
+                break;
+        }
+        //TODO: Display invalid files to user in a dialog
     }
 }

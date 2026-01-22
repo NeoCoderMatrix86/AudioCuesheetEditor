@@ -21,6 +21,8 @@ along with Foobar.  If not, see
 
 @inject IJSRuntime _jsRuntime
 @inject IStringLocalizer<FileDropOverlay> _localizer
+@inject ImportManager _importManager
+@inject DialogManager _dialogManager
 
 <MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" Absolute ZIndex="9999" Modal>
     <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
@@ -75,11 +77,19 @@ along with Foobar.  If not, see
 
     async Task OnInputFileChanged(InputFileChangeEventArgs e)
     {
-        //TODO: send files to a service or an event
+        try
+        {
+            await _dialogManager.ShowLoadingDialogAsync();
+            await _importManager.UploadFilesAsync(e.GetMultipleFiles());
 
-        ClearDragClass();
-        _showOverlay = false;
-        await _jsRuntime.InvokeVoidAsync("globalFileDrag.reset", _dotNetRef);
+            ClearDragClass();
+            _showOverlay = false;
+            await _jsRuntime.InvokeVoidAsync("globalFileDrag.reset", _dotNetRef);
+        }
+        finally
+        {
+            _dialogManager.HideLoadingDialog();
+        }
         StateHasChanged();
     }
 
