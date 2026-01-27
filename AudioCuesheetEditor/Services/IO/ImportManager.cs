@@ -42,59 +42,8 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
 
-        public async Task ImportFilesAsync(IEnumerable<IBrowserFile> files)
-        {
-            var stopwatch = Stopwatch.StartNew();
-            foreach (var file in files)
-            {
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    var stringFileContent = reader.ReadToEnd();
-                    _sessionStateContainer.Importfile = new Importfile()
-                    {
-                        FileContent = stringFileContent,
-                        FileContentRecognized = stringFileContent,
-                        FileType = ImportFileType.ProjectFile
-                    };
-                }
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    var stringFileContent = reader.ReadToEnd();
-                    _sessionStateContainer.Importfile = new Importfile()
-                    {
-                        FileContent = stringFileContent,
-                        FileContentRecognized = stringFileContent,
-                        FileType = ImportFileType.Cuesheet
-                    };
-                }
-                //TODO: Check if this is still needed, maybe we can use import for all kinds of data
-                if (_fileInputManager.IsValidForImportView(file))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    var stringFileContent = reader.ReadToEnd();
-                    _sessionStateContainer.Importfile = new Importfile()
-                    {
-                        FileContent = stringFileContent,
-                        FileContentRecognized = stringFileContent,
-                        FileType = ImportFileType.Textfile
-                    };
-                }
-            }
-            stopwatch.Stop();
-            _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
-        }
-
         public void ImportData(String? data)
         {
-            //TODO: Test
             var stopwatch = Stopwatch.StartNew();
             _sessionStateContainer.Importfile = new Importfile()
             {

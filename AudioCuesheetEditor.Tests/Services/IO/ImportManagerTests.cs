@@ -131,7 +131,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod]
-        public async Task ImportFilesAsync_ProjectFile_ImportsCorrectly()
+        public async Task UploadFilesAsync_ProjectFile_ImportsCorrectly()
         {
             // Arrange
             var fileContent = "This is the content";
@@ -147,7 +147,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var loggerMock = new Mock<ILogger<ImportManager>>();
             var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
             // Act
-            await importManager.ImportFilesAsync([file]);
+            await importManager.UploadFilesAsync([file]);
 
             // Assert
             Assert.IsNotNull(sessionStateContainer.Importfile);
@@ -157,7 +157,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod]
-        public async Task ImportFilesAsync_CuesheetFile_ImportsCorrectly()
+        public async Task UploadFilesAsync_CuesheetFile_ImportsCorrectly()
         {
             // Arrange
             var fileContent = "Cuesheet file content";
@@ -173,7 +173,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var loggerMock = new Mock<ILogger<ImportManager>>();
             var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
             // Act
-            await importManager.ImportFilesAsync([file]);
+            await importManager.UploadFilesAsync([file]);
 
             // Assert
             Assert.IsNotNull(sessionStateContainer.Importfile);
@@ -183,7 +183,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod]
-        public async Task ImportFilesAsync_TextFile_ImportsCorrectly()
+        public async Task UploadFilesAsync_TextFile_ImportsCorrectly()
         {
             // Arrange
             var fileContent = "TextFileContent";
@@ -199,7 +199,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var loggerMock = new Mock<ILogger<ImportManager>>();
             var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
             // Act
-            await importManager.ImportFilesAsync([file]);
+            await importManager.UploadFilesAsync([file]);
 
             // Assert
             Assert.IsNotNull(sessionStateContainer.Importfile);
@@ -250,6 +250,26 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(analyzedCuesheet.Tracks.Last().Begin, sessionStateContainer.Cuesheet.Tracks.Last().Begin);
             Assert.AreEqual(analyzedCuesheet.Tracks.Last().End, sessionStateContainer.Cuesheet.Tracks.Last().End);
             traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<ITraceable>>()));
+        }
+
+        [TestMethod]
+        public void ImportData_ValidData_SetsImportfile()
+        {
+            // Arrange
+            var traceChangeManagerMock = new Mock<ITraceChangeManager>();
+            var sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
+            var importdata = nameof(ImportData_ValidData_SetsImportfile);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var textImportServiceMock = new Mock<ITextImportService>();
+            var loggerMock = new Mock<ILogger<ImportManager>>();
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManagerMock.Object, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            // Act
+            importManager.ImportData(importdata);
+            // Assert
+            Assert.IsNotNull(sessionStateContainer.Importfile);
+            Assert.AreEqual(importdata, sessionStateContainer.Importfile.FileContent);
+            Assert.AreEqual(importdata, sessionStateContainer.Importfile.FileContentRecognized);
+            Assert.AreEqual(ImportFileType.Textfile, sessionStateContainer.Importfile.FileType);
         }
 
         private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
