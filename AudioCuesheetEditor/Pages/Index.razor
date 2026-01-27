@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Index> _localizer
 @inject ImportManager _importManager
 @inject ISessionStateContainer _sessionStateContainer
+@inject DialogManager _dialogManager
 
 <CascadingValue Value="currentViewmode">
     <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
@@ -77,18 +78,29 @@ along with Foobar.  If not, see
         }
     }
 
-    void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
+    async void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
     {
-        switch (_sessionStateContainer.Importfile?.FileType)
+        try
         {
-            case ImportFileType.ProjectFile:
-            case ImportFileType.Cuesheet:
-                _importManager.AnalyseImportfile();
-                break;
-            case ImportFileType.Textfile:
-                LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
-                break;
+            if (invalidFiles.Any())
+            {
+                //TODO: Display invalid files to user (maybe with snackbar from mudblazor)
+            }
+            await _dialogManager.ShowLoadingDialogAsync();
+            switch (_sessionStateContainer.Importfile?.FileType)
+            {
+                case ImportFileType.ProjectFile:
+                case ImportFileType.Cuesheet:
+                    await _importManager.AnalyseImportfile();
+                    break;
+                case ImportFileType.Textfile:
+                    await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
+                    break;
+            }
         }
-        //TODO: Display invalid files to user in a dialog
+        finally
+        {
+            _dialogManager.HideLoadingDialog();
+        }
     }
 }
