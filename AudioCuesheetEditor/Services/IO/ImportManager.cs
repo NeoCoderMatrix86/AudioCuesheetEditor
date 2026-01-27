@@ -113,7 +113,6 @@ namespace AudioCuesheetEditor.Services.IO
 
         public async Task UploadFilesAsync(IEnumerable<IBrowserFile> files)
         {
-            //TODO: Test?
             var stopwatch = Stopwatch.StartNew();
             var invalidFiles = new List<string>();
             foreach (var file in files)
