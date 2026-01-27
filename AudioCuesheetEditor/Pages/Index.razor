@@ -79,7 +79,6 @@ along with Foobar.  If not, see
 
     void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
     {
-        //TODO: Dialog asking for overwrite?
         switch (_sessionStateContainer.Importfile?.FileType)
         {
             case ImportFileType.ProjectFile:
