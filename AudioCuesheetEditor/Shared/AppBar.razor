@@ -24,7 +24,6 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject IJSRuntime _jsRuntime
 @inject HotKeys _hotKeys
-@inject DialogManager _dialogManager
 @inject ImportManager _importManager
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
@@ -47,6 +46,7 @@ along with Foobar.  If not, see
     <MudSpacer />
     @if (DisplayFileMenu)
     {
+        <MudFileUpload @ref="mudFileUpload" T="IBrowserFile" Accept="@String.Join(',', FileExtensions.Cuesheet, FileExtensions.Projectfile)" FilesChanged="FileUploaded" />
         <MudMenu Label="@_localizer["File"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.ImportExport">
             <MudMenuItem Icon="@Icons.Material.Outlined.FileOpen" OnClick="OpenFileClicked">@_localizer["Open"]</MudMenuItem>
             <MudMenu Label="@_localizer["Export"]" StartIcon="@Icons.Material.Outlined.FileDownload">
@@ -83,6 +83,7 @@ along with Foobar.  If not, see
 
 @code {
     HotKeysContext? hotKeysContext;
+    MudFileUpload<IBrowserFile>? mudFileUpload;
 
     protected override void OnInitialized()
     {
@@ -188,15 +189,15 @@ along with Foobar.  If not, see
 
     async Task OpenFileClicked() 
     {
-        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true };
-        var dialog = await _dialogService.ShowAsync<SelectFileDialog>(_localizer["Select file"], options);
-        var result = await dialog.Result;
-        if (result?.Canceled == false)
+        if (mudFileUpload != null)
         {
-            await _dialogManager.ShowLoadingDialogAsync();
-            await _importManager.AnalyseImportfile();
-            _dialogManager.HideLoadingDialog();
+            await mudFileUpload.OpenFilePickerAsync();
         }
+    }
+
+    async Task FileUploaded(IBrowserFile file)
+    {
+        await _importManager.UploadFilesAsync([file]);
     }
 
     async Task DisplayHotkeys()
