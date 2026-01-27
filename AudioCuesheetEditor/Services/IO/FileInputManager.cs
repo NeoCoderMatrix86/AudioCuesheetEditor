@@ -136,7 +136,6 @@ namespace AudioCuesheetEditor.Services.IO
         /// <inheritdoc/>
         public async Task<string> ReadFileContentAsync(IBrowserFile browserFile)
         {
-            //TODO: Tests?
             var fileContent = new StreamContent(browserFile.OpenReadStream());
             return await fileContent.ReadAsStringAsync();
         }
