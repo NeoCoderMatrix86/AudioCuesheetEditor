@@ -24,6 +24,7 @@ along with Foobar.  If not, see
 @inject ImportManager _importManager
 @inject ISessionStateContainer _sessionStateContainer
 @inject DialogManager _dialogManager
+@inject ISnackbar _snackbar
 
 <CascadingValue Value="currentViewmode">
     <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
@@ -78,29 +79,39 @@ along with Foobar.  If not, see
         }
     }
 
-    async void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
+    void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
     {
-        try
+        InvokeAsync(async () =>
         {
-            if (invalidFiles.Any())
+            try
             {
-                //TODO: Display invalid files to user (maybe with snackbar from mudblazor)
+                if (invalidFiles.Any())
+                {
+                    foreach (var file in invalidFiles)
+                    {
+                        string message = _localizer["{0} can not be processed!", file].ToString();
+                        _snackbar.Add(message, Severity.Warning, config =>
+                        {
+                            config.RequireInteraction = true;
+                        });
+                    }
+                }
+                await _dialogManager.ShowLoadingDialogAsync();
+                switch (_sessionStateContainer.Importfile?.FileType)
+                {
+                    case ImportFileType.ProjectFile:
+                    case ImportFileType.Cuesheet:
+                        await _importManager.AnalyseImportfile();
+                        break;
+                    case ImportFileType.Textfile:
+                        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
+                        break;
+                }
             }
-            await _dialogManager.ShowLoadingDialogAsync();
-            switch (_sessionStateContainer.Importfile?.FileType)
+            finally
             {
-                case ImportFileType.ProjectFile:
-                case ImportFileType.Cuesheet:
-                    await _importManager.AnalyseImportfile();
-                    break;
-                case ImportFileType.Textfile:
-                    await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
-                    break;
+                _dialogManager.HideLoadingDialog();
             }
-        }
-        finally
-        {
-            _dialogManager.HideLoadingDialog();
-        }
+        });
     }
 }
