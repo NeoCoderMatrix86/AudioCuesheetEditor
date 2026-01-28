@@ -77,7 +77,7 @@ namespace AudioCuesheetEditor.Services.UI
         }
 
         public IImportfile? Importfile{ get; set; }
-        public int ImportTabActiveTab { get; set; } = 0;
+        public Boolean ImportIsAnalyzed { get; set; } = false;
 
         public void ResetImport()
         {

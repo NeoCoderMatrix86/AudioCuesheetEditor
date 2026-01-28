@@ -28,6 +28,6 @@ namespace AudioCuesheetEditor.Services.UI
         public Audiofile? ImportAudiofile { get; set; }
         public IImportfile? Importfile { get; set; }
         public void ResetImport();
-        public int ImportTabActiveTab { get; set; }
+        public Boolean ImportIsAnalyzed { get; set; }
     }
 }

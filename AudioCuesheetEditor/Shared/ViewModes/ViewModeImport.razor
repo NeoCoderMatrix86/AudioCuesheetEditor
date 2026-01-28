@@ -22,32 +22,38 @@ along with Foobar.  If not, see
 @inject DialogManager _dialogManager
 @inject ISessionStateContainer _sessionStateContainer
 
-<MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Info" Class="ma-2" ActivePanelIndex="activePanelIndex" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
-    <MudTabPanel Text="@_localizer["Data"]" Icon="@Icons.Material.Outlined.Edit">
-        <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
-        <Importprofiles />
-        <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
-                OnClick="Analyze" />
-    </MudTabPanel>
-    <MudTabPanel Text="@_localizer["Analyzed data"]" Icon="@Icons.Material.Outlined.Analytics">
-        <DisplayAnalyzedResult />
+@if (IsAnalyzed == false)
+{
+    <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
+    <Importprofiles />
+    <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
+            OnClick="Analyze" />
+}
+else
+{
+    <DisplayAnalyzedResult />
 
-        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
-                OnClick="ImportData" />
-    </MudTabPanel>
-</MudTabs>
+    <MudFab Color="Color.Warning" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" Label="@_localizer["Back"]" StartIcon="@Icons.Material.Outlined.ArrowBack"
+            OnClick="ResetAsync" />
+
+    <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
+            OnClick="ImportData" />
+}
 
 @code {
     //TODO: Localization
-    //TODO: Maybe disable analyzed data tab when no analyze has been done?
 
     private string? importText;
-    int activePanelIndex;
+
+    public Boolean IsAnalyzed
+    {
+        get => _sessionStateContainer.ImportIsAnalyzed;
+        set => _sessionStateContainer.ImportIsAnalyzed = value;
+    }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        activePanelIndex = _sessionStateContainer.ImportTabActiveTab;
         _importManager.UploadFilesFinished += ImportManager_UploadFilesFinished;
         SetImportText();
     }
@@ -64,12 +70,6 @@ along with Foobar.  If not, see
         _importManager.ImportData(importText);
     }
 
-    void ActiveTabIndexChanged(int tabIndex)
-    {
-        _sessionStateContainer.ImportTabActiveTab = tabIndex;
-        activePanelIndex = tabIndex;
-    }
-
     async Task Analyze()
     {
         await _dialogManager.ShowLoadingDialogAsync();
@@ -82,7 +82,7 @@ along with Foobar.  If not, see
             _dialogManager.HideLoadingDialog();
         }
         // Switch to analyzed data
-        ActiveTabIndexChanged(1);
+        IsAnalyzed = true;
     }
 
     async Task AnalyseImportfile()
@@ -100,7 +100,7 @@ along with Foobar.  If not, see
 
     void ResetAsync()
     {
-        ActiveTabIndexChanged(0);
+        IsAnalyzed = false;
     }
 
     void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
