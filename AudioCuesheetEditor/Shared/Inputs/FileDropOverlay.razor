@@ -25,7 +25,7 @@ along with Foobar.  If not, see
 @inject DialogManager _dialogManager
 
 <MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" Absolute ZIndex="9999" Modal>
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
+    <MudFileUpload FieldId="@fileUploadId" T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
         <ActivatorContent>
             <MudPaper Class="@_dragClass" Width="100vw" Height="100vh" Style="margin:0;opacity:0.65;">
                 <MudStack AlignItems="AlignItems.Center">
@@ -43,8 +43,10 @@ along with Foobar.  If not, see
     private DotNetObjectReference<FileDropOverlay>? _dotNetRef;
     private bool _showOverlay;
     private bool _disposed;
-    private const string DefaultDragClass = "d-flex align-center justify-center position-relative";
     private string _dragClass = DefaultDragClass;
+
+    private const string DefaultDragClass = "d-flex align-center justify-center position-relative";
+    private readonly string fileUploadId = $"FileDropOverlay_{Guid.NewGuid()}";
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,7 +82,7 @@ along with Foobar.  If not, see
         try
         {
             await _dialogManager.ShowLoadingDialogAsync();
-            await _importManager.UploadFilesAsync(e.GetMultipleFiles());
+            await _importManager.UploadFilesAsync(e.GetMultipleFiles(), fileUploadId);
 
             ClearDragClass();
             _showOverlay = false;
@@ -88,7 +90,7 @@ along with Foobar.  If not, see
         }
         finally
         {
-            _dialogManager.HideLoadingDialog();
+             _dialogManager.HideLoadingDialog();
         }
     }
 

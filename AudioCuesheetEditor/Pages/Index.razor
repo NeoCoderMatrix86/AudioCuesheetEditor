@@ -44,6 +44,18 @@ along with Foobar.  If not, see
     ViewOptions? options;
     ViewMode currentViewmode = ViewMode.DetailView;
 
+    public Cuesheet? Cuesheet
+    {
+        get
+        {
+            if (currentViewmode == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -107,6 +119,11 @@ along with Foobar.  If not, see
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
                         break;
                 }
+                if ((Cuesheet != null) && (_sessionStateContainer.ImportAudiofile != null))
+                {
+                    Cuesheet.Audiofile = _sessionStateContainer.ImportAudiofile;
+                }
+                _sessionStateContainer.ResetImport();
             }
             finally
             {

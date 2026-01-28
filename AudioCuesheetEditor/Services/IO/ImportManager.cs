@@ -111,16 +111,16 @@ namespace AudioCuesheetEditor.Services.IO
             _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
-        public async Task UploadFilesAsync(IEnumerable<IBrowserFile> files)
+        public async Task UploadFilesAsync(IEnumerable<IBrowserFile> files, String? fileInputId = null)
         {
             var stopwatch = Stopwatch.StartNew();
             var invalidFiles = new List<string>();
             foreach (var file in files)
             {
-                //TODO: Add check for audio files
                 if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile])
                     || _fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet])
-                    || _fileInputManager.IsValidForImportView(file))
+                    || _fileInputManager.IsValidForImportView(file)
+                    || _fileInputManager.IsValidAudiofile(file))
                 {
                     if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
                     {
@@ -160,6 +160,11 @@ namespace AudioCuesheetEditor.Services.IO
                             FileContentRecognized = stringFileContent,
                             FileType = ImportFileType.Textfile
                         };
+                    }
+                    if (_fileInputManager.IsValidAudiofile(file))
+                    {
+                        var audioFile = await _fileInputManager.CreateAudiofileAsync(fileInputId, file);
+                        _sessionStateContainer.ImportAudiofile = audioFile;
                     }
                 }
                 else

@@ -209,6 +209,31 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod]
+        public async Task UploadFilesAsync_WithAudiofile_ImportsCorrectly()
+        {
+            // Arrange
+            var file = CreateBrowserFileMock("test.mp3");
+            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
+            var fileInputManagerMock = new Mock<IFileInputManager>();
+            var textImportServiceMock = new Mock<ITextImportService>();
+            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
+            fileInputManagerMock.Setup(f => f.IsValidAudiofile(file)).Returns(true);
+            fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<string>(), It.IsAny<IBrowserFile?>(), It.IsAny<Action<Task<Stream>>?>())).ReturnsAsync(new AudioCuesheetEditor.Model.IO.Audio.Audiofile(file.Name));
+
+            var loggerMock = new Mock<ILogger<ImportManager>>();
+            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            // Act
+            await importManager.UploadFilesAsync([file]);
+
+            // Assert
+            Assert.IsNull(sessionStateContainer.Importfile);
+            Assert.IsNotNull(sessionStateContainer.ImportAudiofile);
+        }
+
+        [TestMethod]
         public void ImportCuesheet_WithImportCuesheetAvailable_ImportsCuesheetData()
         {
             // Arrange
