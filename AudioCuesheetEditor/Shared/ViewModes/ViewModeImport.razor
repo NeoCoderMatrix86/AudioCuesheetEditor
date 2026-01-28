@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 {
     <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
     <Importprofiles />
-    <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyse"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
+    <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyze"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
             OnClick="Analyze" />
 }
 else
@@ -41,8 +41,6 @@ else
 }
 
 @code {
-    //TODO: Localization
-
     private string? importText;
 
     public Boolean IsAnalyzed

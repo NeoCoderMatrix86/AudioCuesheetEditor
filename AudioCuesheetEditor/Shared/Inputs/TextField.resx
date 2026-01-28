@@ -117,16 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Analyze" xml:space="preserve">
-    <value>Analysiere</value>
-  </data>
-  <data name="Back" xml:space="preserve">
-    <value>Zurück</value>
-  </data>
-  <data name="Import data" xml:space="preserve">
-    <value>Daten importieren</value>
-  </data>
-  <data name="Please enter text or upload a file for import" xml:space="preserve">
-    <value>Bitte Text eingeben oder eine Datei hochladen</value>
+  <data name="Upload file" xml:space="preserve">
+    <value>Upload file</value>
   </data>
 </root>
