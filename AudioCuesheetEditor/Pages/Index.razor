@@ -114,6 +114,7 @@ along with Foobar.  If not, see
                     case ImportFileType.ProjectFile:
                     case ImportFileType.Cuesheet:
                         await _importManager.AnalyseImportfile();
+                        _sessionStateContainer.ResetImport();
                         break;
                     case ImportFileType.Textfile:
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
@@ -123,7 +124,6 @@ along with Foobar.  If not, see
                 {
                     Cuesheet.Audiofile = _sessionStateContainer.ImportAudiofile;
                 }
-                _sessionStateContainer.ResetImport();
             }
             finally
             {

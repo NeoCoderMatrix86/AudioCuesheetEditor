@@ -46,12 +46,16 @@ along with Foobar.  If not, see
 
     protected override void OnInitialized()
     {
-        base.OnInitialized(); 
+        base.OnInitialized();
         activePanelIndex = _sessionStateContainer.ImportTabActiveTab;
-        if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
-        {
-            importText = _sessionStateContainer.Importfile.FileContent;
-        }
+        _importManager.UploadFilesFinished += ImportManager_UploadFilesFinished;
+        SetImportText();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _importManager.UploadFilesFinished -= ImportManager_UploadFilesFinished;
     }
 
     void ImportTextChanged(string? newImportText)
@@ -97,5 +101,22 @@ along with Foobar.  If not, see
     void ResetAsync()
     {
         ActiveTabIndexChanged(0);
+    }
+
+    void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
+    {
+        SetImportText();
+    }
+
+    void SetImportText()
+    {
+        InvokeAsync(() =>
+        {
+            if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
+            {
+                importText = _sessionStateContainer.Importfile.FileContent;
+                StateHasChanged();
+            }
+        });
     }
 }
