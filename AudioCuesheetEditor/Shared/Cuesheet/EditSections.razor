@@ -142,6 +142,7 @@ along with Foobar.  If not, see
 
     void AudiofileSelected(CuesheetSection section, IBrowserFile? browserFile)
     {
+        //TODO: Move to importmanager
         if ((browserFile != null) && (_fileInputManager.IsValidAudiofile(browserFile) == true))
         {
             section.AudiofileName = browserFile?.Name;
