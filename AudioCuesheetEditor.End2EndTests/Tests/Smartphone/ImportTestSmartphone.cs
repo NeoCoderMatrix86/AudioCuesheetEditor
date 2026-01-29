@@ -283,6 +283,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var importView = new ImportView(TestPage);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.Analyze();
             await importView.SelectTracksAsync([5]);
             await importView.EditTracksModalAsync("Sample Title Edited 5");
             await importView.CompleteImportAsync();
@@ -535,6 +536,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await importView.GotoAsync();
             await importView.ImportFileAsync("Textimport-Bug-#54.txt");
             await importView.SwitchImportProfileAsync("Textfile (just track data)");
+            await importView.Analyze();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - row ""# Increment Decrement Artist Adriatique Clear Title X. Clear Begin 00:00:00 End 00:05:24 Length 00:05:24"":
@@ -1829,6 +1831,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await importView.GotoAsync();
             await importView.ImportFileAsync("Traktor Export.html");
             await importView.SwitchImportProfileAsync("Traktor history");
+            await importView.Analyze();
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
