@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start">
-    <MudFileUpload FieldId="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
                    Accept="@Filter">
         <ActivatorContent>
             <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
@@ -43,7 +43,6 @@ along with Foobar.  If not, see
 }
 
 @code {
-    //TODO: FieldId can not be used, it is readonly
     [Parameter]
     [EditorRequired]
     public String? Label { get; set; }

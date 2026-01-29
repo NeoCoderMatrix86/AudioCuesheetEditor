@@ -9,7 +9,7 @@ window.getObjectURLFromMudFileUpload = function (inputOrFieldId) {
     let inputElem = inputOrFieldId;
     if (typeof inputOrFieldId === "string") {
         inputElem = document.getElementById(inputOrFieldId) ||
-            document.querySelector(`input[fieldid="${inputOrFieldId}"]`) ||
+            document.querySelector(`input[identifier="${inputOrFieldId}"]`) ||
             document.querySelector(`input[id="${inputOrFieldId}"]`);
     }
 

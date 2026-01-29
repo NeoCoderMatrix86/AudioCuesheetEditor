@@ -25,7 +25,7 @@ along with Foobar.  If not, see
 @inject DialogManager _dialogManager
 
 <MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" ZIndex="9999" Modal>
-    <MudFileUpload FieldId="@fileUploadId" T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
+    <MudFileUpload identifier="@fileUploadId" T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
         <ActivatorContent>
             <MudPaper Class="@_dragClass" Width="100vw" Height="100vh" Style="margin:0;opacity:0.65;">
                 <MudStack AlignItems="AlignItems.Center">
@@ -38,7 +38,6 @@ along with Foobar.  If not, see
 </MudOverlay>
 
 @code {
-    //TODO: FieldId can not be used, it is readonly
     private DotNetObjectReference<FileDropOverlay>? _dotNetRef;
     private bool _showOverlay;
     private bool _disposed;
