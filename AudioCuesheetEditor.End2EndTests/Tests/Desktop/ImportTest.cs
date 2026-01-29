@@ -28,6 +28,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var detailView = new DetailView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.Analyze();
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
@@ -2139,5 +2140,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await appBar.UndoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
         }
+
+        //TODO: Method checking manual setting of text (without file)
     }
 }

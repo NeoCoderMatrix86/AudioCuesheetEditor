@@ -3564,5 +3564,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await appBar.UndoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
         }
+
+        //TODO: Method checking manual setting of text (without file)
     }
 }
