@@ -63,8 +63,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task OpenFileAsync(string file)
         {
             await OpenFileDialogAsync();
-            await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).ClickAsync();
-            await _page.Locator("#dropFileInputId_SelectFileDialog").GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(file);
+            await _page.GetByLabel("Open file upload").SetInputFilesAsync(file);
         }
 
         internal async Task OpenFileDialogAsync()
