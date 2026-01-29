@@ -248,7 +248,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
     - row");
             await Expect(detailView.AudiofileInput).ToBeEmptyAsync();
             await importView.GotoAsync();
-            await Expect(TestPage.GetByText("PreviousNext")).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
         }
 
         [TestMethod]
@@ -495,6 +495,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile2.txt");
             await importView.ClearSchemeCommonDataAsync();
+            await importView.Analyze();
             await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
             await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:

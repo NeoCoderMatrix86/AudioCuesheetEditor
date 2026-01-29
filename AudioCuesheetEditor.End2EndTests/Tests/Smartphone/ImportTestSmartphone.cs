@@ -30,6 +30,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var detailView = new DetailView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
+            await importView.Analyze();
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
@@ -273,7 +274,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - button");
             await Expect(detailView.AudiofileInput).ToBeEmptyAsync();
             await importView.GotoAsync();
-            await Expect(TestPage.GetByText("PreviousNext")).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
         }
 
         [TestMethod]
@@ -1598,6 +1599,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile2.txt");
             await importView.ClearSchemeCommonDataAsync();
+            await importView.Analyze();
             await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
             await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
