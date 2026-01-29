@@ -43,12 +43,17 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task ImportFileAsync(string filepath)
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Choose File" }).SetInputFilesAsync(filepath);
+            await _page.GetByLabel("TextField file upload").SetInputFilesAsync(filepath);
+        }
+
+        internal async Task Analyze()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Analyze" }).ClickAsync();
         }
 
         internal async Task CompleteImportAsync()
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Complete" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Import data" }).ClickAsync();
         }
 
         internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)

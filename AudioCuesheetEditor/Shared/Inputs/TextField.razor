@@ -23,7 +23,7 @@ along with Foobar.  If not, see
 <MudField Variant="Variant.Outlined" Class="ma-2">
     <MudTextField Lines="15" Placeholder="@Placeholder" Value="@Text" ValueChanged="EventCallback.Factory.Create<string?>(this, v => TextChanged.InvokeAsync(v))" FullWidth Underline="false" />
     <MudStack Row Justify="Justify.SpaceBetween">
-        <MudFileUpload T="IBrowserFile" Accept="@FileMimeTypes.TextPlain" OnFilesChanged="FileUploaded">
+        <MudFileUpload T="IBrowserFile" Accept="@FileMimeTypes.TextPlain" OnFilesChanged="FileUploaded" aria-label="TextField file upload">
             <ActivatorContent>
                 <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">@_localizer["Upload file"]</MudButton>
             </ActivatorContent>

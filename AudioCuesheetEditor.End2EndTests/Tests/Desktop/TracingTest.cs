@@ -428,6 +428,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
             await importView.SetSchemeCommonDataAsync("Artist - Title - ");
             await importView.SelectSchemeCommonDataPlaceholderAsync("Cataloguenumber");
+            await importView.Analyze();
             await Expect(bar.UndoButton).ToBeDisabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
             await importView.CompleteImportAsync();
