@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
         {
-            var importView = new ImportView(TestPage);
+            var importView = new ImportView(TestPage, DeviceName != null);
             var detailView = new DetailView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
@@ -280,7 +280,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Import_ShouldBeEditable_WhenEditingTrack()
         {
-            var importView = new ImportView(TestPage);
+            var importView = new ImportView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
             await importView.Analyze();
@@ -532,7 +532,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Import_ShouldImportTracks_WithSpecialTextfile()
         {
-            var importView = new ImportView(TestPage);
+            var importView = new ImportView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Textimport-Bug-#54.txt");
             await importView.SwitchImportProfileAsync("Textfile (just track data)");
@@ -1597,7 +1597,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile2()
         {
-            var importView = new ImportView(TestPage);
+            var importView = new ImportView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile2.txt");
             await importView.ClearSchemeCommonDataAsync();
@@ -1827,7 +1827,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Import_ShouldImportTracks_WithTraktorOutput()
         {
-            var importView = new ImportView(TestPage);
+            var importView = new ImportView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Traktor Export.html");
             await importView.SwitchImportProfileAsync("Traktor history");

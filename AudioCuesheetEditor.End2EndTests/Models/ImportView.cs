@@ -14,11 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using Microsoft.Playwright;
+using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    partial class ImportView(IPage page)
+    partial class ImportView(IPage page, bool mobile)
     {
         [GeneratedRegex("^Scheme common data$")]
         private static partial Regex SchemeCommonData();
@@ -26,6 +27,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
+        private readonly bool _isMobile = mobile;
 
         internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
 
@@ -53,7 +55,15 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task CompleteImportAsync()
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Import data" }).ClickAsync();
+            if (_isMobile)
+            {
+                await _page.Locator(".mud-button-root.mud-fab").ClickAsync();
+                await _page.GetByText("Import data").ClickAsync();
+            }
+            else
+            {
+                await _page.GetByRole(AriaRole.Button, new() { Name = "Import data" }).ClickAsync();
+            }
         }
 
         internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)

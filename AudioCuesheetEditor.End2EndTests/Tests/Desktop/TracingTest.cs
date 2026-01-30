@@ -423,7 +423,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         public async Task UndoRedo_ShouldRestoreCuesheet_WhenUsingImport()
         {
             var bar = new AppBar(TestPage);
-            var importView = new ImportView(TestPage);
+            var importView = new ImportView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
             await importView.SetSchemeCommonDataAsync("Artist - Title - ");
