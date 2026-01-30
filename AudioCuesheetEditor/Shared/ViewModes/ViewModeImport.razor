@@ -32,16 +32,30 @@ along with Foobar.  If not, see
 else
 {
     <DisplayAnalyzedResult />
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+        <MudFab Color="Color.Warning" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" Label="@_localizer["Back"]" StartIcon="@Icons.Material.Outlined.ArrowBack"
+                OnClick="ResetAsync" />
 
-    <MudFab Color="Color.Warning" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" Label="@_localizer["Back"]" StartIcon="@Icons.Material.Outlined.ArrowBack"
-            OnClick="ResetAsync" />
-
-    <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
-            OnClick="ImportData" />
+        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
+                OnClick="ImportData" />
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+        <MudMenu @bind-Open="fapMenuOpened" Style="position:fixed; left:16px; bottom:72px; z-index:2000;">
+            <ActivatorContent>
+                <MudFab Color="Color.Primary" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" EndIcon="@Icons.Material.Outlined.Add" OnClick="() => fapMenuOpened = !fapMenuOpened" />
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem IconColor="Color.Warning" Label="@_localizer["Back"]" Icon="@Icons.Material.Outlined.ArrowBack" OnClick="ResetAsync" />
+                <MudMenuItem IconColor="Color.Success" Label="@_localizer["Import data"]" Icon="@Icons.Material.Outlined.CheckCircleOutline" OnClick="ImportData" />
+            </ChildContent>
+        </MudMenu>
+    </MudHidden>
 }
 
 @code {
+    //TODO: Bug when importing without any interaction
     private string? importText;
+    Boolean fapMenuOpened = false;
 
     public Boolean IsAnalyzed
     {
