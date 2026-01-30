@@ -36,6 +36,9 @@ namespace AudioCuesheetEditor.Model.IO.Import
         /// The cue sheet which was created during analyzing the <see cref="FileContent"/>
         /// </summary>
         ImportCuesheet? AnalyzedCuesheet { get; set; }
+        /// <summary>
+        /// Type of file (text, cuesheet, project, etc.)
+        /// </summary>
         ImportFileType FileType { get; set; }
     }
 }

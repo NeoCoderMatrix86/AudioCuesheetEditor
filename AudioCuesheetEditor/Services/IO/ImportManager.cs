@@ -18,7 +18,6 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Diagnostics;
@@ -35,59 +34,25 @@ namespace AudioCuesheetEditor.Services.IO
     }
     public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ILogger<ImportManager> logger)
     {
+        public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
+
         private readonly ILogger<ImportManager> _logger = logger;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
 
-        public async Task ImportFilesAsync(IEnumerable<IBrowserFile> files)
+        public void ImportData(String? data)
         {
             var stopwatch = Stopwatch.StartNew();
-            foreach (var file in files)
+            _sessionStateContainer.Importfile = new Importfile()
             {
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    var stringFileContent = reader.ReadToEnd();
-                    _sessionStateContainer.Importfile = new Importfile()
-                    {
-                        FileContent = stringFileContent,
-                        FileContentRecognized = stringFileContent,
-                        FileType = ImportFileType.ProjectFile
-                    };
-                }
-                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    var stringFileContent = reader.ReadToEnd();
-                    _sessionStateContainer.Importfile = new Importfile()
-                    {
-                        FileContent = stringFileContent,
-                        FileContentRecognized = stringFileContent,
-                        FileType = ImportFileType.Cuesheet
-                    };
-                }
-                if (_fileInputManager.IsValidForImportView(file))
-                {
-                    var fileContent = await ReadFileContentAsync(file);
-                    fileContent.Position = 0;
-                    using var reader = new StreamReader(fileContent);
-                    var stringFileContent = reader.ReadToEnd();
-                    _sessionStateContainer.Importfile = new Importfile()
-                    {
-                        FileContent = stringFileContent,
-                        FileContentRecognized = stringFileContent,
-                        FileType = ImportFileType.Textfile
-                    };
-                }
-            }
+                FileContent = data,
+                FileContentRecognized = data,
+                FileType = ImportFileType.Textfile
+            };
             stopwatch.Stop();
-            _logger.LogDebug("ImportFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            _logger.LogDebug("ImportData duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
         
         public async Task AnalyseImportfile()
@@ -144,6 +109,72 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();
             _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+        }
+
+        public async Task UploadFilesAsync(IEnumerable<IBrowserFile> files, String? fileInputId = null)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            var invalidFiles = new List<string>();
+            foreach (var file in files)
+            {
+                if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile])
+                    || _fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet])
+                    || _fileInputManager.IsValidForImportView(file)
+                    || _fileInputManager.IsValidAudiofile(file))
+                {
+                    if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
+                    {
+                        var fileContent = await ReadFileContentAsync(file);
+                        fileContent.Position = 0;
+                        using var reader = new StreamReader(fileContent);
+                        var stringFileContent = reader.ReadToEnd();
+                        _sessionStateContainer.Importfile = new Importfile()
+                        {
+                            FileContent = stringFileContent,
+                            FileContentRecognized = stringFileContent,
+                            FileType = ImportFileType.ProjectFile
+                        };
+                    }
+                    if (_fileInputManager.CheckFileMimeType(file, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet]))
+                    {
+                        var fileContent = await ReadFileContentAsync(file);
+                        fileContent.Position = 0;
+                        using var reader = new StreamReader(fileContent);
+                        var stringFileContent = reader.ReadToEnd();
+                        _sessionStateContainer.Importfile = new Importfile()
+                        {
+                            FileContent = stringFileContent,
+                            FileContentRecognized = stringFileContent,
+                            FileType = ImportFileType.Cuesheet
+                        };
+                    }
+                    if (_fileInputManager.IsValidForImportView(file))
+                    {
+                        var fileContent = await ReadFileContentAsync(file);
+                        fileContent.Position = 0;
+                        using var reader = new StreamReader(fileContent);
+                        var stringFileContent = reader.ReadToEnd();
+                        _sessionStateContainer.Importfile = new Importfile()
+                        {
+                            FileContent = stringFileContent,
+                            FileContentRecognized = stringFileContent,
+                            FileType = ImportFileType.Textfile
+                        };
+                    }
+                    if (_fileInputManager.IsValidAudiofile(file))
+                    {
+                        var audioFile = await _fileInputManager.CreateAudiofileAsync(fileInputId, file);
+                        _sessionStateContainer.ImportAudiofile = audioFile;
+                    }
+                }
+                else
+                {
+                    invalidFiles.Add(file.Name);
+                }
+            }
+            UploadFilesFinished?.Invoke(this, invalidFiles);
+            stopwatch.Stop();
+            _logger.LogDebug("UploadFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
         }
 
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)

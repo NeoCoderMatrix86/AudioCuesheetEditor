@@ -1,0 +1,73 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<DisplayAnalyzedResult> _localizer
+@inject ISessionStateContainer _sessionStateContainer
+
+<MudField Class="ma-2" Variant="Variant.Outlined">
+    <pre>
+        @if (FileContentRecognized != null)
+        {
+            @((MarkupString)SanitizeHTML(FileContentRecognized))
+        }
+    </pre>
+</MudField>
+@if (_sessionStateContainer.Importfile?.AnalyseException != null)
+{
+    <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+        @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
+    </MudAlert>
+}
+else
+{
+    <MudExpansionPanels MultiExpansion>
+        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <CuesheetData />
+            </ChildContent>
+        </MudExpansionPanel>
+        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
+            <TitleContent>
+                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+            </TitleContent>
+            <ChildContent>
+                <TrackList />
+            </ChildContent>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+}
+
+@code {
+    Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
+
+    public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
+
+    string SanitizeHTML(string input)
+    {
+        var sanitizer = new HtmlSanitizer();
+        var sanitized = sanitizer.Sanitize(input);
+        //We use hardcoded new lines here because the file could be from another system
+        var lines = sanitized.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                             .Where(line => !string.IsNullOrWhiteSpace(line));
+        return string.Join(Environment.NewLine, lines);
+    }
+}

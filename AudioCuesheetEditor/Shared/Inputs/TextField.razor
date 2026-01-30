@@ -1,0 +1,52 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<TextField> _localizer
+@inject IFileInputManager _fileInputManager
+
+<MudField Variant="Variant.Outlined" Class="ma-2">
+    <MudTextField Lines="15" Placeholder="@Placeholder" Value="@Text" ValueChanged="EventCallback.Factory.Create<string?>(this, v => TextChanged.InvokeAsync(v))" FullWidth Underline="false" />
+    <MudStack Row Justify="Justify.SpaceBetween">
+        <MudFileUpload T="IBrowserFile" Accept="@FileMimeTypes.TextPlain" OnFilesChanged="FileUploaded" aria-label="TextField file upload">
+            <ActivatorContent>
+                <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.UploadFile">@_localizer["Upload file"]</MudButton>
+            </ActivatorContent>
+        </MudFileUpload>
+    </MudStack>
+</MudField>
+
+@code {
+    [Parameter]
+    public String? Placeholder { get; set; }
+
+    [Parameter]
+    public String? Text { get; set; }
+
+    [Parameter]
+    public EventCallback<String?> TextChanged { get; set; }
+
+    async Task FileUploaded(InputFileChangeEventArgs e)
+    {
+        if (_fileInputManager.IsValidForImportView(e.File))
+        {
+            var fileContent = await _fileInputManager.ReadFileContentAsync(e.File);
+            await TextChanged.InvokeAsync(fileContent);
+        }
+    }
+}

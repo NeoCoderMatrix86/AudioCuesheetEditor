@@ -109,9 +109,6 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage, DeviceName != null);
             await detailView.GotoAsync();
-            await bar.OpenFileDialogAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
-            await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenExportDialogAsync("Cuesheet");
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();

@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Analyzed file content" xml:space="preserve">
-    <value>Analysierter Dateiinhalt</value>
+  <data name="Common data" xml:space="preserve">
+    <value>Common data</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Bearbeiten</value>
+  <data name="Error during textimport" xml:space="preserve">
+    <value>Error during textimport</value>
+  </data>
+  <data name="Tracks" xml:space="preserve">
+    <value>Tracks</value>
   </data>
 </root>
