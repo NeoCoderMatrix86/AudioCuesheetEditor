@@ -2145,6 +2145,232 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
         }
 
-        //TODO: Method checking manual setting of text (without file)
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WhenUsingText()
+        {
+            var importView = new ImportView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await importView.GotoAsync();
+            var text = String.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
+            await importView.ImportTextAsync(text);
+            await importView.Analyze();
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Sort Column options Artist Sort Column options Title Sort Column options Begin Sort Column options End Sort Column options Length Sort Column options Status"":
+      - columnheader:
+        - checkbox
+      - columnheader ""# Sort Column options"":
+        - text: ""#""
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Artist Sort Column options"":
+        - text: Artist
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Title Sort Column options"":
+        - text: Title
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Begin Sort Column options"":
+        - text: Begin
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""End Sort Column options"":
+        - text: End
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Length Sort Column options"":
+        - text: Length
+        - button ""Sort""
+        - button ""Column options""
+      - columnheader ""Status""
+  - rowgroup:
+    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 1 Clear"":
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 1 Clear"":
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell
+    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 2 Clear"":
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 2 Clear"":
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:04:23"":
+        - textbox: 00:04:23
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 3 Clear"":
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 3 Clear"":
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""00:09:23"":
+        - textbox: 00:09:23
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:06:31"":
+        - textbox: 00:06:31
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 4 Clear"":
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 4 Clear"":
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""00:15:54"":
+        - textbox: 00:15:54
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 5 Clear"":
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 5 Clear"":
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""00:20:13"":
+        - textbox: 00:20:13
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:04:41"":
+        - textbox: 00:04:41
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 6 Clear"":
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 6 Clear"":
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""00:24:54"":
+        - textbox: 00:24:54
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:07:00"":
+        - textbox: 00:07:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 7 Clear"":
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 7 Clear"":
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""00:31:54"":
+        - textbox: 00:31:54
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""00:14:00"":
+        - textbox: 00:14:00
+      - cell:
+        - button
+    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell:
+        - checkbox
+      - cell ""Increment Decrement"":
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Sample Artist 8 Clear"":
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Sample Title 8 Clear"":
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""00:45:54"":
+        - textbox: 00:45:54
+      - cell ""01:15:54"":
+        - textbox: 01:15:54
+      - cell ""00:30:00"":
+        - textbox: 00:30:00
+      - cell:
+        - button
+  - rowgroup:
+    - row");
+        }
     }
 }

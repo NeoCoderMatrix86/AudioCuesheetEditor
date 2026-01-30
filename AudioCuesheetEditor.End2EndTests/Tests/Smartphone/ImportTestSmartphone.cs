@@ -3570,6 +3570,256 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
         }
 
-        //TODO: Method checking manual setting of text (without file)
+        [TestMethod]
+        public async Task Import_ShouldImportTracks_WhenUsingText()
+        {
+            var importView = new ImportView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage, DeviceName != null);
+            await importView.GotoAsync();
+            var text = String.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
+            await importView.ImportTextAsync(text);
+            await importView.Analyze();
+            await importView.CompleteImportAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Increment Decrement Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 1 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 1
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 1 Clear"":
+        - text: Title
+        - textbox: Sample Title 1
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:00"":
+        - text: End
+        - textbox: 00:05:00
+      - cell ""Length 00:05:00"":
+        - text: Length
+        - textbox: 00:05:00
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Sample Artist 2 Clear Title Sample Title 2 Clear Begin 00:05:00 End 00:09:23 Length 00:04:23 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 2 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 2
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 2 Clear"":
+        - text: Title
+        - textbox: Sample Title 2
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:05:00"":
+        - text: Begin
+        - textbox: 00:05:00
+      - cell ""End 00:09:23"":
+        - text: End
+        - textbox: 00:09:23
+      - cell ""Length 00:04:23"":
+        - text: Length
+        - textbox: 00:04:23
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 3 Clear Title Sample Title 3 Clear Begin 00:09:23 End 00:15:54 Length 00:06:31 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""3""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 3 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 3
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 3 Clear"":
+        - text: Title
+        - textbox: Sample Title 3
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:09:23"":
+        - text: Begin
+        - textbox: 00:09:23
+      - cell ""End 00:15:54"":
+        - text: End
+        - textbox: 00:15:54
+      - cell ""Length 00:06:31"":
+        - text: Length
+        - textbox: 00:06:31
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 4 Clear Title Sample Title 4 Clear Begin 00:15:54 End 00:20:13 Length 00:04:19 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""4""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 4 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 4
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 4 Clear"":
+        - text: Title
+        - textbox: Sample Title 4
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:15:54"":
+        - text: Begin
+        - textbox: 00:15:54
+      - cell ""End 00:20:13"":
+        - text: End
+        - textbox: 00:20:13
+      - cell ""Length 00:04:19"":
+        - text: Length
+        - textbox: 00:04:19
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 5 Clear Title Sample Title 5 Clear Begin 00:20:13 End 00:24:54 Length 00:04:41 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""5""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 5 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 5
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 5 Clear"":
+        - text: Title
+        - textbox: Sample Title 5
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:20:13"":
+        - text: Begin
+        - textbox: 00:20:13
+      - cell ""End 00:24:54"":
+        - text: End
+        - textbox: 00:24:54
+      - cell ""Length 00:04:41"":
+        - text: Length
+        - textbox: 00:04:41
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 6 Clear Title Sample Title 6 Clear Begin 00:24:54 End 00:31:54 Length 00:07:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""6""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 6 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 6
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 6 Clear"":
+        - text: Title
+        - textbox: Sample Title 6
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:24:54"":
+        - text: Begin
+        - textbox: 00:24:54
+      - cell ""End 00:31:54"":
+        - text: End
+        - textbox: 00:31:54
+      - cell ""Length 00:07:00"":
+        - text: Length
+        - textbox: 00:07:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 7 Clear Title Sample Title 7 Clear Begin 00:31:54 End 00:45:54 Length 00:14:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""7""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 7 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 7
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 7 Clear"":
+        - text: Title
+        - textbox: Sample Title 7
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:31:54"":
+        - text: Begin
+        - textbox: 00:31:54
+      - cell ""End 00:45:54"":
+        - text: End
+        - textbox: 00:45:54
+      - cell ""Length 00:14:00"":
+        - text: Length
+        - textbox: 00:14:00
+      - cell ""Status"":
+        - text: Status
+        - button
+    - row ""# Increment Decrement Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End 01:15:54 Length 00:30:00 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""8""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist Sample Artist 8 Clear"":
+        - text: Artist
+        - textbox: Sample Artist 8
+        - button ""Clear""
+        - button
+      - cell ""Title Sample Title 8 Clear"":
+        - text: Title
+        - textbox: Sample Title 8
+        - button ""Clear""
+        - button
+      - cell ""Begin 00:45:54"":
+        - text: Begin
+        - textbox: 00:45:54
+      - cell ""End 01:15:54"":
+        - text: End
+        - textbox: 01:15:54
+      - cell ""Length 00:30:00"":
+        - text: Length
+        - textbox: 00:30:00
+      - cell ""Status"":
+        - text: Status
+        - button");
+        }
     }
 }

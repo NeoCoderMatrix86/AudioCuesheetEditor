@@ -48,6 +48,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByLabel("TextField file upload").SetInputFilesAsync(filepath);
         }
 
+        internal async Task ImportTextAsync(string text)
+        {
+            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Please enter text or upload a" }).FillAsync(text);
+        }
+
         internal async Task Analyze()
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Analyze" }).ClickAsync();
