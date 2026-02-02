@@ -63,7 +63,7 @@ namespace AudioCuesheetEditor.Services.UI
                         Boolean copyTrackLength = editMultipleTracksModalResult.LengthChanged;
                         Boolean copyTrackPreGap = editMultipleTracksModalResult.PregapChanged;
                         Boolean copyTrackPostGap = editMultipleTracksModalResult.PostgapChanged;
-                        //First process dynamic edit, because we need to increase each value seperately
+                        //First process dynamic edit, because we need to increase each value separately
                         switch (editMultipleTracksModalResult.PositionEditMode)
                         {
                             case DynamicEditValue.EnteredValueEquals:
