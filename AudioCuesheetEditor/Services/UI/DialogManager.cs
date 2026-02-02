@@ -57,16 +57,24 @@ namespace AudioCuesheetEditor.Services.UI
                         var length = editMultipleTracksModalResult.EditedTrack.Length;
                         var preGap = editMultipleTracksModalResult.EditedTrack.PreGap;
                         var postGap = editMultipleTracksModalResult.EditedTrack.PostGap;
-                        Boolean copyTrackPosition = editMultipleTracksModalResult.PositionChanged;
-                        Boolean copyTrackBegin = editMultipleTracksModalResult.BeginChanged;
-                        Boolean copyTrackEnd = editMultipleTracksModalResult.EndChanged;
-                        Boolean copyTrackLength = editMultipleTracksModalResult.LengthChanged;
-                        Boolean copyTrackPreGap = editMultipleTracksModalResult.PregapChanged;
-                        Boolean copyTrackPostGap = editMultipleTracksModalResult.PostgapChanged;
-                        //First process dynamic edit, because we need to increase each value seperately
+                        Boolean copyIsLinkedToPreviousTrack = editMultipleTracksModalResult.IsLinkedToPreviousTrackEditMode == DynamicEditValue.EnteredValueEquals;
+                        Boolean copyTrackPosition = true;
+                        Boolean copyTrackArtist = editMultipleTracksModalResult.ArtistEditMode == DynamicEditValue.EnteredValueEquals;
+                        Boolean copyTrackTitle = editMultipleTracksModalResult.TitleEditMode == DynamicEditValue.EnteredValueEquals;
+                        Boolean copyTrackBegin = true;
+                        Boolean copyTrackEnd = true;
+                        Boolean copyTrackLength = true;
+                        Boolean copyTrackFlags = editMultipleTracksModalResult.FlagsEditMode == DynamicEditValue.EnteredValueEquals;
+                        Boolean copyTrackPreGap = true;
+                        Boolean copyTrackPostGap = true;
+                        //First process dynamic edit, because we need to increase each value separately
                         switch (editMultipleTracksModalResult.PositionEditMode)
                         {
+                            case DynamicEditValue.DoNotChange:
+                                copyTrackPosition = false;
+                                break;
                             case DynamicEditValue.EnteredValueEquals:
+                                copyTrackPosition = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 editMultipleTracksModalResult.EditedTrack.Position += track.Position;
@@ -83,7 +91,11 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                         switch (editMultipleTracksModalResult.BeginEditMode)
                         {
+                            case DynamicEditValue.DoNotChange:
+                                copyTrackBegin = false;
+                                break;
                             case DynamicEditValue.EnteredValueEquals:
+                                copyTrackBegin = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.Begin + track.Begin;
@@ -100,7 +112,11 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                         switch (editMultipleTracksModalResult.EndEditMode)
                         {
+                            case DynamicEditValue.DoNotChange:
+                                copyTrackEnd = false;
+                                break;
                             case DynamicEditValue.EnteredValueEquals:
+                                copyTrackEnd = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.End + track.End;
@@ -117,7 +133,11 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                         switch (editMultipleTracksModalResult.LengthEditMode)
                         {
+                            case DynamicEditValue.DoNotChange:
+                                copyTrackLength = false;
+                                break;
                             case DynamicEditValue.EnteredValueEquals:
+                                copyTrackLength = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.Length + track.Length;
@@ -134,7 +154,11 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                         switch (editMultipleTracksModalResult.PregapEditMode)
                         {
+                            case DynamicEditValue.DoNotChange:
+                                copyTrackPreGap = false;
+                                break;
                             case DynamicEditValue.EnteredValueEquals:
+                                copyTrackPreGap = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.PreGap + track.PreGap;
@@ -151,7 +175,11 @@ namespace AudioCuesheetEditor.Services.UI
                         }
                         switch (editMultipleTracksModalResult.PostgapEditMode)
                         {
+                            case DynamicEditValue.DoNotChange:
+                                copyTrackPostGap = false;
+                                break;
                             case DynamicEditValue.EnteredValueEquals:
+                                copyTrackPostGap = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.PostGap + track.PostGap;
@@ -173,7 +201,7 @@ namespace AudioCuesheetEditor.Services.UI
                         editMultipleTracksModalResult.EditedTrack.PreGap = preGap;
                         editMultipleTracksModalResult.EditedTrack.PostGap = postGap;
                         //Now copy all values
-                        track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: editMultipleTracksModalResult.IsLinkedToPreviousTrackChanged, setPosition: copyTrackPosition, setArtist: editMultipleTracksModalResult.ArtistChanged, setTitle: editMultipleTracksModalResult.TitleChanged, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: editMultipleTracksModalResult.FlagsChanged, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
+                        track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: copyIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: copyTrackArtist, setTitle: copyTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: copyTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
                     }
                 }
             }

@@ -19,28 +19,23 @@ namespace AudioCuesheetEditor.Model.UI
 {
     public enum DynamicEditValue
     {
-        EnteredValueEquals = 0,
-        EnteredValueAdd = 1,
-        EnteredValueSubstract = 2
+        DoNotChange = 0,
+        EnteredValueEquals = 1,
+        EnteredValueAdd = 2,
+        EnteredValueSubstract = 3
     }
-    public class EditMultipleTracksModalResult(Track editedTrack, Boolean isLinkedToPreviousTrackChanged, Boolean positionChanged, Boolean artistChanged, Boolean titleChanged, Boolean beginChanged, Boolean endChanged, Boolean lengthChanged, Boolean flagsChanged, Boolean pregapChanged, Boolean postgapChanged, DynamicEditValue? positionEditMode = null, DynamicEditValue? beginEditMode = null, DynamicEditValue? endEditMode = null, DynamicEditValue? lengthEditMode = null, DynamicEditValue? pregapEditMode = null, DynamicEditValue? postgapEditMode = null)
+    public class EditMultipleTracksModalResult(Track editedTrack, DynamicEditValue isLinkedToPreviousTrackChanged, DynamicEditValue positionEditMode, DynamicEditValue artistEditMode, DynamicEditValue titleEditMode, DynamicEditValue beginEditMode, DynamicEditValue endEditMode, DynamicEditValue lengthEditMode, DynamicEditValue flagsEditMode, DynamicEditValue pregapEditMode, DynamicEditValue postgapEditMode)
     {
         public Track EditedTrack { get; } = editedTrack;
-        public Boolean IsLinkedToPreviousTrackChanged { get; } = isLinkedToPreviousTrackChanged;
-        public Boolean PositionChanged { get; } = positionChanged;
-        public DynamicEditValue? PositionEditMode { get; } = positionEditMode;
-        public Boolean ArtistChanged { get; } = artistChanged;
-        public Boolean TitleChanged { get; } = titleChanged;
-        public Boolean BeginChanged { get; } = beginChanged;
-        public DynamicEditValue? BeginEditMode { get; } = beginEditMode;
-        public Boolean EndChanged { get; } = endChanged;
-        public DynamicEditValue? EndEditMode { get; } = endEditMode;
-        public Boolean LengthChanged { get; } = lengthChanged;
-        public DynamicEditValue? LengthEditMode { get; } = lengthEditMode;
-        public Boolean FlagsChanged { get; } = flagsChanged;
-        public Boolean PregapChanged { get; } = pregapChanged;
-        public DynamicEditValue? PregapEditMode { get; } = pregapEditMode;
-        public Boolean PostgapChanged { get; } = postgapChanged;
-        public DynamicEditValue? PostgapEditMode { get; } = postgapEditMode;
+        public DynamicEditValue IsLinkedToPreviousTrackEditMode { get; } = isLinkedToPreviousTrackChanged;
+        public DynamicEditValue PositionEditMode { get; } = positionEditMode;
+        public DynamicEditValue ArtistEditMode { get; } = artistEditMode;
+        public DynamicEditValue TitleEditMode { get; } = titleEditMode;
+        public DynamicEditValue BeginEditMode { get; } = beginEditMode;
+        public DynamicEditValue EndEditMode { get; } = endEditMode;
+        public DynamicEditValue LengthEditMode { get; } = lengthEditMode;
+        public DynamicEditValue FlagsEditMode { get; } = flagsEditMode;
+        public DynamicEditValue PregapEditMode { get; } = pregapEditMode;
+        public DynamicEditValue PostgapEditMode { get; } = postgapEditMode;
     }
 }

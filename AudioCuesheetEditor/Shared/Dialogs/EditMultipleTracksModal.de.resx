@@ -123,14 +123,11 @@
   <data name="Begin" xml:space="preserve">
     <value>Start</value>
   </data>
-  <data name="Calculate" xml:space="preserve">
-    <value>Berechnen</value>
-  </data>
   <data name="Change" xml:space="preserve">
     <value>Ändern</value>
   </data>
   <data name="Edit tracks" xml:space="preserve">
-    <value>Spuren bearbeiten</value>
+    <value>Titel bearbeiten</value>
   </data>
   <data name="End" xml:space="preserve">
     <value>Ende</value>
