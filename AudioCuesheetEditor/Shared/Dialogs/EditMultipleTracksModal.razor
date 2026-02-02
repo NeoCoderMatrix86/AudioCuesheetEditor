@@ -29,28 +29,37 @@ along with Foobar.  If not, see
     <DialogContent>
         <MudForm Model="EditedTrack">
             <MudGrid Class="align-baseline">
-                <MudItem xs="2"><MudText>@_localizer["Change"]</MudText></MudItem>
-                <MudItem xs="7"><MudText>@_localizer["Value"]</MudText></MudItem>
-                <MudItem xs="3"><MudText>@_localizer["Calculate"]</MudText></MudItem>
+                <MudItem xs="4" sm="3"><MudText>@_localizer["Change"]</MudText></MudItem>
+                <MudItem xs="8" sm="9"><MudText>@_localizer["Value"]</MudText></MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackIsLinkedToPreviousTrack" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7"><MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Disabled="!editTrackIsLinkedToPreviousTrack" /></MudItem>
-                <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackPosition" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
-                    <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Disabled="!editTrackPosition" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackPosition, EditedTrack, nameof(Track.Position)))"
-                                  ErrorText="@GetValidationErrorMessage(editTrackPosition, EditedTrack, nameof(Track.Position))" />
-                </MudItem>
-                <MudItem xs="3">
-                    <MudSelect @bind-Value="editModeTrackPosition" Disabled="!editTrackPosition">
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackIsLinkedToPreviousTrack" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
                 </MudItem>
+                <MudItem xs="8" sm="9"><MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Disabled="editModeTrackIsLinkedToPreviousTrack == DynamicEditValue.DoNotChange" /></MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackArtist" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackPosition" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
+                    <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Disabled="editModeTrackPosition == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackPosition != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Position)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackPosition != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Position))" />
+                </MudItem>
+                <MudFlexBreak />
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackArtist" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
                     @{
                         MusicBrainzArtist? autocompleteArtist = new()
                         {
@@ -58,8 +67,8 @@ along with Foobar.  If not, see
                         };
                     }
                     <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
-                                     @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Disabled="!editTrackArtist"
-                                     Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(editTrackArtist, EditedTrack, nameof(Track.Artist))" 
+                                     @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Disabled="editModeTrackArtist == DynamicEditValue.DoNotChange"
+                                     Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackArtist != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(editModeTrackArtist != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Artist))"
                                      MaxItems="null" CoerceText="false">
                         <ItemTemplate Context="autocompleteContext">
                             <MudText>@autocompleteContext.Name</MudText>
@@ -72,8 +81,13 @@ along with Foobar.  If not, see
                     </MudAutocomplete>
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackTitle" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackTitle" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
                     @{
                         MusicBrainzTrack? autocompleteTrack = new()
                         {
@@ -82,8 +96,8 @@ along with Foobar.  If not, see
                         };
                     }
                     <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
-                                     @bind-Text="EditedTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator Disabled="!editTrackTitle"
-                                     Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(editTrackTitle, EditedTrack, nameof(Track.Title))" 
+                                     @bind-Text="EditedTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator Disabled="editModeTrackTitle == DynamicEditValue.DoNotChange"
+                                     Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackTitle != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(editModeTrackTitle != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Title))"
                                      MaxItems="null" CoerceText="false">
                         <ItemTemplate Context="autocompleteContext">
                             <MudText>@autocompleteContext.Title</MudText>
@@ -96,52 +110,57 @@ along with Foobar.  If not, see
                     </MudAutocomplete>
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackBegin" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackBegin" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
                     <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)"
-                                  Disabled="!editTrackBegin" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackBegin, EditedTrack, nameof(Track.Begin)))"
-                                  ErrorText="@GetValidationErrorMessage(editTrackBegin, EditedTrack, nameof(Track.Begin))" />
-                </MudItem>
-                <MudItem xs="3">
-                    <MudSelect @bind-Value="editModeTrackBegin" Disabled="!editTrackBegin">
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                    </MudSelect>
+                                  Disabled="editModeTrackBegin == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackBegin != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Begin)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackBegin != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Begin))" />
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackEnd" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackEnd" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
                     <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" 
-                                  Disabled="!editTrackEnd" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackEnd, EditedTrack, nameof(Track.End)))"
-                                  ErrorText="@GetValidationErrorMessage(editTrackEnd, EditedTrack, nameof(Track.End))" />
-                </MudItem>
-                <MudItem xs="3">
-                    <MudSelect @bind-Value="editModeTrackEnd" Disabled="!editTrackEnd">
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                    </MudSelect>
+                                  Disabled="editModeTrackEnd == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackEnd != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.End)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackEnd != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.End))" />
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackLength" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackLength" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
                     <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)" 
-                                  Disabled="!editTrackLength" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackLength, EditedTrack, nameof(Track.Length)))"
-                                  ErrorText="@GetValidationErrorMessage(editTrackLength, EditedTrack, nameof(Track.Length))" />
-                </MudItem>
-                <MudItem xs="3">
-                    <MudSelect @bind-Value="editModeTrackLength" Disabled="!editTrackLength">
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
-                    </MudSelect>
+                                  Disabled="editModeTrackLength == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackLength != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Length)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackLength != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Length))" />
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackFlags" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackFlags" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
                     <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined">
-                        <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info" Disabled="!editTrackFlags">
+                        <MudChipSet T="Flag" SelectedValues="EditedTrack.Flags.ToList().AsReadOnly()" SelectedValuesChanged="(newFlags) => EditedTrack.Flags = newFlags" CheckMark SelectionMode="SelectionMode.MultiSelection" Variant="Variant.Text" Color="Color.Info" Disabled="editModeTrackFlags == DynamicEditValue.DoNotChange">
                             @foreach (var flag in Flag.AvailableFlags)
                             {
                                 <MudChip Value="flag">@flag.Name</MudChip>
@@ -150,32 +169,32 @@ along with Foobar.  If not, see
                     </MudField>
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackPregap" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
-                    <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" 
-                                  Disabled="!editTrackPregap" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackPregap, EditedTrack, nameof(Track.PreGap)))"
-                                  ErrorText="@GetValidationErrorMessage(editTrackPregap, EditedTrack, nameof(Track.PreGap))" />
-                </MudItem>
-                <MudItem xs="3">
-                    <MudSelect @bind-Value="editModeTrackPregap" Disabled="!editTrackPregap">
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackPregap" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
+                    <MudTextField Label="@_localizer["PreGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PreGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PreGap, value)" 
+                                  Disabled="editModeTrackPregap == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackPregap != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.PreGap)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackPregap != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.PreGap))" />
                 </MudItem>
                 <MudFlexBreak />
-                <MudItem xs="2"><MudSwitch @bind-Value="editTrackPostgap" Color="Color.Primary" /></MudItem>
-                <MudItem xs="7">
-                    <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" 
-                                  Disabled="!editTrackPostgap" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editTrackPostgap, EditedTrack, nameof(Track.PostGap)))"
-                                  ErrorText="@GetValidationErrorMessage(editTrackPostgap, EditedTrack, nameof(Track.PostGap))" />
-                </MudItem>
-                <MudItem xs="3">
-                    <MudSelect @bind-Value="editModeTrackPostgap" Disabled="!editTrackPostgap">
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals">=</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd">+</MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract">-</MudSelectItem>
+                <MudItem xs="4" sm="3">
+                    <MudSelect @bind-Value="editModeTrackPostgap" Variant="Variant.Outlined" Modal>
+                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
+                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
+                </MudItem>
+                <MudItem xs="8" sm="9">
+                    <MudTextField Label="@_localizer["PostGap"]" Variant="Variant.Outlined" Value="@EditedTrack.PostGap.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.PostGap, value)" 
+                                  Disabled="editModeTrackPostgap == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackPostgap != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.PostGap)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackPostgap != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.PostGap))" />
                 </MudItem>
             </MudGrid>
         </MudForm>
@@ -193,14 +212,12 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
 
-    Boolean editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap;
-    DynamicEditValue editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackPregap, editModeTrackPostgap;
+    DynamicEditValue editModeTrackIsLinkedToPreviousTrack, editModeTrackPosition, editModeTrackArtist, editModeTrackTitle, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackFlags, editModeTrackPregap, editModeTrackPostgap;
 
     void SaveClick()
     {
-        var result = new EditMultipleTracksModalResult(EditedTrack, editTrackIsLinkedToPreviousTrack, editTrackPosition, editTrackArtist, editTrackTitle, editTrackBegin, 
-            editTrackEnd, editTrackLength, editTrackFlags, editTrackPregap, editTrackPostgap, editModeTrackPosition, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, 
-            editModeTrackPregap, editModeTrackPostgap);
+        var result = new EditMultipleTracksModalResult(EditedTrack, editModeTrackIsLinkedToPreviousTrack, editModeTrackPosition, editModeTrackArtist, editModeTrackTitle, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, 
+                     editModeTrackFlags, editModeTrackPregap, editModeTrackPostgap);
         MudDialog?.Close(DialogResult.Ok(result));
     }
 

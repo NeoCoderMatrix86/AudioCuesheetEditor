@@ -123,9 +123,6 @@
   <data name="Begin" xml:space="preserve">
     <value>Start</value>
   </data>
-  <data name="Calculate" xml:space="preserve">
-    <value>Berechnen</value>
-  </data>
   <data name="Change" xml:space="preserve">
     <value>Ändern</value>
   </data>
