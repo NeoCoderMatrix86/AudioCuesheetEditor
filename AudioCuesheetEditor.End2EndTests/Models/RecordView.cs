@@ -28,6 +28,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GotoAsync(BaseUrl);
             await _page.WaitForURLAsync(BaseUrl);
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
             await _page.GetByText("Record view").ClickAsync();
         }
 
