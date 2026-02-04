@@ -132,5 +132,12 @@ namespace AudioCuesheetEditor.Services.IO
         {
             return CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
         }
+
+        /// <inheritdoc/>
+        public async Task<string> ReadFileContentAsync(IBrowserFile browserFile)
+        {
+            var fileContent = new StreamContent(browserFile.OpenReadStream());
+            return await fileContent.ReadAsStringAsync();
+        }
     }
 }

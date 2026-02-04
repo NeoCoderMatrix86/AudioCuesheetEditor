@@ -1,23 +1,27 @@
-﻿var fileObjectURL = null;
-window.addEventListener('beforeunload', beforeunload);
+﻿window.addEventListener('beforeunload', beforeunload);
 
-function getObjectURLFromMudFileUpload(stackId) {
-    if (fileObjectURL != null) {
-        URL.revokeObjectURL(fileObjectURL);
+window.getObjectURLFromMudFileUpload = function (inputOrFieldId) {
+    if (window._mudFileObjectURL) {
+        try { URL.revokeObjectURL(window._mudFileObjectURL); } catch (e) { /* ignore */ }
+        window._mudFileObjectURL = null;
     }
-    var stackElement = document.getElementById(stackId);
-    var inputElement = stackElement.querySelector('input[type="file"]');
-    var file = null;
-    for (var i = 0, f; f = inputElement.files[i]; i++) {
-        if (f.type.startsWith("audio/")) {
-            file = f;
+
+    let inputElem = inputOrFieldId;
+    if (typeof inputOrFieldId === "string") {
+        inputElem = document.getElementById(inputOrFieldId) ||
+            document.querySelector(`input[identifier="${inputOrFieldId}"]`) ||
+            document.querySelector(`input[id="${inputOrFieldId}"]`);
+    }
+
+    const files = inputElem.files;
+    for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        if (f && f.type && f.type.startsWith("audio/")) {
+            window._mudFileObjectURL = URL.createObjectURL(f);
+            return window._mudFileObjectURL;
         }
     }
-    if (file != null) {
-        fileObjectURL = URL.createObjectURL(file);
-    }
-    return fileObjectURL;
-}
+};
 
 function resetLocalStorage() {
     localStorage.clear();

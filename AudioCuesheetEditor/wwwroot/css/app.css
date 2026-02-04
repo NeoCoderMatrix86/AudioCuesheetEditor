@@ -52,3 +52,13 @@ a, .btn-link {
 .blazor-error-boundary::after {
     content: "An error has occurred."
 }
+
+.file-upload-input {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+}

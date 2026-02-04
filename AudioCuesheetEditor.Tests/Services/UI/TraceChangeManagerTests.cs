@@ -354,5 +354,59 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             Assert.IsNull(track3.End);
             Assert.IsNull(track4.End);
         }
+        
+        [TestMethod()]
+        public void RemoveTracedChanges_RemovesChanges_WhenChangesAvailable()
+        {
+            // Arrange
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var cuesheet1 = new Cuesheet();
+            var cuesheet2 = new Cuesheet();
+            manager.TraceChanges(cuesheet1);
+            manager.TraceChanges(cuesheet2);
+            cuesheet1.Artist = "Test Artist Cuesheet 1";
+            cuesheet1.Title = "Test Title Cuesheet 1";
+            cuesheet2.CDTextfile = new("CD Testfile.cdt");
+            cuesheet2.AddSection();
+            var tracedObjectHistoryChangedFired = false;
+            manager.TracedObjectHistoryChanged += delegate
+            {
+                tracedObjectHistoryChangedFired = true;
+            };
+            // Act
+            manager.RemoveTracedChanges([cuesheet1]);
+            // Assert
+            Assert.IsTrue(tracedObjectHistoryChangedFired);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            manager.Undo();
+            Assert.IsFalse(manager.CanUndo);
+        }
+
+        [TestMethod()]
+        public void RemoveTracedChanges_RemovesNoChanges_WhenNoChangesAvailable()
+        {
+            // Arrange
+            var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
+            var cuesheet1 = new Cuesheet();
+            var cuesheet2 = new Cuesheet();
+            manager.TraceChanges(cuesheet1);
+            manager.TraceChanges(cuesheet2);
+            cuesheet2.CDTextfile = new("CD Testfile.cdt");
+            cuesheet2.AddSection();
+            var tracedObjectHistoryChangedFired = false;
+            manager.TracedObjectHistoryChanged += delegate
+            {
+                tracedObjectHistoryChangedFired = true;
+            };
+            // Act
+            manager.RemoveTracedChanges([cuesheet1]);
+            // Assert
+            Assert.IsTrue(tracedObjectHistoryChangedFired);
+            Assert.IsTrue(manager.CanUndo);
+            manager.Undo();
+            manager.Undo();
+            Assert.IsFalse(manager.CanUndo);
+        }
     }
 }

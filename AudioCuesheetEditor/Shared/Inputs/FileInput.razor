@@ -18,13 +18,12 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<FileInput> _localizer
-@inject IBlazorDownloadFileService _blazorDownloadFileService
 
-<MudStack Row StretchItems="StretchItems.Start" id="@Id">
-    <MudFileUpload T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                   @ondrop="ClearDragClass" @ondragenter="SetDragClass" @ondragleave="ClearDragClass" @ondragend="ClearDragClass" Accept="@Filter">
+<MudStack Row StretchItems="StretchItems.Start">
+    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                   Accept="@Filter">
         <ActivatorContent>
-            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Class="@fieldClass" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
+            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
@@ -74,12 +73,7 @@ along with Foobar.  If not, see
 
     IBrowserFile? selectedFile;
     MudFileUpload<IBrowserFile>? fileUpload;
-    string? fieldClass;
     String TextFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
-
-    void SetDragClass() => fieldClass = "relative rounded-lg border-2 border-dashed mud-border-primary";
-
-    void ClearDragClass() => fieldClass = null;
 
     async Task PickFilesClickedAsync()
     {
@@ -90,7 +84,6 @@ along with Foobar.  If not, see
     {
         await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
         await SetSelectedFileAsync(null);
-        ClearDragClass();
     }
 
     async Task SetSelectedFileAsync(IBrowserFile? browserFile)

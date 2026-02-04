@@ -22,16 +22,6 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<MainLayout> _localizer
 @inject IJSRuntime _jsRuntime
 
-@* Required *@
-<MudThemeProvider />
-<MudPopoverProvider />
-
-@* Needed for dialogs *@
-<MudDialogProvider />
-
-@* Needed for snackbars *@
-<MudSnackbarProvider />
-
 <ErrorBoundary>
     <ChildContent>
         <CascadingValue Value="@this">

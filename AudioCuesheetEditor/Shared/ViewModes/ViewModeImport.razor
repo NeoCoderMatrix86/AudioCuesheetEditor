@@ -17,92 +17,71 @@ along with Foobar.  If not, see
 -->
 @inherits BaseLocalizedComponent
 
-@inject ILogger<ViewModeImport> _logger
 @inject IStringLocalizer<ViewModeImport> _localizer
-@inject ISessionStateContainer _sessionStateContainer
 @inject ImportManager _importManager
 @inject DialogManager _dialogManager
+@inject ISessionStateContainer _sessionStateContainer
 
-<MudStepper @ref="mudStepper" NonLinear OnPreviewInteraction="PreviewInteraction" @bind-ActiveIndex="activeStepIndex">
-    <MudStep Title="@_localizer["Select inputfiles"]" Completed="selectFilesStepCompleted" HasError="selectFilesStepError">
-        <SelectImportFiles FilesImported="FilesImported" InvalidFilesChanged="InvalidFilesDropped" />
-    </MudStep>
-    <MudStep Title="@_localizer["Validate"]" Disabled="!selectFilesStepCompleted" CompletedChanged="CompleteImportAsync">
-        <MudExpansionPanels MultiExpansion>
-            <MudExpansionPanel @bind-Expanded="fileContentExpanded">
-                <TitleContent>
-                    <MudText Typo="Typo.h5">@_localizer["Filecontent"]</MudText>
-                </TitleContent>
-                <ChildContent>
-                    <ImportFileContent FileContentChanged="ImportFileContent_FileContentChanged" />
-                    <Importprofiles ImportprofileChanged="AnalyseImportfile" />
-                    @if (_sessionStateContainer.Importfile?.AnalyseException != null)
-                    {
-                        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                            @_localizer["Error during textimport"] : @_sessionStateContainer.Importfile.AnalyseException.Message
-                        </MudAlert>
-                    }
-                </ChildContent>
-            </MudExpansionPanel>
-            <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-                <TitleContent>
-                    <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-                </TitleContent>
-                <ChildContent>
-                    <CuesheetData />
-                </ChildContent>
-            </MudExpansionPanel>
-            <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
-                <TitleContent>
-                    <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-                </TitleContent>
-                <ChildContent>
-                    <TrackList />
-                </ChildContent>
-            </MudExpansionPanel>
-        </MudExpansionPanels>
-    </MudStep>
-</MudStepper>
+@if (IsAnalyzed == false)
+{
+    <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
+    <Importprofiles />
+    <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyze"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
+            OnClick="Analyze" />
+}
+else
+{
+    <DisplayAnalyzedResult />
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+        <MudFab Color="Color.Warning" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" Label="@_localizer["Back"]" StartIcon="@Icons.Material.Outlined.ArrowBack"
+                OnClick="ResetAsync" />
+
+        <MudFab Color="Color.Success" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Import data"]" EndIcon="@Icons.Material.Outlined.CheckCircleOutline"
+                OnClick="ImportData" />
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+        <MudMenu @bind-Open="fapMenuOpened" Style="position:fixed; left:16px; bottom:72px; z-index:2000;">
+            <ActivatorContent>
+                <MudFab Color="Color.Primary" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" EndIcon="@Icons.Material.Outlined.Add" OnClick="() => fapMenuOpened = !fapMenuOpened" />
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem IconColor="Color.Warning" Label="@_localizer["Back"]" Icon="@Icons.Material.Outlined.ArrowBack" OnClick="ResetAsync" />
+                <MudMenuItem IconColor="Color.Success" Label="@_localizer["Import data"]" Icon="@Icons.Material.Outlined.CheckCircleOutline" OnClick="ImportData" />
+            </ChildContent>
+        </MudMenu>
+    </MudHidden>
+}
 
 @code {
-    MudStepper? mudStepper;
-    int activeStepIndex;
-    Boolean fileContentExpanded = false, cuesheetDataExpanded = false, cuesheetTracksExpanded = false;
-    Boolean selectFilesStepCompleted = false, selectFilesStepError = false;
-    long? renderBegin;
+    string? importText;
+    Boolean fapMenuOpened = false;
 
-    protected override async Task OnInitializedAsync()
+    public Boolean IsAnalyzed
     {
-        await base.OnInitializedAsync();
-        if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
-        {
-            await FilesImported();
-        }
+        get => _sessionStateContainer.ImportIsAnalyzed;
+        set => _sessionStateContainer.ImportIsAnalyzed = value;
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
-        if (renderBegin.HasValue)
-        {
-            var renderDuration = System.Diagnostics.Stopwatch.GetElapsedTime(renderBegin.Value);
-            _logger.LogDebug("ViewModeImport render duration: {renderDuration}", renderDuration);
-        }
-        base.OnAfterRender(firstRender);
+        base.OnInitialized();
+        _importManager.UploadFilesFinished += ImportManager_UploadFilesFinished;
+        SetImportText();
     }
 
-    async Task ImportFileContent_FileContentChanged(string newFileContent)
+    protected override void Dispose(bool disposing)
     {
-        _sessionStateContainer.Importfile!.FileContent = newFileContent;
-        await AnalyseImportfile();
+        base.Dispose(disposing);
+        _importManager.UploadFilesFinished -= ImportManager_UploadFilesFinished;
     }
 
-    async Task AnalyseImportfile()
+    void ImportTextChanged(string? newImportText)
     {
-        await _importManager.AnalyseImportfile();
-        renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
+        importText = newImportText;
+        _importManager.ImportData(importText);
     }
 
-    async Task FilesImported()
+    async Task Analyze()
     {
         await _dialogManager.ShowLoadingDialogAsync();
         try
@@ -113,45 +92,42 @@ along with Foobar.  If not, see
         {
             _dialogManager.HideLoadingDialog();
         }
-        fileContentExpanded = true;
-        cuesheetDataExpanded = true;
-        cuesheetTracksExpanded = true;
-        activeStepIndex = 1;
-        selectFilesStepCompleted = true;
-        selectFilesStepError = false;
-        renderBegin = System.Diagnostics.Stopwatch.GetTimestamp();
+        // Switch to analyzed data
+        IsAnalyzed = true;
     }
 
-    async Task CompleteImportAsync()
+    async Task AnalyseImportfile()
+    {
+        await _importManager.AnalyseImportfile();
+    }
+
+    void ImportData()
     {
         _importManager.ImportCuesheet();
-        await ResetAsync();
+        ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
         _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
     }
 
-    Task PreviewInteraction(StepperInteractionEventArgs arg)
+    void ResetAsync()
     {
-        if (arg.StepIndex == 0)
-        {
-            arg.Cancel = (selectFilesStepCompleted == false) || (selectFilesStepError == true);
-        }
-        return Task.CompletedTask;
+        IsAnalyzed = false;
     }
 
-    void InvalidFilesDropped(List<string> files)
+    void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
     {
-        selectFilesStepError = files.Any();
+        SetImportText();
     }
 
-    async Task ResetAsync()
+    void SetImportText()
     {
-        activeStepIndex = 0;
-        selectFilesStepCompleted = false; 
-        selectFilesStepError = false;
-        if (mudStepper != null)
+        InvokeAsync(() =>
         {
-            await mudStepper.ResetAsync(true);
-        }
+            if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
+            {
+                importText = _sessionStateContainer.Importfile.FileContent;
+                StateHasChanged();
+            }
+        });
     }
 }

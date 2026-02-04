@@ -24,5 +24,6 @@ namespace AudioCuesheetEditor.Services.UI
         public void Undo();
         public void Redo();
         public void MergeLastEditWithEdit(Func<TracedChanges, bool> targetEdit);
+        public void RemoveTracedChanges(IEnumerable<ITraceable> traceables);
     }
 }
