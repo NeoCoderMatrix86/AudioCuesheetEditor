@@ -3574,7 +3574,6 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task Import_ShouldImportTracks_WhenUsingText()
         {
             var importView = new ImportView(TestPage, DeviceName != null);
-            var detailView = new DetailView(TestPage, DeviceName != null);
             await importView.GotoAsync();
             var text = String.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
             await importView.ImportTextAsync(text);
