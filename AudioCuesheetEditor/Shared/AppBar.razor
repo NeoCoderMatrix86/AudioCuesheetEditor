@@ -189,6 +189,7 @@ along with Foobar.  If not, see
 
     async Task OpenFileClicked() 
     {
+        //TODO: Check for changes to cuesheet and if there are any, ask user via dialog for confirmation
         if (mudFileUpload != null)
         {
             await mudFileUpload.OpenFilePickerAsync();
