@@ -93,6 +93,7 @@ along with Foobar.  If not, see
 
     void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
     {
+        //TODO: We should add a dialog asking if the importfile should be imported
         InvokeAsync(async () =>
         {
             try

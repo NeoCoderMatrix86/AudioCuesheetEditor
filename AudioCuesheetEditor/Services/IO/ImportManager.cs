@@ -87,6 +87,8 @@ namespace AudioCuesheetEditor.Services.IO
                         break;
                     case ImportFileType.Cuesheet:
                         _traceChangeManager.BulkEdit = true;
+                        //TODO: Set _sessionStateContainer.Cuesheet to a new empty cuesheet
+                        //TODO: Tests
                         CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _traceChangeManager.BulkEdit = false;
                         break;
