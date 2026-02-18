@@ -165,11 +165,11 @@ along with Foobar.  If not, see
 
     async Task ResetProfiles()
     {
-        var parameters = new DialogParameters<ConfirmDialog>
+        var parameters = new DialogParameters<ConfirmationDialog>
         {
             { x => x.ConfirmText, _localizer["Are you sure you want to reset the import profiles to factory default?"] },
         };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {

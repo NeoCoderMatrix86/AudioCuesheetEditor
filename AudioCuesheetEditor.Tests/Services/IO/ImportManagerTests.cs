@@ -199,7 +199,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(importCuesheet.Audiofile, sessionStateContainerCuesheet.Audiofile.Name);
             Assert.IsNotNull(sessionStateContainerCuesheet.CDTextfile);
             Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainerCuesheet.CDTextfile.Name);
-            Assert.AreEqual(importCuesheet.Tracks.Count, sessionStateContainerCuesheet.Tracks.Count);
+            Assert.HasCount(importCuesheet.Tracks.Count, sessionStateContainerCuesheet.Tracks);
             Assert.AreEqual(importCuesheet.Tracks.First().Artist, sessionStateContainerCuesheet.Tracks.First().Artist);
             Assert.AreEqual(importCuesheet.Tracks.First().Begin, sessionStateContainerCuesheet.Tracks.First().Begin);
             Assert.AreEqual(importCuesheet.Tracks.First().End, sessionStateContainerCuesheet.Tracks.First().End);
