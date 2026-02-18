@@ -189,7 +189,29 @@ along with Foobar.  If not, see
 
     async Task OpenFileClicked() 
     {
-        //TODO: Check for changes to cuesheet and if there are any, ask user via dialog for confirmation
+        //Check if there are already any changes
+        if ((TraceChangeManager.CanUndo) || (TraceChangeManager.CanRedo))
+        {
+            var parameters = new DialogParameters<ConfirmDialog>
+            {
+                { x => x.ConfirmText, _localizer["Are you sure you want reset the cuesheet? All information you have not saved are lost!"] },
+            };
+            var options = new DialogOptions() { BackdropClick = false };
+            var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters, options);
+            var result = await dialog.Result;
+            if (result?.Canceled == false)
+            {
+                await OpenFileUpload();
+            }
+        }
+        else
+        {
+            await OpenFileUpload();
+        }
+    }
+
+    async Task OpenFileUpload()
+    {
         if (mudFileUpload != null)
         {
             await mudFileUpload.OpenFilePickerAsync();
