@@ -17,11 +17,11 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
-using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -39,15 +39,27 @@ namespace AudioCuesheetEditor.Tests.Services.IO
     [TestClass()]
     public class ImportManagerTests
     {
+        private readonly ImportManager _service;
+        private readonly Mock<ISessionStateContainer> _sessionStateContainerMock;
+        private readonly Mock<ITraceChangeManager> _traceChangeManagerMock;
+        private readonly Mock<IFileInputManager> _fileInputManagerMock;
+        private readonly Mock<ITextImportService> _textImportServiceMock;
+
+        public ImportManagerTests()
+        {
+            _traceChangeManagerMock = new();
+            _sessionStateContainerMock = new();
+            _fileInputManagerMock = new();
+            _textImportServiceMock = new();
+            var loggerMock = new Mock<ILogger<ImportManager>>();
+            _service = new ImportManager(_sessionStateContainerMock.Object, _traceChangeManagerMock.Object, _fileInputManagerMock.Object, _textImportServiceMock.Object, loggerMock.Object);
+        }
+
         [TestMethod()]
         public async Task AnalyseImportfile_WithTextfile_SetsImportCuesheet()
         {
             // Arrange
             var fileContent = "This is just a test";
-            var traceChangeManagerMock = new Mock<ITraceChangeManager>();
-            var sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
             var importCuesheet = new ImportCuesheet()
             {
                 Artist = "Test Cuesheet Artist",
@@ -67,42 +79,41 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 PreGap = new TimeSpan(0, 0, 2),
                 PostGap = new TimeSpan(0, 0, 4)
             });
-            var importfile = new Importfile()
+            var importFile = new Importfile()
             {
                 FileContent = fileContent,
                 FileType = ImportFileType.Textfile,
                 AnalyzedCuesheet = importCuesheet
             };
-            textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManagerMock.Object, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
-            sessionStateContainer.Importfile = new Importfile()
-            {
-                FileContent = "This is just a test",
-                FileType = ImportFileType.Textfile
-            };
+            _textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
+            _sessionStateContainerMock.SetupGet(x => x.Importfile).Returns(importFile);
+            Cuesheet? sessionStateContainerImportCuesheet = null;
+            _sessionStateContainerMock.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
+            _sessionStateContainerMock.SetupGet(x => x.ImportCuesheet).Returns(() => sessionStateContainerImportCuesheet);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
             // Act
-            await importManager.AnalyseImportfile();
+            await _service.AnalyseImportfile();
             // Assert
-            Assert.AreEqual(importfile, sessionStateContainer.Importfile);
-            Assert.IsNotNull(sessionStateContainer.ImportCuesheet);
-            Assert.AreEqual(importCuesheet.Artist, sessionStateContainer.ImportCuesheet.Artist);
-            Assert.AreEqual(importCuesheet.Title, sessionStateContainer.ImportCuesheet.Title);
-            Assert.IsNotNull(sessionStateContainer.ImportCuesheet.Audiofile);
-            Assert.AreEqual(importCuesheet.Audiofile, sessionStateContainer.ImportCuesheet.Audiofile.Name);
-            Assert.AreEqual(importCuesheet.Cataloguenumber, sessionStateContainer.ImportCuesheet.Cataloguenumber);
-            Assert.IsNotNull(sessionStateContainer.ImportCuesheet.CDTextfile);
-            Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainer.ImportCuesheet.CDTextfile.Name);
-            Assert.AreEqual(importCuesheet.Tracks.First().Artist, sessionStateContainer.ImportCuesheet.Tracks.First().Artist);
-            Assert.AreEqual(importCuesheet.Tracks.First().Title, sessionStateContainer.ImportCuesheet.Tracks.First().Title);
-            Assert.AreEqual(importCuesheet.Tracks.First().Begin, sessionStateContainer.ImportCuesheet.Tracks.First().Begin);
-            Assert.AreEqual(importCuesheet.Tracks.First().End, sessionStateContainer.ImportCuesheet.Tracks.First().End);
-            CollectionAssert.AreEquivalent(importCuesheet.Tracks.First().Flags.ToList(), sessionStateContainer.ImportCuesheet.Tracks.First().Flags.ToList());
-            Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainer.ImportCuesheet.Tracks.First().Position);
-            Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainer.ImportCuesheet.Tracks.First().PreGap);
-            Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainer.ImportCuesheet.Tracks.First().PostGap);
-            traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Cuesheet>()));
-            traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Track>()));
+            Assert.AreEqual(importFile, sessionStateContainerImportfile);
+            Assert.IsNotNull(sessionStateContainerImportCuesheet);
+            Assert.AreEqual(importCuesheet.Artist, sessionStateContainerImportCuesheet.Artist);
+            Assert.AreEqual(importCuesheet.Title, sessionStateContainerImportCuesheet.Title);
+            Assert.IsNotNull(sessionStateContainerImportCuesheet.Audiofile);
+            Assert.AreEqual(importCuesheet.Audiofile, sessionStateContainerImportCuesheet.Audiofile.Name);
+            Assert.AreEqual(importCuesheet.Cataloguenumber, sessionStateContainerImportCuesheet.Cataloguenumber);
+            Assert.IsNotNull(sessionStateContainerImportCuesheet.CDTextfile);
+            Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainerImportCuesheet.CDTextfile.Name);
+            Assert.AreEqual(importCuesheet.Tracks.First().Artist, sessionStateContainerImportCuesheet.Tracks.First().Artist);
+            Assert.AreEqual(importCuesheet.Tracks.First().Title, sessionStateContainerImportCuesheet.Tracks.First().Title);
+            Assert.AreEqual(importCuesheet.Tracks.First().Begin, sessionStateContainerImportCuesheet.Tracks.First().Begin);
+            Assert.AreEqual(importCuesheet.Tracks.First().End, sessionStateContainerImportCuesheet.Tracks.First().End);
+            CollectionAssert.AreEquivalent(importCuesheet.Tracks.First().Flags.ToList(), sessionStateContainerImportCuesheet.Tracks.First().Flags.ToList());
+            Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainerImportCuesheet.Tracks.First().Position);
+            Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainerImportCuesheet.Tracks.First().PreGap);
+            Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainerImportCuesheet.Tracks.First().PostGap);
+            _traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Cuesheet>()));
+            _traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Track>()));
         }
 
         [TestMethod()]
@@ -110,24 +121,93 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var fileContent = "This is just a test";
-            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            var importfile = new Importfile()
+            var importFile = new Importfile()
             {
                 FileContent = fileContent,
                 FileType = ImportFileType.Textfile,
             };
-            textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importfile);
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
-            sessionStateContainer.Importfile = importfile;
+            _textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
+            _sessionStateContainerMock.SetupGet(x => x.Importfile).Returns(importFile);
+            Cuesheet? sessionStateContainerImportCuesheet = null;
+            _sessionStateContainerMock.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
             // Act
-            await importManager.AnalyseImportfile();
+            await _service.AnalyseImportfile();
             // Assert
-            Assert.AreEqual(importfile, sessionStateContainer.Importfile);
-            Assert.IsNull(sessionStateContainer.ImportCuesheet);
+            Assert.AreEqual(importFile, sessionStateContainerImportfile);
+            Assert.IsNull(sessionStateContainerImportCuesheet);
+        }
+
+        [TestMethod()]
+        public async Task AnalyseImportfile_ExistingCuesheet_OverwritesCuesheet()
+        {
+            // Arrange
+            var sessionStateContainerCuesheet = new Cuesheet()
+            {
+                Artist = "Test Cuesheet Artist",
+                Title = "Test Cuesheet Title",
+                Cataloguenumber = "Test Cuesheet Cataloguenumber"
+            };
+            sessionStateContainerCuesheet.AddTrack(new()
+            {
+                Artist = "Test Track Artist 1",
+                Title = "Test Track Title 1",
+                Begin = new TimeSpan(0, 3, 20),
+                End = new TimeSpan(0, 7, 43),
+                Flags = [Flag.DCP],
+                Position = 1,
+                PreGap = new TimeSpan(0, 0, 2),
+                PostGap = new TimeSpan(0, 0, 4)
+            });
+            var importCuesheet = new ImportCuesheet()
+            {
+                Artist = "Test ImportCuesheet Artist",
+                Title = "Test ImportCuesheet Title",
+                Audiofile = "Test ImportCuesheet Audiofile",
+                Cataloguenumber = "Test ImportCuesheet Cataloguenumber",
+                CDTextfile = "Test ImportCuesheet CDTextfile"
+            };
+            importCuesheet.Tracks.Add(new()
+            {
+                Artist = "Test ImportCuesheet Track Artist 1",
+                Title = "Test ImportCuesheet Track Title 1",
+                Begin = new TimeSpan(0, 0, 10),
+                End = new TimeSpan(0, 5, 23),
+                Flags = [Flag.SCMS],
+                Position = 1,
+                PreGap = new TimeSpan(0, 0, 4),
+                PostGap = new TimeSpan(0, 0, 6)
+            });
+            var sessionStateContainerImportFile = new Importfile()
+            {
+                FileContent = "Some file content!",
+                FileType = ImportFileType.Cuesheet,
+                AnalyzedCuesheet = importCuesheet
+            };
+
+            _sessionStateContainerMock.SetupGet(x => x.Cuesheet).Returns(() => sessionStateContainerCuesheet);
+            _sessionStateContainerMock.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
+            _sessionStateContainerMock.SetupGet(x => x.Importfile).Returns(() => sessionStateContainerImportFile);
+
+            // Act
+            await _service.AnalyseImportfile();
+            // Assert
+            Assert.AreEqual(importCuesheet.Artist, sessionStateContainerCuesheet.Artist);
+            Assert.AreEqual(importCuesheet.Title, sessionStateContainerCuesheet.Title);
+            Assert.IsNotNull(sessionStateContainerCuesheet.Audiofile);
+            Assert.AreEqual(importCuesheet.Audiofile, sessionStateContainerCuesheet.Audiofile.Name);
+            Assert.IsNotNull(sessionStateContainerCuesheet.CDTextfile);
+            Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainerCuesheet.CDTextfile.Name);
+            Assert.HasCount(importCuesheet.Tracks.Count, sessionStateContainerCuesheet.Tracks);
+            Assert.AreEqual(importCuesheet.Tracks.First().Artist, sessionStateContainerCuesheet.Tracks.First().Artist);
+            Assert.AreEqual(importCuesheet.Tracks.First().Begin, sessionStateContainerCuesheet.Tracks.First().Begin);
+            Assert.AreEqual(importCuesheet.Tracks.First().End, sessionStateContainerCuesheet.Tracks.First().End);
+            CollectionAssert.AreEquivalent(importCuesheet.Tracks.First().Flags.ToList(), sessionStateContainerCuesheet.Tracks.First().Flags.ToList());
+            Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainerCuesheet.Tracks.First().Position);
+            Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainerCuesheet.Tracks.First().PostGap);
+            Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainerCuesheet.Tracks.First().PreGap);
+            Assert.AreEqual(importCuesheet.Tracks.First().Title, sessionStateContainerCuesheet.Tracks.First().Title);
         }
 
         [TestMethod]
@@ -136,24 +216,20 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Arrange
             var fileContent = "This is the content";
             var file = CreateBrowserFileMock("test.projectfile", fileContent);
-            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(true);
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-            fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(true);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
 
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
             // Act
-            await importManager.UploadFilesAsync([file]);
+            await _service.UploadFilesAsync([file]);
 
             // Assert
-            Assert.IsNotNull(sessionStateContainer.Importfile);
-            Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContent);
-            Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContentRecognized);
-            Assert.AreEqual(ImportFileType.ProjectFile, sessionStateContainer.Importfile.FileType);
+            Assert.IsNotNull(sessionStateContainerImportfile);
+            Assert.AreEqual(fileContent, sessionStateContainerImportfile.FileContent);
+            Assert.AreEqual(fileContent, sessionStateContainerImportfile.FileContentRecognized);
+            Assert.AreEqual(ImportFileType.ProjectFile, sessionStateContainerImportfile.FileType);
         }
 
         [TestMethod]
@@ -162,24 +238,21 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Arrange
             var fileContent = "Cuesheet file content";
             var file = CreateBrowserFileMock("test.cue", fileContent);
-            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(true);
-            fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
+            
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(true);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
 
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
             // Act
-            await importManager.UploadFilesAsync([file]);
+            await _service.UploadFilesAsync([file]);
 
             // Assert
-            Assert.IsNotNull(sessionStateContainer.Importfile);
-            Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContent);
-            Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContentRecognized);
-            Assert.AreEqual(ImportFileType.Cuesheet, sessionStateContainer.Importfile.FileType);
+            Assert.IsNotNull(sessionStateContainerImportfile);
+            Assert.AreEqual(fileContent, sessionStateContainerImportfile.FileContent);
+            Assert.AreEqual(fileContent, sessionStateContainerImportfile.FileContentRecognized);
+            Assert.AreEqual(ImportFileType.Cuesheet, sessionStateContainerImportfile.FileType);
         }
 
         [TestMethod]
@@ -188,24 +261,21 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Arrange
             var fileContent = "TextFileContent";
             var file = CreateBrowserFileMock("test.txt", fileContent);
-            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-            fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(true);
+            
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(true);
 
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
             // Act
-            await importManager.UploadFilesAsync([file]);
+            await _service.UploadFilesAsync([file]);
 
             // Assert
-            Assert.IsNotNull(sessionStateContainer.Importfile);
-            Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContent);
-            Assert.AreEqual(fileContent, sessionStateContainer.Importfile.FileContentRecognized);
-            Assert.AreEqual(ImportFileType.Textfile, sessionStateContainer.Importfile.FileType);
+            Assert.IsNotNull(sessionStateContainerImportfile);
+            Assert.AreEqual(fileContent, sessionStateContainerImportfile.FileContent);
+            Assert.AreEqual(fileContent, sessionStateContainerImportfile.FileContentRecognized);
+            Assert.AreEqual(ImportFileType.Textfile, sessionStateContainerImportfile.FileType);
         }
 
         [TestMethod]
@@ -213,88 +283,81 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var file = CreateBrowserFileMock("test.mp3");
-            var traceChangeManager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-            var sessionStateContainer = new SessionStateContainer(traceChangeManager);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-            fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-            fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
-            fileInputManagerMock.Setup(f => f.IsValidAudiofile(file)).Returns(true);
-            fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<string>(), It.IsAny<IBrowserFile?>(), It.IsAny<Action<Task<Stream>>?>())).ReturnsAsync(new AudioCuesheetEditor.Model.IO.Audio.Audiofile(file.Name));
+            
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidAudiofile(file)).Returns(true);
+            _fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<string>(), It.IsAny<IBrowserFile?>(), It.IsAny<Action<Task<Stream>>?>())).ReturnsAsync(new AudioCuesheetEditor.Model.IO.Audio.Audiofile(file.Name));
 
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManager, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+            Audiofile? sessionStateContainerImportAudiofile = null;
+            _sessionStateContainerMock.SetupSet(x => x.ImportAudiofile = It.IsAny<Audiofile>()).Callback<Audiofile>(x => sessionStateContainerImportAudiofile = x);
             // Act
-            await importManager.UploadFilesAsync([file]);
+            await _service.UploadFilesAsync([file]);
 
             // Assert
-            Assert.IsNull(sessionStateContainer.Importfile);
-            Assert.IsNotNull(sessionStateContainer.ImportAudiofile);
+            Assert.IsNull(sessionStateContainerImportfile);
+            Assert.IsNotNull(sessionStateContainerImportAudiofile);
         }
 
         [TestMethod]
         public void ImportCuesheet_WithImportCuesheetAvailable_ImportsCuesheetData()
         {
             // Arrange
-            var traceChangeManagerMock = new Mock<ITraceChangeManager>();
-            var sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
-            var analyzedCuesheet = new Cuesheet()
+            var sessionStateContainerImportCuesheet = new Cuesheet()
             {
                 Artist = "Artist 123",
                 Title = "Title 456"
             };
-            analyzedCuesheet.AddTrack(new()
+            sessionStateContainerImportCuesheet.AddTrack(new()
             {
                 Artist = "Track Artist 1",
                 Title = "Track Title 1",
                 End = new TimeSpan(0, 4, 23),
             });
-            analyzedCuesheet.AddTrack(new()
+            sessionStateContainerImportCuesheet.AddTrack(new()
             {
                 Artist = "Track Artist 2",
                 Title = "Track Title 2",
                 End = new TimeSpan(0, 8, 54),
             });
-            sessionStateContainer.ImportCuesheet = analyzedCuesheet;
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManagerMock.Object, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            _sessionStateContainerMock.SetupGet(x => x.ImportCuesheet).Returns(sessionStateContainerImportCuesheet);
+            Cuesheet sessionStateContainerCuesheet = new();
+            _sessionStateContainerMock.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
+            _sessionStateContainerMock.SetupGet(x => x.Cuesheet).Returns(() => sessionStateContainerCuesheet);
             // Act
-            importManager.ImportCuesheet();
+            _service.ImportCuesheet();
             // Assert
-            Assert.AreEqual(analyzedCuesheet.Artist, sessionStateContainer.Cuesheet.Artist);
-            Assert.AreEqual(analyzedCuesheet.Title, sessionStateContainer.Cuesheet.Title);
-            Assert.AreEqual(analyzedCuesheet.Tracks.First().Artist, sessionStateContainer.Cuesheet.Tracks.First().Artist);
-            Assert.AreEqual(analyzedCuesheet.Tracks.First().Title, sessionStateContainer.Cuesheet.Tracks.First().Title);
-            Assert.AreEqual(analyzedCuesheet.Tracks.First().Begin, sessionStateContainer.Cuesheet.Tracks.First().Begin);
-            Assert.AreEqual(analyzedCuesheet.Tracks.First().End, sessionStateContainer.Cuesheet.Tracks.First().End);
-            Assert.AreEqual(analyzedCuesheet.Tracks.Last().Artist, sessionStateContainer.Cuesheet.Tracks.Last().Artist);
-            Assert.AreEqual(analyzedCuesheet.Tracks.Last().Title, sessionStateContainer.Cuesheet.Tracks.Last().Title);
-            Assert.AreEqual(analyzedCuesheet.Tracks.Last().Begin, sessionStateContainer.Cuesheet.Tracks.Last().Begin);
-            Assert.AreEqual(analyzedCuesheet.Tracks.Last().End, sessionStateContainer.Cuesheet.Tracks.Last().End);
-            traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<ITraceable>>()));
+            Assert.IsNotNull(sessionStateContainerCuesheet);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Artist, sessionStateContainerCuesheet.Artist);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Title, sessionStateContainerCuesheet.Title);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.First().Artist, sessionStateContainerCuesheet.Tracks.First().Artist);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.First().Title, sessionStateContainerCuesheet.Tracks.First().Title);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.First().Begin, sessionStateContainerCuesheet.Tracks.First().Begin);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.First().End, sessionStateContainerCuesheet.Tracks.First().End);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().Artist, sessionStateContainerCuesheet.Tracks.Last().Artist);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().Title, sessionStateContainerCuesheet.Tracks.Last().Title);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().Begin, sessionStateContainerCuesheet.Tracks.Last().Begin);
+            Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().End, sessionStateContainerCuesheet.Tracks.Last().End);
+            _traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<ITraceable>>()));
         }
 
         [TestMethod]
         public void ImportData_ValidData_SetsImportfile()
         {
             // Arrange
-            var traceChangeManagerMock = new Mock<ITraceChangeManager>();
-            var sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
-            var importdata = nameof(ImportData_ValidData_SetsImportfile);
-            var fileInputManagerMock = new Mock<IFileInputManager>();
-            var textImportServiceMock = new Mock<ITextImportService>();
-            var loggerMock = new Mock<ILogger<ImportManager>>();
-            var importManager = new ImportManager(sessionStateContainer, traceChangeManagerMock.Object, fileInputManagerMock.Object, textImportServiceMock.Object, loggerMock.Object);
+            var importData = nameof(ImportData_ValidData_SetsImportfile);
+            IImportfile? sessionStateContainerImportfile = null;
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
             // Act
-            importManager.ImportData(importdata);
+            _service.ImportData(importData);
             // Assert
-            Assert.IsNotNull(sessionStateContainer.Importfile);
-            Assert.AreEqual(importdata, sessionStateContainer.Importfile.FileContent);
-            Assert.AreEqual(importdata, sessionStateContainer.Importfile.FileContentRecognized);
-            Assert.AreEqual(ImportFileType.Textfile, sessionStateContainer.Importfile.FileType);
+            Assert.IsNotNull(sessionStateContainerImportfile);
+            Assert.AreEqual(importData, sessionStateContainerImportfile.FileContent);
+            Assert.AreEqual(importData, sessionStateContainerImportfile.FileContentRecognized);
+            Assert.AreEqual(ImportFileType.Textfile, sessionStateContainerImportfile.FileType);
         }
 
         private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")

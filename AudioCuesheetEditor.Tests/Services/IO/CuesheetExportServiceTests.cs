@@ -49,7 +49,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var result = cuesheetExportService.CanGenerateExportfiles(invalidFilename);
 
             // Assert
-            Assert.IsTrue(result.Any(vm => vm.Message.Contains("File extension is not")));
+            Assert.Contains(vm => vm.Message.Contains("File extension is not"), result);
         }
 
         [TestMethod]
