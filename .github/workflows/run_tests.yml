@@ -9,25 +9,25 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4.2.2
+    - uses: actions/checkout@v6
 
     - name: Set timestamp variable
       id: timestamp
       run: echo "datetime=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
     
-    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/9.0
+    # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/10.0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
 
     - name: Install wasm-tools
-      run: dotnet workload install wasm-tools-net9
+      run: dotnet workload install wasm-tools
 
     - name: Build & Install
       run: dotnet build
     - name: Ensure browsers are installed
-      run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright.ps1 install --with-deps
+      run: pwsh AudioCuesheetEditor.End2EndTests/bin/Debug/net10.0/playwright.ps1 install --with-deps
 
     - name: Start App
       run: dotnet run --project AudioCuesheetEditor &
@@ -59,8 +59,8 @@ jobs:
 
     - name: Upload traces
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: playwright-traces-${{ steps.timestamp.outputs.datetime }}
-        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net9.0/playwright-traces/
+        path: AudioCuesheetEditor.End2EndTests/bin/Debug/net10.0/playwright-traces/
         if-no-files-found: ignore

@@ -27,8 +27,6 @@ using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using System.Globalization;
-using System.Reflection;
 using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -72,27 +70,6 @@ var options = await localStorageOptionsProvider.GetOptionsAsync<ApplicationOptio
 builder.Logging.SetMinimumLevel(options.MinimumLogLevel);
 
 builder.Services.AddHotKeys2();
-
-// TODO: Remove this when https://github.com/dotnet/aspnetcore/issues/56824 is fixed
-
-// Get current localization culture
-var currentCulture = CultureInfo.DefaultThreadCurrentCulture;
-
-// Get WASM culture provider via reflection
-var type = Assembly.GetAssembly(typeof(WebAssemblyHost))!.GetType("Microsoft.AspNetCore.Components.WebAssembly.Hosting.WebAssemblyCultureProvider");
-var instance = type
-    !.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static)
-    ?.GetValue(null);
-
-// Swap out the "current culture" for the UI (localization) culture
-CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("de-DE");
-// Load the satellite assemblies
-await (ValueTask)instance!
-    .GetType()
-    .GetMethod("LoadCurrentCultureResourcesAsync", BindingFlags.Public | BindingFlags.Instance)!
-    .Invoke(instance, [])!;
-// Swap the culture back
-CultureInfo.DefaultThreadCurrentCulture = currentCulture;
 
 var host = builder.Build();
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-	<TargetFramework>net9.0</TargetFramework>
+	<TargetFramework>net10.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
@@ -22,13 +22,13 @@
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="9.0.892" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="9.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.13" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" PrivateAssets="all" />
     <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
     <PackageReference Include="Howler.Blazor" Version="0.10.0" />
     <PackageReference Include="Markdig" Version="0.45.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="9.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.3" />
     <PackageReference Include="MudBlazor" Version="8.15.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.2.0" />
     <PackageReference Include="z440.atl.core" Version="7.11.0" />
