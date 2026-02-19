@@ -55,7 +55,10 @@ namespace AudioCuesheetEditor.Services.IO
 
         public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, IEnumerable<String> fileExtensions)
         {
-            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
+            }
             Boolean fileMimeTypeMatches = false;
             if ((file != null) && (String.IsNullOrEmpty(mimeType) == false))
             {
@@ -63,7 +66,7 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     if (mimeType.EndsWith("/*"))
                     {
-                        var mainType = mimeType.Substring(0, mimeType.Length - 1);
+                        var mainType = mimeType[..^1];
                         fileMimeTypeMatches = file.ContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
                     }
                     else
