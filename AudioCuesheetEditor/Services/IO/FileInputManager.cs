@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -93,7 +94,12 @@ namespace AudioCuesheetEditor.Services.IO
                     audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec);
                     if (String.IsNullOrEmpty(audioFileObjectURL) == false)
                     {
-                        var loadContentStreamTask = _httpClient.GetStreamAsync(audioFileObjectURL)
+                        var request = new HttpRequestMessage(HttpMethod.Get, audioFileObjectURL);
+                        //TODO: Enable when https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/524 gets done
+                        request.SetBrowserRequestStreamingEnabled(false);
+
+                        var response = await _httpClient.SendAsync(request);
+                        var loadContentStreamTask = response.Content.ReadAsStreamAsync()
                                 .ContinueWith(x => audiofile.ContentStream = x.Result);
                         if (afterContentStreamLoaded != null)
                         {

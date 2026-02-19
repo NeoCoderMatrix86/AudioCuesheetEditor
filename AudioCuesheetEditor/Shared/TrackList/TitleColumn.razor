@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
-<MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(value) => value.Title"
+<MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(value) => value?.Title"
                  @bind-Text="title" Value="autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator
                  Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false" OnBlur="OnBlur">
     <ItemTemplate Context="autocompleteContext">
