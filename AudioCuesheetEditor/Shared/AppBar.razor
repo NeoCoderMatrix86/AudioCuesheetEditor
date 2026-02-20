@@ -59,7 +59,7 @@ along with Foobar.  If not, see
     <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
         @foreach (var culture in LocalizationService.AvailableCultures)
         {
-            <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@IsoCountryCodeToFlagEmoji(culture)&nbsp;@culture.DisplayName</MudMenuItem>
+            <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture)" Style="@GetStyle(culture)">@IsoCountryCodeToFlagEmoji(culture)&nbsp;@culture.DisplayName</MudMenuItem>
         }
     </MudMenu>
     <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" AriaLabel="More">
@@ -115,9 +115,9 @@ along with Foobar.  If not, see
     [Parameter]
     public Boolean DisplayReset { get; set; }
 
-    async Task SelectedCultureChanged(string name)
+    async Task SelectedCultureChanged(CultureInfo culture)
     {
-        await base.LocalizationService.ChangeLanguageAsync(name);
+        await base.LocalizationService.ChangeLanguageAsync(culture);
     }
 
     String GetStyle(CultureInfo cultureInfo)

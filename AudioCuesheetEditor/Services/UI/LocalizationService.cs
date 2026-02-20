@@ -46,27 +46,27 @@ namespace AudioCuesheetEditor.Services.UI
         {
             var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
 
-            ChangeLanguage(options.Culture.Name);
+            ChangeLanguage(options.Culture);
         }
 
-        public async Task ChangeLanguageAsync(string name)
+        public async Task ChangeLanguageAsync(CultureInfo culture)
         {
-            if (ChangeLanguage(name))
+            if (ChangeLanguage(culture))
             {
-                await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, name);
+                await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
                 LocalizationChanged?.Invoke(this, new EventArgs());
             }
         }
 
-        private static Boolean ChangeLanguage(string name)
+        private static Boolean ChangeLanguage(CultureInfo newCulture)
         {
-            var newCulture = AvailableCultures.SingleOrDefault(c => c.Name == name);
-            if (newCulture != null)
+            var contains = AvailableCultures.Contains(newCulture);
+            if (contains)
             {
                 CultureInfo.DefaultThreadCurrentUICulture = newCulture;
                 CultureInfo.CurrentUICulture = newCulture;
             }
-            return newCulture != null;
+            return contains;
         }
     }
 }
