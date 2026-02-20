@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AudioCuesheetEditor</title>
     <base href="/" />
     <link href="manifest.webmanifest" rel="manifest" />
@@ -32,14 +32,13 @@
             position: relative;
         }
     </style>
-
 </head>
 
 <body>
     <div id="app">
         <div class="container">
             <div class="center">
-                <img src="loading.gif" />
+                <img src="loading.gif" aria-label="Loading animation" />
             </div>
             <div class="center">
                 <p>Loading application, please stand by ...</p>
@@ -55,7 +54,7 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
-    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script>navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' });</script>
     <script src="scripts/library.js"></script>
     <script src="scripts/globalFileDrag.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js?v=1"></script>
