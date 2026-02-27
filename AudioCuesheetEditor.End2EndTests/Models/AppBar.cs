@@ -48,6 +48,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await _page.GetByText(language).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
         }
 
         internal async Task UndoAsync()
