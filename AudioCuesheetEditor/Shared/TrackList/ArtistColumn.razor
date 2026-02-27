@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
-<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="artist"
+<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(MusicBrainzArtist? value) => value?.Name" @bind-Text="artist"
                  Value="autocompleteArtist" ValueChanged="ValueChanged" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
                  MaxItems="null" CoerceText="false" OnBlur="OnBlur">
     <ItemTemplate>
@@ -34,7 +34,6 @@ along with Foobar.  If not, see
 </MudAutocomplete>
 
 @code {
-    //TODO: Check if ToStringFunc really gets a nullable or not
     [Parameter] 
     [EditorRequired]
     public Track Track { get; set; } = default!;
