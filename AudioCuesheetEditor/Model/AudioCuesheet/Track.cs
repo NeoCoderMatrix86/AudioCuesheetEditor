@@ -60,7 +60,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Create object with copied values from input
         /// </summary>
         /// <param name="track">Object to copy values from</param>
-        /// /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
+        /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
         public Track(ITrack track, Boolean copyCuesheetReference = true) : this()
         {
             CopyValues(track, copyCuesheetReference);
