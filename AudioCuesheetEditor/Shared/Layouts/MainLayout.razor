@@ -15,8 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
-
-@inherits BaseLocalizedLayoutComponentBase
+@inherits LayoutComponentBase
 
 @inject NavigationManager _navigationManager
 @inject IStringLocalizer<MainLayout> _localizer
@@ -26,7 +25,7 @@ along with Foobar.  If not, see
     <ChildContent>
         <CascadingValue Value="@this">
             <MudLayout>
-                <AppBar DisplayFileMenu DisplayUndoRedoButtonGroup DisplayReset DisplaySettings />
+                <AppBar DisplayFileMenu DisplayUndoRedoButtonGroup DisplayReset DisplaySettings DisplayHotkeys />
                 <MudMainContent>
                     @Body
                 </MudMainContent>

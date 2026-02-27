@@ -69,7 +69,10 @@ along with Foobar.  If not, see
         }
         <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/wiki/Help" Target="_blank">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
-        <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="DisplayHotkeys">@_localizer["Hotkeys"]</MudMenuItem>
+        @if (DisplayHotkeys)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="ShowHotkeysDialog">@_localizer["Hotkeys"]</MudMenuItem>
+        }
         <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
         @if (DisplayReset)
         {
@@ -114,6 +117,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public Boolean DisplayReset { get; set; }
+
+    [Parameter]
+    public Boolean DisplayHotkeys { get; set; }
 
     async Task SelectedCultureChanged(CultureInfo culture)
     {
@@ -223,7 +229,7 @@ along with Foobar.  If not, see
         await _importManager.UploadFilesAsync([file]);
     }
 
-    async Task DisplayHotkeys()
+    async Task ShowHotkeysDialog()
     {
         var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         await _dialogService.ShowAsync<DisplayHotkeysDialog>(_localizer["Hotkeys"], options);

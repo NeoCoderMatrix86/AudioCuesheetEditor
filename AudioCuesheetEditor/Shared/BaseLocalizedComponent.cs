@@ -33,7 +33,6 @@ namespace AudioCuesheetEditor.Shared
         protected override void OnInitialized()
         {
             base.OnInitialized();
-            LocalizationService.LocalizationChanged += LocalizationService_LocalizationChanged;
             TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
             TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
             TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
@@ -54,18 +53,12 @@ namespace AudioCuesheetEditor.Shared
             StateHasChanged();
         }
 
-        void LocalizationService_LocalizationChanged(object? sender, EventArgs args)
-        {
-            StateHasChanged();
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    LocalizationService.LocalizationChanged -= LocalizationService_LocalizationChanged;
                     TraceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
                     TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
                     TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;

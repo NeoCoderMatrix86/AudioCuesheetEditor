@@ -15,13 +15,17 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.Options;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Globalization;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class LocalizationService(ILocalStorageOptionsProvider localStorageOptionsProvider)
+    public class LocalizationService(ILocalStorageOptionsProvider localStorageOptionsProvider, NavigationManager navigationManager, IJSRuntime jsRuntime)
     {
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
+        private readonly NavigationManager _navigationManager = navigationManager;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
         public const String DefaultCulture = "en-US";
 
@@ -38,8 +42,6 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        public event EventHandler? LocalizationChanged;
-
         public static CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
 
         public async Task SetCultureFromConfigurationAsync()
@@ -54,7 +56,8 @@ namespace AudioCuesheetEditor.Services.UI
             if (ChangeLanguage(culture))
             {
                 await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
-                LocalizationChanged?.Invoke(this, new EventArgs());
+                await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+                _navigationManager.NavigateTo(_navigationManager.Uri, true);
             }
         }
 
@@ -64,7 +67,7 @@ namespace AudioCuesheetEditor.Services.UI
             if (contains)
             {
                 CultureInfo.DefaultThreadCurrentUICulture = newCulture;
-                CultureInfo.CurrentUICulture = newCulture;
+                CultureInfo.DefaultThreadCurrentCulture = newCulture;
             }
             return contains;
         }
