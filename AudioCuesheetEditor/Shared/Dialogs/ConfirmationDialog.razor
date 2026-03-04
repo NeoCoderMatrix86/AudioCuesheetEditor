@@ -24,8 +24,8 @@ along with Foobar.  If not, see
         <MudText>@ConfirmText</MudText>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="() => MudDialog?.Close()">@_localizer["Yes"]</MudButton>
-        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()">@_localizer["No"]</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="() => MudDialog?.Close()" aria-label="@_localizer["Yes"]">@_localizer["Yes"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => MudDialog?.Cancel()" aria-label="@_localizer["No"]">@_localizer["No"]</MudButton>
     </DialogActions>
 </MudDialog>
 

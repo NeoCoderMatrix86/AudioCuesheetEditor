@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 @inject ImportManager _importManager
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
-    <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
+    <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)" aria-label="Home">
         <MudHidden Breakpoint="Breakpoint.Xs">
             <MudText Typo="Typo.h6">AudioCuesheetEditor</MudText>
         </MudHidden>

@@ -21,19 +21,19 @@ along with Foobar.  If not, see
 
 <MudStack Row StretchItems="StretchItems.Start">
     <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                   Accept="@Filter">
+                   Accept="@Filter" aria-label="Upload file">
         <ActivatorContent>
             <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
         </ActivatorContent>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Search"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync" aria-label="@_localizer["Search"]">@_localizer["Search"]</MudButton>
     </MudHidden>
-    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
+    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" aria-label="Clear file" />
     @if (DisplayMenu)
     {
-        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
-            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)">@_localizer["Rename file"]</MudMenuItem>
+        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled" AriaLabel="More">
+            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)" aria-label="@_localizer["Rename file"]">@_localizer["Rename file"]</MudMenuItem>
         </MudMenu>
     }
 </MudStack>
