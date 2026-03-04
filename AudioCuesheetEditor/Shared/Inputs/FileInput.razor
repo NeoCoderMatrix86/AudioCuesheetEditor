@@ -20,10 +20,10 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start">
-    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="_fileUpload" Files="_selectedFile" FilesChanged="SetSelectedFileAsync" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
                    Accept="@Filter" aria-label="Upload file">
         <CustomContent Context="fileUpload">
-            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" />
+            <MudTextField Value="_textFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" />
         </CustomContent>
         <SelectedTemplate></SelectedTemplate>
     </MudFileUpload>
@@ -34,7 +34,7 @@ along with Foobar.  If not, see
     @if (DisplayMenu)
     {
         <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled" AriaLabel="More">
-            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)" aria-label="@_localizer["Rename file"]">@_localizer["Rename file"]</MudMenuItem>
+            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(_selectedFile)" aria-label="@_localizer["Rename file"]">@_localizer["Rename file"]</MudMenuItem>
         </MudMenu>
     }
 </MudStack>
@@ -72,25 +72,25 @@ along with Foobar.  If not, see
     [Parameter]
     public Boolean DisplayMenu { get; set; } = true;
 
-    IBrowserFile? selectedFile;
-    MudFileUpload<IBrowserFile>? fileUpload;
-    String TextFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
+    IBrowserFile? _selectedFile;
+    MudFileUpload<IBrowserFile>? _fileUpload;
+    String _textFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
 
     async Task PickFilesClickedAsync()
     {
-        await (fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
+        await (_fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
     }
 
     async Task ClearClickedAsync()
     {
-        await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
+        await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
         await SetSelectedFileAsync(null);
     }
 
     async Task SetSelectedFileAsync(IBrowserFile? browserFile)
     {
-        selectedFile = browserFile;
-        FileName = selectedFile?.Name;
-        await OnFileSelected.InvokeAsync(selectedFile);
+        _selectedFile = browserFile;
+        FileName = _selectedFile?.Name;
+        await OnFileSelected.InvokeAsync(_selectedFile);
     }
 }
