@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                 <MudItem xs="8" sm="9"><MudText>@_localizer["Value"]</MudText></MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackIsLinkedToPreviousTrack" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackIsLinkedToPreviousTrack" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
@@ -41,7 +41,7 @@ along with Foobar.  If not, see
                 <MudItem xs="8" sm="9"><MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Disabled="editModeTrackIsLinkedToPreviousTrack == DynamicEditValue.DoNotChange" /></MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackPosition" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackPosition" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
@@ -54,7 +54,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackArtist" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackArtist" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
@@ -82,7 +82,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackTitle" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackTitle" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
@@ -111,7 +111,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackBegin" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackBegin" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
@@ -125,7 +125,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackEnd" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackEnd" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
@@ -139,7 +139,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackLength" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackLength" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
@@ -153,7 +153,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackFlags" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackFlags" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                     </MudSelect>
@@ -170,7 +170,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackPregap" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackPregap" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
@@ -184,7 +184,7 @@ along with Foobar.  If not, see
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackPostgap" Variant="Variant.Outlined" Modal>
+                    <MudSelect @bind-Value="editModeTrackPostgap" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>

@@ -20,11 +20,12 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start">
-    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10 Opacity0"
                    Accept="@Filter" aria-label="Upload file">
-        <ActivatorContent>
-            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
-        </ActivatorContent>
+        <CustomContent Context="fileUpload">
+            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" />
+        </CustomContent>
+        <SelectedTemplate></SelectedTemplate>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync" aria-label="@_localizer["Search"]">@_localizer["Search"]</MudButton>

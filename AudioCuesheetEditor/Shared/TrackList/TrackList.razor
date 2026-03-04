@@ -298,7 +298,7 @@ along with Foobar.  If not, see
         track.Position = newPosition;
         if (form != null)
         {
-            await form.Validate();
+            await form.ValidateAsync();
         }
     }
 
@@ -307,7 +307,7 @@ along with Foobar.  If not, see
         await _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TProperty>(track, expression, value);
         if (form != null)
         {
-            await form.Validate();
+            await form.ValidateAsync();
         }
     }
 
