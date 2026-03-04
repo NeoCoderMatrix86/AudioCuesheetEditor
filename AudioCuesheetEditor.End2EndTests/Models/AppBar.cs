@@ -18,13 +18,13 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    partial class AppBar
+    partial class AppBar(IPage page)
     {
         [GeneratedRegex("^Open$")]
         private static partial Regex OpenRegex();
 
-        private readonly IPage _page;
-        private readonly ILocator _menuButton;
+        private readonly IPage _page = page;
+        internal ILocator MenuButton => _page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button, new() { Name = "More" });
 
         internal ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
 
@@ -32,15 +32,9 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal ILocator HomeButton => _page.Locator(".mud-button-root").First;
 
-        internal AppBar(IPage page)
-        {
-            _page = page;
-            _menuButton = _page.GetByRole(AriaRole.Button, new() { Name = "More" });
-        }
-
         internal async Task OpenSettingsAsync()
         {
-            await _menuButton.ClickAsync();
+            await MenuButton.ClickAsync();
             await _page.GetByText("Settings").ClickAsync();
         }
 
@@ -48,6 +42,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
             await _page.GetByText(language).ClickAsync();
+            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
         }
 
         internal async Task UndoAsync()
@@ -81,7 +77,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task OpenDisplayHotkeysAsync()
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "More" }).ClickAsync();
+            await MenuButton.ClickAsync();
             await _page.GetByText("Hotkeys").ClickAsync();
         }
     }

@@ -52,7 +52,10 @@ namespace AudioCuesheetEditor.Services.IO
                 FileType = ImportFileType.Textfile
             };
             stopwatch.Stop();
-            _logger.LogDebug("ImportData duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("ImportData duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            }
         }
         
         public async Task AnalyseImportfile()
@@ -94,7 +97,10 @@ namespace AudioCuesheetEditor.Services.IO
                 }
             }
             stopwatch.Stop();
-            _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            }
         }
         
         public void ImportCuesheet()
@@ -109,7 +115,10 @@ namespace AudioCuesheetEditor.Services.IO
             }
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();
-            _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            }
         }
 
         public async Task UploadFilesAsync(IEnumerable<IBrowserFile> files, String? fileInputId = null)
@@ -175,7 +184,10 @@ namespace AudioCuesheetEditor.Services.IO
             }
             UploadFilesFinished?.Invoke(this, invalidFiles);
             stopwatch.Stop();
-            _logger.LogDebug("UploadFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("UploadFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+            }
         }
 
         private static async Task<MemoryStream> ReadFileContentAsync(IBrowserFile file)

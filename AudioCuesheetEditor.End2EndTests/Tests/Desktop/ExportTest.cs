@@ -83,7 +83,7 @@ FILE ""Kalimba.mp3"" MP3
             await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Textfile");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next" }).ClickAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next", Exact = true }).ClickAsync();
             var downloadTask = TestPage.WaitForDownloadAsync();
             await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download-YouTube.txt" }).ClickAsync();
             var download = await downloadTask;

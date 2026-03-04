@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -54,7 +55,10 @@ namespace AudioCuesheetEditor.Services.IO
 
         public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, IEnumerable<String> fileExtensions)
         {
-            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
+            }
             Boolean fileMimeTypeMatches = false;
             if ((file != null) && (String.IsNullOrEmpty(mimeType) == false))
             {
@@ -62,7 +66,7 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     if (mimeType.EndsWith("/*"))
                     {
-                        var mainType = mimeType.Substring(0, mimeType.Length - 1);
+                        var mainType = mimeType[..^1];
                         fileMimeTypeMatches = file.ContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
                     }
                     else
@@ -93,7 +97,12 @@ namespace AudioCuesheetEditor.Services.IO
                     audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec);
                     if (String.IsNullOrEmpty(audioFileObjectURL) == false)
                     {
-                        var loadContentStreamTask = _httpClient.GetStreamAsync(audioFileObjectURL)
+                        var request = new HttpRequestMessage(HttpMethod.Get, audioFileObjectURL);
+                        //TODO: Enable when https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/524 gets done
+                        request.SetBrowserRequestStreamingEnabled(false);
+
+                        var response = await _httpClient.SendAsync(request);
+                        var loadContentStreamTask = response.Content.ReadAsStreamAsync()
                                 .ContinueWith(x => audiofile.ContentStream = x.Result);
                         if (afterContentStreamLoaded != null)
                         {

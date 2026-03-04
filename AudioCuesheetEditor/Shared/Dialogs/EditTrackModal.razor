@@ -38,7 +38,7 @@ along with Foobar.  If not, see
                     Name = EditedTrack.Artist
                 };
             }
-            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name"
+            <MudAutocomplete T="MusicBrainzArtist" Label="@_localizer["Artist"]" Variant="Variant.Outlined" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name"
                              @bind-Text="EditedTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Artist)))"
                              ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Artist))" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
@@ -57,7 +57,7 @@ along with Foobar.  If not, see
                     Title = EditedTrack.Title
                 };
             }
-            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value.Title"
+            <MudAutocomplete T="MusicBrainzTrack" Label="@_localizer["Title"]" Variant="Variant.Outlined" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, EditedTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
                              @bind-Text="EditedTrack.Title" Value="autocompleteTrack" ValueChanged="TitleSelected" Clearable ShowProgressIndicator 
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Title))" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">

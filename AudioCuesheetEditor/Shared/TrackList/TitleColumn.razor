@@ -20,9 +20,9 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
-<MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(value) => value.Title"
-                 @bind-Text="title" Value="autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator
-                 Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false" OnBlur="OnBlur">
+<MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(MusicBrainzTrack? value) => value?.Title"
+                 @bind-Text="_title" Value="_autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator
+                 Validation="(string? newTitle) => _validationService.Validate(Track, nameof(Track.Title))" MaxItems="null" CoerceText="false" OnBlur="() => StartChangeTimer()">
     <ItemTemplate Context="autocompleteContext">
         <MudText>@autocompleteContext.Title</MudText>
         @if (autocompleteContext.Disambiguation != null)
@@ -42,55 +42,65 @@ along with Foobar.  If not, see
     [EditorRequired]
     public ViewMode CurrentViewMode { get; set; }
 
-    MusicBrainzTrack? autocompleteTrack;
-    string? title;
-    Timer? debounceTimer;
+    MusicBrainzTrack? _autocompleteTrack;
+    string? _title;
+    CancellationTokenSource? _cancellationTokenSource;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        autocompleteTrack = new() { Artist = Track.Artist, Title = Track.Title };
-        title = autocompleteTrack?.Title;
+        SetComponentValues(new() { Artist = Track.Artist, Title = Track.Title });
+    }
+
+    void SetComponentValues(MusicBrainzTrack? newValue)
+    {
+        if ((newValue?.Artist != _autocompleteTrack?.Artist) || (newValue?.Title != _autocompleteTrack?.Title))
+        {
+            _autocompleteTrack = newValue;
+            _title = _autocompleteTrack?.Title;
+        }
     }
 
     void TitleSelected(MusicBrainzTrack? newValue)
     {
-        autocompleteTrack = newValue;
-        title = autocompleteTrack?.Title;
-        StartChangeTimer();
-    }
-
-    void OnBlur(FocusEventArgs args)
-    {
+        SetComponentValues(newValue);
         StartChangeTimer();
     }
 
     void StartChangeTimer()
     {
-        debounceTimer = new Timer(100);
-        debounceTimer.Elapsed += ChangeTitle;
-        debounceTimer.AutoReset = false;
-        debounceTimer.Start();
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        _ = DebounceAsync(_cancellationTokenSource.Token);
     }
 
-    void ChangeTitle(object? sender, System.Timers.ElapsedEventArgs e)
+    async Task DebounceAsync(CancellationToken token)
     {
-        base.TraceChangeManager.BulkEdit = true;
-        Track.Title = title;
-        switch (CurrentViewMode)
+        try
         {
-            case ViewMode.DetailView:
-            case ViewMode.ImportView:
-                if ((String.IsNullOrEmpty(Track.Artist)) && (String.IsNullOrEmpty(autocompleteTrack?.Artist) == false))
-                {
-                    Track.Artist = autocompleteTrack.Artist;
-                }
-                if ((Track.Length.HasValue == false) && (autocompleteTrack?.Length.HasValue == true))
-                {
-                    Track.Length = autocompleteTrack?.Length;
-                }
-                break;
+            await Task.Delay(100, token);
+            base.TraceChangeManager.BulkEdit = true;
+            Track.Title = _title;
+            switch (CurrentViewMode)
+            {
+                case ViewMode.DetailView:
+                case ViewMode.ImportView:
+                    if ((String.IsNullOrEmpty(Track.Artist)) && (String.IsNullOrEmpty(_autocompleteTrack?.Artist) == false))
+                    {
+                        Track.Artist = _autocompleteTrack.Artist;
+                    }
+                    if ((Track.Length.HasValue == false) && (_autocompleteTrack?.Length.HasValue == true))
+                    {
+                        Track.Length = _autocompleteTrack?.Length;
+                    }
+                    break;
+            }
+            base.TraceChangeManager.BulkEdit = false;
         }
-        base.TraceChangeManager.BulkEdit = false;
+        catch (TaskCanceledException)
+        {
+            //Nothing to do here
+        }
     }
 }

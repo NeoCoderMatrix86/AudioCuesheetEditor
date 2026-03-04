@@ -31,7 +31,7 @@ along with Foobar.  If not, see
                     Name = currentRecordingTrack.Artist
                 };
             }
-            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" 
+            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name" 
                              @bind-Text="@currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false">
@@ -53,7 +53,7 @@ along with Foobar.  If not, see
                     Title = currentRecordingTrack.Title
                 };
             }
-            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value.Title"
+            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
                              @bind-Text="currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText 
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" 
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false">
