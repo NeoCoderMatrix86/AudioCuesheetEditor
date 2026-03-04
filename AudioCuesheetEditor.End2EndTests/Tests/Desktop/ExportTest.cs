@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         public async Task DownloadCuesheet_GeneratesCuesheetFile_WhenCuesheetIsValid()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
@@ -54,7 +54,7 @@ FILE ""Kalimba.mp3"" MP3
         public async Task DownloadProject_GeneratesProjectFile_WhenCuesheetIsValidAsync()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
@@ -75,7 +75,7 @@ FILE ""Kalimba.mp3"" MP3
         public async Task DownloadText_GeneratesTextFile_WhenCuesheetIsValidAsync()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");

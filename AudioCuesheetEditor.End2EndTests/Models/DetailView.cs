@@ -17,12 +17,11 @@ using Microsoft.Playwright;
 
 namespace AudioCuesheetEditor.End2EndTests.Models
 {
-    internal class DetailView(IPage page, bool mobile)
+    internal class DetailView(IPage page)
     {
         internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
-        private readonly bool _isMobile = mobile;
 
         internal ILocator AudiofileInput => _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Locator("input[type=\"file\"]");
 
@@ -115,8 +114,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task OpenRenameAudiofileDialogAsync()
         {
-            int buttonIndex = _isMobile ? 2 : 3;
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).GetByRole(AriaRole.Button).Nth(buttonIndex).ClickAsync();
+            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).GetByLabel("More").ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
         }
     }

@@ -50,7 +50,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync(title);
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Add track" }).ClickAsync();
-            await _page.Locator(".mud-overlay").ClickAsync();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         {
             var recordView = new RecordView(TestPage);
             var viewModes = new ViewModes(TestPage, DeviceName != null);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await recordView.GotoAsync();
             await recordView.StartRecordingAsync();
             await recordView.AddRecordingTrackAsync("Test Track 1 Artist", "Test Track 1 Title");
