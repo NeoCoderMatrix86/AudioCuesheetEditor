@@ -20,6 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<DisplayExportfileContent> _localizer
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject IJSRuntime _jsRuntime
+@inject ISnackbar _snackbar
 
 <MudField Variant="Variant.Outlined">
     <MudTextField Lines="@_lineCount" ReadOnly Value="@Exportfile?.Content" FullWidth Underline="false" />
@@ -44,7 +45,13 @@ along with Foobar.  If not, see
 
     async Task CopyClipboardClicked()
     {
-        //TODO: feedback for user
         await _jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", Exportfile?.Content);
+        _snackbar.Add(_localizer["Copied to clipboard"], Severity.Info, config => 
+        {
+            config.ShowTransitionDuration = 500;
+            config.VisibleStateDuration = 1000;
+            config.HideTransitionDuration = 500;
+            config.ShowCloseIcon = false;
+        });
     }
 }
