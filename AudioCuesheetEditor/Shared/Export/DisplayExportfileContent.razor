@@ -25,8 +25,8 @@ along with Foobar.  If not, see
 <MudField Variant="Variant.Outlined">
     <MudTextField Lines="@_lineCount" ReadOnly Value="@Exportfile?.Content" FullWidth Underline="false" />
     <MudStack Row Justify="Justify.FlexEnd">
-        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.CopyAll" OnClick='() => CopyClipboardClicked()'>@_localizer["Copy"]</MudButton>
-        <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(Exportfile?.Name, Exportfile?.Content, System.Text.Encoding.Default, "text/plain")' />
+        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.CopyAll" OnClick='() => CopyClipboardClicked()' aria-label="Copy to clipboard">@_localizer["Copy"]</MudButton>
+        <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(Exportfile?.Name, Exportfile?.Content, System.Text.Encoding.Default, "text/plain")' aria-label="Download" />
     </MudStack>
 </MudField>
 

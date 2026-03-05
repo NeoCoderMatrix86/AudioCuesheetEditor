@@ -85,7 +85,7 @@ FILE ""Kalimba.mp3"" MP3
             await bar.OpenExportDialogAsync("Textfile");
             await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next", Exact = true }).ClickAsync();
             var downloadTask = TestPage.WaitForDownloadAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download-YouTube.txt" }).ClickAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
             var download = await downloadTask;
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
