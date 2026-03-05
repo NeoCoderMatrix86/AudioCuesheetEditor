@@ -20,7 +20,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
     {
         public static readonly string DefaultCuesheetFilename = "Cuesheet.cue";
         public string Name { get; set; } = String.Empty;
-        public byte[]? Content { get; set; }
+        public string? Content { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
     }

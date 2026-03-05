@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject ExportfileGenerator _exportfileGenerator
 @inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject IJSRuntime _jsRuntime
 
 @if (exportOptions != null)
 {
@@ -120,23 +121,38 @@ along with Foobar.  If not, see
                     </MudMenu>
                 </MudStep>
                 <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false">
-                    <MudTable Items="exportFiles">
-                        <HeaderContent>
-                            <MudTh>@_localizer["Name"]</MudTh>
-                            <MudTh>@_localizer["Begin"]</MudTh>
-                            <MudTh>@_localizer["End"]</MudTh>
-                            <MudTh>@_localizer["Content"]</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
-                            <MudTd DataLabel="@_localizer["Begin"]">@context.Begin</MudTd>
-                            <MudTd DataLabel="@_localizer["End"]">@context.End</MudTd>
-                            @{
-                                var ariaLabel = $"Download-{context.Name}";
-                                <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFile(context.Name, context.Content, "text/plain")' aria-label="@ariaLabel" /></MudTd>
-                            }
-                        </RowTemplate>
-                    </MudTable>
+                    @if (exportFiles.Count() == 1)
+                    {
+                        var exportFile = exportFiles.Single();
+                        var lines = exportFile.Content?.Split(Environment.NewLine).Length ?? 1;
+                        <MudField Variant="Variant.Outlined">
+                            <MudTextField Lines="@lines" ReadOnly Value="@exportFile.Content" FullWidth Underline="false" />
+                            <MudStack Row Justify="Justify.FlexEnd">
+                                <MudButton Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.CopyAll" OnClick='() => CopyClipboardClicked(exportFile)'>@_localizer["Copy"]</MudButton>
+                                <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(exportFile.Name, exportFile.Content, System.Text.Encoding.Default, "text/plain")' />
+                            </MudStack>
+                        </MudField>
+                    }
+                    else
+                    {
+                        <MudTable Items="exportFiles">
+                            <HeaderContent>
+                                <MudTh>@_localizer["Name"]</MudTh>
+                                <MudTh>@_localizer["Begin"]</MudTh>
+                                <MudTh>@_localizer["End"]</MudTh>
+                                <MudTh>@_localizer["Content"]</MudTh>
+                            </HeaderContent>
+                            <RowTemplate>
+                                <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
+                                <MudTd DataLabel="@_localizer["Begin"]">@context.Begin</MudTd>
+                                <MudTd DataLabel="@_localizer["End"]">@context.End</MudTd>
+                                @{
+                                    var ariaLabel = $"Download-{context.Name}";
+                                    <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(context.Name, context.Content, System.Text.Encoding.Default, "text/plain")' aria-label="@ariaLabel" /></MudTd>
+                                }
+                            </RowTemplate>
+                        </MudTable>
+                    }
                 </MudStep>
             </MudStepper>
         </DialogContent>
@@ -144,6 +160,7 @@ along with Foobar.  If not, see
 }
 
 @code {
+    //TODO: Display content for multiple files
     ExportOptions? exportOptions;
     IEnumerable<Exportfile> exportFiles = [];
     Boolean configureExportCompleted = false;
@@ -227,5 +244,11 @@ along with Foobar.  If not, see
         {
             await menu.OpenMenuAsync(args);
         }
+    }
+
+    async Task CopyClipboardClicked(Exportfile exportfile)
+    {
+        //TODO: feedback for user
+        await _jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", exportfile.Content);
     }
 }
