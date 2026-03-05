@@ -78,9 +78,8 @@ along with Foobar.  If not, see
         try
         {
             await _dialogManager.ShowLoadingDialogAsync();
-            await _importManager.UploadFilesAsync(files, _fileUploadId);
-
             _showOverlay = false;
+            await _importManager.UploadFilesAsync(files, _fileUploadId);
             await _jsRuntime.InvokeVoidAsync("globalFileDrag.reset", _dotNetRef);
         }
         finally
