@@ -1,0 +1,50 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<DisplayExportfileContent> _localizer
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject IJSRuntime _jsRuntime
+
+<MudField Variant="Variant.Outlined">
+    <MudTextField Lines="@_lineCount" ReadOnly Value="@Exportfile.Content" FullWidth Underline="false" />
+    <MudStack Row Justify="Justify.FlexEnd">
+        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.CopyAll" OnClick='() => CopyClipboardClicked()'>@_localizer["Copy"]</MudButton>
+        <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(Exportfile.Name, Exportfile.Content, System.Text.Encoding.Default, "text/plain")' />
+    </MudStack>
+</MudField>
+
+@code {
+    private int _lineCount;
+
+    [Parameter]
+    [EditorRequired]
+    public Exportfile Exportfile { get; set; } = default!;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _lineCount = Exportfile.Content?.Split(Environment.NewLine).Length ?? 1;
+    }
+
+    async Task CopyClipboardClicked()
+    {
+        //TODO: feedback for user
+        await _jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", Exportfile.Content);
+    }
+}

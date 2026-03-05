@@ -124,14 +124,7 @@ along with Foobar.  If not, see
                     @if (exportFiles.Count() == 1)
                     {
                         var exportFile = exportFiles.Single();
-                        var lines = exportFile.Content?.Split(Environment.NewLine).Length ?? 1;
-                        <MudField Variant="Variant.Outlined">
-                            <MudTextField Lines="@lines" ReadOnly Value="@exportFile.Content" FullWidth Underline="false" />
-                            <MudStack Row Justify="Justify.FlexEnd">
-                                <MudButton Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.CopyAll" OnClick='() => CopyClipboardClicked(exportFile)'>@_localizer["Copy"]</MudButton>
-                                <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(exportFile.Name, exportFile.Content, System.Text.Encoding.Default, "text/plain")' />
-                            </MudStack>
-                        </MudField>
+                        <DisplayExportfileContent Exportfile="exportFile" />
                     }
                     else
                     {
@@ -246,11 +239,5 @@ along with Foobar.  If not, see
         {
             await menu.OpenMenuAsync(args);
         }
-    }
-
-    async Task CopyClipboardClicked(Exportfile exportfile)
-    {
-        //TODO: feedback for user
-        await _jsRuntime.InvokeVoidAsync("navigator.clipboard.writeText", exportfile.Content);
     }
 }
