@@ -216,4 +216,7 @@
   <data name="PostGap" xml:space="preserve">
     <value>PostGap</value>
   </data>
+  <data name="Display content" xml:space="preserve">
+    <value>Display content</value>
+  </data>
 </root>

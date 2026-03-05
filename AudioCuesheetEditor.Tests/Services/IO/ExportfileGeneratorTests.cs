@@ -83,12 +83,11 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
             var content = result.First().Content;
             Assert.IsNotNull(content);
-            var contentString = System.Text.Encoding.UTF8.GetString(content);
             Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
 1 Test artist 1 - Test title 1
 2 Test artist 2 - Test title 2
 
-", contentString);
+", content);
         }
 
         [TestMethod]
@@ -173,12 +172,11 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(section3.End, result.Last().End);
             var content = result.Last().Content;
             Assert.IsNotNull(content);
-            var contentString = System.Text.Encoding.UTF8.GetString(content);
             Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
 1 Test artist 5 - Test title 5
 2 Test artist 6 - Test title 6
 
-", contentString);
+", content);
         }
 
         [TestMethod]

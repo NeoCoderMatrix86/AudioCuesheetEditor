@@ -24,16 +24,17 @@ along with Foobar.  If not, see
 @inject ImportManager _importManager
 @inject DialogManager _dialogManager
 
-<MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" ZIndex="9999" Modal>
-    <MudFileUpload identifier="@fileUploadId" T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" AppendMultipleFiles Hidden="false" InputClass="file-upload-input" tabindex="-1">
-        <ActivatorContent>
-            <MudPaper Class="@_dragClass" Width="100vw" Height="100vh" Style="margin:0;opacity:0.65;">
+<MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" ZIndex="9999">
+    <MudFileUpload identifier="@_fileUploadId" T="IReadOnlyList<IBrowserFile>" FilesChanged="InputFilesChanged" AppendMultipleFiles DragAndDrop Hidden="false" InputClass="file-upload-input" tabindex="-1">
+        <CustomContent>
+            <MudPaper Class="d-flex align-center justify-center position-relative" Width="100vw" Height="100vh" Style="margin:0;opacity:0.65;">
                 <MudStack AlignItems="AlignItems.Center">
                     <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Size="Size.Large" Color="Color.Primary" />
                     <MudText Typo="Typo.h6">@_localizer["Drop files here to upload"]</MudText>
                 </MudStack>
             </MudPaper>
-        </ActivatorContent>
+        </CustomContent>
+        <SelectedTemplate></SelectedTemplate>
     </MudFileUpload>
 </MudOverlay>
 
@@ -41,10 +42,8 @@ along with Foobar.  If not, see
     private DotNetObjectReference<FileDropOverlay>? _dotNetRef;
     private bool _showOverlay;
     private bool _disposed;
-    private string _dragClass = DefaultDragClass;
-
-    private const string DefaultDragClass = "d-flex align-center justify-center position-relative";
-    private readonly string fileUploadId = $"FileDropOverlay_{Guid.NewGuid()}";
+    
+    private readonly string _fileUploadId = $"FileDropOverlay_{Guid.NewGuid()}";
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,32 +68,25 @@ along with Foobar.  If not, see
         if (_showOverlay)
         {
             _showOverlay = false;
-            ClearDragClass();
             StateHasChanged();
         }
         return Task.CompletedTask;
     }
 
-    async Task OnInputFileChanged(InputFileChangeEventArgs e)
+    async Task InputFilesChanged(IReadOnlyList<IBrowserFile> files)
     {
         try
         {
             await _dialogManager.ShowLoadingDialogAsync();
-            await _importManager.UploadFilesAsync(e.GetMultipleFiles(), fileUploadId);
-
-            ClearDragClass();
             _showOverlay = false;
+            await _importManager.UploadFilesAsync(files, _fileUploadId);
             await _jsRuntime.InvokeVoidAsync("globalFileDrag.reset", _dotNetRef);
         }
         finally
         {
-             _dialogManager.HideLoadingDialog();
+            _dialogManager.HideLoadingDialog();
         }
     }
-
-    void SetDragClass() => _dragClass = $"{DefaultDragClass} mud-border-primary";
-
-    void ClearDragClass() => _dragClass = DefaultDragClass;
 
     public async ValueTask DisposeAsync()
     {

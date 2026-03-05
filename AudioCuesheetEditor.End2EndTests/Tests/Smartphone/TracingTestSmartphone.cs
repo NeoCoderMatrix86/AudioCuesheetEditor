@@ -27,7 +27,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoAndRedoAreUsed()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.EditTrackAsync("Test Artist 1");
@@ -143,7 +143,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task UndoRedo_ShouldRestoreTrackState_WhenModalEdit()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.SelectTracksAsync([1]);
