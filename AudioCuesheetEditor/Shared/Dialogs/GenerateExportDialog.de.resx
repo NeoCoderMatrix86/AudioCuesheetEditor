@@ -216,4 +216,7 @@
   <data name="PostGap" xml:space="preserve">
     <value>Nachlücke</value>
   </data>
+  <data name="Copy" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
 </root>
