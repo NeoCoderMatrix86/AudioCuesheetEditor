@@ -46,7 +46,7 @@ along with Foobar.  If not, see
     <MudSpacer />
     @if (DisplayFileMenu)
     {
-        <MudFileUpload @ref="mudFileUpload" T="IBrowserFile" Accept="@String.Join(',', FileExtensions.Cuesheet, FileExtensions.Projectfile)" FilesChanged="FileUploaded" aria-label="Open file upload">
+        <MudFileUpload @ref="mudFileUpload" T="IBrowserFile" Accept="@String.Join(',', FileExtensions.Cuesheet, FileExtensions.Projectfile, FileExtensions.Text)" FilesChanged="FileUploaded" aria-label="Open file upload">
             <CustomContent></CustomContent>
             <SelectedTemplate></SelectedTemplate>
         </MudFileUpload>
