@@ -215,10 +215,10 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var fileContent = "This is the content";
-            var file = CreateBrowserFileMock("test.projectfile", fileContent);
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(true);
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
+            var file = new FileUpload("test.projectfile", "text/plain", fileContent);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(true);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
 
             IImportfile? sessionStateContainerImportfile = null;
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
@@ -237,11 +237,11 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var fileContent = "Cuesheet file content";
-            var file = CreateBrowserFileMock("test.cue", fileContent);
-            
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(true);
-            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
+            var file = new FileUpload("test.cue", "text/plain", fileContent);
+
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(true);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
 
             IImportfile? sessionStateContainerImportfile = null;
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
@@ -260,11 +260,11 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var fileContent = "TextFileContent";
-            var file = CreateBrowserFileMock("test.txt", fileContent);
-            
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(true);
+            var file = new FileUpload("test.txt", "text/plain", fileContent);
+
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(true);
 
             IImportfile? sessionStateContainerImportfile = null;
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
@@ -282,13 +282,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         public async Task UploadFilesAsync_WithAudiofile_ImportsCorrectly()
         {
             // Arrange
-            var file = CreateBrowserFileMock("test.mp3");
-            
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file)).Returns(false);
-            _fileInputManagerMock.Setup(f => f.IsValidAudiofile(file)).Returns(true);
-            _fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<string>(), It.IsAny<IBrowserFile?>(), It.IsAny<Action<Task<Stream>>?>())).ReturnsAsync(new AudioCuesheetEditor.Model.IO.Audio.Audiofile(file.Name));
+            var file = new FileUpload("test.mp3", "audio/mpeg");
+
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
+            _fileInputManagerMock.Setup(f => f.IsValidAudiofile(file.ContentType, file.Name)).Returns(true);
+            _fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<FileUpload>(), It.IsAny<Action<Task<Stream>>?>())).ReturnsAsync(new AudioCuesheetEditor.Model.IO.Audio.Audiofile(file.Name));
 
             IImportfile? sessionStateContainerImportfile = null;
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
@@ -358,15 +358,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(importData, sessionStateContainerImportfile.FileContent);
             Assert.AreEqual(importData, sessionStateContainerImportfile.FileContentRecognized);
             Assert.AreEqual(ImportFileType.Textfile, sessionStateContainerImportfile.FileType);
-        }
-
-        private static IBrowserFile CreateBrowserFileMock(string name, string content = "TestContent")
-        {
-            var fileMock = new Mock<IBrowserFile>();
-            fileMock.Setup(f => f.Name).Returns(name);
-            fileMock.Setup(f => f.OpenReadStream(It.IsAny<long>(), It.IsAny<CancellationToken>()))
-                .Returns(new MemoryStream(Encoding.UTF8.GetBytes(content)));
-            return fileMock.Object;
         }
     }
 }
