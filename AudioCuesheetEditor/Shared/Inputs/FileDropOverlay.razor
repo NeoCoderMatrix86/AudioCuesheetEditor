@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileDropOverlay> _localizer
 @inject ImportManager _importManager
 @inject DialogManager _dialogManager
+@inject IFileInputManager _fileInputManager
 
 <MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" ZIndex="9999">
     <MudFileUpload identifier="@_fileUploadId" T="IReadOnlyList<IBrowserFile>" FilesChanged="InputFilesChanged" AppendMultipleFiles DragAndDrop Hidden="false" InputClass="file-upload-input" tabindex="-1">
@@ -42,7 +43,7 @@ along with Foobar.  If not, see
     private DotNetObjectReference<FileDropOverlay>? _dotNetRef;
     private bool _showOverlay;
     private bool _disposed;
-    
+
     private readonly string _fileUploadId = $"FileDropOverlay_{Guid.NewGuid()}";
 
     protected override async Task OnInitializedAsync()
@@ -78,8 +79,11 @@ along with Foobar.  If not, see
         try
         {
             await _dialogManager.ShowLoadingDialogAsync();
+            var fileUploads = await _fileInputManager.CreateFileUploadsAsync(files, _fileUploadId);
             _showOverlay = false;
-            await _importManager.UploadFilesAsync(files, _fileUploadId);
+            await InvokeAsync(StateHasChanged);
+            await Task.Yield();
+            await _importManager.UploadFilesAsync(fileUploads);
             await _jsRuntime.InvokeVoidAsync("globalFileDrag.reset", _dotNetRef);
         }
         finally

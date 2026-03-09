@@ -28,12 +28,12 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly HttpClient _httpClient = httpClient;
         private readonly ILogger<FileInputManager> _logger = logger;
 
-        public AudioCodec? GetAudioCodec(IBrowserFile browserFile)
+        public AudioCodec? GetAudioCodec(string? fileContentType, string fileName)
         {
             AudioCodec? foundAudioCodec = null;
-            var extension = Path.GetExtension(browserFile.Name);
+            var extension = Path.GetExtension(fileName);
             // First search with mime type and file extension
-            var audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase) && x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
+            var audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(fileContentType, StringComparison.OrdinalIgnoreCase) && x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
             if (audioCodecsFound.Count() <= 1)
             {
                 foundAudioCodec = audioCodecsFound.FirstOrDefault();
@@ -41,63 +41,62 @@ namespace AudioCuesheetEditor.Services.IO
             if (foundAudioCodec == null)
             {
                 // Second search with mime type or file extension
-                audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(browserFile.ContentType, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
+                audioCodecsFound = Audiofile.AudioCodecs.Where(x => x.MimeType.Equals(fileContentType, StringComparison.OrdinalIgnoreCase) || x.FileExtension.Equals(extension, StringComparison.OrdinalIgnoreCase));
                 foundAudioCodec = audioCodecsFound.FirstOrDefault();
             }
             return foundAudioCodec;
         }
 
-        public bool IsValidAudiofile(IBrowserFile browserFile)
+        public bool IsValidAudiofile(string? fileContentType, string fileName)
         {
-            var codec = GetAudioCodec(browserFile);
-            return codec != null;
+            return GetAudioCodec(fileContentType, fileName) != null;
         }
 
-        public Boolean CheckFileMimeType(IBrowserFile file, String mimeType, IEnumerable<String> fileExtensions)
+        public bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions)
         {
+            //TODO: Tests
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", file.Name, file.ContentType, mimeType, fileExtensions);
+                _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", fileName, fileContentType, mimeType, fileExtensions);
             }
             Boolean fileMimeTypeMatches = false;
-            if ((file != null) && (String.IsNullOrEmpty(mimeType) == false))
+            if (String.IsNullOrEmpty(mimeType) == false)
             {
-                if (String.IsNullOrEmpty(file.ContentType) == false)
+                if (String.IsNullOrEmpty(fileContentType) == false)
                 {
                     if (mimeType.EndsWith("/*"))
                     {
                         var mainType = mimeType[..^1];
-                        fileMimeTypeMatches = file.ContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
+                        fileMimeTypeMatches = fileContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
                     }
                     else
                     {
-                        fileMimeTypeMatches = file.ContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
+                        fileMimeTypeMatches = fileContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
                     }
                 }
                 if ((fileMimeTypeMatches == false) && (fileExtensions.Any()))
                 {
                     //Try to find by file extension
-                    var extension = Path.GetExtension(file.Name);
+                    var extension = Path.GetExtension(fileName);
                     fileMimeTypeMatches = fileExtensions.Any(x => x.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
                 }
             }
             return fileMimeTypeMatches;
         }
 
-        public async Task<Audiofile?> CreateAudiofileAsync(String? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null)
+        public async Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload, Action<Task<Stream>>? afterContentStreamLoaded = null)
         {
             Audiofile? audiofile = null;
-            if ((String.IsNullOrEmpty(fileInputId) == false) && (browserFile != null))
+            if (fileUpload.ObjectUrl != null)
             {
                 // Check file mime type
-                var codec = GetAudioCodec(browserFile);
+                var codec = GetAudioCodec(fileUpload.ContentType, fileUpload.Name);
                 if (codec != null)
                 {
-                    var audioFileObjectURL = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
-                    audiofile = new Audiofile(browserFile.Name, audioFileObjectURL, codec);
-                    if (String.IsNullOrEmpty(audioFileObjectURL) == false)
+                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec);
+                    if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
                     {
-                        var request = new HttpRequestMessage(HttpMethod.Get, audioFileObjectURL);
+                        var request = new HttpRequestMessage(HttpMethod.Get, fileUpload.ObjectUrl);
                         //TODO: Enable when https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/524 gets done
                         request.SetBrowserRequestStreamingEnabled(false);
 
@@ -119,27 +118,25 @@ namespace AudioCuesheetEditor.Services.IO
             return audiofile;
         }
 
-        public CDTextfile? CreateCDTextfile(IBrowserFile? browserFile)
+        public CDTextfile? CreateCDTextfile(string? fileContentType, string fileName)
         {
-            CDTextfile? cdTextfile = null;
-            if (browserFile != null)
+            CDTextfile? cdTextfile;
+            if (CheckFileMimeType(fileContentType, fileName, FileMimeTypes.Text, [FileExtensions.CDTextfile]))
             {
-                if (CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.CDTextfile]))
-                {
-                    cdTextfile = new CDTextfile(browserFile.Name);
-                }
-                else
-                {
-                    throw new ArgumentException("The cdtextfile provided is not of a valid type.");
-                }
+                cdTextfile = new CDTextfile(fileName);
+            }
+            else
+            {
+                throw new ArgumentException("The cdtextfile provided is not of a valid type.");
             }
             return cdTextfile;
         }
 
         /// <inheritdoc/>
-        public bool IsValidForImportView(IBrowserFile browserFile)
+        public bool IsValidForImportView(string? fileContentType, string fileName)
         {
-            return CheckFileMimeType(browserFile, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
+            //TODO: Tests
+            return CheckFileMimeType(fileContentType, fileName, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
         }
 
         /// <inheritdoc/>
@@ -147,6 +144,34 @@ namespace AudioCuesheetEditor.Services.IO
         {
             var fileContent = new StreamContent(browserFile.OpenReadStream());
             return await fileContent.ReadAsStringAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null)
+        {
+            //TODO: Tests
+            List<FileUpload> fileUploads = [];
+            foreach (var file in browserFiles)
+            {
+                if (CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, [FileExtensions.Projectfile])
+                    || CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet])
+                    || IsValidForImportView(file.ContentType, file.Name)
+                    || IsValidAudiofile(file.ContentType, file.Name))
+                {
+                    string? content = null;
+                    string? objectUrl = null;
+                    if (IsValidAudiofile(file.ContentType, file.Name))
+                    {
+                        objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
+                    }
+                    else
+                    {
+                        content = await ReadFileContentAsync(file);
+                    }
+                    fileUploads.Add(new(file.Name, file.ContentType, content, objectUrl));
+                }
+            }
+            return fileUploads;
         }
     }
 }
