@@ -54,7 +54,6 @@ namespace AudioCuesheetEditor.Services.IO
 
         public bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions)
         {
-            //TODO: Tests
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", fileName, fileContentType, mimeType, fileExtensions);
@@ -74,7 +73,7 @@ namespace AudioCuesheetEditor.Services.IO
                         fileMimeTypeMatches = fileContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
                     }
                 }
-                if ((fileMimeTypeMatches == false) && (fileExtensions.Any()))
+                if ((fileMimeTypeMatches == false) && fileExtensions.Any())
                 {
                     //Try to find by file extension
                     var extension = Path.GetExtension(fileName);
@@ -135,7 +134,6 @@ namespace AudioCuesheetEditor.Services.IO
         /// <inheritdoc/>
         public bool IsValidForImportView(string? fileContentType, string fileName)
         {
-            //TODO: Tests
             return CheckFileMimeType(fileContentType, fileName, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
         }
 
@@ -149,7 +147,6 @@ namespace AudioCuesheetEditor.Services.IO
         /// <inheritdoc/>
         public async Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null)
         {
-            //TODO: Tests
             List<FileUpload> fileUploads = [];
             foreach (var file in browserFiles)
             {

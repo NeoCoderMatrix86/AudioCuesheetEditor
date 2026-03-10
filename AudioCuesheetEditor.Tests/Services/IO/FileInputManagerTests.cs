@@ -15,11 +15,18 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.IO;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
 {
@@ -242,6 +249,68 @@ namespace AudioCuesheetEditor.Tests.Services.IO
 
             // Assert
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task CreateFileUploadsAsync_ReturnsFileUploads_WhenFileHasTextContentAsync()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+            var firstFile = CreateBrowserFile("Test.txt", "text/plain", "Just a test!");
+            var secondFile = CreateBrowserFile("Test.mp3", "audio/mpeg");
+            var fileInputId = nameof(CreateFileUploadsAsync_ReturnsFileUploads_WhenFileHasTextContentAsync);
+            IReadOnlyList<IBrowserFile> browserfiles = [
+                firstFile,
+                secondFile
+            ];
+            var objectUrl = "Some object url!";
+            jsRuntimeMock.Setup(js => js.InvokeAsync<String>(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(objectUrl);
+            // Act
+            var result = await manager.CreateFileUploadsAsync(browserfiles, fileInputId);
+            // Assert
+            Assert.AreEqual(2, result.Count());
+            Assert.AreEqual(firstFile.Name, result.First().Name);
+            Assert.AreEqual(firstFile.ContentType, result.First().ContentType);
+            Assert.AreEqual("Just a test!", result.First().Content);
+            Assert.AreEqual(secondFile.Name, result.Last().Name);
+            Assert.AreEqual(secondFile.ContentType, result.Last().ContentType);
+            Assert.IsNull(result.Last().Content);
+            Assert.AreEqual(objectUrl, result.Last().ObjectUrl);
+        }
+
+        [TestMethod]
+        public async Task CreateFileUploadsAsync_ReturnsEmpty_WhenFilesHaveInvalidMimeTypeAsync()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+            var firstFile = CreateBrowserFile("Test.bin", "binary", "Just a test!");
+            var secondFile = CreateBrowserFile("Test.bin", "octet/stream");
+            IReadOnlyList<IBrowserFile> browserfiles = [
+                firstFile,
+                secondFile
+            ];
+            // Act
+            var result = await manager.CreateFileUploadsAsync(browserfiles);
+            // Assert
+            Assert.AreEqual(0, result.Count());
+        }
+
+        private static IBrowserFile CreateBrowserFile(string name, string contentType, string? content = null)
+        {
+            var fileMock = new Mock<IBrowserFile>();
+            fileMock.Setup(f => f.Name).Returns(name);
+            fileMock.Setup(f => f.ContentType).Returns(contentType);
+            if (content != null)
+            { 
+                fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(content)));
+            }
+            return fileMock.Object;
         }
     }
 }
