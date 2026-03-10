@@ -44,9 +44,10 @@ along with Foobar.  If not, see
 
     async Task FileUploaded(InputFileChangeEventArgs e)
     {
-        if (_fileInputManager.IsValidForImportView(e.File))
+        var file = e.File;
+        if (_fileInputManager.IsValidForImportView(file.ContentType, file.Name))
         {
-            var fileContent = await _fileInputManager.ReadFileContentAsync(e.File);
+            var fileContent = await _fileInputManager.ReadFileContentAsync(file);
             await TextChanged.InvokeAsync(fileContent);
         }
     }

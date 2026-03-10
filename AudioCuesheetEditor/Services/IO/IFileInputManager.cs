@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -22,22 +23,37 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public interface IFileInputManager
     {
-        bool IsValidAudiofile(IBrowserFile browserFile);
-        AudioCodec? GetAudioCodec(IBrowserFile browserFile);
-        bool CheckFileMimeType(IBrowserFile file, string mimeType, IEnumerable<string> fileExtensions);
-        Task<Audiofile?> CreateAudiofileAsync(string? fileInputId, IBrowserFile? browserFile, Action<Task<Stream>>? afterContentStreamLoaded = null);
-        CDTextfile? CreateCDTextfile(IBrowserFile? browserFile);
+        bool IsValidAudiofile(string? fileContentType, string fileName);
+        AudioCodec? GetAudioCodec(string? fileContentType, string fileName);
+        /// <summary>
+        /// Checks if a file content type and name matches given parameters
+        /// </summary>
+        /// <param name="fileContentType"></param>
+        /// <param name="fileName"></param>
+        /// <param name="mimeType"></param>
+        /// <param name="fileExtensions"></param>
+        /// <returns></returns>
+        bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions);
+        Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload, Action<Task<Stream>>? afterContentStreamLoaded = null);
+        CDTextfile? CreateCDTextfile(string? fileContentType, string fileName);
         /// <summary>
         /// Checks if the file can be used for the import view
         /// </summary>
         /// <param name="browserFile"></param>
         /// <returns></returns>
-        bool IsValidForImportView(IBrowserFile browserFile);
+        bool IsValidForImportView(string? fileContentType, string fileName);
         /// <summary>
         /// Reads the browser file and gets the file content as string
         /// </summary>
         /// <param name="browserFile"></param>
         /// <returns></returns>
         Task<string> ReadFileContentAsync(IBrowserFile browserFile);
+        /// <summary>
+        /// Generates file upload references for files
+        /// </summary>
+        /// <param name="browserFiles"></param>
+        /// <param name="fileInputId"></param>
+        /// <returns></returns>
+        Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null);
     }
 }

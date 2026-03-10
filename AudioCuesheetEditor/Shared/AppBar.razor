@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject IJSRuntime _jsRuntime
 @inject HotKeys _hotKeys
 @inject ImportManager _importManager
+@inject IFileInputManager _fileInputManager
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)" aria-label="Home">
@@ -229,7 +230,8 @@ along with Foobar.  If not, see
 
     async Task FileUploaded(IBrowserFile file)
     {
-        await _importManager.UploadFilesAsync([file]);
+        var fileUploads = await _fileInputManager.CreateFileUploadsAsync([file]);
+        await _importManager.UploadFilesAsync(fileUploads);
     }
 
     async Task ShowHotkeysDialog()
