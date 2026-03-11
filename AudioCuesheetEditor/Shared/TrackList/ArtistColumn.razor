@@ -20,9 +20,9 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 
-<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value.Name" @bind-Text="artist"
-                 Value="autocompleteArtist" ValueChanged="ValueChanged" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
-                 MaxItems="null" CoerceText="false" OnBlur="OnBlur">
+<MudAutocomplete T="MusicBrainzArtist" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(MusicBrainzArtist? value) => value?.Name" @bind-Text="_artist"
+                 Value="_autocompleteArtist" ValueChanged="ValueChanged" Clearable ShowProgressIndicator Validation="(string? newArtist) => _validationService.Validate(Track, nameof(Track.Artist))" 
+                 MaxItems="null" CoerceText="false" OnBlur="() => StartChangeTimer()">
     <ItemTemplate>
         <MudText>@context.Name</MudText>
         @if (context.Disambiguation != null)
@@ -38,39 +38,49 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Track Track { get; set; } = default!;
 
-    MusicBrainzArtist? autocompleteArtist;
-    string? artist;
-    Timer? debounceTimer;
+    MusicBrainzArtist? _autocompleteArtist;
+    string? _artist;
+    CancellationTokenSource? _cancellationTokenSource;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        autocompleteArtist = new() { Name = Track.Artist };
-        artist = autocompleteArtist.Name;
+        SetComponentValues(new() { Name = Track.Artist });
+    }
+
+    void SetComponentValues(MusicBrainzArtist? newValue)
+    {
+        if (newValue?.Name != _autocompleteArtist?.Name)
+        {
+            _autocompleteArtist = newValue;
+            _artist = _autocompleteArtist?.Name;
+        }
     }
 
     void ValueChanged(MusicBrainzArtist? newValue)
     {
-        autocompleteArtist = newValue;
-        artist = autocompleteArtist?.Name;
-        StartChangeTimer();
-    }
-
-    void OnBlur(FocusEventArgs args)
-    {
+        SetComponentValues(newValue);
         StartChangeTimer();
     }
 
     void StartChangeTimer()
     {
-        debounceTimer = new Timer(100);
-        debounceTimer.Elapsed += ChangeArtist;
-        debounceTimer.AutoReset = false;
-        debounceTimer.Start();
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        _ = DebounceAsync(_cancellationTokenSource.Token);
     }
 
-    void ChangeArtist(object? sender, System.Timers.ElapsedEventArgs e)
+    async Task DebounceAsync(CancellationToken token)
     {
-        Track.Artist = artist;
+        try
+        {
+            await Task.Delay(100, token);
+            Track.Artist = _artist;
+        }
+        catch (TaskCanceledException)
+        {
+            //Nothing to do here
+        }
     }
 }

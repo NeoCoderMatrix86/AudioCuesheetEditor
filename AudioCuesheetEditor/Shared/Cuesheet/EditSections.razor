@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 
 <MudButtonGroup OverrideStyles="false">
     <MudTooltip Text="@_localizer["Add new section"]">
-        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddSectionClicked" Icon="@Icons.Material.Outlined.Add" />
+        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddSectionClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add new section"]" />
     </MudTooltip>
     <MudTooltip Text="@_localizer["Delete selected sections"]">
         <MudHidden Breakpoint="Breakpoint.LgAndUp" Invert>
@@ -127,11 +127,11 @@ along with Foobar.  If not, see
 
     async Task DeleteAllSections()
     {
-        var parameters = new DialogParameters<ConfirmDialog>
+        var parameters = new DialogParameters<ConfirmationDialog>
         {
             { x => x.ConfirmText, _localizer["Are you sure you want to remove all sections?"] },
         };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
@@ -142,7 +142,7 @@ along with Foobar.  If not, see
 
     void AudiofileSelected(CuesheetSection section, IBrowserFile? browserFile)
     {
-        if ((browserFile != null) && (_fileInputManager.IsValidAudiofile(browserFile) == true))
+        if ((browserFile != null) && (_fileInputManager.IsValidAudiofile(browserFile.ContentType, browserFile.Name) == true))
         {
             section.AudiofileName = browserFile?.Name;
         }

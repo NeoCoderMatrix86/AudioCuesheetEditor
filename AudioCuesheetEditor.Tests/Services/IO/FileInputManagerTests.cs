@@ -20,7 +20,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
 {
@@ -34,11 +40,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.mp3", "audio/wav");
+            var fileName = "test.mp3";
+            var contentType = "audio/wav";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/mpeg", [".mp3"]);
+            var result = manager.CheckFileMimeType(contentType, fileName, "audio/mpeg", [".mp3"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -51,11 +58,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.mpeg", "audio/mpeg");
+            var fileName = "test.mpeg";
+            var contentType = "audio/mpeg";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/mpeg", [".mp3", ".txt"]);
+            var result = manager.CheckFileMimeType(contentType, fileName, "audio/mpeg", [".mp3", ".txt"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -68,11 +76,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.flac", string.Empty);
+            var fileName = "test.flac";
+            var contentType = string.Empty;
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/flac", [".mp3"]);
+            var result = manager.CheckFileMimeType(contentType, fileName, "audio/flac", [".mp3"]);
 
             // Assert
             Assert.IsFalse(result);
@@ -85,11 +94,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.wav", "audio/wave");
+            var fileName = "test.wav";
+            var contentType = "audio/wave";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "audio/wave", [".wav"]);
+            var result = manager.CheckFileMimeType(contentType, fileName, "audio/wave", [".wav"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -102,11 +112,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("history.txt", "text/plain");
+            var fileName = "history.txt";
+            var contentType = "text/plain";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.CheckFileMimeType(file, "text/*", [".txt", ".text"]);
+            var result = manager.CheckFileMimeType(contentType, fileName, "text/*", [".txt", ".text"]);
 
             // Assert
             Assert.IsTrue(result);
@@ -119,11 +130,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.wav", "audio/wav");
+            var fileName = "test.wav";
+            var contentType = "audio/wav";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.IsValidAudiofile(file);
+            var result = manager.IsValidAudiofile(contentType, fileName);
 
             // Assert
             Assert.IsTrue(result);
@@ -136,11 +148,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.mock", "just a fantasy");
+            var fileName = "test.mock";
+            var contentType = "just a fantasy";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.IsValidAudiofile(file);
+            var result = manager.IsValidAudiofile(contentType, fileName);
 
             // Assert
             Assert.IsFalse(result);
@@ -153,11 +166,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.wbem", "audio/webm");
+            var fileName = "test.wbem";
+            var contentType = "audio/webm";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.GetAudioCodec(file);
+            var result = manager.GetAudioCodec(contentType, fileName);
 
             // Assert
             Assert.IsNotNull(result);
@@ -171,11 +185,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.webm", "audio/webm");
+            var fileName = "test.wbem";
+            var contentType = "audio/webm";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.GetAudioCodec(file);
+            var result = manager.GetAudioCodec(contentType, fileName);
 
             // Assert
             Assert.IsNotNull(result);
@@ -189,11 +204,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.acx", "fantasy stuff");
+            var fileName = "test.acx";
+            var contentType = "fantasy stuff";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.GetAudioCodec(file);
+            var result = manager.GetAudioCodec(contentType, fileName);
 
             // Assert
             Assert.IsNull(result);
@@ -206,11 +222,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.html", "text/html");
+            var fileName = "test.html";
+            var contentType = "text/html";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.IsValidForImportView(file);
+            var result = manager.IsValidForImportView(contentType, fileName);
 
             // Assert
             Assert.IsTrue(result);
@@ -223,21 +240,76 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var jsRuntimeMock = new Mock<IJSRuntime>();
             var httpClientMock = new Mock<HttpClient>();
             var loggerMock = new Mock<ILogger<FileInputManager>>();
-            var file = CreateBrowserFile("test.dat", "application/octet-stream");
+            var fileName = "test.dat";
+            var contentType = "application/octet-stream";
             var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
 
             // Act
-            var result = manager.IsValidForImportView(file);
+            var result = manager.IsValidForImportView(contentType, fileName);
 
             // Assert
             Assert.IsFalse(result);
         }
 
-        private static IBrowserFile CreateBrowserFile(string name, string contentType)
+        [TestMethod]
+        public async Task CreateFileUploadsAsync_ReturnsFileUploads_WhenFileHasTextContentAsync()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+            var firstFile = CreateBrowserFile("Test.txt", "text/plain", "Just a test!");
+            var secondFile = CreateBrowserFile("Test.mp3", "audio/mpeg");
+            var fileInputId = nameof(CreateFileUploadsAsync_ReturnsFileUploads_WhenFileHasTextContentAsync);
+            IReadOnlyList<IBrowserFile> browserfiles = [
+                firstFile,
+                secondFile
+            ];
+            var objectUrl = "Some object url!";
+            jsRuntimeMock.Setup(js => js.InvokeAsync<String>(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(objectUrl);
+            // Act
+            var result = await manager.CreateFileUploadsAsync(browserfiles, fileInputId);
+            // Assert
+            Assert.AreEqual(2, result.Count());
+            Assert.AreEqual(firstFile.Name, result.First().Name);
+            Assert.AreEqual(firstFile.ContentType, result.First().ContentType);
+            Assert.AreEqual("Just a test!", result.First().Content);
+            Assert.AreEqual(secondFile.Name, result.Last().Name);
+            Assert.AreEqual(secondFile.ContentType, result.Last().ContentType);
+            Assert.IsNull(result.Last().Content);
+            Assert.AreEqual(objectUrl, result.Last().ObjectUrl);
+        }
+
+        [TestMethod]
+        public async Task CreateFileUploadsAsync_ReturnsEmpty_WhenFilesHaveInvalidMimeTypeAsync()
+        {
+            // Arrange
+            var jsRuntimeMock = new Mock<IJSRuntime>();
+            var httpClientMock = new Mock<HttpClient>();
+            var loggerMock = new Mock<ILogger<FileInputManager>>();
+            var manager = new FileInputManager(jsRuntimeMock.Object, httpClientMock.Object, loggerMock.Object);
+            var firstFile = CreateBrowserFile("Test.bin", "binary", "Just a test!");
+            var secondFile = CreateBrowserFile("Test.bin", "octet/stream");
+            IReadOnlyList<IBrowserFile> browserfiles = [
+                firstFile,
+                secondFile
+            ];
+            // Act
+            var result = await manager.CreateFileUploadsAsync(browserfiles);
+            // Assert
+            Assert.AreEqual(0, result.Count());
+        }
+
+        private static IBrowserFile CreateBrowserFile(string name, string contentType, string? content = null)
         {
             var fileMock = new Mock<IBrowserFile>();
             fileMock.Setup(f => f.Name).Returns(name);
             fileMock.Setup(f => f.ContentType).Returns(contentType);
+            if (content != null)
+            { 
+                fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(content)));
+            }
             return fileMock.Object;
         }
     }

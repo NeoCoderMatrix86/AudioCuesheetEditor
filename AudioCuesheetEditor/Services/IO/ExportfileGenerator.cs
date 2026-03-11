@@ -60,10 +60,7 @@ namespace AudioCuesheetEditor.Services.IO
                         {
                             content = WriteExport(exportprofile, audioFileName, section);
                             filename = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(exportprofile.Filename), counter, Path.GetExtension(exportprofile.Filename));
-                            if (content != null)
-                            {
-                                exportfiles.Add(new Exportfile() { Name = filename, Content = Encoding.UTF8.GetBytes(content), Begin = section.Begin, End = section.End });
-                            }
+                            exportfiles.Add(new Exportfile() { Name = filename, Content = content, Begin = section.Begin, End = section.End });
                             counter++;
                         }
                     }
@@ -75,12 +72,9 @@ namespace AudioCuesheetEditor.Services.IO
                     {
                         content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
                     }
-                    if (content != null)
-                    {
-                        var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
-                        var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
-                        exportfiles.Add(new Exportfile() { Name = exportprofile.Filename, Content = Encoding.UTF8.GetBytes(content), Begin = begin, End = end });
-                    }
+                    var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
+                    var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
+                    exportfiles.Add(new Exportfile() { Name = exportprofile.Filename, Content = content, Begin = begin, End = end });
                 }
             }
             return exportfiles;

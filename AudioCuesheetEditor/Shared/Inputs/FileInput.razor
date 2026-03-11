@@ -20,20 +20,21 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<FileInput> _localizer
 
 <MudStack Row StretchItems="StretchItems.Start">
-    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="fileUpload" Files="selectedFile" FilesChanged="SetSelectedFileAsync" Hidden="false" InputStyle="opacity:0" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
-                   Accept="@Filter">
-        <ActivatorContent>
-            <MudTextField Value="TextFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" />
-        </ActivatorContent>
+    <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="_fileUpload" Files="_selectedFile" FilesChanged="SetSelectedFileAsync" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
+                   Accept="@Filter" aria-label="Upload file">
+        <CustomContent Context="fileUpload">
+            <MudTextField Value="_textFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" />
+        </CustomContent>
+        <SelectedTemplate></SelectedTemplate>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync">@_localizer["Search"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync" aria-label="@_localizer["Search"]">@_localizer["Search"]</MudButton>
     </MudHidden>
-    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" />
+    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" aria-label="Clear file" />
     @if (DisplayMenu)
     {
-        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled">
-            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(selectedFile)">@_localizer["Rename file"]</MudMenuItem>
+        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled" AriaLabel="More">
+            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(_selectedFile)" aria-label="@_localizer["Rename file"]">@_localizer["Rename file"]</MudMenuItem>
         </MudMenu>
     }
 </MudStack>
@@ -71,25 +72,25 @@ along with Foobar.  If not, see
     [Parameter]
     public Boolean DisplayMenu { get; set; } = true;
 
-    IBrowserFile? selectedFile;
-    MudFileUpload<IBrowserFile>? fileUpload;
-    String TextFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
+    IBrowserFile? _selectedFile;
+    MudFileUpload<IBrowserFile>? _fileUpload;
+    String _textFieldValue => String.IsNullOrEmpty(FileName) ? _localizer["No file selected"] : FileName;
 
     async Task PickFilesClickedAsync()
     {
-        await (fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
+        await (_fileUpload?.OpenFilePickerAsync() ?? Task.CompletedTask);
     }
 
     async Task ClearClickedAsync()
     {
-        await (fileUpload?.ClearAsync() ?? Task.CompletedTask);
+        await (_fileUpload?.ClearAsync() ?? Task.CompletedTask);
         await SetSelectedFileAsync(null);
     }
 
     async Task SetSelectedFileAsync(IBrowserFile? browserFile)
     {
-        selectedFile = browserFile;
-        FileName = selectedFile?.Name;
-        await OnFileSelected.InvokeAsync(selectedFile);
+        _selectedFile = browserFile;
+        FileName = _selectedFile?.Name;
+        await OnFileSelected.InvokeAsync(_selectedFile);
     }
 }

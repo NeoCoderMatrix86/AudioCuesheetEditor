@@ -15,13 +15,17 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.Options;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using System.Globalization;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class LocalizationService(ILocalStorageOptionsProvider localStorageOptionsProvider)
+    public class LocalizationService(ILocalStorageOptionsProvider localStorageOptionsProvider, NavigationManager navigationManager, IJSRuntime jsRuntime)
     {
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
+        private readonly NavigationManager _navigationManager = navigationManager;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
         public const String DefaultCulture = "en-US";
 
@@ -38,35 +42,34 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        public event EventHandler? LocalizationChanged;
-
         public static CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
 
         public async Task SetCultureFromConfigurationAsync()
         {
             var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
 
-            ChangeLanguage(options.Culture.Name);
+            ChangeLanguage(options.Culture);
         }
 
-        public async Task ChangeLanguageAsync(string name)
+        public async Task ChangeLanguageAsync(CultureInfo culture)
         {
-            if (ChangeLanguage(name))
+            if (ChangeLanguage(culture))
             {
-                await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, name);
-                LocalizationChanged?.Invoke(this, new EventArgs());
+                await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
+                await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+                _navigationManager.NavigateTo(_navigationManager.Uri, true);
             }
         }
 
-        private static Boolean ChangeLanguage(string name)
+        private static Boolean ChangeLanguage(CultureInfo newCulture)
         {
-            var newCulture = AvailableCultures.SingleOrDefault(c => c.Name == name);
-            if (newCulture != null)
+            var contains = AvailableCultures.Contains(newCulture);
+            if (contains)
             {
                 CultureInfo.DefaultThreadCurrentUICulture = newCulture;
-                CultureInfo.CurrentUICulture = newCulture;
+                CultureInfo.DefaultThreadCurrentCulture = newCulture;
             }
-            return newCulture != null;
+            return contains;
         }
     }
 }

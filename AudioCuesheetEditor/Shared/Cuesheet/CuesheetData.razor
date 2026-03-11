@@ -111,14 +111,22 @@ along with Foobar.  If not, see
         fileInputAudiofileErrorText = null;
         try 
         {
-            Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileInputAudiofileId, browserFile, x => 
+            if (browserFile != null)
             {
-                if (Cuesheet.RecalculateLastTrackEnd())
+                var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], fileInputAudiofileId);
+                Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single(), x =>
                 {
-                    TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
-                }
-                StateHasChanged();
-            });
+                    if (Cuesheet.RecalculateLastTrackEnd())
+                    {
+                        TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                    }
+                    StateHasChanged();
+                });
+            }
+            else
+            {
+                Cuesheet.Audiofile = null;
+            }
         }
         catch(ArgumentException ae)
         {
@@ -157,7 +165,14 @@ along with Foobar.  If not, see
         fileInputCDTextfileErrorText = null;
         try
         {
-            Cuesheet.CDTextfile = _fileInputManager.CreateCDTextfile(browserFile);
+            if (browserFile != null)
+            {
+                Cuesheet.CDTextfile = _fileInputManager.CreateCDTextfile(browserFile.ContentType, browserFile.Name);
+            }
+            else
+            {
+                Cuesheet.CDTextfile = null;
+            }
         }
         catch (ArgumentException ae)
         {

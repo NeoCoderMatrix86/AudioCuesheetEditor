@@ -13,15 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-
-namespace AudioCuesheetEditor.Model.IO.Export
+namespace AudioCuesheetEditor.Model.IO
 {
-    public class Exportfile
+    public class FileUpload(string name, string contentType, string? content = null, string? objectUrl = null)
     {
-        public static readonly string DefaultCuesheetFilename = "Cuesheet.cue";
-        public string Name { get; set; } = String.Empty;
-        public string? Content { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
+        public string Name { get; set; } = name;
+        public string ContentType { get; set; } = contentType;
+        public string? Content { get; set; } = content;
+        public string? ObjectUrl { get; set; } = objectUrl;
     }
 }

@@ -49,7 +49,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var result = cuesheetExportService.CanGenerateExportfiles(invalidFilename);
 
             // Assert
-            Assert.IsTrue(result.Any(vm => vm.Message.Contains("File extension is not")));
+            Assert.Contains(vm => vm.Message.Contains("File extension is not"), result);
         }
 
         [TestMethod]
@@ -115,7 +115,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
             var content = result.First().Content;
             Assert.IsNotNull(content);
-            var contentString = Encoding.UTF8.GetString(content);
             Assert.AreEqual(@"TITLE ""Test title cuesheet""
 PERFORMER ""Test artist cuesheet""
 FILE ""Test audiofile.mp3"" MP3
@@ -127,7 +126,7 @@ FILE ""Test audiofile.mp3"" MP3
 		TITLE ""Test title 2""
 		PERFORMER ""Test artist 2""
 		INDEX 01 04:12:00
-", contentString);
+", content);
         }
 
         [TestMethod]
@@ -212,7 +211,6 @@ FILE ""Test audiofile.mp3"" MP3
             Assert.AreEqual(section3.End, result.Last().End);
             var content = result.Last().Content;
             Assert.IsNotNull(content);
-            var contentString = Encoding.UTF8.GetString(content);
             Assert.AreEqual(@"TITLE ""Test title cuesheet""
 PERFORMER ""Test artist cuesheet""
 FILE ""Test audiofile.mp3"" MP3
@@ -224,7 +222,7 @@ FILE ""Test audiofile.mp3"" MP3
 		TITLE ""Test title 6""
 		PERFORMER ""Test artist 6""
 		INDEX 01 01:54:00
-", contentString);
+", content);
         }
 
         [TestMethod]

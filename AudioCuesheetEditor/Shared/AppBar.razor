@@ -25,9 +25,10 @@ along with Foobar.  If not, see
 @inject IJSRuntime _jsRuntime
 @inject HotKeys _hotKeys
 @inject ImportManager _importManager
+@inject IFileInputManager _fileInputManager
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
-    <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)">
+    <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)" aria-label="Home">
         <MudHidden Breakpoint="Breakpoint.Xs">
             <MudText Typo="Typo.h6">AudioCuesheetEditor</MudText>
         </MudHidden>
@@ -46,7 +47,10 @@ along with Foobar.  If not, see
     <MudSpacer />
     @if (DisplayFileMenu)
     {
-        <MudFileUpload @ref="mudFileUpload" T="IBrowserFile" Accept="@String.Join(',', FileExtensions.Cuesheet, FileExtensions.Projectfile)" FilesChanged="FileUploaded" aria-label="Open file upload" />
+        <MudFileUpload @ref="mudFileUpload" T="IBrowserFile" Accept="@String.Join(',', FileExtensions.Cuesheet, FileExtensions.Projectfile, FileExtensions.Text)" FilesChanged="FileUploaded" aria-label="Open file upload">
+            <CustomContent></CustomContent>
+            <SelectedTemplate></SelectedTemplate>
+        </MudFileUpload>
         <MudMenu Label="@_localizer["File"]" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.ImportExport">
             <MudMenuItem Icon="@Icons.Material.Outlined.FileOpen" OnClick="OpenFileClicked">@_localizer["Open"]</MudMenuItem>
             <MudMenu Label="@_localizer["Export"]" StartIcon="@Icons.Material.Outlined.FileDownload">
@@ -59,7 +63,7 @@ along with Foobar.  If not, see
     <MudMenu Icon="@Icons.Material.Outlined.Language" Color="Color.Inherit" AriaLabel="@_localizer["Change language"]" TransformOrigin="Origin.TopCenter">
         @foreach (var culture in LocalizationService.AvailableCultures)
         {
-            <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture.Name)" Style="@GetStyle(culture)">@IsoCountryCodeToFlagEmoji(culture)&nbsp;@culture.DisplayName</MudMenuItem>
+            <MudMenuItem OnClick="(args) => SelectedCultureChanged(culture)" Style="@GetStyle(culture)">@IsoCountryCodeToFlagEmoji(culture)&nbsp;@culture.DisplayName</MudMenuItem>
         }
     </MudMenu>
     <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" AriaLabel="More">
@@ -69,7 +73,10 @@ along with Foobar.  If not, see
         }
         <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" Href="https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/wiki/Help" Target="_blank">@_localizer["Help"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.Info" Href="about">@_localizer["About"]</MudMenuItem>
-        <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="DisplayHotkeys">@_localizer["Hotkeys"]</MudMenuItem>
+        @if (DisplayHotkeys)
+        {
+            <MudMenuItem Icon="@Icons.Material.Outlined.Keyboard" OnClick="ShowHotkeysDialog">@_localizer["Hotkeys"]</MudMenuItem>
+        }
         <MudMenuItem Icon="@Icons.Material.Outlined.Preview" Href="https://preview-audiocuesheeteditor.netlify.app/" Target="_blank">@_localizer["Preview environment"]</MudMenuItem>
         @if (DisplayReset)
         {
@@ -115,9 +122,12 @@ along with Foobar.  If not, see
     [Parameter]
     public Boolean DisplayReset { get; set; }
 
-    async Task SelectedCultureChanged(string name)
+    [Parameter]
+    public Boolean DisplayHotkeys { get; set; }
+
+    async Task SelectedCultureChanged(CultureInfo culture)
     {
-        await base.LocalizationService.ChangeLanguageAsync(name);
+        await base.LocalizationService.ChangeLanguageAsync(culture);
     }
 
     String GetStyle(CultureInfo cultureInfo)
@@ -156,12 +166,12 @@ along with Foobar.  If not, see
 
     async Task ResetCuesheetClicked() 
     {
-        var parameters = new DialogParameters<ConfirmDialog>
+        var parameters = new DialogParameters<ConfirmationDialog>
         {
             { x => x.ConfirmText, _localizer["Are you sure you want reset the cuesheet? All information you have not saved are lost!"] },
         };
         var options = new DialogOptions() { BackdropClick = false };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters, options);
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters, options);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
@@ -172,12 +182,12 @@ along with Foobar.  If not, see
 
     async Task ResetApplicationClicked()
     {
-        var parameters = new DialogParameters<ConfirmDialog>
+        var parameters = new DialogParameters<ConfirmationDialog>
         {
             { x => x.ConfirmText, _localizer["Are you sure you want reset the application? All information you have not saved are lost!"] },
         };
         var options = new DialogOptions() { BackdropClick = false };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters, options);
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters, options);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
@@ -189,6 +199,29 @@ along with Foobar.  If not, see
 
     async Task OpenFileClicked() 
     {
+        //Check if there are already any changes
+        if ((TraceChangeManager.CanUndo) || (TraceChangeManager.CanRedo))
+        {
+            var parameters = new DialogParameters<ConfirmationDialog>
+            {
+                { x => x.ConfirmText, _localizer["Are you sure you want reset the cuesheet? All information you have not saved are lost!"] },
+            };
+            var options = new DialogOptions() { BackdropClick = false };
+            var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters, options);
+            var result = await dialog.Result;
+            if (result?.Canceled == false)
+            {
+                await OpenFileUpload();
+            }
+        }
+        else
+        {
+            await OpenFileUpload();
+        }
+    }
+
+    async Task OpenFileUpload()
+    {
         if (mudFileUpload != null)
         {
             await mudFileUpload.OpenFilePickerAsync();
@@ -197,10 +230,11 @@ along with Foobar.  If not, see
 
     async Task FileUploaded(IBrowserFile file)
     {
-        await _importManager.UploadFilesAsync([file]);
+        var fileUploads = await _fileInputManager.CreateFileUploadsAsync([file]);
+        await _importManager.UploadFilesAsync(fileUploads);
     }
 
-    async Task DisplayHotkeys()
+    async Task ShowHotkeysDialog()
     {
         var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         await _dialogService.ShowAsync<DisplayHotkeysDialog>(_localizer["Hotkeys"], options);

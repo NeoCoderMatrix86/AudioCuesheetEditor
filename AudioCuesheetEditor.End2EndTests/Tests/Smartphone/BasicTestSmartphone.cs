@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Application_HasTitle_WhenBrowsingIndex()
         {
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             var appBar = new AppBar(TestPage);
             await Expect(appBar.HomeButton).ToBeVisibleAsync();
@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         [TestMethod]
         public async Task Audiofile_ShouldBeRenamed_WhenEditingFilename()
         {
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
             await detailView.RenameAudiofileAsync("Kalimba test 123.mp3");
@@ -56,7 +56,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task OpenSettings_ShouldDisplaySettings_WhenSelectingSettings()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await bar.OpenSettingsAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
@@ -67,7 +67,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         {
             var bar = new AppBar(TestPage);
             var exportDialog = new ExportDialog(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await bar.ChangeLanguageAsync("German (Germany)");
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Abschnitte" })).ToBeVisibleAsync();
@@ -88,7 +88,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task TrackTableControls_ShouldBeEnabled_WhenSelectingFirstTrackAsync()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
             await detailView.AddTrackAsync();
@@ -107,7 +107,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task KeyboardCommands_ShouldControlDialogs_WhenUsingEnterOrEscapeAsync()
         {
             var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage, DeviceName != null);
+            var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenExportDialogAsync("Cuesheet");

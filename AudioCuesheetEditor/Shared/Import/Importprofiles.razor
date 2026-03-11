@@ -51,7 +51,7 @@ along with Foobar.  If not, see
                       Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.Name))"
                       Label="@_localizer["Profile name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined" />
         <MudSwitch T="Boolean?" Color="Color.Secondary" Value="importOptions.SelectedImportProfile?.UseRegularExpression" Disabled="importOptions.SelectedImportProfile == null" ValueChanged="UseRegularExpressionChangedAsync" Label="@_localizer["Search using regular expressions"]" />
-        <MudTextField T="string" @ref="schemeCuesheetTextField" Text="@importOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="SchemeCuesheetChangedAsync"
+        <MudTextField T="string" Text="@importOptions.SelectedImportProfile?.SchemeCuesheet" TextChanged="SchemeCuesheetChangedAsync"
                       Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeCuesheet))"
                       Label="@_localizer["Scheme common data"]" Placeholder="@_localizer["Enter the common data scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddCircleOutline"
@@ -59,10 +59,10 @@ along with Foobar.  If not, see
         <MudMenu @ref="schemeCuesheetMenu" Disabled="importOptions.SelectedImportProfile == null" PositionAtCursor>
             @foreach (var scheme in Importprofile.AvailableSchemeCuesheet)
             {
-                <MudMenuItem OnClick="() => AppendPlaceholderToTextField(schemeCuesheetTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+                <MudMenuItem OnClick="() => AppendPlaceholderToSchemeCuesheet(scheme)">@_localizer[scheme]</MudMenuItem>
             }
         </MudMenu>
-        <MudTextField T="string" @ref="schemeTracksTextField" Text="@importOptions.SelectedImportProfile?.SchemeTracks" TextChanged="SchemeTracksChangedAsync"
+        <MudTextField T="string" Text="@importOptions.SelectedImportProfile?.SchemeTracks" TextChanged="SchemeTracksChangedAsync"
                       Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile, nameof(Importprofile.SchemeTracks))"
                       Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the track scheme for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddCircleOutline"
@@ -70,10 +70,10 @@ along with Foobar.  If not, see
         <MudMenu @ref="schemeTracksMenu" Disabled="importOptions.SelectedImportProfile == null" PositionAtCursor>
             @foreach (var scheme in Importprofile.AvailableSchemesTrack)
             {
-                <MudMenuItem OnClick="() => AppendPlaceholderToTextField(schemeTracksTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+                <MudMenuItem OnClick="() => AppendPlaceholderToSchemeTracks(scheme)">@_localizer[scheme]</MudMenuItem>
             }
         </MudMenu>
-        <MudTextField T="string" @ref="timeSpanFormatTextField" Text="@importOptions.SelectedImportProfile?.TimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync"
+        <MudTextField T="string" Text="@importOptions.SelectedImportProfile?.TimeSpanFormat?.Scheme" TextChanged="ImportTimeInputFormatChangedAsync"
                       Validation="(string newValue) => _validationService.Validate(importOptions.SelectedImportProfile?.TimeSpanFormat, nameof(TimeSpanFormat.Scheme))"
                       Label="@_localizer["Time input format for import"]" Placeholder="@_localizer["Enter the time format for this profile here"]" Variant="Variant.Outlined"
                       Clearable Disabled="importOptions.SelectedImportProfile == null" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddCircleOutline"
@@ -81,7 +81,7 @@ along with Foobar.  If not, see
         <MudMenu @ref="timeSpanFormatMenu" Disabled="importOptions.SelectedImportProfile == null" PositionAtCursor>
             @foreach (var scheme in TimeSpanFormat.AvailableTimespanScheme)
             {
-                <MudMenuItem OnClick="() => AppendPlaceholderToTextField(timeSpanFormatTextField, scheme)">@_localizer[scheme]</MudMenuItem>
+                <MudMenuItem OnClick="() => AppendPlaceholderToImportTimeInputFormat(scheme)">@_localizer[scheme]</MudMenuItem>
             }
         </MudMenu>
     </MudField>
@@ -91,7 +91,6 @@ along with Foobar.  If not, see
 @code {
     ImportOptions? importOptions;
     MudMenu? schemeCuesheetMenu, schemeTracksMenu, timeSpanFormatMenu;
-    MudTextField<string>? schemeCuesheetTextField, schemeTracksTextField, timeSpanFormatTextField;
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,9 +105,19 @@ along with Foobar.  If not, see
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
-    void AppendPlaceholderToTextField(MudTextField<string>? mudTextField, string placeholder)
+    async Task AppendPlaceholderToSchemeCuesheet(string placeholder)
     {
-        mudTextField?.SetText($"{mudTextField.Text}{placeholder}");
+        await SchemeCuesheetChangedAsync($"{importOptions?.SelectedImportProfile?.SchemeCuesheet}{placeholder}");
+    }
+
+    async Task AppendPlaceholderToSchemeTracks(string placeholder)
+    {
+        await SchemeCuesheetChangedAsync($"{importOptions?.SelectedImportProfile?.SchemeTracks}{placeholder}");
+    }
+
+    async Task AppendPlaceholderToImportTimeInputFormat(string placeholder)
+    {
+        await SchemeCuesheetChangedAsync($"{importOptions?.SelectedImportProfile?.TimeSpanFormat?.Scheme}{placeholder}");
     }
 
     async Task SelectedImportProfileChangedAsync(Importprofile? newSelectedProfile)
@@ -165,11 +174,11 @@ along with Foobar.  If not, see
 
     async Task ResetProfiles()
     {
-        var parameters = new DialogParameters<ConfirmDialog>
+        var parameters = new DialogParameters<ConfirmationDialog>
         {
             { x => x.ConfirmText, _localizer["Are you sure you want to reset the import profiles to factory default?"] },
         };
-        var dialog = await _dialogService.ShowAsync<ConfirmDialog>(_localizer["Confirm"], parameters);
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
