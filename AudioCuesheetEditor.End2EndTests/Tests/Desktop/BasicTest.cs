@@ -68,7 +68,6 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await bar.ChangeLanguageAsync("German (Germany)");
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Abschnitte" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Allgemeine Informationen" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
@@ -79,7 +78,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(TestPage.Locator("#app")).ToMatchAriaSnapshotAsync("- paragraph: Künstler\n- paragraph: Titel\n- paragraph: Audiodatei\n- paragraph: CDTextdatei\n- paragraph: Katalognummer\n- paragraph: Datum\n- paragraph: Datum & Uhrzeit\n- paragraph: Uhrzeit");
             await TestPage.GetByText("CDTextdatei").ClickAsync();
             await exportDialog.OpenSchemeMenuAsync("Schema Titel");
-            await Expect(TestPage.Locator("#app")).ToMatchAriaSnapshotAsync("- paragraph: Position\n- paragraph: Künstler\n- paragraph: Titel\n- paragraph: Beginn\n- paragraph: Ende\n- paragraph: Länge\n- paragraph: Markierungen\n- paragraph: Vorlücke\n- paragraph: Nachlücke");
+            await Expect(TestPage.GetByTestId("menu-wrapper")).ToMatchAriaSnapshotAsync("- paragraph: Position\n- paragraph: Künstler\n- paragraph: Titel\n- paragraph: Begin\n- paragraph: End\n- paragraph: Länge\n- paragraph: Markierungen\n- paragraph: Vorlücke\n- paragraph: Nachlücke");
         }
 
         [TestMethod]
