@@ -126,12 +126,6 @@
   <data name="Name" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="Begin" xml:space="preserve">
-    <value>Begin</value>
-  </data>
-  <data name="End" xml:space="preserve">
-    <value>End</value>
-  </data>
   <data name="Content" xml:space="preserve">
     <value>Content</value>
   </data>

@@ -53,9 +53,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
             }
-            var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
-            var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
-            return Result<Exportfile>.Success(new Exportfile() { Name = exportprofile.Filename, Content = content, Begin = begin, End = end });
+            return Result<Exportfile>.Success(new Exportfile() { Name = exportprofile.Filename, Content = content});
         }
 
         private string WriteExport(Exportprofile exportprofile, string? audiofileName)

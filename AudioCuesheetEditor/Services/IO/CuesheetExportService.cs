@@ -17,7 +17,6 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
-using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.Extensions.Localization;
 using System.Text;
@@ -64,9 +63,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
             }
-            var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
-            var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
-            return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = content, Begin = begin, End = end });
+            return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = content });
         }
 
         private string WriteCuesheet(string? audiofileName)
