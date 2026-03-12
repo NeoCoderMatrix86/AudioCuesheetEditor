@@ -138,9 +138,6 @@
   <data name="Length" xml:space="preserve">
     <value>Länge</value>
   </data>
-  <data name="A section is beginning inside this track" xml:space="preserve">
-    <value>Ein Abschnitt beginnt innerhalb dieses Titels</value>
-  </data>
   <data name="Start playback of this track" xml:space="preserve">
     <value>Wiedergabe dieses Titel starten</value>
   </data>
@@ -155,9 +152,6 @@
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
-  </data>
-  <data name="Section" xml:space="preserve">
-    <value>Abschnitt</value>
   </data>
   <data name="Unlink this track from previous track" xml:space="preserve">
     <value>Track von vorherigem abkoppeln</value>

@@ -15,7 +15,6 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
 
@@ -43,7 +42,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private CDTextfile? cDTextfile;
         private String? catalogueNumber;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
-        private List<CuesheetSection> sections = [];
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler? IsRecordingChanged;
@@ -151,42 +149,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         [JsonIgnore]
         public Boolean IsImporting { get; set; }
-        
-        [JsonInclude]
-        public IReadOnlyCollection<CuesheetSection> Sections 
-        {
-            get => sections;
-            private set
-            {
-                foreach(var section in value.Where(x => x.Cuesheet != this))
-                {
-                    section.Cuesheet = this;
-                }
-                sections = [.. value];
-            }
-        }
-
-        public CuesheetSection AddSection()
-        {
-            var previousValue = new List<CuesheetSection>(sections);
-            var section = new CuesheetSection(this);
-            sections.Add(section);
-            OnTraceablePropertyChanged(previousValue, nameof(Sections));
-            return section;
-        }
-
-        public void RemoveSections(IEnumerable<CuesheetSection> sectionsToRemove)
-        {
-            var previousValue = new List<CuesheetSection>(sections);
-            var intersection = sections.Intersect(sectionsToRemove);
-            sections = [.. sections.Except(intersection)];
-            OnTraceablePropertyChanged(previousValue, nameof(Sections));
-        }
-
-        public CuesheetSection? GetSection(Track track)
-        {
-            return Sections?.FirstOrDefault(x => track.Begin <= x.Begin && track.End >= x.Begin);
-        }
 
         /// <summary>
         /// Get the previous linked track of a track object

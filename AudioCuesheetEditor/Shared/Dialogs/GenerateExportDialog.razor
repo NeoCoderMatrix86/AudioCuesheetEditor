@@ -18,7 +18,6 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<GenerateExportDialog> _localizer
-@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ValidationService _validationService
 @inject ExportfileGenerator _exportfileGenerator
 @inject IBlazorDownloadFileService _blazorDownloadFileService
@@ -121,42 +120,7 @@ along with Foobar.  If not, see
                     </MudMenu>
                 </MudStep>
                 <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false">
-                    @if (_exportFiles.Count() == 1)
-                    {
-                        var exportFile = _exportFiles.Single();
-                        <DisplayExportfileContent Exportfile="exportFile" />
-                    }
-                    else
-                    {
-                        <MudTable Items="_exportFiles">
-                            <HeaderContent>
-                                <MudTh>@_localizer["Name"]</MudTh>
-                                <MudTh>@_localizer["Begin"]</MudTh>
-                                <MudTh>@_localizer["End"]</MudTh>
-                                <MudTh>@_localizer["Content"]</MudTh>
-                            </HeaderContent>
-                            <RowTemplate>
-                                <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
-                                <MudTd DataLabel="@_localizer["Begin"]">@context.Begin</MudTd>
-                                <MudTd DataLabel="@_localizer["End"]">@context.End</MudTd>
-                                @{
-                                    var ariaLabelDownload = $"Download-{context.Name}";
-                                    var ariaLabelDialog = $"Dialog-{context.Name}";
-                                    var dialogVisible = _displayContentDialogVisible.GetValueOrDefault(context);
-                                    <MudDialog Visible="dialogVisible" VisibleChanged="(visible) => _displayContentDialogVisible[context] = visible" Options="_displayContentDialogOptions">
-                                        <TitleContent><MudText Typo="Typo.h6">@_localizer["Display content"]</MudText></TitleContent>
-                                        <DialogContent>
-                                            <DisplayExportfileContent Exportfile="context" />
-                                        </DialogContent>
-                                    </MudDialog>
-                                    <MudTd DataLabel="@_localizer["Content"]">
-                                        <MudIconButton Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Search" OnClick="() => _displayContentDialogVisible[context] = true" aria-label="@ariaLabelDialog" />
-                                        <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(context.Name, context.Content, System.Text.Encoding.Default, "text/plain")' aria-label="@ariaLabelDownload" />
-                                    </MudTd>
-                                }
-                            </RowTemplate>
-                        </MudTable>
-                    }
+                    <DisplayExportfileContent Exportfile="_exportFile" />
                 </MudStep>
             </MudStepper>
         </DialogContent>
@@ -165,7 +129,7 @@ along with Foobar.  If not, see
 
 @code {
     ExportOptions? _exportOptions;
-    IEnumerable<Exportfile> _exportFiles = [];
+    Exportfile? _exportFile;
     Boolean _configureExportCompleted = false;
     MudMenu? _schemeHeadMenu, _schemeTracksMenu, _schemeFooterMenu;
     Dictionary<Exportfile, Boolean> _displayContentDialogVisible = new();
@@ -218,10 +182,18 @@ along with Foobar.  If not, see
     String? GetGenerationValidationMessages()
     {
         String? validationErrorMessage = null;
-        var messages = _exportfileGenerator.CanGenerateExportfiles(_exportOptions?.SelectedExportProfile);
-        if (messages.Count() > 0)
+        var selectedExportProfile = _exportOptions?.SelectedExportProfile;
+        if (selectedExportProfile != null)
         {
-            validationErrorMessage = String.Join("<br />", messages.Select(x => x.GetMessageLocalized(_validationMessageLocalizer)));
+            var result = _exportfileGenerator.CanGenerateExportfile(selectedExportProfile);
+            if (result.IsSuccess == false)
+            {
+                validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
+            }
+        }
+        else
+        {
+            validationErrorMessage = _localizer["No export profile selected!"];
         }
         return validationErrorMessage;
     }
@@ -237,10 +209,15 @@ along with Foobar.  If not, see
 
     void ActiveIndexChanged(int newIndex)
     {
-        if (newIndex == 1)
+        if (newIndex == 1) 
         {
-            _exportFiles = _exportfileGenerator.GenerateExportfiles(_exportOptions?.SelectedExportProfile);
-            _configureExportCompleted = _exportFiles.Any();
+            var selectedExportProfile = _exportOptions?.SelectedExportProfile;
+            if (selectedExportProfile != null)
+            {
+                var result = _exportfileGenerator.GenerateExportfile(selectedExportProfile);
+                _exportFile = result.Value;
+                _configureExportCompleted = result.IsSuccess;
+            }
         }
     }
 
