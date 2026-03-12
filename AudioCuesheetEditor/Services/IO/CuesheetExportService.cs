@@ -17,16 +17,19 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
+using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Services.UI;
+using Microsoft.Extensions.Localization;
 using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    public class CuesheetExportService(ISessionStateContainer sessionStateContainer)
+    public class CuesheetExportService(ISessionStateContainer sessionStateContainer, IStringLocalizer<ValidationMessage> localizer)
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
 
-        public IEnumerable<ValidationMessage> CanGenerateExportfiles(string? filename)
+        public Result CanGenerateExportfile(string? filename)
         {
             List<ValidationMessage> validationMessages = [];
             var extension = Path.GetExtension(filename);
@@ -37,52 +40,36 @@ namespace AudioCuesheetEditor.Services.IO
             }
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
-            return validationMessages;
-        }
-
-        public IReadOnlyCollection<Exportfile> GenerateExportfiles(string? filename)
-        {
-            List<Exportfile> exportfiles = [];
-            if (!CanGenerateExportfiles(filename).Any())
+            if (validationMessages.Count != 0)
             {
-                if (_sessionStateContainer.Cuesheet.Sections.Count != 0)
-                {
-                    var counter = 1;
-                    string? content = null;
-                    string? audioFileName = null;
-                    foreach (var section in _sessionStateContainer.Cuesheet.Sections.OrderBy(x => x.Begin))
-                    {
-                        audioFileName = section.AudiofileName;
-                        if (section.Validate().Status == ValidationStatus.Success)
-                        {
-                            content = WriteCuesheet(audioFileName, section);
-                            var name = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(filename), counter, FileExtensions.Cuesheet);
-                            exportfiles.Add(new Exportfile() { Name = name, Content = content, Begin = section.Begin, End = section.End });
-                            counter++;
-                        }
-                    }
-                }
-                else
-                {
-                    string? content = null;
-                    var extension = Path.GetExtension(filename);
-                    if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-                    {
-                        filename = $"{filename}{FileExtensions.Cuesheet}";
-                    }
-                    if (_sessionStateContainer.Cuesheet.Audiofile != null)
-                    {
-                        content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
-                    }
-                    var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
-                    var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
-                    exportfiles.Add(new Exportfile() { Name = filename!, Content = content, Begin = begin, End = end });
-                }
+                return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
             }
-            return exportfiles;
+            return Result.Success();
         }
 
-        private string WriteCuesheet(string? audiofileName, CuesheetSection? section = null)
+        public Result<Exportfile> GenerateExportfile(string? filename)
+        {
+            var validationResult = CanGenerateExportfile(filename);
+            if (validationResult.IsSuccess == false)
+            {
+                return Result<Exportfile>.Failure(new Error(ErrorType.ValidationFailed, validationResult.Error!.Message));
+            }
+            string? content = null;
+            var extension = Path.GetExtension(filename);
+            if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
+            {
+                filename = $"{filename}{FileExtensions.Cuesheet}";
+            }
+            if (_sessionStateContainer.Cuesheet.Audiofile != null)
+            {
+                content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
+            }
+            var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
+            var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
+            return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = content, Begin = begin, End = end });
+        }
+
+        private string WriteCuesheet(string? audiofileName)
         {
             var builder = new StringBuilder();
             if (string.IsNullOrEmpty(_sessionStateContainer.Cuesheet.Cataloguenumber) == false)
@@ -93,14 +80,10 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile.Name));
             }
-            builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, section != null ? section.Title : _sessionStateContainer.Cuesheet.Title));
-            builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, section != null ? section.Artist : _sessionStateContainer.Cuesheet.Artist));
+            builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, _sessionStateContainer.Cuesheet.Title));
+            builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
             builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofileName, _sessionStateContainer.Cuesheet.Audiofile?.AudioFileType));
             IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
-            if (section != null)
-            {
-                tracks = _sessionStateContainer.Cuesheet.Tracks.Where(x => x.Begin <= section.End && x.End >= section.Begin).OrderBy(x => x.Position);
-            }
             if (tracks.Any())
             {
                 //Position and begin should always start from 0 even with splitpoints
@@ -121,17 +104,6 @@ namespace AudioCuesheetEditor.Services.IO
                     if (track.Begin.HasValue)
                     {
                         var begin = track.Begin.Value;
-                        if (section != null && section.Begin.HasValue)
-                        {
-                            if (section.Begin >= track.Begin)
-                            {
-                                begin = TimeSpan.Zero;
-                            }
-                            else
-                            {
-                                begin = track.Begin.Value - section.Begin.Value;
-                            }
-                        }
                         builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(begin.TotalMinutes), begin.Seconds, begin.Milliseconds * 75 / 1000));
                     }
                     else
