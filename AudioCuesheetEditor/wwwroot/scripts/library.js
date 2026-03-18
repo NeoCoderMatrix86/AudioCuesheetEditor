@@ -40,3 +40,20 @@ function beforeunload(e) {
 function removeBeforeunload() {
     window.removeEventListener('beforeunload', beforeunload);
 }
+
+function getAudioDurationFromFile(url) {
+    return new Promise((resolve, reject) => {
+        const audio = new Audio();
+
+        audio.preload = "metadata";
+        audio.src = url;
+
+        audio.onloadedmetadata = () => {
+            resolve(audio.duration);
+        };
+
+        audio.onerror = (e) => {
+            reject(e);
+        };
+    });
+}

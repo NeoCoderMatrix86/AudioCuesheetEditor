@@ -92,22 +92,13 @@ namespace AudioCuesheetEditor.Services.IO
                 var codec = GetAudioCodec(fileUpload.ContentType, fileUpload.Name);
                 if (codec != null)
                 {
-                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec);
+                    TimeSpan? duration = null;
                     if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
                     {
-                        var request = new HttpRequestMessage(HttpMethod.Get, fileUpload.ObjectUrl);
-                        //TODO: Enable when https://github.com/NeoCoderMatrix86/AudioCuesheetEditor/issues/524 gets done
-                        request.SetBrowserRequestStreamingEnabled(false);
-
-                        var response = await _httpClient.SendAsync(request);
-                        var loadContentStreamTask = response.Content.ReadAsStreamAsync()
-                                .ContinueWith(x => audiofile.ContentStream = x.Result);
-                        if (afterContentStreamLoaded != null)
-                        {
-                            _ = loadContentStreamTask
-                                .ContinueWith(afterContentStreamLoaded);
-                        }
+                        var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
+                        duration = TimeSpan.FromSeconds(durationSeconds);
                     }
+                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration); 
                 }
                 else
                 {

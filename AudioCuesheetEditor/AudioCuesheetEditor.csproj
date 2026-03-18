@@ -31,7 +31,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.4" />
     <PackageReference Include="MudBlazor" Version="9.1.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.2.0" />
-    <PackageReference Include="z440.atl.core" Version="7.11.0" />
   </ItemGroup>
   
   <ItemGroup>

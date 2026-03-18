@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private List<Track> tracks = [];
         private String? artist;
         private String? title;
-        private IAudiofile? audiofile;
+        private Audiofile? audiofile;
         private CDTextfile? cDTextfile;
         private String? catalogueNumber;
         private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
@@ -89,7 +89,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 FireEvents(previousValue, propertyName: nameof(Title));
             }
         }
-        public IAudiofile? Audiofile
+        public Audiofile? Audiofile
         {
             get => audiofile;
             set 

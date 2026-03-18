@@ -26,8 +26,6 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Audio
         public void AudioFileTest()
         {
             var audioFile = new Audiofile("test.mp3");
-            Assert.IsNull(audioFile.ContentStream);
-            Assert.IsFalse(audioFile.IsContentStreamLoaded);
             Assert.IsNotNull(audioFile.Name);
             Assert.AreEqual("MP3", audioFile.AudioFileType);
             audioFile = new Audiofile("Test");
