@@ -446,7 +446,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         private void RecalculateTrackProperties(Track trackToCalculate)
         {
-            if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (trackToCalculate.End.HasValue == false))
+            if ((Audiofile?.Duration.HasValue == true) && (trackToCalculate.End.HasValue == false))
             {
                 trackToCalculate.End = Audiofile.Duration;
             }
