@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.Services.IO
         /// <param name="fileExtensions"></param>
         /// <returns></returns>
         bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions);
-        Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload, Action<Task<Stream>>? afterContentStreamLoaded = null);
+        Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload);
         CDTextfile? CreateCDTextfile(string? fileContentType, string fileName);
         /// <summary>
         /// Checks if the file can be used for the import view

@@ -83,7 +83,7 @@ namespace AudioCuesheetEditor.Services.IO
             return fileMimeTypeMatches;
         }
 
-        public async Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload, Action<Task<Stream>>? afterContentStreamLoaded = null)
+        public async Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload)
         {
             Audiofile? audiofile = null;
             if (fileUpload.ObjectUrl != null)
@@ -98,7 +98,7 @@ namespace AudioCuesheetEditor.Services.IO
                         var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
                         duration = TimeSpan.FromSeconds(durationSeconds);
                     }
-                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration); 
+                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration);
                 }
                 else
                 {
