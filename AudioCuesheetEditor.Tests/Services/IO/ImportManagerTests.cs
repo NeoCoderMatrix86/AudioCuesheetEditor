@@ -288,7 +288,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             _fileInputManagerMock.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
             _fileInputManagerMock.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
             _fileInputManagerMock.Setup(f => f.IsValidAudiofile(file.ContentType, file.Name)).Returns(true);
-            _fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<FileUpload>(), It.IsAny<Action<Task<Stream>>?>())).ReturnsAsync(new AudioCuesheetEditor.Model.IO.Audio.Audiofile(file.Name));
+            _fileInputManagerMock.Setup(f => f.CreateAudiofileAsync(It.IsAny<FileUpload>())).ReturnsAsync(new Audiofile(file.Name));
 
             IImportfile? sessionStateContainerImportfile = null;
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
