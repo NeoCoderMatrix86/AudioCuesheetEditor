@@ -22,14 +22,14 @@
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="9.0.892" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.5" PrivateAssets="all" />
     <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
     <PackageReference Include="Howler.Blazor" Version="0.10.0" />
     <PackageReference Include="Markdig" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.4" />
-    <PackageReference Include="MudBlazor" Version="9.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.5" />
+    <PackageReference Include="MudBlazor" Version="9.2.0" />
     <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.2.0" />
   </ItemGroup>
   
