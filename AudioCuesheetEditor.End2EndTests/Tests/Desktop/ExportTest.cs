@@ -68,7 +68,7 @@ FILE ""Kalimba.mp3"" MP3
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
             var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-            Assert.AreEqual("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofile\":{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"}}}", content);
+            Assert.AreEqual("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofile\":{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"}}}", content);
         }
 
         [TestMethod]

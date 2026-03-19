@@ -673,12 +673,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration()
         {
             // Arrange
-            var audiofileMock = new Mock<IAudiofile>();
-            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
-
             var cuesheet = new Cuesheet
             {
-                Audiofile = audiofileMock.Object
+                Audiofile = new("Test.mp3", nameof(RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration), new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"), TimeSpan.FromMinutes(5))
             };
             var track = new Track { Position = 1, Begin = TimeSpan.Zero };
             cuesheet.AddTrack(track);
@@ -712,12 +709,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void RecalculateLastTrackEnd_MultipleTracksWithAudiofile_LastTrackEndSetToAudiofileDuration()
         {
             // Arrange
-            var audiofileMock = new Mock<IAudiofile>();
-            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
-
             var cuesheet = new Cuesheet
             {
-                Audiofile = audiofileMock.Object
+                Audiofile = new("Test.mp3", nameof(RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration), new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"), TimeSpan.FromMinutes(5))
             };
             var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
             var track2 = new Track { Position = 2, Begin = TimeSpan.FromMinutes(2) };
