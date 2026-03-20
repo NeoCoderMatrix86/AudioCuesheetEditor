@@ -285,6 +285,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
+            //TODO: Move tracks corresponding to its position in cuesheet
+            //TODO: Use result pattern
             lock (syncLock)
             {
                 if (!MoveTracksPossible(tracksToMove, moveDirection))

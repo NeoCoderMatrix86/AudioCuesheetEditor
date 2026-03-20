@@ -44,6 +44,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// <summary>
         /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
         /// </summary>
+        //TODO: Check if this event is really needed because of reordering
         public event EventHandler<String>? RankPropertyValueChanged;
 
         /// <summary>
