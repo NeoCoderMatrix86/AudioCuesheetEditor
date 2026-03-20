@@ -35,6 +35,12 @@ You can contribute to the project by opening up issues or adding feature request
 
 This application is build using Blazor WASM Standalone and needs .NET 10 to run. Tests are running using MSTest and Playwright.
 
+## Guidelines
+
+### Versioning
+
+This application uses semantic versioning (https://semver.org/) set inside the visual studio project file.
+
 # License
 
 GNU GENERAL PUBLIC LICENSE Version 3
