@@ -26,11 +26,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         Down
     }
 
-    public class TracksAddedRemovedEventArgs(IEnumerable<Track> tracks) : EventArgs
-    {
-        public IEnumerable<Track> Tracks { get; } = tracks;
-    }
-
+    //TODO: Move back to plain POCO
     public class Cuesheet() : Validateable, ITraceable, ICuesheet
     {
         private readonly Lock syncLock = new();

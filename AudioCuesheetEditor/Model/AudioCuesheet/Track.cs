@@ -19,12 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public enum SetFlagMode
-    {
-        Add,
-        Remove
-    }
-
+    //TODO: Move back to plain POCO
     public class Track : Validateable, ITraceable, ITrack
     {
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
