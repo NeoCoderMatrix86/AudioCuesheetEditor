@@ -220,11 +220,8 @@ namespace AudioCuesheetEditor.Services.UI
 
         public void HideLoadingDialog()
         {
-            if (loadingDialog != null)
-            {
-                loadingDialog.Close();
-                loadingDialog = null;
-            }
+            loadingDialog?.Close();
+            loadingDialog = null;
         }
     }
 }
