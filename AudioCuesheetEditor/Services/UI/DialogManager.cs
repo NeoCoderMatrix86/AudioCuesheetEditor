@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Services.UI
         private readonly IDialogService _dialogService = dialogService;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
-        private IDialogReference? loadingDialog;
+        private IDialogReference? _loadingDialog;
 
         public async Task ShowAndHandleModalEditDialogAsync(IEnumerable<Track> tracks)
         {
@@ -210,18 +210,18 @@ namespace AudioCuesheetEditor.Services.UI
 
         public async Task ShowLoadingDialogAsync()
         {
-            if (loadingDialog == null)
+            if (_loadingDialog == null)
             { 
                 var options = new DialogOptions() { BackdropClick = false, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall, NoHeader = true };
-                loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(null, options);
+                _loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(null, options);
                 await Task.Delay(1);
             }
         }
 
         public void HideLoadingDialog()
         {
-            loadingDialog?.Close();
-            loadingDialog = null;
+            _loadingDialog?.Close();
+            _loadingDialog = null;
         }
     }
 }
