@@ -25,7 +25,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 
         private uint? position;
-        private String? artist;
         private String? title;
         private TimeSpan? begin;
         private TimeSpan? end;
