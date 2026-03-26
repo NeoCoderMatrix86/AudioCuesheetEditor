@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             if (Equals(artist, previousValue) == false)
             {
                 track.Artist = artist;
-                _traceChangeManager.AddChange(track, new(previousValue, nameof(Track.Artist)));
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Artist))));
             }
         }
     }

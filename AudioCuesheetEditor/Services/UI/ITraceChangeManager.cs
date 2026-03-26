@@ -38,9 +38,8 @@ namespace AudioCuesheetEditor.Services.UI
         /// <summary>
         /// Adds a change of a property
         /// </summary>
-        /// <param name="traceable"></param>
-        /// <param name="traceableChange"></param>
-        void AddChange(ITraceable traceable, TraceableChange traceableChange);
+        /// <param name="tracedChange"></param>
+        void AddChange(TracedChange tracedChange);
         public void Reset();
         public void Undo();
         public void Redo();

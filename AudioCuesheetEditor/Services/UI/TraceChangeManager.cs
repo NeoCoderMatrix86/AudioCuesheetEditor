@@ -232,21 +232,20 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        public void AddChange(ITraceable traceable, TraceableChange traceableChange)
+        public void AddChange(TracedChange tracedChange)
         {
             //TODO: Tests
             if (BulkEdit == false)
             {
                 //Single change
-                var changes = new TracedChanges([new(traceable, traceableChange)]);
-                _undoStack.Add(changes);
+                _undoStack.Add(new([tracedChange]));
                 _redoStack.Clear();
                 TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
             }
             else
             {
                 //We are tracing multiple changes
-                _bulkEditTracedChanges?.Add(new TracedChange(traceable, traceableChange));
+                _bulkEditTracedChanges?.Add(tracedChange);
             }
         }
 
