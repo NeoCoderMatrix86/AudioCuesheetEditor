@@ -261,14 +261,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
             if (setArtist)
             {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Artist))))
-                {
-                    artist = track.Artist;
-                }
-                else
-                {
-                    Artist = track.Artist;
-                }
+                //TODO
+                //if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Artist))))
+                //{
+                //    artist = track.Artist;
+                //}
+                //else
+                //{
+                //    Artist = track.Artist;
+                //}
             }
             if (setTitle)
             {
