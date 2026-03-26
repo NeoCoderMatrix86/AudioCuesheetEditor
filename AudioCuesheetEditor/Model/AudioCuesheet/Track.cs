@@ -67,11 +67,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             get => position;
             set { var previousValue = position; position = value; FireEvents(previousValue, propertyName: nameof(Position)); }
         }
-        public String? Artist 
-        {
-            get => artist;
-            set { var previousValue = artist; artist = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Artist)); }
-        }
+        public String? Artist { get; set; }
+
         public String? Title 
         {
             get => title;

@@ -35,6 +35,12 @@ namespace AudioCuesheetEditor.Services.UI
         public bool CanRedo { get; }
         public bool BulkEdit { get; set; }
         public void TraceChanges(ITraceable traceable);
+        /// <summary>
+        /// Adds a change of a property
+        /// </summary>
+        /// <param name="traceable"></param>
+        /// <param name="traceableChange"></param>
+        void AddChange(ITraceable traceable, TraceableChange traceableChange);
         public void Reset();
         public void Undo();
         public void Redo();

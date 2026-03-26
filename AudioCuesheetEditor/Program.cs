@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Audio;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Services.Validation;
@@ -62,6 +63,7 @@ builder.Services.AddScoped<PlaybackService>();
 builder.Services.AddScoped<DialogManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
+builder.Services.AddScoped<ITrackManager, TrackManager>();
 
 builder.Services.AddLogging();
 // Read out configuration for loglevel

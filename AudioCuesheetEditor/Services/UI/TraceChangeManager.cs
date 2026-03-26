@@ -232,6 +232,24 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
+        public void AddChange(ITraceable traceable, TraceableChange traceableChange)
+        {
+            //TODO: Tests
+            if (BulkEdit == false)
+            {
+                //Single change
+                var changes = new TracedChanges([new(traceable, traceableChange)]);
+                _undoStack.Add(changes);
+                _redoStack.Clear();
+                TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
+            }
+            else
+            {
+                //We are tracing multiple changes
+                _bulkEditTracedChanges?.Add(new TracedChange(traceable, traceableChange));
+            }
+        }
+
         public void RemoveTracedChanges(IEnumerable<ITraceable> traceables)
         {
             _undoStack.RemoveAll(x => x.HasTraceableObject == false);
