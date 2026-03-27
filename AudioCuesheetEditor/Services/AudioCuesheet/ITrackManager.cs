@@ -28,8 +28,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="track"></param>
         /// <param name="artist"></param>
         void SetArtist(Track track, String? artist);
+        /// <summary>
+        /// Set title for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="title"></param>
+        void SetTitle(Track track, String? title);
 
-        //TODO: Add all functions for editing a track (Title, IsLinkedToPreviousTrack, Position, Begin, End, Length, Flags, PreGap, PostGap)
+        //TODO: Add all functions for editing a track (IsLinkedToPreviousTrack, Position, Begin, End, Length, Flags, PreGap, PostGap)
         //TODO: Add functions for track methods (CopyValues, Clone, Validate, etc.)
     }
 }

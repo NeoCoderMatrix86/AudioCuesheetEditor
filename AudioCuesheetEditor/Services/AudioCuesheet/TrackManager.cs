@@ -33,5 +33,16 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Artist))));
             }
         }
+
+        /// <inheritdoc/>
+        public void SetTitle(Track track, string? title)
+        {
+            var previousValue = track.Title;
+            if (Equals(title, previousValue) == false)
+            {
+                track.Title = title;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Title))));
+            }
+        }
     }
 }

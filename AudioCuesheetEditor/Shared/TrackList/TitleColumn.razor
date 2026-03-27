@@ -19,6 +19,7 @@ along with Foobar.  If not, see
 
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
+@inject ITrackManager _trackManager
 
 <MudAutocomplete T="MusicBrainzTrack" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, Track.Artist, token)" ToStringFunc="(MusicBrainzTrack? value) => value?.Title"
                  @bind-Text="_title" Value="_autocompleteTrack" ValueChanged="TitleSelected" ResetValueOnEmptyText Clearable ShowProgressIndicator
@@ -81,17 +82,18 @@ along with Foobar.  If not, see
         {
             await Task.Delay(100, token);
             base.TraceChangeManager.BulkEdit = true;
-            Track.Title = _title;
+            _trackManager.SetTitle(Track, _title);
             switch (CurrentViewMode)
             {
                 case ViewMode.DetailView:
                 case ViewMode.ImportView:
                     if ((String.IsNullOrEmpty(Track.Artist)) && (String.IsNullOrEmpty(_autocompleteTrack?.Artist) == false))
                     {
-                        Track.Artist = _autocompleteTrack.Artist;
+                        _trackManager.SetArtist(Track, _autocompleteTrack.Artist);
                     }
                     if ((Track.Length.HasValue == false) && (_autocompleteTrack?.Length.HasValue == true))
                     {
+                        //TODO
                         Track.Length = _autocompleteTrack?.Length;
                     }
                     break;

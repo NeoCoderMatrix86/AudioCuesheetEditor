@@ -25,7 +25,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 
         private uint? position;
-        private String? title;
         private TimeSpan? begin;
         private TimeSpan? end;
         private TimeSpan? length;
@@ -68,11 +67,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         public String? Artist { get; set; }
 
-        public String? Title 
-        {
-            get => title;
-            set { var previousValue = title; title = value; FireEvents(previousValue, fireRankPropertyValueChanged: false, propertyName: nameof(Title)); }
-        }
+        public String? Title { get; set; }
         public TimeSpan? Begin 
         {
             get => begin;
@@ -259,29 +254,29 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     Position = track.Position;
                 }
             }
-            if (setArtist)
-            {
-                //TODO
-                //if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Artist))))
-                //{
-                //    artist = track.Artist;
-                //}
-                //else
-                //{
-                //    Artist = track.Artist;
-                //}
-            }
-            if (setTitle)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Title))))
-                {
-                    title = track.Title;
-                }
-                else
-                {
-                    Title = track.Title;
-                }
-            }
+            //TODO
+            //if (setArtist)
+            //{
+            //    if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Artist))))
+            //    {
+            //        artist = track.Artist;
+            //    }
+            //    else
+            //    {
+            //        Artist = track.Artist;
+            //    }
+            //}
+            //if (setTitle)
+            //{
+            //    if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Title))))
+            //    {
+            //        title = track.Title;
+            //    }
+            //    else
+            //    {
+            //        Title = track.Title;
+            //    }
+            //}
             if (setBegin)
             {
                 if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Begin))))
