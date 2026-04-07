@@ -57,6 +57,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void CopyValues(Track source, Track target, bool setIsLinkedToPreviousTrack = true, bool setPosition = true, bool setArtist = true, bool setTitle = true, bool setBegin = true, bool setEnd = true, bool setLength = false, bool setFlags = true, bool setPreGap = true, bool setPostGap = true)
         {
+            //TODO: History?
             if (setIsLinkedToPreviousTrack)
             {
                 target.IsLinkedToPreviousTrack = source.IsLinkedToPreviousTrack;
