@@ -57,6 +57,5 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <returns></returns>
         Track Clone(Track track);
         //TODO: Add all functions for editing a track (IsLinkedToPreviousTrack, Position, Begin, End, Length, Flags, PreGap, PostGap)
-        //TODO: Add functions for track methods (Validate?, etc.)
     }
 }
