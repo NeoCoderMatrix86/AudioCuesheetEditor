@@ -15,15 +15,17 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Shared.Dialogs;
 using MudBlazor;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager)
+    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager)
     {
         private readonly IDialogService _dialogService = dialogService;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly ITrackManager _trackManager = trackManager;
 
         private IDialogReference? _loadingDialog;
 
@@ -32,7 +34,7 @@ namespace AudioCuesheetEditor.Services.UI
             _traceChangeManager.BulkEdit = true;
             if (tracks.Count() == 1)
             {
-                var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, tracks.First().Clone() } };
+                var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, _trackManager.Clone(tracks.First()) } };
                 var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
                 var dialog = await _dialogService.ShowAsync<EditTrackModal>(null, parameters, options);
                 var result = await dialog.Result;

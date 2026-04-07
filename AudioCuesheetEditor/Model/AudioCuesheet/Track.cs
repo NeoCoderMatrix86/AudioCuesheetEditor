@@ -203,18 +203,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
 
         /// <summary>
-        /// Performs a deep clone of the current object
-        /// </summary>
-        /// <returns>A deep clone of the current object</returns>
-        public Track Clone()
-        {
-            return new Track(this)
-            {
-                ClonedFrom = this
-            };
-        }
-
-        /// <summary>
         /// Copy values from input object to this object
         /// </summary>
         /// <param name="track">Object to copy values from</param>
@@ -461,10 +449,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 var propertyValue = propertyInfo.GetValue(this);
                 if (Equals(propertyValue, previousValue) == false)
                 {
-                    if (fireValidateablePropertyChanged)
-                    {
-                        OnValidateablePropertyChanged(propertyName);
-                    }
                     if (fireRankPropertyValueChanged)
                     {
                         RankPropertyValueChanged?.Invoke(this, propertyName);

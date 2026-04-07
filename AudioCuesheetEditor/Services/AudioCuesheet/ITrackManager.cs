@@ -34,8 +34,29 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="track"></param>
         /// <param name="title"></param>
         void SetTitle(Track track, String? title);
-
+        /// <summary>
+        /// Copies values from a track to another
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <param name="setIsLinkedToPreviousTrack"></param>
+        /// <param name="setPosition"></param>
+        /// <param name="setArtist"></param>
+        /// <param name="setTitle"></param>
+        /// <param name="setBegin"></param>
+        /// <param name="setEnd"></param>
+        /// <param name="setLength"></param>
+        /// <param name="setFlags"></param>
+        /// <param name="setPreGap"></param>
+        /// <param name="setPostGap"></param>
+        void CopyValues(Track source, Track target, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true);
+        /// <summary>
+        /// Create a clone of a track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <returns></returns>
+        Track Clone(Track track);
         //TODO: Add all functions for editing a track (IsLinkedToPreviousTrack, Position, Begin, End, Length, Flags, PreGap, PostGap)
-        //TODO: Add functions for track methods (CopyValues, Clone, Validate, etc.)
+        //TODO: Add functions for track methods (Validate?, etc.)
     }
 }

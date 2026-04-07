@@ -22,6 +22,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+
         //TODO: Tests
         /// <inheritdoc/>
         public void SetArtist(Track track, string? artist)
@@ -42,6 +43,59 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 track.Title = title;
                 _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Title))));
+            }
+        }
+
+        /// <inheritdoc/>
+        public Track Clone(Track track)
+        {
+            var clone = new Track();
+            CopyValues(track, clone);
+            return clone;
+        }
+
+        /// <inheritdoc/>
+        public void CopyValues(Track source, Track target, bool setIsLinkedToPreviousTrack = true, bool setPosition = true, bool setArtist = true, bool setTitle = true, bool setBegin = true, bool setEnd = true, bool setLength = false, bool setFlags = true, bool setPreGap = true, bool setPostGap = true)
+        {
+            if (setIsLinkedToPreviousTrack)
+            {
+                target.IsLinkedToPreviousTrack = source.IsLinkedToPreviousTrack;
+            }
+            if (setPosition)
+            {
+                target.Position = source.Position;
+            }
+            if (setArtist)
+            {
+                target.Artist = source.Artist;
+            }
+            if (setTitle)
+            {
+                target.Title = source.Title;
+            }
+            if (setBegin)
+            {
+                target.Begin = source.Begin;
+            }
+            if (setEnd)
+            {
+                target.End = source.End;
+            }
+            if (setLength)
+            {
+                target.Length = source.Length;
+            }
+            if (setFlags)
+            {
+                target.Flags = source.Flags;
+            }
+            if (setPreGap)
+            {
+                target.PreGap = source.PreGap;
+            }
+            if (setPostGap)
+            {
+                target.PostGap = source.PostGap;
             }
         }
     }
