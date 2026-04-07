@@ -47,6 +47,17 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
+        public void SetFlags(Track track, IEnumerable<Flag> flags)
+        {
+            var previousValue = track.Flags;
+            if (Equals(flags, previousValue) == false)
+            {
+                track.Flags = flags;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Flags))));
+            }
+        }
+
+        /// <inheritdoc/>
         public Track Clone(Track track)
         {
             var clone = new Track();
@@ -57,7 +68,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void CopyValues(Track source, Track target, bool setIsLinkedToPreviousTrack = true, bool setPosition = true, bool setArtist = true, bool setTitle = true, bool setBegin = true, bool setEnd = true, bool setLength = false, bool setFlags = true, bool setPreGap = true, bool setPostGap = true)
         {
-            //TODO: History?
+            //TODO: Create change for ITraceChangeManager
             if (setIsLinkedToPreviousTrack)
             {
                 target.IsLinkedToPreviousTrack = source.IsLinkedToPreviousTrack;

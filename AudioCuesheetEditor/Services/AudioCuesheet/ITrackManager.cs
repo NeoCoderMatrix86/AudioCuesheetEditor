@@ -35,6 +35,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="title"></param>
         void SetTitle(Track track, String? title);
         /// <summary>
+        /// Set flags for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="flags"></param>
+        void SetFlags(Track track, IEnumerable<Flag> flags);
+        /// <summary>
         /// Copies values from a track to another
         /// </summary>
         /// <param name="source"></param>

@@ -28,7 +28,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private TimeSpan? begin;
         private TimeSpan? end;
         private TimeSpan? length;
-        private List<Flag> flags = [];
         private Boolean isLinkedToPreviousTrack;
         private Cuesheet? cuesheet;
         private TimeSpan? preGap;
@@ -142,16 +141,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
         [JsonInclude]
-        public IEnumerable<Flag> Flags
-        {
-            get { return flags.AsReadOnly(); }
-            set
-            {
-                var previousValue = flags;
-                flags = [.. value];
-                FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(Flags));
-            }
-        }
+        public IEnumerable<Flag> Flags { get; set; } = [];
+        
         [JsonIgnore]
         public Cuesheet? Cuesheet 
         {
@@ -291,18 +282,19 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 Length = track.Length;
             }
-            if (setFlags)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Flags))))
-                {
-                    flags.Clear();
-                    flags.AddRange(track.Flags);
-                }
-                else
-                {
-                    Flags = track.Flags;
-                }
-            }
+            //TODO
+            //if (setFlags)
+            //{
+            //    if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Flags))))
+            //    {
+            //        flags.Clear();
+            //        flags.AddRange(track.Flags);
+            //    }
+            //    else
+            //    {
+            //        Flags = track.Flags;
+            //    }
+            //}
             if (setPreGap)
             {
                 if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(PreGap))))
