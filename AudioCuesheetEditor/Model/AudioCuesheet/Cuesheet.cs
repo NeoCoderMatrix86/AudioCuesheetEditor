@@ -167,10 +167,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         public void AddTrack(Track track)
         {
-            if (track.IsCloned)
-            {
-                throw new ArgumentException("Cloned tracks may not be added!");
-            }
             var previousValue = new List<Track>(tracks);
             track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
             if (IsRecording && RecordingStart.HasValue)
@@ -368,7 +364,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     else
                     {
                         //Check track overlapping
-                        var tracksWithSamePosition = Tracks.Where(x => x.IsCloned == false)
+                        var tracksWithSamePosition = Tracks
                             .GroupBy(x => x.Position)
                             .Where(grp => grp.Count() > 1);
                         if (tracksWithSamePosition.Any())

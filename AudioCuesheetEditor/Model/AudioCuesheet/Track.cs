@@ -59,24 +59,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             CopyValues(track, copyCuesheetReference);
         }
         
-        public uint? Position 
-        {
-            get => position;
-            set { var previousValue = position; position = value; FireEvents(previousValue, propertyName: nameof(Position)); }
-        }
+        public uint? Position { get; set; }
         public String? Artist { get; set; }
-
         public String? Title { get; set; }
-        public TimeSpan? Begin 
-        {
-            get => begin;
-            set { var previousValue = begin; begin = value; FireEvents(previousValue, propertyName: nameof(Begin)); }
-        }
-        public TimeSpan? End 
-        {
-            get => end;
-            set { var previousValue = end; end = value; FireEvents(previousValue,  propertyName: nameof(End)); }
-        }
+        public TimeSpan? Begin { get; set; }        
+        public TimeSpan? End { get; set; }
+
+        //TODO: find a way for AutomaticallyCalculateLength and Length
+
         /// <summary>
         /// If <see cref="Length"/> is set, should it be automatically change begin and end? Defaulting to true, because only during edit dialog this should be set to false. 
         /// If set to false an internal field will be used.
@@ -162,36 +152,14 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
         }
-
-        /// <summary>
-        /// Indicates that this track has been cloned from another track and is a transparent proxy
-        /// </summary>
-        [JsonIgnore]
-        public Boolean IsCloned { get { return ClonedFrom != null; } }
-        /// <summary>
-        /// Get the original track that this track has been cloned from. Can be null on original objects
-        /// </summary>
-        public Track? ClonedFrom { get; set; }
         /// <inheritdoc/>
-        public TimeSpan? PreGap 
-        {
-            get => preGap;
-            set { var previousValue = preGap; preGap = value; FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(PreGap)); }
-        }
+        public TimeSpan? PreGap { get; set;  }
         /// <inheritdoc/>
-        public TimeSpan? PostGap 
-        {
-            get => postGap;
-            set { var previousValue = postGap; postGap = value; FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(PostGap)); }
-        }
+        public TimeSpan? PostGap { get; set; }
         /// <summary>
         /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
-        public Boolean IsLinkedToPreviousTrack
-        {
-            get => isLinkedToPreviousTrack;
-            set { var previousValue = IsLinkedToPreviousTrack; isLinkedToPreviousTrack = value; IsLinkedToPreviousTrackChanged?.Invoke(this, EventArgs.Empty); FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(IsLinkedToPreviousTrack)); }
-        }
+        public Boolean IsLinkedToPreviousTrack { get; set; }
 
         /// <summary>
         /// Copy values from input object to this object
@@ -353,7 +321,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         else
                         {
                             // Check correct track position
-                            if ((IsCloned == false) && (Cuesheet != null))
+                            if (Cuesheet != null)
                             {
                                 var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
                                 if (positionTrackShouldHave != Position)

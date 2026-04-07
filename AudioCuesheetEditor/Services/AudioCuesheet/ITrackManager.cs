@@ -23,6 +23,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     public interface ITrackManager
     {
         /// <summary>
+        /// Set position for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="position"></param>
+        void SetPosition(Track track, uint? position);
+        /// <summary>
         /// Set artist for track
         /// </summary>
         /// <param name="track"></param>
@@ -35,11 +41,47 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="title"></param>
         void SetTitle(Track track, String? title);
         /// <summary>
+        /// Set begin for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="begin"></param>
+        void SetBegin(Track track, TimeSpan? begin);
+        /// <summary>
+        /// Set end for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="end"></param>
+        void SetEnd(Track track, TimeSpan? end);
+        /// <summary>
+        /// Set length for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="length"></param>
+        void SetLength(Track track, TimeSpan? length);
+        /// <summary>
+        /// Set pregap for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="pregap"></param>
+        void SetPregap(Track track, TimeSpan? pregap);
+        /// <summary>
+        /// Set postgap for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="postgap"></param>
+        void SetPostgap(Track track, TimeSpan? postgap);
+        /// <summary>
         /// Set flags for track
         /// </summary>
         /// <param name="track"></param>
         /// <param name="flags"></param>
         void SetFlags(Track track, IEnumerable<Flag> flags);
+        /// <summary>
+        /// Set IsLinkedToPreviousTrack for track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <param name="linkedToPreviousTrack"></param>
+        void SetLinkedToPreviousTrack(Track track, Boolean linkedToPreviousTrack);
         /// <summary>
         /// Copies values from a track to another
         /// </summary>
@@ -62,6 +104,5 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="track"></param>
         /// <returns></returns>
         Track Clone(Track track);
-        //TODO: Add all functions for editing a track (IsLinkedToPreviousTrack, Position, Begin, End, Length, Flags, PreGap, PostGap)
     }
 }

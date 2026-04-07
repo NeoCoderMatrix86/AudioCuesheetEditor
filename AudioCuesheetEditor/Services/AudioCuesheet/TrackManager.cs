@@ -15,6 +15,8 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
+using MetaBrainz.MusicBrainz.Interfaces.Entities;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
@@ -25,6 +27,16 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         //TODO: Tests
         /// <inheritdoc/>
+        public void SetPosition(Track track, uint? position)
+        {
+            var previousValue = track.Position;
+            if (Equals(position, previousValue) == false)
+            {
+                track.Position = position;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Position))));
+            }
+        }
+        /// <inheritdoc/>
         public void SetArtist(Track track, string? artist)
         {
             var previousValue = track.Artist;
@@ -34,7 +46,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Artist))));
             }
         }
-
         /// <inheritdoc/>
         public void SetTitle(Track track, string? title)
         {
@@ -45,7 +56,61 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Title))));
             }
         }
-
+        /// <inheritdoc/>
+        public void SetBegin(Track track, TimeSpan? begin)
+        {
+            var previousValue = track.Begin;
+            if (Equals(begin, previousValue) == false)
+            {
+                track.Begin = begin;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.Begin))));
+            }
+        }
+        /// <inheritdoc/>
+        public void SetEnd(Track track, TimeSpan? end)
+        {
+            var previousValue = track.End;
+            if (Equals(end, previousValue) == false)
+            {
+                track.End = end;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.End))));
+            }
+        }
+        /// <inheritdoc/>
+        public void SetLength(Track track, TimeSpan? length)
+        {
+            throw new NotImplementedException();
+        }
+        /// <inheritdoc/>
+        public void SetPregap(Track track, TimeSpan? pregap)
+        {
+            var previousValue = track.PreGap;
+            if (Equals(pregap, previousValue) == false)
+            {
+                track.PreGap = pregap;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.PreGap))));
+            }
+        }
+        /// <inheritdoc/>
+        public void SetPostgap(Track track, TimeSpan? postgap)
+        {
+            var previousValue = track.PostGap;
+            if (Equals(postgap, previousValue) == false)
+            {
+                track.PostGap = postgap;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.PostGap))));
+            }
+        }
+        /// <inheritdoc/>
+        public void SetLinkedToPreviousTrack(Track track, bool linkedToPreviousTrack)
+        {
+            var previousValue = track.IsLinkedToPreviousTrack;
+            if (Equals(linkedToPreviousTrack, previousValue) == false)
+            {
+                track.IsLinkedToPreviousTrack = linkedToPreviousTrack;
+                _traceChangeManager.AddChange(new(track, new(previousValue, nameof(Track.IsLinkedToPreviousTrack))));
+            }
+        }
         /// <inheritdoc/>
         public void SetFlags(Track track, IEnumerable<Flag> flags)
         {
