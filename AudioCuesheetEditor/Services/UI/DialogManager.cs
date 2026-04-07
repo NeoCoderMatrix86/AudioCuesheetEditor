@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Services.UI
                 var result = await dialog.Result;
                 if ((result?.Canceled == false) && (result.Data is Track editedTrack))
                 {
-                    tracks.First().CopyValues(editedTrack, setCuesheet: false);
+                    _trackManager.CopyValues(editedTrack, tracks.First());
                 }
             }
             if (tracks.Count() > 1)
@@ -203,7 +203,7 @@ namespace AudioCuesheetEditor.Services.UI
                         editMultipleTracksModalResult.EditedTrack.PreGap = preGap;
                         editMultipleTracksModalResult.EditedTrack.PostGap = postGap;
                         //Now copy all values
-                        track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: copyIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: copyTrackArtist, setTitle: copyTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: copyTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
+                        _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: copyIsLinkedToPreviousTrack, setPosition: copyTrackPosition, setArtist: copyTrackArtist, setTitle: copyTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: copyTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
                     }
                 }
             }
