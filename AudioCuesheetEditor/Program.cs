@@ -64,6 +64,7 @@ builder.Services.AddScoped<DialogManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 builder.Services.AddScoped<ITrackManager, TrackManager>();
+builder.Services.AddScoped<ICuesheetManager, CuesheetManager>();
 
 builder.Services.AddLogging();
 // Read out configuration for loglevel

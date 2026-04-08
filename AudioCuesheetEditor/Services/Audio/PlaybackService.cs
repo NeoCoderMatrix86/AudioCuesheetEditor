@@ -59,7 +59,8 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             _sessionStateContainer = sessionStateContainer;
             cuesheet = _sessionStateContainer.Cuesheet;
-            cuesheet.AudiofileChanged += Cuesheet_AudiofileChanged;
+            //TODO
+            //cuesheet.AudiofileChanged += Cuesheet_AudiofileChanged;
             _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
             _howl = howl;
             _howl.OnPlay += Howl_OnPlay;
@@ -184,7 +185,8 @@ namespace AudioCuesheetEditor.Services.Audio
             {
                 if (disposing)
                 {
-                    cuesheet.AudiofileChanged -= Cuesheet_AudiofileChanged;
+                    //TODO
+                    //cuesheet.AudiofileChanged -= Cuesheet_AudiofileChanged;
                     _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
                     _howl.OnPlay -= Howl_OnPlay;
                     _howl.OnPause -= Howl_OnPause;
@@ -246,9 +248,10 @@ namespace AudioCuesheetEditor.Services.Audio
         private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
         {
             _ = StopAsync();
-            cuesheet.AudiofileChanged -= Cuesheet_AudiofileChanged;
+            //TODO
+            //cuesheet.AudiofileChanged -= Cuesheet_AudiofileChanged;
             cuesheet = _sessionStateContainer.Cuesheet;
-            cuesheet.AudiofileChanged += Cuesheet_AudiofileChanged;
+            //cuesheet.AudiofileChanged += Cuesheet_AudiofileChanged;
         }
 
         private void Cuesheet_AudiofileChanged(object? sender, EventArgs e)

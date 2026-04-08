@@ -32,16 +32,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private readonly Lock syncLock = new();
 
         private List<Track> tracks = [];
-        private String? artist;
-        private String? title;
-        private Audiofile? audiofile;
-        private CDTextfile? cDTextfile;
-        private String? catalogueNumber;
-        private readonly List<KeyValuePair<String, Track>> currentlyHandlingLinkedTrackPropertyChange = [];
 
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         public event EventHandler? IsRecordingChanged;
-        public event EventHandler? AudiofileChanged;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -61,59 +54,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }
         }
 
-        public String? Artist 
-        {
-            get => artist;
-            set 
-            {
-                var previousValue = artist;
-                artist = value;
-                FireEvents(previousValue, propertyName: nameof(Artist));
-            }
-        }
-        public String? Title 
-        {
-            get => title;
-            set 
-            {
-                var previousValue = title;
-                title = value;
-                FireEvents(previousValue, propertyName: nameof(Title));
-            }
-        }
-        public Audiofile? Audiofile
-        {
-            get => audiofile;
-            set 
-            {
-                var previousValue = audiofile;
-                audiofile = value;
-                FireEvents(previousValue, propertyName: nameof(Audiofile));
-                AudiofileChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        public String? Artist { get; set; }
+        
+        public String? Title { get; set; }
 
-        public CDTextfile? CDTextfile 
-        {
-            get => cDTextfile;
-            set 
-            {
-                var previousValue = cDTextfile;
-                cDTextfile = value;
-                FireEvents(previousValue, fireValidateablePropertyChanged: false, propertyName: nameof(CDTextfile));
-            }
-        }
+        public Audiofile? Audiofile { get; set; }
 
-        public String? Cataloguenumber 
-        {
-            get => catalogueNumber;
-            set
-            {
-                var previousValue = catalogueNumber;
-                catalogueNumber = value;
-                FireEvents(previousValue, propertyName: nameof(Cataloguenumber));
-            }
-        }
+        public CDTextfile? CDTextfile { get; set; }
+
+        public String? Cataloguenumber { get; set; }
 
         [JsonIgnore]
         public bool IsRecording => RecordingStart.HasValue;
@@ -121,6 +70,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public DateTime? RecordingStart { get; set; }
 
+        //TODO: Move to cuesheetmanager
         [JsonIgnore]
         public IEnumerable<String> IsRecordingPossible
         {
