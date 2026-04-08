@@ -46,7 +46,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="setFlags"></param>
         /// <param name="setPreGap"></param>
         /// <param name="setPostGap"></param>
-        void CopyValues(ITrack source, Track target, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true);
+        void CopyValues(ITrack source, Track target, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = true, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true);
         /// <summary>
         /// Create a clone of a track
         /// </summary>
