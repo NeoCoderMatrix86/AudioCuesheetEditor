@@ -93,8 +93,7 @@ along with Foobar.  If not, see
                     }
                     if ((Track.Length.HasValue == false) && (_autocompleteTrack?.Length.HasValue == true))
                     {
-                        //TODO
-                        Track.Length = _autocompleteTrack?.Length;
+                        _trackManager.SetProperty(Track, x => x.Length, _autocompleteTrack.Length);
                     }
                     break;
             }
