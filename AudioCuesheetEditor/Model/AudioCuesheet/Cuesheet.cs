@@ -161,6 +161,28 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             return previousLinkedTrack;
         }
 
+        /// <summary>
+        /// Get next linked track that is linked to the parameter track
+        /// </summary>
+        /// <param name="track"></param>
+        /// <returns></returns>
+        public Track? GetNextLinkedTrack(Track track)
+        {
+            Track? nextLinkedTrack = null;
+            {
+                var index = tracks.IndexOf(track);
+                if (index + 1 < tracks.Count)
+                {
+                    var nextTrack = tracks.ElementAt(index + 1);
+                    if (nextTrack.IsLinkedToPreviousTrack)
+                    {
+                        nextLinkedTrack = nextTrack;
+                    }
+                }
+            }
+            return nextLinkedTrack;
+        }
+
         public void AddTrack(Track track)
         {
             var previousValue = new List<Track>(tracks);

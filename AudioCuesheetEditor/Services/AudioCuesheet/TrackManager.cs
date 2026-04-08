@@ -30,8 +30,8 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
         {
-            //TODO: If IsLinkedToPreviousTrack is true set also position, begin and end
             SetValue(track, propertyExpression, value);
+            RecalculateLinkedProperties(track);
         }
 
         /// <inheritdoc/>
@@ -108,6 +108,35 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             propertyInfo.SetValue(track, value);
 
             _traceChangeManager.AddChange(new(track, new(previousValue, propertyInfo.Name)));
+        }
+
+        static void RecalculateLinkedProperties(Track track)
+        {
+            var previousTrack = track.Cuesheet?.GetPreviousLinkedTrack(track);
+            if (previousTrack != null)
+            {
+                if (track.Position.HasValue && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
+                {
+                    track.Position = previousTrack.Position.Value + 1;
+                }
+                if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+                {
+                    track.Begin = previousTrack.End;
+                }
+                if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
+                {
+                    previousTrack.End = track.Begin;
+                }
+            }
+            var nextTrack = track.Cuesheet?.GetNextLinkedTrack(track);
+            if (nextTrack != null)
+            {
+                if (track.Position.HasValue)
+                {
+                    nextTrack.Position = track.Position.Value + 1;
+                }
+                nextTrack.Begin = track.End;
+            }
         }
     }
 }
