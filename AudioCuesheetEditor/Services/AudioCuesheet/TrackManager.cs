@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public Track Clone(ITrack track)
         {
             var clone = new Track();
-            CopyValues(track, clone, setIsLinkedToPreviousTrack: true);
+            CopyValues(track, clone);
             return clone;
         }
 
