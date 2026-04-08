@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
-@inject ITrackManager trackManager
+@inject ITrackManager _trackManager
 
 @switch (CurrentViewMode)
 {
@@ -235,7 +235,7 @@ along with Foobar.  If not, see
         }
         if (trackThatWillBeCopied != null)
         {
-            var copy = trackManager.Clone(trackThatWillBeCopied);
+            var copy = _trackManager.Clone(trackThatWillBeCopied);
             Cuesheet?.AddTrack(copy);
             TraceChangeManager.TraceChanges(copy);
             await EditTrackModalClicked(copy);
@@ -298,9 +298,10 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task TimespanChanged<TProperty>(Track track, System.Linq.Expressions.Expression<Func<Track, TProperty>> expression, String value)
+    async Task TimespanChanged(Track track, System.Linq.Expressions.Expression<Func<Track, TimeSpan?>> expression, String value)
     {
-        await _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TProperty>(track, expression, value);
+        var timeSpan = await _applicationOptionsTimeSpanParser.GetTimespanAsync(value);
+        _trackManager.SetProperty<TimeSpan?>(track, expression, timeSpan);
         if (form != null)
         {
             await form.ValidateAsync();
