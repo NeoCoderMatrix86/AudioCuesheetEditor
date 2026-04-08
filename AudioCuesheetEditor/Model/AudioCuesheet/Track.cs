@@ -21,7 +21,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Track : Validateable, ITraceable, ITrack
     {
-        /// <inheritdoc/>
         //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         

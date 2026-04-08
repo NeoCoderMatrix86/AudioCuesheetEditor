@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 @inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
 
 <MudCard Outlined>
     <MudCardContent>
@@ -82,29 +83,12 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            if (CurrentViewMode == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
-        }
-    }
+    public Cuesheet Cuesheet => _sessionStateContainer.Cuesheet;
 
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
-        if (Cuesheet != null)
-        {
-            Cuesheet.IsRecordingChanged -= Cuesheet_IsRecordingChanged;
-        }
-        base.OnParametersSet();
-        if (Cuesheet != null)
-        {
-            Cuesheet.IsRecordingChanged += Cuesheet_IsRecordingChanged;
-        }
+        base.OnInitialized();
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -123,7 +107,7 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         if (Cuesheet != null)
         {
-            Cuesheet.IsRecordingChanged -= Cuesheet_IsRecordingChanged;
+            _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
         }
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
@@ -160,7 +144,7 @@ along with Foobar.  If not, see
         }
     }
 
-    void Cuesheet_IsRecordingChanged(object? sender, EventArgs args)
+    void CuesheetManager_IsRecordingChanged(object? sender, Cuesheet cuesheet)
     {
         StateHasChanged();
         artistInput?.ClearAsync();

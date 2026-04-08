@@ -25,6 +25,8 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
+        public event EventHandler<Cuesheet>? IsRecordingChanged;
+
         //TODO: Tests
 
         /// <inheritdoc/>
@@ -34,14 +36,37 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
+        public Result IsRecordingPossible(Cuesheet cuesheet)
+        {
+            if (cuesheet.Tracks.Count != 0)
+            {
+                return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
+            }
+            return Result.Success();
+        }
+
+        /// <inheritdoc/>
         public Result StartRecording(Cuesheet cuesheet)
         {
             if (cuesheet.IsRecording == true)
             {
-                //TODO
+                return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
             }
             cuesheet.RecordingStart = DateTime.UtcNow;
+            IsRecordingChanged?.Invoke(this, cuesheet);
             return Result.Success();
+        }
+
+        /// <inheritdoc/>
+        public void StopRecording(Cuesheet cuesheet)
+        {
+            var lastTrack = cuesheet.Tracks.LastOrDefault();
+            if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
+            {
+                lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+            }
+            cuesheet.RecordingStart = null;
+            IsRecordingChanged?.Invoke(this, cuesheet);
         }
 
         void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)

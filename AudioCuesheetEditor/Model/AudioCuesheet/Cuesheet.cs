@@ -32,9 +32,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         private readonly Lock syncLock = new();
 
         private List<Track> tracks = [];
-
+        //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-        public event EventHandler? IsRecordingChanged;
 
         [JsonInclude]
         public IReadOnlyCollection<Track> Tracks
@@ -69,25 +68,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         
         [JsonIgnore]
         public DateTime? RecordingStart { get; set; }
-
-        //TODO: Move to cuesheetmanager
-        [JsonIgnore]
-        public IEnumerable<String> IsRecordingPossible
-        {
-            get
-            {
-                var errors = new List<String>();
-                if (IsRecording)
-                {
-                    errors.Add("Record is already running!");
-                }
-                if (Tracks.Count != 0)
-                {
-                    errors.Add("Cuesheet already contains tracks!");
-                }
-                return errors;
-            }
-        }
 
         [JsonIgnore]
         public Boolean IsImporting { get; set; }
@@ -143,7 +123,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             tracks.Add(track);
             track.Cuesheet = this;
             RecalculateTrackProperties(track);
-            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         public void RemoveTrack(Track track)
@@ -180,7 +159,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
             RecalculateLastTrackEnd();
-            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
         /// <summary>
@@ -210,7 +188,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
             RecalculateLastTrackEnd();
-            OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
         public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
@@ -270,30 +247,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                     }
                 }
-
-                OnTraceablePropertyChanged(previousValue, nameof(Tracks));
             }
-        }
-
-        public void StartRecording()
-        {
-            if (IsRecordingPossible.Any() == false)
-            {
-                RecordingStart = DateTime.UtcNow;
-                IsRecordingChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public void StopRecording()
-        {
-            //Set end of last track
-            var lastTrack = Tracks.LastOrDefault();
-            if ((lastTrack != null) && (RecordingStart.HasValue))
-            {
-                lastTrack.End = DateTime.UtcNow - RecordingStart.Value;
-            }
-            RecordingStart = null;
-            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public Boolean RecalculateLastTrackEnd()
@@ -447,11 +401,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             }            
         }
 
-        private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-        {
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
-        }
-
         private void SwitchTracks(Track track1, Track track2)
         {
             var indexTrack1 = tracks.IndexOf(track1);
@@ -495,38 +444,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// Method for checking if fire of events should be done
-        /// </summary>
-        /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
-        /// <param name="fireTraceablePropertyChanged">Fire TraceablePropertyChanged?</param>
-        /// <param name="propertyName">Property firing the event</param>
-        /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-        {
-            var propertyInfo = GetType().GetProperty(propertyName);
-            if (propertyInfo != null)
-            {
-                var propertyValue = propertyInfo.GetValue(this);
-                if (Equals(propertyValue, previousValue) == false)
-                {
-                    if (fireValidateablePropertyChanged)
-                    {
-                        OnValidateablePropertyChanged(propertyName);
-                    }
-                    if (fireTraceablePropertyChanged)
-                    {
-                        OnTraceablePropertyChanged(previousValue, propertyName);
-                    }
-                }
-            }
-            else
-            {
-                throw new NullReferenceException(String.Format("Property {0} could not be found!", propertyName));
             }
         }
     }

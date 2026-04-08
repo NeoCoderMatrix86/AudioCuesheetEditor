@@ -24,6 +24,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     public interface ICuesheetManager
     {
         /// <summary>
+        /// Event propagated when recording on a cuesheet changes
+        /// </summary>
+        public event EventHandler<Cuesheet>? IsRecordingChanged;
+        /// <summary>
         /// Set property for cuesheet
         /// </summary>
         /// <typeparam name="TProperty"></typeparam>
@@ -32,11 +36,23 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="value"></param>
         void SetProperty<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
         /// <summary>
+        /// Checks if recording for the cuesheet is possible
+        /// </summary>
+        /// <param name="cuesheet"></param>
+        /// <returns></returns>
+        Result IsRecordingPossible(Cuesheet cuesheet);
+        /// <summary>
         /// Starts recording on cuesheet
         /// </summary>
         /// <param name="cuesheet"></param>
         /// <returns></returns>
         Result StartRecording(Cuesheet cuesheet);
+        /// <summary>
+        /// Stop recording on cuesheet
+        /// </summary>
+        /// <param name="cuesheet"></param>
+        /// <returns></returns>
+        void StopRecording(Cuesheet cuesheet);
 
         //TODO: Add all methods from cuesheet here
     }
