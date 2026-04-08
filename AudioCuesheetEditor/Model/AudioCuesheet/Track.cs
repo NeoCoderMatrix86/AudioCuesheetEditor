@@ -21,8 +21,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Track : Validateable, ITraceable, ITrack
     {
-        public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
-
         /// <inheritdoc/>
         //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
