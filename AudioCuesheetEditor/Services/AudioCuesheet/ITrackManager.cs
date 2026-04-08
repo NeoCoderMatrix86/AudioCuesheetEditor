@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using System.Linq.Expressions;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
@@ -23,65 +24,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     public interface ITrackManager
     {
         /// <summary>
-        /// Set position for track
+        /// Set property value for track
         /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
         /// <param name="track"></param>
-        /// <param name="position"></param>
-        void SetPosition(Track track, uint? position);
-        /// <summary>
-        /// Set artist for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="artist"></param>
-        void SetArtist(Track track, String? artist);
-        /// <summary>
-        /// Set title for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="title"></param>
-        void SetTitle(Track track, String? title);
-        /// <summary>
-        /// Set begin for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="begin"></param>
-        void SetBegin(Track track, TimeSpan? begin);
-        /// <summary>
-        /// Set end for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="end"></param>
-        void SetEnd(Track track, TimeSpan? end);
-        /// <summary>
-        /// Set length for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="length"></param>
-        void SetLength(Track track, TimeSpan? length);
-        /// <summary>
-        /// Set pregap for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="pregap"></param>
-        void SetPregap(Track track, TimeSpan? pregap);
-        /// <summary>
-        /// Set postgap for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="postgap"></param>
-        void SetPostgap(Track track, TimeSpan? postgap);
-        /// <summary>
-        /// Set flags for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="flags"></param>
-        void SetFlags(Track track, IEnumerable<Flag> flags);
-        /// <summary>
-        /// Set IsLinkedToPreviousTrack for track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <param name="linkedToPreviousTrack"></param>
-        void SetLinkedToPreviousTrack(Track track, Boolean linkedToPreviousTrack);
+        /// <param name="propertyExpression"></param>
+        /// <param name="value"></param>
+        void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value);
         /// <summary>
         /// Copies values from a track to another
         /// </summary>
@@ -97,12 +46,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="setFlags"></param>
         /// <param name="setPreGap"></param>
         /// <param name="setPostGap"></param>
-        void CopyValues(Track source, Track target, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true);
+        void CopyValues(ITrack source, Track target, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true);
         /// <summary>
         /// Create a clone of a track
         /// </summary>
         /// <param name="track"></param>
         /// <returns></returns>
-        Track Clone(Track track);
+        Track Clone(ITrack track);
     }
 }

@@ -26,6 +26,7 @@ along with Foobar.  If not, see
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
+@inject ITrackManager trackManager
 
 @switch (CurrentViewMode)
 {
@@ -130,7 +131,7 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-@code {
+    @code {
     //TODO: Disallow editing of position
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
@@ -234,7 +235,7 @@ along with Foobar.  If not, see
         }
         if (trackThatWillBeCopied != null)
         {
-            var copy = new Track(trackThatWillBeCopied);
+            var copy = trackManager.Clone(trackThatWillBeCopied);
             Cuesheet?.AddTrack(copy);
             TraceChangeManager.TraceChanges(copy);
             await EditTrackModalClicked(copy);

@@ -51,16 +51,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 foreach (var track in tracks)
                 {
-                    track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
-                    track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
                     track.Cuesheet = null;
                 }
                 tracks = [.. value];
                 foreach (var track in tracks)
                 {
                     track.Cuesheet = this;
-                    track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
-                    track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
                 }
             }
         }
@@ -168,17 +164,13 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public void AddTrack(Track track)
         {
             var previousValue = new List<Track>(tracks);
-            track.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged;
             if (IsRecording && RecordingStart.HasValue)
             {
                 track.Begin = DateTime.UtcNow - RecordingStart.Value;
             }
-            //Fire the event manually since we don't know if the track is already linked to previous one
-            Track_IsLinkedToPreviousTrackChanged(track, EventArgs.Empty);
             tracks.Add(track);
             track.Cuesheet = this;
             RecalculateTrackProperties(track);
-            track.RankPropertyValueChanged += Track_RankPropertyValueChanged;
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
 
@@ -194,11 +186,10 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
             var previousValue = new List<Track>();
-            tracks.ForEach(x => previousValue.Add(new Track(x)));
+            //TODO
+            //tracks.ForEach(x => previousValue.Add(new Track(x)));
             tracks.Remove(track);
             track.Cuesheet = null;
-            track.RankPropertyValueChanged -= Track_RankPropertyValueChanged;
-            track.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged;
             //If Tracks are linked, we need to set the linked track again
             if (nextTrack != null)
             {
@@ -227,9 +218,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
         {
             var previousValue = new List<Track>();
-            tracks.ForEach(x => previousValue.Add(new Track(x)));
-            tracks.ForEach(x => x.RankPropertyValueChanged -= Track_RankPropertyValueChanged);
-            tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged -= Track_IsLinkedToPreviousTrackChanged);
+            //TODO
+            //tracks.ForEach(x => previousValue.Add(new Track(x)));
             var intersection = tracks.Intersect(tracksToRemove);
             tracks = [.. tracks.Except(intersection)];
             foreach (var track in tracks)
@@ -247,8 +237,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                 }
             }
-            tracks.ForEach(x => x.RankPropertyValueChanged += Track_RankPropertyValueChanged);
-            tracks.ForEach(x => x.IsLinkedToPreviousTrackChanged += Track_IsLinkedToPreviousTrackChanged);
             RecalculateLastTrackEnd();
             OnTraceablePropertyChanged(previousValue, nameof(Tracks));
         }
@@ -485,97 +473,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     trackToCalculate.Begin = TimeSpan.Zero;
                 }
             }            
-        }
-
-        private void Track_RankPropertyValueChanged(object? sender, string e)
-        {
-            if (sender is Track trackRaisedEvent)
-            {
-                var item = KeyValuePair.Create(e, trackRaisedEvent);
-                if (currentlyHandlingLinkedTrackPropertyChange.Contains(item) == false)
-                {
-                    currentlyHandlingLinkedTrackPropertyChange.Add(item);
-                    var linkedPreviousTrack = GetPreviousLinkedTrack(trackRaisedEvent);
-                    //Check if raising track has linked previous track
-                    if (trackRaisedEvent.IsLinkedToPreviousTrack && (linkedPreviousTrack != null))
-                    {
-                        switch (e)
-                        {
-                            case nameof(Track.Position):
-                                if (trackRaisedEvent.Position.HasValue)
-                                {
-                                    linkedPreviousTrack.Position = trackRaisedEvent.Position.Value - 1;
-                                }
-                                break;
-                            case nameof(Track.Begin):
-                                if (trackRaisedEvent.Begin.HasValue)
-                                {
-                                    linkedPreviousTrack.End = trackRaisedEvent.Begin;
-                                }
-                                break;
-                        }
-                    }
-                    //Check if track is linked by next track
-                    var index = tracks.IndexOf(trackRaisedEvent);
-                    if ((index + 1) < tracks.Count)
-                    {
-                        var nextTrack = tracks.ElementAt(index + 1);
-                        if (nextTrack.IsLinkedToPreviousTrack)
-                        {
-                            switch (e)
-                            {
-                                case nameof(Track.Position):
-                                    if (trackRaisedEvent.Position.HasValue)
-                                    {
-                                        nextTrack.Position = trackRaisedEvent.Position.Value + 1;
-                                    }
-                                    break;
-                                case nameof(Track.End):
-                                    nextTrack.Begin = trackRaisedEvent.End;
-                                    break;
-                            }
-                        }
-                    }
-                    currentlyHandlingLinkedTrackPropertyChange.Remove(item);
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
-        }
-
-        private void Track_IsLinkedToPreviousTrackChanged(object? sender, EventArgs e)
-        {
-            if (sender != null)
-            {
-                Track trackRaisedEvent = (Track)sender;
-                if (trackRaisedEvent.IsLinkedToPreviousTrack)
-                {
-                    //Set values
-                    var index = tracks.IndexOf(trackRaisedEvent);
-                    if (index > 0)
-                    {
-                        var previousTrack = tracks.ElementAt(index - 1);
-                        if ((trackRaisedEvent.Position.HasValue) && (previousTrack.Position.HasValue) && (trackRaisedEvent.Position != previousTrack.Position.Value + 1))
-                        {
-                            trackRaisedEvent.Position = previousTrack.Position.Value + 1;
-                        }
-                        if ((previousTrack.End.HasValue) && (trackRaisedEvent.Begin != previousTrack.End))
-                        {
-                            trackRaisedEvent.Begin = previousTrack.End;
-                        }
-                        if ((previousTrack.End.HasValue == false) && (trackRaisedEvent.Begin.HasValue))
-                        {
-                            previousTrack.End = trackRaisedEvent.Begin;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                throw new ArgumentNullException(nameof(sender));
-            }
         }
 
         private void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")

@@ -19,45 +19,13 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    //TODO: Move back to plain POCO
     public class Track : Validateable, ITraceable, ITrack
     {
         public static readonly List<String> AllPropertyNames = [nameof(IsLinkedToPreviousTrack), nameof(Position), nameof(Artist), nameof(Title), nameof(Begin), nameof(End), nameof(Flags), nameof(PreGap), nameof(PostGap), nameof(Length)];
 
-        private uint? position;
-        private TimeSpan? begin;
-        private TimeSpan? end;
-        private TimeSpan? length;
-        private Boolean isLinkedToPreviousTrack;
-        private Cuesheet? cuesheet;
-        private TimeSpan? preGap;
-        private TimeSpan? postGap;
-
-        /// <summary>
-        /// A property with influence to position of this track in cuesheet has been changed. Name of the property changed is provided in event arguments.
-        /// </summary>
-        //TODO: Check if this event is really needed because of reordering
-        public event EventHandler<String>? RankPropertyValueChanged;
-
-        /// <summary>
-        /// Eventhandler for IsLinkedToPreviousTrack has changed
-        /// </summary>
-        public event EventHandler? IsLinkedToPreviousTrackChanged;
-
         /// <inheritdoc/>
+        //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-
-        public Track() { }
-
-        /// <summary>
-        /// Create object with copied values from input
-        /// </summary>
-        /// <param name="track">Object to copy values from</param>
-        /// <param name="copyCuesheetReference">Copy cuesheet reference from track also?</param>
-        public Track(ITrack track, Boolean copyCuesheetReference = true) : this()
-        {
-            CopyValues(track, copyCuesheetReference);
-        }
         
         public uint? Position { get; set; }
         public String? Artist { get; set; }
@@ -65,93 +33,53 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public TimeSpan? Begin { get; set; }        
         public TimeSpan? End { get; set; }
 
-        //TODO: find a way for AutomaticallyCalculateLength and Length
-
-        /// <summary>
-        /// If <see cref="Length"/> is set, should it be automatically change begin and end? Defaulting to true, because only during edit dialog this should be set to false. 
-        /// If set to false an internal field will be used.
-        /// </summary>
-        [JsonIgnore]
-        public Boolean AutomaticallyCalculateLength { get; init; } = true;
         [JsonIgnore]
         public TimeSpan? Length 
         {
             get
             {
-                if (AutomaticallyCalculateLength)
+                if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
                 {
-                    if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
-                    {
-                        return End - Begin;
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                    return End - Begin;
                 }
                 else
                 {
-                    return length;
+                    return null;
                 }
             }
             set
             {
-                var previousValue = Length;
-                if (AutomaticallyCalculateLength)
+                if ((Begin.HasValue == false) && (End.HasValue == false))
                 {
-                    if ((Begin.HasValue == false) && (End.HasValue == false))
+                    Begin = TimeSpan.Zero;
+                    End = Begin.Value + value;
+                }
+                else
+                {
+                    if ((Begin.HasValue == true) && (End.HasValue == true))
                     {
-                        Begin = TimeSpan.Zero;
                         End = Begin.Value + value;
                     }
                     else
                     {
-                        if ((Begin.HasValue == true) && (End.HasValue == true))
+                        if ((End.HasValue == false) && (Begin.HasValue))
                         {
                             End = Begin.Value + value;
                         }
-                        else
+                        if ((Begin.HasValue == false) && (End.HasValue))
                         {
-                            if ((End.HasValue == false) && (Begin.HasValue))
-                            {
-                                End = Begin.Value + value;
-                            }
-                            if ((Begin.HasValue == false) && (End.HasValue))
-                            {
-                                Begin = End.Value - value;
-                            }
+                            Begin = End.Value - value;
                         }
                     }
                 }
-                else
-                {
-                    length = value;
-                }
-                FireEvents(previousValue, fireRankPropertyValueChanged: false, fireTraceablePropertyChanged: false);
             }
         }
         [JsonInclude]
         public IEnumerable<Flag> Flags { get; set; } = [];
         
         [JsonIgnore]
-        public Cuesheet? Cuesheet 
-        {
-            get => cuesheet;
-            set 
-            {
-                var previousValue = cuesheet;
-                Boolean setValue = true;
-                if (value != null)
-                {
-                    setValue = value.Tracks.Contains(this);
-                }
-                if (setValue)
-                {
-                    cuesheet = value;
-                    FireEvents(previousValue, fireValidateablePropertyChanged: false, fireRankPropertyValueChanged: false, propertyName: nameof(Cuesheet));
-                }
-            }
-        }
+        public Cuesheet? Cuesheet { get; set; }
+        
         /// <inheritdoc/>
         public TimeSpan? PreGap { get; set;  }
         /// <inheritdoc/>
@@ -160,143 +88,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
         public Boolean IsLinkedToPreviousTrack { get; set; }
-
-        /// <summary>
-        /// Copy values from input object to this object
-        /// </summary>
-        /// <param name="track">Object to copy values from</param>
-        /// <param name="setCuesheet">Copy Cuesheet reference from track also?</param>
-        /// <param name="setIsLinkedToPreviousTrack">Copy IsLinkedToPreviousTrack from track also?</param>
-        /// <param name="setPosition">Copy Position from track also?</param>
-        /// <param name="setArtist">Copy Artist from track also?</param>
-        /// <param name="setTitle">Copy Title from track also?</param>
-        /// <param name="setBegin">Copy Begin from track also?</param>
-        /// <param name="setEnd">Copy End from track also?</param>
-        /// <param name="setLength">Copy Length from track also?</param>
-        /// <param name="setFlags">Copy Flags from track also?</param>
-        /// <param name="setPreGap">Copy PreGap from track also?</param>
-        /// <param name="setPostGap">Copy PostGap from track also?</param>
-        /// <param name="useInternalSetters">A list of properties, for whom the internal set construct should be used, in order to avoid automatic calculation.</param>
-        public void CopyValues(ITrack track, Boolean setCuesheet = true, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = false, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true, IEnumerable<String>? useInternalSetters = null)
-        {
-            if (setCuesheet && (track is Track cuesheetTrack))
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Cuesheet))))
-                {
-                    cuesheet = cuesheetTrack.Cuesheet;
-                }
-                else
-                {
-                    Cuesheet = cuesheetTrack.Cuesheet;
-                }
-            }
-            if (setPosition)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Position))))
-                {
-                    position = track.Position;
-                }
-                else
-                {
-                    Position = track.Position;
-                }
-            }
-            //TODO
-            //if (setArtist)
-            //{
-            //    if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Artist))))
-            //    {
-            //        artist = track.Artist;
-            //    }
-            //    else
-            //    {
-            //        Artist = track.Artist;
-            //    }
-            //}
-            //if (setTitle)
-            //{
-            //    if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Title))))
-            //    {
-            //        title = track.Title;
-            //    }
-            //    else
-            //    {
-            //        Title = track.Title;
-            //    }
-            //}
-            if (setBegin)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Begin))))
-                {
-                    begin = track.Begin;
-                }
-                else
-                {
-                    Begin = track.Begin;
-                }
-            }
-            if (setEnd)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(End))))
-                {
-                    end = track.End;
-                }
-                else
-                {
-                    End = track.End;
-                }
-            }
-            if (setLength)
-            {
-                Length = track.Length;
-            }
-            //TODO
-            //if (setFlags)
-            //{
-            //    if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(Flags))))
-            //    {
-            //        flags.Clear();
-            //        flags.AddRange(track.Flags);
-            //    }
-            //    else
-            //    {
-            //        Flags = track.Flags;
-            //    }
-            //}
-            if (setPreGap)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(PreGap))))
-                {
-                    preGap = track.PreGap;
-                }
-                else
-                {
-                    PreGap = track.PreGap;
-                }
-            }
-            if (setPostGap)
-            {
-                if ((useInternalSetters != null) && (useInternalSetters.Contains(nameof(PostGap))))
-                {
-                    postGap = track.PostGap;
-                }
-                else
-                {
-                    PostGap = track.PostGap;
-                }
-            }
-            if (setIsLinkedToPreviousTrack)
-            {
-                if (useInternalSetters?.Contains(nameof(IsLinkedToPreviousTrack)) == true)
-                {
-                    isLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
-                }
-                else
-                {
-                    IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack;
-                }
-            }
-        }
 
         public override ValidationResult Validate(string property)
         {
@@ -385,44 +176,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
-        }
-
-        protected void OnTraceablePropertyChanged(object? previousValue, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-        {
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, propertyName)));
-        }
-
-        /// <summary>
-        /// Method for checking if fire of events should be done
-        /// </summary>
-        /// <param name="previousValue">Previous value of the property firing events</param>
-        /// <param name="fireValidateablePropertyChanged">Fire OnValidateablePropertyChanged?</param>
-        /// <param name="fireRankPropertyValueChanged">Fire RankPropertyValueChanged?</param>
-        /// <param name="fireTraceablePropertyChanged">Fire OnTraceablePropertyChanged?</param>
-        /// <exception cref="NullReferenceException">If propertyName can not be found, an exception is thrown.</exception>
-        /// <param name="propertyName">Property firing the events</param>
-        private void FireEvents(object? previousValue, Boolean fireValidateablePropertyChanged = true, Boolean fireRankPropertyValueChanged = true, Boolean fireTraceablePropertyChanged = true, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-        {
-            var propertyInfo = GetType().GetProperty(propertyName);
-            if (propertyInfo != null)
-            {
-                var propertyValue = propertyInfo.GetValue(this);
-                if (Equals(propertyValue, previousValue) == false)
-                {
-                    if (fireRankPropertyValueChanged)
-                    {
-                        RankPropertyValueChanged?.Invoke(this, propertyName);
-                    }
-                    if (fireTraceablePropertyChanged)
-                    {
-                        OnTraceablePropertyChanged(previousValue, propertyName);
-                    }
-                }
-            }
-            else
-            {
-                throw new NullReferenceException(String.Format("Property {0} could not be found!", propertyName));
-            }
         }
     }
 }

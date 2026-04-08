@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using System.Diagnostics;
 
@@ -31,7 +32,7 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ILogger<ImportManager> logger)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ILogger<ImportManager> logger)
     {
         public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -40,6 +41,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
+        private readonly ITrackManager _trackManager = trackManager;
 
         public void ImportData(String? data)
         {
@@ -177,7 +179,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private static void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
+        private void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
         {
             target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
@@ -210,7 +212,8 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     var importTrack = tracks.ElementAt(i);
                     //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
-                    var track = new Track(importTrack, false);
+                    var track = _trackManager.Clone(importTrack);
+                    track.Cuesheet = null;
                     if (importTrack is ImportTrack importTrackReference)
                     {
                         if (importTrackReference.StartDateTime != null)

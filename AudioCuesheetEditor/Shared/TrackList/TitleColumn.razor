@@ -82,14 +82,14 @@ along with Foobar.  If not, see
         {
             await Task.Delay(100, token);
             base.TraceChangeManager.BulkEdit = true;
-            _trackManager.SetTitle(Track, _title);
+            _trackManager.SetProperty(Track, x => x.Title, _title);
             switch (CurrentViewMode)
             {
                 case ViewMode.DetailView:
                 case ViewMode.ImportView:
                     if ((String.IsNullOrEmpty(Track.Artist)) && (String.IsNullOrEmpty(_autocompleteTrack?.Artist) == false))
                     {
-                        _trackManager.SetArtist(Track, _autocompleteTrack.Artist);
+                        _trackManager.SetProperty(Track, x => x.Artist, _autocompleteTrack.Artist);
                     }
                     if ((Track.Length.HasValue == false) && (_autocompleteTrack?.Length.HasValue == true))
                     {

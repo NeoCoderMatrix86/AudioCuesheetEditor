@@ -45,7 +45,7 @@ namespace AudioCuesheetEditor.Services.UI
             }
             if (tracks.Count() > 1)
             {
-                var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() { AutomaticallyCalculateLength = false } } };
+                var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() } };
                 var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
                 var dialog = await _dialogService.ShowAsync<EditMultipleTracksModal>(null, parameters, options);
                 var result = await dialog.Result;
@@ -80,14 +80,14 @@ namespace AudioCuesheetEditor.Services.UI
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
                                 editMultipleTracksModalResult.EditedTrack.Position += track.Position;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackPosition = false;
                                 editMultipleTracksModalResult.EditedTrack.Position = position;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 var newValue = track.Position - editMultipleTracksModalResult.EditedTrack.Position;
                                 editMultipleTracksModalResult.EditedTrack.Position = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackPosition = false;
                                 break;
                         }
@@ -102,13 +102,13 @@ namespace AudioCuesheetEditor.Services.UI
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.Begin + track.Begin;
                                 editMultipleTracksModalResult.EditedTrack.Begin = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackBegin = false;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 newValue = track.Begin - editMultipleTracksModalResult.EditedTrack.Begin;
                                 editMultipleTracksModalResult.EditedTrack.Begin = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackBegin = false;
                                 break;
                         }
@@ -123,13 +123,13 @@ namespace AudioCuesheetEditor.Services.UI
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.End + track.End;
                                 editMultipleTracksModalResult.EditedTrack.End = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackEnd = false;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 newValue = track.End - editMultipleTracksModalResult.EditedTrack.End;
                                 editMultipleTracksModalResult.EditedTrack.End = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackEnd = false;
                                 break;
                         }
@@ -144,13 +144,13 @@ namespace AudioCuesheetEditor.Services.UI
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.Length + track.Length;
                                 editMultipleTracksModalResult.EditedTrack.Length = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackLength = false;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 newValue = track.Length - editMultipleTracksModalResult.EditedTrack.Length;
                                 editMultipleTracksModalResult.EditedTrack.Length = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackLength = false;
                                 break;
                         }
@@ -165,13 +165,13 @@ namespace AudioCuesheetEditor.Services.UI
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.PreGap + track.PreGap;
                                 editMultipleTracksModalResult.EditedTrack.PreGap = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false);
                                 copyTrackPreGap = false;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 newValue = track.PreGap - editMultipleTracksModalResult.EditedTrack.PreGap;
                                 editMultipleTracksModalResult.EditedTrack.PreGap = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false);
                                 copyTrackPreGap = false;
                                 break;
                         }
@@ -186,13 +186,13 @@ namespace AudioCuesheetEditor.Services.UI
                             case DynamicEditValue.EnteredValueAdd:
                                 var newValue = editMultipleTracksModalResult.EditedTrack.PostGap + track.PostGap;
                                 editMultipleTracksModalResult.EditedTrack.PostGap = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap);
                                 copyTrackPostGap = false;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 newValue = track.PostGap - editMultipleTracksModalResult.EditedTrack.PostGap;
                                 editMultipleTracksModalResult.EditedTrack.PostGap = newValue;
-                                track.CopyValues(editMultipleTracksModalResult.EditedTrack, setCuesheet: false, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap, useInternalSetters: Track.AllPropertyNames);
+                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap);
                                 copyTrackPostGap = false;
                                 break;
                         }
