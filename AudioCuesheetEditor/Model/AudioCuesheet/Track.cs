@@ -30,7 +30,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public String? Title { get; set; }
         public TimeSpan? Begin { get; set; }        
         public TimeSpan? End { get; set; }
-
         [JsonIgnore]
         public TimeSpan? Length 
         {
@@ -74,10 +73,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         }
         [JsonInclude]
         public IEnumerable<Flag> Flags { get; set; } = [];
-        
         [JsonIgnore]
         public Cuesheet? Cuesheet { get; set; }
-        
         /// <inheritdoc/>
         public TimeSpan? PreGap { get; set;  }
         /// <inheritdoc/>
