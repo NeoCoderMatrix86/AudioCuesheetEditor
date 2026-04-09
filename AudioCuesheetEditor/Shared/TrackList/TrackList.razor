@@ -45,21 +45,21 @@ along with Foobar.  If not, see
             </MudAlert>
         }
         <div aria-label="@_localizer["Track table controls"]">
-            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0"
-                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
+                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                     MoveTracksUpDisabled="MoveTracksUpDisabled" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
-                                     MoveTracksDownDisabled="MoveTracksDownDisabled" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
-                                     CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
+                                     MoveTracksUpDisabled="MoveTracksUpDisabled" MoveTracksUpClicked="MoveTracksUpClicked"
+                                     MoveTracksDownDisabled="MoveTracksDownDisabled" MoveTracksDownClicked="MoveTracksDownClicked"
+                                     CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                                     FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
         </div>
         break;
 }
 
-<MudForm @ref="form">
-    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
-                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" Validator="form" Virtualize SortMode="SortMode.None">
+<MudForm @ref="_form">
+    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
+                 FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" Validator="_form" Virtualize SortMode="SortMode.None">
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
@@ -124,21 +124,21 @@ along with Foobar.  If not, see
     </MudDataGrid>
 </MudForm>
 
-<MudMenu PositionAtCursor @ref="trackContextMenu">
-    @if (contextMenuTrack != null)
+<MudMenu PositionAtCursor @ref="_trackContextMenu">
+    @if (_contextMenuTrack != null)
     {
-        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
-        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(_contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(_contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
     }
 </MudMenu>
 
 @code {
     //TODO: Disallow editing of position
-    HashSet<Track> selectedTracks = new();
-    MudMenu? trackContextMenu;
-    Track? contextMenuTrack;
-    ApplicationOptions? applicationOptions;
-    MudForm? form;
+    HashSet<Track> _selectedTracks = new();
+    MudMenu? _trackContextMenu;
+    Track? _contextMenuTrack;
+    ApplicationOptions? _applicationOptions;
+    MudForm? _form;
 
     public Cuesheet? Cuesheet
     {
@@ -152,9 +152,9 @@ along with Foobar.  If not, see
         }
     }
 
-    Boolean MoveTracksUpDisabled => selectedTracks.Count == 0 || selectedTracks.Min(x => x.Position) <= 1;
+    Boolean MoveTracksUpDisabled => _selectedTracks.Count == 0 || _selectedTracks.Min(x => x.Position) <= 1;
 
-    Boolean MoveTracksDownDisabled => selectedTracks.Count == 0 || selectedTracks.Max(x => x.Position) >= Cuesheet?.Tracks.Max(x => x.Position);
+    Boolean MoveTracksDownDisabled => _selectedTracks.Count == 0 || _selectedTracks.Max(x => x.Position) >= Cuesheet?.Tracks.Max(x => x.Position);
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -170,7 +170,7 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
@@ -180,7 +180,7 @@ along with Foobar.  If not, see
     {
         var newTrack = new Track()
         {
-            IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+            IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
         _cuesheetManager.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);
@@ -188,13 +188,13 @@ along with Foobar.  If not, see
 
     async Task EditSelectedTracksClicked()
     {
-        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(selectedTracks);
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(_selectedTracks);
     }
 
     void DeleteSelectedTracksClicked()
     {
-        _cuesheetManager.RemoveTracks(selectedTracks);
-        selectedTracks.Clear();
+        _cuesheetManager.RemoveTracks(_selectedTracks);
+        _selectedTracks.Clear();
     }
 
     async Task OnDeleteAllTracksClicked()
@@ -208,7 +208,7 @@ along with Foobar.  If not, see
         if (result?.Canceled == false)
         {
             _cuesheetManager.RemoveTracks(Cuesheet!.Tracks);
-            selectedTracks.Clear();
+            _selectedTracks.Clear();
         }
     }
 
@@ -236,7 +236,7 @@ along with Foobar.  If not, see
         var trackThatWillBeCopied = trackToCopy;
         if (trackThatWillBeCopied == null)
         {
-            trackThatWillBeCopied = selectedTracks.FirstOrDefault();
+            trackThatWillBeCopied = _selectedTracks.FirstOrDefault();
         }
         if (trackThatWillBeCopied != null)
         {
@@ -254,10 +254,10 @@ along with Foobar.  If not, see
 
     async Task OpenMenuContent(DataGridRowClickEventArgs<Track> args)
     {
-        contextMenuTrack = args.Item;
-        if (trackContextMenu != null)
+        _contextMenuTrack = args.Item;
+        if (_trackContextMenu != null)
         {
-            await trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
+            await _trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
         }
     }
 
@@ -289,7 +289,7 @@ along with Foobar.  If not, see
     {
         if (option is ApplicationOptions applicationOption)
         {
-            applicationOptions = applicationOption;
+            _applicationOptions = applicationOption;
             StateHasChanged();
         }
     }
@@ -297,9 +297,9 @@ along with Foobar.  If not, see
     async Task PositionChanged(Track track, ushort? newPosition)
     {
         track.Position = newPosition;
-        if (form != null)
+        if (_form != null)
         {
-            await form.ValidateAsync();
+            await _form.ValidateAsync();
         }
     }
 
@@ -307,9 +307,49 @@ along with Foobar.  If not, see
     {
         var timeSpan = await _applicationOptionsTimeSpanParser.GetTimespanAsync(value);
         _trackManager.SetProperty<TimeSpan?>(track, expression, timeSpan);
-        if (form != null)
+        if (_form != null)
         {
-            await form.ValidateAsync();
+            await _form.ValidateAsync();
+        }
+    }
+
+    void MoveTracksUpClicked()
+    {
+        if (MoveTracksUpDisabled == false)
+        {
+            base.TraceChangeManager.BulkEdit = true;
+            foreach (var selectedTrack in _selectedTracks)
+            {
+                var previousTrack = Cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
+                if (previousTrack != null)
+                {
+                    _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
+                }
+                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
+                //TODO: switch begin, end and length
+            }
+            _cuesheetManager.SetProperty(x => x.Tracks, Cuesheet?.Tracks.OrderBy(x => x.Position));
+            base.TraceChangeManager.BulkEdit = false;
+        }
+    }
+
+    void MoveTracksDownClicked()
+    {
+        if (MoveTracksDownDisabled == false)
+        {
+            base.TraceChangeManager.BulkEdit = true;
+            foreach (var selectedTrack in _selectedTracks)
+            {
+                var nextTrack = Cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
+                if (nextTrack != null)
+                {
+                    _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
+                }
+                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
+                //TODO: switch begin, end and length
+            }
+            _cuesheetManager.SetProperty(x => x.Tracks, Cuesheet?.Tracks.OrderBy(x => x.Position));
+            base.TraceChangeManager.BulkEdit = false;
         }
     }
 

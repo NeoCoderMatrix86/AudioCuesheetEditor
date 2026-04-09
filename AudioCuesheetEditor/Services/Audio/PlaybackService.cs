@@ -53,7 +53,7 @@ namespace AudioCuesheetEditor.Services.Audio
         //Refer to Cuesheet (not ImportCuesheet) since playback will always be done on the imported cuesheet
         public Boolean PlaybackPossible => cuesheet.Audiofile != null && cuesheet.Audiofile.PlaybackPossible;
         public Boolean PreviousPossible => (CurrentlyPlayingTrack != null) && cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) >= 1;
-        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < cuesheet.Tracks.Count - 1;
+        public Boolean NextPossible => (CurrentlyPlayingTrack != null) && cuesheet.Tracks.ToList().IndexOf(CurrentlyPlayingTrack) < cuesheet.Tracks.Count() - 1;
 
         public PlaybackService(ISessionStateContainer sessionStateContainer, IHowl howl)
         {

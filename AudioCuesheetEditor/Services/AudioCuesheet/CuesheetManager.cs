@@ -41,7 +41,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             get
             {
-                if (_sessionStateContainer.Cuesheet.Tracks.Count != 0)
+                if (_sessionStateContainer.Cuesheet.Tracks.Any())
                 {
                     return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
                 }

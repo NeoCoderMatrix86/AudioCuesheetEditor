@@ -20,23 +20,15 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public enum MoveDirection
-    {
-        Up,
-        Down
-    }
-
     //TODO: Move back to plain POCO
     public class Cuesheet() : Validateable, ITraceable, ICuesheet
     {
-        private readonly Lock syncLock = new();
-
         private List<Track> tracks = [];
         //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
         [JsonInclude]
-        public ICollection<Track> Tracks { get; set; } = [];
+        public IEnumerable<Track> Tracks { get; set; } = [];
 
         public String? Artist { get; set; }
         
@@ -56,45 +48,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         [JsonIgnore]
         public Boolean IsImporting { get; set; }
-
-        public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
-        {
-            //TODO: Move tracks corresponding to its position in cuesheet
-            //TODO: Use result pattern
-            lock (syncLock)
-            {
-                //TODO
-                //if (!MoveTracksPossible(tracksToMove, moveDirection))
-                //{
-                //    return;
-                //}
-                var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
-
-                var previousValue = new List<Track>(Tracks);
-
-                if (moveDirection == MoveDirection.Up)
-                {
-                    foreach (var index in trackIndices)
-                    {
-                        if (index > 0)
-                        {
-                            SwitchTracks(tracks[index], tracks[index - 1]);
-                        }
-                    }
-                }
-                else if (moveDirection == MoveDirection.Down)
-                {
-                    for (int i = trackIndices.Count - 1; i >= 0; i--)
-                    {
-                        int index = trackIndices[i];
-                        if (index < Tracks.Count - 1)
-                        {
-                            SwitchTracks(tracks[index], tracks[index + 1]);
-                        }
-                    }
-                }
-            }
-        }
 
         public Boolean RecalculateLastTrackEnd()
         {
@@ -116,7 +69,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 case nameof(Tracks):
                     validationStatus = ValidationStatus.Success;
-                    if (Tracks.Count <= 0)
+                    if (!Tracks.Any())
                     {
                         validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} has invalid Count ({1})!", nameof(Tracks), 0));
@@ -204,48 +157,49 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             {
                 trackToCalculate.End = Audiofile.Duration;
             }
-            if (Tracks.Count > 1)
-            {
-                var lastTrack = tracks.ElementAt(tracks.IndexOf(trackToCalculate) - 1);
-                if (lastTrack != trackToCalculate)
-                {
-                    if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (lastTrack.End.HasValue) && (lastTrack.End.Value == Audiofile.Duration.Value))
-                    {
-                        lastTrack.End = null;
-                    }
-                    if (trackToCalculate.Position.HasValue == false)
-                    {
-                        //TODO
-                        //trackToCalculate.Position = lastTrack.Position + 1;
-                    }
-                    if (trackToCalculate.Begin.HasValue == false)
-                    {
-                        trackToCalculate.Begin = lastTrack.End;
-                    }
-                    else
-                    {
-                        if (lastTrack.End.HasValue == false)
-                        {
-                            lastTrack.End = trackToCalculate.Begin;
-                        }
-                    }
-                    if (IsRecording)
-                    {
-                        lastTrack.End = trackToCalculate.Begin;
-                    }
-                }
-            }
-            else
-            {
-                if (trackToCalculate.Position.HasValue == false)
-                {
-                    trackToCalculate.Position = 1;
-                }
-                if ((trackToCalculate.Begin.HasValue == false) || (IsRecording))
-                {
-                    trackToCalculate.Begin = TimeSpan.Zero;
-                }
-            }            
+            //TODO
+            //if (Tracks.Count > 1)
+            //{
+            //    var lastTrack = tracks.ElementAt(tracks.IndexOf(trackToCalculate) - 1);
+            //    if (lastTrack != trackToCalculate)
+            //    {
+            //        if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (lastTrack.End.HasValue) && (lastTrack.End.Value == Audiofile.Duration.Value))
+            //        {
+            //            lastTrack.End = null;
+            //        }
+            //        if (trackToCalculate.Position.HasValue == false)
+            //        {
+            //            //TODO
+            //            //trackToCalculate.Position = lastTrack.Position + 1;
+            //        }
+            //        if (trackToCalculate.Begin.HasValue == false)
+            //        {
+            //            trackToCalculate.Begin = lastTrack.End;
+            //        }
+            //        else
+            //        {
+            //            if (lastTrack.End.HasValue == false)
+            //            {
+            //                lastTrack.End = trackToCalculate.Begin;
+            //            }
+            //        }
+            //        if (IsRecording)
+            //        {
+            //            lastTrack.End = trackToCalculate.Begin;
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    if (trackToCalculate.Position.HasValue == false)
+            //    {
+            //        trackToCalculate.Position = 1;
+            //    }
+            //    if ((trackToCalculate.Begin.HasValue == false) || (IsRecording))
+            //    {
+            //        trackToCalculate.Begin = TimeSpan.Zero;
+            //    }
+            //}            
         }
 
         private void SwitchTracks(Track track1, Track track2)
