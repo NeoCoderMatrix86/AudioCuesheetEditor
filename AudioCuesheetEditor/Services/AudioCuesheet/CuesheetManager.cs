@@ -21,82 +21,89 @@ using System.Reflection;
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class CuesheetManager(ITraceChangeManager traceChangeManager) : ICuesheetManager
+    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer) : ICuesheetManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
 
-        public event EventHandler<Cuesheet>? IsRecordingChanged;
+        public event EventHandler? IsRecordingChanged;
 
         //TODO: Tests
 
         /// <inheritdoc/>
-        public void SetProperty<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
+        public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
-            SetValue(cuesheet, propertyExpression, value);
+            SetValue(_sessionStateContainer.Cuesheet, propertyExpression, value);
         }
 
         /// <inheritdoc/>
-        public Result IsRecordingPossible(Cuesheet cuesheet)
+        public Result IsRecordingPossible
         {
-            if (cuesheet.Tracks.Count != 0)
+            get
             {
-                return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
+                if (_sessionStateContainer.Cuesheet.Tracks.Count != 0)
+                {
+                    return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
+                }
+                return Result.Success();
             }
-            return Result.Success();
         }
 
         /// <inheritdoc/>
-        public Result StartRecording(Cuesheet cuesheet)
+        public Result StartRecording()
         {
+            var cuesheet = _sessionStateContainer.Cuesheet;
             if (cuesheet.IsRecording == true)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
             }
             cuesheet.RecordingStart = DateTime.UtcNow;
-            IsRecordingChanged?.Invoke(this, cuesheet);
+            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
             return Result.Success();
         }
 
         /// <inheritdoc/>
-        public void StopRecording(Cuesheet cuesheet)
+        public void StopRecording()
         {
+            var cuesheet = _sessionStateContainer.Cuesheet;
             var lastTrack = cuesheet.Tracks.LastOrDefault();
             if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
             {
                 lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
             }
             cuesheet.RecordingStart = null;
-            IsRecordingChanged?.Invoke(this, cuesheet);
+            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
-        public Track? GetPreviousLinkedTrack(Cuesheet cuesheet, Track track)
+        public Track? GetPreviousLinkedTrack(Track track)
         {
             Track? previousLinkedTrack = null;
             if (track.IsLinkedToPreviousTrack && track.Position.HasValue)
             {
                 if (track.Position.Value > 1)
                 {
-                    previousLinkedTrack = cuesheet.Tracks.SingleOrDefault(x => x.Position == track.Position.Value - 1);
+                    previousLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value - 1);
                 }
             }
             return previousLinkedTrack;
         }
 
         /// <inheritdoc/>
-        public Track? GetNextLinkedTrack(Cuesheet cuesheet, Track track)
+        public Track? GetNextLinkedTrack(Track track)
         {
             Track? nextLinkedTrack = null;
             if (track.Position.HasValue)
             {
-                nextLinkedTrack = cuesheet.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
+                nextLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
             }
             return nextLinkedTrack;
         }
 
         /// <inheritdoc/>
-        public void AddTrack(Cuesheet cuesheet, Track track)
+        public void AddTrack(Track track)
         {
+            var cuesheet = _sessionStateContainer.Cuesheet;
             var newValue = new List<Track>(cuesheet.Tracks)
             {
                 track
@@ -107,20 +114,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public void RemoveTracks(Cuesheet cuesheet, IEnumerable<Track> tracksToRemove)
+        public void RemoveTracks(IEnumerable<Track> tracksToRemove)
         {
+            var cuesheet = _sessionStateContainer.Cuesheet;
             var intersection = cuesheet.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
             SetValue(cuesheet, x => x.Tracks, newValue);
             //TODO: calculate position and begin of all tracks
             //TODO: calculate last track end Cuesheet.RecalculateTrackProperties did
-        }
-
-        /// <inheritdoc/>
-        public bool MoveTracksPossible(Cuesheet cuesheet, IEnumerable<Track> tracksToMove, bool moveUp)
-        {
-            //TODO
-            throw new NotImplementedException();
         }
 
         void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)

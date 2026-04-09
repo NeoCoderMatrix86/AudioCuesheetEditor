@@ -90,7 +90,7 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    public Boolean StartRecordingDisabled => _startRecordTimer?.Enabled == true || _cuesheetManager.IsRecordingPossible(Cuesheet).IsSuccess == false;
+    public Boolean StartRecordingDisabled => _startRecordTimer?.Enabled == true || _cuesheetManager.IsRecordingPossible.IsSuccess == false;
 
     protected override void OnInitialized()
     {
@@ -109,7 +109,7 @@ along with Foobar.  If not, see
                 _updateGUITimer.Stop();
             }
         };
-        var result = _cuesheetManager.IsRecordingPossible(Cuesheet);
+        var result = _cuesheetManager.IsRecordingPossible;
         if (result.IsSuccess == false)
         {
             _errorMessage = result.Error!.Message;
@@ -118,7 +118,7 @@ along with Foobar.  If not, see
 
     void StartRecording()
     {
-        var result = _cuesheetManager.StartRecording(Cuesheet);
+        var result = _cuesheetManager.StartRecording();
         if (result.IsSuccess)
         {
             _updateGUITimer.Start();
@@ -132,7 +132,7 @@ along with Foobar.  If not, see
 
     void StopRecording() 
     {
-        _cuesheetManager.StopRecording(Cuesheet);
+        _cuesheetManager.StopRecording();
     }
 
     async Task DisplayStartCountdownDialog()

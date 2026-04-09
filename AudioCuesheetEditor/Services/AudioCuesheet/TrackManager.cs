@@ -115,7 +115,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             if (track.Cuesheet != null)
             {
-                var previousTrack = _cuesheetManager.GetPreviousLinkedTrack(track.Cuesheet, track);
+                var previousTrack = _cuesheetManager.GetPreviousLinkedTrack(track);
                 if (previousTrack != null)
                 {
                     if (track.Position.HasValue && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
@@ -131,7 +131,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                         previousTrack.End = track.Begin;
                     }
                 }
-                var nextTrack = _cuesheetManager.GetNextLinkedTrack(track.Cuesheet, track);
+                var nextTrack = _cuesheetManager.GetNextLinkedTrack(track);
                 if (nextTrack != null)
                 {
                     if (track.Position.HasValue)

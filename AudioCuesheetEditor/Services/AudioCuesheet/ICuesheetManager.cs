@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <summary>
         /// Event propagated when recording on a cuesheet changes
         /// </summary>
-        public event EventHandler<Cuesheet>? IsRecordingChanged;
+        public event EventHandler? IsRecordingChanged;
         /// <summary>
         /// Set property for cuesheet
         /// </summary>
@@ -34,51 +34,48 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="cuesheet"></param>
         /// <param name="propertyExpression"></param>
         /// <param name="value"></param>
-        void SetProperty<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
+        void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
         /// <summary>
         /// Checks if recording for the cuesheet is possible
         /// </summary>
-        /// <param name="cuesheet"></param>
         /// <returns></returns>
-        Result IsRecordingPossible(Cuesheet cuesheet);
+        Result IsRecordingPossible { get; }
         /// <summary>
         /// Starts recording on cuesheet
         /// </summary>
-        /// <param name="cuesheet"></param>
         /// <returns></returns>
-        Result StartRecording(Cuesheet cuesheet);
+        Result StartRecording();
         /// <summary>
         /// Stop recording on cuesheet
         /// </summary>
-        /// <param name="cuesheet"></param>
         /// <returns></returns>
-        void StopRecording(Cuesheet cuesheet);
+        void StopRecording();
         /// <summary>
         /// Get the previous linked track of a track object
         /// </summary>
         /// <param name="cuesheet">Cuesheet to get the previous linked track from</param>
         /// <param name="track">Track object to get the previous link to</param>
         /// <returns>Previous linked track or null (if not linked)</returns>
-        Track? GetPreviousLinkedTrack(Cuesheet cuesheet, Track track);
+        Track? GetPreviousLinkedTrack(Track track);
         /// <summary>
         /// Get next linked track that is linked to the parameter track
         /// </summary>
         /// <param name="cuesheet"></param>
         /// <param name="track"></param>
         /// <returns></returns>
-        Track? GetNextLinkedTrack(Cuesheet cuesheet, Track track);
+        Track? GetNextLinkedTrack(Track track);
         /// <summary>
         /// Adds a track to the cuesheet
         /// </summary>
         /// <param name="cuesheet"></param>
         /// <param name="track"></param>
-        void AddTrack(Cuesheet cuesheet, Track track);
+        void AddTrack(Track track);
         /// <summary>
         /// Remove tracks from cuesheet
         /// </summary>
         /// <param name="cuesheet"></param>
         /// <param name="tracksToRemove"></param>
-        void RemoveTracks(Cuesheet cuesheet, IEnumerable<Track> tracksToRemove);
+        void RemoveTracks(IEnumerable<Track> tracksToRemove);
         //TODO: Add all methods from cuesheet here
     }
 }

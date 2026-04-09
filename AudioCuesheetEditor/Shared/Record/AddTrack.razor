@@ -132,7 +132,7 @@ along with Foobar.  If not, see
     {
         if (Cuesheet.IsRecording == true)
         {
-            _cuesheetManager.AddTrack(Cuesheet, currentRecordingTrack);
+            _cuesheetManager.AddTrack(currentRecordingTrack);
             currentRecordingTrack = new()
             {
                 IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
@@ -144,7 +144,7 @@ along with Foobar.  If not, see
         }
     }
 
-    void CuesheetManager_IsRecordingChanged(object? sender, Cuesheet cuesheet)
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
         artistInput?.ClearAsync();

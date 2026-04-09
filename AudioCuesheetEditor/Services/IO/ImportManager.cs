@@ -232,7 +232,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    _cuesheetManager.AddTrack(target, track);
+                    target.Tracks.Add(track);
                 }
             }
             else

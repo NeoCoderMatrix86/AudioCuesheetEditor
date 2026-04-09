@@ -64,7 +64,7 @@ along with Foobar.  If not, see
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks(Cuesheet!, [context.Item])" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks([context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -178,7 +178,7 @@ along with Foobar.  If not, see
         {
             IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
-        _cuesheetManager.AddTrack(Cuesheet!, newTrack);
+        _cuesheetManager.AddTrack(newTrack);
         TraceChangeManager.TraceChanges(newTrack);
     }
 
@@ -189,7 +189,7 @@ along with Foobar.  If not, see
 
     void DeleteSelectedTracksClicked()
     {
-        _cuesheetManager.RemoveTracks(Cuesheet!, selectedTracks);
+        _cuesheetManager.RemoveTracks(selectedTracks);
         selectedTracks.Clear();
     }
 
@@ -203,7 +203,7 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            _cuesheetManager.RemoveTracks(Cuesheet!, Cuesheet!.Tracks);
+            _cuesheetManager.RemoveTracks(Cuesheet!.Tracks);
             selectedTracks.Clear();
         }
     }
@@ -237,7 +237,7 @@ along with Foobar.  If not, see
         if (trackThatWillBeCopied != null)
         {
             var copy = _trackManager.Clone(trackThatWillBeCopied);
-            _cuesheetManager.AddTrack(Cuesheet!, copy);
+            _cuesheetManager.AddTrack(copy);
             TraceChangeManager.TraceChanges(copy);
             await EditTrackModalClicked(copy);
         }
