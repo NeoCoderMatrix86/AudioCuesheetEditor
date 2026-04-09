@@ -79,14 +79,14 @@ namespace AudioCuesheetEditor.Services.UI
                                 copyTrackPosition = true;
                                 break;
                             case DynamicEditValue.EnteredValueAdd:
-                                editMultipleTracksModalResult.EditedTrack.Position += track.Position;
+                                editMultipleTracksModalResult.EditedTrack.Position = (ushort?)(editMultipleTracksModalResult.EditedTrack.Position + track.Position);
                                 _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackPosition = false;
                                 editMultipleTracksModalResult.EditedTrack.Position = position;
                                 break;
                             case DynamicEditValue.EnteredValueSubstract:
                                 var newValue = track.Position - editMultipleTracksModalResult.EditedTrack.Position;
-                                editMultipleTracksModalResult.EditedTrack.Position = newValue;
+                                editMultipleTracksModalResult.EditedTrack.Position = (ushort?)newValue;
                                 _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: copyTrackPosition, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                                 copyTrackPosition = false;
                                 break;

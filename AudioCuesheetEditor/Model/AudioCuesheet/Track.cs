@@ -24,7 +24,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
         
-        public uint? Position { get; set; }
+        public ushort? Position { get; set; }
         public String? Artist { get; set; }
         public String? Title { get; set; }
         public TimeSpan? Begin { get; set; }        

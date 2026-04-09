@@ -57,39 +57,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public Boolean IsImporting { get; set; }
 
-        public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
-        {
-            lock (syncLock)
-            {
-                var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
-
-                if (trackIndices.Count == 0)
-                {
-                    return false;
-                }
-
-                if (moveDirection == MoveDirection.Up)
-                {
-                    return trackIndices.First() > 0;
-                }
-                if (moveDirection == MoveDirection.Down)
-                {
-                    return trackIndices.Last() < Tracks.Count - 1;
-                }
-
-                return false;
-            }
-        }
         public void MoveTracks(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
             //TODO: Move tracks corresponding to its position in cuesheet
             //TODO: Use result pattern
             lock (syncLock)
             {
-                if (!MoveTracksPossible(tracksToMove, moveDirection))
-                {
-                    return;
-                }
+                //TODO
+                //if (!MoveTracksPossible(tracksToMove, moveDirection))
+                //{
+                //    return;
+                //}
                 var trackIndices = tracksToMove.Select(t => tracks.IndexOf(t)).Where(i => i >= 0).OrderBy(i => i).ToList();
 
                 var previousValue = new List<Track>(Tracks);
@@ -237,7 +215,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     }
                     if (trackToCalculate.Position.HasValue == false)
                     {
-                        trackToCalculate.Position = lastTrack.Position + 1;
+                        //TODO
+                        //trackToCalculate.Position = lastTrack.Position + 1;
                     }
                     if (trackToCalculate.Begin.HasValue == false)
                     {
@@ -283,8 +262,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             if (track1.IsLinkedToPreviousTrack || track2.IsLinkedToPreviousTrack)
             { 
                 //Set values corresponding to their new positions
-                track1.Position = (uint)indexTrack1 + 1;
-                track2.Position = (uint)indexTrack2 + 1;
+                //TODO
+                //track1.Position = (uint)indexTrack1 + 1;
+                //track2.Position = (uint)indexTrack2 + 1;
                 //Set also begin and end
                 if (indexTrack1 < indexTrack2)
                 {

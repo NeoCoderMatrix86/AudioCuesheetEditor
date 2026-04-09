@@ -20,7 +20,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
     {
         public string? Artist { get; set; }
         public string? Title { get; set; }
-        public uint? Position { get; set; }
+        public ushort? Position { get; set; }
         public TimeSpan? Begin { get; set; }
         public TimeSpan? End { get; set; }
         public TimeSpan? Length { get; set; }

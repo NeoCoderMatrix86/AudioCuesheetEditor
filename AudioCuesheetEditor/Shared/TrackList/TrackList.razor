@@ -48,8 +48,8 @@ along with Foobar.  If not, see
             <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0"
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                     MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
-                                     MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
+                                     MoveTracksUpDisabled="MoveTracksUpDisabled" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
+                                     MoveTracksDownDisabled="MoveTracksDownDisabled" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
                                      CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
                                      FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
         </div>
@@ -69,8 +69,8 @@ along with Foobar.  If not, see
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
                 <EditTemplate>
-                    <MudNumericField Validation="(uint? newPosition) => _validationService.Validate(context.Item, nameof(Track.Position))" Value="context.Item.Position"
-                                     ValueChanged="(uint? newPosition) => PositionChanged(context.Item, newPosition)" />
+                    <MudNumericField Validation="() => _validationService.Validate(context.Item, nameof(Track.Position))" Value="context.Item.Position"
+                                     ValueChanged="(ushort? newPosition) => PositionChanged(context.Item, newPosition)" />
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
@@ -132,7 +132,7 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-    @code {
+@code {
     //TODO: Disallow editing of position
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
@@ -151,6 +151,10 @@ along with Foobar.  If not, see
             return _sessionStateContainer.Cuesheet;
         }
     }
+
+    Boolean MoveTracksUpDisabled => selectedTracks.Count == 0 || selectedTracks.Min(x => x.Position) <= 1;
+
+    Boolean MoveTracksDownDisabled => selectedTracks.Count == 0 || selectedTracks.Max(x => x.Position) >= Cuesheet?.Tracks.Max(x => x.Position);
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -290,7 +294,7 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task PositionChanged(Track track, uint? newPosition)
+    async Task PositionChanged(Track track, ushort? newPosition)
     {
         track.Position = newPosition;
         if (form != null)

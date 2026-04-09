@@ -120,7 +120,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 {
                     if (track.Position.HasValue && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
                     {
-                        track.Position = previousTrack.Position.Value + 1;
+                        track.Position = (ushort?)(previousTrack.Position + 1);
                     }
                     if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
                     {
@@ -136,7 +136,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 {
                     if (track.Position.HasValue)
                     {
-                        nextTrack.Position = track.Position.Value + 1;
+                        nextTrack.Position = (ushort?)(track.Position + 1);
                     }
                     nextTrack.Begin = track.End;
                 }
