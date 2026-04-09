@@ -53,7 +53,32 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="cuesheet"></param>
         /// <returns></returns>
         void StopRecording(Cuesheet cuesheet);
-
+        /// <summary>
+        /// Get the previous linked track of a track object
+        /// </summary>
+        /// <param name="cuesheet">Cuesheet to get the previous linked track from</param>
+        /// <param name="track">Track object to get the previous link to</param>
+        /// <returns>Previous linked track or null (if not linked)</returns>
+        Track? GetPreviousLinkedTrack(Cuesheet cuesheet, Track track);
+        /// <summary>
+        /// Get next linked track that is linked to the parameter track
+        /// </summary>
+        /// <param name="cuesheet"></param>
+        /// <param name="track"></param>
+        /// <returns></returns>
+        Track? GetNextLinkedTrack(Cuesheet cuesheet, Track track);
+        /// <summary>
+        /// Adds a track to the cuesheet
+        /// </summary>
+        /// <param name="cuesheet"></param>
+        /// <param name="track"></param>
+        void AddTrack(Cuesheet cuesheet, Track track);
+        /// <summary>
+        /// Remove tracks from cuesheet
+        /// </summary>
+        /// <param name="cuesheet"></param>
+        /// <param name="tracksToRemove"></param>
+        void RemoveTracks(Cuesheet cuesheet, IEnumerable<Track> tracksToRemove);
         //TODO: Add all methods from cuesheet here
     }
 }

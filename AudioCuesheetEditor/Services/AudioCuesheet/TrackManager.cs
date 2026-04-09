@@ -21,9 +21,10 @@ using System.Reflection;
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManager
+    public class TrackManager(ITraceChangeManager traceChangeManager, ICuesheetManager cuesheetManager) : ITrackManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         //TODO: Tests
 
@@ -110,32 +111,35 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.AddChange(new(track, new(previousValue, propertyInfo.Name)));
         }
 
-        static void RecalculateLinkedProperties(Track track)
+        void RecalculateLinkedProperties(Track track)
         {
-            var previousTrack = track.Cuesheet?.GetPreviousLinkedTrack(track);
-            if (previousTrack != null)
+            if (track.Cuesheet != null)
             {
-                if (track.Position.HasValue && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
+                var previousTrack = _cuesheetManager.GetPreviousLinkedTrack(track.Cuesheet, track);
+                if (previousTrack != null)
                 {
-                    track.Position = previousTrack.Position.Value + 1;
+                    if (track.Position.HasValue && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
+                    {
+                        track.Position = previousTrack.Position.Value + 1;
+                    }
+                    if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+                    {
+                        track.Begin = previousTrack.End;
+                    }
+                    if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
+                    {
+                        previousTrack.End = track.Begin;
+                    }
                 }
-                if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+                var nextTrack = _cuesheetManager.GetNextLinkedTrack(track.Cuesheet, track);
+                if (nextTrack != null)
                 {
-                    track.Begin = previousTrack.End;
+                    if (track.Position.HasValue)
+                    {
+                        nextTrack.Position = track.Position.Value + 1;
+                    }
+                    nextTrack.Begin = track.End;
                 }
-                if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
-                {
-                    previousTrack.End = track.Begin;
-                }
-            }
-            var nextTrack = track.Cuesheet?.GetNextLinkedTrack(track);
-            if (nextTrack != null)
-            {
-                if (track.Position.HasValue)
-                {
-                    nextTrack.Position = track.Position.Value + 1;
-                }
-                nextTrack.Begin = track.End;
             }
         }
     }

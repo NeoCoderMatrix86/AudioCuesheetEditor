@@ -27,6 +27,7 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
 @inject ITrackManager _trackManager
+@inject ICuesheetManager _cuesheetManager
 
 @switch (CurrentViewMode)
 {
@@ -63,7 +64,7 @@ along with Foobar.  If not, see
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks(Cuesheet!, [context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -131,7 +132,7 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-@code {
+    @code {
     //TODO: Disallow editing of position
     HashSet<Track> selectedTracks = new();
     MudMenu? trackContextMenu;
@@ -177,7 +178,7 @@ along with Foobar.  If not, see
         {
             IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
-        Cuesheet?.AddTrack(newTrack);
+        _cuesheetManager.AddTrack(Cuesheet!, newTrack);
         TraceChangeManager.TraceChanges(newTrack);
     }
 
@@ -188,7 +189,7 @@ along with Foobar.  If not, see
 
     void DeleteSelectedTracksClicked()
     {
-        Cuesheet?.RemoveTracks(selectedTracks.ToList());
+        _cuesheetManager.RemoveTracks(Cuesheet!, selectedTracks);
         selectedTracks.Clear();
     }
 
@@ -202,7 +203,7 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            Cuesheet?.RemoveTracks(Cuesheet.Tracks);
+            _cuesheetManager.RemoveTracks(Cuesheet!, Cuesheet!.Tracks);
             selectedTracks.Clear();
         }
     }
@@ -236,7 +237,7 @@ along with Foobar.  If not, see
         if (trackThatWillBeCopied != null)
         {
             var copy = _trackManager.Clone(trackThatWillBeCopied);
-            Cuesheet?.AddTrack(copy);
+            _cuesheetManager.AddTrack(Cuesheet!, copy);
             TraceChangeManager.TraceChanges(copy);
             await EditTrackModalClicked(copy);
         }

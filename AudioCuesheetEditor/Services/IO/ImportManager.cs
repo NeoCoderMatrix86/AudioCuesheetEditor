@@ -32,7 +32,7 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ILogger<ImportManager> logger)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ICuesheetManager cuesheetManager, ILogger<ImportManager> logger)
     {
         public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -42,6 +42,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
         private readonly ITrackManager _trackManager = trackManager;
+        private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         public void ImportData(String? data)
         {
@@ -231,7 +232,7 @@ namespace AudioCuesheetEditor.Services.IO
                             }
                         }
                     }
-                    target.AddTrack(track);
+                    _cuesheetManager.AddTrack(target, track);
                 }
             }
             else

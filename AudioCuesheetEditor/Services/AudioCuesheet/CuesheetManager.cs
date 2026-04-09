@@ -69,6 +69,60 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             IsRecordingChanged?.Invoke(this, cuesheet);
         }
 
+        /// <inheritdoc/>
+        public Track? GetPreviousLinkedTrack(Cuesheet cuesheet, Track track)
+        {
+            Track? previousLinkedTrack = null;
+            if (track.IsLinkedToPreviousTrack && track.Position.HasValue)
+            {
+                if (track.Position.Value > 1)
+                {
+                    previousLinkedTrack = cuesheet.Tracks.SingleOrDefault(x => x.Position == track.Position.Value - 1);
+                }
+            }
+            return previousLinkedTrack;
+        }
+
+        /// <inheritdoc/>
+        public Track? GetNextLinkedTrack(Cuesheet cuesheet, Track track)
+        {
+            Track? nextLinkedTrack = null;
+            if (track.Position.HasValue)
+            {
+                nextLinkedTrack = cuesheet.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
+            }
+            return nextLinkedTrack;
+        }
+
+        /// <inheritdoc/>
+        public void AddTrack(Cuesheet cuesheet, Track track)
+        {
+            var newValue = new List<Track>(cuesheet.Tracks)
+            {
+                track
+            };
+            SetValue(cuesheet, x => x.Tracks, newValue);
+            //TODO: calculate track begin when cuesheet is recording
+            //TODO: recalculate track properties like Cuesheet.RecalculateTrackProperties did
+        }
+
+        /// <inheritdoc/>
+        public void RemoveTracks(Cuesheet cuesheet, IEnumerable<Track> tracksToRemove)
+        {
+            var intersection = cuesheet.Tracks.Intersect(tracksToRemove);
+            ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
+            SetValue(cuesheet, x => x.Tracks, newValue);
+            //TODO: calculate position and begin of all tracks
+            //TODO: calculate last track end Cuesheet.RecalculateTrackProperties did
+        }
+
+        /// <inheritdoc/>
+        public bool MoveTracksPossible(Cuesheet cuesheet, IEnumerable<Track> tracksToMove, bool moveUp)
+        {
+            //TODO
+            throw new NotImplementedException();
+        }
+
         void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
@@ -91,5 +145,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
         }
+
     }
 }

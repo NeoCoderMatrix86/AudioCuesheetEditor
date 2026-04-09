@@ -130,9 +130,9 @@ along with Foobar.  If not, see
 
     async Task AddTrackAsync()
     {
-        if (Cuesheet?.IsRecording == true)
+        if (Cuesheet.IsRecording == true)
         {
-            Cuesheet?.AddTrack(currentRecordingTrack);
+            _cuesheetManager.AddTrack(Cuesheet, currentRecordingTrack);
             currentRecordingTrack = new()
             {
                 IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack

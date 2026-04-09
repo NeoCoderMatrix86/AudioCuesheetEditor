@@ -36,22 +36,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
         [JsonInclude]
-        public IReadOnlyCollection<Track> Tracks
-        {
-            get => tracks.AsReadOnly();
-            private set
-            {
-                foreach (var track in tracks)
-                {
-                    track.Cuesheet = null;
-                }
-                tracks = [.. value];
-                foreach (var track in tracks)
-                {
-                    track.Cuesheet = this;
-                }
-            }
-        }
+        public ICollection<Track> Tracks { get; set; } = [];
 
         public String? Artist { get; set; }
         
@@ -72,123 +57,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public Boolean IsImporting { get; set; }
 
-        /// <summary>
-        /// Get the previous linked track of a track object
-        /// </summary>
-        /// <param name="track">Track object to get the previous link to</param>
-        /// <returns>Previous linked track or null (if not linked)</returns>
-        public Track? GetPreviousLinkedTrack(Track track)
-        {
-            Track? previousLinkedTrack = null;
-            if (track.IsLinkedToPreviousTrack)
-            {
-                var index = tracks.IndexOf(track);
-                if (index > 0)
-                {
-                    previousLinkedTrack = tracks.ElementAt(index - 1);
-                }
-            }
-            return previousLinkedTrack;
-        }
-
-        /// <summary>
-        /// Get next linked track that is linked to the parameter track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <returns></returns>
-        public Track? GetNextLinkedTrack(Track track)
-        {
-            Track? nextLinkedTrack = null;
-            {
-                var index = tracks.IndexOf(track);
-                if (index + 1 < tracks.Count)
-                {
-                    var nextTrack = tracks.ElementAt(index + 1);
-                    if (nextTrack.IsLinkedToPreviousTrack)
-                    {
-                        nextLinkedTrack = nextTrack;
-                    }
-                }
-            }
-            return nextLinkedTrack;
-        }
-
-        public void AddTrack(Track track)
-        {
-            var previousValue = new List<Track>(tracks);
-            if (IsRecording && RecordingStart.HasValue)
-            {
-                track.Begin = DateTime.UtcNow - RecordingStart.Value;
-            }
-            tracks.Add(track);
-            track.Cuesheet = this;
-            RecalculateTrackProperties(track);
-        }
-
-        public void RemoveTrack(Track track)
-        {
-            var index = tracks.IndexOf(track);
-            Track? nextTrack = null;
-            if ((index + 1) < tracks.Count)
-            {
-                if (tracks.ElementAt(index + 1).IsLinkedToPreviousTrack)
-                {
-                    nextTrack = tracks.ElementAt(index + 1);
-                }
-            }
-            var previousValue = new List<Track>();
-            //TODO
-            //tracks.ForEach(x => previousValue.Add(new Track(x)));
-            tracks.Remove(track);
-            track.Cuesheet = null;
-            //If Tracks are linked, we need to set the linked track again
-            if (nextTrack != null)
-            {
-                index = tracks.IndexOf(nextTrack);
-                if (index > 0)
-                {
-                    var previousTrack = tracks.ElementAt(index - 1);
-                    if (previousTrack.Position.HasValue)
-                    {
-                        nextTrack.Position = previousTrack.Position.Value + 1;
-                    }
-                    if (previousTrack.End.HasValue)
-                    {
-                        nextTrack.Begin = previousTrack.End.Value;
-                    }
-                }
-            }
-            RecalculateLastTrackEnd();
-        }
-
-        /// <summary>
-        /// Remove selected tracks
-        /// </summary>
-        /// <param name="tracksToRemove">Selected tracks to remove (can not be null, only empty)</param>
-        public void RemoveTracks(IReadOnlyCollection<Track> tracksToRemove)
-        {
-            var previousValue = new List<Track>();
-            //TODO
-            //tracks.ForEach(x => previousValue.Add(new Track(x)));
-            var intersection = tracks.Intersect(tracksToRemove);
-            tracks = [.. tracks.Except(intersection)];
-            foreach (var track in tracks)
-            {
-                if (track.IsLinkedToPreviousTrack)
-                {
-                    track.Position = (uint)tracks.IndexOf(track) + 1;
-                }
-                var previousTrack = GetPreviousLinkedTrack(track);
-                if (previousTrack != null)
-                {
-                    if (previousTrack.End.HasValue)
-                    {
-                        track.Begin = previousTrack.End;
-                    }
-                }
-            }
-            RecalculateLastTrackEnd();
-        }
         public Boolean MoveTracksPossible(IEnumerable<Track> tracksToMove, MoveDirection moveDirection)
         {
             lock (syncLock)
@@ -422,27 +290,29 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 {
                     track1.Begin = track2.Begin;
                     (track2.End, track1.End) = (track1.End, track2.End);
-                    if (track2.IsLinkedToPreviousTrack)
-                    {
-                        var previousTrack = GetPreviousLinkedTrack(track2);
-                        if ((previousTrack != null) && (previousTrack.End.HasValue))
-                        {
-                            track2.Begin = previousTrack.End;
-                        }
-                    }
+                    //TODO
+                    //if (track2.IsLinkedToPreviousTrack)
+                    //{
+                    //    var previousTrack = GetPreviousLinkedTrack(track2);
+                    //    if ((previousTrack != null) && (previousTrack.End.HasValue))
+                    //    {
+                    //        track2.Begin = previousTrack.End;
+                    //    }
+                    //}
                 }
                 else
                 {
                     track2.Begin = track1.Begin;
                     (track1.End, track2.End) = (track2.End, track1.End);
-                    if (track1.IsLinkedToPreviousTrack)
-                    {
-                        var previousTrack = GetPreviousLinkedTrack(track1);
-                        if ((previousTrack != null) && (previousTrack.End.HasValue))
-                        {
-                            track1.Begin = previousTrack.End;
-                        }
-                    }
+                    //TODO
+                    //if (track1.IsLinkedToPreviousTrack)
+                    //{
+                    //    var previousTrack = GetPreviousLinkedTrack(track1);
+                    //    if ((previousTrack != null) && (previousTrack.End.HasValue))
+                    //    {
+                    //        track1.Begin = previousTrack.End;
+                    //    }
+                    //}
                 }
             }
         }
