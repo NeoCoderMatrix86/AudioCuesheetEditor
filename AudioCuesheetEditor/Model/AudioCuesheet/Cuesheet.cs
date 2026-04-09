@@ -201,54 +201,5 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
             //    }
             //}            
         }
-
-        private void SwitchTracks(Track track1, Track track2)
-        {
-            var indexTrack1 = tracks.IndexOf(track1);
-            var indexTrack2 = tracks.IndexOf(track2);
-            //Switch track positions in array
-            tracks[indexTrack2] = track1;
-            tracks[indexTrack1] = track2;
-            //Set linked tracks correct again
-            indexTrack1 = tracks.IndexOf(track1);
-            indexTrack2 = tracks.IndexOf(track2);
-            //If using linked tracks, we set values correctly
-            if (track1.IsLinkedToPreviousTrack || track2.IsLinkedToPreviousTrack)
-            { 
-                //Set values corresponding to their new positions
-                //TODO
-                //track1.Position = (uint)indexTrack1 + 1;
-                //track2.Position = (uint)indexTrack2 + 1;
-                //Set also begin and end
-                if (indexTrack1 < indexTrack2)
-                {
-                    track1.Begin = track2.Begin;
-                    (track2.End, track1.End) = (track1.End, track2.End);
-                    //TODO
-                    //if (track2.IsLinkedToPreviousTrack)
-                    //{
-                    //    var previousTrack = GetPreviousLinkedTrack(track2);
-                    //    if ((previousTrack != null) && (previousTrack.End.HasValue))
-                    //    {
-                    //        track2.Begin = previousTrack.End;
-                    //    }
-                    //}
-                }
-                else
-                {
-                    track2.Begin = track1.Begin;
-                    (track1.End, track2.End) = (track2.End, track1.End);
-                    //TODO
-                    //if (track1.IsLinkedToPreviousTrack)
-                    //{
-                    //    var previousTrack = GetPreviousLinkedTrack(track1);
-                    //    if ((previousTrack != null) && (previousTrack.End.HasValue))
-                    //    {
-                    //        track1.Begin = previousTrack.End;
-                    //    }
-                    //}
-                }
-            }
-        }
     }
 }
