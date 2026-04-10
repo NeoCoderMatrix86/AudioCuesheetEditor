@@ -20,10 +20,8 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    //TODO: Move back to plain POCO
     public class Cuesheet() : Validateable, ITraceable, ICuesheet
     {
-        private List<Track> tracks = [];
         //TODO: Remove when ITraceable doesn't have event any more
         public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
@@ -48,18 +46,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 
         [JsonIgnore]
         public Boolean IsImporting { get; set; }
-
-        public Boolean RecalculateLastTrackEnd()
-        {
-            //Try to recalculate length by recalculating last track
-            var lastTrack = tracks.LastOrDefault();
-            if (lastTrack != null)
-            {
-                RecalculateTrackProperties(lastTrack);
-                return true;
-            }
-            return false;
-        }
 
         public override ValidationResult Validate(string property)
         {
@@ -149,57 +135,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
-        }
-
-        private void RecalculateTrackProperties(Track trackToCalculate)
-        {
-            if ((Audiofile?.Duration.HasValue == true) && (trackToCalculate.End.HasValue == false))
-            {
-                trackToCalculate.End = Audiofile.Duration;
-            }
-            //TODO
-            //if (Tracks.Count > 1)
-            //{
-            //    var lastTrack = tracks.ElementAt(tracks.IndexOf(trackToCalculate) - 1);
-            //    if (lastTrack != trackToCalculate)
-            //    {
-            //        if ((Audiofile != null) && (Audiofile.Duration.HasValue) && (lastTrack.End.HasValue) && (lastTrack.End.Value == Audiofile.Duration.Value))
-            //        {
-            //            lastTrack.End = null;
-            //        }
-            //        if (trackToCalculate.Position.HasValue == false)
-            //        {
-            //            //TODO
-            //            //trackToCalculate.Position = lastTrack.Position + 1;
-            //        }
-            //        if (trackToCalculate.Begin.HasValue == false)
-            //        {
-            //            trackToCalculate.Begin = lastTrack.End;
-            //        }
-            //        else
-            //        {
-            //            if (lastTrack.End.HasValue == false)
-            //            {
-            //                lastTrack.End = trackToCalculate.Begin;
-            //            }
-            //        }
-            //        if (IsRecording)
-            //        {
-            //            lastTrack.End = trackToCalculate.Begin;
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    if (trackToCalculate.Position.HasValue == false)
-            //    {
-            //        trackToCalculate.Position = 1;
-            //    }
-            //    if ((trackToCalculate.Begin.HasValue == false) || (IsRecording))
-            //    {
-            //        trackToCalculate.Begin = TimeSpan.Zero;
-            //    }
-            //}            
         }
     }
 }

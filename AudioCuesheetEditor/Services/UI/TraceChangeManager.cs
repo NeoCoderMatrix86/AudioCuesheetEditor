@@ -220,18 +220,6 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        public void MergeLastEditWithEdit(Func<TracedChanges, bool> targetEdit)
-        {
-            var edit = _undoStack.FirstOrDefault(targetEdit);
-            if ((edit != null) && (_undoStack.Count > 0))
-            {
-                var lastEdits = _undoStack[^1];
-                _undoStack.Remove(lastEdits);
-                edit.Changes.AddRange(lastEdits.Changes);
-                UndoDone?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
         public void AddChange(TracedChange tracedChange)
         {
             //TODO: Tests

@@ -23,6 +23,7 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
+@inject ITrackManager _trackManager
 
 @if (Cuesheet != null)
 {
@@ -117,12 +118,14 @@ along with Foobar.  If not, see
                 var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], fileInputAudiofileId);
                 audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single());
             }
+            base.TraceChangeManager.BulkEdit = true;
             _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
-            //TODO: Include into cuesheetmanager
-            if (Cuesheet.RecalculateLastTrackEnd())
+            var lastTrack = Cuesheet.Tracks.LastOrDefault();
+            if ((lastTrack != null) && (audiofile?.Duration.HasValue == true))
             {
-                TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);
             }
+            base.TraceChangeManager.BulkEdit = false;
         }
         catch(ArgumentException ae)
         {

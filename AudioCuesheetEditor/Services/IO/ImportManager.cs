@@ -32,7 +32,7 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ICuesheetManager cuesheetManager, ILogger<ImportManager> logger)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ILogger<ImportManager> logger)
     {
         public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -42,7 +42,6 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
         private readonly ITrackManager _trackManager = trackManager;
-        private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         public void ImportData(String? data)
         {
@@ -212,7 +211,6 @@ namespace AudioCuesheetEditor.Services.IO
                 for (int i = 0; i < tracks.Count(); i++)
                 {
                     var importTrack = tracks.ElementAt(i);
-                    //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
                     var track = _trackManager.Clone(importTrack);
                     track.Cuesheet = null;
                     if (importTrack is ImportTrack importTrackReference)

@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -125,6 +126,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             else
             {
                 var trackBeforeNewTrack = cuesheet.Tracks.Last();
+                if ((cuesheet.Audiofile?.Duration.HasValue == true) && (trackBeforeNewTrack.End.HasValue) && (trackBeforeNewTrack.End == cuesheet.Audiofile.Duration))
+                {
+                    trackBeforeNewTrack.End = null;
+                }
                 if (track.Position.HasValue == false)
                 {
                     track.Position = (ushort?)(trackBeforeNewTrack.Position + 1);
