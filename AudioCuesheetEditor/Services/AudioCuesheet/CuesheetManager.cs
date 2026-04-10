@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;

@@ -76,6 +76,5 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="cuesheet"></param>
         /// <param name="tracksToRemove"></param>
         void RemoveTracks(IEnumerable<Track> tracksToRemove);
-        //TODO: Add all methods from cuesheet here
     }
 }
