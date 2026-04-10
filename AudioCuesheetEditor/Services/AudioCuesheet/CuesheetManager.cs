@@ -104,13 +104,52 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void AddTrack(Track track)
         {
             var cuesheet = _sessionStateContainer.Cuesheet;
+            track.Cuesheet = cuesheet;
+            // Calculate track properties
+            if (cuesheet.IsRecording && cuesheet.RecordingStart.HasValue)
+            {
+                track.Begin = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+            }
+            if ((track.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
+            {
+                track.End = cuesheet.Audiofile?.Duration;
+            }
+            if (cuesheet.Tracks.Any() == false)
+            {
+                track.Position = 1;
+                if ((track.Begin.HasValue == false) || cuesheet.IsRecording)
+                {
+                    track.Begin = TimeSpan.Zero;
+                }
+            }
+            else
+            {
+                var trackBeforeNewTrack = cuesheet.Tracks.Last();
+                if (track.Position.HasValue == false)
+                {
+                    track.Position = (ushort?)(trackBeforeNewTrack.Position + 1);
+                }
+                if (track.Begin.HasValue == false)
+                {
+                    track.Begin = trackBeforeNewTrack.End;
+                }
+                else
+                {
+                    if (trackBeforeNewTrack.End.HasValue == false)
+                    {
+                        trackBeforeNewTrack.End = track.Begin;
+                    }
+                }
+                if (cuesheet.IsRecording)
+                {
+                    trackBeforeNewTrack.End = track.Begin;
+                }
+            }
             var newValue = new List<Track>(cuesheet.Tracks)
             {
                 track
             };
             SetValue(cuesheet, x => x.Tracks, newValue);
-            //TODO: calculate track begin when cuesheet is recording
-            //TODO: recalculate track properties like Cuesheet.RecalculateTrackProperties did
         }
 
         /// <inheritdoc/>
@@ -146,6 +185,5 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
         }
-
     }
 }
