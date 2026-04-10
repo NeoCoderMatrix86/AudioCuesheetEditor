@@ -127,7 +127,7 @@ along with Foobar.  If not, see
 <MudMenu PositionAtCursor @ref="_trackContextMenu">
     @if (_contextMenuTrack != null)
     {
-        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(_contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.IsPlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(_contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
         <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(_contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
     }
 </MudMenu>
