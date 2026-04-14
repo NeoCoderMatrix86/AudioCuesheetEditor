@@ -17,7 +17,6 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace AudioCuesheetEditor.Tests.Services.UI
 {
@@ -25,7 +24,6 @@ namespace AudioCuesheetEditor.Tests.Services.UI
     public class TraceChangeManagerTests
     {
         private readonly TraceChangeManager _traceChangeManager = new(TestHelper.CreateLogger<TraceChangeManager>());
-        //TODO
 
         [TestMethod()]
         public void AddChange_SingleChange_EnablesUndo()
@@ -75,92 +73,111 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             Assert.IsTrue(tracedObjectHistoryChangedFired);
         }
 
-        private static T CallInItsOwnScope<T>(Func<T> getter)
+        [TestMethod()]
+        public void Undo_SingleChange_UndoesChange()
         {
-            return getter();
+            // Arrange
+            var track = new Track
+            {
+                Position = 3
+            };
+            var undoDoneEventFired = false;
+            _traceChangeManager.UndoDone += delegate
+            {
+                undoDoneEventFired = true;
+            };
+            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+            // Act
+            _traceChangeManager.Undo();
+            // Assert
+            Assert.IsNull(track.Position);
+            Assert.IsTrue(undoDoneEventFired);
+            Assert.IsFalse(_traceChangeManager.CanUndo);
+            Assert.IsTrue(_traceChangeManager.CanRedo);
         }
 
-        //[TestMethod()]
-        //public void TraceChangesTest()
-        //{
-        //    var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-        //    var callResult = CallInItsOwnScope(() =>
-        //    {
-        //        var track = new Track();
-        //        manager.TraceChanges(track);
-        //        var track2 = new Track();
-        //        manager.TraceChanges(track2);
-        //        track2.Title = "Title 2";
-        //        track.Artist = "Artist 1";
-        //        track = null;
-        //        GC.Collect();
-        //        return track2;
-        //    });
-        //    GC.Collect();
-        //    Assert.IsTrue(manager.CanUndo);
-        //    manager.Undo();
-        //    Assert.IsNull(callResult.Title);
-        //    Assert.IsFalse(manager.CanUndo);
-        //}
+        [TestMethod()]
+        public void Undo_BulkChange_UndoesChanges()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Position = 3,
+                Artist = "Artist"
+            };
+            var undoDoneEventFired = false;
+            _traceChangeManager.UndoDone += delegate
+            {
+                undoDoneEventFired = true;
+            };
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
+            _traceChangeManager.BulkEdit = false;
+            // Act
+            _traceChangeManager.Undo();
+            // Assert
+            Assert.IsNull(track.Position);
+            Assert.IsNull(track.Artist);
+            Assert.IsTrue(undoDoneEventFired);
+            Assert.IsFalse(_traceChangeManager.CanUndo);
+            Assert.IsTrue(_traceChangeManager.CanRedo);
+        }
 
-        //[TestMethod()]
-        //public void UndoTest()
-        //{
-        //    var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-        //    var track = new Track();
-        //    manager.TraceChanges(track);
-        //    Assert.IsFalse(manager.CanUndo);
-        //    manager.Undo();
-        //    track.Position = 3;
-        //    Assert.IsTrue(manager.CanUndo);
-        //    track.Artist = "Artist";
-        //    track.End = new TimeSpan(0, 3, 23);
-        //    manager.Undo();
-        //    Assert.IsTrue(manager.CanRedo);
-        //    Assert.IsNull(track.End);
-        //    var track2 = new Track();
-        //    manager.TraceChanges(track2);
-        //    track2.Position = 5;
-        //    Assert.IsFalse(manager.CanRedo);
-        //    track2.Artist = "Artist 2";
-        //    track2.Title = "Title 2";
-        //    track2.Length = new TimeSpan(0, 4, 12);
-        //    Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
-        //    manager.Undo();
-        //    Assert.IsNull(track2.Length);
-        //}
+        [TestMethod()]
+        public void Redo_SingleChange_UndoesChange()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Position = 3
+            };
+            var redoDoneEventFired = false;
+            _traceChangeManager.RedoDone += delegate
+            {
+                redoDoneEventFired = true;
+            };
+            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+            _traceChangeManager.Undo();
+            // Act
+            _traceChangeManager.Redo();
+            // Assert
+            Assert.AreEqual((ushort)3, track.Position);
+            Assert.IsTrue(redoDoneEventFired);
+            Assert.IsTrue(_traceChangeManager.CanUndo);
+            Assert.IsFalse(_traceChangeManager.CanRedo);
+        }
 
-        //[TestMethod()]
-        //public void RedoTest()
-        //{
-        //    var manager = new TraceChangeManager(TestHelper.CreateLogger<TraceChangeManager>());
-        //    var track = new Track();
-        //    manager.TraceChanges(track);
-        //    Assert.IsFalse(manager.CanUndo);
-        //    track.Position = 3;
-        //    Assert.IsTrue(manager.CanUndo);
-        //    track.Artist = "Artist";
-        //    track.End = new TimeSpan(0, 3, 23);
-        //    Assert.IsFalse(manager.CanRedo);
-        //    manager.Redo();
-        //    manager.Undo();
-        //    Assert.IsTrue(manager.CanRedo);
-        //    Assert.IsNull(track.End);
-        //    manager.Redo();
-        //    Assert.AreEqual(new TimeSpan(0, 3, 23), track.End);
-        //    var track2 = new Track();
-        //    manager.TraceChanges(track2);
-        //    track2.Position = 5;
-        //    Assert.IsFalse(manager.CanRedo);
-        //    track2.Artist = "Artist 2";
-        //    track2.Title = "Title 2";
-        //    track2.Length = new TimeSpan(0, 4, 12);
-        //    Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
-        //    manager.Undo();
-        //    Assert.IsNull(track2.Length);
-        //    manager.Redo();
-        //    Assert.AreEqual(new TimeSpan(0, 4, 12), track2.Length);
-        //}
+        [TestMethod()]
+        public void Redo_BulkChange_UndoesChanges()
+        {
+            // Arrange
+            var track = new Track
+            {
+                Position = 3,
+                Artist = "Artist"
+            };
+            var redoDoneEventFired = false;
+            _traceChangeManager.RedoDone += delegate
+            {
+                redoDoneEventFired = true;
+            };
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
+            _traceChangeManager.BulkEdit = false;
+            _traceChangeManager.Undo();
+            // Act
+            _traceChangeManager.Redo();
+            // Assert
+            Assert.AreEqual((ushort)3, track.Position);
+            Assert.AreEqual("Artist", track.Artist);
+            Assert.IsTrue(redoDoneEventFired);
+            Assert.IsTrue(_traceChangeManager.CanUndo);
+            Assert.IsFalse(_traceChangeManager.CanRedo);
+        }
+
+        //TODO
 
         //[TestMethod()]
         //public void UndoRedoCombinationTest()
@@ -402,7 +419,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         //    Assert.IsNull(track3.End);
         //    Assert.IsNull(track4.End);
         //}
-        
+
         //[TestMethod()]
         //public void RemoveTracedChanges_RemovesChanges_WhenChangesAvailable()
         //{
