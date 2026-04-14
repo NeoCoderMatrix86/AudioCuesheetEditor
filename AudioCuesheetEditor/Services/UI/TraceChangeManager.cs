@@ -184,7 +184,6 @@ namespace AudioCuesheetEditor.Services.UI
 
         public void AddChange(TracedChange tracedChange)
         {
-            //TODO: Tests
             if (BulkEdit == false)
             {
                 //Single change

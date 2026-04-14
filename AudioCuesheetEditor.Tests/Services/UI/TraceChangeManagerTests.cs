@@ -24,7 +24,57 @@ namespace AudioCuesheetEditor.Tests.Services.UI
     [TestClass()]
     public class TraceChangeManagerTests
     {
+        private readonly TraceChangeManager _traceChangeManager = new(TestHelper.CreateLogger<TraceChangeManager>());
         //TODO
+
+        [TestMethod()]
+        public void AddChange_SingleChange_EnablesUndo()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Test Artist 1"
+            };
+            var tracedObjectHistoryChangedFired = false;
+            _traceChangeManager.TracedObjectHistoryChanged += delegate
+            {
+                tracedObjectHistoryChangedFired = true;
+            };
+            // Act
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
+            // Assert
+            Assert.IsTrue(_traceChangeManager.CanUndo);
+            Assert.IsFalse(_traceChangeManager.CanRedo);
+            Assert.IsTrue(tracedObjectHistoryChangedFired);
+        }
+
+        [TestMethod()]
+        public void AddChange_BulkChange_EnablesUndo()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Test Artist 1",
+                Title = "Test Title 1",
+                Cataloguenumber = "1234567890"
+            };
+            var tracedObjectHistoryChangedFired = false;
+            _traceChangeManager.TracedObjectHistoryChanged += delegate
+            {
+                tracedObjectHistoryChangedFired = true;
+            };
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Title))));
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Cataloguenumber))));
+            // Act
+            _traceChangeManager.BulkEdit = false;
+            // Assert
+            Assert.IsTrue(_traceChangeManager.CanUndo);
+            Assert.IsFalse(_traceChangeManager.CanRedo);
+            Assert.IsTrue(tracedObjectHistoryChangedFired);
+        }
+
         private static T CallInItsOwnScope<T>(Func<T> getter)
         {
             return getter();
