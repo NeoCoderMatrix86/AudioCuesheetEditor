@@ -135,9 +135,20 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.Cuesheet;
             var intersection = cuesheet.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
+            //Calculate position and begin of new tracks
+            ushort position = 1;
+            foreach (var track in newValue.OrderBy(x => x.Position))
+            {
+                track.Position = position;
+                position++;
+                var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
+                if (previousTrack?.End.HasValue == true)
+                {
+                    track.Begin = previousTrack.End;
+                }
+            }
             SetValue(cuesheet, x => x.Tracks, newValue);
-            //TODO: calculate position and begin of all tracks
-            //TODO: calculate last track end Cuesheet.RecalculateTrackProperties did
+            SetLastTrackEnd();
         }
 
         void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
