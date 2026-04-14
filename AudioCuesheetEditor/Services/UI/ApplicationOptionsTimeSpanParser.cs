@@ -54,7 +54,6 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        //TODO: Tests
         public async Task<TimeSpan?> GetTimespanAsync(String value)
         {
             await EnsureInitializedAsync();

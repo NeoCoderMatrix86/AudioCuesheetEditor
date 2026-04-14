@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Options;
+using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -108,6 +109,68 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             var result = parser.GetTimespanFormatted(new TimeSpan(0, 1, 30, 27, 200, 103));
             // Assert
             Assert.AreEqual("01:30:27.2001030", result);
+        }
+
+        [TestMethod()]
+        public async Task GetTimespanAsync_CustomValidFormat_ReturnsTimeSpanAsync()
+        {
+            // Arrange
+            var options = new ApplicationOptions()
+            {
+                TimeSpanFormat = new()
+                {
+                    Scheme = $"{TimeSpanFormat.Hours}-{TimeSpanFormat.Minutes}-{TimeSpanFormat.Seconds}"
+                }
+            };
+            var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
+            mockOptionsProvider
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
+                .ReturnsAsync(options);
+            var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
+            // Act
+            var result = await parser.GetTimespanAsync("23-45-56");
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(new TimeSpan(23, 45, 56), result);
+        }
+
+        [TestMethod()]
+        public async Task GetTimespanAsync_CustomInvalidFormat_ReturnsNullAsync()
+        {
+            // Arrange
+            var options = new ApplicationOptions()
+            {
+                TimeSpanFormat = new()
+                {
+                    Scheme = $"INVALID_FORMAT"
+                }
+            };
+            var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
+            mockOptionsProvider
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
+                .ReturnsAsync(options);
+            var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
+            // Act
+            var result = await parser.GetTimespanAsync("23-45-56");
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod()]
+        public async Task GetTimespanAsync_DefaultFormat_ReturnsTimeSpanAsync()
+        {
+            // Arrange
+            var options = new ApplicationOptions();
+            var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
+            mockOptionsProvider
+                .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
+                .ReturnsAsync(options);
+            var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
+            // Act
+            var result = await parser.GetTimespanAsync("23:45:56");
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(new TimeSpan(23, 45, 56), result);
         }
     }
 }
