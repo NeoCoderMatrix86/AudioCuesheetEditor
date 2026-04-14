@@ -183,7 +183,6 @@ along with Foobar.  If not, see
             IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
         _cuesheetManager.AddTrack(newTrack);
-        TraceChangeManager.TraceChanges(newTrack);
     }
 
     async Task EditSelectedTracksClicked()
@@ -242,7 +241,6 @@ along with Foobar.  If not, see
         {
             var copy = _trackManager.Clone(trackThatWillBeCopied);
             _cuesheetManager.AddTrack(copy);
-            TraceChangeManager.TraceChanges(copy);
             await EditTrackModalClicked(copy);
         }
     }

@@ -15,16 +15,12 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Cuesheet() : Validateable, ITraceable, ICuesheet
+    public class Cuesheet() : Validateable, ICuesheet
     {
-        //TODO: Remove when ITraceable doesn't have event any more
-        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-
         [JsonInclude]
         public IEnumerable<Track> Tracks { get; set; } = [];
 

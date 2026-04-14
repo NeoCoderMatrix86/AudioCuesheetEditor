@@ -30,20 +30,4 @@ namespace AudioCuesheetEditor.Model.UI
         public object? PreviousValue { get; }
         public string PropertyName { get; }
     }
-
-    public class TraceablePropertiesChangedEventArgs(TraceableChange traceableChange) : EventArgs
-    {
-        public TraceableChange TraceableChange { get; } = traceableChange;
-    }
-
-    /// <summary>
-    /// Interface for undo/redoable actions
-    /// </summary>
-    public interface ITraceable
-    {
-        /// <summary>
-        /// A property of this object has been changed and therefore needs to be traced by the TraceChangeManager.
-        /// </summary>
-        public event EventHandler<TraceablePropertiesChangedEventArgs> TraceablePropertyChanged;
-    }
 }

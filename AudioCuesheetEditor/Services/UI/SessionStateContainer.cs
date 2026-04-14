@@ -20,11 +20,10 @@ using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class SessionStateContainer : ISessionStateContainer, ITraceable
+    public class SessionStateContainer : ISessionStateContainer
     {
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ImportCuesheetChanged;
-        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
         private readonly ITraceChangeManager _traceChangeManager;
         private Cuesheet cuesheet;
@@ -36,7 +35,6 @@ namespace AudioCuesheetEditor.Services.UI
             _traceChangeManager = traceChangeManager;
             cuesheet = new Cuesheet();
             SetCuesheetReference(cuesheet);
-            _traceChangeManager.TraceChanges(this);
         }
         public Cuesheet Cuesheet 
         {
@@ -90,8 +88,9 @@ namespace AudioCuesheetEditor.Services.UI
         {
             var previousValue = Cuesheet;
             cuesheet = value;
-            _traceChangeManager.TraceChanges(Cuesheet);
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, nameof(Cuesheet))));
+            //TODO
+            //_traceChangeManager.TraceChanges(Cuesheet);
+            //TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, nameof(Cuesheet))));
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
     }

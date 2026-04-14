@@ -34,7 +34,6 @@ namespace AudioCuesheetEditor.Services.UI
         /// </summary>
         public bool CanRedo { get; }
         public bool BulkEdit { get; set; }
-        public void TraceChanges(ITraceable traceable);
         /// <summary>
         /// Adds a change of a property
         /// </summary>
@@ -43,6 +42,6 @@ namespace AudioCuesheetEditor.Services.UI
         public void Reset();
         public void Undo();
         public void Redo();
-        public void RemoveTracedChanges(IEnumerable<ITraceable> traceables);
+        public void RemoveTracedChanges(IEnumerable<object> traceables);
     }
 }

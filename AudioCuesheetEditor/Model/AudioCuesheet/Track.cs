@@ -14,16 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.UI;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class Track : Validateable, ITraceable, ITrack
+    public class Track : Validateable, ITrack
     {
-        //TODO: Remove when ITraceable doesn't have event any more
-        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
-        
         public ushort? Position { get; set; }
         public String? Artist { get; set; }
         public String? Title { get; set; }

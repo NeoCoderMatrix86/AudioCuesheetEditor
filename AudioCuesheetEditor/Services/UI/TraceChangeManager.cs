@@ -17,34 +17,6 @@ using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    /// <summary>
-    /// Class for tracing changes on an object
-    /// </summary>
-    public class TracedChange(ITraceable traceableObject, TraceableChange traceableChange)
-    {
-        private readonly WeakReference<ITraceable> _tracedObject = new(traceableObject, false);
-
-        public ITraceable? TraceableObject
-        {
-            get
-            {
-                if (_tracedObject.TryGetTarget(out var traceable))
-                {
-                    return traceable;
-                }
-                return null;
-            }
-        }
-
-        public TraceableChange TraceableChange { get; } = traceableChange;
-    }
-
-    public class TracedChanges(IEnumerable<TracedChange> changes)
-    {
-        public List<TracedChange> Changes { get; } = [.. changes];
-        public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
-    }
-
     /// <inheritdoc />
     public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChangeManager
     {
@@ -59,22 +31,16 @@ namespace AudioCuesheetEditor.Services.UI
         public event EventHandler? UndoDone;
         public event EventHandler? RedoDone;
 
-        public bool CurrentlyHandlingRedoOrUndoChanges { get; private set; } = false;
         /// <inheritdoc />
         public bool CanUndo => _undoStack.Count > 0;
 
         /// <inheritdoc />
         public bool CanRedo => _redoStack.Count > 0;
 
-        public void TraceChanges(ITraceable traceable)
-        {
-            traceable.TraceablePropertyChanged += Traceable_TraceablePropertyChanged;
-        }
-
         public void Reset()
         {
-            Reset(_redoStack);
-            Reset(_undoStack);
+            _redoStack.Clear();
+            _undoStack.Clear();
         }
 
         public void Undo()
@@ -82,7 +48,6 @@ namespace AudioCuesheetEditor.Services.UI
             _logger.LogDebug("Undo called");
             if (CanUndo)
             {
-                CurrentlyHandlingRedoOrUndoChanges = true; 
                 TracedChanges? changes = null;
                 while (_undoStack.Count > 0 && changes == null)
                 {
@@ -111,7 +76,7 @@ namespace AudioCuesheetEditor.Services.UI
                             if (propertyInfo != null)
                             {
                                 var currentValue = propertyInfo.GetValue(tracedObject);
-                                redoChanges.Add(new TracedChange(tracedObject, new TraceableChange(currentValue, traceAbleChange.PropertyName)));
+                                redoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
                                 if (_logger.IsEnabled(LogLevel.Debug))
                                 {
                                     _logger.LogDebug("Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}", traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
@@ -131,7 +96,6 @@ namespace AudioCuesheetEditor.Services.UI
                     //Push the old value to redo stack
                     _redoStack.Add(new TracedChanges(redoChanges));
                 }
-                CurrentlyHandlingRedoOrUndoChanges = false;
                 UndoDone?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -141,7 +105,6 @@ namespace AudioCuesheetEditor.Services.UI
             _logger.LogDebug("Redo called");
             if (CanRedo)
             {
-                CurrentlyHandlingRedoOrUndoChanges = true;
                 TracedChanges? changes = null;
                 while (_redoStack.Count > 0 && changes == null)
                 {
@@ -170,7 +133,7 @@ namespace AudioCuesheetEditor.Services.UI
                             if (propertyInfo != null)
                             {
                                 var currentValue = propertyInfo.GetValue(tracedObject);
-                                undoChanges.Add(new TracedChange(tracedObject, new TraceableChange(currentValue, traceAbleChange.PropertyName)));
+                                undoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
                                 if (_logger.IsEnabled(LogLevel.Debug))
                                 {
                                     _logger.LogDebug("Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}", traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
@@ -190,7 +153,6 @@ namespace AudioCuesheetEditor.Services.UI
                     //Push the old value to redo stack
                     _undoStack.Add(new TracedChanges(undoChanges));
                 }
-                CurrentlyHandlingRedoOrUndoChanges = false;
                 RedoDone?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -237,63 +199,13 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
-        public void RemoveTracedChanges(IEnumerable<ITraceable> traceables)
+        public void RemoveTracedChanges(IEnumerable<object> traceables)
         {
             _undoStack.RemoveAll(x => x.HasTraceableObject == false);
             _undoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
             _redoStack.RemoveAll(x => x.HasTraceableObject == false);
             _redoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
             TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        private void Reset(List<TracedChanges> stack)
-        {
-            while (stack.Count > 0)
-            {
-                var tracedChange = stack[^1];
-                stack.Remove(tracedChange);
-                foreach (var change in tracedChange.Changes)
-                {
-                    change.TraceableObject?.TraceablePropertyChanged -= Traceable_TraceablePropertyChanged;
-                }
-            }
-            stack.Clear();
-        }
-
-        private void Traceable_TraceablePropertyChanged(object? sender, TraceablePropertiesChangedEventArgs e)
-        {
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Traceable_TraceablePropertyChanged called with {sender}, {PropertyName}, {PreviousValue}", sender, e.TraceableChange.PropertyName, e.TraceableChange.PreviousValue);
-                _logger.LogDebug("CurrentlyHandlingRedoOrUndoChanges = {CurrentlyHandlingRedoOrUndoChanges}", CurrentlyHandlingRedoOrUndoChanges);
-            }
-            if (CurrentlyHandlingRedoOrUndoChanges == false)
-            {
-                if (sender != null)
-                {
-                    if (_logger.IsEnabled(LogLevel.Debug))
-                    {
-                        _logger.LogDebug("BulkEdit = {BulkEdit}", BulkEdit);
-                    }
-                    if (BulkEdit == false)
-                    {
-                        //Single change
-                        var changes = new TracedChanges([new((ITraceable)sender, e.TraceableChange)]);
-                        _undoStack.Add(changes);
-                        _redoStack.Clear();
-                        TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
-                    }
-                    else
-                    {
-                        //We are tracing multiple changes
-                        _bulkEditTracedChanges?.Add(new TracedChange((ITraceable)sender, e.TraceableChange));
-                    }
-                }
-                else
-                {
-                    throw new ArgumentNullException(nameof(sender));
-                }
-            }
         }
     }
 }

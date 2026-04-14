@@ -244,11 +244,12 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                _traceChangeManager.TraceChanges(_sessionStateContainer.ImportCuesheet);
-                foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
-                {
-                    _traceChangeManager.TraceChanges(track);
-                }
+                //TODO
+                //_traceChangeManager.TraceChanges(_sessionStateContainer.ImportCuesheet);
+                //foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
+                //{
+                //    _traceChangeManager.TraceChanges(track);
+                //}
             }
         }
 
