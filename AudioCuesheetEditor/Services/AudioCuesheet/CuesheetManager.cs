@@ -106,9 +106,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.Cuesheet;
             track.Cuesheet = cuesheet;
             // Calculate track properties
-            if (cuesheet.IsRecording && cuesheet.RecordingStart.HasValue)
+            if (cuesheet.IsRecording)
             {
-                track.Begin = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+                track.Begin = DateTime.UtcNow - cuesheet.RecordingStart;
             }
             if ((track.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
             {
