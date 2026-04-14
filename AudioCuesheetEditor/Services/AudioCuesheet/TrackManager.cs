@@ -91,12 +91,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public Track? GetPreviousLinkedTrack(Track track)
         {
             Track? previousLinkedTrack = null;
-            if (track.IsLinkedToPreviousTrack && track.Position.HasValue)
+            if (track.IsLinkedToPreviousTrack)
             {
-                if (track.Position.Value > 1)
-                {
-                    previousLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value - 1);
-                }
+                previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1);
             }
             return previousLinkedTrack;
         }
@@ -107,7 +104,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             Track? nextLinkedTrack = null;
             if (track.Position.HasValue)
             {
-                nextLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
+                nextLinkedTrack = track.Cuesheet?.Tracks.FirstOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
             }
             return nextLinkedTrack;
         }
