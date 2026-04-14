@@ -120,12 +120,6 @@ along with Foobar.  If not, see
             }
             base.TraceChangeManager.BulkEdit = true;
             _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
-            //TODO: Move this to service (is needed on removing on tracks also)
-            var lastTrack = Cuesheet.Tracks.LastOrDefault();
-            if ((lastTrack != null) && (audiofile?.Duration.HasValue == true))
-            {
-                _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);
-            }
             base.TraceChangeManager.BulkEdit = false;
         }
         catch(ArgumentException ae)

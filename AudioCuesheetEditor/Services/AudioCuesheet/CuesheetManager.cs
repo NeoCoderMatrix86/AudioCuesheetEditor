@@ -14,7 +14,6 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,10 +21,11 @@ using System.Reflection;
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer) : ICuesheetManager
+    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager) : ICuesheetManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly ITrackManager _trackManager = trackManager;
 
         public event EventHandler? IsRecordingChanged;
 
@@ -86,10 +86,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 track.Begin = DateTime.UtcNow - cuesheet.RecordingStart;
             }
-            if ((track.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
-            {
-                track.End = cuesheet.Audiofile?.Duration;
-            }
+            SetLastTrackEnd();
             if (cuesheet.Tracks.Any() == false)
             {
                 track.Position = 1;
@@ -164,6 +161,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             propertyInfo.SetValue(cuesheet, value);
 
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
+        }
+
+        void SetLastTrackEnd()
+        {
+            var lastTrack = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault();
+            if ((lastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
+            {
+                _trackManager.SetProperty(lastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
+            }
         }
     }
 }
