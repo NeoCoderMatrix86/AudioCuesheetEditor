@@ -21,10 +21,9 @@ using System.Reflection;
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class TrackManager(ITraceChangeManager traceChangeManager, ICuesheetManager cuesheetManager) : ITrackManager
+    public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
-        private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         //TODO: Tests
 
@@ -88,6 +87,31 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
         }
 
+        /// <inheritdoc/>
+        public Track? GetPreviousLinkedTrack(Track track)
+        {
+            Track? previousLinkedTrack = null;
+            if (track.IsLinkedToPreviousTrack && track.Position.HasValue)
+            {
+                if (track.Position.Value > 1)
+                {
+                    previousLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value - 1);
+                }
+            }
+            return previousLinkedTrack;
+        }
+
+        /// <inheritdoc/>
+        public Track? GetNextLinkedTrack(Track track)
+        {
+            Track? nextLinkedTrack = null;
+            if (track.Position.HasValue)
+            {
+                nextLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
+            }
+            return nextLinkedTrack;
+        }
+
         void SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
@@ -115,7 +139,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             if (track.Cuesheet != null)
             {
-                var previousTrack = _cuesheetManager.GetPreviousLinkedTrack(track);
+                var previousTrack = GetPreviousLinkedTrack(track);
                 if (previousTrack != null)
                 {
                     if (track.Position.HasValue && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
@@ -131,7 +155,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                         previousTrack.End = track.Begin;
                     }
                 }
-                var nextTrack = _cuesheetManager.GetNextLinkedTrack(track);
+                var nextTrack = GetNextLinkedTrack(track);
                 if (nextTrack != null)
                 {
                     if (track.Position.HasValue)

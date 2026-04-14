@@ -51,20 +51,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <returns></returns>
         void StopRecording();
         /// <summary>
-        /// Get the previous linked track of a track object
-        /// </summary>
-        /// <param name="cuesheet">Cuesheet to get the previous linked track from</param>
-        /// <param name="track">Track object to get the previous link to</param>
-        /// <returns>Previous linked track or null (if not linked)</returns>
-        Track? GetPreviousLinkedTrack(Track track);
-        /// <summary>
-        /// Get next linked track that is linked to the parameter track
-        /// </summary>
-        /// <param name="cuesheet"></param>
-        /// <param name="track"></param>
-        /// <returns></returns>
-        Track? GetNextLinkedTrack(Track track);
-        /// <summary>
         /// Adds a track to the cuesheet
         /// </summary>
         /// <param name="cuesheet"></param>

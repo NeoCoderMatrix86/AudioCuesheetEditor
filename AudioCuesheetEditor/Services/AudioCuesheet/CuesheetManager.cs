@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -73,31 +74,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             cuesheet.RecordingStart = null;
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <inheritdoc/>
-        public Track? GetPreviousLinkedTrack(Track track)
-        {
-            Track? previousLinkedTrack = null;
-            if (track.IsLinkedToPreviousTrack && track.Position.HasValue)
-            {
-                if (track.Position.Value > 1)
-                {
-                    previousLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value - 1);
-                }
-            }
-            return previousLinkedTrack;
-        }
-
-        /// <inheritdoc/>
-        public Track? GetNextLinkedTrack(Track track)
-        {
-            Track? nextLinkedTrack = null;
-            if (track.Position.HasValue)
-            {
-                nextLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
-            }
-            return nextLinkedTrack;
         }
 
         /// <inheritdoc/>
