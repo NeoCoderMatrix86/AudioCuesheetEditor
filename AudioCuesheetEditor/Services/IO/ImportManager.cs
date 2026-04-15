@@ -87,7 +87,6 @@ namespace AudioCuesheetEditor.Services.IO
                         var importCuesheet = new Cuesheet();
                         CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
-                        StartTracing();
                         break;
                     case ImportFileType.Cuesheet:
                         _traceChangeManager.BulkEdit = true;
@@ -238,19 +237,6 @@ namespace AudioCuesheetEditor.Services.IO
                 throw new NullReferenceException();
             }
             target.IsImporting = false;
-        }
-
-        private void StartTracing()
-        {
-            if (_sessionStateContainer.ImportCuesheet != null)
-            {
-                //TODO
-                //_traceChangeManager.TraceChanges(_sessionStateContainer.ImportCuesheet);
-                //foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
-                //{
-                //    _traceChangeManager.TraceChanges(track);
-                //}
-            }
         }
 
         private void ResetTracing()

@@ -47,43 +47,43 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             if (setIsLinkedToPreviousTrack)
             {
-                SetValue(target, x => x.IsLinkedToPreviousTrack, source.IsLinkedToPreviousTrack);
+                SetValue(target, x => x.IsLinkedToPreviousTrack, source.IsLinkedToPreviousTrack, false);
             }
             if (setPosition)
             {
-                SetValue(target, x => x.Position, source.Position);
+                SetValue(target, x => x.Position, source.Position, false);
             }
             if (setArtist)
             {
-                SetValue(target, x => x.Artist, source.Artist);
+                SetValue(target, x => x.Artist, source.Artist, false);
             }
             if (setTitle)
             {
-                SetValue(target, x => x.Title, source.Title);
+                SetValue(target, x => x.Title, source.Title, false);
             }
             if (setBegin)
             {
-                SetValue(target, x => x.Begin, source.Begin);
+                SetValue(target, x => x.Begin, source.Begin, false );
             }
             if (setEnd)
             {
-                SetValue(target, x => x.End, source.End);
+                SetValue(target, x => x.End, source.End, false);
             }
             if (setLength)
             {
-                SetValue(target, x => x.Length, source.Length);
+                SetValue(target, x => x.Length, source.Length, false);
             }
             if (setFlags)
             {
-                SetValue(target, x => x.Flags, source.Flags);
+                SetValue(target, x => x.Flags, source.Flags, false);
             }
             if (setPreGap)
             {
-                SetValue(target, x => x.PreGap, source.PreGap);
+                SetValue(target, x => x.PreGap, source.PreGap, false);
             }
             if (setPostGap)
             {
-                target.PostGap = source.PostGap;
+                SetValue(target, x=> x.PostGap, source.PostGap, false);
             }
         }
 
@@ -109,7 +109,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             return nextLinkedTrack;
         }
 
-        void SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
+        void SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value, Boolean signalTraceChangeManager = true)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
             {
@@ -128,8 +128,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
 
             propertyInfo.SetValue(track, value);
-
-            _traceChangeManager.AddChange(new(track, new(previousValue, propertyInfo.Name)));
+            if (signalTraceChangeManager)
+            {
+                _traceChangeManager.AddChange(new(track, new(previousValue, propertyInfo.Name)));
+            }
         }
 
         void RecalculateLinkedProperties(Track track)
