@@ -16,26 +16,19 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.UI;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class SessionStateContainer : ISessionStateContainer
+    public class SessionStateContainer(ITraceChangeManager traceChangeManager) : ISessionStateContainer
     {
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ImportCuesheetChanged;
 
-        private readonly ITraceChangeManager _traceChangeManager;
-        private Cuesheet cuesheet;
+        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+        private Cuesheet cuesheet = new();
         private Cuesheet? importCuesheet;
         private Audiofile? importAudiofile;
 
-        public SessionStateContainer(ITraceChangeManager traceChangeManager)
-        {
-            _traceChangeManager = traceChangeManager;
-            cuesheet = new Cuesheet();
-            SetCuesheetReference(cuesheet);
-        }
         public Cuesheet Cuesheet 
         {
             get { return cuesheet; }
@@ -88,9 +81,7 @@ namespace AudioCuesheetEditor.Services.UI
         {
             var previousValue = Cuesheet;
             cuesheet = value;
-            //TODO
-            //_traceChangeManager.TraceChanges(Cuesheet);
-            //TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, nameof(Cuesheet))));
+            _traceChangeManager.AddChange(new(this, new(previousValue, nameof(Cuesheet))));
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
     }

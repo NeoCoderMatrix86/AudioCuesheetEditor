@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -25,48 +26,45 @@ namespace AudioCuesheetEditor.Tests.Services.UI
     [TestClass]
     public class SessionStateContainerTests
     {
-        private readonly Mock<ITraceChangeManager> traceChangeManagerMock;
-        private readonly SessionStateContainer sessionStateContainer;
+        private readonly Mock<ITraceChangeManager> _traceChangeManagerMock;
+        private readonly SessionStateContainer _sessionStateContainer;
 
         public SessionStateContainerTests()
         {
-            traceChangeManagerMock = new Mock<ITraceChangeManager>();
-            sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
+            _traceChangeManagerMock = new Mock<ITraceChangeManager>();
+            _sessionStateContainer = new SessionStateContainer(_traceChangeManagerMock.Object);
         }
-        //TODO
-        //[TestMethod]
-        //public void Cuesheet_SetNewValue_ShouldTriggerCuesheetChangedEvent()
-        //{
-        //    // Arrange
-        //    var newCuesheet = new Cuesheet();
-        //    bool eventTriggered = false;
-        //    bool traceablePropertyChangedFired = false;
-        //    sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
-        //    sessionStateContainer.TraceablePropertyChanged += (sender, args) => traceablePropertyChangedFired = true;
+        
+        [TestMethod]
+        public void Cuesheet_SetNewValue_ShouldTriggerCuesheetChangedEvent()
+        {
+            // Arrange
+            var newCuesheet = new Cuesheet();
+            bool eventTriggered = false;
+            _sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
 
-        //    // Act
-        //    sessionStateContainer.Cuesheet = newCuesheet;
+            // Act
+            _sessionStateContainer.Cuesheet = newCuesheet;
 
-        //    // Assert
-        //    Assert.IsTrue(eventTriggered);
-        //    Assert.IsTrue(traceablePropertyChangedFired);
-        //    traceChangeManagerMock.Verify(m => m.TraceChanges(newCuesheet), Times.Once);
-        //}
+            // Assert
+            Assert.IsTrue(eventTriggered);
+            _traceChangeManagerMock.Verify(m => m.AddChange(It.Is<TracedChange>(x => x.TraceableObject == _sessionStateContainer && x.TraceableChange.PropertyName == nameof(SessionStateContainer.Cuesheet))), Times.Once);
+        }
 
-        //[TestMethod]
-        //public void ImportCuesheet_SetNewValue_ShouldTriggerImportCuesheetChangedEvent()
-        //{
-        //    // Arrange
-        //    var newImportCuesheet = new Cuesheet();
-        //    bool eventTriggered = false;
-        //    sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
+        [TestMethod]
+        public void ImportCuesheet_SetNewValue_ShouldTriggerImportCuesheetChangedEvent()
+        {
+            // Arrange
+            var newImportCuesheet = new Cuesheet();
+            bool eventTriggered = false;
+            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
 
-        //    // Act
-        //    sessionStateContainer.ImportCuesheet = newImportCuesheet;
+            // Act
+            _sessionStateContainer.ImportCuesheet = newImportCuesheet;
 
-        //    // Assert
-        //    Assert.IsTrue(eventTriggered);
-        //}
+            // Assert
+            Assert.IsTrue(eventTriggered);
+        }
 
         [TestMethod]
         public void ImportAudiofile_SetNewValue_ShouldUpdateImportCuesheetAndTriggerEvent()
@@ -74,12 +72,12 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             // Arrange
             var importCuesheet = new Cuesheet();
             var audioFile = new Audiofile("Test audio file.mp3");
-            sessionStateContainer.ImportCuesheet = importCuesheet;
+            _sessionStateContainer.ImportCuesheet = importCuesheet;
             bool eventTriggered = false;
-            sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
+            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
 
             // Act
-            sessionStateContainer.ImportAudiofile = audioFile;
+            _sessionStateContainer.ImportAudiofile = audioFile;
 
             // Assert
             Assert.AreEqual(audioFile, importCuesheet.Audiofile);
@@ -90,16 +88,16 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         public void ResetImport_ShouldClearImportProperties()
         {
             // Arrange
-            sessionStateContainer.Importfile = Mock.Of<IImportfile>();
-            sessionStateContainer.ImportCuesheet = new Cuesheet();
+            _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
+            _sessionStateContainer.ImportCuesheet = new Cuesheet();
 
             // Act
-            sessionStateContainer.ResetImport();
+            _sessionStateContainer.ResetImport();
 
             // Assert
-            Assert.IsNull(sessionStateContainer.Importfile);
-            Assert.IsNull(sessionStateContainer.ImportAudiofile);
-            Assert.IsNull(sessionStateContainer.ImportCuesheet);
+            Assert.IsNull(_sessionStateContainer.Importfile);
+            Assert.IsNull(_sessionStateContainer.ImportAudiofile);
+            Assert.IsNull(_sessionStateContainer.ImportCuesheet);
         }
     }
 }
