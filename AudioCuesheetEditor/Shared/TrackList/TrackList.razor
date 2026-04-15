@@ -132,7 +132,7 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-@code {
+    @code {
     //TODO: Disallow editing of position
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
@@ -240,6 +240,9 @@ along with Foobar.  If not, see
         if (trackThatWillBeCopied != null)
         {
             var copy = _trackManager.Clone(trackThatWillBeCopied);
+            copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
+            copy.Begin = trackThatWillBeCopied.End;
+            copy.End = null;
             _cuesheetManager.AddTrack(copy);
             await EditTrackModalClicked(copy);
         }
