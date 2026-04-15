@@ -184,6 +184,10 @@ namespace AudioCuesheetEditor.Services.UI
 
         public void AddChange(TracedChange tracedChange)
         {
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                _logger.LogDebug("AddChange: {tracedChange.TraceableObject}, {tracedChange.TraceableChange.PropertyName}, {tracedChange.TraceableChange.PreviousValue}", tracedChange.TraceableObject, tracedChange.TraceableChange.PropertyName, tracedChange.TraceableChange.PreviousValue);
+            }
             if (BulkEdit == false)
             {
                 //Single change
