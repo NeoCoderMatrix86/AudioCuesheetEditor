@@ -18,7 +18,7 @@ using System.Text.Json.Serialization;
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
     [method: JsonConstructor]
-    public class Audiofile(String name) : IDisposable, IAudiofile
+    public class Audiofile(String name)
     {
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
@@ -35,13 +35,9 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         ];
 
         private AudioCodec? audioCodec;
-        private Stream? contentStream;
         private String name = name;
-        private bool disposedValue;
 
-        public event EventHandler? ContentStreamLoaded;
-
-        public Audiofile(String name, String objectURL, AudioCodec? audioCodec) : this(name)
+        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this(name)
         {
             if (String.IsNullOrEmpty(objectURL))
             {
@@ -49,6 +45,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             }
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
+            Duration = duration;
         }
 
         public String Name
@@ -70,32 +67,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         }
         [JsonIgnore]
         public String? ObjectURL { get; private set; }
-        /// <summary>
-        /// Boolean indicating if the stream has fully been loaded
-        /// </summary>
-        [JsonIgnore]
-        public Boolean IsContentStreamLoaded
-        {
-            get { return ContentStream != null; }
-        }
-        /// <summary>
-        /// File content stream. Be carefully, this stream is loaded asynchronously. Connect to the StreamLoaded for checking if loading has already been done!
-        /// </summary>
-        [JsonIgnore]
-        public Stream? ContentStream
-        {
-            get => contentStream;
-            set
-            {
-                contentStream = value;
-                if ((ContentStream != null) && (AudioCodec != null))
-                {
-                    var track = new ATL.Track(ContentStream, AudioCodec.MimeType);
-                    Duration = new TimeSpan(0, 0, track.Duration);
-                    ContentStreamLoaded?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
         /// <summary>
         /// Duration of the audio file
         /// </summary>
@@ -143,31 +114,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 }
                 return playbackPossible;
             }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    if (ContentStream != null)
-                    {
-                        ContentStream.Close();
-                        ContentStream.Dispose();
-                        ContentStream = null;
-                    }
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

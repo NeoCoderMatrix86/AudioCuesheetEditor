@@ -19,7 +19,6 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Services.UI;
-using Microsoft.AspNetCore.Components.Forms;
 using System.Diagnostics;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -188,12 +187,6 @@ namespace AudioCuesheetEditor.Services.IO
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
                 tracks = originCuesheet.Tracks;
-                // Copy sections
-                foreach (var section in originCuesheet.Sections)
-                {
-                    var newSplitPoint = target.AddSection();
-                    newSplitPoint.CopyValues(section);
-                }
                 target.Audiofile = originCuesheet.Audiofile;
                 target.CDTextfile = originCuesheet.CDTextfile;
                 target.Cataloguenumber = originCuesheet.Cataloguenumber;

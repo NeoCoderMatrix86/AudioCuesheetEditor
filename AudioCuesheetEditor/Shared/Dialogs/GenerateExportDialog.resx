@@ -132,9 +132,6 @@
   <data name="Delete selected export profile" xml:space="preserve">
     <value>Delete selected export profile</value>
   </data>
-  <data name="Name" xml:space="preserve">
-    <value>Name</value>
-  </data>
   <data name="Enter the name for this profile here" xml:space="preserve">
     <value>Enter the name for this profile here</value>
   </data>
@@ -167,15 +164,6 @@
   </data>
   <data name="Download export" xml:space="preserve">
     <value>Download export</value>
-  </data>
-  <data name="Begin" xml:space="preserve">
-    <value>Begin</value>
-  </data>
-  <data name="End" xml:space="preserve">
-    <value>End</value>
-  </data>
-  <data name="Content" xml:space="preserve">
-    <value>Content</value>
   </data>
   <data name="Artist" xml:space="preserve">
     <value>Artist</value>
@@ -216,7 +204,7 @@
   <data name="PostGap" xml:space="preserve">
     <value>PostGap</value>
   </data>
-  <data name="Display content" xml:space="preserve">
-    <value>Display content</value>
+  <data name="No export profile selected!" xml:space="preserve">
+    <value>No export profile selected!</value>
   </data>
 </root>

@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -415,96 +414,6 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         }
 
         [TestMethod]
-        public void AddSection_WithValidData_FiresEvents()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            bool eventFired = false;
-            cuesheet.TraceablePropertyChanged += (sender, args) =>
-            {
-                if (args.TraceableChange.PropertyName == nameof(Cuesheet.Sections))
-                {
-                    eventFired = true;
-                }
-            };
-
-            // Act
-            var section = cuesheet.AddSection();
-
-            // Assert
-            Assert.IsTrue(eventFired);
-            Assert.IsNotNull(section);
-            Assert.HasCount(1, cuesheet.Sections);
-            Assert.AreEqual(cuesheet, section.Cuesheet);
-        }
-
-        [TestMethod()]
-        public void RemoveSections_RemovesSpecifiedSections()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            var section1 = cuesheet.AddSection();
-            var section2 = cuesheet.AddSection();
-            var section3 = cuesheet.AddSection();
-            var sectionsToRemove = new List<CuesheetSection> { section1, section3 };
-            bool eventFired = false;
-            cuesheet.TraceablePropertyChanged += (sender, args) =>
-            {
-                if (args.TraceableChange.PropertyName == nameof(Cuesheet.Sections))
-                {
-                    eventFired = true;
-                }
-            };
-
-            // Act
-            cuesheet.RemoveSections(sectionsToRemove);
-
-            // Assert
-            Assert.IsTrue(eventFired);
-            Assert.HasCount(1, cuesheet.Sections);
-            Assert.IsTrue(cuesheet.Sections.Contains(section2));
-            Assert.IsFalse(cuesheet.Sections.Contains(section1));
-            Assert.IsFalse(cuesheet.Sections.Contains(section3));
-        }
-
-        [TestMethod()]
-        public void GetSection_ReturnsCorrectSection()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            var section1 = cuesheet.AddSection();
-            section1.Begin = TimeSpan.Zero;
-            section1.End = TimeSpan.FromSeconds(120);
-            cuesheet.AddSection();
-            var track = new Track { Begin = TimeSpan.Zero, End = TimeSpan.FromSeconds(83) };
-            cuesheet.AddTrack(track);
-
-            // Act
-            var result = cuesheet.GetSection(track);
-
-            // Assert
-            Assert.AreEqual(section1, result);
-        }
-
-        [TestMethod()]
-        public void GetSection_ReturnsNullIfNoMatchingSection()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            var section1 = cuesheet.AddSection();
-            section1.Begin = TimeSpan.Zero;
-            section1.End = TimeSpan.FromHours(1.5);
-            var track = new Track { Begin = section1.End + TimeSpan.FromSeconds(1), End = section1.End + TimeSpan.FromSeconds(2) };
-            cuesheet.AddTrack(track);
-
-            // Act
-            var result = cuesheet.GetSection(track);
-
-            // Assert
-            Assert.IsNull(result);
-        }
-
-        [TestMethod]
         public void MoveTracksPossible_ShouldReturnFalse_WhenNoTracksToMove()
         {
             // Arrange
@@ -764,12 +673,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration()
         {
             // Arrange
-            var audiofileMock = new Mock<IAudiofile>();
-            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
-
             var cuesheet = new Cuesheet
             {
-                Audiofile = audiofileMock.Object
+                Audiofile = new("Test.mp3", nameof(RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration), new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"), TimeSpan.FromMinutes(5))
             };
             var track = new Track { Position = 1, Begin = TimeSpan.Zero };
             cuesheet.AddTrack(track);
@@ -803,12 +709,9 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void RecalculateLastTrackEnd_MultipleTracksWithAudiofile_LastTrackEndSetToAudiofileDuration()
         {
             // Arrange
-            var audiofileMock = new Mock<IAudiofile>();
-            audiofileMock.SetupGet(a => a.Duration).Returns(TimeSpan.FromMinutes(5));
-
             var cuesheet = new Cuesheet
             {
-                Audiofile = audiofileMock.Object
+                Audiofile = new("Test.mp3", nameof(RecalculateLastTrackEnd_SingleTrackWithAudiofile_EndSetToAudiofileDuration), new AudioCodec("audio/mpeg", ".mp3", "AudioCodec MP3"), TimeSpan.FromMinutes(5))
             };
             var track1 = new Track { Position = 1, Begin = TimeSpan.Zero, End = TimeSpan.FromMinutes(2) };
             var track2 = new Track { Position = 2, Begin = TimeSpan.FromMinutes(2) };

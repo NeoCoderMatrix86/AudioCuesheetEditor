@@ -18,7 +18,6 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<GenerateCuesheetDialog> _localizer
-@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ValidationService _validationService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject CuesheetExportService _cuesheetExportService
@@ -32,20 +31,16 @@ along with Foobar.  If not, see
                 @((MarkupString)GetGenerationValidationMessages()!)
             </MudAlert>
         }
-        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@options?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
+        <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@_options?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
                       Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
         <br />
-        <MudTable Items="exportfiles">
+        <MudTable Items="_exportfiles">
             <HeaderContent>
                 <MudTh>@_localizer["Name"]</MudTh>
-                <MudTh>@_localizer["Begin"]</MudTh>
-                <MudTh>@_localizer["End"]</MudTh>
                 <MudTh>@_localizer["Content"]</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
-                <MudTd DataLabel="@_localizer["Begin"]">@context.Begin</MudTd>
-                <MudTd DataLabel="@_localizer["End"]">@context.End</MudTd>
                 @{
                     var ariaLabel = $"Download-{context.Name}";
                     <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(context.Name, context.Content, System.Text.Encoding.Default, "text/plain")' aria-label="@ariaLabel" /></MudTd>
@@ -57,15 +52,21 @@ along with Foobar.  If not, see
 </MudDialog>
 
 @code {
-    IEnumerable<Exportfile> exportfiles = [];
-    DownloadOptions? options;
+    //TODO: Get validation messages only once during rendering and use the reference for better performance
+    //TODO: Will be a single file when #548 gets done
+    IEnumerable<Exportfile> _exportfiles = [];
+    DownloadOptions? _options;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        options = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        _options = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        exportfiles = _cuesheetExportService.GenerateExportfiles(options?.CuesheetFilename);
+        var result = _cuesheetExportService.GenerateExportfile(_options?.CuesheetFilename);
+        if (result.IsSuccess)
+        {
+            _exportfiles = [result.Value!];
+        }
     }
 
     protected override void Dispose(bool disposing)
@@ -77,9 +78,9 @@ along with Foobar.  If not, see
     String? GetValidationErrorMessage()
     {
         String? validationErrorMessage = null;
-        if (options != null)
+        if (_options != null)
         {
-            var validationMessages = _validationService.Validate(options, nameof(DownloadOptions.CuesheetFilename));
+            var validationMessages = _validationService.Validate(_options, nameof(DownloadOptions.CuesheetFilename));
             if (validationMessages.Count() > 0)
             {
                 validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
@@ -91,10 +92,10 @@ along with Foobar.  If not, see
     String? GetGenerationValidationMessages()
     {
         String? validationErrorMessage = null;
-        var messages = _cuesheetExportService.CanGenerateExportfiles(options?.CuesheetFilename);
-        if (messages.Count() > 0)
+        var result = _cuesheetExportService.CanGenerateExportfile(_options?.CuesheetFilename);
+        if (result.IsSuccess == false)
         {
-            validationErrorMessage = String.Join("<br />", messages.Select(x => x.GetMessageLocalized(_validationMessageLocalizer)));
+            validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
         }
         return validationErrorMessage;
     }
@@ -102,14 +103,18 @@ along with Foobar.  If not, see
     async Task CuesheetFilenameChanged(string newFilename)
     {
         await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, newFilename);
-        exportfiles = _cuesheetExportService.GenerateExportfiles(options?.CuesheetFilename);
+        var result = _cuesheetExportService.GenerateExportfile(_options?.CuesheetFilename);
+        if (result.IsSuccess)
+        {
+            _exportfiles = [result.Value!];
+        }
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
     {
         if (option is DownloadOptions downloadOptions)
         {
-            options = downloadOptions;
+            _options = downloadOptions;
             StateHasChanged();
         }
     }

@@ -120,9 +120,6 @@
   <data name="Common data" xml:space="preserve">
     <value>Allgemeine Informationen</value>
   </data>
-  <data name="Sections" xml:space="preserve">
-    <value>Abschnitte</value>
-  </data>
   <data name="Tracks" xml:space="preserve">
     <value>Titel</value>
   </data>

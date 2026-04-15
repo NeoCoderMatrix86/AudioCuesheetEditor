@@ -60,7 +60,7 @@ namespace AudioCuesheetEditor.Model.Options
         public ExportOptions(ICollection<Exportprofile> exportProfiles, Guid? selectedProfileId = null)
         {
             ExportProfiles = exportProfiles;
-            SelectedProfileId = selectedProfileId ?? ExportProfiles.First().Id;
+            SelectedProfileId = selectedProfileId ?? ExportProfiles.FirstOrDefault()?.Id;
         }
         public ICollection<Exportprofile> ExportProfiles { get; set; }
         [JsonIgnore]

@@ -367,7 +367,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             cuesheet1.Artist = "Test Artist Cuesheet 1";
             cuesheet1.Title = "Test Title Cuesheet 1";
             cuesheet2.CDTextfile = new("CD Testfile.cdt");
-            cuesheet2.AddSection();
+            cuesheet2.Title = "Test Title Cuesheet 2";
             var tracedObjectHistoryChangedFired = false;
             manager.TracedObjectHistoryChanged += delegate
             {
@@ -393,7 +393,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             manager.TraceChanges(cuesheet1);
             manager.TraceChanges(cuesheet2);
             cuesheet2.CDTextfile = new("CD Testfile.cdt");
-            cuesheet2.AddSection();
+            cuesheet2.Title = "Test Title Cuesheet 2";
             var tracedObjectHistoryChangedFired = false;
             manager.TracedObjectHistoryChanged += delegate
             {

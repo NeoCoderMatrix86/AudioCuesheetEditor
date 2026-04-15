@@ -110,12 +110,6 @@ along with Foobar.  If not, see
             </PropertyColumn>
             <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
                 <EditTemplate>
-                    @if (Cuesheet?.GetSection(context.Item) != null)
-                    {
-                        <MudTooltip Text="@_localizer["A section is beginning inside this track"]">
-                            <MudChip Icon="@Icons.Material.Outlined.ContentCut" Color="Color.Info">@_localizer["Section"]</MudChip>
-                        </MudTooltip>
-                    }
                     @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
                     {
                         <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">

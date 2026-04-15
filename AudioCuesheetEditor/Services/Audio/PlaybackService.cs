@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.Services.Audio
         private readonly IHowl _howl;
 
         private int? soundId;
-        private IAudiofile? currentlyPlayingAudiofile;
+        private Audiofile? currentlyPlayingAudiofile;
         private Timer? updateTimer;
         private bool disposedValue;
         private readonly Lock timerLock = new();
@@ -71,7 +71,7 @@ namespace AudioCuesheetEditor.Services.Audio
         public async Task PlayOrPauseAsync()
         {
             //Reset if the last played audiofile is not the current one
-            if (currentlyPlayingAudiofile !=cuesheet.Audiofile)
+            if (currentlyPlayingAudiofile != cuesheet.Audiofile)
             {
                 soundId = null;
             }

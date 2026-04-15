@@ -14,28 +14,29 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
 {
     [TestClass]
     public class ExportfileGeneratorTests
     {
-        private readonly Mock<ISessionStateContainer> mockSessionStateContainer;
-        private readonly ExportfileGenerator exportfileGenerator;
+        private readonly Mock<ISessionStateContainer> _mockSessionStateContainer;
+        private readonly ExportfileGenerator _exportfileGenerator;
 
         public ExportfileGeneratorTests()
         {
-            mockSessionStateContainer = new Mock<ISessionStateContainer>();
-            exportfileGenerator = new ExportfileGenerator(mockSessionStateContainer.Object);
+            _mockSessionStateContainer = new Mock<ISessionStateContainer>();
+            var mockLocalizer = new Mock<IStringLocalizer<ValidationMessage>>();
+            _exportfileGenerator = new ExportfileGenerator(_mockSessionStateContainer.Object, mockLocalizer.Object);
         }
 
         [TestMethod]
@@ -70,111 +71,18 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
             });
-            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
-            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
-
+            var result = _exportfileGenerator.GenerateExportfile(exportProfile);
             // Assert
-            Assert.IsNotNull(result);
-            Assert.HasCount(1, result);
-            Assert.AreEqual(exportProfile.Filename, result.First().Name);
-            Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
-            Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
-            var content = result.First().Content;
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual(exportProfile.Filename, result.Value!.Name);
+            var content = result.Value!.Content;
             Assert.IsNotNull(content);
             Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
 1 Test artist 1 - Test title 1
 2 Test artist 2 - Test title 2
-
-", content);
-        }
-
-        [TestMethod]
-        public void GenerateExportFile_ShouldGenerateExportfiles_WithSections()
-        {
-            // Arrange
-            var exportProfile = new Exportprofile
-            {
-                Name = "TestProfile",
-                SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
-                SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
-                Filename = "TestExport.txt"
-            };
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3")
-            };
-            cuesheet.AddTrack(new Track()
-            {
-                Artist = "Test artist 1",
-                Title = "Test title 1",
-                Begin = TimeSpan.Zero,
-                End = new TimeSpan(0, 4, 12),
-                Position = 1
-            });
-            cuesheet.AddTrack(new Track()
-            {
-                Artist = "Test artist 2",
-                Title = "Test title 2",
-                End = new TimeSpan(0, 8, 32),
-                Position = 2
-            });
-            cuesheet.AddTrack(new Track()
-            {
-                Artist = "Test artist 3",
-                Title = "Test title 3",
-                End = new TimeSpan(0, 12, 31),
-                Position = 3
-            });
-            cuesheet.AddTrack(new Track()
-            {
-                Artist = "Test artist 4",
-                Title = "Test title 4",
-                End = new TimeSpan(0, 16, 8),
-                Position = 4
-            });
-            cuesheet.AddTrack(new Track()
-            {
-                Artist = "Test artist 5",
-                Title = "Test title 5",
-                End = new TimeSpan(0, 21, 54),
-                Position = 5
-            });
-            cuesheet.AddTrack(new Track()
-            {
-                Artist = "Test artist 6",
-                Title = "Test title 6",
-                End = new TimeSpan(0, 31, 32),
-                Position = 6
-            });
-            var section1 = cuesheet.AddSection();
-            section1.Begin = TimeSpan.Zero;
-            section1.End = new TimeSpan(0, 10, 0);
-            var section2 = cuesheet.AddSection();
-            section2.Begin = section1.End;
-            section2.End = new TimeSpan(0, 20, 0);
-            var section3 = cuesheet.AddSection();
-            section3.Begin = section2.End;
-            section3.End = new TimeSpan(0, 30, 0);
-            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-
-            // Act
-            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.HasCount(3, result);
-            Assert.AreEqual("TestExport(3).txt", result.Last().Name);
-            Assert.AreEqual(section3.Begin, result.Last().Begin);
-            Assert.AreEqual(section3.End, result.Last().End);
-            var content = result.Last().Content;
-            Assert.IsNotNull(content);
-            Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
-1 Test artist 5 - Test title 5
-2 Test artist 6 - Test title 6
 
 ", content);
         }
@@ -205,18 +113,15 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
             });
-            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
-            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
+            var result = _exportfileGenerator.GenerateExportfile(exportProfile);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.HasCount(1, result);
-            Assert.AreEqual(Exportprofile.DefaultFileName, result.First().Name);
-            Assert.AreEqual(TimeSpan.Zero, result.First().Begin);
-            Assert.AreEqual(new TimeSpan(0, 8, 32), result.First().End);
-            Assert.IsNotNull(result.First().Content);
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual(Exportprofile.DefaultFileName, result.Value!.Name);
+            Assert.IsNotNull(result.Value!.Content);
         }
 
         [TestMethod]
@@ -249,13 +154,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 Title = "Test title 2",
                 Position = 2
             });
-            mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
-            var result = exportfileGenerator.GenerateExportfiles(exportProfile);
+            var result = _exportfileGenerator.GenerateExportfile(exportProfile);
 
             // Assert
-            Assert.HasCount(0, result);
+            Assert.IsFalse(result.IsSuccess);
         }
     }
 }

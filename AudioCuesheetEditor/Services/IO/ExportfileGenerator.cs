@@ -17,77 +17,53 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.UI;
+using Microsoft.Extensions.Localization;
 using System.Data;
 using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    public class ExportfileGenerator(ISessionStateContainer sessionStateContainer)
+    public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, IStringLocalizer<ValidationMessage> localizer)
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
 
-        public IEnumerable<ValidationMessage> CanGenerateExportfiles(Exportprofile? exportprofile)
+        public Result CanGenerateExportfile(Exportprofile exportprofile)
         {
             List<ValidationMessage> validationMessages = [];
-            if (exportprofile != null)
-            {
-                validationMessages.AddRange(exportprofile.Validate().ValidationMessages);
-            }
-            else
-            {
-                validationMessages.Add(new ValidationMessage("No exportprofile selected!"));
-            }
+            validationMessages.AddRange(exportprofile.Validate().ValidationMessages);
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
-            return validationMessages;
-        }
-
-        public IReadOnlyCollection<Exportfile> GenerateExportfiles(Exportprofile? exportprofile)
-        {
-            List<Exportfile> exportfiles = [];
-            if ((!CanGenerateExportfiles(exportprofile).Any()) && (exportprofile != null))
+            if (validationMessages.Count != 0)
             {
-                if (_sessionStateContainer.Cuesheet.Sections.Count != 0)
-                {
-                    var counter = 1;
-                    string? content = null;
-                    string filename = string.Empty;
-                    string? audioFileName = null;
-                    foreach (var section in _sessionStateContainer.Cuesheet.Sections.OrderBy(x => x.Begin))
-                    {
-                        audioFileName = section.AudiofileName;
-                        if (section.Validate().Status == ValidationStatus.Success)
-                        {
-                            content = WriteExport(exportprofile, audioFileName, section);
-                            filename = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(exportprofile.Filename), counter, Path.GetExtension(exportprofile.Filename));
-                            exportfiles.Add(new Exportfile() { Name = filename, Content = content, Begin = section.Begin, End = section.End });
-                            counter++;
-                        }
-                    }
-                }
-                else
-                {
-                    string? content = null;
-                    if (_sessionStateContainer.Cuesheet.Audiofile != null)
-                    {
-                        content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
-                    }
-                    var begin = _sessionStateContainer.Cuesheet.Tracks.Min(x => x.Begin);
-                    var end = _sessionStateContainer.Cuesheet.Tracks.Max(x => x.End);
-                    exportfiles.Add(new Exportfile() { Name = exportprofile.Filename, Content = content, Begin = begin, End = end });
-                }
+                return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
             }
-            return exportfiles;
+            return Result.Success();
         }
 
-        private string WriteExport(Exportprofile exportprofile, string? audiofileName, CuesheetSection? section = null)
+        public Result<Exportfile> GenerateExportfile(Exportprofile exportprofile)
+        {
+            var validationResult = CanGenerateExportfile(exportprofile);
+            if (validationResult.IsSuccess == false)
+            {
+                return Result<Exportfile>.Failure(new Error(ErrorType.ValidationFailed, validationResult.Error!.Message));
+            }
+            string? content = null;
+            if (_sessionStateContainer.Cuesheet.Audiofile != null)
+            {
+                content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
+            }
+            return Result<Exportfile>.Success(new Exportfile() { Name = exportprofile.Filename, Content = content});
+        }
+
+        private string WriteExport(Exportprofile exportprofile, string? audiofileName)
         {
             var builder = new StringBuilder();
             if (exportprofile != null)
             {
                 var header = exportprofile.SchemeHead
-                    .Replace(Exportprofile.SchemeCuesheetArtist, section != null ? section.Artist : _sessionStateContainer.Cuesheet.Artist)
-                    .Replace(Exportprofile.SchemeCuesheetTitle, section != null ? section.Title : _sessionStateContainer.Cuesheet.Title)
+                    .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
+                    .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)
                     .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
@@ -96,10 +72,6 @@ namespace AudioCuesheetEditor.Services.IO
                     .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
                 builder.AppendLine(header);
                 IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
-                if (section != null)
-                {
-                    tracks = _sessionStateContainer.Cuesheet.Tracks.Where(x => x.Begin <= section.End && x.End >= section.Begin).OrderBy(x => x.Position);
-                }
                 if (tracks.Any())
                 {
                     //Position, Begin and End should always start from 0 even with splitpoints
@@ -111,18 +83,6 @@ namespace AudioCuesheetEditor.Services.IO
                         if (track.Begin.HasValue)
                         {
                             begin = track.Begin.Value;
-                            if (section?.Begin != null)
-                            {
-                                if (section.Begin >= track.Begin)
-                                {
-                                    begin = TimeSpan.Zero;
-                                }
-                                else
-                                {
-                                    begin = track.Begin.Value - section.Begin.Value;
-                                }
-                                end = track.End - section.Begin.Value;
-                            }
                         }
                         else
                         {
@@ -145,8 +105,8 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                 }
                 var footer = exportprofile.SchemeFooter
-                    .Replace(Exportprofile.SchemeCuesheetArtist, section != null ? section.Artist : _sessionStateContainer.Cuesheet.Artist)
-                    .Replace(Exportprofile.SchemeCuesheetTitle, section != null ? section.Title : _sessionStateContainer.Cuesheet.Title)
+                    .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
+                    .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)
                     .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)

@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 
 namespace AudioCuesheetEditor.Tests.Model.IO
@@ -67,57 +66,6 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             var projectFile = new Projectfile(cuesheet);
             // Assert
             var generatedFile = projectFile.GenerateFile();
-            Assert.IsNotNull(generatedFile);
-            var fileName = Path.GetTempFileName();
-            File.WriteAllBytes(fileName, generatedFile);
-            var fileContent = File.ReadAllLines(fileName);
-            var json = JsonSerializer.Serialize(cuesheet, Projectfile.Options);
-            Assert.AreEqual(json, fileContent.FirstOrDefault());
-            File.Delete(fileName);
-        }
-
-        [TestMethod()]
-        public void GenerateFile_WithSections_GeneratesOneFile()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet
-            {
-                Artist = "CuesheetArtist",
-                Title = "CuesheetTitle",
-                Audiofile = new Audiofile("AudioFile.mp3"),
-                CDTextfile = new CDTextfile("CDTextfile.cdt"),
-                Cataloguenumber = "A123"
-            };
-            var begin = TimeSpan.Zero;
-            for (int i = 1; i <= 10; i++)
-            {
-                var track = new Track
-                {
-                    Position = (uint)i,
-                    Artist = string.Format("Artist {0}", i),
-                    Title = string.Format("Title {0}", i),
-                    Begin = begin
-                };
-                var rand = new Random();
-                var flagsToAdd = rand.Next(1, 3);
-                var flags = new List<Flag>();
-                for (int x = 0; x < flagsToAdd; x++)
-                {
-                    flags.Add(Flag.AvailableFlags.ElementAt(x));
-                }
-                track.Flags = flags;
-                begin = begin.Add(new TimeSpan(0, i, i));
-                track.End = begin;
-                cuesheet.AddTrack(track);
-            }
-            var section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(0, 30, 0);
-            section = cuesheet.AddSection();
-            section.Begin = new TimeSpan(1, 0, 0);
-            var projectFile = new Projectfile(cuesheet);
-            // Act 
-            var generatedFile = projectFile.GenerateFile();
-            // Assert
             Assert.IsNotNull(generatedFile);
             var fileName = Path.GetTempFileName();
             File.WriteAllBytes(fileName, generatedFile);
@@ -175,9 +123,10 @@ namespace AudioCuesheetEditor.Tests.Model.IO
             Assert.IsTrue(ReferenceEquals(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1))));
             Assert.AreEqual(cuesheet.Tracks.First(), cuesheet.GetPreviousLinkedTrack(cuesheet.Tracks.ElementAt(1)));
             Assert.AreEqual((uint)10, cuesheet.Tracks.Last().Position);
-            Assert.HasCount(2, cuesheet.Sections);
-            Assert.AreEqual(new TimeSpan(0, 30, 0), cuesheet.Sections.First().Begin);
-            Assert.AreEqual(new TimeSpan(1, 0, 0), cuesheet.Sections.Last().Begin);
+            //TODOD
+            //Assert.HasCount(2, cuesheet.Sections);
+            //Assert.AreEqual(new TimeSpan(0, 30, 0), cuesheet.Sections.First().Begin);
+            //Assert.AreEqual(new TimeSpan(1, 0, 0), cuesheet.Sections.Last().Begin);
         }
     }
 }

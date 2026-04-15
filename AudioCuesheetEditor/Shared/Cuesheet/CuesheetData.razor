@@ -114,14 +114,11 @@ along with Foobar.  If not, see
             if (browserFile != null)
             {
                 var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], fileInputAudiofileId);
-                Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single(), x =>
+                Cuesheet.Audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single());
+                if (Cuesheet.RecalculateLastTrackEnd())
                 {
-                    if (Cuesheet.RecalculateLastTrackEnd())
-                    {
-                        TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
-                    }
-                    StateHasChanged();
-                });
+                    TraceChangeManager.MergeLastEditWithEdit(x => x.Changes.All(y => y.TraceableObject == Cuesheet && y.TraceableChange.PropertyName == nameof(Audiofile)));
+                }
             }
             else
             {
