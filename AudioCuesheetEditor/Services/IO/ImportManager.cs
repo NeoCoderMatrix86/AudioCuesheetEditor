@@ -180,7 +180,6 @@ namespace AudioCuesheetEditor.Services.IO
 
         private void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
         {
-            target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
             target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
@@ -236,7 +235,6 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 throw new NullReferenceException();
             }
-            target.IsImporting = false;
         }
 
         private void ResetTracing()

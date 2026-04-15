@@ -40,9 +40,6 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         [JsonIgnore]
         public DateTime? RecordingStart { get; set; }
 
-        [JsonIgnore]
-        public Boolean IsImporting { get; set; }
-
         public override ValidationResult Validate(string property)
         {
             ValidationStatus validationStatus = ValidationStatus.NoValidation;
