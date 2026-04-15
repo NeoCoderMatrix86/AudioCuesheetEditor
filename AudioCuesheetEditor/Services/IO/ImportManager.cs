@@ -100,7 +100,7 @@ namespace AudioCuesheetEditor.Services.IO
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+                _logger.LogDebug("AnalyseImportfile duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
             }
         }
         
