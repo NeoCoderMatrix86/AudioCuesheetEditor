@@ -29,8 +29,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         public event EventHandler? IsRecordingChanged;
 
-        //TODO: Tests
-
         /// <inheritdoc/>
         public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
@@ -53,27 +51,35 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result StartRecording()
         {
-            var cuesheet = _sessionStateContainer.Cuesheet;
-            if (cuesheet.IsRecording == true)
+            var isRecordingPossibleResult = IsRecordingPossible;
+            if (isRecordingPossibleResult.IsSuccess)
             {
-                return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
+                var cuesheet = _sessionStateContainer.Cuesheet;
+                if (cuesheet.IsRecording == true)
+                {
+                    return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
+                }
+                cuesheet.RecordingStart = DateTime.UtcNow;
+                IsRecordingChanged?.Invoke(this, EventArgs.Empty);
+                return Result.Success();
             }
-            cuesheet.RecordingStart = DateTime.UtcNow;
-            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
-            return Result.Success();
+            return isRecordingPossibleResult;
         }
 
         /// <inheritdoc/>
         public void StopRecording()
         {
             var cuesheet = _sessionStateContainer.Cuesheet;
-            var lastTrack = cuesheet.Tracks.LastOrDefault();
-            if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
+            if (cuesheet.IsRecording == true)
             {
-                lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+                var lastTrack = cuesheet.Tracks.LastOrDefault();
+                if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
+                {
+                    lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+                }
+                cuesheet.RecordingStart = null;
+                IsRecordingChanged?.Invoke(this, EventArgs.Empty);
             }
-            cuesheet.RecordingStart = null;
-            IsRecordingChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <inheritdoc/>
@@ -86,7 +92,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 track.Begin = DateTime.UtcNow - cuesheet.RecordingStart;
             }
-            SetLastTrackEnd();
             if (cuesheet.Tracks.Any() == false)
             {
                 track.Position = 1;
@@ -127,6 +132,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 track
             };
             SetValue(cuesheet, x => x.Tracks, newValue);
+            SetLastTrackEnd();
         }
 
         /// <inheritdoc/>
