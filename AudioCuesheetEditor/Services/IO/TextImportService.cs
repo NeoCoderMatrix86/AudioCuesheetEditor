@@ -199,9 +199,9 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 property.SetValue(entity, TimeSpanUtility.ParseTimeSpan(value, timeSpanFormat));
             }
-            if (property.PropertyType == typeof(uint?))
+            if (property.PropertyType == typeof(ushort?))
             {
-                property.SetValue(entity, Convert.ToUInt32(value));
+                property.SetValue(entity, Convert.ToUInt16(value));
             }
             if (property.PropertyType == typeof(String))
             {
