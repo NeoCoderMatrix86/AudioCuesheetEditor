@@ -25,8 +25,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
-        //TODO: Tests
-
         /// <inheritdoc/>
         public void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
         {
@@ -93,7 +91,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             Track? previousLinkedTrack = null;
             if (track.IsLinkedToPreviousTrack)
             {
-                previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1);
+                previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
             }
             return previousLinkedTrack;
         }
