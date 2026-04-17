@@ -62,6 +62,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist 2",
                 Title = "Test title 2",
+                Begin = track1.End,
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
             };
@@ -107,6 +108,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist 2",
                 Title = "Test title 2",
+                Begin = track1.End,
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
             };
