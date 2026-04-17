@@ -58,7 +58,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void SetProperty_EqualValue_ChangesPropertyAndSetsTracedChange()
+        public void SetProperty_EqualValue_DoesntChangeProperty()
         {
             // Arrange
             var cuesheet = new Cuesheet()
