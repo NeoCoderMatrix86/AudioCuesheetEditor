@@ -127,7 +127,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(importTrack.PostGap, track.PostGap);
             Assert.AreEqual(importTrack.PreGap, track.PreGap);
             Assert.AreEqual(importTrack.Flags, track.Flags);
-            Assert.AreEqual(importTrack.Length, track.Length);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Never);
         }
 

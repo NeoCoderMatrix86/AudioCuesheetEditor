@@ -36,7 +36,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public Track Clone(ITrack track)
         {
             var clone = new Track();
-            CopyValues(track, clone);
+            Boolean setLength = true;
+            if (track.Begin.HasValue && track.End.HasValue)
+            {
+                setLength = false;
+            }
+            CopyValues(track, clone, setLength: setLength);
             return clone;
         }
 
