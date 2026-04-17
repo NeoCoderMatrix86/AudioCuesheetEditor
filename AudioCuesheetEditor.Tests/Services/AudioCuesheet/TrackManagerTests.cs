@@ -182,7 +182,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var target = new Track();
             // Act
-            _trackManager.CopyValues(source, target, setBegin: false, setPreGap: false, setPostGap:false);
+            _trackManager.CopyValues(source, target, setBegin: false, setPostGap:false, setLength: false, setFlags: false);
             // Assert
             Assert.AreEqual(source.Artist, target.Artist);
             Assert.AreEqual(source.Title, target.Title);
@@ -193,7 +193,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreNotEqual(source.PostGap, target.PostGap);
             Assert.AreEqual(source.PreGap, target.PreGap);
             Assert.AreNotEqual(source.Flags, target.Flags);
-            Assert.AreEqual(source.Length, target.Length);
+            Assert.AreNotEqual(source.Length, target.Length);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Never);
         }
 
