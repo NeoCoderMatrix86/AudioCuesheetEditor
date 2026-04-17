@@ -77,7 +77,8 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                     {
                         IsLinkedToPreviousTrack = true,
                         Position = 1,
-                        Begin = TimeSpan.Zero
+                        Begin = TimeSpan.Zero,
+                        End = new TimeSpan(0, 4, 56)
                     }
                 ]
             };
@@ -85,7 +86,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 IsLinkedToPreviousTrack = true,
                 Cuesheet = cuesheet,
-                Begin = new TimeSpan(0, 4, 56)
+                Begin = cuesheet.Tracks.Single().End
             };
             cuesheet.Tracks = cuesheet.Tracks.Append(track);
             var artist = "Artist 1";
@@ -270,6 +271,35 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             var linkedTrack = _trackManager.GetPreviousLinkedTrack(track2);
             // Assert
             Assert.IsNull(linkedTrack);
+        }
+
+        [TestMethod]
+        public void GetPreviousLinkedTrack_WithBegin_ReturnsTrack()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                IsLinkedToPreviousTrack = true,
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 6, 37)
+            };
+            var track2 = new Track()
+            {
+                IsLinkedToPreviousTrack = true,
+                Begin = track1.End
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track1, track2]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            var linkedTrack = _trackManager.GetPreviousLinkedTrack(track2);
+            // Assert
+            Assert.IsNotNull(linkedTrack);
+            Assert.AreEqual(track1, linkedTrack);
         }
 
         [TestMethod]
