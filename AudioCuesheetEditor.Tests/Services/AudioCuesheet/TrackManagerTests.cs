@@ -21,9 +21,7 @@ using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
 {
