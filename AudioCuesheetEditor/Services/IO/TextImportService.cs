@@ -255,7 +255,7 @@ namespace AudioCuesheetEditor.Services.IO
                             nextFieldIdx = pos;
                         }
                     }
-                    string separator = scheme.Substring(idx, nextFieldIdx - idx);
+                    string separator = scheme[idx..nextFieldIdx];
                     parts.Add(separator);
                     idx = nextFieldIdx;
                 }
@@ -324,7 +324,7 @@ namespace AudioCuesheetEditor.Services.IO
                             nextFieldIdx = pos;
                         }
                     }
-                    string separator = scheme.Substring(idx, nextFieldIdx - idx);
+                    string separator = scheme[idx..nextFieldIdx];
                     parts.Add(separator);
                     idx = nextFieldIdx;
                 }

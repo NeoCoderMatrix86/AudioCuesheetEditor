@@ -28,6 +28,8 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
@@ -48,8 +50,88 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             _fileInputManagerMock = new();
             _textImportServiceMock = new();
             _trackManagerMock = new();
+            _trackManagerMock.Setup(x => x.CopyValues(It.IsAny<ITrack>(), It.IsAny<Track>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Callback<ITrack, Track, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool>((source, target, setIsLinkedToPreviousTrack, setPosition, setArtist, setTitle, setBegin, setEnd, setLength, setFlags, setPreGap, setPostGap) =>
+            {
+                if (setIsLinkedToPreviousTrack)
+                {
+                    TrackManager_SetValue(target, x => x.IsLinkedToPreviousTrack, source.IsLinkedToPreviousTrack, false);
+                }
+                if (setPosition)
+                {
+                    TrackManager_SetValue(target, x => x.Position, source.Position, false);
+                }
+                if (setArtist)
+                {
+                    TrackManager_SetValue(target, x => x.Artist, source.Artist, false);
+                }
+                if (setTitle)
+                {
+                    TrackManager_SetValue(target, x => x.Title, source.Title, false);
+                }
+                if (setBegin)
+                {
+                    TrackManager_SetValue(target, x => x.Begin, source.Begin, false);
+                }
+                if (setEnd)
+                {
+                    TrackManager_SetValue(target, x => x.End, source.End, false);
+                }
+                if (setLength)
+                {
+                    TrackManager_SetValue(target, x => x.Length, source.Length, false);
+                }
+                if (setFlags)
+                {
+                    TrackManager_SetValue(target, x => x.Flags, source.Flags, false);
+                }
+                if (setPreGap)
+                {
+                    TrackManager_SetValue(target, x => x.PreGap, source.PreGap, false);
+                }
+                if (setPostGap)
+                {
+                    TrackManager_SetValue(target, x => x.PostGap, source.PostGap, false);
+                }
+            });
+            _trackManagerMock.Setup(x => x.Clone(It.IsAny<ITrack>())).Returns<ITrack>(track =>
+            {
+                var clone = new Track();
+                Boolean setLength = true;
+                if (track.Begin.HasValue && track.End.HasValue)
+                {
+                    setLength = false;
+                }
+                _trackManagerMock.Object.CopyValues(track, clone, setLength: setLength);
+                return clone;
+            });
             var loggerMock = new Mock<ILogger<ImportManager>>();
             _service = new ImportManager(_sessionStateContainerMock.Object, _traceChangeManagerMock.Object, _fileInputManagerMock.Object, _textImportServiceMock.Object, _trackManagerMock.Object, loggerMock.Object);
+        }
+
+        void TrackManager_SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value, Boolean signalTraceChangeManager = true)
+        {
+            if (propertyExpression.Body is not MemberExpression memberExpression)
+            {
+                throw new ArgumentException("Expression must be a property");
+            }
+
+            if (memberExpression.Member is not PropertyInfo propertyInfo)
+            {
+                throw new ArgumentException("Member is not a property");
+            }
+
+            var previousValue = (TProperty?)propertyInfo.GetValue(track);
+            if (Equals(previousValue, value))
+            {
+                return;
+            }
+
+            propertyInfo.SetValue(track, value);
+            if (signalTraceChangeManager)
+            {
+                _traceChangeManagerMock.Object.AddChange(new(track, new(previousValue, propertyInfo.Name)));
+            }
         }
 
         [TestMethod()]
