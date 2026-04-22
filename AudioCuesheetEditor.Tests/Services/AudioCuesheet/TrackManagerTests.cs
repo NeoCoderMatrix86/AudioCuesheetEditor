@@ -407,5 +407,26 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.IsNotNull(linkedTrack);
             Assert.AreEqual(track2, linkedTrack);
         }
+
+        [TestMethod]
+        public void GetNextLinkedTrack_OnlyOneTrack_ReturnsNull()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                IsLinkedToPreviousTrack = true,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 8, 32)
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track1]
+            };
+            track1.Cuesheet = cuesheet;
+            // Act
+            var linkedTrack = _trackManager.GetNextLinkedTrack(track1);
+            // Assert
+            Assert.IsNull(linkedTrack);
+        }
     }
 }

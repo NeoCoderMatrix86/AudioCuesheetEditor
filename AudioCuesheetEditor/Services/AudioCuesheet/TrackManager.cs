@@ -117,11 +117,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             Track? nextLinkedTrack = null;
             if (track.Position.HasValue)
             {
-                nextLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true);
+                nextLinkedTrack = track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position == track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
             }
             if (track.End.HasValue)
             {
-                nextLinkedTrack = track.Cuesheet?.Tracks.OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true);
+                nextLinkedTrack = track.Cuesheet?.Tracks.OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
             }
             return nextLinkedTrack;
         }
