@@ -560,7 +560,6 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = "<tr>\\s*<td>\\d+</td>\\s*<td>(?<Artist>.*?)</td>\\s*<td>(?<Title>.*?)</td>\\s*<td>(?<StartDateTime>.*?)</td>\\s*</tr>"
             };
             var fileContent = File.ReadAllText("Resources/Traktor Export.html");
-            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {
                 SelectedImportProfile = profile
@@ -568,9 +567,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var applicationOptions = new ApplicationOptions();
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
-            var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
-            var importFile = await service.AnalyseAsync(fileContent);
+            var importFile = await _textImportService.AnalyseAsync(fileContent);
             // Assert
             Assert.AreEqual(fileContent, importFile.FileContent);
             Assert.IsNull(importFile.AnalyseException);
@@ -600,7 +598,6 @@ Sample Artist 8 - Sample Title 8				01:15:54";
                 SchemeTracks = "Artist - Title\tBegin"
             };
             var fileContent = File.ReadAllText("Resources/Textimport with Cuesheetdata.txt");
-            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {
                 SelectedImportProfile = profile
@@ -608,9 +605,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var applicationOptions = new ApplicationOptions();
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
-            var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
-            var importFile = await service.AnalyseAsync(fileContent);
+            var importFile = await _textImportService.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
@@ -673,7 +669,6 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
                 UseRegularExpression = false,
                 SchemeTracks = $"{nameof(ImportTrack.Artist)}~{nameof(ImportTrack.Title)}~{nameof(ImportTrack.StartDateTime)}"
             };
-            var localStorageOptionsProviderMock = new Mock<ILocalStorageOptionsProvider>();
             var options = new ImportOptions
             {
                 SelectedImportProfile = profile
@@ -681,9 +676,8 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var applicationOptions = new ApplicationOptions();
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
-            var service = new TextImportService(localStorageOptionsProviderMock.Object);
             // Act
-            var importFile = await service.AnalyseAsync(fileContent);
+            var importFile = await _textImportService.AnalyseAsync(fileContent);
             // Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
