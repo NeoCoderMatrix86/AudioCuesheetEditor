@@ -128,7 +128,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(importTrack.PostGap, track.PostGap);
             Assert.AreEqual(importTrack.PreGap, track.PreGap);
             Assert.AreEqual(importTrack.Flags, track.Flags);
-            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Never);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Exactly(9));
         }
 
         [TestMethod]
@@ -161,7 +161,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(source.PreGap, target.PreGap);
             Assert.AreEqual(source.Flags, target.Flags);
             Assert.AreEqual(source.Length, target.Length);
-            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Never);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Exactly(9));
         }
 
         [TestMethod]
@@ -194,7 +194,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(source.PreGap, target.PreGap);
             Assert.AreNotEqual(source.Flags, target.Flags);
             Assert.AreNotEqual(source.Length, target.Length);
-            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Never);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Exactly(6));
         }
 
         [TestMethod]
