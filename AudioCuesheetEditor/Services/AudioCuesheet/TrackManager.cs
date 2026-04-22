@@ -35,13 +35,27 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Track Clone(ITrack track)
         {
-            var clone = new Track();
             Boolean setLength = true;
             if (track.Begin.HasValue && track.End.HasValue)
             {
                 setLength = false;
             }
-            CopyValues(track, clone, setLength: setLength);
+            var clone = new Track()
+            {
+                IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack,
+                Position = track.Position,
+                Artist = track.Artist,
+                Title = track.Title,
+                Begin = track.Begin,
+                End = track.End,
+                Flags = track.Flags,
+                PreGap = track.PreGap,
+                PostGap = track.PostGap
+            };
+            if (setLength)
+            {
+                clone.Length = track.Length;
+            }
             return clone;
         }
 

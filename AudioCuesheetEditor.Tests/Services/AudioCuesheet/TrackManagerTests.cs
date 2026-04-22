@@ -128,7 +128,39 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(importTrack.PostGap, track.PostGap);
             Assert.AreEqual(importTrack.PreGap, track.PreGap);
             Assert.AreEqual(importTrack.Flags, track.Flags);
-            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Exactly(9));
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Never);
+        }
+
+        [TestMethod]
+        public void Clone_ImportTrackWithLength_ReturnsTrackCloneWithLengthSet()
+        {
+            // Arrange
+            var importTrack = new ImportTrack()
+            {
+                Artist = "Artist 1",
+                Title = "Title 1",
+                Begin = TimeSpan.Zero,
+                Length = new TimeSpan(0, 2, 54),
+                IsLinkedToPreviousTrack = true,
+                Position = 1,
+                PostGap = new TimeSpan(0, 0, 2),
+                PreGap = new TimeSpan(0, 0, 4),
+                Flags = [Flag.FourCH, Flag.DCP],
+                StartDateTime = new DateTime(2024, 2, 28, 19, 23, 54)
+            };
+            // Act
+            var track = _trackManager.Clone(importTrack);
+            // Assert
+            Assert.AreEqual(importTrack.Artist, track.Artist);
+            Assert.AreEqual(importTrack.Title, track.Title);
+            Assert.AreEqual(importTrack.Begin, track.Begin);
+            Assert.AreEqual(importTrack.Length, track.End);
+            Assert.AreEqual(importTrack.IsLinkedToPreviousTrack, track.IsLinkedToPreviousTrack);
+            Assert.AreEqual(importTrack.Position, track.Position);
+            Assert.AreEqual(importTrack.PostGap, track.PostGap);
+            Assert.AreEqual(importTrack.PreGap, track.PreGap);
+            Assert.AreEqual(importTrack.Flags, track.Flags);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Never);
         }
 
         [TestMethod]
