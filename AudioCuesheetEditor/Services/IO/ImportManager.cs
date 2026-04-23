@@ -109,9 +109,9 @@ namespace AudioCuesheetEditor.Services.IO
             ResetTracing();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                _traceChangeManager.BulkEdit = true;
-                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.ImportCuesheet);
-                _traceChangeManager.BulkEdit = false;
+                var newCuesheet = _sessionStateContainer.ImportCuesheet;
+                CopyCuesheet(newCuesheet, _sessionStateContainer.ImportCuesheet);
+                _sessionStateContainer.Cuesheet = newCuesheet;
             }
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();
