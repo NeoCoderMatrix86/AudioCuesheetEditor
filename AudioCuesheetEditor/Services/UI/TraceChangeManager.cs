@@ -174,8 +174,11 @@ namespace AudioCuesheetEditor.Services.UI
                 {
                     if (_bulkEditTracedChanges != null)
                     {
-                        _undoStack.Add(new TracedChanges(_bulkEditTracedChanges));
-                        TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
+                        if (_bulkEditTracedChanges.Count != 0)
+                        {
+                            _undoStack.Add(new TracedChanges(_bulkEditTracedChanges));
+                            TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
+                        }
                         _bulkEditTracedChanges = null;
                     }
                 }

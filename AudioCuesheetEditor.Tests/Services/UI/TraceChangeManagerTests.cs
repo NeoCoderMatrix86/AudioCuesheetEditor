@@ -76,6 +76,17 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod()]
+        public void BulkEdit_WithoutChange_DoesntAddChange()
+        {
+            // Arrange
+            _traceChangeManager.BulkEdit = true;
+            // Act
+            _traceChangeManager.BulkEdit = false;
+            // Assert
+            Assert.IsFalse(_traceChangeManager.CanUndo);
+        }
+
+        [TestMethod()]
         public void Undo_SingleChange_UndoesChange()
         {
             // Arrange
