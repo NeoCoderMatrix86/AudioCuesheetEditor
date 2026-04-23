@@ -19,54 +19,11 @@ using AudioCuesheetEditor.Model.IO.Import;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class SessionStateContainer(ITraceChangeManager traceChangeManager) : ISessionStateContainer
+    public class SessionStateContainer() : ISessionStateContainer
     {
-        public event EventHandler? CuesheetChanged;
-        public event EventHandler? ImportCuesheetChanged;
-
-        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
-        private Cuesheet cuesheet = new();
-        private Cuesheet? importCuesheet;
-        private Audiofile? importAudiofile;
-
-        public Cuesheet Cuesheet 
-        {
-            get { return cuesheet; }
-            set { SetCuesheetReference(value); }
-        }
-        public Cuesheet? ImportCuesheet
-        {
-            get { return importCuesheet; }
-            set
-            {
-                var previousValue = importCuesheet;
-                importCuesheet = value;
-                //When there is an audiofile from import, we use this file because it has an object url and gets duration, etc.
-                if (importCuesheet != null && ImportAudiofile != null)
-                {
-                    importCuesheet.Audiofile = ImportAudiofile;
-                }
-                if (Equals(previousValue, importCuesheet) == false)
-                {
-                    ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public Audiofile? ImportAudiofile
-        {
-            get => importAudiofile;
-            set
-            {
-                importAudiofile = value;
-                if (ImportCuesheet != null && ImportAudiofile != null)
-                {
-                    ImportCuesheet.Audiofile = ImportAudiofile;
-                    ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
+        public Cuesheet Cuesheet { get; set; } = new();
+        public Cuesheet? ImportCuesheet { get; set; }
+        public Audiofile? ImportAudiofile { get; set; }
         public IImportfile? Importfile{ get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;
 
@@ -75,14 +32,6 @@ namespace AudioCuesheetEditor.Services.UI
             Importfile = null;
             ImportAudiofile = null;
             ImportCuesheet = null;
-        }
-
-        private void SetCuesheetReference(Cuesheet value)
-        {
-            var previousValue = Cuesheet;
-            cuesheet = value;
-            _traceChangeManager.AddChange(new(this, new(previousValue, nameof(Cuesheet))));
-            CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

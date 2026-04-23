@@ -21,8 +21,6 @@ namespace AudioCuesheetEditor.Services.UI
 {
     public interface ISessionStateContainer
     {
-        public event EventHandler? CuesheetChanged;
-        public event EventHandler? ImportCuesheetChanged;
         public Cuesheet Cuesheet { get; set; }
         public Cuesheet? ImportCuesheet { get; set; }
         public Audiofile? ImportAudiofile { get; set; }

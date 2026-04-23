@@ -163,8 +163,6 @@ along with Foobar.  If not, see
     {
         base.Dispose(disposing);
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
-        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -172,8 +170,6 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
     }
 
     void AddTrackClicked()
@@ -352,15 +348,5 @@ along with Foobar.  If not, see
             _cuesheetManager.SetProperty(x => x.Tracks, Cuesheet?.Tracks.OrderBy(x => x.Position));
             base.TraceChangeManager.BulkEdit = false;
         }
-    }
-
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
     }
 }

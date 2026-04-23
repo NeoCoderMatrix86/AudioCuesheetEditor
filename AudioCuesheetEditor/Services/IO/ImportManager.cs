@@ -111,7 +111,9 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 var newCuesheet = _sessionStateContainer.ImportCuesheet;
                 CopyCuesheet(newCuesheet, _sessionStateContainer.ImportCuesheet);
+                var previousValue = _sessionStateContainer.Cuesheet;
                 _sessionStateContainer.Cuesheet = newCuesheet;
+                _traceChangeManager.AddChange(new Model.UI.TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();

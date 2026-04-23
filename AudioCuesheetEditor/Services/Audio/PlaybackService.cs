@@ -63,7 +63,6 @@ namespace AudioCuesheetEditor.Services.Audio
         public PlaybackService(ISessionStateContainer sessionStateContainer, IHowl howl)
         {
             _sessionStateContainer = sessionStateContainer;
-            _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
             _howl = howl;
             _howl.OnPlay += Howl_OnPlay;
             _howl.OnPause += Howl_OnPause;
@@ -185,7 +184,6 @@ namespace AudioCuesheetEditor.Services.Audio
             {
                 if (disposing)
                 {
-                    _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
                     _howl.OnPlay -= Howl_OnPlay;
                     _howl.OnPause -= Howl_OnPause;
                     _howl.OnEnd -= Howl_OnEnd;
@@ -246,11 +244,6 @@ namespace AudioCuesheetEditor.Services.Audio
             {
                 await _howl.Stop(_currentPlayingSoundId.Value);
             }
-        }
-
-        private void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
-        {
-            _ = StopAsync();
         }
     }
 }
