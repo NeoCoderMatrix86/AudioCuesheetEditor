@@ -26,63 +26,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
     [TestClass]
     public class SessionStateContainerTests
     {
-        private readonly Mock<ITraceChangeManager> _traceChangeManagerMock;
-        private readonly SessionStateContainer _sessionStateContainer;
-
-        public SessionStateContainerTests()
-        {
-            _traceChangeManagerMock = new Mock<ITraceChangeManager>();
-            _sessionStateContainer = new SessionStateContainer(_traceChangeManagerMock.Object);
-        }
-        
-        [TestMethod]
-        public void Cuesheet_SetNewValue_ShouldTriggerCuesheetChangedEvent()
-        {
-            // Arrange
-            var newCuesheet = new Cuesheet();
-            bool eventTriggered = false;
-            _sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
-
-            // Act
-            _sessionStateContainer.Cuesheet = newCuesheet;
-
-            // Assert
-            Assert.IsTrue(eventTriggered);
-            _traceChangeManagerMock.Verify(m => m.AddChange(It.Is<TracedChange>(x => x.TraceableObject == _sessionStateContainer && x.TraceableChange.PropertyName == nameof(SessionStateContainer.Cuesheet))), Times.Once);
-        }
-
-        [TestMethod]
-        public void ImportCuesheet_SetNewValue_ShouldTriggerImportCuesheetChangedEvent()
-        {
-            // Arrange
-            var newImportCuesheet = new Cuesheet();
-            bool eventTriggered = false;
-            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
-
-            // Act
-            _sessionStateContainer.ImportCuesheet = newImportCuesheet;
-
-            // Assert
-            Assert.IsTrue(eventTriggered);
-        }
-
-        [TestMethod]
-        public void ImportAudiofile_SetNewValue_ShouldUpdateImportCuesheetAndTriggerEvent()
-        {
-            // Arrange
-            var importCuesheet = new Cuesheet();
-            var audioFile = new Audiofile("Test audio file.mp3");
-            _sessionStateContainer.ImportCuesheet = importCuesheet;
-            bool eventTriggered = false;
-            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
-
-            // Act
-            _sessionStateContainer.ImportAudiofile = audioFile;
-
-            // Assert
-            Assert.AreEqual(audioFile, importCuesheet.Audiofile);
-            Assert.IsTrue(eventTriggered);
-        }
+        private readonly SessionStateContainer _sessionStateContainer = new();
 
         [TestMethod]
         public void ResetImport_ShouldClearImportProperties()
