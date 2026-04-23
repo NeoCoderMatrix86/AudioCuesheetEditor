@@ -27,7 +27,7 @@ along with Foobar.  If not, see
 
 @if (Cuesheet != null)
 {
-    <MudForm @ref="form" Model="Cuesheet">
+    <MudForm @ref="_form" Model="Cuesheet">
         <MudTextField Text="@Cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Artist, newValue)" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" 
                       Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
         <MudTextField Text="@Cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Title, newValue)" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
@@ -36,11 +36,11 @@ along with Foobar.  If not, see
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@fileInputAudiofileErrorText" 
+                <FileInput Id="@_fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@_fileInputAudiofileErrorText" 
                            Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" />
                 <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" 
-                           Error="@fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
-                <MudTextField @ref="catalogueNumberTextField" Value="@Cuesheet.Cataloguenumber" ValueChanged="(string? newValue) => _cuesheetManager.SetProperty(x => x.Cataloguenumber, newValue)" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
+                           Error="@_fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
+                <MudTextField @ref="_catalogueNumberTextField" @bind-Value="_catalogueNumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
                               Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined"
                               Mask="@(new PatternMask("00 00000 00000 0"))" OnBlur="CataloguenumberOnBlur" />
                 break;
@@ -64,19 +64,19 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    string? fileInputAudiofileId;
-    string? fileInputAudiofileErrorText;
-    string? fileInputCDTextfileErrorText;
-    string? catalogueNumber;
-    MudForm? form;
-    MudTextField<string>? catalogueNumberTextField;
+    string? _fileInputAudiofileId;
+    string? _fileInputAudiofileErrorText;
+    string? _fileInputCDTextfileErrorText;
+    string? _catalogueNumber;
+    MudForm? _form;
+    MudTextField<string>? _catalogueNumberTextField;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (fileInputAudiofileId == null)
+        if (_fileInputAudiofileId == null)
         {
-            fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
+            _fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
         }
         TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
@@ -92,11 +92,11 @@ along with Foobar.  If not, see
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        if (form?.IsTouched == true)
+        if (_form?.IsTouched == true)
         {
             SetAudiofileValidationText();
         }
-        catalogueNumber = Cuesheet?.Cataloguenumber;
+        _catalogueNumber = Cuesheet?.Cataloguenumber;
     }
 
     async Task OnAudiofileSelected(IBrowserFile? browserFile)
@@ -105,13 +105,13 @@ along with Foobar.  If not, see
         {
             return;
         }
-        fileInputAudiofileErrorText = null;
+        _fileInputAudiofileErrorText = null;
         try 
         {
             Audiofile? audiofile = null;
             if (browserFile != null)
             {
-                var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], fileInputAudiofileId);
+                var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], _fileInputAudiofileId);
                 audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single());
             }
             base.TraceChangeManager.BulkEdit = true;
@@ -120,10 +120,10 @@ along with Foobar.  If not, see
         }
         catch(ArgumentException ae)
         {
-            fileInputAudiofileErrorText = ae.Message;
+            _fileInputAudiofileErrorText = ae.Message;
         }
         // Just validate the cuesheet if there is no error already
-        if (fileInputAudiofileErrorText == null)
+        if (_fileInputAudiofileErrorText == null)
         {
             SetAudiofileValidationText();
         }
@@ -138,11 +138,11 @@ along with Foobar.  If not, see
         var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
         if (validationMessages.Count() > 0)
         {
-            fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
+            _fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
         }
         else
         {
-            fileInputAudiofileErrorText = null;
+            _fileInputAudiofileErrorText = null;
         }
     }
 
@@ -152,7 +152,7 @@ along with Foobar.  If not, see
         {
             return;
         }
-        fileInputCDTextfileErrorText = null;
+        _fileInputCDTextfileErrorText = null;
         try
         {
             CDTextfile? newValue = null;
@@ -164,7 +164,7 @@ along with Foobar.  If not, see
         }
         catch (ArgumentException ae)
         {
-            fileInputCDTextfileErrorText = ae.Message;
+            _fileInputCDTextfileErrorText = ae.Message;
         }
     }
 
@@ -218,21 +218,19 @@ along with Foobar.  If not, see
 
     void CataloguenumberOnBlur()
     {
-        if (Cuesheet != null)
-        {
-            Cuesheet.Cataloguenumber = catalogueNumber?.Replace(" ", string.Empty);
-        }
+        var newValue = _catalogueNumber?.Replace(" ", string.Empty);
+        _cuesheetManager.SetProperty(x => x.Cataloguenumber, newValue);
     }
 
     void TraceChangeManager_RedoDone(object? sender, EventArgs e)
     {
-        catalogueNumber = Cuesheet?.Cataloguenumber;
-        catalogueNumberTextField?.ResetAsync();
+        _catalogueNumber = Cuesheet?.Cataloguenumber;
+        _catalogueNumberTextField?.ResetAsync();
     }
 
     void TraceChangeManager_UndoDone(object? sender, EventArgs e)
     {
-        catalogueNumber = Cuesheet?.Cataloguenumber;
-        catalogueNumberTextField?.ResetAsync();
+        _catalogueNumber = Cuesheet?.Cataloguenumber;
+        _catalogueNumberTextField?.ResetAsync();
     }
 }
