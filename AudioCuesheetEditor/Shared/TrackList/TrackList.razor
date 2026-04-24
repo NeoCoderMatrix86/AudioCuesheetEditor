@@ -132,7 +132,7 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-@code {
+    @code {
     //TODO: Disallow editing of position
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
@@ -163,6 +163,8 @@ along with Foobar.  If not, see
     {
         base.Dispose(disposing);
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -170,6 +172,8 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     void AddTrackClicked()
@@ -348,5 +352,15 @@ along with Foobar.  If not, see
             _cuesheetManager.SetProperty(x => x.Tracks, Cuesheet?.Tracks.OrderBy(x => x.Position));
             base.TraceChangeManager.BulkEdit = false;
         }
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

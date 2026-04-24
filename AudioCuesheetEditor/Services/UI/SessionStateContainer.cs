@@ -21,8 +21,30 @@ namespace AudioCuesheetEditor.Services.UI
 {
     public class SessionStateContainer() : ISessionStateContainer
     {
-        public Cuesheet Cuesheet { get; set; } = new();
-        public Cuesheet? ImportCuesheet { get; set; }
+        private Cuesheet _cuesheet = new();
+        private Cuesheet? _importCuesheet;
+
+        public event EventHandler? CuesheetChanged;
+        public event EventHandler? ImportCuesheetChanged;
+
+        public Cuesheet Cuesheet 
+        {
+            get => _cuesheet;
+            set
+            {
+                _cuesheet = value;
+                CuesheetChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        public Cuesheet? ImportCuesheet 
+        {
+            get => _importCuesheet;
+            set
+            {
+                _importCuesheet = value;
+                ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
         public Audiofile? ImportAudiofile { get; set; }
         public IImportfile? Importfile{ get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;

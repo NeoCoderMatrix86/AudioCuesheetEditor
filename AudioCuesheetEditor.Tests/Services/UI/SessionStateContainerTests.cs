@@ -29,6 +29,36 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         private readonly SessionStateContainer _sessionStateContainer = new();
 
         [TestMethod]
+        public void Cuesheet_SetNewValue_ShouldTriggerCuesheetChangedEvent()
+        {
+            // Arrange
+            var newCuesheet = new Cuesheet();
+            bool eventTriggered = false;
+            _sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
+
+            // Act
+            _sessionStateContainer.Cuesheet = newCuesheet;
+
+            // Assert
+            Assert.IsTrue(eventTriggered);
+        }
+
+        [TestMethod]
+        public void ImportCuesheet_SetNewValue_ShouldTriggerImportCuesheetChangedEvent()
+        {
+            // Arrange
+            var newImportCuesheet = new Cuesheet();
+            bool eventTriggered = false;
+            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
+
+            // Act
+            _sessionStateContainer.ImportCuesheet = newImportCuesheet;
+
+            // Assert
+            Assert.IsTrue(eventTriggered);
+        }
+
+        [TestMethod]
         public void ResetImport_ShouldClearImportProperties()
         {
             // Arrange

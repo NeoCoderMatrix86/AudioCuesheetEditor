@@ -80,6 +80,8 @@ along with Foobar.  If not, see
         }
         TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override void Dispose(bool disposing)
@@ -87,6 +89,8 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
+        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override void OnParametersSet()
@@ -232,5 +236,15 @@ along with Foobar.  If not, see
     {
         _catalogueNumber = Cuesheet?.Cataloguenumber;
         _catalogueNumberTextField?.ResetAsync();
+    }
+
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }
