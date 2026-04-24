@@ -212,7 +212,6 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     var importTrack = tracks.ElementAt(i);
                     var track = _trackManager.Clone(importTrack);
-                    track.Cuesheet = null;
                     if (importTrack is ImportTrack importTrackReference)
                     {
                         if (importTrackReference.StartDateTime != null)
