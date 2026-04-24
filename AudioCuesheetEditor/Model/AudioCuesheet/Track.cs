@@ -25,6 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         public String? Title { get; set; }
         public TimeSpan? Begin { get; set; }        
         public TimeSpan? End { get; set; }
+        //TODO: Remove, since we want to be a POCO
         [JsonIgnore]
         public TimeSpan? Length 
         {

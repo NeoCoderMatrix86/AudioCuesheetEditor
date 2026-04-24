@@ -207,30 +207,47 @@ namespace AudioCuesheetEditor.Services.IO
             }
             if (tracks != null)
             {
-                var begin = TimeSpan.Zero;
-                for (int i = 0; i < tracks.Count(); i++)
+                var sortedTracks = tracks
+                    .OrderByDescending(x => x.Position.HasValue)
+                    .ThenBy(x => x.Position)
+                    .ThenByDescending(x => x.Begin.HasValue)
+                    .ThenByDescending(x => x.Begin)
+                    .ThenByDescending(x => x.End.HasValue)
+                    .ThenBy(x => x.End);
+                List<Track> targetTracks = [];
+                TimeSpan? begin = TimeSpan.Zero;
+                ushort position = 1;
+                foreach (var (importTrack, index) in sortedTracks.Select((track, i) => (track, i)))
                 {
-                    var importTrack = tracks.ElementAt(i);
+                    // Copy track
                     var track = _trackManager.Clone(importTrack);
-                    if (importTrack is ImportTrack importTrackReference)
+                    track.Cuesheet = target;
+                    // Special treatment for StartDateTime of ImportTrack
+                    if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null)
                     {
-                        if (importTrackReference.StartDateTime != null)
+                        if (index < sortedTracks.Count() - 1)
                         {
-                            if (i < tracks.Count() - 1)
-                            {
-                                var nextTrack = (ImportTrack)tracks.ElementAt(i + 1);
-                                var length = nextTrack.StartDateTime - importTrackReference.StartDateTime;
-                                track.Begin = begin;
-                                track.End = begin + length;
-                                if (track.End.HasValue)
-                                {
-                                    begin = track.End.Value;
-                                }
-                            }
+                            var nextTrack = (ImportTrack)sortedTracks.ElementAt(index + 1);
+                            var length = nextTrack.StartDateTime - importTrackReference.StartDateTime;
+
+                            track.Begin = begin;
+                            track.End = begin + length;
                         }
                     }
-                    target.Tracks = target.Tracks.Append(track);
+                    // Calculate properties
+                    if (track.Position.HasValue == false)
+                    {
+                        track.Position = position;
+                    }
+                    if (track.Begin.HasValue == false)
+                    {
+                        track.Begin = begin;
+                    }
+                    begin = track.End;
+                    position++;
+                    targetTracks.Add(track);
                 }
+                target.Tracks = targetTracks;
             }
             else
             {
