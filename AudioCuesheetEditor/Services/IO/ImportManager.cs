@@ -206,13 +206,31 @@ namespace AudioCuesheetEditor.Services.IO
             }
             if (tracks != null)
             {
-                var sortedTracks = tracks
-                    .OrderByDescending(x => x.Position.HasValue)
-                    .ThenBy(x => x.Position)
-                    .ThenByDescending(x => x.Begin.HasValue)
-                    .ThenByDescending(x => x.Begin)
-                    .ThenByDescending(x => x.End.HasValue)
-                    .ThenBy(x => x.End);
+                IOrderedEnumerable<ITrack> sortedTracks;
+                if (tracks.All(x => x.Position.HasValue))
+                {
+                    sortedTracks = tracks.OrderBy(x => x.Position);
+                }
+                else
+                {
+                    sortedTracks = tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position);
+                }
+                if (sortedTracks.All(x => x.Begin.HasValue))
+                {
+                    sortedTracks = sortedTracks.ThenBy(x => x.Begin);
+                }
+                else
+                {
+                    sortedTracks = sortedTracks.ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin);
+                }
+                if (sortedTracks.All(x => x.End.HasValue))
+                {
+                    sortedTracks = sortedTracks.ThenBy(x => x.End);
+                }
+                else
+                {
+                    sortedTracks = sortedTracks.ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End);
+                }
                 List<Track> targetTracks = [];
                 TimeSpan? begin = TimeSpan.Zero;
                 ushort position = 1;
