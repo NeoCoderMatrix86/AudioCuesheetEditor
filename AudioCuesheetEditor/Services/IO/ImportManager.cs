@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using System.Diagnostics;
@@ -69,7 +70,10 @@ namespace AudioCuesheetEditor.Services.IO
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
                     case ImportFileType.ProjectFile:
-                        _sessionStateContainer.Cuesheet = Projectfile.ImportFile(fileContent)!;
+                        var importedCuesheet = Projectfile.ImportFile(fileContent);
+                        var previousValue = _sessionStateContainer.Cuesheet;
+                        _sessionStateContainer.Cuesheet = importedCuesheet!;
+                        _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
                         break;
                     case ImportFileType.Textfile:
                         _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
@@ -83,16 +87,11 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
+                    case ImportFileType.Cuesheet:
                     case ImportFileType.Textfile:
                         var importCuesheet = new Cuesheet();
                         CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
-                        break;
-                    case ImportFileType.Cuesheet:
-                        _traceChangeManager.BulkEdit = true;
-                        _sessionStateContainer.Cuesheet = new();
-                        CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
-                        _traceChangeManager.BulkEdit = false;
                         break;
                 }
             }
@@ -113,7 +112,7 @@ namespace AudioCuesheetEditor.Services.IO
                 CopyCuesheet(newCuesheet, _sessionStateContainer.ImportCuesheet);
                 var previousValue = _sessionStateContainer.Cuesheet;
                 _sessionStateContainer.Cuesheet = newCuesheet;
-                _traceChangeManager.AddChange(new Model.UI.TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
+                _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();

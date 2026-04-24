@@ -112,8 +112,12 @@ along with Foobar.  If not, see
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
                     case ImportFileType.ProjectFile:
+                        await _importManager.AnalyseImportfile();
+                        _sessionStateContainer.ResetImport();
+                        break;
                     case ImportFileType.Cuesheet:
                         await _importManager.AnalyseImportfile();
+                        _importManager.ImportCuesheet();
                         _sessionStateContainer.ResetImport();
                         break;
                     case ImportFileType.Textfile:
