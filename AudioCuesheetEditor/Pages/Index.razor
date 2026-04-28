@@ -113,7 +113,7 @@ along with Foobar.  If not, see
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
                         break;
                 }
-                if ((Cuesheet != null) && (_sessionStateContainer.ImportAudiofile != null))
+                if (_sessionStateContainer.ImportAudiofile != null)
                 {
                     _cuesheetManager.SetProperty(x => x.Audiofile, _sessionStateContainer.ImportAudiofile);
                 }
