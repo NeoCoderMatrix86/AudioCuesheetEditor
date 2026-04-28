@@ -96,51 +96,49 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.Cuesheet;
             track.Cuesheet = cuesheet;
             // Calculate track properties
+            _traceChangeManager.BulkEdit = true;
             if (cuesheet.IsRecording)
             {
-                track.Begin = DateTime.UtcNow - cuesheet.RecordingStart;
+                _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
             }
             if (cuesheet.Tracks.Any() == false)
             {
-                track.Position = 1;
+                _trackManager.SetProperty(track, x => x.Position, (ushort)(1));
                 if ((track.Begin.HasValue == false) || cuesheet.IsRecording)
                 {
-                    track.Begin = TimeSpan.Zero;
+                    _trackManager.SetProperty(track, x => x.Begin, TimeSpan.Zero);
                 }
             }
             else
             {
-                //TODO: All this changes needs to be done with previousvalue for tracechangemanager, because otherwise undo will not work as expected
-                var trackBeforeNewTrack = cuesheet.Tracks.Last();
-                if ((cuesheet.Audiofile?.Duration.HasValue == true) && (trackBeforeNewTrack.End.HasValue) && (trackBeforeNewTrack.End == cuesheet.Audiofile.Duration))
+                if ((cuesheet.Audiofile?.Duration.HasValue == true) && (LastTrack?.End.HasValue == true) && (LastTrack.End == cuesheet.Audiofile.Duration))
                 {
-                    trackBeforeNewTrack.End = null;
+                    _trackManager.SetProperty(LastTrack, x => x.End, null);
                 }
                 if (track.Position.HasValue == false)
                 {
-                    track.Position = (ushort?)(trackBeforeNewTrack.Position + 1);
+                    _trackManager.SetProperty(track, x => x.Position, (ushort?)(LastTrack?.Position + 1));
                 }
                 if (track.Begin.HasValue == false)
                 {
-                    track.Begin = trackBeforeNewTrack.End;
+                    track.Begin = LastTrack?.End;
                 }
                 else
                 {
-                    if (trackBeforeNewTrack.End.HasValue == false)
+                    if (LastTrack?.End.HasValue == false)
                     {
-                        trackBeforeNewTrack.End = track.Begin;
+                        _trackManager.SetProperty(LastTrack, x => x.End, track.Begin);
                     }
                 }
-                if (cuesheet.IsRecording)
+                if (cuesheet.IsRecording && LastTrack != null)
                 {
-                    trackBeforeNewTrack.End = track.Begin;
+                    _trackManager.SetProperty(LastTrack, x => x.End, track.Begin);
                 }
             }
             var newValue = new List<Track>(cuesheet.Tracks)
             {
                 track
             };
-            _traceChangeManager.BulkEdit = true;
             SetValue(cuesheet, x => x.Tracks, newValue);
             SetLastTrackEnd();
             _traceChangeManager.BulkEdit = false;
@@ -195,15 +193,16 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         void SetLastTrackEnd()
         {
-            var lastTrack = _sessionStateContainer.Cuesheet.Tracks
+            if ((LastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
+            {
+                _trackManager.SetProperty(LastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
+            }
+        }
+
+        Track? LastTrack => _sessionStateContainer.Cuesheet.Tracks
                 .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
                 .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
                 .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
                 .LastOrDefault();
-            if ((lastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
-            {
-                _trackManager.SetProperty(lastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
-            }
-        }
     }
 }

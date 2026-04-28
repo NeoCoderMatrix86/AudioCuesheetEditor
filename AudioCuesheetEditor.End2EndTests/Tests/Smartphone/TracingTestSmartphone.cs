@@ -1433,5 +1433,107 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - text: Status
         - button");
         }
+
+        [TestMethod]
+        public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoWithAudiofile()
+        {
+            var bar = new AppBar(TestPage);
+            var detailView = new DetailView(TestPage);
+            await detailView.GotoAsync();
+            await detailView.AddTrackAsync();
+            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddTrackAsync();
+            await Expect(bar.UndoButton).ToBeEnabledAsync();
+            await Expect(bar.RedoButton).ToBeDisabledAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup
+  - rowgroup:
+    - row ""# Increment Decrement Artist Title Begin 00:00:00 End Length Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist"":
+        - text: Artist
+        - textbox
+        - button
+      - cell ""Title"":
+        - text: Title
+        - textbox
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End"":
+        - text: End
+        - textbox
+      - cell ""Length"":
+        - text: Length
+        - textbox
+      - cell ""Status""
+    - row ""# Increment Decrement Artist Title Begin End 00:05:48.0608330 Length Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""2""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist"":
+        - text: Artist
+        - textbox
+        - button
+      - cell ""Title"":
+        - text: Title
+        - textbox
+        - button
+      - cell ""Begin"":
+        - text: Begin
+        - textbox
+      - cell ""End 00:05:48.0608330"":
+        - text: End
+        - textbox: 00:05:48.0608330
+      - cell ""Length"":
+        - text: Length
+        - textbox
+      - cell ""Status"":
+        - text: Status
+        - button");
+            await bar.UndoAsync();
+            await Expect(bar.UndoButton).ToBeEnabledAsync();
+            await Expect(bar.RedoButton).ToBeEnabledAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup
+  - rowgroup:
+    - row ""# Increment Decrement Artist Title Begin 00:00:00 End 00:05:48.0608330 Length 00:05:48.0608330 Status"":
+      - cell:
+        - checkbox
+      - cell ""# Increment Decrement"":
+        - text: ""#""
+        - spinbutton: ""1""
+        - button ""Increment""
+        - button ""Decrement""
+      - cell ""Artist"":
+        - text: Artist
+        - textbox
+        - button
+      - cell ""Title"":
+        - text: Title
+        - textbox
+        - button
+      - cell ""Begin 00:00:00"":
+        - text: Begin
+        - textbox: 00:00:00
+      - cell ""End 00:05:48.0608330"":
+        - text: End
+        - textbox: 00:05:48.0608330
+      - cell ""Length 00:05:48.0608330"":
+        - text: Length
+        - textbox: 00:05:48.0608330
+      - cell ""Status""");
+        }
     }
 }
