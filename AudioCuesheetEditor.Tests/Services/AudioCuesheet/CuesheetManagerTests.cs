@@ -85,6 +85,15 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Tracks = [track]
             };
             track.Cuesheet = cuesheet;
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            _trackManager.Setup(x => x.SetProperty(track, x => x.End, It.IsAny<TimeSpan>())).Callback<Track, Expression<Func<Track, TimeSpan?>>, TimeSpan?>((t, propExpression, value) =>
+            {
+                var memberExpression = propExpression.Body as MemberExpression;
+                if (memberExpression?.Member is PropertyInfo propInfo)
+                {
+                    propInfo.SetValue(t, value);
+                }
+            });
             var duration = new TimeSpan(0, 5, 23);
             var audiofile = new Audiofile("Test.mp3", nameof(SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso), Audiofile.AudioCodecs.First(), duration);
             // Act

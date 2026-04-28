@@ -32,7 +32,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
+            _traceChangeManager.BulkEdit = true;
+            var audiofile = _sessionStateContainer.Cuesheet.Audiofile;
             SetValue(_sessionStateContainer.Cuesheet, propertyExpression, value);
+            // If audiofile has been set, we need to calculate last track end
+            if (audiofile != _sessionStateContainer.Cuesheet.Audiofile)
+            {
+                SetLastTrackEnd();
+            }
+            _traceChangeManager.BulkEdit = false;
         }
 
         /// <inheritdoc/>
