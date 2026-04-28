@@ -236,20 +236,20 @@ namespace AudioCuesheetEditor.Services.IO
                 ushort position = 1;
                 foreach (var (importTrack, index) in sortedTracks.Select((track, i) => (track, i)))
                 {
+                    ITrack? nextTrack = null;
+                    if (index < sortedTracks.Count() - 1)
+                    {
+                        nextTrack = sortedTracks.ElementAt(index + 1);
+                    }
                     // Copy track
                     var track = _trackManager.Clone(importTrack);
                     track.Cuesheet = target;
                     // Special treatment for StartDateTime of ImportTrack
-                    if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null)
+                    if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null && nextTrack is ImportTrack nextImportTrackReference)
                     {
-                        if (index < sortedTracks.Count() - 1)
-                        {
-                            var nextTrack = (ImportTrack)sortedTracks.ElementAt(index + 1);
-                            var length = nextTrack.StartDateTime - importTrackReference.StartDateTime;
-
-                            track.Begin = begin;
-                            track.End = begin + length;
-                        }
+                        var length = nextImportTrackReference.StartDateTime - importTrackReference.StartDateTime;
+                        track.Begin = begin;
+                        track.End = begin + length;
                     }
                     // Calculate properties
                     if (track.Position.HasValue == false)
@@ -259,6 +259,10 @@ namespace AudioCuesheetEditor.Services.IO
                     if (track.Begin.HasValue == false)
                     {
                         track.Begin = begin;
+                    }
+                    if ((track.End.HasValue == false) && (nextTrack?.Begin.HasValue == true))
+                    {
+                        track.End = nextTrack.Begin;
                     }
                     begin = track.End;
                     position++;
