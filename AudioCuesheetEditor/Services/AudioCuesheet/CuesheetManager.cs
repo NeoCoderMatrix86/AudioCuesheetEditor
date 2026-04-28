@@ -110,6 +110,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             else
             {
+                //TODO: All this changes needs to be done with previousvalue for tracechangemanager, because otherwise undo will not work as expected
                 var trackBeforeNewTrack = cuesheet.Tracks.Last();
                 if ((cuesheet.Audiofile?.Duration.HasValue == true) && (trackBeforeNewTrack.End.HasValue) && (trackBeforeNewTrack.End == cuesheet.Audiofile.Duration))
                 {
@@ -139,8 +140,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 track
             };
+            _traceChangeManager.BulkEdit = true;
             SetValue(cuesheet, x => x.Tracks, newValue);
             SetLastTrackEnd();
+            _traceChangeManager.BulkEdit = false;
         }
 
         /// <inheritdoc/>
@@ -161,8 +164,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                     track.Begin = previousTrack.End;
                 }
             }
+            _traceChangeManager.BulkEdit = true;
             SetValue(cuesheet, x => x.Tracks, newValue);
             SetLastTrackEnd();
+            _traceChangeManager.BulkEdit = false;
         }
 
         void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
