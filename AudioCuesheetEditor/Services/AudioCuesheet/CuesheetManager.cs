@@ -182,7 +182,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         void SetLastTrackEnd()
         {
-            var lastTrack = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault();
+            var lastTrack = _sessionStateContainer.Cuesheet.Tracks
+                .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+                .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+                .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
+                .LastOrDefault();
             if ((lastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
             {
                 _trackManager.SetProperty(lastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
