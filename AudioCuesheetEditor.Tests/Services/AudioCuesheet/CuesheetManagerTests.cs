@@ -41,6 +41,34 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             _traceChangeManager = new();
             _sessionStateContainer = new();
             _trackManager = new();
+            _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(),It.IsAny<Expression<Func<Track, It.IsAnyType>>>(),It.IsAny<It.IsAnyType>()))
+            .Callback((Track track, LambdaExpression propExpr, object value) =>
+            {
+                var memberExpression = propExpr.Body as MemberExpression;
+                if (memberExpression?.Member is PropertyInfo propertyInfo)
+                {
+                    propertyInfo.SetValue(track, value);
+                }
+            });
+            _trackManager.Setup(x => x.GetPreviousLinkedTrack(It.IsAny<Track>())).Returns(delegate (Track track)
+            {
+                Track? previousLinkedTrack = null;
+                if (track.IsLinkedToPreviousTrack)
+                {
+                    if (track.Position.HasValue)
+                    {
+                        previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
+                    }
+                    else
+                    {
+                        if (track.Begin.HasValue)
+                        {
+                            previousLinkedTrack = track.Cuesheet?.Tracks.OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin);
+                        }
+                    }
+                }
+                return previousLinkedTrack;
+            });
             _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object);
         }
 
@@ -86,14 +114,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             track.Cuesheet = cuesheet;
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            _trackManager.Setup(x => x.SetProperty(track, x => x.End, It.IsAny<TimeSpan>())).Callback<Track, Expression<Func<Track, TimeSpan?>>, TimeSpan?>((t, propExpression, value) =>
-            {
-                var memberExpression = propExpression.Body as MemberExpression;
-                if (memberExpression?.Member is PropertyInfo propInfo)
-                {
-                    propInfo.SetValue(t, value);
-                }
-            });
             var duration = new TimeSpan(0, 5, 23);
             var audiofile = new Audiofile("Test.mp3", nameof(SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso), Audiofile.AudioCodecs.First(), duration);
             // Act
@@ -250,14 +270,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
             var track = new Track();
-            _trackManager.Setup(x => x.SetProperty(track, x => x.End, It.IsAny<TimeSpan>())).Callback<Track, Expression<Func<Track, TimeSpan?>>, TimeSpan?>((t, propExpression, value) =>
-            {
-                var memberExpression = propExpression.Body as MemberExpression;
-                if (memberExpression?.Member is PropertyInfo propInfo)
-                {
-                    propInfo.SetValue(t, value);
-                }
-            });
             // Act
             _cuesheetManager.AddTrack(track);
             // Assert
@@ -289,14 +301,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
             var track = new Track();
-            _trackManager.Setup(x => x.SetProperty(track, x => x.End, It.IsAny<TimeSpan>())).Callback<Track, Expression<Func<Track, TimeSpan?>>, TimeSpan?>((t, propExpression, value) =>
-            {
-                var memberExpression = propExpression.Body as MemberExpression;
-                if (memberExpression?.Member is PropertyInfo propInfo)
-                {
-                    propInfo.SetValue(t, value);
-                }
-            });
             // Act
             _cuesheetManager.AddTrack(track);
             // Assert
@@ -387,33 +391,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track4.Cuesheet = cuesheet;
             track5.Cuesheet = cuesheet;
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            _trackManager.Setup(x => x.GetPreviousLinkedTrack(It.IsAny<Track>())).Returns(delegate(Track track)
-            {
-                Track? previousLinkedTrack = null;
-                if (track.IsLinkedToPreviousTrack)
-                {
-                    if (track.Position.HasValue)
-                    {
-                        previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
-                    }
-                    else
-                    {
-                        if (track.Begin.HasValue)
-                        {
-                            previousLinkedTrack = track.Cuesheet?.Tracks.OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin);
-                        }
-                    }
-                }
-                return previousLinkedTrack;
-            });
-            _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(), x => x.End, It.IsAny<TimeSpan>())).Callback<Track, Expression<Func<Track, TimeSpan?>>, TimeSpan?>((track, propExpression, value) =>
-            {
-                var memberExpression = propExpression.Body as MemberExpression;
-                if (memberExpression?.Member is PropertyInfo propInfo)
-                {
-                    propInfo.SetValue(track, value);
-                }
-            });
             // Act
             _cuesheetManager.RemoveTracks([track2, track4]);
             // Assert
