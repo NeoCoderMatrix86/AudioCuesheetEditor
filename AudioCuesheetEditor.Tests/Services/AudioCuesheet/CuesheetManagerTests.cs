@@ -392,7 +392,17 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Track? previousLinkedTrack = null;
                 if (track.IsLinkedToPreviousTrack)
                 {
-                    previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1);
+                    if (track.Position.HasValue)
+                    {
+                        previousLinkedTrack = track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
+                    }
+                    else
+                    {
+                        if (track.Begin.HasValue)
+                        {
+                            previousLinkedTrack = track.Cuesheet?.Tracks.OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin);
+                        }
+                    }
                 }
                 return previousLinkedTrack;
             });
