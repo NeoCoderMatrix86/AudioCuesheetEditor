@@ -31,7 +31,7 @@ along with Foobar.  If not, see
             <MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack)))"
                        ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.IsLinkedToPreviousTrack))" />
             <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Position)))"
-                          ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" ReadOnly />
+                          ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Position))" Disabled />
             @{
                 MusicBrainzArtist? autocompleteArtist = new()
                 {

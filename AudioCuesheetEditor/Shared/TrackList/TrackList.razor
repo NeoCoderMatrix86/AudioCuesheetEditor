@@ -67,12 +67,7 @@ along with Foobar.  If not, see
                     <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks([context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
-            <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-                <EditTemplate>
-                    <MudNumericField Validation="() => _validationService.Validate(context.Item, nameof(Track.Position))" Value="context.Item.Position"
-                                     ValueChanged="(ushort? newPosition) => PositionChanged(context.Item, newPosition)" />
-                </EditTemplate>
-            </PropertyColumn>
+            <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
             <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
                 <EditTemplate>
                     <ArtistColumn Track="context.Item" />
@@ -133,7 +128,6 @@ along with Foobar.  If not, see
 </MudMenu>
 
 @code {
-    //TODO: Disallow editing of position
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
     Track? _contextMenuTrack;
