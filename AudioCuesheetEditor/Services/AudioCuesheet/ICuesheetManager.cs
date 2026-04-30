@@ -34,7 +34,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="cuesheet"></param>
         /// <param name="propertyExpression"></param>
         /// <param name="value"></param>
-        void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
+        Task SetPropertyAsync<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
         /// <summary>
         /// Checks if recording for the cuesheet is possible
         /// </summary>
@@ -55,13 +55,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// </summary>
         /// <param name="cuesheet"></param>
         /// <param name="track"></param>
-        void AddTrack(Track track);
+        Task AddTrackAsync(Track track);
         /// <summary>
         /// Remove tracks from cuesheet
         /// </summary>
         /// <param name="cuesheet"></param>
         /// <param name="tracksToRemove"></param>
-        void RemoveTracks(IEnumerable<Track> tracksToRemove);
+        Task RemoveTracksAsync(IEnumerable<Track> tracksToRemove);
         /// <summary>
         /// Determines if moving tracks up is possible
         /// </summary>
@@ -78,12 +78,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// Moves selected tracks up
         /// </summary>
         /// <param name="selectedTracks"></param>
-        Result MoveTracksUp(HashSet<Track> selectedTracks);
+        Task<Result> MoveTracksUpAsync(HashSet<Track> selectedTracks);
         /// <summary>
         /// Moves selected tracks down
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Result MoveTracksDown(HashSet<Track> selectedTracks);
+        Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks);
     }
 }

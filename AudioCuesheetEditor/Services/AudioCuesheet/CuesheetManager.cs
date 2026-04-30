@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
@@ -22,24 +23,26 @@ using System.Reflection;
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager) : ICuesheetManager
+    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager, ILocalStorageOptionsProvider localStorageOptionsProvider) : ICuesheetManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITrackManager _trackManager = trackManager;
+        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
 
         public event EventHandler? IsRecordingChanged;
 
         /// <inheritdoc/>
-        public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
+        public async Task SetPropertyAsync<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             _traceChangeManager.BulkEdit = true;
+            //TODO: set cuesheet to import cuesheet if using import view
             var audiofile = _sessionStateContainer.Cuesheet.Audiofile;
             SetValue(_sessionStateContainer.Cuesheet, propertyExpression, value);
             // If audiofile has been set, we need to calculate last track end
             if (audiofile != _sessionStateContainer.Cuesheet.Audiofile)
             {
-                SetLastTrackEnd();
+                await SetLastTrackEndAsync();
             }
             _traceChangeManager.BulkEdit = false;
         }
@@ -92,18 +95,17 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public void AddTrack(Track track)
+        public async Task AddTrackAsync(Track track)
         {
-            var cuesheet = _sessionStateContainer.Cuesheet;
-            //TODO: set cuesheet to import cuesheet if using import view
+            var cuesheet = await GetCurrentCuesheetAsync();
             track.Cuesheet = cuesheet;
             // Calculate track properties
             _traceChangeManager.BulkEdit = true;
-            if (cuesheet.IsRecording)
+            if (cuesheet?.IsRecording == true)
             {
                 _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
             }
-            if (cuesheet.Tracks.Any() == false)
+            if (cuesheet?.Tracks.Any() == false)
             {
                 _trackManager.SetProperty(track, x => x.Position, (ushort)(1));
                 if ((track.Begin.HasValue == false) || cuesheet.IsRecording)
@@ -113,41 +115,42 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             else
             {
-                if ((cuesheet.Audiofile?.Duration.HasValue == true) && (LastTrack?.End.HasValue == true) && (LastTrack.End == cuesheet.Audiofile.Duration))
+                var lastTrack = await GetLastTrackAsync();
+                if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
                 {
-                    _trackManager.SetProperty(LastTrack, x => x.End, null);
+                    _trackManager.SetProperty(lastTrack, x => x.End, null);
                 }
                 if (track.Position.HasValue == false)
                 {
-                    _trackManager.SetProperty(track, x => x.Position, (ushort?)(LastTrack?.Position + 1));
+                    _trackManager.SetProperty(track, x => x.Position, (ushort?)(lastTrack?.Position + 1));
                 }
                 if (track.Begin.HasValue == false)
                 {
-                    track.Begin = LastTrack?.End;
+                    track.Begin = lastTrack?.End;
                 }
                 else
                 {
-                    if (LastTrack?.End.HasValue == false)
+                    if (lastTrack?.End.HasValue == false)
                     {
-                        _trackManager.SetProperty(LastTrack, x => x.End, track.Begin);
+                        _trackManager.SetProperty(lastTrack, x => x.End, track.Begin);
                     }
                 }
-                if (cuesheet.IsRecording && LastTrack != null)
+                if (cuesheet?.IsRecording == true && lastTrack != null)
                 {
-                    _trackManager.SetProperty(LastTrack, x => x.End, track.Begin);
+                    _trackManager.SetProperty(lastTrack, x => x.End, track.Begin);
                 }
             }
-            var newValue = new List<Track>(cuesheet.Tracks)
+            var newValue = new List<Track>(cuesheet!.Tracks)
             {
                 track
             };
             SetValue(cuesheet, x => x.Tracks, newValue);
-            SetLastTrackEnd();
+            await SetLastTrackEndAsync();
             _traceChangeManager.BulkEdit = false;
         }
 
         /// <inheritdoc/>
-        public void RemoveTracks(IEnumerable<Track> tracksToRemove)
+        public async Task RemoveTracksAsync(IEnumerable<Track> tracksToRemove)
         {
             var cuesheet = _sessionStateContainer.Cuesheet;
             //TODO: set cuesheet to import cuesheet if using import view
@@ -167,7 +170,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             _traceChangeManager.BulkEdit = true;
             SetValue(cuesheet, x => x.Tracks, newValue);
-            SetLastTrackEnd();
+            await SetLastTrackEndAsync();
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -186,7 +189,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         /// <inheritdoc/>
         //TODO: Tests
-        public Result MoveTracksUp(HashSet<Track> selectedTracks)
+        public async Task<Result> MoveTracksUpAsync(HashSet<Track> selectedTracks)
         {
             if (IsMoveTracksUpPossible(selectedTracks) == false)
             {
@@ -205,14 +208,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
                 //TODO: switch begin, end and length
             }
-            SetProperty(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            await SetPropertyAsync(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
         }
 
         /// <inheritdoc/>
         //TODO: Tests
-        public Result MoveTracksDown(HashSet<Track> selectedTracks)
+        public async Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks)
         {
             if (IsMoveTracksDownPossible(selectedTracks) == false)
             {
@@ -231,7 +234,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
                 //TODO: switch begin, end and length
             }
-            SetProperty(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            await SetPropertyAsync(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
         }
@@ -259,18 +262,33 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
         }
 
-        void SetLastTrackEnd()
+        async Task SetLastTrackEndAsync()
         {
-            if ((LastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
+            var lastTrack = await GetLastTrackAsync();
+            if ((lastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
             {
-                _trackManager.SetProperty(LastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
+                _trackManager.SetProperty(lastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
             }
         }
 
-        Track? LastTrack => _sessionStateContainer.Cuesheet.Tracks
+        async Task<Cuesheet?> GetCurrentCuesheetAsync()
+        {
+            var viewOptions = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+            if (viewOptions.ActiveTab == ViewMode.ImportView)
+            {
+                return _sessionStateContainer.ImportCuesheet;
+            }
+            return _sessionStateContainer.Cuesheet;
+        }
+
+        async Task<Track?> GetLastTrackAsync()
+        {
+            var cuesheet = await GetCurrentCuesheetAsync();
+            return cuesheet?.Tracks
                 .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
                 .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
                 .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
                 .LastOrDefault();
+        }
     }
 }
