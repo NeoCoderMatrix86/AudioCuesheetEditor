@@ -73,7 +73,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Boolean IsMoveTracksDownPossible(HashSet<Track> selectedTracks);
+        Task<Boolean> IsMoveTracksDownPossibleAsync(HashSet<Track> selectedTracks);
         /// <summary>
         /// Moves selected tracks up
         /// </summary>

@@ -175,14 +175,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         /// <inheritdoc/>
         //TODO: Tests
-        public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count == 0 || selectedTracks.Min(x => x.Position) <= 1;
+        public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
 
         /// <inheritdoc/>
         //TODO: Tests
-        public bool IsMoveTracksDownPossible(HashSet<Track> selectedTracks)
+        public async Task<bool> IsMoveTracksDownPossibleAsync(HashSet<Track> selectedTracks)
         {
-            var cuesheet = _sessionStateContainer.Cuesheet;
-            //TODO: set cuesheet to import cuesheet if using import view
+            var cuesheet = await GetCurrentCuesheetAsync();
             return selectedTracks.Count == 0 || selectedTracks.Max(x => x.Position) >= cuesheet?.Tracks.Max(x => x.Position);
         }
 
@@ -195,8 +194,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.Cuesheet;
-            //TODO: set cuesheet to import cuesheet if using import view
+            var cuesheet = await GetCurrentCuesheetAsync();
             foreach (var selectedTrack in selectedTracks)
             {
                 var previousTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
@@ -216,13 +214,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         //TODO: Tests
         public async Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks)
         {
-            if (IsMoveTracksDownPossible(selectedTracks) == false)
+            if (await IsMoveTracksDownPossibleAsync(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.Cuesheet;
-            //TODO: set cuesheet to import cuesheet if using import view
+            var cuesheet = await GetCurrentCuesheetAsync();
             foreach (var selectedTrack in selectedTracks)
             {
                 var nextTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position + 1);

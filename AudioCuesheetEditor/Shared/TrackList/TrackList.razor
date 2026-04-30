@@ -49,7 +49,7 @@ along with Foobar.  If not, see
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUpAsync(_selectedTracks)"
-                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDownAsync(_selectedTracks)"
+                                     MoveTracksDownDisabled="_moveTracksDownDisabled" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDownAsync(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
                                      FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
         </div>
@@ -133,6 +133,9 @@ along with Foobar.  If not, see
     Track? _contextMenuTrack;
     ApplicationOptions? _applicationOptions;
     MudForm? _form;
+    Boolean _moveTracksDownDisabled = true;
+
+    //TODO: Use _cuesheetManager.IsMoveTracksDownPossibleAsync to calculate _moveTracksDownDisabled
 
     public Cuesheet? Cuesheet
     {
