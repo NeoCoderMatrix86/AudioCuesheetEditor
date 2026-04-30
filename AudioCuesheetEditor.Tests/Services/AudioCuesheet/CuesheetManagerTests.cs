@@ -83,6 +83,11 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Arrange
             var cuesheet = new Cuesheet();
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.DetailView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             // Act
             await _cuesheetManager.SetPropertyAsync(x => x.Artist, "Artist");
             // Assert
@@ -99,6 +104,11 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Artist = "Artist"
             };
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.DetailView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             // Act
             await _cuesheetManager.SetPropertyAsync(x => x.Artist, cuesheet.Artist);
             // Assert
@@ -118,6 +128,11 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Tracks = [track]
             };
             track.Cuesheet = cuesheet;
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.DetailView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
             var duration = new TimeSpan(0, 5, 23);
             var audiofile = new Audiofile("Test.mp3", nameof(SetPropertyAsync_AudiofileWithDuration_SetsLastTrackEndAlsoAsync), Audiofile.AudioCodecs.First(), duration);
