@@ -130,7 +130,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             if (track.Position.HasValue)
             {
-                return track.Cuesheet?.Tracks.SingleOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
+                return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).FirstOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
             }
             if (track.End.HasValue)
             {
