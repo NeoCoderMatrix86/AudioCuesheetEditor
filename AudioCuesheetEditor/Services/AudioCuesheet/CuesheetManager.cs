@@ -95,6 +95,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void AddTrack(Track track)
         {
             var cuesheet = _sessionStateContainer.Cuesheet;
+            //TODO: set cuesheet to import cuesheet if using import view
             track.Cuesheet = cuesheet;
             // Calculate track properties
             _traceChangeManager.BulkEdit = true;
@@ -149,6 +150,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void RemoveTracks(IEnumerable<Track> tracksToRemove)
         {
             var cuesheet = _sessionStateContainer.Cuesheet;
+            //TODO: set cuesheet to import cuesheet if using import view
             var intersection = cuesheet.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
             //Calculate position and begin of new tracks
@@ -264,7 +266,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _trackManager.SetProperty(LastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
             }
         }
-
 
         Track? LastTrack => _sessionStateContainer.Cuesheet.Tracks
                 .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
