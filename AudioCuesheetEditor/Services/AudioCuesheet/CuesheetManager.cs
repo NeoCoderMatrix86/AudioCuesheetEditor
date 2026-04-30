@@ -36,13 +36,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public async Task SetPropertyAsync<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             _traceChangeManager.BulkEdit = true;
-            //TODO: set cuesheet to import cuesheet if using import view
-            var audiofile = _sessionStateContainer.Cuesheet.Audiofile;
-            SetValue(_sessionStateContainer.Cuesheet, propertyExpression, value);
+            var cuesheet = await GetCurrentCuesheetAsync();
+            var audiofile = cuesheet?.Audiofile;
+            SetValue(cuesheet!, propertyExpression, value);
             // If audiofile has been set, we need to calculate last track end
-            if (audiofile != _sessionStateContainer.Cuesheet.Audiofile)
+            if (audiofile != cuesheet?.Audiofile)
             {
-                await SetLastTrackEndAsync();
+                SetLastTrackEnd(cuesheet!);
             }
             _traceChangeManager.BulkEdit = false;
         }
@@ -115,7 +115,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             else
             {
-                var lastTrack = await GetLastTrackAsync();
+                var lastTrack = GetLastTrack(cuesheet!);
                 if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
                 {
                     _trackManager.SetProperty(lastTrack, x => x.End, null);
@@ -145,16 +145,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 track
             };
             SetValue(cuesheet, x => x.Tracks, newValue);
-            await SetLastTrackEndAsync();
+            SetLastTrackEnd(cuesheet);
             _traceChangeManager.BulkEdit = false;
         }
 
         /// <inheritdoc/>
         public async Task RemoveTracksAsync(IEnumerable<Track> tracksToRemove)
         {
-            var cuesheet = _sessionStateContainer.Cuesheet;
-            //TODO: set cuesheet to import cuesheet if using import view
-            var intersection = cuesheet.Tracks.Intersect(tracksToRemove);
+            var cuesheet = await GetCurrentCuesheetAsync();
+            var intersection = cuesheet!.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
             //Calculate position and begin of new tracks
             ushort position = 1;
@@ -170,7 +169,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             _traceChangeManager.BulkEdit = true;
             SetValue(cuesheet, x => x.Tracks, newValue);
-            await SetLastTrackEndAsync();
+            SetLastTrackEnd(cuesheet);
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -262,12 +261,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
         }
 
-        async Task SetLastTrackEndAsync()
+        void SetLastTrackEnd(Cuesheet cuesheet)
         {
-            var lastTrack = await GetLastTrackAsync();
-            if ((lastTrack?.End.HasValue == false) && (_sessionStateContainer.Cuesheet.Audiofile?.Duration.HasValue == true))
+            var lastTrack = GetLastTrack(cuesheet);
+            if ((lastTrack?.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
             {
-                _trackManager.SetProperty(lastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
+                _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
             }
         }
 
@@ -281,10 +280,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             return _sessionStateContainer.Cuesheet;
         }
 
-        async Task<Track?> GetLastTrackAsync()
+        static Track? GetLastTrack(Cuesheet cuesheet)
         {
-            var cuesheet = await GetCurrentCuesheetAsync();
-            return cuesheet?.Tracks
+            return cuesheet.Tracks
                 .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
                 .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
                 .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
