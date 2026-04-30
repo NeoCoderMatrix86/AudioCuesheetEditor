@@ -48,8 +48,8 @@ along with Foobar.  If not, see
             <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                     MoveTracksUpDisabled="MoveTracksUpDisabled" MoveTracksUpClicked="MoveTracksUpClicked"
-                                     MoveTracksDownDisabled="MoveTracksDownDisabled" MoveTracksDownClicked="MoveTracksDownClicked"
+                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUp(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
                                      FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
         </div>
@@ -145,10 +145,6 @@ along with Foobar.  If not, see
             return _sessionStateContainer.Cuesheet;
         }
     }
-
-    Boolean MoveTracksUpDisabled => _selectedTracks.Count == 0 || _selectedTracks.Min(x => x.Position) <= 1;
-
-    Boolean MoveTracksDownDisabled => _selectedTracks.Count == 0 || _selectedTracks.Max(x => x.Position) >= Cuesheet?.Tracks.Max(x => x.Position);
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -305,46 +301,6 @@ along with Foobar.  If not, see
         if (_form != null)
         {
             await _form.ValidateAsync();
-        }
-    }
-
-    void MoveTracksUpClicked()
-    {
-        if (MoveTracksUpDisabled == false)
-        {
-            base.TraceChangeManager.BulkEdit = true;
-            foreach (var selectedTrack in _selectedTracks)
-            {
-                var previousTrack = Cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
-                if (previousTrack != null)
-                {
-                    _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
-                }
-                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
-                //TODO: switch begin, end and length
-            }
-            _cuesheetManager.SetProperty(x => x.Tracks, Cuesheet?.Tracks.OrderBy(x => x.Position));
-            base.TraceChangeManager.BulkEdit = false;
-        }
-    }
-
-    void MoveTracksDownClicked()
-    {
-        if (MoveTracksDownDisabled == false)
-        {
-            base.TraceChangeManager.BulkEdit = true;
-            foreach (var selectedTrack in _selectedTracks)
-            {
-                var nextTrack = Cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
-                if (nextTrack != null)
-                {
-                    _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
-                }
-                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
-                //TODO: switch begin, end and length
-            }
-            _cuesheetManager.SetProperty(x => x.Tracks, Cuesheet?.Tracks.OrderBy(x => x.Position));
-            base.TraceChangeManager.BulkEdit = false;
         }
     }
 

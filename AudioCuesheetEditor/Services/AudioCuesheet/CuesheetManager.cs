@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -168,6 +169,71 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.BulkEdit = false;
         }
 
+        /// <inheritdoc/>
+        //TODO: Tests
+        public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count == 0 || selectedTracks.Min(x => x.Position) <= 1;
+
+        /// <inheritdoc/>
+        //TODO: Tests
+        public bool IsMoveTracksDownPossible(HashSet<Track> selectedTracks)
+        {
+            var cuesheet = _sessionStateContainer.Cuesheet;
+            //TODO: set cuesheet to import cuesheet if using import view
+            return selectedTracks.Count == 0 || selectedTracks.Max(x => x.Position) >= cuesheet?.Tracks.Max(x => x.Position);
+        }
+
+        /// <inheritdoc/>
+        //TODO: Tests
+        public Result MoveTracksUp(HashSet<Track> selectedTracks)
+        {
+            if (IsMoveTracksUpPossible(selectedTracks) == false)
+            {
+                return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
+            }
+            _traceChangeManager.BulkEdit = true;
+            var cuesheet = _sessionStateContainer.Cuesheet;
+            //TODO: set cuesheet to import cuesheet if using import view
+            foreach (var selectedTrack in selectedTracks)
+            {
+                var previousTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
+                if (previousTrack != null)
+                {
+                    _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
+                }
+                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
+                //TODO: switch begin, end and length
+            }
+            SetProperty(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            _traceChangeManager.BulkEdit = false;
+            return Result.Success();
+        }
+
+        /// <inheritdoc/>
+        //TODO: Tests
+        public Result MoveTracksDown(HashSet<Track> selectedTracks)
+        {
+            if (IsMoveTracksDownPossible(selectedTracks) == false)
+            {
+                return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
+            }
+            _traceChangeManager.BulkEdit = true;
+            var cuesheet = _sessionStateContainer.Cuesheet;
+            //TODO: set cuesheet to import cuesheet if using import view
+            foreach (var selectedTrack in selectedTracks)
+            {
+                var nextTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
+                if (nextTrack != null)
+                {
+                    _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
+                }
+                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
+                //TODO: switch begin, end and length
+            }
+            SetProperty(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            _traceChangeManager.BulkEdit = false;
+            return Result.Success();
+        }
+
         void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
@@ -198,6 +264,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _trackManager.SetProperty(LastTrack, x => x.End, _sessionStateContainer.Cuesheet.Audiofile.Duration);
             }
         }
+
 
         Track? LastTrack => _sessionStateContainer.Cuesheet.Tracks
                 .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)

@@ -62,5 +62,28 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="cuesheet"></param>
         /// <param name="tracksToRemove"></param>
         void RemoveTracks(IEnumerable<Track> tracksToRemove);
+        /// <summary>
+        /// Determines if moving tracks up is possible
+        /// </summary>
+        /// <param name="selectedTracks"></param>
+        /// <returns></returns>
+        Boolean IsMoveTracksUpPossible(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Determines if moving tracks down is possible
+        /// </summary>
+        /// <param name="selectedTracks"></param>
+        /// <returns></returns>
+        Boolean IsMoveTracksDownPossible(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Moves selected tracks up
+        /// </summary>
+        /// <param name="selectedTracks"></param>
+        Result MoveTracksUp(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Moves selected tracks down
+        /// </summary>
+        /// <param name="selectedTracks"></param>
+        /// <returns></returns>
+        Result MoveTracksDown(HashSet<Track> selectedTracks);
     }
 }
