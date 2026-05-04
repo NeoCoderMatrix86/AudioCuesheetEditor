@@ -546,5 +546,119 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(duration, track5.End);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == importCuesheet && y.TraceableChange.PreviousValue == previousValue && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Once);
         }
+
+        [TestMethod]
+        public void IsMoveTracksUpPossible_TracksAbove_ReturnsTrue()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track3, track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([track2, track3]);
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void IsMoveTracksUpPossible_NoTracksAbove_ReturnsFalse()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1, track3]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([track1, track2]);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void IsMoveTracksUpPossible_EmptyCollection_ReturnsFalse()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1, track3]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([]);
+            // Assert
+            Assert.IsFalse(result);
+        }
     }
 }
