@@ -179,11 +179,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         /// <inheritdoc/>
         //TODO: Tests
-        public async Task<bool> IsMoveTracksDownPossibleAsync(HashSet<Track> selectedTracks)
-        {
-            var cuesheet = await GetCurrentCuesheetAsync();
-            return selectedTracks.Count == 0 || selectedTracks.Max(x => x.Position) >= cuesheet?.Tracks.Max(x => x.Position);
-        }
+        public bool IsMoveTracksDownPossible(Cuesheet cuesheet, HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Max(x => x.Position) < cuesheet?.Tracks.Max(x => x.Position);
 
         /// <inheritdoc/>
         //TODO: Tests
@@ -219,21 +215,27 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         //TODO: Tests
         public async Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks)
         {
-            if (await IsMoveTracksDownPossibleAsync(selectedTracks) == false)
+            var cuesheet = await GetCurrentCuesheetAsync();
+            if (IsMoveTracksDownPossible(cuesheet!, selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = await GetCurrentCuesheetAsync();
-            foreach (var selectedTrack in selectedTracks)
+            foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
             {
                 var nextTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
+                var newBegin = nextTrack?.Begin;
+                var newEnd = nextTrack?.End;
                 if (nextTrack != null)
                 {
                     _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
+                    _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
+                    _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
                 }
-                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
-                //TODO: switch begin, end and length
+                var newPosition = (ushort?)(selectedTrack.Position + 1);
+                _trackManager.SetProperty(selectedTrack, x => x.Position, newPosition);
+                _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
             }
             await SetPropertyAsync(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
             _traceChangeManager.BulkEdit = false;
