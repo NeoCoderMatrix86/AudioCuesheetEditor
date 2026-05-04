@@ -28,6 +28,7 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject ITrackManager _trackManager
 @inject ICuesheetManager _cuesheetManager
+@inject ITraceChangeManager _traceChangeManager
 
 @switch (CurrentViewMode)
 {
@@ -297,7 +298,10 @@ along with Foobar.  If not, see
     async Task TimespanChanged(Track track, System.Linq.Expressions.Expression<Func<Track, TimeSpan?>> expression, String value)
     {
         var timeSpan = await _applicationOptionsTimeSpanParser.GetTimespanAsync(value);
+        _traceChangeManager.BulkEdit = true;
         _trackManager.SetProperty<TimeSpan?>(track, expression, timeSpan);
+        _trackManager.RecalculateLinkedTracksProperties(track);
+        _traceChangeManager.BulkEdit = false;
         if (_form != null)
         {
             await _form.ValidateAsync();

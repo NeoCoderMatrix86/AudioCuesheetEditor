@@ -41,6 +41,7 @@ namespace AudioCuesheetEditor.Services.UI
                 if ((result?.Canceled == false) && (result.Data is Track editedTrack))
                 {
                     _trackManager.CopyValues(editedTrack, tracks.First());
+                    _trackManager.RecalculateLinkedTracksProperties(tracks.First());
                 }
             }
             if (tracks.Count() > 1)

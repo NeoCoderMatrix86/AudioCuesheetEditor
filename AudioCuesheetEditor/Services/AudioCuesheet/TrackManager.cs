@@ -29,8 +29,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
         {
             SetValue(track, propertyExpression, value);
-            //TODO: We need to move recalculation to a seperate method
-            RecalculateLinkedProperties(track);
         }
 
         /// <inheritdoc/>
@@ -140,6 +138,40 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             return null;
         }
 
+        /// <inheritdoc/>
+        //TODO: Tests
+        public void RecalculateLinkedTracksProperties(Track track)
+        {
+            if (track.Cuesheet != null)
+            {
+                var previousTrack = GetPreviousLinkedTrack(track);
+                if (previousTrack != null)
+                {
+                    if (track.Position.HasValue == false && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
+                    {
+                        SetValue(track, x => x.Position, (ushort?)(previousTrack.Position + 1));
+                    }
+                    if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+                    {
+                        SetValue(track, x => x.Begin, previousTrack.End);
+                    }
+                    if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
+                    {
+                        SetValue(previousTrack, x => x.End, track.Begin);
+                    }
+                }
+                var nextTrack = GetNextLinkedTrack(track);
+                if (nextTrack != null)
+                {
+                    if (track.Position.HasValue)
+                    {
+                        SetValue(nextTrack, x => x.Position, (ushort?)(track.Position + 1));
+                    }
+                    SetValue(nextTrack, x => x.Begin, track.End);
+                }
+            }
+        }
+
         void SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
@@ -160,38 +192,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
             propertyInfo.SetValue(track, value);
             _traceChangeManager.AddChange(new(track, new(previousValue, propertyInfo.Name)));
-        }
-
-        void RecalculateLinkedProperties(Track track)
-        {
-            if (track.Cuesheet != null)
-            {
-                var previousTrack = GetPreviousLinkedTrack(track);
-                if (previousTrack != null)
-                {
-                    if (track.Position.HasValue == false && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
-                    {
-                        track.Position = (ushort?)(previousTrack.Position + 1);
-                    }
-                    if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
-                    {
-                        track.Begin = previousTrack.End;
-                    }
-                    if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
-                    {
-                        previousTrack.End = track.Begin;
-                    }
-                }
-                var nextTrack = GetNextLinkedTrack(track);
-                if (nextTrack != null)
-                {
-                    if (track.Position.HasValue)
-                    {
-                        nextTrack.Position = (ushort?)(track.Position + 1);
-                    }
-                    nextTrack.Begin = track.End;
-                }
-            }
         }
     }
 }

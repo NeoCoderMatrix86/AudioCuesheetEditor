@@ -65,5 +65,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="track"></param>
         /// <returns></returns>
         Track? GetNextLinkedTrack(Track track);
+        /// <summary>
+        /// Recalculates properties of linked tracks (previous and next track)
+        /// </summary>
+        /// <param name="track"></param>
+        void RecalculateLinkedTracksProperties(Track track);
     }
 }
