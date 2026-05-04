@@ -168,19 +168,16 @@ namespace AudioCuesheetEditor.Services.UI
                 }
                 if (value)
                 {
-                    _bulkEditTracedChanges = [];
+                    _bulkEditTracedChanges ??= [];
                 }
                 else
                 {
-                    if (_bulkEditTracedChanges != null)
+                    if (_bulkEditTracedChanges?.Count != 0)
                     {
-                        if (_bulkEditTracedChanges.Count != 0)
-                        {
-                            _undoStack.Add(new TracedChanges(_bulkEditTracedChanges));
-                            TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
-                        }
-                        _bulkEditTracedChanges = null;
+                        _undoStack.Add(new TracedChanges(_bulkEditTracedChanges));
+                        TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
                     }
+                    _bulkEditTracedChanges = null;
                 }
             }
         }

@@ -87,6 +87,31 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod()]
+        public void BulkEdit_AlreadyEnabledBulkEdit_DoesntDropPreviousEdits()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Artist = "Test Artist 1",
+                Title = "Test Title 1",
+                Cataloguenumber = "1234567890"
+            };
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Title))));
+            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Cataloguenumber))));
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.BulkEdit = false;
+            // Act
+            _traceChangeManager.Undo();
+            // Assert
+            Assert.IsNull(cuesheet.Artist);
+            Assert.IsNull(cuesheet.Title);
+            Assert.IsNull(cuesheet.Cataloguenumber);
+            Assert.IsTrue(_traceChangeManager.CanRedo);
+        }
+
+        [TestMethod()]
         public void Undo_SingleChange_UndoesChange()
         {
             // Arrange
