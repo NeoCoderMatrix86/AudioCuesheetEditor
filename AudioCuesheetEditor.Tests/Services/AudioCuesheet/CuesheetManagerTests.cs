@@ -713,27 +713,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         public void IsMoveTracksDownPossible_EmptyCollection_ReturnsFalse()
         {
             // Arrange
-            var track1 = new Track()
-            {
-                Position = 1,
-                Begin = TimeSpan.Zero,
-                End = new TimeSpan(0, 3, 12),
-                IsLinkedToPreviousTrack = true
-            };
-            var track2 = new Track()
-            {
-                Position = 2,
-                Begin = new TimeSpan(0, 3, 12),
-                End = new TimeSpan(0, 7, 34),
-                IsLinkedToPreviousTrack = true
-            };
-            var track3 = new Track()
-            {
-                Position = 3,
-                Begin = new TimeSpan(0, 7, 34),
-                End = new TimeSpan(0, 10, 4),
-                IsLinkedToPreviousTrack = true
-            };
             var cuesheet = new Cuesheet();
             // Act
             var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, []);
