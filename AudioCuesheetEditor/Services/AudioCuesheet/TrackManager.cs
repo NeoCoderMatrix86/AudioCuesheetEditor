@@ -29,6 +29,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
         {
             SetValue(track, propertyExpression, value);
+            //TODO: We need to move recalculation to a seperate method
             RecalculateLinkedProperties(track);
         }
 
