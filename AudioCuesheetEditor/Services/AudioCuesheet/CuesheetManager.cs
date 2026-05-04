@@ -195,15 +195,20 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             _traceChangeManager.BulkEdit = true;
             var cuesheet = await GetCurrentCuesheetAsync();
-            foreach (var selectedTrack in selectedTracks)
+            foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
             {
                 var previousTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
+                var newBegin = previousTrack?.Begin;
+                var newEnd = previousTrack?.End;
                 if (previousTrack != null)
                 {
                     _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
+                    _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
+                    _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
                 }
                 _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
-                //TODO: switch begin, end and length
+                _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
             }
             await SetPropertyAsync(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
             _traceChangeManager.BulkEdit = false;
