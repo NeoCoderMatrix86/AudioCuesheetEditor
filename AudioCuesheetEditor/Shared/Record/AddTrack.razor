@@ -29,12 +29,12 @@ along with Foobar.  If not, see
             @{
                 MusicBrainzArtist? autocompleteArtist = new()
                 {
-                    Name = currentRecordingTrack.Artist
+                    Name = _currentRecordingTrack.Artist
                 };
             }
-            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name" 
-                             @bind-Text="@currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
+            <MudAutocomplete @ref="_artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name" 
+                             @bind-Text="@_currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist))"
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
@@ -50,13 +50,13 @@ along with Foobar.  If not, see
             @{
                 MusicBrainzTrack? autocompleteTrack = new()
                 {
-                    Artist = currentRecordingTrack.Artist,
-                    Title = currentRecordingTrack.Title
+                    Artist = _currentRecordingTrack.Artist,
+                    Title = _currentRecordingTrack.Title
                 };
             }
-            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
-                             @bind-Text="currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText 
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" 
+            <MudAutocomplete @ref="_titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, _currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
+                             @bind-Text="_currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText 
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title))" 
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
@@ -85,6 +85,11 @@ along with Foobar.  If not, see
 
     public Cuesheet Cuesheet => _sessionStateContainer.Cuesheet;
 
+    Track _currentRecordingTrack = new();
+    MudAutocomplete<MusicBrainzArtist>? _artistInput;
+    MudAutocomplete<MusicBrainzTrack>? _titleInput;
+    ApplicationOptions? _applicationOptions;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -94,11 +99,11 @@ along with Foobar.  If not, see
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        currentRecordingTrack = new()
+        _currentRecordingTrack = new()
         {
-            IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+            IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
     }
 
@@ -111,11 +116,6 @@ along with Foobar.  If not, see
         }
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
-
-    Track currentRecordingTrack = new();
-    MudAutocomplete<MusicBrainzArtist>? artistInput;
-    MudAutocomplete<MusicBrainzTrack>? titleInput;
-    ApplicationOptions? applicationOptions;
 
     String? GetValidationErrorMessage(object model, string propertyName)
     {
@@ -132,14 +132,14 @@ along with Foobar.  If not, see
     {
         if (Cuesheet.IsRecording == true)
         {
-            await _cuesheetManager.AddTrackAsync(currentRecordingTrack);
-            currentRecordingTrack = new()
+            await _cuesheetManager.AddTrackAsync(_currentRecordingTrack);
+            _currentRecordingTrack = new()
             {
-                IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+                IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
             };
-            if (artistInput != null)
+            if (_artistInput != null)
             {
-                await artistInput.FocusAsync();
+                await _artistInput.FocusAsync();
             }
         }
     }
@@ -147,15 +147,15 @@ along with Foobar.  If not, see
     void CuesheetManager_IsRecordingChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
-        artistInput?.ClearAsync();
-        titleInput?.ClearAsync();
+        _artistInput?.ClearAsync();
+        _titleInput?.ClearAsync();
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
     {
         if (option is ApplicationOptions applicationOption)
         {
-            applicationOptions = applicationOption;
+            _applicationOptions = applicationOption;
             StateHasChanged();
         }
     }
