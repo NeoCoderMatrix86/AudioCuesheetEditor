@@ -627,6 +627,54 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         public void IsMoveTracksUpPossible_EmptyCollection_ReturnsFalse()
         {
             // Arrange
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([]);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void IsMoveTracksDownPossible_TracksBelow_ReturnsTrue()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track3, track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, [track2, track1]);
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public void IsMoveTracksDownPossible_NoTracksBelow_ReturnsFalse()
+        {
+            // Arrange
             var track1 = new Track()
             {
                 Position = 1,
@@ -656,7 +704,39 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             // Act
-            var result = _cuesheetManager.IsMoveTracksUpPossible([]);
+            var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, [track3, track2]);
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void IsMoveTracksDownPossible_EmptyCollection_ReturnsFalse()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet();
+            // Act
+            var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, []);
             // Assert
             Assert.IsFalse(result);
         }

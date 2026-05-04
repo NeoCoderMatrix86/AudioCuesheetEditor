@@ -177,7 +177,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
 
         /// <inheritdoc/>
-        //TODO: Tests
         public bool IsMoveTracksDownPossible(Cuesheet cuesheet, HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Max(x => x.Position) < cuesheet?.Tracks.Max(x => x.Position);
 
         /// <inheritdoc/>
