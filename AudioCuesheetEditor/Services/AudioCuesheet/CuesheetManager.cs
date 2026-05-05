@@ -209,7 +209,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        //TODO: Tests
         public async Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks)
         {
             var cuesheet = await GetCurrentCuesheetAsync();
@@ -234,7 +233,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
                 _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
             }
-            await SetPropertyAsync(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            SetValue(cuesheet!, x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
         }
