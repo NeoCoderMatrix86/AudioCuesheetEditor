@@ -273,6 +273,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         async Task<Cuesheet?> GetCurrentCuesheetAsync()
         {
+            //TODO: Use OptionSaved and a local variable for options making shure to have IsMoveTracksDownPossible work without cuesheet reference
             var viewOptions = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
             if (viewOptions.ActiveTab == ViewMode.ImportView)
             {
