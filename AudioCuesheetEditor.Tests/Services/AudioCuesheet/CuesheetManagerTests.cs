@@ -18,6 +18,7 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -47,14 +48,14 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             _trackManager = new();
             _localStorageOptionsProvider = new();
             _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(),It.IsAny<Expression<Func<Track, It.IsAnyType>>>(),It.IsAny<It.IsAnyType>()))
-            .Callback((Track track, LambdaExpression propExpr, object value) =>
-            {
-                var memberExpression = propExpr.Body as MemberExpression;
-                if (memberExpression?.Member is PropertyInfo propertyInfo)
+                .Callback((Track track, LambdaExpression propExpr, object value) =>
                 {
-                    propertyInfo.SetValue(track, value);
-                }
-            });
+                    var memberExpression = propExpr.Body as MemberExpression;
+                    if (memberExpression?.Member is PropertyInfo propertyInfo)
+                    {
+                        propertyInfo.SetValue(track, value);
+                    }
+                });
             _trackManager.Setup(x => x.GetPreviousLinkedTrack(It.IsAny<Track>())).Returns(delegate (Track track)
             {
                 Track? previousLinkedTrack = null;
@@ -718,6 +719,179 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, []);
             // Assert
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task MoveTracksUpAsync_TracksAbove_MovesTracksUpAsync()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track3, track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.DetailView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            // Act
+            var result = await _cuesheetManager.MoveTracksUpAsync([track2, track3]);
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual((ushort?)1, track2.Position);
+            Assert.AreEqual(TimeSpan.Zero, track2.Begin);
+            Assert.AreEqual(track1End, track2.End);
+            Assert.AreEqual((ushort?)2, track3.Position);
+            Assert.AreEqual(track1End, track3.Begin);
+            Assert.AreEqual(track2End, track3.End);
+            Assert.AreEqual((ushort?)3, track1.Position);
+            Assert.AreEqual(track2End, track1.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Once);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
+        }
+
+        [TestMethod]
+        public async Task MoveTracksUpAsync_NoTracksAbove_ReturnsFailure()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track3, track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.DetailView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            // Act
+            var result = await _cuesheetManager.MoveTracksUpAsync([track2, track1]);
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+            Assert.AreEqual((ushort?)1, track1.Position);
+            Assert.AreEqual(TimeSpan.Zero, track1.Begin);
+            Assert.AreEqual(track1End, track1.End);
+            Assert.AreEqual((ushort?)2, track2.Position);
+            Assert.AreEqual(track1End, track2.Begin);
+            Assert.AreEqual(track2End, track2.End);
+            Assert.AreEqual((ushort?)3, track3.Position);
+            Assert.AreEqual(track2End, track3.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
+        }
+
+        [TestMethod]
+        public async Task MoveTracksUpAsync_NoTracksSelected_ReturnsFailure()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track3, track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.DetailView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            // Act
+            var result = await _cuesheetManager.MoveTracksUpAsync([]);
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+            Assert.AreEqual((ushort?)1, track1.Position);
+            Assert.AreEqual(TimeSpan.Zero, track1.Begin);
+            Assert.AreEqual(track1End, track1.End);
+            Assert.AreEqual((ushort?)2, track2.Position);
+            Assert.AreEqual(track1End, track2.Begin);
+            Assert.AreEqual(track2End, track2.End);
+            Assert.AreEqual((ushort?)3, track3.Position);
+            Assert.AreEqual(track2End, track3.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
         }
     }
 }

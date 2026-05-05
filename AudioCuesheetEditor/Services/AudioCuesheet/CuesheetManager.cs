@@ -180,7 +180,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public bool IsMoveTracksDownPossible(Cuesheet cuesheet, HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Max(x => x.Position) < cuesheet?.Tracks.Max(x => x.Position);
 
         /// <inheritdoc/>
-        //TODO: Tests
         public async Task<Result> MoveTracksUpAsync(HashSet<Track> selectedTracks)
         {
             if (IsMoveTracksUpPossible(selectedTracks) == false)
@@ -204,7 +203,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
                 _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
             }
-            await SetPropertyAsync(x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            SetValue(cuesheet!, x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
         }
