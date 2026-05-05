@@ -100,6 +100,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = await GetCurrentCuesheetAsync();
             track.Cuesheet = cuesheet;
             // Calculate track properties
+            //TODO: Refactor this code (maybe use trackmanager)
             _traceChangeManager.BulkEdit = true;
             if (cuesheet?.IsRecording == true)
             {
