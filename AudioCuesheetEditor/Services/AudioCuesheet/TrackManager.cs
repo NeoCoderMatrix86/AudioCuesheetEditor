@@ -139,7 +139,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        //TODO: Tests
         public void RecalculateLinkedTracksProperties(Track track)
         {
             if (track.Cuesheet != null)

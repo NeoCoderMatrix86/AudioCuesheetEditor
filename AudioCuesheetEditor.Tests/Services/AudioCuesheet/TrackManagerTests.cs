@@ -21,7 +21,6 @@ using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
 {
@@ -465,6 +464,146 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             Assert.IsNotNull(linkedTrack);
             Assert.AreEqual(track2, linkedTrack);
+        }
+
+        [TestMethod]
+        public void RecalculateLinkedTracksProperties_TrackHasNoBegin_SetsBegin()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12)
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            _trackManager.RecalculateLinkedTracksProperties(track2);
+            // Assert
+            Assert.AreEqual(track1.End, track2.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track2 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Begin))), Times.Once);
+        }
+
+        [TestMethod]
+        public void RecalculateLinkedTracksProperties_TrackHasNoPosition_SetsPosition()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12)
+            };
+            var track2 = new Track()
+            {
+                IsLinkedToPreviousTrack = true,
+                Begin = track1.End
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            _trackManager.RecalculateLinkedTracksProperties(track2);
+            // Assert
+            Assert.AreEqual((ushort?)2, track2.Position);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track2 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Position))), Times.Once);
+        }
+
+        [TestMethod]
+        public void RecalculateLinkedTracksProperties_PreviousTrackHasNoEnd_SetsEnd()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                IsLinkedToPreviousTrack = true,
+                Begin = new TimeSpan(0, 3, 12)
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            _trackManager.RecalculateLinkedTracksProperties(track2);
+            // Assert
+            Assert.AreEqual(track2.Begin, track1.End);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track1 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.End))), Times.Once);
+        }
+
+        [TestMethod]
+        public void RecalculateLinkedTracksProperties_NextTrackNoPosition_SetsPosition()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12)
+            };
+            var track2 = new Track()
+            {
+                Begin = track1.End,
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            _trackManager.RecalculateLinkedTracksProperties(track1);
+            // Assert
+            Assert.AreEqual((ushort?)2, track2.Position);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track2 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Position))), Times.Once);
+        }
+
+        [TestMethod]
+        public void RecalculateLinkedTracksProperties_NextTrackNoBegin_SetsBegin()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12)
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            _trackManager.RecalculateLinkedTracksProperties(track1);
+            // Assert
+            Assert.AreEqual(track1.End, track2.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track2 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Begin))), Times.Once);
         }
     }
 }
