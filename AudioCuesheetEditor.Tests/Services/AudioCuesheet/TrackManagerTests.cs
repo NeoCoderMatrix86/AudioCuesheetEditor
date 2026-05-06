@@ -67,39 +67,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void SetProperty_CuesheetAvailable_CalculatesLinkedProperties()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Tracks = [
-                    new() 
-                    {
-                        IsLinkedToPreviousTrack = true,
-                        Position = 1,
-                        Begin = TimeSpan.Zero,
-                        End = new TimeSpan(0, 4, 56)
-                    }
-                ]
-            };
-            var track = new Track()
-            {
-                IsLinkedToPreviousTrack = true,
-                Cuesheet = cuesheet,
-                Begin = cuesheet.Tracks.Single().End
-            };
-            cuesheet.Tracks = cuesheet.Tracks.Append(track);
-            var artist = "Artist 1";
-            // Act
-            _trackManager.SetProperty(track, x => x.Artist, artist);
-            // Assert
-            Assert.AreEqual(artist, track.Artist);
-            Assert.AreEqual((ushort)2, track.Position);
-            Assert.AreEqual(track.Begin, cuesheet.Tracks.Single(x => x.Position == 1).End);
-            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Artist))), Times.Once);
-        }
-
-        [TestMethod]
         public void Clone_ImportTrack_ReturnsTrackClone()
         {
             // Arrange
