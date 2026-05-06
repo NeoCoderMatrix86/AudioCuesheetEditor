@@ -73,7 +73,6 @@ namespace AudioCuesheetEditor.Services.UI
             _viewOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
         }
 
-
         public void ResetImport()
         {
             Importfile = null;
@@ -82,7 +81,6 @@ namespace AudioCuesheetEditor.Services.UI
         }
 
         /// <inheritdoc/>
-        //TODO: Tests
         public Cuesheet? GetActiveCuesheet()
         {
             if (_viewOptions == null)

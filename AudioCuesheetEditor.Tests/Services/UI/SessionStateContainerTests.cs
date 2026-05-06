@@ -16,9 +16,12 @@
 using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.UI
 {
@@ -78,6 +81,70 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             Assert.IsNull(_sessionStateContainer.Importfile);
             Assert.IsNull(_sessionStateContainer.ImportAudiofile);
             Assert.IsNull(_sessionStateContainer.ImportCuesheet);
+        }
+
+        [TestMethod]
+        public async Task InitializeAsync_NotInitialized_ShouldInitializeAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            // Act
+            await _sessionStateContainer.InitializeAsync();
+            // Assert
+            _localStorageOptionsProvider.Verify(x => x.GetOptionsAsync<ViewOptions>(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task InitializeAsync_Initialized_ShouldNoptInitializeAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            // Act
+            await _sessionStateContainer.InitializeAsync();
+            // Assert
+            _localStorageOptionsProvider.Verify(x => x.GetOptionsAsync<ViewOptions>(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetActiveCuesheet_Initialized_ReturnsDetailViewCuesheeetAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            // Act
+            var result = _sessionStateContainer.GetActiveCuesheet();
+            // Assert
+            Assert.AreEqual(_sessionStateContainer.Cuesheet, result);
+        }
+
+        [TestMethod]
+        public async Task GetActiveCuesheet_InitializedWithImportView_ReturnsDetailViewCuesheeetAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.ImportView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            // Act
+            var result = _sessionStateContainer.GetActiveCuesheet();
+            // Assert
+            Assert.AreEqual(_sessionStateContainer.ImportCuesheet, result);
+        }
+
+        [TestMethod]
+        public void GetActiveCuesheet_NotInitialized_ThrowsException()
+        {
+            // Arrange
+            // Act
+            var exception = Assert.Throws<InvalidOperationException>(() => _sessionStateContainer.GetActiveCuesheet());
+            // Assert
+            Assert.AreEqual("Not initialized!", exception.Message);
         }
     }
 }
