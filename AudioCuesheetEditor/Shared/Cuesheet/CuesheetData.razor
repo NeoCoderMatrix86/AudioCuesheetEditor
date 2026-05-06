@@ -28,9 +28,9 @@ along with Foobar.  If not, see
 @if (Cuesheet != null)
 {
     <MudForm @ref="_form" Model="Cuesheet">
-        <MudTextField Text="@Cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetPropertyAsync(x => x.Artist, newValue)" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" 
+        <MudTextField Text="@Cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Artist, newValue)" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" 
                       Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
-        <MudTextField Text="@Cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetPropertyAsync(x => x.Title, newValue)" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
+        <MudTextField Text="@Cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Title, newValue)" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
                       Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
         @switch(CurrentViewMode)
         {
@@ -118,9 +118,7 @@ along with Foobar.  If not, see
                 var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], _fileInputAudiofileId);
                 audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single());
             }
-            base.TraceChangeManager.BulkEdit = true;
-            await _cuesheetManager.SetPropertyAsync(x => x.Audiofile, audiofile);
-            base.TraceChangeManager.BulkEdit = false;
+            _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
         }
         catch(ArgumentException ae)
         {
@@ -164,7 +162,7 @@ along with Foobar.  If not, see
             {
                 newValue = _fileInputManager.CreateCDTextfile(browserFile.ContentType, browserFile.Name);
             }
-            _cuesheetManager.SetPropertyAsync(x => x.CDTextfile, newValue);
+            _cuesheetManager.SetProperty(x => x.CDTextfile, newValue);
         }
         catch (ArgumentException ae)
         {
@@ -223,7 +221,7 @@ along with Foobar.  If not, see
     void CataloguenumberOnBlur()
     {
         var newValue = _catalogueNumber?.Replace(" ", string.Empty);
-        _cuesheetManager.SetPropertyAsync(x => x.Cataloguenumber, newValue);
+        _cuesheetManager.SetProperty(x => x.Cataloguenumber, newValue);
     }
 
     void TraceChangeManager_RedoDone(object? sender, EventArgs e)

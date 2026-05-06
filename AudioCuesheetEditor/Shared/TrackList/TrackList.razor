@@ -49,8 +49,8 @@ along with Foobar.  If not, see
             <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUpAsync(_selectedTracks)"
-                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(Cuesheet!, _selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDownAsync(_selectedTracks)"
+                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUp(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
                                      FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
         </div>
@@ -65,7 +65,7 @@ along with Foobar.  If not, see
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracksAsync([context.Item])" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks([context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
@@ -167,13 +167,13 @@ along with Foobar.  If not, see
         _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
-    async Task AddTrackClicked()
+    void AddTrackClicked()
     {
         var newTrack = new Track()
         {
             IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
-        await _cuesheetManager.AddTrackAsync(newTrack);
+        _cuesheetManager.AddTrack(newTrack);
     }
 
     async Task EditSelectedTracksClicked()
@@ -181,9 +181,9 @@ along with Foobar.  If not, see
         await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(_selectedTracks);
     }
 
-    async Task DeleteSelectedTracksClicked()
+    void DeleteSelectedTracksClicked()
     {
-        await _cuesheetManager.RemoveTracksAsync(_selectedTracks);
+        _cuesheetManager.RemoveTracks(_selectedTracks);
         _selectedTracks.Clear();
     }
 
@@ -197,7 +197,7 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            await _cuesheetManager.RemoveTracksAsync(Cuesheet!.Tracks);
+            _cuesheetManager.RemoveTracks(Cuesheet!.Tracks);
             _selectedTracks.Clear();
         }
     }
@@ -234,7 +234,7 @@ along with Foobar.  If not, see
             copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
             copy.Begin = trackThatWillBeCopied.End;
             copy.End = null;
-            await _cuesheetManager.AddTrackAsync(copy);
+            _cuesheetManager.AddTrack(copy);
             await EditTrackModalClicked(copy);
         }
     }

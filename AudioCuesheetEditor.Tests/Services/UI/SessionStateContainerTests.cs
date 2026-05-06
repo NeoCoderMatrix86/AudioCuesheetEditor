@@ -13,10 +13,9 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -26,7 +25,14 @@ namespace AudioCuesheetEditor.Tests.Services.UI
     [TestClass]
     public class SessionStateContainerTests
     {
-        private readonly SessionStateContainer _sessionStateContainer = new();
+        private readonly SessionStateContainer _sessionStateContainer;
+        private readonly Mock<ILocalStorageOptionsProvider> _localStorageOptionsProvider;
+
+        public SessionStateContainerTests()
+        {
+            _localStorageOptionsProvider = new();
+            _sessionStateContainer = new(_localStorageOptionsProvider.Object);
+        }
 
         [TestMethod]
         public void Cuesheet_SetNewValue_ShouldTriggerCuesheetChangedEvent()

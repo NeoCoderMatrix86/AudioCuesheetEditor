@@ -132,7 +132,7 @@ along with Foobar.  If not, see
     {
         if (Cuesheet.IsRecording == true)
         {
-            await _cuesheetManager.AddTrackAsync(_currentRecordingTrack);
+            _cuesheetManager.AddTrack(_currentRecordingTrack);
             _currentRecordingTrack = new()
             {
                 IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack

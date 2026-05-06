@@ -31,10 +31,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// Set property for cuesheet
         /// </summary>
         /// <typeparam name="TProperty"></typeparam>
-        /// <param name="cuesheet"></param>
         /// <param name="propertyExpression"></param>
         /// <param name="value"></param>
-        Task SetPropertyAsync<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
+        void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
         /// <summary>
         /// Checks if recording for the cuesheet is possible
         /// </summary>
@@ -53,15 +52,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <summary>
         /// Adds a track to the cuesheet
         /// </summary>
-        /// <param name="cuesheet"></param>
         /// <param name="track"></param>
-        Task AddTrackAsync(Track track);
+        void AddTrack(Track track);
         /// <summary>
         /// Remove tracks from cuesheet
         /// </summary>
-        /// <param name="cuesheet"></param>
         /// <param name="tracksToRemove"></param>
-        Task RemoveTracksAsync(IEnumerable<Track> tracksToRemove);
+        void RemoveTracks(IEnumerable<Track> tracksToRemove);
         /// <summary>
         /// Determines if moving tracks up is possible
         /// </summary>
@@ -71,20 +68,19 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <summary>
         /// Determines if moving tracks down is possible
         /// </summary>
-        /// <param name="cuesheet"></param>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Boolean IsMoveTracksDownPossible(Cuesheet cuesheet, HashSet<Track> selectedTracks);
+        Boolean IsMoveTracksDownPossible(HashSet<Track> selectedTracks);
         /// <summary>
         /// Moves selected tracks up
         /// </summary>
         /// <param name="selectedTracks"></param>
-        Task<Result> MoveTracksUpAsync(HashSet<Track> selectedTracks);
+        Result MoveTracksUp(HashSet<Track> selectedTracks);
         /// <summary>
         /// Moves selected tracks down
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks);
+        Result MoveTracksDown(HashSet<Track> selectedTracks);
     }
 }

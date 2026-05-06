@@ -13,10 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services;
 using AudioCuesheetEditor.Services.AudioCuesheet;
@@ -28,7 +26,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
 {
@@ -39,14 +36,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         private readonly Mock<ITraceChangeManager> _traceChangeManager;
         private readonly Mock<ISessionStateContainer> _sessionStateContainer;
         private readonly Mock<ITrackManager> _trackManager;
-        private readonly Mock<ILocalStorageOptionsProvider> _localStorageOptionsProvider;
 
         public CuesheetManagerTests()
         {
             _traceChangeManager = new();
             _sessionStateContainer = new();
             _trackManager = new();
-            _localStorageOptionsProvider = new();
             _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(),It.IsAny<Expression<Func<Track, It.IsAnyType>>>(),It.IsAny<It.IsAnyType>()))
                 .Callback((Track track, LambdaExpression propExpr, object value) =>
                 {
@@ -75,49 +70,39 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 }
                 return previousLinkedTrack;
             });
-            _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object, _localStorageOptionsProvider.Object);
+            _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object);
         }
 
         [TestMethod]
-        public async Task SetPropertyAsync_NewValue_ChangesPropertyAndSetsTracedChangeAsync()
+        public void SetProperty_NewValue_ChangesPropertyAndSetsTracedChange()
         {
             // Arrange
             var cuesheet = new Cuesheet();
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
-            await _cuesheetManager.SetPropertyAsync(x => x.Artist, "Artist");
+            _cuesheetManager.SetProperty(x => x.Artist, "Artist");
             // Assert
             Assert.AreEqual("Artist", cuesheet.Artist);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Cuesheet.Artist))), Times.Once);
         }
 
         [TestMethod]
-        public async Task SetPropertyAsync_EqualValue_DoesntChangePropertyAsync()
+        public void SetProperty_EqualValue_DoesntChangeProperty()
         {
             // Arrange
             var cuesheet = new Cuesheet()
             {
                 Artist = "Artist"
             };
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
-            await _cuesheetManager.SetPropertyAsync(x => x.Artist, cuesheet.Artist);
+            _cuesheetManager.SetProperty(x => x.Artist, cuesheet.Artist);
             // Assert
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Cuesheet.Artist))), Times.Never);
         }
 
         [TestMethod]
-        public async Task SetPropertyAsync_AudiofileWithDuration_SetsLastTrackEndAlsoAsync()
+        public void SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso()
         {
             // Arrange
             var track = new Track()
@@ -129,16 +114,11 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Tracks = [track]
             };
             track.Cuesheet = cuesheet;
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             var duration = new TimeSpan(0, 5, 23);
-            var audiofile = new Audiofile("Test.mp3", nameof(SetPropertyAsync_AudiofileWithDuration_SetsLastTrackEndAlsoAsync), Audiofile.AudioCodecs.First(), duration);
+            var audiofile = new Audiofile("Test.mp3", nameof(SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso), Audiofile.AudioCodecs.First(), duration);
             // Act
-            await _cuesheetManager.SetPropertyAsync(x => x.Audiofile, audiofile);
+            _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
             // Assert
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Cuesheet.Audiofile))), Times.Once);
             Assert.AreEqual(duration, track.End);
@@ -281,23 +261,18 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task AddTrackAsync_FirstTrack_AddsNewTrackWithCalulatedTrackPropertiesAsync()
+        public void AddTrack_FirstTrack_AddsNewTrackWithCalulatedTrackProperties()
         {
             // Arrange
             var duration = new TimeSpan(0, 27, 56);
             var cuesheet = new Cuesheet()
             {
-                Audiofile = new("Audio.mp3", nameof(AddTrackAsync_FirstTrack_AddsNewTrackWithCalulatedTrackPropertiesAsync), Audiofile.AudioCodecs.First(), duration)
+                Audiofile = new("Audio.mp3", nameof(AddTrack_FirstTrack_AddsNewTrackWithCalulatedTrackProperties), Audiofile.AudioCodecs.First(), duration)
             };
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             var track = new Track();
             // Act
-            await _cuesheetManager.AddTrackAsync(track);
+            _cuesheetManager.AddTrack(track);
             // Assert
             Assert.HasCount(1, cuesheet.Tracks);
             Assert.AreEqual((ushort)1, cuesheet.Tracks.First().Position);
@@ -307,7 +282,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task AddTrackAsync_AddToPreviousTracks_AddsNewTrackWithCalulatedTrackPropertiesAsync()
+        public void AddTrack_AddToPreviousTracks_AddsNewTrackWithCalulatedTrackProperties()
         {
             // Arrange
             var duration = new TimeSpan(0, 27, 56);
@@ -323,17 +298,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             var cuesheet = new Cuesheet()
             {
                 Tracks = tracks,
-                Audiofile = new("Audio.mp3", nameof(AddTrackAsync_AddToPreviousTracks_AddsNewTrackWithCalulatedTrackPropertiesAsync), Audiofile.AudioCodecs.First(), duration)
+                Audiofile = new("Audio.mp3", nameof(AddTrack_AddToPreviousTracks_AddsNewTrackWithCalulatedTrackProperties), Audiofile.AudioCodecs.First(), duration)
             };
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             var track = new Track();
             // Act
-            await _cuesheetManager.AddTrackAsync(track);
+            _cuesheetManager.AddTrack(track);
             // Assert
             Assert.HasCount(2, cuesheet.Tracks);
             Assert.AreEqual((ushort)2, cuesheet.Tracks.Last().Position);
@@ -343,7 +313,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task AddTrackAsync_DuringRecording_AddsNewTrackWithCalulatedTrackPropertiesAsync()
+        public void AddTrack_DuringRecording_AddsNewTrackWithCalulatedTrackProperties()
         {
             // Arrange
             var tracks = new List<Track>
@@ -359,15 +329,10 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 RecordingStart = DateTime.UtcNow,
                 Tracks = tracks
             };
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.RecordView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             var track = new Track();
             // Act
-            await _cuesheetManager.AddTrackAsync(track);
+            _cuesheetManager.AddTrack(track);
             // Assert
             Assert.HasCount(2, cuesheet.Tracks);
             Assert.AreEqual((ushort)2, cuesheet.Tracks.Last().Position);
@@ -377,23 +342,18 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task AddTrackAsync_FirstTrackImporting_AddsNewTrackWithCalulatedTrackPropertiesAsync()
+        public void AddTrack_FirstTrackImporting_AddsNewTrackWithCalulatedTrackProperties()
         {
             // Arrange
             var duration = new TimeSpan(0, 27, 56);
             var importCuesheet = new Cuesheet()
             {
-                Audiofile = new("Audio.mp3", nameof(AddTrackAsync_FirstTrack_AddsNewTrackWithCalulatedTrackPropertiesAsync), Audiofile.AudioCodecs.First(), duration)
+                Audiofile = new("Audio.mp3", nameof(AddTrack_FirstTrackImporting_AddsNewTrackWithCalulatedTrackProperties), Audiofile.AudioCodecs.First(), duration)
             };
-            _sessionStateContainer.SetupProperty(x => x.ImportCuesheet, importCuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.ImportView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(importCuesheet);
             var track = new Track();
             // Act
-            await _cuesheetManager.AddTrackAsync(track);
+            _cuesheetManager.AddTrack(track);
             // Assert
             Assert.HasCount(1, importCuesheet.Tracks);
             Assert.AreEqual((ushort)1, importCuesheet.Tracks.First().Position);
@@ -403,7 +363,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task RemoveTracksAsync_WithAttachedTracks_RemovesTracksAndRecalculatesRemainingTrackPropertiesAsync()
+        public void RemoveTracks_WithAttachedTracks_RemovesTracksAndRecalculatesRemainingTrackProperties()
         {
             // Arrange
             var track1 = new Track()
@@ -445,21 +405,16 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             var cuesheet = new Cuesheet()
             {
                 Tracks = previousValue,
-                Audiofile = new("Audio.mp3", nameof(RemoveTracksAsync_WithAttachedTracks_RemovesTracksAndRecalculatesRemainingTrackPropertiesAsync), Audiofile.AudioCodecs.First(), duration)
+                Audiofile = new("Audio.mp3", nameof(RemoveTracks_WithAttachedTracks_RemovesTracksAndRecalculatesRemainingTrackProperties), Audiofile.AudioCodecs.First(), duration)
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             track4.Cuesheet = cuesheet;
             track5.Cuesheet = cuesheet;
-            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
-            await _cuesheetManager.RemoveTracksAsync([track2, track4]);
+            _cuesheetManager.RemoveTracks([track2, track4]);
             // Assert
             Assert.HasCount(3, cuesheet.Tracks);
             Assert.IsTrue(cuesheet.Tracks.Contains(track1));
@@ -476,7 +431,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task RemoveTracksAsync_DuringImport_RemovesTracksAndRecalculatesRemainingTrackPropertiesAsync()
+        public void RemoveTracks_DuringImport_RemovesTracksAndRecalculatesRemainingTrackProperties()
         {
             // Arrange
             var track1 = new Track()
@@ -518,21 +473,16 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             var importCuesheet = new Cuesheet()
             {
                 Tracks = previousValue,
-                Audiofile = new("Audio.mp3", nameof(RemoveTracksAsync_WithAttachedTracks_RemovesTracksAndRecalculatesRemainingTrackPropertiesAsync), Audiofile.AudioCodecs.First(), duration)
+                Audiofile = new("Audio.mp3", nameof(RemoveTracks_DuringImport_RemovesTracksAndRecalculatesRemainingTrackProperties), Audiofile.AudioCodecs.First(), duration)
             };
             track1.Cuesheet = importCuesheet;
             track2.Cuesheet = importCuesheet;
             track3.Cuesheet = importCuesheet;
             track4.Cuesheet = importCuesheet;
             track5.Cuesheet = importCuesheet;
-            _sessionStateContainer.SetupProperty(x => x.ImportCuesheet, importCuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.ImportView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(importCuesheet);
             // Act
-            await _cuesheetManager.RemoveTracksAsync([track2, track4]);
+            _cuesheetManager.RemoveTracks([track2, track4]);
             // Assert
             Assert.HasCount(3, importCuesheet.Tracks);
             Assert.IsTrue(importCuesheet.Tracks.Contains(track1));
@@ -666,8 +616,9 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
-            var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, [track2, track1]);
+            var result = _cuesheetManager.IsMoveTracksDownPossible([track2, track1]);
             // Assert
             Assert.IsTrue(result);
         }
@@ -705,7 +656,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             // Act
-            var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, [track3, track2]);
+            var result = _cuesheetManager.IsMoveTracksDownPossible([track3, track2]);
             // Assert
             Assert.IsFalse(result);
         }
@@ -716,13 +667,13 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Arrange
             var cuesheet = new Cuesheet();
             // Act
-            var result = _cuesheetManager.IsMoveTracksDownPossible(cuesheet, []);
+            var result = _cuesheetManager.IsMoveTracksDownPossible([]);
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task MoveTracksUpAsync_TracksAbove_MovesTracksUpAsync()
+        public void MoveTracksUp_TracksAbove_ReturnsSuccess()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -755,14 +706,9 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
-            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
-            var result = await _cuesheetManager.MoveTracksUpAsync([track2, track3]);
+            var result = _cuesheetManager.MoveTracksUp([track2, track3]);
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual((ushort?)1, track2.Position);
@@ -779,7 +725,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task MoveTracksUpAsync_NoTracksAbove_ReturnsFailure()
+        public void MoveTracksUp_NoTracksAbove_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -813,13 +759,8 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             // Act
-            var result = await _cuesheetManager.MoveTracksUpAsync([track2, track1]);
+            var result = _cuesheetManager.MoveTracksUp([track2, track1]);
             // Assert
             Assert.IsFalse(result.IsSuccess);
             Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
@@ -837,7 +778,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task MoveTracksUpAsync_NoTracksSelected_ReturnsFailure()
+        public void MoveTracksUp_NoTracksSelected_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -871,13 +812,8 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             // Act
-            var result = await _cuesheetManager.MoveTracksUpAsync([]);
+            var result = _cuesheetManager.MoveTracksUp([]);
             // Assert
             Assert.IsFalse(result.IsSuccess);
             Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
@@ -895,7 +831,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task MoveTracksDownAsync_TracksBelow_ReturnsSucess()
+        public void MoveTracksDown_TracksBelow_ReturnsSucess()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -928,14 +864,9 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
-            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
-            var result = await _cuesheetManager.MoveTracksDownAsync([track2, track1]);
+            var result = _cuesheetManager.MoveTracksDown([track2, track1]);
             // Assert
             Assert.IsTrue(result.IsSuccess);
             Assert.AreEqual((ushort?)1, track3.Position);
@@ -952,7 +883,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task MoveTracksDownAsync_NoTracksBelow_ReturnsFailure()
+        public void MoveTracksDown_NoTracksBelow_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -986,13 +917,8 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             // Act
-            var result = await _cuesheetManager.MoveTracksDownAsync([track2, track3]);
+            var result = _cuesheetManager.MoveTracksDown([track2, track3]);
             // Assert
             Assert.IsFalse(result.IsSuccess);
             Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
@@ -1010,7 +936,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task MoveTracksDownAsync_NoTracksSelected_ReturnsFailure()
+        public void MoveTracksDown_NoTracksSelected_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -1044,13 +970,8 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-            var viewOptions = new ViewOptions()
-            {
-                ActiveTab = ViewMode.DetailView
-            };
-            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             // Act
-            var result = await _cuesheetManager.MoveTracksDownAsync([]);
+            var result = _cuesheetManager.MoveTracksDown([]);
             // Assert
             Assert.IsFalse(result.IsSuccess);
             Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);

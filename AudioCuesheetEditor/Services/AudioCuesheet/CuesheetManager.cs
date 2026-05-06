@@ -13,9 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -23,20 +21,19 @@ using System.Reflection;
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager, ILocalStorageOptionsProvider localStorageOptionsProvider) : ICuesheetManager
+    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager) : ICuesheetManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITrackManager _trackManager = trackManager;
-        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
 
         public event EventHandler? IsRecordingChanged;
 
         /// <inheritdoc/>
-        public async Task SetPropertyAsync<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
+        public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = await GetCurrentCuesheetAsync();
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             var audiofile = cuesheet?.Audiofile;
             SetValue(cuesheet!, propertyExpression, value);
             // If audiofile has been set, we need to calculate last track end
@@ -95,9 +92,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public async Task AddTrackAsync(Track track)
+        public void AddTrack(Track track)
         {
-            var cuesheet = await GetCurrentCuesheetAsync();
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             track.Cuesheet = cuesheet;
             // Calculate track properties
             //TODO: Refactor this code (maybe use trackmanager)
@@ -151,9 +148,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public async Task RemoveTracksAsync(IEnumerable<Track> tracksToRemove)
+        public void RemoveTracks(IEnumerable<Track> tracksToRemove)
         {
-            var cuesheet = await GetCurrentCuesheetAsync();
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             var intersection = cuesheet!.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
             //Calculate position and begin of new tracks
@@ -178,17 +175,17 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
 
         /// <inheritdoc/>
-        public bool IsMoveTracksDownPossible(Cuesheet cuesheet, HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Max(x => x.Position) < cuesheet?.Tracks.Max(x => x.Position);
+        public bool IsMoveTracksDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Max(x => x.Position) < _sessionStateContainer.GetActiveCuesheet()?.Tracks.Max(x => x.Position);
 
         /// <inheritdoc/>
-        public async Task<Result> MoveTracksUpAsync(HashSet<Track> selectedTracks)
+        public Result MoveTracksUp(HashSet<Track> selectedTracks)
         {
             if (IsMoveTracksUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = await GetCurrentCuesheetAsync();
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
             {
                 var previousTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
@@ -210,10 +207,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public async Task<Result> MoveTracksDownAsync(HashSet<Track> selectedTracks)
+        public Result MoveTracksDown(HashSet<Track> selectedTracks)
         {
-            var cuesheet = await GetCurrentCuesheetAsync();
-            if (IsMoveTracksDownPossible(cuesheet!, selectedTracks) == false)
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            if (IsMoveTracksDownPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
@@ -269,17 +266,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
             }
-        }
-
-        async Task<Cuesheet?> GetCurrentCuesheetAsync()
-        {
-            //TODO: Use OptionSaved and a local variable for options making shure to have IsMoveTracksDownPossible work without cuesheet reference
-            var viewOptions = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
-            if (viewOptions.ActiveTab == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
         }
 
         static Track? GetLastTrack(Cuesheet cuesheet)

@@ -115,7 +115,7 @@ along with Foobar.  If not, see
                 }
                 if (_sessionStateContainer.ImportAudiofile != null)
                 {
-                    await _cuesheetManager.SetPropertyAsync(x => x.Audiofile, _sessionStateContainer.ImportAudiofile);
+                    _cuesheetManager.SetProperty(x => x.Audiofile, _sessionStateContainer.ImportAudiofile);
                 }
             }
             finally
