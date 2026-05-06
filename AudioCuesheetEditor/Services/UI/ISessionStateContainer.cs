@@ -27,7 +27,17 @@ namespace AudioCuesheetEditor.Services.UI
         public Cuesheet? ImportCuesheet { get; set; }
         public Audiofile? ImportAudiofile { get; set; }
         public IImportfile? Importfile { get; set; }
-        public void ResetImport();
         public Boolean ImportIsAnalyzed { get; set; }
+        public void ResetImport();
+        /// <summary>
+        /// Initialize this class
+        /// </summary>
+        /// <returns></returns>
+        Task InitializeAsync();
+        /// <summary>
+        /// Get current cuesheet based on current view
+        /// </summary>
+        /// <returns></returns>
+        public Cuesheet? GetActiveCuesheet();
     }
 }
