@@ -43,13 +43,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
         - button ""Clear""
@@ -65,13 +62,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
         - button ""Clear""
@@ -88,13 +82,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
         - button ""Clear""
@@ -111,13 +102,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
         - button ""Clear""
@@ -134,13 +122,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
         - button ""Clear""
@@ -157,13 +142,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
         - button ""Clear""
@@ -180,13 +162,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
         - button ""Clear""
@@ -203,13 +182,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
         - button ""Clear""
@@ -256,13 +232,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
         - button ""Clear""
@@ -278,13 +251,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
         - button ""Clear""
@@ -301,13 +271,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
         - button ""Clear""
@@ -324,13 +291,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
         - button ""Clear""
@@ -347,13 +311,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 5 Clear Sample Title Edited 5 Clear 00:20:13 00:24:54 00:04:41"":
+    - row ""5 Sample Artist 5 Clear Sample Title Edited 5 Clear 00:20:13 00:24:54 00:04:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
         - button ""Clear""
@@ -370,13 +331,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
         - button ""Clear""
@@ -393,13 +351,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
         - button ""Clear""
@@ -416,13 +371,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
         - button ""Clear""
@@ -451,7 +403,722 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.ImportFileAsync("Textimport-Bug-#54.txt");
             await importView.SwitchImportProfileAsync("Textfile (just track data)");
             await importView.Analyze();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync("- table:\r\n  - rowgroup:\r\n    - row \"# Artist Title Begin End Length\":\r\n      - columnheader:\r\n        - checkbox\r\n      - columnheader \"#\"\r\n      - columnheader \"Artist\"\r\n      - columnheader \"Title\"\r\n      - columnheader \"Begin\"\r\n      - columnheader \"End\"\r\n      - columnheader \"Length\"\r\n  - rowgroup:\r\n    - row \"Increment Decrement Adriatique Clear X. Clear 00:00:00 00:05:24 00:05:24\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"1\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Adriatique Clear\":\r\n        - textbox: Adriatique\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"X. Clear\":\r\n        - textbox: X.\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:00:00\":\r\n        - textbox: 00:00:00\r\n      - cell \"00:05:24\":\r\n        - textbox: 00:05:24\r\n      - cell \"00:05:24\":\r\n        - textbox: 00:05:24\r\n    - row \"Increment Decrement Third Harmony Clear Fears And Dreams (Original Mix) Clear 00:05:24 00:10:39 00:05:15\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"2\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Third Harmony Clear\":\r\n        - textbox: Third Harmony\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Fears And Dreams (Original Mix) Clear\":\r\n        - textbox: Fears And Dreams (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:05:24\":\r\n        - textbox: 00:05:24\r\n      - cell \"00:10:39\":\r\n        - textbox: 00:10:39\r\n      - cell \"00:05:15\":\r\n        - textbox: 00:05:15\r\n    - row \"Increment Decrement Dele Sosimi Afrobeat Orchestra Clear Too Much Information (Laolu Remix; Edit) Clear 00:10:39 00:17:06 00:06:27\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"3\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Dele Sosimi Afrobeat Orchestra Clear\":\r\n        - textbox: Dele Sosimi Afrobeat Orchestra\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Too Much Information (Laolu Remix; Edit) Clear\":\r\n        - textbox: Too Much Information (Laolu Remix; Edit)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:10:39\":\r\n        - textbox: 00:10:39\r\n      - cell \"00:17:06\":\r\n        - textbox: 00:17:06\r\n      - cell \"00:06:27\":\r\n        - textbox: 00:06:27\r\n    - row \"Increment Decrement Edem, Govan Clear Ankh (Onetwo MX Remix) Clear 00:17:06 00:23:21 00:06:15\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"4\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Edem, Govan Clear\":\r\n        - textbox: Edem, Govan\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Ankh (Onetwo MX Remix) Clear\":\r\n        - textbox: Ankh (Onetwo MX Remix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:17:06\":\r\n        - textbox: 00:17:06\r\n      - cell \"00:23:21\":\r\n        - textbox: 00:23:21\r\n      - cell \"00:06:15\":\r\n        - textbox: 00:06:15\r\n    - row \"Increment Decrement Jody Wisternoff Clear For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear 00:23:21 00:29:02 00:05:41\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"5\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Jody Wisternoff Clear\":\r\n        - textbox: Jody Wisternoff\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear\":\r\n        - textbox: For All Time (feat. Hendrik Burkhard) (Extended Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:23:21\":\r\n        - textbox: 00:23:21\r\n      - cell \"00:29:02\":\r\n        - textbox: 00:29:02\r\n      - cell \"00:05:41\":\r\n        - textbox: 00:05:41\r\n    - row \"Increment Decrement Einmusik Clear Bead (Original Mix) Clear 00:29:02 00:34:27 00:05:25\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"6\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Einmusik Clear\":\r\n        - textbox: Einmusik\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Bead (Original Mix) Clear\":\r\n        - textbox: Bead (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:29:02\":\r\n        - textbox: 00:29:02\r\n      - cell \"00:34:27\":\r\n        - textbox: 00:34:27\r\n      - cell \"00:05:25\":\r\n        - textbox: 00:05:25\r\n    - row \"Increment Decrement Sebastien Leger Clear La Danse du Scorpion Clear 00:34:27 00:40:59 00:06:32\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"7\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Sebastien Leger Clear\":\r\n        - textbox: Sebastien Leger\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"La Danse du Scorpion Clear\":\r\n        - textbox: La Danse du Scorpion\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:34:27\":\r\n        - textbox: 00:34:27\r\n      - cell \"00:40:59\":\r\n        - textbox: 00:40:59\r\n      - cell \"00:06:32\":\r\n        - textbox: 00:06:32\r\n    - row \"Increment Decrement Paul Thomas & Solid Stone Clear La Bombo (Solid Stone Remix) Clear 00:40:59 00:46:19 00:05:20\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"8\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Paul Thomas & Solid Stone Clear\":\r\n        - textbox: Paul Thomas & Solid Stone\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"La Bombo (Solid Stone Remix) Clear\":\r\n        - textbox: La Bombo (Solid Stone Remix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:40:59\":\r\n        - textbox: 00:40:59\r\n      - cell \"00:46:19\":\r\n        - textbox: 00:46:19\r\n      - cell \"00:05:20\":\r\n        - textbox: 00:05:20\r\n    - row \"Increment Decrement GusGus Clear Crossfade (Maceo Plex Mix) Clear 00:46:19 00:52:20 00:06:01\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"9\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"GusGus Clear\":\r\n        - textbox: GusGus\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Crossfade (Maceo Plex Mix) Clear\":\r\n        - textbox: Crossfade (Maceo Plex Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:46:19\":\r\n        - textbox: 00:46:19\r\n      - cell \"00:52:20\":\r\n        - textbox: 00:52:20\r\n      - cell \"00:06:01\":\r\n        - textbox: 00:06:01\r\n    - row \"Increment Decrement Klangkarussell Clear Time (Original Mix) Clear 00:52:20 00:56:19 00:03:59\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"10\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Klangkarussell Clear\":\r\n        - textbox: Klangkarussell\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Time (Original Mix) Clear\":\r\n        - textbox: Time (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:52:20\":\r\n        - textbox: 00:52:20\r\n      - cell \"00:56:19\":\r\n        - textbox: 00:56:19\r\n      - cell \"00:03:59\":\r\n        - textbox: 00:03:59\r\n    - row \"Increment Decrement Anysense & Un:said Clear Missing Path (Original Mix) Clear 00:56:19 01:01:41 00:05:22\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"11\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Anysense & Un:said Clear\":\r\n        - textbox: Anysense & Un:said\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Missing Path (Original Mix) Clear\":\r\n        - textbox: Missing Path (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"00:56:19\":\r\n        - textbox: 00:56:19\r\n      - cell \"01:01:41\":\r\n        - textbox: 01:01:41\r\n      - cell \"00:05:22\":\r\n        - textbox: 00:05:22\r\n    - row \"Increment Decrement Space Food Clear Bombay Clear 01:01:41 01:06:33 00:04:52\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"12\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Space Food Clear\":\r\n        - textbox: Space Food\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Bombay Clear\":\r\n        - textbox: Bombay\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:01:41\":\r\n        - textbox: 01:01:41\r\n      - cell \"01:06:33\":\r\n        - textbox: 01:06:33\r\n      - cell \"00:04:52\":\r\n        - textbox: 00:04:52\r\n    - row \"Increment Decrement SHDW & Obscure Shape Clear Wächter der Nacht (Original Mix) Clear 01:06:33 01:11:04 00:04:31\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"13\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"SHDW & Obscure Shape Clear\":\r\n        - textbox: SHDW & Obscure Shape\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Wächter der Nacht (Original Mix) Clear\":\r\n        - textbox: Wächter der Nacht (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:06:33\":\r\n        - textbox: 01:06:33\r\n      - cell \"01:11:04\":\r\n        - textbox: 01:11:04\r\n      - cell \"00:04:31\":\r\n        - textbox: 00:04:31\r\n    - row \"Increment Decrement HOSH Clear Karma Clear 01:11:04 01:15:28 00:04:24\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"14\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"HOSH Clear\":\r\n        - textbox: HOSH\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Karma Clear\":\r\n        - textbox: Karma\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:11:04\":\r\n        - textbox: 01:11:04\r\n      - cell \"01:15:28\":\r\n        - textbox: 01:15:28\r\n      - cell \"00:04:24\":\r\n        - textbox: 00:04:24\r\n    - row \"Increment Decrement Alexey Union Clear Olympia (Original Mix) Clear 01:15:28 01:21:08 00:05:40\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"15\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Alexey Union Clear\":\r\n        - textbox: Alexey Union\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Olympia (Original Mix) Clear\":\r\n        - textbox: Olympia (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:15:28\":\r\n        - textbox: 01:15:28\r\n      - cell \"01:21:08\":\r\n        - textbox: 01:21:08\r\n      - cell \"00:05:40\":\r\n        - textbox: 00:05:40\r\n    - row \"Increment Decrement Paul Taylor Clear Afterglow Clear 01:21:08 01:25:38 00:04:30\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"16\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Paul Taylor Clear\":\r\n        - textbox: Paul Taylor\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Afterglow Clear\":\r\n        - textbox: Afterglow\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:21:08\":\r\n        - textbox: 01:21:08\r\n      - cell \"01:25:38\":\r\n        - textbox: 01:25:38\r\n      - cell \"00:04:30\":\r\n        - textbox: 00:04:30\r\n    - row \"Increment Decrement Philter Clear Stranger Clear 01:25:38 01:31:52 00:06:14\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"17\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Philter Clear\":\r\n        - textbox: Philter\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Stranger Clear\":\r\n        - textbox: Stranger\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:25:38\":\r\n        - textbox: 01:25:38\r\n      - cell \"01:31:52\":\r\n        - textbox: 01:31:52\r\n      - cell \"00:06:14\":\r\n        - textbox: 00:06:14\r\n    - row \"Increment Decrement Skizologic Clear Hypersphere (Original Mix) Clear 01:31:52 01:36:40 00:04:48\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"18\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Skizologic Clear\":\r\n        - textbox: Skizologic\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Hypersphere (Original Mix) Clear\":\r\n        - textbox: Hypersphere (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:31:52\":\r\n        - textbox: 01:31:52\r\n      - cell \"01:36:40\":\r\n        - textbox: 01:36:40\r\n      - cell \"00:04:48\":\r\n        - textbox: 00:04:48\r\n    - row \"Increment Decrement Thomas Schumacher, Caitlin Clear All of You (Remix) Clear 01:36:40 01:42:16 00:05:36\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"19\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Thomas Schumacher, Caitlin Clear\":\r\n        - textbox: Thomas Schumacher, Caitlin\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"All of You (Remix) Clear\":\r\n        - textbox: All of You (Remix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:36:40\":\r\n        - textbox: 01:36:40\r\n      - cell \"01:42:16\":\r\n        - textbox: 01:42:16\r\n      - cell \"00:05:36\":\r\n        - textbox: 00:05:36\r\n    - row \"Increment Decrement A. Skomoroh Clear White Horse Conquest (Original Mix) Clear 01:42:16 01:47:04 00:04:48\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"20\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"A. Skomoroh Clear\":\r\n        - textbox: A. Skomoroh\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"White Horse Conquest (Original Mix) Clear\":\r\n        - textbox: White Horse Conquest (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:42:16\":\r\n        - textbox: 01:42:16\r\n      - cell \"01:47:04\":\r\n        - textbox: 01:47:04\r\n      - cell \"00:04:48\":\r\n        - textbox: 00:04:48\r\n    - row \"Increment Decrement Patrik Berg Clear Bright (Original Mix) Clear 01:47:04 01:52:37 00:05:33\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"21\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Patrik Berg Clear\":\r\n        - textbox: Patrik Berg\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Bright (Original Mix) Clear\":\r\n        - textbox: Bright (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:47:04\":\r\n        - textbox: 01:47:04\r\n      - cell \"01:52:37\":\r\n        - textbox: 01:52:37\r\n      - cell \"00:05:33\":\r\n        - textbox: 00:05:33\r\n    - row \"Increment Decrement Hidden Empire Clear Bengal Clear 01:52:37 01:58:05 00:05:28\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"22\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Hidden Empire Clear\":\r\n        - textbox: Hidden Empire\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Bengal Clear\":\r\n        - textbox: Bengal\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:52:37\":\r\n        - textbox: 01:52:37\r\n      - cell \"01:58:05\":\r\n        - textbox: 01:58:05\r\n      - cell \"00:05:28\":\r\n        - textbox: 00:05:28\r\n    - row \"Increment Decrement Mario Ochoa Clear Levitate Clear 01:58:05 02:03:00 00:04:55\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"23\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Mario Ochoa Clear\":\r\n        - textbox: Mario Ochoa\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Levitate Clear\":\r\n        - textbox: Levitate\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"01:58:05\":\r\n        - textbox: 01:58:05\r\n      - cell \"02:03:00\":\r\n        - textbox: 02:03:00\r\n      - cell \"00:04:55\":\r\n        - textbox: 00:04:55\r\n    - row \"Increment Decrement Raul Facio Clear Eyes Wide Shut (Original Mix) Clear 02:03:00 02:08:21 00:05:21\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"24\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Raul Facio Clear\":\r\n        - textbox: Raul Facio\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Eyes Wide Shut (Original Mix) Clear\":\r\n        - textbox: Eyes Wide Shut (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:03:00\":\r\n        - textbox: 02:03:00\r\n      - cell \"02:08:21\":\r\n        - textbox: 02:08:21\r\n      - cell \"00:05:21\":\r\n        - textbox: 00:05:21\r\n    - row \"Increment Decrement Soolver Clear Regular (Original Mix) Clear 02:08:21 02:14:31 00:06:10\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"25\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Soolver Clear\":\r\n        - textbox: Soolver\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Regular (Original Mix) Clear\":\r\n        - textbox: Regular (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:08:21\":\r\n        - textbox: 02:08:21\r\n      - cell \"02:14:31\":\r\n        - textbox: 02:14:31\r\n      - cell \"00:06:10\":\r\n        - textbox: 00:06:10\r\n    - row \"Increment Decrement Weska Clear EQ64 (Original Mix) Clear 02:14:31 02:18:35 00:04:04\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"26\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Weska Clear\":\r\n        - textbox: Weska\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"EQ64 (Original Mix) Clear\":\r\n        - textbox: EQ64 (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:14:31\":\r\n        - textbox: 02:14:31\r\n      - cell \"02:18:35\":\r\n        - textbox: 02:18:35\r\n      - cell \"00:04:04\":\r\n        - textbox: 00:04:04\r\n    - row \"Increment Decrement Tempo Giusto Clear The Fall (Extended Mix) Clear 02:18:35 02:24:12 00:05:37\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"27\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Tempo Giusto Clear\":\r\n        - textbox: Tempo Giusto\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"The Fall (Extended Mix) Clear\":\r\n        - textbox: The Fall (Extended Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:18:35\":\r\n        - textbox: 02:18:35\r\n      - cell \"02:24:12\":\r\n        - textbox: 02:24:12\r\n      - cell \"00:05:37\":\r\n        - textbox: 00:05:37\r\n    - row \"Increment Decrement Vlind & Asteroid & Gary Leroy Clear Trinity (Extended Mix) Clear 02:24:12 02:29:38 00:05:26\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"28\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Vlind & Asteroid & Gary Leroy Clear\":\r\n        - textbox: Vlind & Asteroid & Gary Leroy\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Trinity (Extended Mix) Clear\":\r\n        - textbox: Trinity (Extended Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:24:12\":\r\n        - textbox: 02:24:12\r\n      - cell \"02:29:38\":\r\n        - textbox: 02:29:38\r\n      - cell \"00:05:26\":\r\n        - textbox: 00:05:26\r\n    - row \"Increment Decrement Astral Legacy Clear Vaveyla (Original Mix) Clear 02:29:38 02:32:52 00:03:14\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"29\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Astral Legacy Clear\":\r\n        - textbox: Astral Legacy\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Vaveyla (Original Mix) Clear\":\r\n        - textbox: Vaveyla (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:29:38\":\r\n        - textbox: 02:29:38\r\n      - cell \"02:32:52\":\r\n        - textbox: 02:32:52\r\n      - cell \"00:03:14\":\r\n        - textbox: 00:03:14\r\n    - row \"Increment Decrement Gerrox Clear Chakra (Original Mix) Clear 02:32:52 02:37:00 00:04:08\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"30\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Gerrox Clear\":\r\n        - textbox: Gerrox\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Chakra (Original Mix) Clear\":\r\n        - textbox: Chakra (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:32:52\":\r\n        - textbox: 02:32:52\r\n      - cell \"02:37:00\":\r\n        - textbox: 02:37:00\r\n      - cell \"00:04:08\":\r\n        - textbox: 00:04:08\r\n    - row \"Increment Decrement Charlotte De Witte Clear Pattern Clear 02:37:00 02:41:55 00:04:55\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"31\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Charlotte De Witte Clear\":\r\n        - textbox: Charlotte De Witte\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Pattern Clear\":\r\n        - textbox: Pattern\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:37:00\":\r\n        - textbox: 02:37:00\r\n      - cell \"02:41:55\":\r\n        - textbox: 02:41:55\r\n      - cell \"00:04:55\":\r\n        - textbox: 00:04:55\r\n    - row \"Increment Decrement Space Food Clear Amabey Clear 02:41:55 02:46:55 00:05:00\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"32\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Space Food Clear\":\r\n        - textbox: Space Food\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Amabey Clear\":\r\n        - textbox: Amabey\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:41:55\":\r\n        - textbox: 02:41:55\r\n      - cell \"02:46:55\":\r\n        - textbox: 02:46:55\r\n      - cell \"00:05:00\":\r\n        - textbox: 00:05:00\r\n    - row \"Increment Decrement ARTBAT Clear Papilion (Original Mix) Clear 02:46:55 02:51:13 00:04:18\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"33\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"ARTBAT Clear\":\r\n        - textbox: ARTBAT\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Papilion (Original Mix) Clear\":\r\n        - textbox: Papilion (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:46:55\":\r\n        - textbox: 02:46:55\r\n      - cell \"02:51:13\":\r\n        - textbox: 02:51:13\r\n      - cell \"00:04:18\":\r\n        - textbox: 00:04:18\r\n    - row \"Increment Decrement PETER PAHN Clear Enjoy Infinity (Original Mix) Clear 02:51:13 02:56:08 00:04:55\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"34\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"PETER PAHN Clear\":\r\n        - textbox: PETER PAHN\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Enjoy Infinity (Original Mix) Clear\":\r\n        - textbox: Enjoy Infinity (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:51:13\":\r\n        - textbox: 02:51:13\r\n      - cell \"02:56:08\":\r\n        - textbox: 02:56:08\r\n      - cell \"00:04:55\":\r\n        - textbox: 00:04:55\r\n    - row \"Increment Decrement Solitek Clear Instinct (Original Mix) Clear 02:56:08 03:00:57 00:04:49\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"35\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Solitek Clear\":\r\n        - textbox: Solitek\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Instinct (Original Mix) Clear\":\r\n        - textbox: Instinct (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"02:56:08\":\r\n        - textbox: 02:56:08\r\n      - cell \"03:00:57\":\r\n        - textbox: 03:00:57\r\n      - cell \"00:04:49\":\r\n        - textbox: 00:04:49\r\n    - row \"Increment Decrement Veerus Clear Heavy Clear 03:00:57 03:05:19 00:04:22\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"36\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Veerus Clear\":\r\n        - textbox: Veerus\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Heavy Clear\":\r\n        - textbox: Heavy\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"03:00:57\":\r\n        - textbox: 03:00:57\r\n      - cell \"03:05:19\":\r\n        - textbox: 03:05:19\r\n      - cell \"00:04:22\":\r\n        - textbox: 00:04:22\r\n    - row \"Increment Decrement Secret Cinema & Reinier Zonneveld Clear Pain Thing (Original Mix) Clear 03:05:19 03:09:38 00:04:19\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"37\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Secret Cinema & Reinier Zonneveld Clear\":\r\n        - textbox: Secret Cinema & Reinier Zonneveld\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Pain Thing (Original Mix) Clear\":\r\n        - textbox: Pain Thing (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"03:05:19\":\r\n        - textbox: 03:05:19\r\n      - cell \"03:09:38\":\r\n        - textbox: 03:09:38\r\n      - cell \"00:04:19\":\r\n        - textbox: 00:04:19\r\n    - row \"Increment Decrement Amelie Lens Clear Hypnotized Clear 03:09:38 03:13:13 00:03:35\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"38\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Amelie Lens Clear\":\r\n        - textbox: Amelie Lens\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Hypnotized Clear\":\r\n        - textbox: Hypnotized\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"03:09:38\":\r\n        - textbox: 03:09:38\r\n      - cell \"03:13:13\":\r\n        - textbox: 03:13:13\r\n      - cell \"00:03:35\":\r\n        - textbox: 00:03:35\r\n    - row \"Increment Decrement Nikolay Kirov Clear Chasing the Sun (Original Mix) Clear 03:13:13\":\r\n      - cell:\r\n        - checkbox\r\n      - cell \"Increment Decrement\":\r\n        - spinbutton: \"39\"\r\n        - button \"Increment\"\r\n        - button \"Decrement\"\r\n      - cell \"Nikolay Kirov Clear\":\r\n        - textbox: Nikolay Kirov\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"Chasing the Sun (Original Mix) Clear\":\r\n        - textbox: Chasing the Sun (Original Mix)\r\n        - button \"Clear\"\r\n        - button\r\n      - cell \"03:13:13\":\r\n        - textbox: 03:13:13\r\n      - cell:\r\n        - textbox\r\n      - cell:\r\n        - textbox\r\n  - rowgroup:\r\n    - row");
+            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+  - rowgroup:
+    - row ""# Artist Title Begin End Length"":
+      - columnheader:
+        - checkbox
+      - columnheader ""#""
+      - columnheader ""Artist""
+      - columnheader ""Title""
+      - columnheader ""Begin""
+      - columnheader ""End""
+      - columnheader ""Length""
+  - rowgroup:
+    - row ""1 Adriatique Clear X. Clear 00:00:00 00:05:24 00:05:24"":
+      - cell:
+        - checkbox
+      - cell ""1""
+      - cell ""Adriatique Clear"":
+        - textbox: Adriatique
+        - button ""Clear""
+        - button
+      - cell ""X. Clear"":
+        - textbox: X.
+        - button ""Clear""
+        - button
+      - cell ""00:00:00"":
+        - textbox: 00:00:00
+      - cell ""00:05:24"":
+        - textbox: 00:05:24
+      - cell ""00:05:24"":
+        - textbox: 00:05:24
+    - row ""2 Third Harmony Clear Fears And Dreams (Original Mix) Clear 00:05:24 00:10:39 00:05:15"":
+      - cell:
+        - checkbox
+      - cell ""2""
+      - cell ""Third Harmony Clear"":
+        - textbox: Third Harmony
+        - button ""Clear""
+        - button
+      - cell ""Fears And Dreams (Original Mix) Clear"":
+        - textbox: Fears And Dreams (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""00:05:24"":
+        - textbox: 00:05:24
+      - cell ""00:10:39"":
+        - textbox: 00:10:39
+      - cell ""00:05:15"":
+        - textbox: 00:05:15
+    - row ""3 Dele Sosimi Afrobeat Orchestra Clear Too Much Information (Laolu Remix; Edit) Clear 00:10:39 00:17:06 00:06:27"":
+      - cell:
+        - checkbox
+      - cell ""3""
+      - cell ""Dele Sosimi Afrobeat Orchestra Clear"":
+        - textbox: Dele Sosimi Afrobeat Orchestra
+        - button ""Clear""
+        - button
+      - cell ""Too Much Information (Laolu Remix; Edit) Clear"":
+        - textbox: Too Much Information (Laolu Remix; Edit)
+        - button ""Clear""
+        - button
+      - cell ""00:10:39"":
+        - textbox: 00:10:39
+      - cell ""00:17:06"":
+        - textbox: 00:17:06
+      - cell ""00:06:27"":
+        - textbox: 00:06:27
+    - row ""4 Edem, Govan Clear Ankh (Onetwo MX Remix) Clear 00:17:06 00:23:21 00:06:15"":
+      - cell:
+        - checkbox
+      - cell ""4""
+      - cell ""Edem, Govan Clear"":
+        - textbox: Edem, Govan
+        - button ""Clear""
+        - button
+      - cell ""Ankh (Onetwo MX Remix) Clear"":
+        - textbox: Ankh (Onetwo MX Remix)
+        - button ""Clear""
+        - button
+      - cell ""00:17:06"":
+        - textbox: 00:17:06
+      - cell ""00:23:21"":
+        - textbox: 00:23:21
+      - cell ""00:06:15"":
+        - textbox: 00:06:15
+    - row ""5 Jody Wisternoff Clear For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear 00:23:21 00:29:02 00:05:41"":
+      - cell:
+        - checkbox
+      - cell ""5""
+      - cell ""Jody Wisternoff Clear"":
+        - textbox: Jody Wisternoff
+        - button ""Clear""
+        - button
+      - cell ""For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear"":
+        - textbox: For All Time (feat. Hendrik Burkhard) (Extended Mix)
+        - button ""Clear""
+        - button
+      - cell ""00:23:21"":
+        - textbox: 00:23:21
+      - cell ""00:29:02"":
+        - textbox: 00:29:02
+      - cell ""00:05:41"":
+        - textbox: 00:05:41
+    - row ""6 Einmusik Clear Bead (Original Mix) Clear 00:29:02 00:34:27 00:05:25"":
+      - cell:
+        - checkbox
+      - cell ""6""
+      - cell ""Einmusik Clear"":
+        - textbox: Einmusik
+        - button ""Clear""
+        - button
+      - cell ""Bead (Original Mix) Clear"":
+        - textbox: Bead (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""00:29:02"":
+        - textbox: 00:29:02
+      - cell ""00:34:27"":
+        - textbox: 00:34:27
+      - cell ""00:05:25"":
+        - textbox: 00:05:25
+    - row ""7 Sebastien Leger Clear La Danse du Scorpion Clear 00:34:27 00:40:59 00:06:32"":
+      - cell:
+        - checkbox
+      - cell ""7""
+      - cell ""Sebastien Leger Clear"":
+        - textbox: Sebastien Leger
+        - button ""Clear""
+        - button
+      - cell ""La Danse du Scorpion Clear"":
+        - textbox: La Danse du Scorpion
+        - button ""Clear""
+        - button
+      - cell ""00:34:27"":
+        - textbox: 00:34:27
+      - cell ""00:40:59"":
+        - textbox: 00:40:59
+      - cell ""00:06:32"":
+        - textbox: 00:06:32
+    - row ""8 Paul Thomas & Solid Stone Clear La Bombo (Solid Stone Remix) Clear 00:40:59 00:46:19 00:05:20"":
+      - cell:
+        - checkbox
+      - cell ""8""
+      - cell ""Paul Thomas & Solid Stone Clear"":
+        - textbox: Paul Thomas & Solid Stone
+        - button ""Clear""
+        - button
+      - cell ""La Bombo (Solid Stone Remix) Clear"":
+        - textbox: La Bombo (Solid Stone Remix)
+        - button ""Clear""
+        - button
+      - cell ""00:40:59"":
+        - textbox: 00:40:59
+      - cell ""00:46:19"":
+        - textbox: 00:46:19
+      - cell ""00:05:20"":
+        - textbox: 00:05:20
+    - row ""9 GusGus Clear Crossfade (Maceo Plex Mix) Clear 00:46:19 00:52:20 00:06:01"":
+      - cell:
+        - checkbox
+      - cell ""9""
+      - cell ""GusGus Clear"":
+        - textbox: GusGus
+        - button ""Clear""
+        - button
+      - cell ""Crossfade (Maceo Plex Mix) Clear"":
+        - textbox: Crossfade (Maceo Plex Mix)
+        - button ""Clear""
+        - button
+      - cell ""00:46:19"":
+        - textbox: 00:46:19
+      - cell ""00:52:20"":
+        - textbox: 00:52:20
+      - cell ""00:06:01"":
+        - textbox: 00:06:01
+    - row ""10 Klangkarussell Clear Time (Original Mix) Clear 00:52:20 00:56:19 00:03:59"":
+      - cell:
+        - checkbox
+      - cell ""10""
+      - cell ""Klangkarussell Clear"":
+        - textbox: Klangkarussell
+        - button ""Clear""
+        - button
+      - cell ""Time (Original Mix) Clear"":
+        - textbox: Time (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""00:52:20"":
+        - textbox: 00:52:20
+      - cell ""00:56:19"":
+        - textbox: 00:56:19
+      - cell ""00:03:59"":
+        - textbox: 00:03:59
+    - row ""11 Anysense & Un:said Clear Missing Path (Original Mix) Clear 00:56:19 01:01:41 00:05:22"":
+      - cell:
+        - checkbox
+      - cell ""11""
+      - cell ""Anysense & Un:said Clear"":
+        - textbox: Anysense & Un:said
+        - button ""Clear""
+        - button
+      - cell ""Missing Path (Original Mix) Clear"":
+        - textbox: Missing Path (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""00:56:19"":
+        - textbox: 00:56:19
+      - cell ""01:01:41"":
+        - textbox: 01:01:41
+      - cell ""00:05:22"":
+        - textbox: 00:05:22
+    - row ""12 Space Food Clear Bombay Clear 01:01:41 01:06:33 00:04:52"":
+      - cell:
+        - checkbox
+      - cell ""12""
+      - cell ""Space Food Clear"":
+        - textbox: Space Food
+        - button ""Clear""
+        - button
+      - cell ""Bombay Clear"":
+        - textbox: Bombay
+        - button ""Clear""
+        - button
+      - cell ""01:01:41"":
+        - textbox: 01:01:41
+      - cell ""01:06:33"":
+        - textbox: 01:06:33
+      - cell ""00:04:52"":
+        - textbox: 00:04:52
+    - row ""13 SHDW & Obscure Shape Clear Wächter der Nacht (Original Mix) Clear 01:06:33 01:11:04 00:04:31"":
+      - cell:
+        - checkbox
+      - cell ""13""
+      - cell ""SHDW & Obscure Shape Clear"":
+        - textbox: SHDW & Obscure Shape
+        - button ""Clear""
+        - button
+      - cell ""Wächter der Nacht (Original Mix) Clear"":
+        - textbox: Wächter der Nacht (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""01:06:33"":
+        - textbox: 01:06:33
+      - cell ""01:11:04"":
+        - textbox: 01:11:04
+      - cell ""00:04:31"":
+        - textbox: 00:04:31
+    - row ""14 HOSH Clear Karma Clear 01:11:04 01:15:28 00:04:24"":
+      - cell:
+        - checkbox
+      - cell ""14""
+      - cell ""HOSH Clear"":
+        - textbox: HOSH
+        - button ""Clear""
+        - button
+      - cell ""Karma Clear"":
+        - textbox: Karma
+        - button ""Clear""
+        - button
+      - cell ""01:11:04"":
+        - textbox: 01:11:04
+      - cell ""01:15:28"":
+        - textbox: 01:15:28
+      - cell ""00:04:24"":
+        - textbox: 00:04:24
+    - row ""15 Alexey Union Clear Olympia (Original Mix) Clear 01:15:28 01:21:08 00:05:40"":
+      - cell:
+        - checkbox
+      - cell ""15""
+      - cell ""Alexey Union Clear"":
+        - textbox: Alexey Union
+        - button ""Clear""
+        - button
+      - cell ""Olympia (Original Mix) Clear"":
+        - textbox: Olympia (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""01:15:28"":
+        - textbox: 01:15:28
+      - cell ""01:21:08"":
+        - textbox: 01:21:08
+      - cell ""00:05:40"":
+        - textbox: 00:05:40
+    - row ""16 Paul Taylor Clear Afterglow Clear 01:21:08 01:25:38 00:04:30"":
+      - cell:
+        - checkbox
+      - cell ""16""
+      - cell ""Paul Taylor Clear"":
+        - textbox: Paul Taylor
+        - button ""Clear""
+        - button
+      - cell ""Afterglow Clear"":
+        - textbox: Afterglow
+        - button ""Clear""
+        - button
+      - cell ""01:21:08"":
+        - textbox: 01:21:08
+      - cell ""01:25:38"":
+        - textbox: 01:25:38
+      - cell ""00:04:30"":
+        - textbox: 00:04:30
+    - row ""17 Philter Clear Stranger Clear 01:25:38 01:31:52 00:06:14"":
+      - cell:
+        - checkbox
+      - cell ""17""
+      - cell ""Philter Clear"":
+        - textbox: Philter
+        - button ""Clear""
+        - button
+      - cell ""Stranger Clear"":
+        - textbox: Stranger
+        - button ""Clear""
+        - button
+      - cell ""01:25:38"":
+        - textbox: 01:25:38
+      - cell ""01:31:52"":
+        - textbox: 01:31:52
+      - cell ""00:06:14"":
+        - textbox: 00:06:14
+    - row ""18 Skizologic Clear Hypersphere (Original Mix) Clear 01:31:52 01:36:40 00:04:48"":
+      - cell:
+        - checkbox
+      - cell ""18""
+      - cell ""Skizologic Clear"":
+        - textbox: Skizologic
+        - button ""Clear""
+        - button
+      - cell ""Hypersphere (Original Mix) Clear"":
+        - textbox: Hypersphere (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""01:31:52"":
+        - textbox: 01:31:52
+      - cell ""01:36:40"":
+        - textbox: 01:36:40
+      - cell ""00:04:48"":
+        - textbox: 00:04:48
+    - row ""19 Thomas Schumacher, Caitlin Clear All of You (Remix) Clear 01:36:40 01:42:16 00:05:36"":
+      - cell:
+        - checkbox
+      - cell ""19""
+      - cell ""Thomas Schumacher, Caitlin Clear"":
+        - textbox: Thomas Schumacher, Caitlin
+        - button ""Clear""
+        - button
+      - cell ""All of You (Remix) Clear"":
+        - textbox: All of You (Remix)
+        - button ""Clear""
+        - button
+      - cell ""01:36:40"":
+        - textbox: 01:36:40
+      - cell ""01:42:16"":
+        - textbox: 01:42:16
+      - cell ""00:05:36"":
+        - textbox: 00:05:36
+    - row ""20 A. Skomoroh Clear White Horse Conquest (Original Mix) Clear 01:42:16 01:47:04 00:04:48"":
+      - cell:
+        - checkbox
+      - cell ""20""
+      - cell ""A. Skomoroh Clear"":
+        - textbox: A. Skomoroh
+        - button ""Clear""
+        - button
+      - cell ""White Horse Conquest (Original Mix) Clear"":
+        - textbox: White Horse Conquest (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""01:42:16"":
+        - textbox: 01:42:16
+      - cell ""01:47:04"":
+        - textbox: 01:47:04
+      - cell ""00:04:48"":
+        - textbox: 00:04:48
+    - row ""21 Patrik Berg Clear Bright (Original Mix) Clear 01:47:04 01:52:37 00:05:33"":
+      - cell:
+        - checkbox
+      - cell ""21""
+      - cell ""Patrik Berg Clear"":
+        - textbox: Patrik Berg
+        - button ""Clear""
+        - button
+      - cell ""Bright (Original Mix) Clear"":
+        - textbox: Bright (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""01:47:04"":
+        - textbox: 01:47:04
+      - cell ""01:52:37"":
+        - textbox: 01:52:37
+      - cell ""00:05:33"":
+        - textbox: 00:05:33
+    - row ""22 Hidden Empire Clear Bengal Clear 01:52:37 01:58:05 00:05:28"":
+      - cell:
+        - checkbox
+      - cell ""22""
+      - cell ""Hidden Empire Clear"":
+        - textbox: Hidden Empire
+        - button ""Clear""
+        - button
+      - cell ""Bengal Clear"":
+        - textbox: Bengal
+        - button ""Clear""
+        - button
+      - cell ""01:52:37"":
+        - textbox: 01:52:37
+      - cell ""01:58:05"":
+        - textbox: 01:58:05
+      - cell ""00:05:28"":
+        - textbox: 00:05:28
+    - row ""23 Mario Ochoa Clear Levitate Clear 01:58:05 02:03:00 00:04:55"":
+      - cell:
+        - checkbox
+      - cell ""23""
+      - cell ""Mario Ochoa Clear"":
+        - textbox: Mario Ochoa
+        - button ""Clear""
+        - button
+      - cell ""Levitate Clear"":
+        - textbox: Levitate
+        - button ""Clear""
+        - button
+      - cell ""01:58:05"":
+        - textbox: 01:58:05
+      - cell ""02:03:00"":
+        - textbox: 02:03:00
+      - cell ""00:04:55"":
+        - textbox: 00:04:55
+    - row ""24 Raul Facio Clear Eyes Wide Shut (Original Mix) Clear 02:03:00 02:08:21 00:05:21"":
+      - cell:
+        - checkbox
+      - cell ""24""
+      - cell ""Raul Facio Clear"":
+        - textbox: Raul Facio
+        - button ""Clear""
+        - button
+      - cell ""Eyes Wide Shut (Original Mix) Clear"":
+        - textbox: Eyes Wide Shut (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:03:00"":
+        - textbox: 02:03:00
+      - cell ""02:08:21"":
+        - textbox: 02:08:21
+      - cell ""00:05:21"":
+        - textbox: 00:05:21
+    - row ""25 Soolver Clear Regular (Original Mix) Clear 02:08:21 02:14:31 00:06:10"":
+      - cell:
+        - checkbox
+      - cell ""25""
+      - cell ""Soolver Clear"":
+        - textbox: Soolver
+        - button ""Clear""
+        - button
+      - cell ""Regular (Original Mix) Clear"":
+        - textbox: Regular (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:08:21"":
+        - textbox: 02:08:21
+      - cell ""02:14:31"":
+        - textbox: 02:14:31
+      - cell ""00:06:10"":
+        - textbox: 00:06:10
+    - row ""26 Weska Clear EQ64 (Original Mix) Clear 02:14:31 02:18:35 00:04:04"":
+      - cell:
+        - checkbox
+      - cell ""26""
+      - cell ""Weska Clear"":
+        - textbox: Weska
+        - button ""Clear""
+        - button
+      - cell ""EQ64 (Original Mix) Clear"":
+        - textbox: EQ64 (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:14:31"":
+        - textbox: 02:14:31
+      - cell ""02:18:35"":
+        - textbox: 02:18:35
+      - cell ""00:04:04"":
+        - textbox: 00:04:04
+    - row ""27 Tempo Giusto Clear The Fall (Extended Mix) Clear 02:18:35 02:24:12 00:05:37"":
+      - cell:
+        - checkbox
+      - cell ""27""
+      - cell ""Tempo Giusto Clear"":
+        - textbox: Tempo Giusto
+        - button ""Clear""
+        - button
+      - cell ""The Fall (Extended Mix) Clear"":
+        - textbox: The Fall (Extended Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:18:35"":
+        - textbox: 02:18:35
+      - cell ""02:24:12"":
+        - textbox: 02:24:12
+      - cell ""00:05:37"":
+        - textbox: 00:05:37
+    - row ""28 Vlind & Asteroid & Gary Leroy Clear Trinity (Extended Mix) Clear 02:24:12 02:29:38 00:05:26"":
+      - cell:
+        - checkbox
+      - cell ""28""
+      - cell ""Vlind & Asteroid & Gary Leroy Clear"":
+        - textbox: Vlind & Asteroid & Gary Leroy
+        - button ""Clear""
+        - button
+      - cell ""Trinity (Extended Mix) Clear"":
+        - textbox: Trinity (Extended Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:24:12"":
+        - textbox: 02:24:12
+      - cell ""02:29:38"":
+        - textbox: 02:29:38
+      - cell ""00:05:26"":
+        - textbox: 00:05:26
+    - row ""29 Astral Legacy Clear Vaveyla (Original Mix) Clear 02:29:38 02:32:52 00:03:14"":
+      - cell:
+        - checkbox
+      - cell ""29""
+      - cell ""Astral Legacy Clear"":
+        - textbox: Astral Legacy
+        - button ""Clear""
+        - button
+      - cell ""Vaveyla (Original Mix) Clear"":
+        - textbox: Vaveyla (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:29:38"":
+        - textbox: 02:29:38
+      - cell ""02:32:52"":
+        - textbox: 02:32:52
+      - cell ""00:03:14"":
+        - textbox: 00:03:14
+    - row ""30 Gerrox Clear Chakra (Original Mix) Clear 02:32:52 02:37:00 00:04:08"":
+      - cell:
+        - checkbox
+      - cell ""30""
+      - cell ""Gerrox Clear"":
+        - textbox: Gerrox
+        - button ""Clear""
+        - button
+      - cell ""Chakra (Original Mix) Clear"":
+        - textbox: Chakra (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:32:52"":
+        - textbox: 02:32:52
+      - cell ""02:37:00"":
+        - textbox: 02:37:00
+      - cell ""00:04:08"":
+        - textbox: 00:04:08
+    - row ""31 Charlotte De Witte Clear Pattern Clear 02:37:00 02:41:55 00:04:55"":
+      - cell:
+        - checkbox
+      - cell ""31""
+      - cell ""Charlotte De Witte Clear"":
+        - textbox: Charlotte De Witte
+        - button ""Clear""
+        - button
+      - cell ""Pattern Clear"":
+        - textbox: Pattern
+        - button ""Clear""
+        - button
+      - cell ""02:37:00"":
+        - textbox: 02:37:00
+      - cell ""02:41:55"":
+        - textbox: 02:41:55
+      - cell ""00:04:55"":
+        - textbox: 00:04:55
+    - row ""32 Space Food Clear Amabey Clear 02:41:55 02:46:55 00:05:00"":
+      - cell:
+        - checkbox
+      - cell ""32""
+      - cell ""Space Food Clear"":
+        - textbox: Space Food
+        - button ""Clear""
+        - button
+      - cell ""Amabey Clear"":
+        - textbox: Amabey
+        - button ""Clear""
+        - button
+      - cell ""02:41:55"":
+        - textbox: 02:41:55
+      - cell ""02:46:55"":
+        - textbox: 02:46:55
+      - cell ""00:05:00"":
+        - textbox: 00:05:00
+    - row ""33 ARTBAT Clear Papilion (Original Mix) Clear 02:46:55 02:51:13 00:04:18"":
+      - cell:
+        - checkbox
+      - cell ""33""
+      - cell ""ARTBAT Clear"":
+        - textbox: ARTBAT
+        - button ""Clear""
+        - button
+      - cell ""Papilion (Original Mix) Clear"":
+        - textbox: Papilion (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:46:55"":
+        - textbox: 02:46:55
+      - cell ""02:51:13"":
+        - textbox: 02:51:13
+      - cell ""00:04:18"":
+        - textbox: 00:04:18
+    - row ""34 PETER PAHN Clear Enjoy Infinity (Original Mix) Clear 02:51:13 02:56:08 00:04:55"":
+      - cell:
+        - checkbox
+      - cell ""34""
+      - cell ""PETER PAHN Clear"":
+        - textbox: PETER PAHN
+        - button ""Clear""
+        - button
+      - cell ""Enjoy Infinity (Original Mix) Clear"":
+        - textbox: Enjoy Infinity (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:51:13"":
+        - textbox: 02:51:13
+      - cell ""02:56:08"":
+        - textbox: 02:56:08
+      - cell ""00:04:55"":
+        - textbox: 00:04:55
+    - row ""35 Solitek Clear Instinct (Original Mix) Clear 02:56:08 03:00:57 00:04:49"":
+      - cell:
+        - checkbox
+      - cell ""35""
+      - cell ""Solitek Clear"":
+        - textbox: Solitek
+        - button ""Clear""
+        - button
+      - cell ""Instinct (Original Mix) Clear"":
+        - textbox: Instinct (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""02:56:08"":
+        - textbox: 02:56:08
+      - cell ""03:00:57"":
+        - textbox: 03:00:57
+      - cell ""00:04:49"":
+        - textbox: 00:04:49
+    - row ""36 Veerus Clear Heavy Clear 03:00:57 03:05:19 00:04:22"":
+      - cell:
+        - checkbox
+      - cell ""36""
+      - cell ""Veerus Clear"":
+        - textbox: Veerus
+        - button ""Clear""
+        - button
+      - cell ""Heavy Clear"":
+        - textbox: Heavy
+        - button ""Clear""
+        - button
+      - cell ""03:00:57"":
+        - textbox: 03:00:57
+      - cell ""03:05:19"":
+        - textbox: 03:05:19
+      - cell ""00:04:22"":
+        - textbox: 00:04:22
+    - row ""37 Secret Cinema & Reinier Zonneveld Clear Pain Thing (Original Mix) Clear 03:05:19 03:09:38 00:04:19"":
+      - cell:
+        - checkbox
+      - cell ""37""
+      - cell ""Secret Cinema & Reinier Zonneveld Clear"":
+        - textbox: Secret Cinema & Reinier Zonneveld
+        - button ""Clear""
+        - button
+      - cell ""Pain Thing (Original Mix) Clear"":
+        - textbox: Pain Thing (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""03:05:19"":
+        - textbox: 03:05:19
+      - cell ""03:09:38"":
+        - textbox: 03:09:38
+      - cell ""00:04:19"":
+        - textbox: 00:04:19
+    - row ""38 Amelie Lens Clear Hypnotized Clear 03:09:38 03:13:13 00:03:35"":
+      - cell:
+        - checkbox
+      - cell ""38""
+      - cell ""Amelie Lens Clear"":
+        - textbox: Amelie Lens
+        - button ""Clear""
+        - button
+      - cell ""Hypnotized Clear"":
+        - textbox: Hypnotized
+        - button ""Clear""
+        - button
+      - cell ""03:09:38"":
+        - textbox: 03:09:38
+      - cell ""03:13:13"":
+        - textbox: 03:13:13
+      - cell ""00:03:35"":
+        - textbox: 00:03:35
+    - row ""39 Nikolay Kirov Clear Chasing the Sun (Original Mix) Clear 03:13:13"":
+      - cell:
+        - checkbox
+      - cell ""39""
+      - cell ""Nikolay Kirov Clear"":
+        - textbox: Nikolay Kirov
+        - button ""Clear""
+        - button
+      - cell ""Chasing the Sun (Original Mix) Clear"":
+        - textbox: Chasing the Sun (Original Mix)
+        - button ""Clear""
+        - button
+      - cell ""03:13:13"":
+        - textbox: 03:13:13
+      - cell:
+        - textbox
+      - cell:
+        - textbox
+  - rowgroup:
+    - row");
         }
 
         [TestMethod]
@@ -476,13 +1143,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""End""
       - columnheader ""Length""
   - rowgroup:
-    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
         - button ""Clear""
@@ -497,13 +1161,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:00
       - cell ""00:05:00"":
         - textbox: 00:05:00
-    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
         - button ""Clear""
@@ -518,13 +1179,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:09:23
       - cell ""00:04:23"":
         - textbox: 00:04:23
-    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
         - button ""Clear""
@@ -539,13 +1197,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:15:54
       - cell ""00:06:31"":
         - textbox: 00:06:31
-    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
         - button ""Clear""
@@ -560,13 +1215,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:20:13
       - cell ""00:04:19"":
         - textbox: 00:04:19
-    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
         - button ""Clear""
@@ -581,13 +1233,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:24:54
       - cell ""00:04:41"":
         - textbox: 00:04:41
-    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
         - button ""Clear""
@@ -602,13 +1251,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:31:54
       - cell ""00:07:00"":
         - textbox: 00:07:00
-    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
         - button ""Clear""
@@ -623,13 +1269,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:45:54
       - cell ""00:14:00"":
         - textbox: 00:14:00
-    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
         - button ""Clear""
@@ -670,13 +1313,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Increment Decrement Nachap Clear Glass Clear 00:00:00 00:11:56 00:11:56"":
+    - row ""1 Nachap Clear Glass Clear 00:00:00 00:11:56 00:11:56"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Nachap Clear"":
         - textbox: Nachap
         - button ""Clear""
@@ -692,13 +1332,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:11:56"":
         - textbox: 00:11:56
       - cell
-    - row ""Increment Decrement Progressive + Melodic DECK Clear 00:11:56 00:13:31 00:01:35"":
+    - row ""2 Progressive + Melodic DECK Clear 00:11:56 00:13:31 00:01:35"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell:
         - textbox
         - button
@@ -714,13 +1351,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:01:35
       - cell:
         - button
-    - row ""Increment Decrement Nomer 21 Clear Depersonalization Clear 00:13:31 00:19:14 00:05:43"":
+    - row ""3 Nomer 21 Clear Depersonalization Clear 00:13:31 00:19:14 00:05:43"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Nomer 21 Clear"":
         - textbox: Nomer 21
         - button ""Clear""
@@ -737,13 +1371,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:43
       - cell:
         - button
-    - row ""Increment Decrement SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Showing Off Clear 00:19:14 00:24:02 00:04:48"":
+    - row ""4 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Showing Off Clear 00:19:14 00:24:02 00:04:48"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
@@ -760,13 +1391,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:48
       - cell:
         - button
-    - row ""Increment Decrement Carlo Whale Clear Unconscious Clear 00:24:02 00:29:37 00:05:35"":
+    - row ""5 Carlo Whale Clear Unconscious Clear 00:24:02 00:29:37 00:05:35"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Carlo Whale Clear"":
         - textbox: Carlo Whale
         - button ""Clear""
@@ -783,13 +1411,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:35
       - cell:
         - button
-    - row ""Increment Decrement Arba Han Clear Timelaps Clear 00:29:37 00:33:13 00:03:36"":
+    - row ""6 Arba Han Clear Timelaps Clear 00:29:37 00:33:13 00:03:36"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Arba Han Clear"":
         - textbox: Arba Han
         - button ""Clear""
@@ -806,13 +1431,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:36
       - cell:
         - button
-    - row ""Increment Decrement Savill Clear Energy Surrounds Clear 00:33:13 00:40:30 00:07:17"":
+    - row ""7 Savill Clear Energy Surrounds Clear 00:33:13 00:40:30 00:07:17"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Savill Clear"":
         - textbox: Savill
         - button ""Clear""
@@ -829,13 +1451,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:17
       - cell:
         - button
-    - row ""Increment Decrement Teklix Clear The Tribal Code Clear 00:40:30 00:48:53 00:08:23"":
+    - row ""8 Teklix Clear The Tribal Code Clear 00:40:30 00:48:53 00:08:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Teklix Clear"":
         - textbox: Teklix
         - button ""Clear""
@@ -852,13 +1471,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:23
       - cell:
         - button
-    - row ""Increment Decrement Neuralis Clear I'm Looking for Answers Clear 00:48:53 00:54:34 00:05:41"":
+    - row ""9 Neuralis Clear I'm Looking for Answers Clear 00:48:53 00:54:34 00:05:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""9""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""9""
       - cell ""Neuralis Clear"":
         - textbox: Neuralis
         - button ""Clear""
@@ -875,13 +1491,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:41
       - cell:
         - button
-    - row ""Increment Decrement Nopopstar &amp; Arsia Clear Dirty Moves Clear 00:54:34 01:00:24 00:05:50"":
+    - row ""10 Nopopstar &amp; Arsia Clear Dirty Moves Clear 00:54:34 01:00:24 00:05:50"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""10""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""10""
       - cell ""Nopopstar &amp; Arsia Clear"":
         - textbox: Nopopstar &amp; Arsia
         - button ""Clear""
@@ -898,13 +1511,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:50
       - cell:
         - button
-    - row ""Increment Decrement SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Maze 28 Remix) Clear 01:00:24 01:05:17 00:04:53"":
+    - row ""11 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Maze 28 Remix) Clear 01:00:24 01:05:17 00:04:53"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""11""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""11""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
@@ -921,13 +1531,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:53
       - cell:
         - button
-    - row ""Increment Decrement SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Redspace Remix) Clear 01:05:17 01:08:22 00:03:05"":
+    - row ""12 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Redspace Remix) Clear 01:05:17 01:08:22 00:03:05"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""12""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""12""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
@@ -944,13 +1551,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:05
       - cell:
         - button
-    - row ""Increment Decrement Gadoz Clear 5d Clear 01:08:22 01:16:34 00:08:12"":
+    - row ""13 Gadoz Clear 5d Clear 01:08:22 01:16:34 00:08:12"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""13""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""13""
       - cell ""Gadoz Clear"":
         - textbox: Gadoz
         - button ""Clear""
@@ -967,13 +1571,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:12
       - cell:
         - button
-    - row ""Increment Decrement DJ Danzik Clear Out of Space Clear 01:16:34 01:19:22 00:02:48"":
+    - row ""14 DJ Danzik Clear Out of Space Clear 01:16:34 01:19:22 00:02:48"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""14""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""14""
       - cell ""DJ Danzik Clear"":
         - textbox: DJ Danzik
         - button ""Clear""
@@ -990,13 +1591,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:48
       - cell:
         - button
-    - row ""Increment Decrement Enis Çoban Clear Internet Clear 01:19:22 01:25:14 00:05:52"":
+    - row ""15 Enis Çoban Clear Internet Clear 01:19:22 01:25:14 00:05:52"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""15""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""15""
       - cell ""Enis Çoban Clear"":
         - textbox: Enis Çoban
         - button ""Clear""
@@ -1013,13 +1611,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:52
       - cell:
         - button
-    - row ""Increment Decrement Cold Mind &amp; Alex Yikker Clear Rage Clear 01:25:14 01:31:33 00:06:19"":
+    - row ""16 Cold Mind &amp; Alex Yikker Clear Rage Clear 01:25:14 01:31:33 00:06:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""16""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""16""
       - cell ""Cold Mind &amp; Alex Yikker Clear"":
         - textbox: Cold Mind &amp; Alex Yikker
         - button ""Clear""
@@ -1036,13 +1631,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:19
       - cell:
         - button
-    - row ""Increment Decrement Maze 28 Clear Sol (JAHAYA Remix) Clear 01:31:33 01:32:51 00:01:18"":
+    - row ""17 Maze 28 Clear Sol (JAHAYA Remix) Clear 01:31:33 01:32:51 00:01:18"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""17""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""17""
       - cell ""Maze 28 Clear"":
         - textbox: Maze 28
         - button ""Clear""
@@ -1059,13 +1651,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:01:18
       - cell:
         - button
-    - row ""Increment Decrement Alex Grafton Clear Hi Baby Clear 01:32:51 01:42:13 00:09:22"":
+    - row ""18 Alex Grafton Clear Hi Baby Clear 01:32:51 01:42:13 00:09:22"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""18""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""18""
       - cell ""Alex Grafton Clear"":
         - textbox: Alex Grafton
         - button ""Clear""
@@ -1082,13 +1671,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:09:22
       - cell:
         - button
-    - row ""Increment Decrement Che&amp;Mos &amp; Halo Far Clear Daddy Clear 01:42:13 01:45:22 00:03:09"":
+    - row ""19 Che&amp;Mos &amp; Halo Far Clear Daddy Clear 01:42:13 01:45:22 00:03:09"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""19""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""19""
       - cell ""Che&amp;Mos &amp; Halo Far Clear"":
         - textbox: Che&amp;Mos &amp; Halo Far
         - button ""Clear""
@@ -1105,13 +1691,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:09
       - cell:
         - button
-    - row ""Increment Decrement K KARDEN Clear Acid Rain Clear 01:45:22 01:48:40 00:03:18"":
+    - row ""20 K KARDEN Clear Acid Rain Clear 01:45:22 01:48:40 00:03:18"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""20""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""20""
       - cell ""K KARDEN Clear"":
         - textbox: K KARDEN
         - button ""Clear""
@@ -1128,13 +1711,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:18
       - cell:
         - button
-    - row ""Increment Decrement Dobrov &amp; Gar1sson Clear Analogic (Redspace Remix) Clear 01:48:40 01:56:40 00:08:00"":
+    - row ""21 Dobrov &amp; Gar1sson Clear Analogic (Redspace Remix) Clear 01:48:40 01:56:40 00:08:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""21""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""21""
       - cell ""Dobrov &amp; Gar1sson Clear"":
         - textbox: Dobrov &amp; Gar1sson
         - button ""Clear""
@@ -1151,13 +1731,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:00
       - cell:
         - button
-    - row ""Increment Decrement Gazfluz Clear Vargan Clear 01:56:40 02:00:39 00:03:59"":
+    - row ""22 Gazfluz Clear Vargan Clear 01:56:40 02:00:39 00:03:59"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""22""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""22""
       - cell ""Gazfluz Clear"":
         - textbox: Gazfluz
         - button ""Clear""
@@ -1174,13 +1751,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:59
       - cell:
         - button
-    - row ""Increment Decrement SHKAPOV Clear Control Clear 02:00:39 02:06:47 00:06:08"":
+    - row ""23 SHKAPOV Clear Control Clear 02:00:39 02:06:47 00:06:08"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""23""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""23""
       - cell ""SHKAPOV Clear"":
         - textbox: SHKAPOV
         - button ""Clear""
@@ -1197,13 +1771,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:08
       - cell:
         - button
-    - row ""Increment Decrement QazaQ Clear On the Line Clear 02:06:47 02:09:09 00:02:22"":
+    - row ""24 QazaQ Clear On the Line Clear 02:06:47 02:09:09 00:02:22"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""24""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""24""
       - cell ""QazaQ Clear"":
         - textbox: QazaQ
         - button ""Clear""
@@ -1220,13 +1791,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:22
       - cell:
         - button
-    - row ""Increment Decrement Alex Schaufel Clear Elizabeth (Larsun Hesh Remix) Clear 02:09:09 02:14:18 00:05:09"":
+    - row ""25 Alex Schaufel Clear Elizabeth (Larsun Hesh Remix) Clear 02:09:09 02:14:18 00:05:09"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""25""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""25""
       - cell ""Alex Schaufel Clear"":
         - textbox: Alex Schaufel
         - button ""Clear""
@@ -1243,13 +1811,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:09
       - cell:
         - button
-    - row ""Increment Decrement Oiro Clear Just Business Clear 02:14:18 02:19:22 00:05:04"":
+    - row ""26 Oiro Clear Just Business Clear 02:14:18 02:19:22 00:05:04"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""26""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""26""
       - cell ""Oiro Clear"":
         - textbox: Oiro
         - button ""Clear""
@@ -1266,13 +1831,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:04
       - cell:
         - button
-    - row ""Increment Decrement Molex Clear Mind Split (Redspace Remix) Clear 02:19:22 02:27:48 00:08:26"":
+    - row ""27 Molex Clear Mind Split (Redspace Remix) Clear 02:19:22 02:27:48 00:08:26"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""27""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""27""
       - cell ""Molex Clear"":
         - textbox: Molex
         - button ""Clear""
@@ -1289,13 +1851,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:26
       - cell:
         - button
-    - row ""Increment Decrement SOLI Clear Give Me Your Mind Clear 02:27:48 02:33:48 00:06:00"":
+    - row ""28 SOLI Clear Give Me Your Mind Clear 02:27:48 02:33:48 00:06:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""28""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""28""
       - cell ""SOLI Clear"":
         - textbox: SOLI
         - button ""Clear""
@@ -1312,13 +1871,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:00
       - cell:
         - button
-    - row ""Increment Decrement MANDU Clear Jacky Clear 02:33:48 02:39:05 00:05:17"":
+    - row ""29 MANDU Clear Jacky Clear 02:33:48 02:39:05 00:05:17"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""29""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""29""
       - cell ""MANDU Clear"":
         - textbox: MANDU
         - button ""Clear""
@@ -1335,13 +1891,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:17
       - cell:
         - button
-    - row ""Increment Decrement SOLI Clear Spacetoon Clear 02:39:05 02:41:31 00:02:26"":
+    - row ""30 SOLI Clear Spacetoon Clear 02:39:05 02:41:31 00:02:26"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""30""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""30""
       - cell ""SOLI Clear"":
         - textbox: SOLI
         - button ""Clear""
@@ -1358,13 +1911,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:26
       - cell:
         - button
-    - row ""Increment Decrement Sasha Fashion Clear Moqton Clear 02:41:31 02:50:18 00:08:47"":
+    - row ""31 Sasha Fashion Clear Moqton Clear 02:41:31 02:50:18 00:08:47"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""31""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""31""
       - cell ""Sasha Fashion Clear"":
         - textbox: Sasha Fashion
         - button ""Clear""
@@ -1381,13 +1931,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:47
       - cell:
         - button
-    - row ""Increment Decrement NAASA Clear Poison Clear 02:50:18 02:56:45 00:06:27"":
+    - row ""32 NAASA Clear Poison Clear 02:50:18 02:56:45 00:06:27"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""32""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""32""
       - cell ""NAASA Clear"":
         - textbox: NAASA
         - button ""Clear""
@@ -1404,13 +1951,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:27
       - cell:
         - button
-    - row ""Increment Decrement Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Nightlong Clear 02:56:45 02:59:14 00:02:29"":
+    - row ""33 Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Nightlong Clear 02:56:45 02:59:14 00:02:29"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""33""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""33""
       - cell ""Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
@@ -1427,13 +1971,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:29
       - cell:
         - button
-    - row ""Increment Decrement Skillz jay Clear Choir Clear 02:59:14 03:05:49 00:06:35"":
+    - row ""34 Skillz jay Clear Choir Clear 02:59:14 03:05:49 00:06:35"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""34""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""34""
       - cell ""Skillz jay Clear"":
         - textbox: Skillz jay
         - button ""Clear""
@@ -1450,13 +1991,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:35
       - cell:
         - button
-    - row ""Increment Decrement Kovax Clear Controller Clear 03:05:49 03:08:31 00:02:42"":
+    - row ""35 Kovax Clear Controller Clear 03:05:49 03:08:31 00:02:42"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""35""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""35""
       - cell ""Kovax Clear"":
         - textbox: Kovax
         - button ""Clear""
@@ -1473,13 +2011,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:42
       - cell:
         - button
-    - row ""Increment Decrement Mumboi Clear Just a Beat Clear 03:08:31 03:15:18 00:06:47"":
+    - row ""36 Mumboi Clear Just a Beat Clear 03:08:31 03:15:18 00:06:47"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""36""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""36""
       - cell ""Mumboi Clear"":
         - textbox: Mumboi
         - button ""Clear""
@@ -1496,13 +2031,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:47
       - cell:
         - button
-    - row ""Increment Decrement Eclept Clear Sprut Clear 03:15:18 03:20:35 00:05:17"":
+    - row ""37 Eclept Clear Sprut Clear 03:15:18 03:20:35 00:05:17"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""37""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""37""
       - cell ""Eclept Clear"":
         - textbox: Eclept
         - button ""Clear""
@@ -1519,13 +2051,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:17
       - cell:
         - button
-    - row ""Increment Decrement Rudensky Clear Dark Escort Clear 03:20:35 03:25:02 00:04:27"":
+    - row ""38 Rudensky Clear Dark Escort Clear 03:20:35 03:25:02 00:04:27"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""38""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""38""
       - cell ""Rudensky Clear"":
         - textbox: Rudensky
         - button ""Clear""
@@ -1542,13 +2071,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:27
       - cell:
         - button
-    - row ""Increment Decrement Alexey Union, Kinky Sound &amp; KOCHETOV Clear Connected Clear 03:25:02 03:32:30 00:07:28"":
+    - row ""39 Alexey Union, Kinky Sound &amp; KOCHETOV Clear Connected Clear 03:25:02 03:32:30 00:07:28"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""39""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""39""
       - cell ""Alexey Union, Kinky Sound &amp; KOCHETOV Clear"":
         - textbox: Alexey Union, Kinky Sound &amp; KOCHETOV
         - button ""Clear""
@@ -1565,13 +2091,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:28
       - cell:
         - button
-    - row ""Increment Decrement ANMA (MD) Clear Space Yoda (Snyl Remix) Clear 03:32:30 03:37:53 00:05:23"":
+    - row ""40 ANMA (MD) Clear Space Yoda (Snyl Remix) Clear 03:32:30 03:37:53 00:05:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""40""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""40""
       - cell ""ANMA (MD) Clear"":
         - textbox: ANMA (MD)
         - button ""Clear""
@@ -1588,13 +2111,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:23
       - cell:
         - button
-    - row ""Increment Decrement Inache Clear Andale (MONTA (TN) Remix) Clear 03:37:53"":
+    - row ""41 Inache Clear Andale (MONTA (TN) Remix) Clear 03:37:53"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""41""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""41""
       - cell ""Inache Clear"":
         - textbox: Inache
         - button ""Clear""
@@ -1637,13 +2157,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
         - button ""Clear""
@@ -1659,13 +2176,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
         - button ""Clear""
@@ -1682,13 +2196,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
         - button ""Clear""
@@ -1705,13 +2216,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
         - button ""Clear""
@@ -1728,13 +2236,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
         - button ""Clear""
@@ -1751,13 +2256,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
         - button ""Clear""
@@ -1774,13 +2276,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
         - button ""Clear""
@@ -1797,13 +2296,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
         - button ""Clear""
@@ -1848,13 +2344,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
         - button ""Clear""
@@ -1870,13 +2363,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
         - button ""Clear""
@@ -1893,13 +2383,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
         - button ""Clear""
@@ -1916,13 +2403,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
         - button ""Clear""
@@ -1939,13 +2423,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
         - button ""Clear""
@@ -1962,13 +2443,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
         - button ""Clear""
@@ -1985,13 +2463,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
         - button ""Clear""
@@ -2008,13 +2483,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
         - button ""Clear""
@@ -2059,13 +2531,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Increment Decrement Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""1""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
         - button ""Clear""
@@ -2081,13 +2550,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""Increment Decrement Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""2""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
         - button ""Clear""
@@ -2104,13 +2570,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""3""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
         - button ""Clear""
@@ -2127,13 +2590,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""4""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
         - button ""Clear""
@@ -2150,13 +2610,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""5""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
         - button ""Clear""
@@ -2173,13 +2630,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""6""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
         - button ""Clear""
@@ -2196,13 +2650,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""7""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
         - button ""Clear""
@@ -2219,13 +2670,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""Increment Decrement Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
       - cell:
         - checkbox
-      - cell ""Increment Decrement"":
-        - spinbutton: ""8""
-        - button ""Increment""
-        - button ""Decrement""
+      - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
         - button ""Clear""
