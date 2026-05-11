@@ -97,7 +97,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             track.Cuesheet = cuesheet;
             // Calculate track properties
-            //TODO: Refactor this code (maybe use trackmanager)
             _traceChangeManager.BulkEdit = true;
             if (cuesheet?.IsRecording == true)
             {
@@ -124,7 +123,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 }
                 if (track.Begin.HasValue == false)
                 {
-                    track.Begin = lastTrack?.End;
+                    _trackManager.SetProperty(track, x => x.Begin, lastTrack?.End);
                 }
                 else
                 {
