@@ -467,6 +467,34 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
+        public void GetNextLinkedTrack_WithPosition_ReturnsTrack()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12)
+            };
+            var track2 = new Track()
+            {
+                Begin = track1.End,
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Tracks = [track2, track1]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            // Act
+            var linkedTrack = _trackManager.GetNextLinkedTrack(track1);
+            // Assert
+            Assert.IsNotNull(linkedTrack);
+            Assert.AreEqual(track2, linkedTrack);
+        }
+
+        [TestMethod]
         public void RecalculateLinkedTracksProperties_TrackHasNoBegin_SetsBegin()
         {
             // Arrange
