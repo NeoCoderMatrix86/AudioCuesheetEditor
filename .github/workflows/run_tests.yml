@@ -55,8 +55,7 @@ jobs:
       shell: bash
 
     - name: Run tests
-      # TODO run: dotnet test
-      run: dotnet test --filter "Name~Import_ShouldBeEditable_WhenEditingTrack"
+      run: dotnet test
 
     - name: Upload traces
       if: always()
