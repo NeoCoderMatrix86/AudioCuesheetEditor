@@ -41,9 +41,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Title Begin 00:00:00 End Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End Length Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist"":
         - text: Artist
@@ -69,9 +70,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Test Artist 1 Clear Title Test Title 1 Clear Begin 00:00:00 End Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Test Artist 1 Clear Title Test Title 1 Clear Begin 00:00:00 End Length Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist Test Artist 1 Clear"":
         - text: Artist
@@ -97,9 +99,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Mozart Clear Title Eine kleine Nachtmusik Clear Begin 00:00:00 End Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Mozart Clear Title Eine kleine Nachtmusik Clear Begin 00:00:00 End Length Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist Mozart Clear"":
         - text: Artist
@@ -125,9 +128,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Mozart Clear Title Test Title 1 Clear Begin 00:00:00 End Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Mozart Clear Title Test Title 1 Clear Begin 00:00:00 End Length Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist Mozart Clear"":
         - text: Artist
@@ -163,9 +167,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Test Track Artist 1 Clear Title Test Track Title 1 Clear Begin 00:00:00 End 00:02:23 Length 00:02:23 Status"":
-      - cell:
-        - checkbox [checked]
+    - 'row ""Select row # 1 Artist Test Track Artist 1 Clear Title Test Track Title 1 Clear Begin 00:00:00 End 00:02:23 Length 00:02:23 Status"" [selected]':
+      - cell ""Select row"":
+        - checkbox ""Select row"" [checked]
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist Test Track Artist 1 Clear"":
         - text: Artist
@@ -191,9 +196,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Title Begin 00:00:00 End Length Status"":
-      - cell:
-        - checkbox [checked]
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End End has no value! Length Length has no value! Status"" [selected]':
+      - cell ""Select row"":
+        - checkbox ""Select row"" [checked]
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist"":
         - text: Artist
@@ -206,20 +212,23 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:00:00"":
         - text: Begin
         - textbox: 00:00:00
-      - cell ""End"":
+      - cell ""End End has no value!"":
         - text: End
         - textbox
-      - cell ""Length"":
+        - text: End has no value!
+      - cell ""Length Length has no value!"":
         - text: Length
         - textbox
+        - text: Length has no value!
       - cell ""Status""");
             await bar.RedoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Test Track Artist 1 Clear Title Test Track Title 1 Clear Begin 00:00:00 End 00:02:23 Length 00:02:23 Status"":
-      - cell:
-        - checkbox [checked]
+    - 'row ""Select row # 1 Artist Test Track Artist 1 Clear Title Test Track Title 1 Clear Begin 00:00:00 End 00:02:23 Length 00:02:23 Status"" [selected]':
+      - cell ""Select row"":
+        - checkbox ""Select row"" [checked]
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist Test Track Artist 1 Clear"":
         - text: Artist
@@ -268,9 +277,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Adriatique Clear Title X. Clear Begin 00:00:00 End 00:05:24.2500000 Length 00:05:24.2500000 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Adriatique Clear Title X. Clear Begin 00:00:00 End 00:05:24.2500000 Length 00:05:24.2500000 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist Adriatique Clear"":
         - text: Artist
@@ -292,9 +302,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - text: Length
         - textbox: 00:05:24.2500000
       - cell ""Status""
-    - row ""# 2 Artist Third Harmony Clear Title Fears And Dreams (Original Mix) Clear Begin 00:05:24.2500000 End 00:10:39 Length 00:05:14.7500000 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 2 Artist Third Harmony Clear Title Fears And Dreams (Original Mix) Clear Begin 00:05:24.2500000 End 00:10:39 Length 00:05:14.7500000 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 2""
       - cell ""Artist Third Harmony Clear"":
         - text: Artist
@@ -318,9 +329,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 3 Artist Dele Sosimi Afrobeat Orchestra Clear Title Too Much Information (Laolu Remix; Edit) Clear Begin 00:10:39 End 00:17:06 Length 00:06:27 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 3 Artist Dele Sosimi Afrobeat Orchestra Clear Title Too Much Information (Laolu Remix; Edit) Clear Begin 00:10:39 End 00:17:06 Length 00:06:27 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 3""
       - cell ""Artist Dele Sosimi Afrobeat Orchestra Clear"":
         - text: Artist
@@ -344,9 +356,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 4 Artist Edem, Govan Clear Title Ankh (Onetwo MX Remix) Clear Begin 00:17:06 End 00:23:21 Length 00:06:15 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 4 Artist Edem, Govan Clear Title Ankh (Onetwo MX Remix) Clear Begin 00:17:06 End 00:23:21 Length 00:06:15 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 4""
       - cell ""Artist Edem, Govan Clear"":
         - text: Artist
@@ -370,9 +383,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 5 Artist Jody Wisternoff Clear Title For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear Begin 00:23:21 End 00:29:02 Length 00:05:41 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 5 Artist Jody Wisternoff Clear Title For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear Begin 00:23:21 End 00:29:02 Length 00:05:41 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 5""
       - cell ""Artist Jody Wisternoff Clear"":
         - text: Artist
@@ -396,9 +410,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 6 Artist Einmusik Clear Title Bead (Original Mix) Clear Begin 00:29:02 End 00:34:27 Length 00:05:25 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 6 Artist Einmusik Clear Title Bead (Original Mix) Clear Begin 00:29:02 End 00:34:27 Length 00:05:25 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 6""
       - cell ""Artist Einmusik Clear"":
         - text: Artist
@@ -422,9 +437,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 7 Artist Sebastien Leger Clear Title La Danse du Scorpion Clear Begin 00:34:27 End 00:40:59 Length 00:06:32 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 7 Artist Sebastien Leger Clear Title La Danse du Scorpion Clear Begin 00:34:27 End 00:40:59 Length 00:06:32 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 7""
       - cell ""Artist Sebastien Leger Clear"":
         - text: Artist
@@ -448,9 +464,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 8 Artist Paul Thomas & Solid Stone Clear Title La Bombo (Solid Stone Remix) Clear Begin 00:40:59 End 00:46:19 Length 00:05:20 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 8 Artist Paul Thomas & Solid Stone Clear Title La Bombo (Solid Stone Remix) Clear Begin 00:40:59 End 00:46:19 Length 00:05:20 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 8""
       - cell ""Artist Paul Thomas & Solid Stone Clear"":
         - text: Artist
@@ -474,9 +491,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 9 Artist GusGus Clear Title Crossfade (Maceo Plex Mix) Clear Begin 00:46:19 End 00:52:20 Length 00:06:01 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 9 Artist GusGus Clear Title Crossfade (Maceo Plex Mix) Clear Begin 00:46:19 End 00:52:20 Length 00:06:01 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 9""
       - cell ""Artist GusGus Clear"":
         - text: Artist
@@ -500,9 +518,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 10 Artist Klangkarussell Clear Title Time (Original Mix) Clear Begin 00:52:20 End 00:56:19 Length 00:03:59 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 10 Artist Klangkarussell Clear Title Time (Original Mix) Clear Begin 00:52:20 End 00:56:19 Length 00:03:59 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 10""
       - cell ""Artist Klangkarussell Clear"":
         - text: Artist
@@ -526,9 +545,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 11 Artist Anysense & Un:said Clear Title Missing Path (Original Mix) Clear Begin 00:56:19 End 01:01:41 Length 00:05:22 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 11 Artist Anysense & Un:said Clear Title Missing Path (Original Mix) Clear Begin 00:56:19 End 01:01:41 Length 00:05:22 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 11""
       - cell ""Artist Anysense & Un:said Clear"":
         - text: Artist
@@ -552,9 +572,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 12 Artist Space Food Clear Title Bombay Clear Begin 01:01:41 End 01:06:33 Length 00:04:52 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 12 Artist Space Food Clear Title Bombay Clear Begin 01:01:41 End 01:06:33 Length 00:04:52 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 12""
       - cell ""Artist Space Food Clear"":
         - text: Artist
@@ -578,9 +599,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 13 Artist SHDW & Obscure Shape Clear Title Wächter der Nacht (Original Mix) Clear Begin 01:06:33 End 01:11:04 Length 00:04:31 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 13 Artist SHDW & Obscure Shape Clear Title Wächter der Nacht (Original Mix) Clear Begin 01:06:33 End 01:11:04 Length 00:04:31 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 13""
       - cell ""Artist SHDW & Obscure Shape Clear"":
         - text: Artist
@@ -604,9 +626,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 14 Artist HOSH Clear Title Karma Clear Begin 01:11:04 End 01:15:28 Length 00:04:24 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 14 Artist HOSH Clear Title Karma Clear Begin 01:11:04 End 01:15:28 Length 00:04:24 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 14""
       - cell ""Artist HOSH Clear"":
         - text: Artist
@@ -630,9 +653,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 15 Artist Alexey Union Clear Title Olympia (Original Mix) Clear Begin 01:15:28 End 01:21:08 Length 00:05:40 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 15 Artist Alexey Union Clear Title Olympia (Original Mix) Clear Begin 01:15:28 End 01:21:08 Length 00:05:40 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 15""
       - cell ""Artist Alexey Union Clear"":
         - text: Artist
@@ -656,9 +680,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 16 Artist Paul Taylor Clear Title Afterglow Clear Begin 01:21:08 End 01:25:38 Length 00:04:30 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 16 Artist Paul Taylor Clear Title Afterglow Clear Begin 01:21:08 End 01:25:38 Length 00:04:30 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 16""
       - cell ""Artist Paul Taylor Clear"":
         - text: Artist
@@ -682,9 +707,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 17 Artist Philter Clear Title Stranger Clear Begin 01:25:38 End 01:31:52 Length 00:06:14 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 17 Artist Philter Clear Title Stranger Clear Begin 01:25:38 End 01:31:52 Length 00:06:14 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 17""
       - cell ""Artist Philter Clear"":
         - text: Artist
@@ -708,9 +734,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 18 Artist Skizologic Clear Title Hypersphere (Original Mix) Clear Begin 01:31:52 End 01:36:40 Length 00:04:48 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 18 Artist Skizologic Clear Title Hypersphere (Original Mix) Clear Begin 01:31:52 End 01:36:40 Length 00:04:48 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 18""
       - cell ""Artist Skizologic Clear"":
         - text: Artist
@@ -734,9 +761,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 19 Artist Thomas Schumacher, Caitlin Clear Title All of You (Remix) Clear Begin 01:36:40 End 01:42:16 Length 00:05:36 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 19 Artist Thomas Schumacher, Caitlin Clear Title All of You (Remix) Clear Begin 01:36:40 End 01:42:16 Length 00:05:36 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 19""
       - cell ""Artist Thomas Schumacher, Caitlin Clear"":
         - text: Artist
@@ -760,9 +788,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 20 Artist A. Skomoroh Clear Title White Horse Conquest (Original Mix) Clear Begin 01:42:16 End 01:47:04 Length 00:04:48 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 20 Artist A. Skomoroh Clear Title White Horse Conquest (Original Mix) Clear Begin 01:42:16 End 01:47:04 Length 00:04:48 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 20""
       - cell ""Artist A. Skomoroh Clear"":
         - text: Artist
@@ -786,9 +815,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 21 Artist Patrik Berg Clear Title Bright (Original Mix) Clear Begin 01:47:04 End 01:52:37 Length 00:05:33 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 21 Artist Patrik Berg Clear Title Bright (Original Mix) Clear Begin 01:47:04 End 01:52:37 Length 00:05:33 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 21""
       - cell ""Artist Patrik Berg Clear"":
         - text: Artist
@@ -812,9 +842,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 22 Artist Hidden Empire Clear Title Bengal Clear Begin 01:52:37 End 01:58:05 Length 00:05:28 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 22 Artist Hidden Empire Clear Title Bengal Clear Begin 01:52:37 End 01:58:05 Length 00:05:28 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 22""
       - cell ""Artist Hidden Empire Clear"":
         - text: Artist
@@ -838,9 +869,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 23 Artist Mario Ochoa Clear Title Levitate Clear Begin 01:58:05 End 02:03:00 Length 00:04:55 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 23 Artist Mario Ochoa Clear Title Levitate Clear Begin 01:58:05 End 02:03:00 Length 00:04:55 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 23""
       - cell ""Artist Mario Ochoa Clear"":
         - text: Artist
@@ -864,9 +896,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 24 Artist Raul Facio Clear Title Eyes Wide Shut (Original Mix) Clear Begin 02:03:00 End 02:08:21 Length 00:05:21 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 24 Artist Raul Facio Clear Title Eyes Wide Shut (Original Mix) Clear Begin 02:03:00 End 02:08:21 Length 00:05:21 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 24""
       - cell ""Artist Raul Facio Clear"":
         - text: Artist
@@ -890,9 +923,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 25 Artist Soolver Clear Title Regular (Original Mix) Clear Begin 02:08:21 End 02:14:31 Length 00:06:10 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 25 Artist Soolver Clear Title Regular (Original Mix) Clear Begin 02:08:21 End 02:14:31 Length 00:06:10 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 25""
       - cell ""Artist Soolver Clear"":
         - text: Artist
@@ -916,9 +950,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 26 Artist Weska Clear Title EQ64 (Original Mix) Clear Begin 02:14:31 End 02:18:35 Length 00:04:04 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 26 Artist Weska Clear Title EQ64 (Original Mix) Clear Begin 02:14:31 End 02:18:35 Length 00:04:04 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 26""
       - cell ""Artist Weska Clear"":
         - text: Artist
@@ -942,9 +977,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 27 Artist Tempo Giusto Clear Title The Fall (Extended Mix) Clear Begin 02:18:35 End 02:24:12 Length 00:05:37 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 27 Artist Tempo Giusto Clear Title The Fall (Extended Mix) Clear Begin 02:18:35 End 02:24:12 Length 00:05:37 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 27""
       - cell ""Artist Tempo Giusto Clear"":
         - text: Artist
@@ -968,9 +1004,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 28 Artist Vlind & Asteroid & Gary Leroy Clear Title Trinity (Extended Mix) Clear Begin 02:24:12 End 02:29:38 Length 00:05:26 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 28 Artist Vlind & Asteroid & Gary Leroy Clear Title Trinity (Extended Mix) Clear Begin 02:24:12 End 02:29:38 Length 00:05:26 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 28""
       - cell ""Artist Vlind & Asteroid & Gary Leroy Clear"":
         - text: Artist
@@ -994,9 +1031,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 29 Artist Astral Legacy Clear Title Vaveyla (Original Mix) Clear Begin 02:29:38 End 02:32:52 Length 00:03:14 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 29 Artist Astral Legacy Clear Title Vaveyla (Original Mix) Clear Begin 02:29:38 End 02:32:52 Length 00:03:14 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 29""
       - cell ""Artist Astral Legacy Clear"":
         - text: Artist
@@ -1020,9 +1058,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 30 Artist Gerrox Clear Title Chakra (Original Mix) Clear Begin 02:32:52 End 02:37:00 Length 00:04:08 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 30 Artist Gerrox Clear Title Chakra (Original Mix) Clear Begin 02:32:52 End 02:37:00 Length 00:04:08 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 30""
       - cell ""Artist Gerrox Clear"":
         - text: Artist
@@ -1046,9 +1085,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 31 Artist Charlotte De Witte Clear Title Pattern Clear Begin 02:37:00 End 02:41:55 Length 00:04:55 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 31 Artist Charlotte De Witte Clear Title Pattern Clear Begin 02:37:00 End 02:41:55 Length 00:04:55 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 31""
       - cell ""Artist Charlotte De Witte Clear"":
         - text: Artist
@@ -1072,9 +1112,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 32 Artist Space Food Clear Title Amabey Clear Begin 02:41:55 End 02:46:55 Length 00:05:00 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 32 Artist Space Food Clear Title Amabey Clear Begin 02:41:55 End 02:46:55 Length 00:05:00 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 32""
       - cell ""Artist Space Food Clear"":
         - text: Artist
@@ -1098,9 +1139,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 33 Artist ARTBAT Clear Title Papilion (Original Mix) Clear Begin 02:46:55 End 02:51:13 Length 00:04:18 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 33 Artist ARTBAT Clear Title Papilion (Original Mix) Clear Begin 02:46:55 End 02:51:13 Length 00:04:18 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 33""
       - cell ""Artist ARTBAT Clear"":
         - text: Artist
@@ -1124,9 +1166,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 34 Artist PETER PAHN Clear Title Enjoy Infinity (Original Mix) Clear Begin 02:51:13 End 02:56:08 Length 00:04:55 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 34 Artist PETER PAHN Clear Title Enjoy Infinity (Original Mix) Clear Begin 02:51:13 End 02:56:08 Length 00:04:55 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 34""
       - cell ""Artist PETER PAHN Clear"":
         - text: Artist
@@ -1150,9 +1193,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 35 Artist Solitek Clear Title Instinct (Original Mix) Clear Begin 02:56:08 End 03:00:57 Length 00:04:49 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 35 Artist Solitek Clear Title Instinct (Original Mix) Clear Begin 02:56:08 End 03:00:57 Length 00:04:49 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 35""
       - cell ""Artist Solitek Clear"":
         - text: Artist
@@ -1176,9 +1220,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 36 Artist Veerus Clear Title Heavy Clear Begin 03:00:57 End 03:05:19 Length 00:04:22 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 36 Artist Veerus Clear Title Heavy Clear Begin 03:00:57 End 03:05:19 Length 00:04:22 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 36""
       - cell ""Artist Veerus Clear"":
         - text: Artist
@@ -1202,9 +1247,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 37 Artist Secret Cinema & Reinier Zonneveld Clear Title Pain Thing (Original Mix) Clear Begin 03:05:19 End 03:09:38 Length 00:04:19 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 37 Artist Secret Cinema & Reinier Zonneveld Clear Title Pain Thing (Original Mix) Clear Begin 03:05:19 End 03:09:38 Length 00:04:19 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 37""
       - cell ""Artist Secret Cinema & Reinier Zonneveld Clear"":
         - text: Artist
@@ -1228,9 +1274,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 38 Artist Amelie Lens Clear Title Hypnotized Clear Begin 03:09:38 End 03:13:13 Length 00:03:35 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 38 Artist Amelie Lens Clear Title Hypnotized Clear Begin 03:09:38 End 03:13:13 Length 00:03:35 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 38""
       - cell ""Artist Amelie Lens Clear"":
         - text: Artist
@@ -1254,9 +1301,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - row ""# 39 Artist Nikolay Kirov Clear Title Chasing the Sun (Original Mix) Clear Begin 03:13:13 End Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 39 Artist Nikolay Kirov Clear Title Chasing the Sun (Original Mix) Clear Begin 03:13:13 End Length Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 39""
       - cell ""Artist Nikolay Kirov Clear"":
         - text: Artist
@@ -1296,9 +1344,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Title Begin 00:00:00 End Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End End has no value! Length Length has no value! Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist"":
         - text: Artist
@@ -1311,16 +1360,19 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:00:00"":
         - text: Begin
         - textbox: 00:00:00
-      - cell ""End"":
+      - cell ""End End has no value!"":
         - text: End
         - textbox
-      - cell ""Length"":
+        - text: End has no value!
+      - cell ""Length Length has no value!"":
         - text: Length
         - textbox
+        - text: Length has no value!
       - cell ""Status""
-    - row ""# 2 Artist Title Begin End 00:05:48.0608330 Length Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 2 Artist Title Begin End 00:05:48.0608330 Length Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 2""
       - cell ""Artist"":
         - text: Artist
@@ -1348,9 +1400,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - row ""# 1 Artist Title Begin 00:00:00 End 00:05:48.0608330 Length 00:05:48.0608330 Status"":
-      - cell:
-        - checkbox
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End 00:05:48.0608330 Length 00:05:48.0608330 Status""':
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""# 1""
       - cell ""Artist"":
         - text: Artist

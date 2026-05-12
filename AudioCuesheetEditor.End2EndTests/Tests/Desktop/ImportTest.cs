@@ -32,9 +32,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length Status"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length Status""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -43,9 +43,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
@@ -62,9 +63,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
@@ -82,9 +84,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
@@ -102,9 +105,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
@@ -122,9 +126,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
@@ -142,9 +147,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
@@ -162,9 +168,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
@@ -182,9 +189,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
@@ -221,9 +229,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length Status"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length Status""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -232,9 +240,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
@@ -251,9 +260,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
@@ -271,9 +281,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
@@ -291,9 +302,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
@@ -311,9 +323,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""5 Sample Artist 5 Clear Sample Title Edited 5 Clear 00:20:13 00:24:54 00:04:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Sample Artist 5 Clear Sample Title Edited 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
@@ -331,9 +344,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
@@ -351,9 +365,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
@@ -371,9 +386,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
@@ -405,9 +421,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.Analyze();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -415,9 +431,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""End""
       - columnheader ""Length""
   - rowgroup:
-    - row ""1 Adriatique Clear X. Clear 00:00:00 00:05:24 00:05:24"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Adriatique Clear X. Clear 00:00:00 00:05:24 00:05:24"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Adriatique Clear"":
         - textbox: Adriatique
@@ -433,9 +450,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:24
       - cell ""00:05:24"":
         - textbox: 00:05:24
-    - row ""2 Third Harmony Clear Fears And Dreams (Original Mix) Clear 00:05:24 00:10:39 00:05:15"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Third Harmony Clear Fears And Dreams (Original Mix) Clear 00:05:24 00:10:39 00:05:15"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Third Harmony Clear"":
         - textbox: Third Harmony
@@ -451,9 +469,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:10:39
       - cell ""00:05:15"":
         - textbox: 00:05:15
-    - row ""3 Dele Sosimi Afrobeat Orchestra Clear Too Much Information (Laolu Remix; Edit) Clear 00:10:39 00:17:06 00:06:27"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Dele Sosimi Afrobeat Orchestra Clear Too Much Information (Laolu Remix; Edit) Clear 00:10:39 00:17:06 00:06:27"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Dele Sosimi Afrobeat Orchestra Clear"":
         - textbox: Dele Sosimi Afrobeat Orchestra
@@ -469,9 +488,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:17:06
       - cell ""00:06:27"":
         - textbox: 00:06:27
-    - row ""4 Edem, Govan Clear Ankh (Onetwo MX Remix) Clear 00:17:06 00:23:21 00:06:15"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Edem, Govan Clear Ankh (Onetwo MX Remix) Clear 00:17:06 00:23:21 00:06:15"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Edem, Govan Clear"":
         - textbox: Edem, Govan
@@ -487,9 +507,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:23:21
       - cell ""00:06:15"":
         - textbox: 00:06:15
-    - row ""5 Jody Wisternoff Clear For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear 00:23:21 00:29:02 00:05:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Jody Wisternoff Clear For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear 00:23:21 00:29:02 00:05:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Jody Wisternoff Clear"":
         - textbox: Jody Wisternoff
@@ -505,9 +526,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:29:02
       - cell ""00:05:41"":
         - textbox: 00:05:41
-    - row ""6 Einmusik Clear Bead (Original Mix) Clear 00:29:02 00:34:27 00:05:25"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Einmusik Clear Bead (Original Mix) Clear 00:29:02 00:34:27 00:05:25"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Einmusik Clear"":
         - textbox: Einmusik
@@ -523,9 +545,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:34:27
       - cell ""00:05:25"":
         - textbox: 00:05:25
-    - row ""7 Sebastien Leger Clear La Danse du Scorpion Clear 00:34:27 00:40:59 00:06:32"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sebastien Leger Clear La Danse du Scorpion Clear 00:34:27 00:40:59 00:06:32"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sebastien Leger Clear"":
         - textbox: Sebastien Leger
@@ -541,9 +564,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:40:59
       - cell ""00:06:32"":
         - textbox: 00:06:32
-    - row ""8 Paul Thomas & Solid Stone Clear La Bombo (Solid Stone Remix) Clear 00:40:59 00:46:19 00:05:20"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Paul Thomas & Solid Stone Clear La Bombo (Solid Stone Remix) Clear 00:40:59 00:46:19 00:05:20"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Paul Thomas & Solid Stone Clear"":
         - textbox: Paul Thomas & Solid Stone
@@ -559,9 +583,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:46:19
       - cell ""00:05:20"":
         - textbox: 00:05:20
-    - row ""9 GusGus Clear Crossfade (Maceo Plex Mix) Clear 00:46:19 00:52:20 00:06:01"":
-      - cell:
-        - checkbox
+    - row ""Select row 9 GusGus Clear Crossfade (Maceo Plex Mix) Clear 00:46:19 00:52:20 00:06:01"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""9""
       - cell ""GusGus Clear"":
         - textbox: GusGus
@@ -577,9 +602,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:52:20
       - cell ""00:06:01"":
         - textbox: 00:06:01
-    - row ""10 Klangkarussell Clear Time (Original Mix) Clear 00:52:20 00:56:19 00:03:59"":
-      - cell:
-        - checkbox
+    - row ""Select row 10 Klangkarussell Clear Time (Original Mix) Clear 00:52:20 00:56:19 00:03:59"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""10""
       - cell ""Klangkarussell Clear"":
         - textbox: Klangkarussell
@@ -595,9 +621,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:56:19
       - cell ""00:03:59"":
         - textbox: 00:03:59
-    - row ""11 Anysense & Un:said Clear Missing Path (Original Mix) Clear 00:56:19 01:01:41 00:05:22"":
-      - cell:
-        - checkbox
+    - row ""Select row 11 Anysense & Un:said Clear Missing Path (Original Mix) Clear 00:56:19 01:01:41 00:05:22"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""11""
       - cell ""Anysense & Un:said Clear"":
         - textbox: Anysense & Un:said
@@ -613,9 +640,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:01:41
       - cell ""00:05:22"":
         - textbox: 00:05:22
-    - row ""12 Space Food Clear Bombay Clear 01:01:41 01:06:33 00:04:52"":
-      - cell:
-        - checkbox
+    - row ""Select row 12 Space Food Clear Bombay Clear 01:01:41 01:06:33 00:04:52"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""12""
       - cell ""Space Food Clear"":
         - textbox: Space Food
@@ -631,9 +659,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:06:33
       - cell ""00:04:52"":
         - textbox: 00:04:52
-    - row ""13 SHDW & Obscure Shape Clear Wächter der Nacht (Original Mix) Clear 01:06:33 01:11:04 00:04:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 13 SHDW & Obscure Shape Clear Wächter der Nacht (Original Mix) Clear 01:06:33 01:11:04 00:04:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""13""
       - cell ""SHDW & Obscure Shape Clear"":
         - textbox: SHDW & Obscure Shape
@@ -649,9 +678,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:11:04
       - cell ""00:04:31"":
         - textbox: 00:04:31
-    - row ""14 HOSH Clear Karma Clear 01:11:04 01:15:28 00:04:24"":
-      - cell:
-        - checkbox
+    - row ""Select row 14 HOSH Clear Karma Clear 01:11:04 01:15:28 00:04:24"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""14""
       - cell ""HOSH Clear"":
         - textbox: HOSH
@@ -667,9 +697,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:15:28
       - cell ""00:04:24"":
         - textbox: 00:04:24
-    - row ""15 Alexey Union Clear Olympia (Original Mix) Clear 01:15:28 01:21:08 00:05:40"":
-      - cell:
-        - checkbox
+    - row ""Select row 15 Alexey Union Clear Olympia (Original Mix) Clear 01:15:28 01:21:08 00:05:40"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""15""
       - cell ""Alexey Union Clear"":
         - textbox: Alexey Union
@@ -685,9 +716,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:21:08
       - cell ""00:05:40"":
         - textbox: 00:05:40
-    - row ""16 Paul Taylor Clear Afterglow Clear 01:21:08 01:25:38 00:04:30"":
-      - cell:
-        - checkbox
+    - row ""Select row 16 Paul Taylor Clear Afterglow Clear 01:21:08 01:25:38 00:04:30"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""16""
       - cell ""Paul Taylor Clear"":
         - textbox: Paul Taylor
@@ -703,9 +735,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:25:38
       - cell ""00:04:30"":
         - textbox: 00:04:30
-    - row ""17 Philter Clear Stranger Clear 01:25:38 01:31:52 00:06:14"":
-      - cell:
-        - checkbox
+    - row ""Select row 17 Philter Clear Stranger Clear 01:25:38 01:31:52 00:06:14"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""17""
       - cell ""Philter Clear"":
         - textbox: Philter
@@ -721,9 +754,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:31:52
       - cell ""00:06:14"":
         - textbox: 00:06:14
-    - row ""18 Skizologic Clear Hypersphere (Original Mix) Clear 01:31:52 01:36:40 00:04:48"":
-      - cell:
-        - checkbox
+    - row ""Select row 18 Skizologic Clear Hypersphere (Original Mix) Clear 01:31:52 01:36:40 00:04:48"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""18""
       - cell ""Skizologic Clear"":
         - textbox: Skizologic
@@ -739,9 +773,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:36:40
       - cell ""00:04:48"":
         - textbox: 00:04:48
-    - row ""19 Thomas Schumacher, Caitlin Clear All of You (Remix) Clear 01:36:40 01:42:16 00:05:36"":
-      - cell:
-        - checkbox
+    - row ""Select row 19 Thomas Schumacher, Caitlin Clear All of You (Remix) Clear 01:36:40 01:42:16 00:05:36"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""19""
       - cell ""Thomas Schumacher, Caitlin Clear"":
         - textbox: Thomas Schumacher, Caitlin
@@ -757,9 +792,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:42:16
       - cell ""00:05:36"":
         - textbox: 00:05:36
-    - row ""20 A. Skomoroh Clear White Horse Conquest (Original Mix) Clear 01:42:16 01:47:04 00:04:48"":
-      - cell:
-        - checkbox
+    - row ""Select row 20 A. Skomoroh Clear White Horse Conquest (Original Mix) Clear 01:42:16 01:47:04 00:04:48"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""20""
       - cell ""A. Skomoroh Clear"":
         - textbox: A. Skomoroh
@@ -775,9 +811,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:47:04
       - cell ""00:04:48"":
         - textbox: 00:04:48
-    - row ""21 Patrik Berg Clear Bright (Original Mix) Clear 01:47:04 01:52:37 00:05:33"":
-      - cell:
-        - checkbox
+    - row ""Select row 21 Patrik Berg Clear Bright (Original Mix) Clear 01:47:04 01:52:37 00:05:33"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""21""
       - cell ""Patrik Berg Clear"":
         - textbox: Patrik Berg
@@ -793,9 +830,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:52:37
       - cell ""00:05:33"":
         - textbox: 00:05:33
-    - row ""22 Hidden Empire Clear Bengal Clear 01:52:37 01:58:05 00:05:28"":
-      - cell:
-        - checkbox
+    - row ""Select row 22 Hidden Empire Clear Bengal Clear 01:52:37 01:58:05 00:05:28"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""22""
       - cell ""Hidden Empire Clear"":
         - textbox: Hidden Empire
@@ -811,9 +849,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 01:58:05
       - cell ""00:05:28"":
         - textbox: 00:05:28
-    - row ""23 Mario Ochoa Clear Levitate Clear 01:58:05 02:03:00 00:04:55"":
-      - cell:
-        - checkbox
+    - row ""Select row 23 Mario Ochoa Clear Levitate Clear 01:58:05 02:03:00 00:04:55"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""23""
       - cell ""Mario Ochoa Clear"":
         - textbox: Mario Ochoa
@@ -829,9 +868,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:03:00
       - cell ""00:04:55"":
         - textbox: 00:04:55
-    - row ""24 Raul Facio Clear Eyes Wide Shut (Original Mix) Clear 02:03:00 02:08:21 00:05:21"":
-      - cell:
-        - checkbox
+    - row ""Select row 24 Raul Facio Clear Eyes Wide Shut (Original Mix) Clear 02:03:00 02:08:21 00:05:21"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""24""
       - cell ""Raul Facio Clear"":
         - textbox: Raul Facio
@@ -847,9 +887,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:08:21
       - cell ""00:05:21"":
         - textbox: 00:05:21
-    - row ""25 Soolver Clear Regular (Original Mix) Clear 02:08:21 02:14:31 00:06:10"":
-      - cell:
-        - checkbox
+    - row ""Select row 25 Soolver Clear Regular (Original Mix) Clear 02:08:21 02:14:31 00:06:10"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""25""
       - cell ""Soolver Clear"":
         - textbox: Soolver
@@ -865,9 +906,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:14:31
       - cell ""00:06:10"":
         - textbox: 00:06:10
-    - row ""26 Weska Clear EQ64 (Original Mix) Clear 02:14:31 02:18:35 00:04:04"":
-      - cell:
-        - checkbox
+    - row ""Select row 26 Weska Clear EQ64 (Original Mix) Clear 02:14:31 02:18:35 00:04:04"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""26""
       - cell ""Weska Clear"":
         - textbox: Weska
@@ -883,9 +925,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:18:35
       - cell ""00:04:04"":
         - textbox: 00:04:04
-    - row ""27 Tempo Giusto Clear The Fall (Extended Mix) Clear 02:18:35 02:24:12 00:05:37"":
-      - cell:
-        - checkbox
+    - row ""Select row 27 Tempo Giusto Clear The Fall (Extended Mix) Clear 02:18:35 02:24:12 00:05:37"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""27""
       - cell ""Tempo Giusto Clear"":
         - textbox: Tempo Giusto
@@ -901,9 +944,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:24:12
       - cell ""00:05:37"":
         - textbox: 00:05:37
-    - row ""28 Vlind & Asteroid & Gary Leroy Clear Trinity (Extended Mix) Clear 02:24:12 02:29:38 00:05:26"":
-      - cell:
-        - checkbox
+    - row ""Select row 28 Vlind & Asteroid & Gary Leroy Clear Trinity (Extended Mix) Clear 02:24:12 02:29:38 00:05:26"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""28""
       - cell ""Vlind & Asteroid & Gary Leroy Clear"":
         - textbox: Vlind & Asteroid & Gary Leroy
@@ -919,9 +963,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:29:38
       - cell ""00:05:26"":
         - textbox: 00:05:26
-    - row ""29 Astral Legacy Clear Vaveyla (Original Mix) Clear 02:29:38 02:32:52 00:03:14"":
-      - cell:
-        - checkbox
+    - row ""Select row 29 Astral Legacy Clear Vaveyla (Original Mix) Clear 02:29:38 02:32:52 00:03:14"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""29""
       - cell ""Astral Legacy Clear"":
         - textbox: Astral Legacy
@@ -937,9 +982,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:32:52
       - cell ""00:03:14"":
         - textbox: 00:03:14
-    - row ""30 Gerrox Clear Chakra (Original Mix) Clear 02:32:52 02:37:00 00:04:08"":
-      - cell:
-        - checkbox
+    - row ""Select row 30 Gerrox Clear Chakra (Original Mix) Clear 02:32:52 02:37:00 00:04:08"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""30""
       - cell ""Gerrox Clear"":
         - textbox: Gerrox
@@ -955,9 +1001,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:37:00
       - cell ""00:04:08"":
         - textbox: 00:04:08
-    - row ""31 Charlotte De Witte Clear Pattern Clear 02:37:00 02:41:55 00:04:55"":
-      - cell:
-        - checkbox
+    - row ""Select row 31 Charlotte De Witte Clear Pattern Clear 02:37:00 02:41:55 00:04:55"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""31""
       - cell ""Charlotte De Witte Clear"":
         - textbox: Charlotte De Witte
@@ -973,9 +1020,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:41:55
       - cell ""00:04:55"":
         - textbox: 00:04:55
-    - row ""32 Space Food Clear Amabey Clear 02:41:55 02:46:55 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 32 Space Food Clear Amabey Clear 02:41:55 02:46:55 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""32""
       - cell ""Space Food Clear"":
         - textbox: Space Food
@@ -991,9 +1039,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:46:55
       - cell ""00:05:00"":
         - textbox: 00:05:00
-    - row ""33 ARTBAT Clear Papilion (Original Mix) Clear 02:46:55 02:51:13 00:04:18"":
-      - cell:
-        - checkbox
+    - row ""Select row 33 ARTBAT Clear Papilion (Original Mix) Clear 02:46:55 02:51:13 00:04:18"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""33""
       - cell ""ARTBAT Clear"":
         - textbox: ARTBAT
@@ -1009,9 +1058,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:51:13
       - cell ""00:04:18"":
         - textbox: 00:04:18
-    - row ""34 PETER PAHN Clear Enjoy Infinity (Original Mix) Clear 02:51:13 02:56:08 00:04:55"":
-      - cell:
-        - checkbox
+    - row ""Select row 34 PETER PAHN Clear Enjoy Infinity (Original Mix) Clear 02:51:13 02:56:08 00:04:55"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""34""
       - cell ""PETER PAHN Clear"":
         - textbox: PETER PAHN
@@ -1027,9 +1077,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 02:56:08
       - cell ""00:04:55"":
         - textbox: 00:04:55
-    - row ""35 Solitek Clear Instinct (Original Mix) Clear 02:56:08 03:00:57 00:04:49"":
-      - cell:
-        - checkbox
+    - row ""Select row 35 Solitek Clear Instinct (Original Mix) Clear 02:56:08 03:00:57 00:04:49"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""35""
       - cell ""Solitek Clear"":
         - textbox: Solitek
@@ -1045,9 +1096,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 03:00:57
       - cell ""00:04:49"":
         - textbox: 00:04:49
-    - row ""36 Veerus Clear Heavy Clear 03:00:57 03:05:19 00:04:22"":
-      - cell:
-        - checkbox
+    - row ""Select row 36 Veerus Clear Heavy Clear 03:00:57 03:05:19 00:04:22"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""36""
       - cell ""Veerus Clear"":
         - textbox: Veerus
@@ -1063,9 +1115,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 03:05:19
       - cell ""00:04:22"":
         - textbox: 00:04:22
-    - row ""37 Secret Cinema & Reinier Zonneveld Clear Pain Thing (Original Mix) Clear 03:05:19 03:09:38 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 37 Secret Cinema & Reinier Zonneveld Clear Pain Thing (Original Mix) Clear 03:05:19 03:09:38 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""37""
       - cell ""Secret Cinema & Reinier Zonneveld Clear"":
         - textbox: Secret Cinema & Reinier Zonneveld
@@ -1081,9 +1134,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 03:09:38
       - cell ""00:04:19"":
         - textbox: 00:04:19
-    - row ""38 Amelie Lens Clear Hypnotized Clear 03:09:38 03:13:13 00:03:35"":
-      - cell:
-        - checkbox
+    - row ""Select row 38 Amelie Lens Clear Hypnotized Clear 03:09:38 03:13:13 00:03:35"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""38""
       - cell ""Amelie Lens Clear"":
         - textbox: Amelie Lens
@@ -1099,9 +1153,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 03:13:13
       - cell ""00:03:35"":
         - textbox: 00:03:35
-    - row ""39 Nikolay Kirov Clear Chasing the Sun (Original Mix) Clear 03:13:13"":
-      - cell:
-        - checkbox
+    - row ""Select row 39 Nikolay Kirov Clear Chasing the Sun (Original Mix) Clear 03:13:13"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""39""
       - cell ""Nikolay Kirov Clear"":
         - textbox: Nikolay Kirov
@@ -1133,9 +1188,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -1143,9 +1198,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""End""
       - columnheader ""Length""
   - rowgroup:
-    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
@@ -1161,9 +1217,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:00
       - cell ""00:05:00"":
         - textbox: 00:05:00
-    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
@@ -1179,9 +1236,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:09:23
       - cell ""00:04:23"":
         - textbox: 00:04:23
-    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
@@ -1197,9 +1255,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:15:54
       - cell ""00:06:31"":
         - textbox: 00:06:31
-    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
@@ -1215,9 +1274,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:20:13
       - cell ""00:04:19"":
         - textbox: 00:04:19
-    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
@@ -1233,9 +1293,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:24:54
       - cell ""00:04:41"":
         - textbox: 00:04:41
-    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
@@ -1251,9 +1312,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:31:54
       - cell ""00:07:00"":
         - textbox: 00:07:00
-    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
@@ -1269,9 +1331,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:45:54
       - cell ""00:14:00"":
         - textbox: 00:14:00
-    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
@@ -1302,9 +1365,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length Status"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length Status""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -1313,9 +1376,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""1 Nachap Clear Glass Clear 00:00:00 00:11:56 00:11:56"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Nachap Clear Glass Clear 00:00:00 00:11:56 00:11:56"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Nachap Clear"":
         - textbox: Nachap
@@ -1332,9 +1396,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:11:56"":
         - textbox: 00:11:56
       - cell
-    - row ""2 Progressive + Melodic DECK Clear 00:11:56 00:13:31 00:01:35"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Progressive + Melodic DECK Clear 00:11:56 00:13:31 00:01:35"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell:
         - textbox
@@ -1351,9 +1416,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:01:35
       - cell:
         - button
-    - row ""3 Nomer 21 Clear Depersonalization Clear 00:13:31 00:19:14 00:05:43"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Nomer 21 Clear Depersonalization Clear 00:13:31 00:19:14 00:05:43"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Nomer 21 Clear"":
         - textbox: Nomer 21
@@ -1371,9 +1437,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:43
       - cell:
         - button
-    - row ""4 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Showing Off Clear 00:19:14 00:24:02 00:04:48"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Showing Off Clear 00:19:14 00:24:02 00:04:48"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
@@ -1391,9 +1458,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:48
       - cell:
         - button
-    - row ""5 Carlo Whale Clear Unconscious Clear 00:24:02 00:29:37 00:05:35"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Carlo Whale Clear Unconscious Clear 00:24:02 00:29:37 00:05:35"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Carlo Whale Clear"":
         - textbox: Carlo Whale
@@ -1411,9 +1479,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:35
       - cell:
         - button
-    - row ""6 Arba Han Clear Timelaps Clear 00:29:37 00:33:13 00:03:36"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Arba Han Clear Timelaps Clear 00:29:37 00:33:13 00:03:36"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Arba Han Clear"":
         - textbox: Arba Han
@@ -1431,9 +1500,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:36
       - cell:
         - button
-    - row ""7 Savill Clear Energy Surrounds Clear 00:33:13 00:40:30 00:07:17"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Savill Clear Energy Surrounds Clear 00:33:13 00:40:30 00:07:17"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Savill Clear"":
         - textbox: Savill
@@ -1451,9 +1521,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:17
       - cell:
         - button
-    - row ""8 Teklix Clear The Tribal Code Clear 00:40:30 00:48:53 00:08:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Teklix Clear The Tribal Code Clear 00:40:30 00:48:53 00:08:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Teklix Clear"":
         - textbox: Teklix
@@ -1471,9 +1542,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:23
       - cell:
         - button
-    - row ""9 Neuralis Clear I'm Looking for Answers Clear 00:48:53 00:54:34 00:05:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 9 Neuralis Clear I'm Looking for Answers Clear 00:48:53 00:54:34 00:05:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""9""
       - cell ""Neuralis Clear"":
         - textbox: Neuralis
@@ -1491,9 +1563,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:41
       - cell:
         - button
-    - row ""10 Nopopstar &amp; Arsia Clear Dirty Moves Clear 00:54:34 01:00:24 00:05:50"":
-      - cell:
-        - checkbox
+    - row ""Select row 10 Nopopstar &amp; Arsia Clear Dirty Moves Clear 00:54:34 01:00:24 00:05:50"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""10""
       - cell ""Nopopstar &amp; Arsia Clear"":
         - textbox: Nopopstar &amp; Arsia
@@ -1511,9 +1584,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:50
       - cell:
         - button
-    - row ""11 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Maze 28 Remix) Clear 01:00:24 01:05:17 00:04:53"":
-      - cell:
-        - checkbox
+    - row ""Select row 11 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Maze 28 Remix) Clear 01:00:24 01:05:17 00:04:53"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""11""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
@@ -1531,9 +1605,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:53
       - cell:
         - button
-    - row ""12 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Redspace Remix) Clear 01:05:17 01:08:22 00:03:05"":
-      - cell:
-        - checkbox
+    - row ""Select row 12 SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Lost (Redspace Remix) Clear 01:05:17 01:08:22 00:03:05"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""12""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
@@ -1551,9 +1626,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:05
       - cell:
         - button
-    - row ""13 Gadoz Clear 5d Clear 01:08:22 01:16:34 00:08:12"":
-      - cell:
-        - checkbox
+    - row ""Select row 13 Gadoz Clear 5d Clear 01:08:22 01:16:34 00:08:12"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""13""
       - cell ""Gadoz Clear"":
         - textbox: Gadoz
@@ -1571,9 +1647,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:12
       - cell:
         - button
-    - row ""14 DJ Danzik Clear Out of Space Clear 01:16:34 01:19:22 00:02:48"":
-      - cell:
-        - checkbox
+    - row ""Select row 14 DJ Danzik Clear Out of Space Clear 01:16:34 01:19:22 00:02:48"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""14""
       - cell ""DJ Danzik Clear"":
         - textbox: DJ Danzik
@@ -1591,9 +1668,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:48
       - cell:
         - button
-    - row ""15 Enis Çoban Clear Internet Clear 01:19:22 01:25:14 00:05:52"":
-      - cell:
-        - checkbox
+    - row ""Select row 15 Enis Çoban Clear Internet Clear 01:19:22 01:25:14 00:05:52"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""15""
       - cell ""Enis Çoban Clear"":
         - textbox: Enis Çoban
@@ -1611,9 +1689,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:52
       - cell:
         - button
-    - row ""16 Cold Mind &amp; Alex Yikker Clear Rage Clear 01:25:14 01:31:33 00:06:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 16 Cold Mind &amp; Alex Yikker Clear Rage Clear 01:25:14 01:31:33 00:06:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""16""
       - cell ""Cold Mind &amp; Alex Yikker Clear"":
         - textbox: Cold Mind &amp; Alex Yikker
@@ -1631,9 +1710,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:19
       - cell:
         - button
-    - row ""17 Maze 28 Clear Sol (JAHAYA Remix) Clear 01:31:33 01:32:51 00:01:18"":
-      - cell:
-        - checkbox
+    - row ""Select row 17 Maze 28 Clear Sol (JAHAYA Remix) Clear 01:31:33 01:32:51 00:01:18"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""17""
       - cell ""Maze 28 Clear"":
         - textbox: Maze 28
@@ -1651,9 +1731,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:01:18
       - cell:
         - button
-    - row ""18 Alex Grafton Clear Hi Baby Clear 01:32:51 01:42:13 00:09:22"":
-      - cell:
-        - checkbox
+    - row ""Select row 18 Alex Grafton Clear Hi Baby Clear 01:32:51 01:42:13 00:09:22"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""18""
       - cell ""Alex Grafton Clear"":
         - textbox: Alex Grafton
@@ -1671,9 +1752,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:09:22
       - cell:
         - button
-    - row ""19 Che&amp;Mos &amp; Halo Far Clear Daddy Clear 01:42:13 01:45:22 00:03:09"":
-      - cell:
-        - checkbox
+    - row ""Select row 19 Che&amp;Mos &amp; Halo Far Clear Daddy Clear 01:42:13 01:45:22 00:03:09"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""19""
       - cell ""Che&amp;Mos &amp; Halo Far Clear"":
         - textbox: Che&amp;Mos &amp; Halo Far
@@ -1691,9 +1773,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:09
       - cell:
         - button
-    - row ""20 K KARDEN Clear Acid Rain Clear 01:45:22 01:48:40 00:03:18"":
-      - cell:
-        - checkbox
+    - row ""Select row 20 K KARDEN Clear Acid Rain Clear 01:45:22 01:48:40 00:03:18"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""20""
       - cell ""K KARDEN Clear"":
         - textbox: K KARDEN
@@ -1711,9 +1794,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:18
       - cell:
         - button
-    - row ""21 Dobrov &amp; Gar1sson Clear Analogic (Redspace Remix) Clear 01:48:40 01:56:40 00:08:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 21 Dobrov &amp; Gar1sson Clear Analogic (Redspace Remix) Clear 01:48:40 01:56:40 00:08:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""21""
       - cell ""Dobrov &amp; Gar1sson Clear"":
         - textbox: Dobrov &amp; Gar1sson
@@ -1731,9 +1815,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:00
       - cell:
         - button
-    - row ""22 Gazfluz Clear Vargan Clear 01:56:40 02:00:39 00:03:59"":
-      - cell:
-        - checkbox
+    - row ""Select row 22 Gazfluz Clear Vargan Clear 01:56:40 02:00:39 00:03:59"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""22""
       - cell ""Gazfluz Clear"":
         - textbox: Gazfluz
@@ -1751,9 +1836,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:03:59
       - cell:
         - button
-    - row ""23 SHKAPOV Clear Control Clear 02:00:39 02:06:47 00:06:08"":
-      - cell:
-        - checkbox
+    - row ""Select row 23 SHKAPOV Clear Control Clear 02:00:39 02:06:47 00:06:08"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""23""
       - cell ""SHKAPOV Clear"":
         - textbox: SHKAPOV
@@ -1771,9 +1857,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:08
       - cell:
         - button
-    - row ""24 QazaQ Clear On the Line Clear 02:06:47 02:09:09 00:02:22"":
-      - cell:
-        - checkbox
+    - row ""Select row 24 QazaQ Clear On the Line Clear 02:06:47 02:09:09 00:02:22"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""24""
       - cell ""QazaQ Clear"":
         - textbox: QazaQ
@@ -1791,9 +1878,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:22
       - cell:
         - button
-    - row ""25 Alex Schaufel Clear Elizabeth (Larsun Hesh Remix) Clear 02:09:09 02:14:18 00:05:09"":
-      - cell:
-        - checkbox
+    - row ""Select row 25 Alex Schaufel Clear Elizabeth (Larsun Hesh Remix) Clear 02:09:09 02:14:18 00:05:09"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""25""
       - cell ""Alex Schaufel Clear"":
         - textbox: Alex Schaufel
@@ -1811,9 +1899,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:09
       - cell:
         - button
-    - row ""26 Oiro Clear Just Business Clear 02:14:18 02:19:22 00:05:04"":
-      - cell:
-        - checkbox
+    - row ""Select row 26 Oiro Clear Just Business Clear 02:14:18 02:19:22 00:05:04"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""26""
       - cell ""Oiro Clear"":
         - textbox: Oiro
@@ -1831,9 +1920,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:04
       - cell:
         - button
-    - row ""27 Molex Clear Mind Split (Redspace Remix) Clear 02:19:22 02:27:48 00:08:26"":
-      - cell:
-        - checkbox
+    - row ""Select row 27 Molex Clear Mind Split (Redspace Remix) Clear 02:19:22 02:27:48 00:08:26"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""27""
       - cell ""Molex Clear"":
         - textbox: Molex
@@ -1851,9 +1941,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:26
       - cell:
         - button
-    - row ""28 SOLI Clear Give Me Your Mind Clear 02:27:48 02:33:48 00:06:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 28 SOLI Clear Give Me Your Mind Clear 02:27:48 02:33:48 00:06:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""28""
       - cell ""SOLI Clear"":
         - textbox: SOLI
@@ -1871,9 +1962,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:00
       - cell:
         - button
-    - row ""29 MANDU Clear Jacky Clear 02:33:48 02:39:05 00:05:17"":
-      - cell:
-        - checkbox
+    - row ""Select row 29 MANDU Clear Jacky Clear 02:33:48 02:39:05 00:05:17"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""29""
       - cell ""MANDU Clear"":
         - textbox: MANDU
@@ -1891,9 +1983,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:17
       - cell:
         - button
-    - row ""30 SOLI Clear Spacetoon Clear 02:39:05 02:41:31 00:02:26"":
-      - cell:
-        - checkbox
+    - row ""Select row 30 SOLI Clear Spacetoon Clear 02:39:05 02:41:31 00:02:26"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""30""
       - cell ""SOLI Clear"":
         - textbox: SOLI
@@ -1911,9 +2004,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:26
       - cell:
         - button
-    - row ""31 Sasha Fashion Clear Moqton Clear 02:41:31 02:50:18 00:08:47"":
-      - cell:
-        - checkbox
+    - row ""Select row 31 Sasha Fashion Clear Moqton Clear 02:41:31 02:50:18 00:08:47"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""31""
       - cell ""Sasha Fashion Clear"":
         - textbox: Sasha Fashion
@@ -1931,9 +2025,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:08:47
       - cell:
         - button
-    - row ""32 NAASA Clear Poison Clear 02:50:18 02:56:45 00:06:27"":
-      - cell:
-        - checkbox
+    - row ""Select row 32 NAASA Clear Poison Clear 02:50:18 02:56:45 00:06:27"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""32""
       - cell ""NAASA Clear"":
         - textbox: NAASA
@@ -1951,9 +2046,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:27
       - cell:
         - button
-    - row ""33 Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Nightlong Clear 02:56:45 02:59:14 00:02:29"":
-      - cell:
-        - checkbox
+    - row ""Select row 33 Nopopstar, 2JOHN'S &amp; Eugene Jay Clear Nightlong Clear 02:56:45 02:59:14 00:02:29"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""33""
       - cell ""Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
         - textbox: Nopopstar, 2JOHN'S &amp; Eugene Jay
@@ -1971,9 +2067,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:29
       - cell:
         - button
-    - row ""34 Skillz jay Clear Choir Clear 02:59:14 03:05:49 00:06:35"":
-      - cell:
-        - checkbox
+    - row ""Select row 34 Skillz jay Clear Choir Clear 02:59:14 03:05:49 00:06:35"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""34""
       - cell ""Skillz jay Clear"":
         - textbox: Skillz jay
@@ -1991,9 +2088,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:35
       - cell:
         - button
-    - row ""35 Kovax Clear Controller Clear 03:05:49 03:08:31 00:02:42"":
-      - cell:
-        - checkbox
+    - row ""Select row 35 Kovax Clear Controller Clear 03:05:49 03:08:31 00:02:42"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""35""
       - cell ""Kovax Clear"":
         - textbox: Kovax
@@ -2011,9 +2109,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:02:42
       - cell:
         - button
-    - row ""36 Mumboi Clear Just a Beat Clear 03:08:31 03:15:18 00:06:47"":
-      - cell:
-        - checkbox
+    - row ""Select row 36 Mumboi Clear Just a Beat Clear 03:08:31 03:15:18 00:06:47"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""36""
       - cell ""Mumboi Clear"":
         - textbox: Mumboi
@@ -2031,9 +2130,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:47
       - cell:
         - button
-    - row ""37 Eclept Clear Sprut Clear 03:15:18 03:20:35 00:05:17"":
-      - cell:
-        - checkbox
+    - row ""Select row 37 Eclept Clear Sprut Clear 03:15:18 03:20:35 00:05:17"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""37""
       - cell ""Eclept Clear"":
         - textbox: Eclept
@@ -2051,9 +2151,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:17
       - cell:
         - button
-    - row ""38 Rudensky Clear Dark Escort Clear 03:20:35 03:25:02 00:04:27"":
-      - cell:
-        - checkbox
+    - row ""Select row 38 Rudensky Clear Dark Escort Clear 03:20:35 03:25:02 00:04:27"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""38""
       - cell ""Rudensky Clear"":
         - textbox: Rudensky
@@ -2071,9 +2172,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:27
       - cell:
         - button
-    - row ""39 Alexey Union, Kinky Sound &amp; KOCHETOV Clear Connected Clear 03:25:02 03:32:30 00:07:28"":
-      - cell:
-        - checkbox
+    - row ""Select row 39 Alexey Union, Kinky Sound &amp; KOCHETOV Clear Connected Clear 03:25:02 03:32:30 00:07:28"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""39""
       - cell ""Alexey Union, Kinky Sound &amp; KOCHETOV Clear"":
         - textbox: Alexey Union, Kinky Sound &amp; KOCHETOV
@@ -2091,9 +2193,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:28
       - cell:
         - button
-    - row ""40 ANMA (MD) Clear Space Yoda (Snyl Remix) Clear 03:32:30 03:37:53 00:05:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 40 ANMA (MD) Clear Space Yoda (Snyl Remix) Clear 03:32:30 03:37:53 00:05:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""40""
       - cell ""ANMA (MD) Clear"":
         - textbox: ANMA (MD)
@@ -2111,9 +2214,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:05:23
       - cell:
         - button
-    - row ""41 Inache Clear Andale (MONTA (TN) Remix) Clear 03:37:53"":
-      - cell:
-        - checkbox
+    - row ""Select row 41 Inache Clear Andale (MONTA (TN) Remix) Clear 03:37:53"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""41""
       - cell ""Inache Clear"":
         - textbox: Inache
@@ -2146,9 +2250,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length Status"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length Status""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -2157,9 +2261,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
@@ -2176,9 +2281,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
@@ -2196,9 +2302,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
@@ -2216,9 +2323,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
@@ -2236,9 +2344,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
@@ -2256,9 +2365,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
@@ -2276,9 +2386,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
@@ -2296,9 +2407,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
@@ -2333,9 +2445,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length Status"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length Status""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -2344,9 +2456,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
@@ -2363,9 +2476,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
@@ -2383,9 +2497,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
@@ -2403,9 +2518,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
@@ -2423,9 +2539,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
@@ -2443,9 +2560,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
@@ -2463,9 +2581,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
@@ -2483,9 +2602,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
@@ -2520,9 +2640,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.CompleteImportAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
-    - row ""# Artist Title Begin End Length Status"":
-      - columnheader:
-        - checkbox
+    - 'row ""Select all rows # Artist Title Begin End Length Status""':
+      - columnheader ""Select all rows"":
+        - checkbox ""Select all rows""
       - columnheader ""#""
       - columnheader ""Artist""
       - columnheader ""Title""
@@ -2531,9 +2651,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 1 Sample Artist 1 Clear Sample Title 1 Clear 00:00:00 00:05:00 00:05:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
         - textbox: Sample Artist 1
@@ -2550,9 +2671,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell ""00:05:00"":
         - textbox: 00:05:00
       - cell
-    - row ""2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
-      - cell:
-        - checkbox
+    - row ""Select row 2 Sample Artist 2 Clear Sample Title 2 Clear 00:05:00 00:09:23 00:04:23"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
         - textbox: Sample Artist 2
@@ -2570,9 +2692,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:23
       - cell:
         - button
-    - row ""3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
-      - cell:
-        - checkbox
+    - row ""Select row 3 Sample Artist 3 Clear Sample Title 3 Clear 00:09:23 00:15:54 00:06:31"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
         - textbox: Sample Artist 3
@@ -2590,9 +2713,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:06:31
       - cell:
         - button
-    - row ""4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
-      - cell:
-        - checkbox
+    - row ""Select row 4 Sample Artist 4 Clear Sample Title 4 Clear 00:15:54 00:20:13 00:04:19"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
         - textbox: Sample Artist 4
@@ -2610,9 +2734,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:19
       - cell:
         - button
-    - row ""5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
-      - cell:
-        - checkbox
+    - row ""Select row 5 Sample Artist 5 Clear Sample Title 5 Clear 00:20:13 00:24:54 00:04:41"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
         - textbox: Sample Artist 5
@@ -2630,9 +2755,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:04:41
       - cell:
         - button
-    - row ""6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 6 Sample Artist 6 Clear Sample Title 6 Clear 00:24:54 00:31:54 00:07:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
         - textbox: Sample Artist 6
@@ -2650,9 +2776,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:07:00
       - cell:
         - button
-    - row ""7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 7 Sample Artist 7 Clear Sample Title 7 Clear 00:31:54 00:45:54 00:14:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
         - textbox: Sample Artist 7
@@ -2670,9 +2797,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
-      - cell:
-        - checkbox
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
+      - cell ""Select row"":
+        - checkbox ""Select row""
+        - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
         - textbox: Sample Artist 8
