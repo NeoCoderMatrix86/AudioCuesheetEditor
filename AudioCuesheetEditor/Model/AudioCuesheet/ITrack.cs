@@ -19,7 +19,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
     {
         string? Artist { get; set; }
         string? Title { get; set; }
-        uint? Position { get; set; }
+        ushort? Position { get; set; }
         TimeSpan? Begin { get; set; }
         TimeSpan? End { get; set; }
         TimeSpan? Length { get; set; }

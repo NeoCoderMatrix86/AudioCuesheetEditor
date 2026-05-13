@@ -13,71 +13,65 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Model.Options;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class SessionStateContainer : ISessionStateContainer, ITraceable
+    public class SessionStateContainer : ISessionStateContainer, IDisposable
     {
+        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
+
+        private Cuesheet _cuesheet = new();
+        private Cuesheet? _importCuesheet;
+        private ViewOptions? _viewOptions;
+        private bool disposedValue;
+
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ImportCuesheetChanged;
-        public event EventHandler<TraceablePropertiesChangedEventArgs>? TraceablePropertyChanged;
 
-        private readonly ITraceChangeManager _traceChangeManager;
-        private Cuesheet cuesheet;
-        private Cuesheet? importCuesheet;
-        private Audiofile? importAudiofile;
-
-        public SessionStateContainer(ITraceChangeManager traceChangeManager)
+        public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider)
         {
-            _traceChangeManager = traceChangeManager;
-            cuesheet = new Cuesheet();
-            SetCuesheetReference(cuesheet);
-            _traceChangeManager.TraceChanges(this);
+            _localStorageOptionsProvider = localStorageOptionsProvider;
+            _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         public Cuesheet Cuesheet 
         {
-            get { return cuesheet; }
-            set { SetCuesheetReference(value); }
-        }
-        public Cuesheet? ImportCuesheet
-        {
-            get { return importCuesheet; }
+            get => _cuesheet;
             set
             {
-                var previousValue = importCuesheet;
-                importCuesheet = value;
-                //When there is an audiofile from import, we use this file because it has an object url and gets duration, etc.
-                if (importCuesheet != null && ImportAudiofile != null)
-                {
-                    importCuesheet.Audiofile = ImportAudiofile;
-                }
-                if (Equals(previousValue, importCuesheet) == false)
-                {
-                    ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
-                }
+                _cuesheet = value;
+                CuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
-        public Audiofile? ImportAudiofile
+        public Cuesheet? ImportCuesheet 
         {
-            get => importAudiofile;
+            get => _importCuesheet;
             set
             {
-                importAudiofile = value;
-                if (ImportCuesheet != null && ImportAudiofile != null)
-                {
-                    ImportCuesheet.Audiofile = ImportAudiofile;
-                    ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
-                }
+                _importCuesheet = value;
+                ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-
+        public Audiofile? ImportAudiofile { get; set; }
         public IImportfile? Importfile{ get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;
+
+        /// <inheritdoc/>
+        public async Task InitializeAsync()
+        {
+            _viewOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        }
 
         public void ResetImport()
         {
@@ -86,13 +80,38 @@ namespace AudioCuesheetEditor.Services.UI
             ImportCuesheet = null;
         }
 
-        private void SetCuesheetReference(Cuesheet value)
+        /// <inheritdoc/>
+        public Cuesheet? GetActiveCuesheet()
         {
-            var previousValue = Cuesheet;
-            cuesheet = value;
-            _traceChangeManager.TraceChanges(Cuesheet);
-            TraceablePropertyChanged?.Invoke(this, new TraceablePropertiesChangedEventArgs(new TraceableChange(previousValue, nameof(Cuesheet))));
-            CuesheetChanged?.Invoke(this, EventArgs.Empty);
+            if (_viewOptions == null)
+            {
+                throw new InvalidOperationException("Not initialized!");
+            }
+            if (_viewOptions.ActiveTab == ViewMode.ImportView)
+            {
+                return ImportCuesheet;
+            }
+            return Cuesheet;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+                }
+                disposedValue = true;
+            }
+        }
+
+        private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+        {
+            if (options is ViewOptions viewOptions)
+            {
+                _viewOptions = viewOptions;
+            }
         }
     }
 }

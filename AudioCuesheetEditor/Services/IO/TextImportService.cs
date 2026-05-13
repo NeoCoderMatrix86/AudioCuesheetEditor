@@ -199,9 +199,9 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 property.SetValue(entity, TimeSpanUtility.ParseTimeSpan(value, timeSpanFormat));
             }
-            if (property.PropertyType == typeof(uint?))
+            if (property.PropertyType == typeof(ushort?))
             {
-                property.SetValue(entity, Convert.ToUInt32(value));
+                property.SetValue(entity, Convert.ToUInt16(value));
             }
             if (property.PropertyType == typeof(String))
             {
@@ -255,7 +255,7 @@ namespace AudioCuesheetEditor.Services.IO
                             nextFieldIdx = pos;
                         }
                     }
-                    string separator = scheme.Substring(idx, nextFieldIdx - idx);
+                    string separator = scheme[idx..nextFieldIdx];
                     parts.Add(separator);
                     idx = nextFieldIdx;
                 }
@@ -324,7 +324,7 @@ namespace AudioCuesheetEditor.Services.IO
                             nextFieldIdx = pos;
                         }
                     }
-                    string separator = scheme.Substring(idx, nextFieldIdx - idx);
+                    string separator = scheme[idx..nextFieldIdx];
                     parts.Add(separator);
                     idx = nextFieldIdx;
                 }

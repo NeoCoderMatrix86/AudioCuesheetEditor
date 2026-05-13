@@ -18,6 +18,8 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using System.Diagnostics;
 
@@ -31,7 +33,7 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ILogger<ImportManager> logger)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ILogger<ImportManager> logger)
     {
         public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -40,6 +42,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
+        private readonly ITrackManager _trackManager = trackManager;
 
         public void ImportData(String? data)
         {
@@ -67,7 +70,10 @@ namespace AudioCuesheetEditor.Services.IO
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
                     case ImportFileType.ProjectFile:
-                        _sessionStateContainer.Cuesheet = Projectfile.ImportFile(fileContent)!;
+                        var importedCuesheet = Projectfile.ImportFile(fileContent);
+                        var previousValue = _sessionStateContainer.Cuesheet;
+                        _sessionStateContainer.Cuesheet = importedCuesheet!;
+                        _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
                         break;
                     case ImportFileType.Textfile:
                         _sessionStateContainer.Importfile = await _textImportService.AnalyseAsync(fileContent);
@@ -81,24 +87,18 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
+                    case ImportFileType.Cuesheet:
                     case ImportFileType.Textfile:
                         var importCuesheet = new Cuesheet();
                         CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
-                        StartTracing();
-                        break;
-                    case ImportFileType.Cuesheet:
-                        _traceChangeManager.BulkEdit = true;
-                        _sessionStateContainer.Cuesheet = new();
-                        CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
-                        _traceChangeManager.BulkEdit = false;
                         break;
                 }
             }
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("ImportTextAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
+                _logger.LogDebug("AnalyseImportfile duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
             }
         }
         
@@ -108,9 +108,11 @@ namespace AudioCuesheetEditor.Services.IO
             ResetTracing();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                _traceChangeManager.BulkEdit = true;
-                CopyCuesheet(_sessionStateContainer.Cuesheet, _sessionStateContainer.ImportCuesheet);
-                _traceChangeManager.BulkEdit = false;
+                var newCuesheet = _sessionStateContainer.ImportCuesheet;
+                CopyCuesheet(newCuesheet, _sessionStateContainer.ImportCuesheet);
+                var previousValue = _sessionStateContainer.Cuesheet;
+                _sessionStateContainer.Cuesheet = newCuesheet;
+                _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();
@@ -177,9 +179,8 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private static void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
+        private void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
         {
-            target.IsImporting = true;
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
             target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
@@ -205,48 +206,73 @@ namespace AudioCuesheetEditor.Services.IO
             }
             if (tracks != null)
             {
-                var begin = TimeSpan.Zero;
-                for (int i = 0; i < tracks.Count(); i++)
+                IOrderedEnumerable<ITrack> sortedTracks;
+                if (tracks.All(x => x.Position.HasValue))
                 {
-                    var importTrack = tracks.ElementAt(i);
-                    //We don't want to copy the cuesheet reference since we are doing a copy and want to assign the track to this object
-                    var track = new Track(importTrack, false);
-                    if (importTrack is ImportTrack importTrackReference)
-                    {
-                        if (importTrackReference.StartDateTime != null)
-                        {
-                            if (i < tracks.Count() - 1)
-                            {
-                                var nextTrack = (ImportTrack)tracks.ElementAt(i + 1);
-                                var length = nextTrack.StartDateTime - importTrackReference.StartDateTime;
-                                track.Begin = begin;
-                                track.End = begin + length;
-                                if (track.End.HasValue)
-                                {
-                                    begin = track.End.Value;
-                                }
-                            }
-                        }
-                    }
-                    target.AddTrack(track);
+                    sortedTracks = tracks.OrderBy(x => x.Position);
                 }
+                else
+                {
+                    sortedTracks = tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position);
+                }
+                if (sortedTracks.All(x => x.Begin.HasValue))
+                {
+                    sortedTracks = sortedTracks.ThenBy(x => x.Begin);
+                }
+                else
+                {
+                    sortedTracks = sortedTracks.ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin);
+                }
+                if (sortedTracks.All(x => x.End.HasValue))
+                {
+                    sortedTracks = sortedTracks.ThenBy(x => x.End);
+                }
+                else
+                {
+                    sortedTracks = sortedTracks.ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End);
+                }
+                List<Track> targetTracks = [];
+                TimeSpan? begin = TimeSpan.Zero;
+                ushort position = 1;
+                foreach (var (importTrack, index) in sortedTracks.Select((track, i) => (track, i)))
+                {
+                    ITrack? nextTrack = null;
+                    if (index < sortedTracks.Count() - 1)
+                    {
+                        nextTrack = sortedTracks.ElementAt(index + 1);
+                    }
+                    // Copy track
+                    var track = _trackManager.Clone(importTrack);
+                    track.Cuesheet = target;
+                    // Special treatment for StartDateTime of ImportTrack
+                    if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null && nextTrack is ImportTrack nextImportTrackReference)
+                    {
+                        var length = nextImportTrackReference.StartDateTime - importTrackReference.StartDateTime;
+                        track.Begin = begin;
+                        track.End = begin + length;
+                    }
+                    // Calculate properties
+                    if (track.Position.HasValue == false)
+                    {
+                        track.Position = position;
+                    }
+                    if (track.Begin.HasValue == false)
+                    {
+                        track.Begin = begin;
+                    }
+                    if ((track.End.HasValue == false) && (nextTrack?.Begin.HasValue == true))
+                    {
+                        track.End = nextTrack.Begin;
+                    }
+                    begin = track.End;
+                    position++;
+                    targetTracks.Add(track);
+                }
+                target.Tracks = targetTracks;
             }
             else
             {
                 throw new NullReferenceException();
-            }
-            target.IsImporting = false;
-        }
-
-        private void StartTracing()
-        {
-            if (_sessionStateContainer.ImportCuesheet != null)
-            {
-                _traceChangeManager.TraceChanges(_sessionStateContainer.ImportCuesheet);
-                foreach (var track in _sessionStateContainer.ImportCuesheet.Tracks)
-                {
-                    _traceChangeManager.TraceChanges(track);
-                }
             }
         }
 

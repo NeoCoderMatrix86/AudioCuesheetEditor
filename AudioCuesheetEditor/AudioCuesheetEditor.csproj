@@ -6,8 +6,8 @@
 	<Nullable>enable</Nullable>
 	<ImplicitUsings>enable</ImplicitUsings>
 	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
-	<RazorLangVersion>3.0</RazorLangVersion>
-	<Version>12.0.0</Version>
+	<RazorLangVersion>Latest</RazorLangVersion>
+	<Version>12.1.0</Version>
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	<PublishTrimmed>true</PublishTrimmed>
 	<RunAOTCompilation>true</RunAOTCompilation>
@@ -22,15 +22,15 @@
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="9.0.892" />
     <PackageReference Include="MetaBrainz.MusicBrainz" Version="8.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.5" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.7" PrivateAssets="all" />
     <PackageReference Include="BlazorDownloadFile" Version="2.4.0.2" />
     <PackageReference Include="Howler.Blazor" Version="0.10.0" />
-    <PackageReference Include="Markdig" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.5" />
-    <PackageReference Include="MudBlazor" Version="9.2.0" />
-    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.2.0" />
+    <PackageReference Include="Markdig" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.7" />
+    <PackageReference Include="MudBlazor" Version="9.4.0" />
+    <PackageReference Include="Toolbelt.Blazor.HotKeys2" Version="6.2.1" />
   </ItemGroup>
   
   <ItemGroup>

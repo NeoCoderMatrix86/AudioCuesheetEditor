@@ -23,7 +23,15 @@ namespace AudioCuesheetEditor.Services
         /// <summary>
         /// Validation failed with error
         /// </summary>
-        ValidationFailed
+        ValidationFailed,
+        /// <summary>
+        /// Resource already exists
+        /// </summary>
+        AlreadyDone,
+        /// <summary>
+        /// Current action is not possible
+        /// </summary>
+        NotPossible
     }
 
     /// <summary>

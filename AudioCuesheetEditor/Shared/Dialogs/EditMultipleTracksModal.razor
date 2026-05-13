@@ -41,19 +41,6 @@ along with Foobar.  If not, see
                 <MudItem xs="8" sm="9"><MudSwitch @bind-Value="EditedTrack.IsLinkedToPreviousTrack" Label="@_localizer["Link to previous track"]" Color="Color.Primary" Disabled="editModeTrackIsLinkedToPreviousTrack == DynamicEditValue.DoNotChange" /></MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">
-                    <MudSelect @bind-Value="editModeTrackPosition" Variant="Variant.Outlined" Modal="true">
-                        <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueAdd"><MudIcon Icon="@Icons.Material.Filled.Add" Style="height: 14px;" /></MudSelectItem>
-                        <MudSelectItem Value="DynamicEditValue.EnteredValueSubstract"><MudIcon Icon="@Icons.Material.Filled.Remove" Style="height: 14px;" /></MudSelectItem>
-                    </MudSelect>
-                </MudItem>
-                <MudItem xs="8" sm="9">
-                    <MudTextField @bind-Value="EditedTrack.Position" Label="@_localizer["Position"]" Variant="Variant.Outlined" Disabled="editModeTrackPosition == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackPosition != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Position)))"
-                                  ErrorText="@GetValidationErrorMessage(editModeTrackPosition != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Position))" />
-                </MudItem>
-                <MudFlexBreak />
-                <MudItem xs="4" sm="3">
                     <MudSelect @bind-Value="editModeTrackArtist" Variant="Variant.Outlined" Modal="true">
                         <MudSelectItem Value="DynamicEditValue.DoNotChange"><MudIcon Icon="@Icons.Material.Filled.DoDisturb" Style="height: 14px;" /></MudSelectItem>
                         <MudSelectItem Value="DynamicEditValue.EnteredValueEquals"><MudIcon Icon="@Icons.Material.Filled.Check" Style="height: 14px;" /></MudSelectItem>
@@ -212,11 +199,11 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Track EditedTrack { get; set; } = null!;
 
-    DynamicEditValue editModeTrackIsLinkedToPreviousTrack, editModeTrackPosition, editModeTrackArtist, editModeTrackTitle, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackFlags, editModeTrackPregap, editModeTrackPostgap;
+    DynamicEditValue editModeTrackIsLinkedToPreviousTrack, editModeTrackArtist, editModeTrackTitle, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, editModeTrackFlags, editModeTrackPregap, editModeTrackPostgap;
 
     void SaveClick()
     {
-        var result = new EditMultipleTracksModalResult(EditedTrack, editModeTrackIsLinkedToPreviousTrack, editModeTrackPosition, editModeTrackArtist, editModeTrackTitle, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, 
+        var result = new EditMultipleTracksModalResult(EditedTrack, editModeTrackIsLinkedToPreviousTrack, editModeTrackArtist, editModeTrackTitle, editModeTrackBegin, editModeTrackEnd, editModeTrackLength, 
                      editModeTrackFlags, editModeTrackPregap, editModeTrackPostgap);
         MudDialog?.Close(DialogResult.Ok(result));
     }

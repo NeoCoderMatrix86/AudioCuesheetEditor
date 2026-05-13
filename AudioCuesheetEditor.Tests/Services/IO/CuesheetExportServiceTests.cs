@@ -63,14 +63,16 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test Artist",
                 Title = "Test Title",
-                Audiofile = new Audiofile("Audio.mp3")
+                Audiofile = new Audiofile("Audio.mp3"),
+                Tracks = [
+                    new()
+                    {
+                        Position = 1,
+                        Begin = TimeSpan.Zero,
+                        End = new TimeSpan(0, 3, 43)
+                    }
+                ]
             };
-            cuesheet.AddTrack(new Track()
-            {
-                Position = 1,
-                Begin = TimeSpan.Zero,
-                End = new TimeSpan(0, 3, 43)
-            });
             _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -85,27 +87,31 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var filename = "Test valid Filename.cue";
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3")
-            };
-            cuesheet.AddTrack(new Track()
+            var track1 = new Track()
             {
                 Artist = "Test artist 1",
                 Title = "Test title 1",
                 Begin = TimeSpan.Zero,
                 End = new TimeSpan(0, 4, 12),
                 Position = 1
-            });
-            cuesheet.AddTrack(new Track()
+            };
+            var track2 = new Track()
             {
                 Artist = "Test artist 2",
                 Title = "Test title 2",
+                Begin = track1.End,
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
-            });
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new Audiofile("Test audiofile.mp3"),
+                Tracks = [track1, track2]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
             _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -138,19 +144,19 @@ FILE ""Test audiofile.mp3"" MP3
             {
                 Artist = "Test Artist",
                 Title = "Test Title",
-                Audiofile = new Audiofile("Audio.mp3")
+                Audiofile = new Audiofile("Audio.mp3"),
+                Tracks = [
+                    new()
+                    {
+                        Position = 1,
+                        Begin = TimeSpan.Zero,
+                    },
+                    new()
+                    {
+                        Position = 2,
+                    }
+                ]
             };
-            var track1 = new Track()
-            {
-                Position = 1,
-                Begin = TimeSpan.Zero,
-            };
-            var track2 = new Track()
-            {
-                Position = 2,
-            };
-            cuesheet.AddTrack(track1);
-            cuesheet.AddTrack(track2);
             _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act

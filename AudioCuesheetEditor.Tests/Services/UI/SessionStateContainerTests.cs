@@ -13,25 +13,28 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
+using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
+using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.UI
 {
     [TestClass]
     public class SessionStateContainerTests
     {
-        private readonly Mock<ITraceChangeManager> traceChangeManagerMock;
-        private readonly SessionStateContainer sessionStateContainer;
+        private readonly SessionStateContainer _sessionStateContainer;
+        private readonly Mock<ILocalStorageOptionsProvider> _localStorageOptionsProvider;
 
         public SessionStateContainerTests()
         {
-            traceChangeManagerMock = new Mock<ITraceChangeManager>();
-            sessionStateContainer = new SessionStateContainer(traceChangeManagerMock.Object);
+            _localStorageOptionsProvider = new();
+            _sessionStateContainer = new(_localStorageOptionsProvider.Object);
         }
 
         [TestMethod]
@@ -40,17 +43,13 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             // Arrange
             var newCuesheet = new Cuesheet();
             bool eventTriggered = false;
-            bool traceablePropertyChangedFired = false;
-            sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
-            sessionStateContainer.TraceablePropertyChanged += (sender, args) => traceablePropertyChangedFired = true;
+            _sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
 
             // Act
-            sessionStateContainer.Cuesheet = newCuesheet;
+            _sessionStateContainer.Cuesheet = newCuesheet;
 
             // Assert
             Assert.IsTrue(eventTriggered);
-            Assert.IsTrue(traceablePropertyChangedFired);
-            traceChangeManagerMock.Verify(m => m.TraceChanges(newCuesheet), Times.Once);
         }
 
         [TestMethod]
@@ -59,30 +58,12 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             // Arrange
             var newImportCuesheet = new Cuesheet();
             bool eventTriggered = false;
-            sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
+            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
 
             // Act
-            sessionStateContainer.ImportCuesheet = newImportCuesheet;
+            _sessionStateContainer.ImportCuesheet = newImportCuesheet;
 
             // Assert
-            Assert.IsTrue(eventTriggered);
-        }
-
-        [TestMethod]
-        public void ImportAudiofile_SetNewValue_ShouldUpdateImportCuesheetAndTriggerEvent()
-        {
-            // Arrange
-            var importCuesheet = new Cuesheet();
-            var audioFile = new Audiofile("Test audio file.mp3");
-            sessionStateContainer.ImportCuesheet = importCuesheet;
-            bool eventTriggered = false;
-            sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
-
-            // Act
-            sessionStateContainer.ImportAudiofile = audioFile;
-
-            // Assert
-            Assert.AreEqual(audioFile, importCuesheet.Audiofile);
             Assert.IsTrue(eventTriggered);
         }
 
@@ -90,16 +71,80 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         public void ResetImport_ShouldClearImportProperties()
         {
             // Arrange
-            sessionStateContainer.Importfile = Mock.Of<IImportfile>();
-            sessionStateContainer.ImportCuesheet = new Cuesheet();
+            _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
+            _sessionStateContainer.ImportCuesheet = new Cuesheet();
 
             // Act
-            sessionStateContainer.ResetImport();
+            _sessionStateContainer.ResetImport();
 
             // Assert
-            Assert.IsNull(sessionStateContainer.Importfile);
-            Assert.IsNull(sessionStateContainer.ImportAudiofile);
-            Assert.IsNull(sessionStateContainer.ImportCuesheet);
+            Assert.IsNull(_sessionStateContainer.Importfile);
+            Assert.IsNull(_sessionStateContainer.ImportAudiofile);
+            Assert.IsNull(_sessionStateContainer.ImportCuesheet);
+        }
+
+        [TestMethod]
+        public async Task InitializeAsync_NotInitialized_ShouldInitializeAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            // Act
+            await _sessionStateContainer.InitializeAsync();
+            // Assert
+            _localStorageOptionsProvider.Verify(x => x.GetOptionsAsync<ViewOptions>(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task InitializeAsync_Initialized_ShouldNoptInitializeAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            // Act
+            await _sessionStateContainer.InitializeAsync();
+            // Assert
+            _localStorageOptionsProvider.Verify(x => x.GetOptionsAsync<ViewOptions>(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetActiveCuesheet_Initialized_ReturnsDetailViewCuesheeetAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            // Act
+            var result = _sessionStateContainer.GetActiveCuesheet();
+            // Assert
+            Assert.AreEqual(_sessionStateContainer.Cuesheet, result);
+        }
+
+        [TestMethod]
+        public async Task GetActiveCuesheet_InitializedWithImportView_ReturnsDetailViewCuesheeetAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.ImportView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            // Act
+            var result = _sessionStateContainer.GetActiveCuesheet();
+            // Assert
+            Assert.AreEqual(_sessionStateContainer.ImportCuesheet, result);
+        }
+
+        [TestMethod]
+        public void GetActiveCuesheet_NotInitialized_ThrowsException()
+        {
+            // Arrange
+            // Act
+            var exception = Assert.Throws<InvalidOperationException>(() => _sessionStateContainer.GetActiveCuesheet());
+            // Assert
+            Assert.AreEqual("Not initialized!", exception.Message);
         }
     }
 }

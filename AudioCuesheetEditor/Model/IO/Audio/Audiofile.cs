@@ -101,19 +101,5 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                 return audioFileType;
             }
         }
-
-        [JsonIgnore]
-        public Boolean PlaybackPossible
-        {
-            get
-            {
-                Boolean playbackPossible = false;
-                if ((String.IsNullOrEmpty(Name) == false) && (String.IsNullOrEmpty(ObjectURL) == false) && (String.IsNullOrEmpty(AudioFileType) == false) && (AudioCodec != null))
-                {
-                    playbackPossible = true;
-                }
-                return playbackPossible;
-            }
-        }
     }
 }

@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var mockLocalizer = new Mock<IStringLocalizer<ValidationMessage>>();
             _exportfileGenerator = new ExportfileGenerator(_mockSessionStateContainer.Object, mockLocalizer.Object);
         }
-
+        
         [TestMethod]
         public void GenerateExportFile_ShouldGenerateExportfile_WithoutSections()
         {
@@ -50,27 +50,31 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
                 Filename = "TestExport.txt"
             };
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3")
-            };
-            cuesheet.AddTrack(new Track()
+            var track1 = new Track()
             {
                 Artist = "Test artist 1",
                 Title = "Test title 1",
                 Begin = TimeSpan.Zero,
                 End = new TimeSpan(0, 4, 12),
                 Position = 1
-            });
-            cuesheet.AddTrack(new Track()
+            };
+            var track2 = new Track()
             {
                 Artist = "Test artist 2",
                 Title = "Test title 2",
+                Begin = track1.End,
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
-            });
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new Audiofile("Test audiofile.mp3"),
+                Tracks = [track1, track2]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
             _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -92,27 +96,31 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         {
             // Arrange
             var exportProfile = new Exportprofile();
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3")
-            };
-            cuesheet.AddTrack(new Track()
+            var track1 = new Track()
             {
                 Artist = "Test artist 1",
                 Title = "Test title 1",
                 Begin = TimeSpan.Zero,
                 End = new TimeSpan(0, 4, 12),
                 Position = 1
-            });
-            cuesheet.AddTrack(new Track()
+            };
+            var track2 = new Track()
             {
                 Artist = "Test artist 2",
                 Title = "Test title 2",
+                Begin = track1.End,
                 End = new TimeSpan(0, 8, 32),
                 Position = 2
-            });
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new Audiofile("Test audiofile.mp3"),
+                Tracks = [track1, track2]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
             _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -135,25 +143,28 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
                 Filename = "TestExport.txt"
             };
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3")
-            };
-            cuesheet.AddTrack(new Track()
+            var track1 = new Track()
             {
                 Artist = "Test artist 1",
                 Title = "Test title 1",
                 Begin = TimeSpan.Zero,
                 Position = 1
-            });
-            cuesheet.AddTrack(new Track()
+            };
+            var track2 = new Track()
             {
                 Artist = "Test artist 2",
                 Title = "Test title 2",
                 Position = 2
-            });
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Artist = "Test artist cuesheet",
+                Title = "Test title cuesheet",
+                Audiofile = new Audiofile("Test audiofile.mp3"),
+                Tracks = [track1, track2]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
             _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act

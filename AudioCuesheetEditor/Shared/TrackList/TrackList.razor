@@ -26,6 +26,9 @@ along with Foobar.  If not, see
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
+@inject ITrackManager _trackManager
+@inject ICuesheetManager _cuesheetManager
+@inject ITraceChangeManager _traceChangeManager
 
 @switch (CurrentViewMode)
 {
@@ -43,34 +46,29 @@ along with Foobar.  If not, see
             </MudAlert>
         }
         <div aria-label="@_localizer["Track table controls"]">
-            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="selectedTracks.Count == 0"
-                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="selectedTracks.Count == 0"
+            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
+                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                     MoveTracksUpDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Up) == true)" MoveTracksUpClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Up)"
-                                     MoveTracksDownDisabled="!(Cuesheet?.MoveTracksPossible(selectedTracks, MoveDirection.Down) == true)" MoveTracksDownClicked="() => Cuesheet?.MoveTracks(selectedTracks, MoveDirection.Down)"
-                                     CopySelectedTracksDisabled="selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !applicationOptions?.FixedTracksTableHeader)" />
+                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUp(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDown(_selectedTracks)"
+                                     CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                                     FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
         </div>
         break;
 }
 
-<MudForm @ref="form">
-    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
-                 FixedHeader="applicationOptions?.FixedTracksTableHeader == true" Validator="form" Virtualize>
+<MudForm @ref="_form">
+    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
+                 FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" Validator="_form" Virtualize SortMode="SortMode.None">
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => Cuesheet?.RemoveTrack(context.Item)" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks([context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
-            <PropertyColumn Property="x => x.Position" Title="#" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
-                <EditTemplate>
-                    <MudNumericField Validation="(uint? newPosition) => _validationService.Validate(context.Item, nameof(Track.Position))" Value="context.Item.Position"
-                                     ValueChanged="(uint? newPosition) => PositionChanged(context.Item, newPosition)" />
-                </EditTemplate>
-            </PropertyColumn>
+            <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
             <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
                 <EditTemplate>
                     <ArtistColumn Track="context.Item" />
@@ -113,7 +111,7 @@ along with Foobar.  If not, see
                     @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
                     {
                         <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">
-                            <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => context.Item.IsLinkedToPreviousTrack = !context.Item.IsLinkedToPreviousTrack" />
+                            <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => _trackManager.SetProperty(context.Item, x => x.IsLinkedToPreviousTrack, !context.Item.IsLinkedToPreviousTrack)" />
                         </MudTooltip>
                     }
                 </EditTemplate>
@@ -122,20 +120,20 @@ along with Foobar.  If not, see
     </MudDataGrid>
 </MudForm>
 
-<MudMenu PositionAtCursor @ref="trackContextMenu">
-    @if (contextMenuTrack != null)
+<MudMenu PositionAtCursor @ref="_trackContextMenu">
+    @if (_contextMenuTrack != null)
     {
-        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.PlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
-        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.IsPlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(_contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(_contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
     }
 </MudMenu>
 
 @code {
-    HashSet<Track> selectedTracks = new();
-    MudMenu? trackContextMenu;
-    Track? contextMenuTrack;
-    ApplicationOptions? applicationOptions;
-    MudForm? form;
+    HashSet<Track> _selectedTracks = new();
+    MudMenu? _trackContextMenu;
+    Track? _contextMenuTrack;
+    ApplicationOptions? _applicationOptions;
+    MudForm? _form;
 
     public Cuesheet? Cuesheet
     {
@@ -156,38 +154,37 @@ along with Foobar.  If not, see
     {
         base.Dispose(disposing);
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     void AddTrackClicked()
     {
         var newTrack = new Track()
         {
-            IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+            IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
-        Cuesheet?.AddTrack(newTrack);
-        TraceChangeManager.TraceChanges(newTrack);
+        _cuesheetManager.AddTrack(newTrack);
     }
 
     async Task EditSelectedTracksClicked()
     {
-        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(selectedTracks);
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(_selectedTracks);
     }
 
     void DeleteSelectedTracksClicked()
     {
-        Cuesheet?.RemoveTracks(selectedTracks.ToList());
-        selectedTracks.Clear();
+        _cuesheetManager.RemoveTracks(_selectedTracks);
+        _selectedTracks.Clear();
     }
 
     async Task OnDeleteAllTracksClicked()
@@ -200,8 +197,8 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            Cuesheet?.RemoveTracks(Cuesheet.Tracks);
-            selectedTracks.Clear();
+            _cuesheetManager.RemoveTracks(Cuesheet!.Tracks);
+            _selectedTracks.Clear();
         }
     }
 
@@ -229,13 +226,15 @@ along with Foobar.  If not, see
         var trackThatWillBeCopied = trackToCopy;
         if (trackThatWillBeCopied == null)
         {
-            trackThatWillBeCopied = selectedTracks.FirstOrDefault();
+            trackThatWillBeCopied = _selectedTracks.FirstOrDefault();
         }
         if (trackThatWillBeCopied != null)
         {
-            var copy = new Track(trackThatWillBeCopied);
-            Cuesheet?.AddTrack(copy);
-            TraceChangeManager.TraceChanges(copy);
+            var copy = _trackManager.Clone(trackThatWillBeCopied);
+            copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
+            copy.Begin = trackThatWillBeCopied.End;
+            copy.End = null;
+            _cuesheetManager.AddTrack(copy);
             await EditTrackModalClicked(copy);
         }
     }
@@ -247,10 +246,10 @@ along with Foobar.  If not, see
 
     async Task OpenMenuContent(DataGridRowClickEventArgs<Track> args)
     {
-        contextMenuTrack = args.Item;
-        if (trackContextMenu != null)
+        _contextMenuTrack = args.Item;
+        if (_trackContextMenu != null)
         {
-            await trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
+            await _trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
         }
     }
 
@@ -282,35 +281,39 @@ along with Foobar.  If not, see
     {
         if (option is ApplicationOptions applicationOption)
         {
-            applicationOptions = applicationOption;
+            _applicationOptions = applicationOption;
             StateHasChanged();
         }
     }
 
-    async Task PositionChanged(Track track, uint? newPosition)
+    async Task PositionChanged(Track track, ushort? newPosition)
     {
         track.Position = newPosition;
-        if (form != null)
+        if (_form != null)
         {
-            await form.ValidateAsync();
+            await _form.ValidateAsync();
         }
     }
 
-    async Task TimespanChanged<TProperty>(Track track, System.Linq.Expressions.Expression<Func<Track, TProperty>> expression, String value)
+    async Task TimespanChanged(Track track, System.Linq.Expressions.Expression<Func<Track, TimeSpan?>> expression, String value)
     {
-        await _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TProperty>(track, expression, value);
-        if (form != null)
+        var timeSpan = await _applicationOptionsTimeSpanParser.GetTimespanAsync(value);
+        _traceChangeManager.BulkEdit = true;
+        _trackManager.SetProperty<TimeSpan?>(track, expression, timeSpan);
+        _trackManager.RecalculateLinkedTracksProperties(track);
+        _traceChangeManager.BulkEdit = false;
+        if (_form != null)
         {
-            await form.ValidateAsync();
+            await _form.ValidateAsync();
         }
     }
 
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
+    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
 
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
+    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
     }
