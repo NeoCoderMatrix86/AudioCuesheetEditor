@@ -39,7 +39,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await viewModes.SwitchView("Detail view");
             await detailView.SelectTracksAsync([1]);
             await detailView.EditSelectedTracksModalAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Checkbox, new() { Name = "Link to previous track" })).ToBeCheckedAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Switch, new() { Name = "Link to previous track" })).ToBeCheckedAsync();
         }
     }
 }
