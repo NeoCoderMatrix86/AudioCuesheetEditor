@@ -21,32 +21,29 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
 
-@if (Cuesheet?.IsRecording == false)
+@if (Cuesheet.IsRecording == false)
 {
-    var recordingPossibleMessages = Cuesheet?.IsRecordingPossible;
-    if (recordingPossibleMessages?.Any() == true)
+    if (String.IsNullOrEmpty(_errorMessage) == false)
     {
         <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
             <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
-            @foreach (var recordingPossibleMessage in recordingPossibleMessages)
-            {
-                <MudText>@_localizer[recordingPossibleMessage]</MudText>
-            }
+            <MudText>@_localizer[_errorMessage]</MudText>
         </MudAlert>
     }
 }
 <MudCard Outlined>
     <MudCardContent>
-        @if (Cuesheet?.IsRecording == true)
+        @if (Cuesheet.IsRecording == true)
         {
             <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
             <br />
         }
-        @if (startRecordTimer?.Enabled == true)
+        @if (_startRecordTimer?.Enabled == true)
         {
-            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => startRecordTimer.Dispose()">
-                @_localizer["Record will start in {0} seconds!", ((startRecordTimer.Interval / 1000) - (DateTime.Now - recordTimerStarted).Seconds)]
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => _startRecordTimer.Dispose()">
+                @_localizer["Record will start in {0} seconds!", ((_startRecordTimer.Interval / 1000) - (DateTime.Now - _recordTimerStarted).Seconds)]
             </MudAlert>
             <br />
         }
@@ -62,7 +59,7 @@ along with Foobar.  If not, see
                     <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
                 </MudMenu>
             </MudButtonGroup>
-            @if (Cuesheet?.RecordingStart.HasValue == true)
+            @if ((Cuesheet.IsRecording) && (Cuesheet.RecordingStart.HasValue))
             {
                 var recordingTime = DateTime.UtcNow - Cuesheet.RecordingStart;
                 recordingTime = recordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, recordingTime.Value.Milliseconds));
@@ -73,66 +70,68 @@ along with Foobar.  If not, see
                 <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
             }
             <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]">@_localizer["Stop recording"]</MudButton>
+                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]">@_localizer["Stop recording"]</MudButton>
             </MudHidden>
             <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet?.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]" />
+                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]" />
             </MudHidden>
         </MudStack>
     </MudCardContent>
 </MudCard>
 
 @code {
-    Timer updateGUITimer = new(500);
-    Timer? startRecordTimer;
-    DateTime recordTimerStarted;
+    Timer _updateGUITimer = new(500);
+    Timer? _startRecordTimer;
+    DateTime _recordTimerStarted;
+    string? _errorMessage = null;
 
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            if (CurrentViewMode == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
-        }
-    }
+    public Cuesheet Cuesheet => _sessionStateContainer.Cuesheet;
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    public Boolean StartRecordingDisabled => startRecordTimer?.Enabled == true || Cuesheet?.IsRecordingPossible.Any() == true;
+    public Boolean StartRecordingDisabled => _startRecordTimer?.Enabled == true || _cuesheetManager.IsRecordingPossible.IsSuccess == false;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        updateGUITimer.AutoReset = true;
-        updateGUITimer.Elapsed += delegate
+        _updateGUITimer.AutoReset = true;
+        _updateGUITimer.Elapsed += delegate
         {
             StateHasChanged();
             Boolean startRecordTimeEnabled = false;
-            if (startRecordTimer != null)
+            if (_startRecordTimer != null)
             {
-                startRecordTimeEnabled = startRecordTimer.Enabled;
+                startRecordTimeEnabled = _startRecordTimer.Enabled;
             }
-            if ((startRecordTimeEnabled == false) && (Cuesheet?.IsRecording == false))
+            if ((startRecordTimeEnabled == false) && (Cuesheet.IsRecording == false))
             {
-                updateGUITimer.Stop();
+                _updateGUITimer.Stop();
             }
         };
+        var result = _cuesheetManager.IsRecordingPossible;
+        if (result.IsSuccess == false)
+        {
+            _errorMessage = result.Error!.Message;
+        }
     }
 
     void StartRecording()
     {
-        Cuesheet?.StartRecording();
-        updateGUITimer.Start();
-        Cuesheet!.Audiofile = null;
+        var result = _cuesheetManager.StartRecording();
+        if (result.IsSuccess)
+        {
+            _updateGUITimer.Start();
+        }
+        else
+        {
+            _errorMessage = result.Error!.Message;
+        }
     }
 
     void StopRecording() 
     {
-        Cuesheet?.StopRecording();
+        _cuesheetManager.StopRecording();
     }
 
     async Task DisplayStartCountdownDialog()
@@ -143,16 +142,16 @@ along with Foobar.  If not, see
         var recordCountdownTimer = result?.Data as uint?;
         if ((result?.Canceled == false) && (recordCountdownTimer.HasValue))
         {
-            startRecordTimer = new Timer(recordCountdownTimer.Value * 1000);
-            startRecordTimer.Elapsed += delegate
+            _startRecordTimer = new Timer(recordCountdownTimer.Value * 1000);
+            _startRecordTimer.Elapsed += delegate
             {
                 StartRecording();
-                startRecordTimer.Stop();
-                startRecordTimer.Dispose();
+                _startRecordTimer.Stop();
+                _startRecordTimer.Dispose();
             };
-            startRecordTimer.Start();
-            updateGUITimer.Start();
-            recordTimerStarted = DateTime.Now;
+            _startRecordTimer.Start();
+            _updateGUITimer.Start();
+            _recordTimerStarted = DateTime.Now;
         }
     }
 }

@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Audio;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Services.Validation;
@@ -48,7 +49,13 @@ builder.Services.AddBlazorDownloadFile();
 builder.Services.AddScoped<ILocalStorageOptionsProvider, LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
 
-builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
+builder.Services.AddScoped<ISessionStateContainer>(x =>
+{
+    var localStorageOptionsProvider = x.GetRequiredService<ILocalStorageOptionsProvider>();
+    var sessionStateContainer = new SessionStateContainer(localStorageOptionsProvider);
+    _ = sessionStateContainer.InitializeAsync();
+    return sessionStateContainer;
+});
 builder.Services.AddScoped<ITraceChangeManager, TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<ITextImportService, TextImportService>();
@@ -62,6 +69,8 @@ builder.Services.AddScoped<PlaybackService>();
 builder.Services.AddScoped<DialogManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
+builder.Services.AddScoped<ITrackManager, TrackManager>();
+builder.Services.AddScoped<ICuesheetManager, CuesheetManager>();
 
 builder.Services.AddLogging();
 // Read out configuration for loglevel

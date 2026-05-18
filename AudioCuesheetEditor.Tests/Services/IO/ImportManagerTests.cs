@@ -19,19 +19,17 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
-using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
@@ -44,15 +42,96 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         private readonly Mock<ITraceChangeManager> _traceChangeManagerMock;
         private readonly Mock<IFileInputManager> _fileInputManagerMock;
         private readonly Mock<ITextImportService> _textImportServiceMock;
-
+        private readonly Mock<ITrackManager> _trackManagerMock;
         public ImportManagerTests()
         {
             _traceChangeManagerMock = new();
             _sessionStateContainerMock = new();
             _fileInputManagerMock = new();
             _textImportServiceMock = new();
+            _trackManagerMock = new();
+            _trackManagerMock.Setup(x => x.CopyValues(It.IsAny<ITrack>(), It.IsAny<Track>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Callback<ITrack, Track, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool>((source, target, setIsLinkedToPreviousTrack, setPosition, setArtist, setTitle, setBegin, setEnd, setLength, setFlags, setPreGap, setPostGap) =>
+            {
+                if (setIsLinkedToPreviousTrack)
+                {
+                    TrackManager_SetValue(target, x => x.IsLinkedToPreviousTrack, source.IsLinkedToPreviousTrack, false);
+                }
+                if (setPosition)
+                {
+                    TrackManager_SetValue(target, x => x.Position, source.Position, false);
+                }
+                if (setArtist)
+                {
+                    TrackManager_SetValue(target, x => x.Artist, source.Artist, false);
+                }
+                if (setTitle)
+                {
+                    TrackManager_SetValue(target, x => x.Title, source.Title, false);
+                }
+                if (setBegin)
+                {
+                    TrackManager_SetValue(target, x => x.Begin, source.Begin, false);
+                }
+                if (setEnd)
+                {
+                    TrackManager_SetValue(target, x => x.End, source.End, false);
+                }
+                if (setLength)
+                {
+                    TrackManager_SetValue(target, x => x.Length, source.Length, false);
+                }
+                if (setFlags)
+                {
+                    TrackManager_SetValue(target, x => x.Flags, source.Flags, false);
+                }
+                if (setPreGap)
+                {
+                    TrackManager_SetValue(target, x => x.PreGap, source.PreGap, false);
+                }
+                if (setPostGap)
+                {
+                    TrackManager_SetValue(target, x => x.PostGap, source.PostGap, false);
+                }
+            });
+            _trackManagerMock.Setup(x => x.Clone(It.IsAny<ITrack>())).Returns<ITrack>(track =>
+            {
+                var clone = new Track();
+                Boolean setLength = true;
+                if (track.Begin.HasValue && track.End.HasValue)
+                {
+                    setLength = false;
+                }
+                _trackManagerMock.Object.CopyValues(track, clone, setLength: setLength);
+                return clone;
+            });
             var loggerMock = new Mock<ILogger<ImportManager>>();
-            _service = new ImportManager(_sessionStateContainerMock.Object, _traceChangeManagerMock.Object, _fileInputManagerMock.Object, _textImportServiceMock.Object, loggerMock.Object);
+            _service = new ImportManager(_sessionStateContainerMock.Object, _traceChangeManagerMock.Object, _fileInputManagerMock.Object, _textImportServiceMock.Object, _trackManagerMock.Object, loggerMock.Object);
+        }
+
+        void TrackManager_SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value, Boolean signalTraceChangeManager = true)
+        {
+            if (propertyExpression.Body is not MemberExpression memberExpression)
+            {
+                throw new ArgumentException("Expression must be a property");
+            }
+
+            if (memberExpression.Member is not PropertyInfo propertyInfo)
+            {
+                throw new ArgumentException("Member is not a property");
+            }
+
+            var previousValue = (TProperty?)propertyInfo.GetValue(track);
+            if (Equals(previousValue, value))
+            {
+                return;
+            }
+
+            propertyInfo.SetValue(track, value);
+            if (signalTraceChangeManager)
+            {
+                _traceChangeManagerMock.Object.AddChange(new(track, new(previousValue, propertyInfo.Name)));
+            }
         }
 
         [TestMethod()]
@@ -112,8 +191,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainerImportCuesheet.Tracks.First().Position);
             Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainerImportCuesheet.Tracks.First().PreGap);
             Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainerImportCuesheet.Tracks.First().PostGap);
-            _traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Cuesheet>()));
-            _traceChangeManagerMock.Verify(x => x.TraceChanges(It.IsAny<Track>()));
         }
 
         [TestMethod()]
@@ -140,74 +217,66 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         }
 
         [TestMethod()]
-        public async Task AnalyseImportfile_ExistingCuesheet_OverwritesCuesheet()
+        public async Task AnalyseImportfile_ExistingCuesheet_SetsImportfileCuesheet()
         {
             // Arrange
-            var sessionStateContainerCuesheet = new Cuesheet()
+            var fileContent = @"PERFORMER ""Sample CD Artist""
+TITLE ""Sample CD Title""
+FILE ""Sample.mp3"" MP3
+TRACK 01 AUDIO
+	PERFORMER ""Sample Artist 1""
+	TITLE ""Sample Title 1""
+	INDEX 01 00:00:00
+TRACK 02 AUDIO
+	PERFORMER ""Sample Artist 2""
+	TITLE ""Sample Title 2""
+	INDEX 01 05:00:00
+TRACK 03 AUDIO
+	PERFORMER ""Sample Artist 3""
+	TITLE ""Sample Title 3""
+	INDEX 01 09:23:00
+TRACK 04 AUDIO
+	PERFORMER ""Sample Artist 4""
+	TITLE ""Sample Title 4""
+	INDEX 01 15:54:00
+TRACK 05 AUDIO
+	PERFORMER ""Sample Artist 5""
+	TITLE ""Sample Title 5""
+	INDEX 01 20:13:00
+TRACK 06 AUDIO
+	PERFORMER ""Sample Artist 6""
+	TITLE ""Sample Title 6""
+	INDEX 01 24:54:00
+TRACK 07 AUDIO
+	PERFORMER ""Sample Artist 7""
+	TITLE ""Sample Title 7""
+	INDEX 01 31:54:00
+TRACK 08 AUDIO
+	PERFORMER ""Sample Artist 8""
+	TITLE ""Sample Title 8""
+	INDEX 01 45:54:00
+";
+            IImportfile sessionStateContainerImportFile = new Importfile()
             {
-                Artist = "Test Cuesheet Artist",
-                Title = "Test Cuesheet Title",
-                Cataloguenumber = "Test Cuesheet Cataloguenumber"
-            };
-            sessionStateContainerCuesheet.AddTrack(new()
-            {
-                Artist = "Test Track Artist 1",
-                Title = "Test Track Title 1",
-                Begin = new TimeSpan(0, 3, 20),
-                End = new TimeSpan(0, 7, 43),
-                Flags = [Flag.DCP],
-                Position = 1,
-                PreGap = new TimeSpan(0, 0, 2),
-                PostGap = new TimeSpan(0, 0, 4)
-            });
-            var importCuesheet = new ImportCuesheet()
-            {
-                Artist = "Test ImportCuesheet Artist",
-                Title = "Test ImportCuesheet Title",
-                Audiofile = "Test ImportCuesheet Audiofile",
-                Cataloguenumber = "Test ImportCuesheet Cataloguenumber",
-                CDTextfile = "Test ImportCuesheet CDTextfile"
-            };
-            importCuesheet.Tracks.Add(new()
-            {
-                Artist = "Test ImportCuesheet Track Artist 1",
-                Title = "Test ImportCuesheet Track Title 1",
-                Begin = new TimeSpan(0, 0, 10),
-                End = new TimeSpan(0, 5, 23),
-                Flags = [Flag.SCMS],
-                Position = 1,
-                PreGap = new TimeSpan(0, 0, 4),
-                PostGap = new TimeSpan(0, 0, 6)
-            });
-            var sessionStateContainerImportFile = new Importfile()
-            {
-                FileContent = "Some file content!",
-                FileType = ImportFileType.Cuesheet,
-                AnalyzedCuesheet = importCuesheet
+                FileContent = fileContent,
+                FileType = ImportFileType.Cuesheet
             };
 
-            _sessionStateContainerMock.SetupGet(x => x.Cuesheet).Returns(() => sessionStateContainerCuesheet);
-            _sessionStateContainerMock.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
             _sessionStateContainerMock.SetupGet(x => x.Importfile).Returns(() => sessionStateContainerImportFile);
+            _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(importfile => sessionStateContainerImportFile = importfile);
 
             // Act
             await _service.AnalyseImportfile();
             // Assert
-            Assert.AreEqual(importCuesheet.Artist, sessionStateContainerCuesheet.Artist);
-            Assert.AreEqual(importCuesheet.Title, sessionStateContainerCuesheet.Title);
-            Assert.IsNotNull(sessionStateContainerCuesheet.Audiofile);
-            Assert.AreEqual(importCuesheet.Audiofile, sessionStateContainerCuesheet.Audiofile.Name);
-            Assert.IsNotNull(sessionStateContainerCuesheet.CDTextfile);
-            Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainerCuesheet.CDTextfile.Name);
-            Assert.HasCount(importCuesheet.Tracks.Count, sessionStateContainerCuesheet.Tracks);
-            Assert.AreEqual(importCuesheet.Tracks.First().Artist, sessionStateContainerCuesheet.Tracks.First().Artist);
-            Assert.AreEqual(importCuesheet.Tracks.First().Begin, sessionStateContainerCuesheet.Tracks.First().Begin);
-            Assert.AreEqual(importCuesheet.Tracks.First().End, sessionStateContainerCuesheet.Tracks.First().End);
-            CollectionAssert.AreEquivalent(importCuesheet.Tracks.First().Flags.ToList(), sessionStateContainerCuesheet.Tracks.First().Flags.ToList());
-            Assert.AreEqual(importCuesheet.Tracks.First().Position, sessionStateContainerCuesheet.Tracks.First().Position);
-            Assert.AreEqual(importCuesheet.Tracks.First().PostGap, sessionStateContainerCuesheet.Tracks.First().PostGap);
-            Assert.AreEqual(importCuesheet.Tracks.First().PreGap, sessionStateContainerCuesheet.Tracks.First().PreGap);
-            Assert.AreEqual(importCuesheet.Tracks.First().Title, sessionStateContainerCuesheet.Tracks.First().Title);
+            Assert.IsNotNull(sessionStateContainerImportFile.AnalyzedCuesheet);
+            Assert.AreEqual("Sample CD Artist", sessionStateContainerImportFile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("Sample CD Title", sessionStateContainerImportFile.AnalyzedCuesheet.Title);
+            Assert.IsNotNull(sessionStateContainerImportFile.AnalyzedCuesheet.Audiofile);
+            Assert.AreEqual("Sample.mp3", sessionStateContainerImportFile.AnalyzedCuesheet.Audiofile);
+            Assert.HasCount(8, sessionStateContainerImportFile.AnalyzedCuesheet.Tracks);
+            Assert.AreEqual("Sample Artist 1", sessionStateContainerImportFile.AnalyzedCuesheet.Tracks.First().Artist);
+            Assert.AreEqual(TimeSpan.Zero, sessionStateContainerImportFile.AnalyzedCuesheet.Tracks.First().Begin);
+            Assert.AreEqual("Sample Title 1", sessionStateContainerImportFile.AnalyzedCuesheet.Tracks.First().Title);
         }
 
         [TestMethod]
@@ -306,23 +375,26 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         public void ImportCuesheet_WithImportCuesheetAvailable_ImportsCuesheetData()
         {
             // Arrange
-            var sessionStateContainerImportCuesheet = new Cuesheet()
-            {
-                Artist = "Artist 123",
-                Title = "Title 456"
-            };
-            sessionStateContainerImportCuesheet.AddTrack(new()
+            var track1 = new Track()
             {
                 Artist = "Track Artist 1",
                 Title = "Track Title 1",
                 End = new TimeSpan(0, 4, 23),
-            });
-            sessionStateContainerImportCuesheet.AddTrack(new()
+            };
+            var track2 = new Track()
             {
                 Artist = "Track Artist 2",
                 Title = "Track Title 2",
                 End = new TimeSpan(0, 8, 54),
-            });
+            };
+            var sessionStateContainerImportCuesheet = new Cuesheet()
+            {
+                Artist = "Artist 123",
+                Title = "Title 456",
+                Tracks = [track1, track2]
+            };
+            track1.Cuesheet = sessionStateContainerImportCuesheet;
+            track2.Cuesheet = sessionStateContainerImportCuesheet;
             _sessionStateContainerMock.SetupGet(x => x.ImportCuesheet).Returns(sessionStateContainerImportCuesheet);
             Cuesheet sessionStateContainerCuesheet = new();
             _sessionStateContainerMock.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
@@ -341,7 +413,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().Title, sessionStateContainerCuesheet.Tracks.Last().Title);
             Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().Begin, sessionStateContainerCuesheet.Tracks.Last().Begin);
             Assert.AreEqual(sessionStateContainerImportCuesheet.Tracks.Last().End, sessionStateContainerCuesheet.Tracks.Last().End);
-            _traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<ITraceable>>()));
+            _traceChangeManagerMock.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<object>>()));
         }
 
         [TestMethod]

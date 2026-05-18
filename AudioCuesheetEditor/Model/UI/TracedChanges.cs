@@ -13,21 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-
-namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
+namespace AudioCuesheetEditor.Model.UI
 {
-    public class ImportTrack : ITrack
+    public class TracedChanges(IEnumerable<TracedChange> changes)
     {
-        public string? Artist { get; set; }
-        public string? Title { get; set; }
-        public ushort? Position { get; set; }
-        public TimeSpan? Begin { get; set; }
-        public TimeSpan? End { get; set; }
-        public TimeSpan? Length { get; set; }
-        public IEnumerable<Flag> Flags { get; set; } = [];
-        public TimeSpan? PreGap { get; set; }
-        public TimeSpan? PostGap { get; set; }
-        public DateTime? StartDateTime { get; set; }
-        public bool IsLinkedToPreviousTrack { get; set; }
+        public List<TracedChange> Changes { get; } = [.. changes];
+        public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
     }
 }

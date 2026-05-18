@@ -24,11 +24,10 @@ namespace AudioCuesheetEditor.Model.UI
         EnteredValueAdd = 2,
         EnteredValueSubstract = 3
     }
-    public class EditMultipleTracksModalResult(Track editedTrack, DynamicEditValue isLinkedToPreviousTrackChanged, DynamicEditValue positionEditMode, DynamicEditValue artistEditMode, DynamicEditValue titleEditMode, DynamicEditValue beginEditMode, DynamicEditValue endEditMode, DynamicEditValue lengthEditMode, DynamicEditValue flagsEditMode, DynamicEditValue pregapEditMode, DynamicEditValue postgapEditMode)
+    public class EditMultipleTracksModalResult(Track editedTrack, DynamicEditValue isLinkedToPreviousTrackChanged, DynamicEditValue artistEditMode, DynamicEditValue titleEditMode, DynamicEditValue beginEditMode, DynamicEditValue endEditMode, DynamicEditValue lengthEditMode, DynamicEditValue flagsEditMode, DynamicEditValue pregapEditMode, DynamicEditValue postgapEditMode)
     {
         public Track EditedTrack { get; } = editedTrack;
         public DynamicEditValue IsLinkedToPreviousTrackEditMode { get; } = isLinkedToPreviousTrackChanged;
-        public DynamicEditValue PositionEditMode { get; } = positionEditMode;
         public DynamicEditValue ArtistEditMode { get; } = artistEditMode;
         public DynamicEditValue TitleEditMode { get; } = titleEditMode;
         public DynamicEditValue BeginEditMode { get; } = beginEditMode;

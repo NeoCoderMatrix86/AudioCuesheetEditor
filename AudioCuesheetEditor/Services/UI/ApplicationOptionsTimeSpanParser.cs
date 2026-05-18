@@ -54,6 +54,13 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
 
+        public async Task<TimeSpan?> GetTimespanAsync(String value)
+        {
+            await EnsureInitializedAsync();
+            TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+            return result;
+        }
+
         public string? GetTimespanFormatted(TimeSpan? timeSpan)
         {
             string? formatted = null;

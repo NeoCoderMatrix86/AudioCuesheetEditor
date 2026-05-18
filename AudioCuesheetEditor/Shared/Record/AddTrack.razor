@@ -21,6 +21,7 @@ along with Foobar.  If not, see
 @inject AutocompleteManager _autocompleteManager
 @inject ValidationService _validationService
 @inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
 
 <MudCard Outlined>
     <MudCardContent>
@@ -28,12 +29,12 @@ along with Foobar.  If not, see
             @{
                 MusicBrainzArtist? autocompleteArtist = new()
                 {
-                    Name = currentRecordingTrack.Artist
+                    Name = _currentRecordingTrack.Artist
                 };
             }
-            <MudAutocomplete @ref="artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name" 
-                             @bind-Text="@currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Artist))"
+            <MudAutocomplete @ref="_artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name" 
+                             @bind-Text="@_currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist))"
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
@@ -49,13 +50,13 @@ along with Foobar.  If not, see
             @{
                 MusicBrainzTrack? autocompleteTrack = new()
                 {
-                    Artist = currentRecordingTrack.Artist,
-                    Title = currentRecordingTrack.Title
+                    Artist = _currentRecordingTrack.Artist,
+                    Title = _currentRecordingTrack.Title
                 };
             }
-            <MudAutocomplete @ref="titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
-                             @bind-Text="currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText 
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(currentRecordingTrack, nameof(Track.Title))" 
+            <MudAutocomplete @ref="_titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, _currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
+                             @bind-Text="_currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText 
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title))" 
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
@@ -82,39 +83,27 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            if (CurrentViewMode == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
-        }
-    }
+    public Cuesheet Cuesheet => _sessionStateContainer.Cuesheet;
 
-    protected override void OnParametersSet()
+    Track _currentRecordingTrack = new();
+    MudAutocomplete<MusicBrainzArtist>? _artistInput;
+    MudAutocomplete<MusicBrainzTrack>? _titleInput;
+    ApplicationOptions? _applicationOptions;
+
+    protected override void OnInitialized()
     {
-        if (Cuesheet != null)
-        {
-            Cuesheet.IsRecordingChanged -= Cuesheet_IsRecordingChanged;
-        }
-        base.OnParametersSet();
-        if (Cuesheet != null)
-        {
-            Cuesheet.IsRecordingChanged += Cuesheet_IsRecordingChanged;
-        }
+        base.OnInitialized();
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
     }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        currentRecordingTrack = new()
+        _currentRecordingTrack = new()
         {
-            IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+            IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
     }
 
@@ -123,15 +112,10 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         if (Cuesheet != null)
         {
-            Cuesheet.IsRecordingChanged -= Cuesheet_IsRecordingChanged;
+            _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
         }
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
-
-    Track currentRecordingTrack = new();
-    MudAutocomplete<MusicBrainzArtist>? artistInput;
-    MudAutocomplete<MusicBrainzTrack>? titleInput;
-    ApplicationOptions? applicationOptions;
 
     String? GetValidationErrorMessage(object model, string propertyName)
     {
@@ -146,32 +130,32 @@ along with Foobar.  If not, see
 
     async Task AddTrackAsync()
     {
-        if (Cuesheet?.IsRecording == true)
+        if (Cuesheet.IsRecording == true)
         {
-            Cuesheet?.AddTrack(currentRecordingTrack);
-            currentRecordingTrack = new()
+            _cuesheetManager.AddTrack(_currentRecordingTrack);
+            _currentRecordingTrack = new()
             {
-                IsLinkedToPreviousTrack = applicationOptions!.DefaultIsLinkedToPreviousTrack
+                IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
             };
-            if (artistInput != null)
+            if (_artistInput != null)
             {
-                await artistInput.FocusAsync();
+                await _artistInput.FocusAsync();
             }
         }
     }
 
-    void Cuesheet_IsRecordingChanged(object? sender, EventArgs args)
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs args)
     {
         StateHasChanged();
-        artistInput?.ClearAsync();
-        titleInput?.ClearAsync();
+        _artistInput?.ClearAsync();
+        _titleInput?.ClearAsync();
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
     {
         if (option is ApplicationOptions applicationOption)
         {
-            applicationOptions = applicationOption;
+            _applicationOptions = applicationOption;
             StateHasChanged();
         }
     }

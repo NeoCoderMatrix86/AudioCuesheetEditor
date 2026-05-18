@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject DialogManager _dialogManager
 @inject ISnackbar _snackbar
+@inject ICuesheetManager _cuesheetManager
 
 <CascadingValue Value="currentViewmode">
     <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
@@ -43,18 +44,6 @@ along with Foobar.  If not, see
 @code{
     ViewOptions? options;
     ViewMode currentViewmode = ViewMode.DetailView;
-
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            if (currentViewmode == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
-        }
-    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -112,17 +101,21 @@ along with Foobar.  If not, see
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
                     case ImportFileType.ProjectFile:
+                        await _importManager.AnalyseImportfile();
+                        _sessionStateContainer.ResetImport();
+                        break;
                     case ImportFileType.Cuesheet:
                         await _importManager.AnalyseImportfile();
+                        _importManager.ImportCuesheet();
                         _sessionStateContainer.ResetImport();
                         break;
                     case ImportFileType.Textfile:
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
                         break;
                 }
-                if ((Cuesheet != null) && (_sessionStateContainer.ImportAudiofile != null))
+                if (_sessionStateContainer.ImportAudiofile != null)
                 {
-                    Cuesheet.Audiofile = _sessionStateContainer.ImportAudiofile;
+                    _cuesheetManager.SetProperty(x => x.Audiofile, _sessionStateContainer.ImportAudiofile);
                 }
             }
             finally
