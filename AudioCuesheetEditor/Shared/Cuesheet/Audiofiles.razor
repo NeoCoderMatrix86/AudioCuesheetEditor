@@ -21,10 +21,21 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
 @inject IAudiofileManager _audiofileManager
+@inject IDialogService _dialogService
 
-<MudTooltip Text="@_localizer["Add file"]">
-    <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
-</MudTooltip>
+<MudButtonGroup OverrideStyles="false">
+    <MudTooltip Text="@_localizer["Add file"]">
+        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
+    </MudTooltip>
+    <MudTooltip Text="@_localizer["Delete all files"]">
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]">@_localizer["Delete all files"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+            <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]" />
+        </MudHidden>
+    </MudTooltip>
+</MudButtonGroup>
 
 <MudExpansionPanels MultiExpansion>
     @foreach (var file in _audiofiles)
@@ -48,7 +59,7 @@ along with Foobar.  If not, see
     //TODO: Remove audiofile button
     //TODO: Tracklist below each file
     //TOOD: Better handling for fileinput?!
-    //TODO: Button for removing all audiofiles
+    //TODO: Localization
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -68,5 +79,20 @@ along with Foobar.  If not, see
         var files = new List<Audiofile>(_audiofiles);
         files.Remove(audiofile);
         _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+    }
+
+    async Task DeleteAllFilesClicked()
+    {
+        var parameters = new DialogParameters<ConfirmationDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want to remove all files?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            var files = new List<Audiofile>();
+            _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+        }
     }
 }
