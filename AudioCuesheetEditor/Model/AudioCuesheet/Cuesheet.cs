@@ -21,6 +21,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
     public class Cuesheet() : Validateable, ICuesheet
     {
+        //TODO: Move tracks below audiofiles
         [JsonInclude]
         public IEnumerable<Track> Tracks { get; set; } = [];
 
@@ -28,7 +29,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         
         public String? Title { get; set; }
 
-        public Audiofile? Audiofile { get; set; }
+        public ICollection<Audiofile> Audiofiles { get; set; } = [];
 
         public CDTextfile? CDTextfile { get; set; }
 
@@ -51,7 +52,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                     if (!Tracks.Any())
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has invalid Count ({1})!", nameof(Tracks), 0));
+                        validationMessages.Add(new ValidationMessage("{0} has invalid count ({1})!", nameof(Tracks), 0));
                     }
                     else
                     {
@@ -86,12 +87,12 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         }
                     }
                     break;
-                case nameof(Audiofile):
+                case nameof(Audiofiles):
                     validationStatus = ValidationStatus.Success;
-                    if (Audiofile == null)
+                    if (Audiofiles.Count == 0)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Audiofile)));
+                        validationMessages.Add(new ValidationMessage("{0} has invalid count ({1})!", nameof(Audiofiles), 0));
                     }
                     break;
                 case nameof(Artist):

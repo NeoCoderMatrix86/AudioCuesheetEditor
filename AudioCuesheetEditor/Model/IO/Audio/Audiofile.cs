@@ -17,8 +17,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
-    [method: JsonConstructor]
-    public class Audiofile(String name)
+    public class Audiofile()
     {
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
@@ -34,9 +33,15 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
         ];
 
-        private AudioCodec? audioCodec;
-        private String name = name;
-
+        private AudioCodec? _audioCodec;
+        private String? _name;
+        
+        [JsonConstructor]
+        public Audiofile(String? name) : this()
+        {
+            _name = name;
+        }
+        //TODO: Remove constructors?!
         public Audiofile(String name, String objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this(name)
         {
             if (String.IsNullOrEmpty(objectURL))
@@ -48,57 +53,37 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             Duration = duration;
         }
 
-        public String Name
+        public String? Name
         {
-            get => name;
+            get => _name;
             set
             {
-                if (String.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
                 var extension = Path.GetExtension(value);
-                if (extension.Equals(audioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
+                if (extension?.Equals(_audioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
                 {
-                    value = $"{value}{audioCodec?.FileExtension}";
+                    value = $"{value}{_audioCodec?.FileExtension}";
                 }
-                name = value;
+                _name = value;
             }
         }
         [JsonIgnore]
-        public String? ObjectURL { get; private set; }
+        public String? ObjectURL { get; set; }
         /// <summary>
         /// Duration of the audio file
         /// </summary>
-        public TimeSpan? Duration { get; private set; }
+        public TimeSpan? Duration { get; set; }
 
         public AudioCodec? AudioCodec
         {
-            get { return audioCodec; }
-            private set
+            get { return _audioCodec; }
+            set
             {
-                audioCodec = value;
-                if ((audioCodec != null) && (Name?.EndsWith(audioCodec.FileExtension) == false))
+                _audioCodec = value;
+                if ((_audioCodec != null) && (Name?.EndsWith(_audioCodec.FileExtension) == false))
                 {
                     //Replace file ending
-                    Name = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), audioCodec.FileExtension);
+                    Name = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), _audioCodec.FileExtension);
                 }
-            }
-        }
-
-        [JsonIgnore]
-        public String? AudioFileType
-        {
-            get
-            {
-                String? audioFileType = null;
-                if (AudioCodec != null)
-                {
-                    audioFileType = AudioCodec.FileExtension.Replace(".", "").ToUpper();
-                }
-                //Try to find by file name
-                audioFileType ??= Path.GetExtension(Name)?.Replace(".", "").ToUpper();
-                return audioFileType;
             }
         }
     }

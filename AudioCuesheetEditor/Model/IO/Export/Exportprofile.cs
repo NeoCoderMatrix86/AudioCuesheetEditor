@@ -59,7 +59,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
 
             SchemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
             SchemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-            SchemeCuesheetAudiofile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
+            //TODO
+            //SchemeCuesheetAudiofile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Audiofile), SchemeCharacter);
             SchemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
             SchemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
 
@@ -67,7 +68,8 @@ namespace AudioCuesheetEditor.Model.IO.Export
             {
                 { nameof(Cuesheet.Artist), SchemeCuesheetArtist },
                 { nameof(Cuesheet.Title), SchemeCuesheetTitle },
-                { nameof(Cuesheet.Audiofile), SchemeCuesheetAudiofile },
+                //TODO
+                //{ nameof(Cuesheet.Audiofile), SchemeCuesheetAudiofile },
                 { nameof(Cuesheet.CDTextfile), SchemeCuesheetCDTextfile },
                 { nameof(Cuesheet.Cataloguenumber), SchemeCuesheetCatalogueNumber },
                 { "Date", SchemeDate },

@@ -49,10 +49,11 @@ namespace AudioCuesheetEditor.Services.IO
                 return Result<Exportfile>.Failure(new Error(ErrorType.ValidationFailed, validationResult.Error!.Message));
             }
             string? content = null;
-            if (_sessionStateContainer.Cuesheet.Audiofile != null)
-            {
-                content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
-            }
+            //TODO
+            //if (_sessionStateContainer.Cuesheet.Audiofile != null)
+            //{
+            //    content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
+            //}
             return Result<Exportfile>.Success(new Exportfile() { Name = exportprofile.Filename, Content = content});
         }
 

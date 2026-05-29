@@ -36,8 +36,8 @@ along with Foobar.  If not, see
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Id="@_fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@_fileInputAudiofileErrorText" 
-                           Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" />
+                @* <FileInput Id="@_fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@_fileInputAudiofileErrorText" 
+                           Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" /> *@
                 <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" 
                            Error="@_fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
                 <MudTextField @ref="_catalogueNumberTextField" @bind-Value="_catalogueNumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
@@ -49,6 +49,8 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
+    //TODO: Have multiple audio file inputs for each file
+    //TODO: Add tracks to file
     public Cuesheet? Cuesheet
     {
         get
@@ -118,7 +120,8 @@ along with Foobar.  If not, see
                 var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], _fileInputAudiofileId);
                 audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single());
             }
-            _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
+            //TODO
+            // _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
         }
         catch(ArgumentException ae)
         {
@@ -137,7 +140,7 @@ along with Foobar.  If not, see
         {
             return;
         }
-        var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofile));
+        var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofiles));
         if (validationMessages.Count() > 0)
         {
             _fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
@@ -185,15 +188,16 @@ along with Foobar.  If not, see
 
     async Task AudioFileRename()
     {
-        var newFileName = await ShowInputDialog(Cuesheet?.Audiofile?.Name);
-        if (String.IsNullOrEmpty(newFileName) == false)
-        {
-            var audioFile = Cuesheet?.Audiofile;
-            if (audioFile != null)
-            {
-                audioFile.Name = newFileName;
-            }
-        }
+        //TODO
+        // var newFileName = await ShowInputDialog(Cuesheet?.Audiofile?.Name);
+        // if (String.IsNullOrEmpty(newFileName) == false)
+        // {
+        //     var audioFile = Cuesheet?.Audiofile;
+        //     if (audioFile != null)
+        //     {
+        //         audioFile.Name = newFileName;
+        //     }
+        // }
     }
 
     async Task<String?> ShowInputDialog(string? initialValue)

@@ -28,12 +28,12 @@ along with Foobar.  If not, see
             <CuesheetData />
         </ChildContent>
     </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
+    <MudExpansionPanel @bind-Expanded="cuesheetFilesExpanded">
         <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+            <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
         </TitleContent>
         <ChildContent>
-            <TrackList />
+            <Audiofiles />
         </ChildContent>
     </MudExpansionPanel>
 </MudExpansionPanels>
@@ -42,5 +42,5 @@ along with Foobar.  If not, see
 
 @code {
     Boolean cuesheetDataExpanded = true;
-    Boolean cuesheetTracksExpanded = true;
+    Boolean cuesheetFilesExpanded = true;
 }

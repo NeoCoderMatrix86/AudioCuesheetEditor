@@ -188,17 +188,19 @@ namespace AudioCuesheetEditor.Services.IO
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
                 tracks = originCuesheet.Tracks;
-                target.Audiofile = originCuesheet.Audiofile;
+                //TODO
+                //target.Audiofile = originCuesheet.Audiofile;
                 target.CDTextfile = originCuesheet.CDTextfile;
                 target.Cataloguenumber = originCuesheet.Cataloguenumber;
             }
             if (cuesheetToCopy is ImportCuesheet importCuesheet)
             {
                 tracks = importCuesheet.Tracks;
-                if (String.IsNullOrEmpty(importCuesheet.Audiofile) == false)
-                {
-                    target.Audiofile = new Audiofile(importCuesheet.Audiofile);
-                }
+                //TODO
+                //if (String.IsNullOrEmpty(importCuesheet.Audiofile) == false)
+                //{
+                //    target.Audiofile = new Audiofile(importCuesheet.Audiofile);
+                //}
                 if (String.IsNullOrEmpty(importCuesheet.CDTextfile) == false)
                 {
                     target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);

@@ -59,10 +59,11 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 filename = $"{filename}{FileExtensions.Cuesheet}";
             }
-            if (_sessionStateContainer.Cuesheet.Audiofile != null)
-            {
-                content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
-            }
+            //TODO
+            //if (_sessionStateContainer.Cuesheet.Audiofile != null)
+            //{
+            //    content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
+            //}
             return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = content });
         }
 
@@ -79,7 +80,8 @@ namespace AudioCuesheetEditor.Services.IO
             }
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, _sessionStateContainer.Cuesheet.Title));
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
-            builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofileName, _sessionStateContainer.Cuesheet.Audiofile?.AudioFileType));
+            //TODO
+            //builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofileName, _sessionStateContainer.Cuesheet.Audiofile?.AudioFileType));
             IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
             if (tracks.Any())
             {

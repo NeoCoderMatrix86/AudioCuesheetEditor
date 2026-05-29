@@ -34,13 +34,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            var audiofile = cuesheet?.Audiofile;
+            //TODO
+            //var audiofile = cuesheet?.Audiofile;
             SetValue(cuesheet!, propertyExpression, value);
-            // If audiofile has been set, we need to calculate last track end
-            if (audiofile != cuesheet?.Audiofile)
-            {
-                SetLastTrackEnd(cuesheet!);
-            }
+            //// If audiofile has been set, we need to calculate last track end
+            //if (audiofile != cuesheet?.Audiofile)
+            //{
+            //    SetLastTrackEnd(cuesheet!);
+            //}
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -113,10 +114,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             else
             {
                 var lastTrack = GetLastTrack(cuesheet!);
-                if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
-                {
-                    _trackManager.SetProperty(lastTrack, x => x.End, null);
-                }
+                //TODO
+                //if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
+                //{
+                //    _trackManager.SetProperty(lastTrack, x => x.End, null);
+                //}
                 if (track.Position.HasValue == false)
                 {
                     _trackManager.SetProperty(track, x => x.Position, (ushort?)(lastTrack?.Position + 1));
@@ -261,10 +263,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         void SetLastTrackEnd(Cuesheet cuesheet)
         {
             var lastTrack = GetLastTrack(cuesheet);
-            if ((lastTrack?.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
-            {
-                _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
-            }
+            //TODO
+            //if ((lastTrack?.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
+            //{
+            //    _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
+            //}
         }
 
         static Track? GetLastTrack(Cuesheet cuesheet)
