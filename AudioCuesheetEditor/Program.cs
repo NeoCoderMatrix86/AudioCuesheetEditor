@@ -48,14 +48,7 @@ builder.Services.AddBlazorDownloadFile();
 
 builder.Services.AddScoped<ILocalStorageOptionsProvider, LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
-
-builder.Services.AddScoped<ISessionStateContainer>(x =>
-{
-    var localStorageOptionsProvider = x.GetRequiredService<ILocalStorageOptionsProvider>();
-    var sessionStateContainer = new SessionStateContainer(localStorageOptionsProvider);
-    _ = sessionStateContainer.InitializeAsync();
-    return sessionStateContainer;
-});
+builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
 builder.Services.AddScoped<ITraceChangeManager, TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<ITextImportService, TextImportService>();
@@ -83,5 +76,5 @@ builder.Services.AddHotKeys2();
 var host = builder.Build();
 
 await host.SetCultureFromConfigurationAsync();
-
+await host.InitializeSessionStateContainer();
 await host.RunAsync();
