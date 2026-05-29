@@ -37,10 +37,13 @@ along with Foobar.  If not, see
     </MudTooltip>
 </MudButtonGroup>
 
+<br />
+<br />
+
 <MudExpansionPanels MultiExpansion>
     @foreach (var file in _audiofiles)
     {
-        <MudExpansionPanel>
+        <MudExpansionPanel Expanded>
             <TitleContent>
                 <MudText Typo="Typo.h6">@file.Name</MudText>
             </TitleContent>
