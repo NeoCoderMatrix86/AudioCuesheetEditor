@@ -23,7 +23,7 @@ along with Foobar.  If not, see
     <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="_fileUpload" Files="_selectedFile" FilesChanged="SetSelectedFileAsync" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
                    Accept="@Filter" aria-label="Upload file">
         <CustomContent Context="fileUpload">
-            <MudTextField Value="_textFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" />
+            <MudTextField Value="_textFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" Error="String.IsNullOrEmpty(Error) == false" />
         </CustomContent>
         <SelectedTemplate></SelectedTemplate>
     </MudFileUpload>
