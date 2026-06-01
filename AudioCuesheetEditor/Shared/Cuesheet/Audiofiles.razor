@@ -43,25 +43,8 @@ along with Foobar.  If not, see
         break;
 }
 
-<MudButtonGroup OverrideStyles="false">
-    <MudTooltip Text="@_localizer["Add file"]">
-        <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
-    </MudTooltip>
-    <MudTooltip Text="@_localizer["Delete all files"]">
-        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-            <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]">@_localizer["Delete all files"]</MudButton>
-        </MudHidden>
-        <MudHidden Breakpoint="Breakpoint.MdAndUp">
-            <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]" />
-        </MudHidden>
-    </MudTooltip>
-</MudButtonGroup>
-
-<br />
-<br />
-
 <MudExpansionPanels MultiExpansion>
-    @foreach (var file in _audiofiles)
+    @foreach (var file in Files)
     {
         <MudExpansionPanel Expanded>
             <TitleContent>
@@ -85,22 +68,25 @@ along with Foobar.  If not, see
     //TODO: Localization
     //TODO: Move up/down buttons
 
+    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
+
+    [Parameter]
+    [EditorRequired]
+    public ICollection<Audiofile> Files { get; set; }
+
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
-    ICollection<Audiofile> _audiofiles => _cuesheet!.Audiofiles;
-
     void AddButtonClicked()
     {
-        var files = new List<Audiofile>(_audiofiles);
+        var files = new List<Audiofile>(Files);
         files.Add(new());
         _cuesheetManager.SetProperty(x => x.Audiofiles, files);
     }
 
     void DeleteButtonClicked(Audiofile audiofile)
     {
-        var files = new List<Audiofile>(_audiofiles);
+        var files = new List<Audiofile>(Files);
         files.Remove(audiofile);
         _cuesheetManager.SetProperty(x => x.Audiofiles, files);
     }

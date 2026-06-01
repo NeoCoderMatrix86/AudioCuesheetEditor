@@ -22,54 +22,45 @@ along with Foobar.  If not, see
 @inject PlaybackService _playbackService
 @inject HotKeys _hotKeys
 
-<MudCard>
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">@_localizer["Playback"]</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
-    <MudCardContent>
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
-            @if (_playbackService.CurrentPosition.HasValue)
-            {
-                <MudText>@_playbackService.CurrentPosition.Value.ToString("hh\\:mm\\:ss")</MudText>
-            }
-            else
-            {
-                <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
-            }
-            <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.IsPlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" ValueLabel aria-label="Playback slider">
-                <ValueLabelContent>
-                    @GetSliderTimeValue()
-                </ValueLabelContent>
-            </MudSlider>
-            @if (_playbackService.TotalTime.HasValue)
-            {
-                @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
-            }
-            else
-            {
-                <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
-            }
-        </MudStack>
-        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
-            <MudTooltip Text="@_localizer["Play or pause the current audio"]">
-                <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.IsPlaybackPossible" OnClick="OnPlayOrPauseClicked" aria-label="Play" />
-            </MudTooltip>
-            <MudButtonGroup OverrideStyles="false">
-                <MudTooltip Text="@_localizer["Jump to previous track"]">
-                    <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.IsPreviousPossible" OnClick="PlayPreviousTrackAsync" aria-label="@_localizer["Jump to previous track"]" />
-                </MudTooltip>
-                <MudTooltip Text="@_localizer["Stop the current playback"]">
-                    <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="StopAsync" Disabled="!_playbackService.IsPlaybackPossible" aria-label="@_localizer["Stop the current playback"]" />
-                </MudTooltip>
-                <MudTooltip Text="@_localizer["Jump to next track"]">
-                    <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.IsNextPossible" OnClick="PlayNextTrackAsync" aria-label="@_localizer["Jump to next track"]" />
-                </MudTooltip>
-            </MudButtonGroup>
-        </MudStack>
-    </MudCardContent>
-</MudCard>
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
+    @if (_playbackService.CurrentPosition.HasValue)
+    {
+        <MudText>@_playbackService.CurrentPosition.Value.ToString("hh\\:mm\\:ss")</MudText>
+    }
+    else
+    {
+        <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+    }
+    <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.IsPlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" ValueLabel aria-label="Playback slider">
+        <ValueLabelContent>
+            @GetSliderTimeValue()
+        </ValueLabelContent>
+    </MudSlider>
+    @if (_playbackService.TotalTime.HasValue)
+    {
+        @_playbackService.TotalTime.Value.ToString("hh\\:mm\\:ss")
+    }
+    else
+    {
+        <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+    }
+</MudStack>
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
+    <MudTooltip Text="@_localizer["Play or pause the current audio"]">
+        <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.IsPlaybackPossible" OnClick="OnPlayOrPauseClicked" aria-label="Play" />
+    </MudTooltip>
+    <MudButtonGroup OverrideStyles="false">
+        <MudTooltip Text="@_localizer["Jump to previous track"]">
+            <MudIconButton Icon="@Icons.Material.Outlined.SkipPrevious" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.IsPreviousPossible" OnClick="PlayPreviousTrackAsync" aria-label="@_localizer["Jump to previous track"]" />
+        </MudTooltip>
+        <MudTooltip Text="@_localizer["Stop the current playback"]">
+            <MudIconButton Icon="@Icons.Material.Outlined.Stop" Variant="Variant.Filled" Color="Color.Primary" OnClick="StopAsync" Disabled="!_playbackService.IsPlaybackPossible" aria-label="@_localizer["Stop the current playback"]" />
+        </MudTooltip>
+        <MudTooltip Text="@_localizer["Jump to next track"]">
+            <MudIconButton Icon="@Icons.Material.Outlined.SkipNext" Variant="Variant.Filled" Color="Color.Tertiary" Disabled="!_playbackService.IsNextPossible" OnClick="PlayNextTrackAsync" aria-label="@_localizer["Jump to next track"]" />
+        </MudTooltip>
+    </MudButtonGroup>
+</MudStack>
 
 @code {
     double sliderValue;

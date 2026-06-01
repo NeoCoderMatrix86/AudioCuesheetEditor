@@ -18,29 +18,75 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeFull> _localizer
+@inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
+@inject IDialogService _dialogService
 
-<MudExpansionPanels MultiExpansion>
-    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <CuesheetData />
-        </ChildContent>
-    </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="cuesheetFilesExpanded">
-        <TitleContent>
+<MudCard Outlined>
+    <MudCardHeader>
+        <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <CuesheetData />
+    </MudCardContent>
+</MudCard>
+<MudCard Outlined>
+    <MudCardHeader>
+        <CardHeaderContent>
             <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <Audiofiles />
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
-
-<AudioPlayer />
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudTooltip Text="@_localizer["Add file"]">
+                <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
+            </MudTooltip>
+            <MudTooltip Text="@_localizer["Delete all files"]">
+                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+                    <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]">@_localizer["Delete all files"]</MudButton>
+                </MudHidden>
+                <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                    <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]" />
+                </MudHidden>
+            </MudTooltip>
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent>
+        <Audiofiles Files="_audiofiles" />
+    </MudCardContent>
+</MudCard>
+<MudCard Outlined>
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h6">@_localizer["Playback"]</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <AudioPlayer />
+    </MudCardContent>
+</MudCard>
 
 @code {
-    Boolean cuesheetDataExpanded = true;
-    Boolean cuesheetFilesExpanded = true;
+    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
+    ICollection<Audiofile> _audiofiles => _cuesheet != null ? _cuesheet.Audiofiles : [];
+
+    void AddButtonClicked()
+    {
+        var files = new List<Audiofile>(_audiofiles);
+        files.Add(new());
+        _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+    }
+
+    async Task DeleteAllFilesClicked()
+    {
+        var parameters = new DialogParameters<ConfirmationDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want to remove all files?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            var files = new List<Audiofile>();
+            _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+        }
+    }
 }

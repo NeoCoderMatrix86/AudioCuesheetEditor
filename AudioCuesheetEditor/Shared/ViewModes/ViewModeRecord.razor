@@ -18,33 +18,24 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeRecord> _localizer
-@inject IJSRuntime _jsRuntime
-@inject ISessionStateContainer _sessionStateContainer
-@inject IFileInputManager _fileInputManager
 
 <ControlRecording />
 <br />
 <AddTrack />
 <br/>
-<MudExpansionPanels MultiExpansion>
-    <MudExpansionPanel @bind-Expanded="tracksExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <TrackList />
-        </ChildContent>
-    </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <CuesheetData />
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
-
-@code {
-    Boolean cuesheetDataExpanded = false, tracksExpanded = true;
-}
+<MudCard Outlined>
+    <MudCardHeader>
+        <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <TrackList />
+    </MudCardContent>
+</MudCard>
+<MudCard Outlined>
+    <MudCardHeader>
+        <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <CuesheetData />
+    </MudCardContent>
+</MudCard>

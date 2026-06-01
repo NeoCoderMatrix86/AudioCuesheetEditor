@@ -36,29 +36,26 @@ along with Foobar.  If not, see
 }
 else
 {
-    <MudExpansionPanels MultiExpansion>
-        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <CuesheetData />
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <TrackList />
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
+    <MudCard Outlined>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <CuesheetData />
+        </MudCardContent>
+    </MudCard>
+    <MudCard Outlined>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <TrackList />
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
-    Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
-
+    //TODO: Display files and then tracks
     public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
 
     string SanitizeHTML(string input)
