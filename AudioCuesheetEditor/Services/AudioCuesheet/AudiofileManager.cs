@@ -18,6 +18,8 @@ using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
@@ -30,9 +32,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile? browserFile, string fileInputId)
         {
+            //TODO: Tests
+            _traceChangeManager.BulkEdit = true;
             if (browserFile == null)
             {
-                SetProperties(audiofile, null, null, null, null);
+                SetValue(audiofile, x => x.AudioCodec, null);
+                SetValue(audiofile, x => x.Name, null);
+                SetValue(audiofile, x => x.ObjectURL, null);
+                SetValue(audiofile, x => x.Duration, null);
             }
             else
             {
@@ -44,34 +51,40 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                     var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", objectUrl);
                     duration = TimeSpan.FromSeconds(durationSeconds);
                 }
-                SetProperties(audiofile, codec, browserFile.Name, objectUrl, duration);
-            }
-        }
-
-        void SetProperties(Audiofile audiofile, AudioCodec? audioCodec, string? name, string? objectUrl, TimeSpan? duration)
-        {
-            _traceChangeManager.BulkEdit = true;
-            if (audiofile.AudioCodec != audioCodec)
-            {
-                _traceChangeManager.AddChange(new(audiofile, new(audiofile.AudioCodec, nameof(Audiofile.AudioCodec))));
-                audiofile.AudioCodec = audioCodec;
-            }
-            if (audiofile.Name != name)
-            {
-                _traceChangeManager.AddChange(new(audiofile, new(audiofile.Name, nameof(Audiofile.Name))));
-                audiofile.Name = name;
-            }
-            if (audiofile.ObjectURL != objectUrl)
-            {
-                _traceChangeManager.AddChange(new(audiofile, new(audiofile.ObjectURL, nameof(Audiofile.ObjectURL))));
-                audiofile.ObjectURL = objectUrl;
-            }
-            if (audiofile.Duration != duration)
-            {
-                _traceChangeManager.AddChange(new(audiofile, new(audiofile.Duration, nameof(Audiofile.Duration))));
-                audiofile.Duration = duration;
+                SetValue(audiofile, x => x.AudioCodec, codec);
+                SetValue(audiofile, x => x.Name, browserFile.Name);
+                SetValue(audiofile, x => x.ObjectURL, objectUrl);
+                SetValue(audiofile, x => x.Duration, duration);
             }
             _traceChangeManager.BulkEdit = false;
+        }
+
+        public void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
+        {
+            //TODO: Tests
+            SetValue(audiofile, propertyExpression, value);
+        }
+
+        void SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
+        {
+            if (propertyExpression.Body is not MemberExpression memberExpression)
+            {
+                throw new ArgumentException("Expression must be a property");
+            }
+
+            if (memberExpression.Member is not PropertyInfo propertyInfo)
+            {
+                throw new ArgumentException("Member is not a property");
+            }
+
+            var previousValue = (TProperty?)propertyInfo.GetValue(audiofile);
+            if (Equals(previousValue, value))
+            {
+                return;
+            }
+
+            propertyInfo.SetValue(audiofile, value);
+            _traceChangeManager.AddChange(new(audiofile, new(previousValue, propertyInfo.Name)));
         }
     }
 }

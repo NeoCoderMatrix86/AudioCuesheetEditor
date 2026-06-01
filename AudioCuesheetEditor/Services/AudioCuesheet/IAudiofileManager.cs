@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
+using System.Linq.Expressions;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
@@ -27,5 +28,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="browserFile"></param>
         /// <param name="fileInputId"></param>
         Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile? browserFile, string fileInputId);
+        /// <summary>
+        /// Set property for an audio file
+        /// </summary>
+        /// <typeparam name="TProperty"></typeparam>
+        /// <param name="audiofile"></param>
+        /// <param name="propertyExpression"></param>
+        /// <param name="value"></param>
+        void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value);
     }
 }

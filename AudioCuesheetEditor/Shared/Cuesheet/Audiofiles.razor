@@ -45,20 +45,21 @@ along with Foobar.  If not, see
     {
         <MudExpansionPanel Expanded>
             <TitleContent>
-                <MudText Typo="Typo.h6">@file.Name</MudText>
-            </TitleContent>
-            <ChildContent>
                 @{
                     var fileInputId = $"Audiofile_{Guid.NewGuid()}";
                 }
                 <FileInput Id="@fileInputId" Label="@_localizer["Audiofile"]" FileName="@file.Name" OnFileSelected="(IBrowserFile? browserFile) => _audiofileManager.SetPropertiesAsync(file, browserFile, fileInputId)"
-                           Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" />
+                           OnFileRenameClicked="(IBrowserFile? browserFile) => FileRenameClicked(file, browserFile)" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
+                           FileRenameDisabled="file.Name == null"/>
+            </TitleContent>
+            <ChildContent>
+                
             </ChildContent>
         </MudExpansionPanel>
     }
 </MudExpansionPanels>
 
-@code {
+    @code {
     //TODO: Remove audiofile button
     //TODO: Tracklist below each file
     //TOOD: Better handling for fileinput?!
@@ -96,6 +97,37 @@ along with Foobar.  If not, see
         {
             var files = new List<Audiofile>();
             _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+        }
+    }
+
+    async Task<String?> ShowInputDialog(string? initialValue)
+    {
+        var parameters = new DialogParameters<InputTextDialog>
+        {
+            { x => x.Placeholder, _localizer["Enter the new file name here"] },
+            { x => x.Label, _localizer["New file name"] },
+            { x => x.InitialValue, initialValue }
+        };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
+        var result = await dialog.Result;
+        var newFileName = result?.Data as string;
+        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
+        {
+            return newFileName;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    async Task FileRenameClicked(Audiofile audiofile, IBrowserFile? browserFile)
+    {
+        var newFileName = await ShowInputDialog(browserFile?.Name);
+        if (String.IsNullOrEmpty(newFileName) == false)
+        {
+            _audiofileManager.SetProperty(audiofile, x => x.Name, newFileName);
         }
     }
 }
