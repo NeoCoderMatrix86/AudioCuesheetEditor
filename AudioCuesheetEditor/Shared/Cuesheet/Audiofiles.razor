@@ -77,35 +77,6 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    void AddButtonClicked()
-    {
-        var files = new List<Audiofile>(Files);
-        files.Add(new());
-        _cuesheetManager.SetProperty(x => x.Audiofiles, files);
-    }
-
-    void DeleteButtonClicked(Audiofile audiofile)
-    {
-        var files = new List<Audiofile>(Files);
-        files.Remove(audiofile);
-        _cuesheetManager.SetProperty(x => x.Audiofiles, files);
-    }
-
-    async Task DeleteAllFilesClicked()
-    {
-        var parameters = new DialogParameters<ConfirmationDialog>
-        {
-            { x => x.ConfirmText, _localizer["Are you sure you want to remove all files?"] },
-        };
-        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
-        var result = await dialog.Result;
-        if (result?.Canceled == false)
-        {
-            var files = new List<Audiofile>();
-            _cuesheetManager.SetProperty(x => x.Audiofiles, files);
-        }
-    }
-
     async Task<String?> ShowInputDialog(string? initialValue)
     {
         var parameters = new DialogParameters<InputTextDialog>
