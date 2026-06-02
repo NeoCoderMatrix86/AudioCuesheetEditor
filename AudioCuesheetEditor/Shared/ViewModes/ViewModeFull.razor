@@ -39,18 +39,23 @@ along with Foobar.  If not, see
             <MudTooltip Text="@_localizer["Add file"]">
                 <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
             </MudTooltip>
-            <MudTooltip Text="@_localizer["Delete all files"]">
-                <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-                    <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]">@_localizer["Delete all files"]</MudButton>
-                </MudHidden>
-                <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                    <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]" />
-                </MudHidden>
-            </MudTooltip>
+            <MudButtonGroup OverrideStyles="false">
+                <MudTooltip Text="@_localizer["Delete selected files"]">
+                    <MudIconButton Color="Color.Warning" Variant="Variant.Filled" OnClick="DeleteButtonClicked" Icon="@Icons.Material.Outlined.Delete" Disabled="_selectedAudiofiles.Count == 0" aria-label="@_localizer["Delete selected files"]" />
+                </MudTooltip>
+                <MudTooltip Text="@_localizer["Delete all files"]">
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+                        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" StartIcon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]">@_localizer["Delete all files"]</MudButton>
+                    </MudHidden>
+                    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                        <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="DeleteAllFilesClicked" Icon="@Icons.Material.Outlined.DeleteForever" Disabled="_audiofiles.Count == 0" aria-label="@_localizer["Delete all files"]" />
+                    </MudHidden>
+                </MudTooltip>
+            </MudButtonGroup>
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
-        <Audiofiles Files="_audiofiles" />
+        <Audiofiles Files="_audiofiles" @bind-SelectedFiles="_selectedAudiofiles" />
     </MudCardContent>
 </MudCard>
 <MudCard Outlined>
@@ -65,14 +70,25 @@ along with Foobar.  If not, see
 </MudCard>
 
 @code {
+    //TODO: Move up/down buttons for files
+
     Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
     ICollection<Audiofile> _audiofiles => _cuesheet != null ? _cuesheet.Audiofiles : [];
+    HashSet<Audiofile> _selectedAudiofiles = [];
 
     void AddButtonClicked()
     {
         var files = new List<Audiofile>(_audiofiles);
         files.Add(new());
         _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+    }
+
+    void DeleteButtonClicked()
+    {
+        var files = new List<Audiofile>(_audiofiles);
+        files.RemoveAll(x => _selectedAudiofiles.Contains(x));
+        _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+        _selectedAudiofiles.Clear();
     }
 
     async Task DeleteAllFilesClicked()

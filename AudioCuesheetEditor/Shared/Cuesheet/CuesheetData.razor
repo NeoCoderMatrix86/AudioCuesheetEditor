@@ -23,24 +23,21 @@ along with Foobar.  If not, see
 @inject IDialogService _dialogService
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
-@inject ITrackManager _trackManager
 
-@if (Cuesheet != null)
+@if (_cuesheet != null)
 {
-    <MudForm @ref="_form" Model="Cuesheet">
-        <MudTextField Text="@Cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Artist, newValue)" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]" 
+    <MudForm @ref="_form" Model="_cuesheet">
+        <MudTextField Text="@_cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Artist, newValue)" For="(() => _cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]"
                       Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
-        <MudTextField Text="@Cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Title, newValue)" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
+        <MudTextField Text="@_cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Title, newValue)" For="(() => _cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
                       Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
         @switch(CurrentViewMode)
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                @* <FileInput Id="@_fileInputAudiofileId" Label="@_localizer["Audiofile"]" FileName="@Cuesheet.Audiofile?.Name" OnFileSelected="OnAudiofileSelected" Error="@_fileInputAudiofileErrorText" 
-                           Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" OnFileRenameClicked="AudioFileRename" FileRenameDisabled="Cuesheet.Audiofile == null" /> *@
-                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile" 
-                           Error="@_fileInputCDTextfileErrorText" OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
-                <MudTextField @ref="_catalogueNumberTextField" @bind-Value="_catalogueNumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
+                <FileInput Label="@_localizer["CD Textfile"]" FileName="@_cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile"
+                           OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="_cuesheet.CDTextfile == null" />
+                <MudTextField @ref="_catalogueNumberTextField" @bind-Value="_catalogueNumber" For="(() => _cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
                               Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined"
                               Mask="@(new PatternMask("00 00000 00000 0"))" OnBlur="CataloguenumberOnBlur" />
                 break;
@@ -49,26 +46,10 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
-    //TODO: Have multiple audio file inputs for each file
-    //TODO: Add tracks to file
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            if (CurrentViewMode == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
-        }
-    }
-
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    string? _fileInputAudiofileId;
-    string? _fileInputAudiofileErrorText;
-    string? _fileInputCDTextfileErrorText;
+    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
     string? _catalogueNumber;
     MudForm? _form;
     MudTextField<string>? _catalogueNumberTextField;
@@ -76,10 +57,6 @@ along with Foobar.  If not, see
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        if (_fileInputAudiofileId == null)
-        {
-            _fileInputAudiofileId = $"Input_Audiofile_{Guid.NewGuid()}";
-        }
         TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
         _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
@@ -98,106 +75,34 @@ along with Foobar.  If not, see
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        if (_form?.IsTouched == true)
-        {
-            SetAudiofileValidationText();
-        }
-        _catalogueNumber = Cuesheet?.Cataloguenumber;
-    }
-
-    async Task OnAudiofileSelected(IBrowserFile? browserFile)
-    {
-        if (Cuesheet == null)
-        {
-            return;
-        }
-        _fileInputAudiofileErrorText = null;
-        try 
-        {
-            Audiofile? audiofile = null;
-            if (browserFile != null)
-            {
-                var fileUpload = await _fileInputManager.CreateFileUploadsAsync([browserFile], _fileInputAudiofileId);
-                audiofile = await _fileInputManager.CreateAudiofileAsync(fileUpload.Single());
-            }
-            //TODO
-            // _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
-        }
-        catch(ArgumentException ae)
-        {
-            _fileInputAudiofileErrorText = ae.Message;
-        }
-        // Just validate the cuesheet if there is no error already
-        if (_fileInputAudiofileErrorText == null)
-        {
-            SetAudiofileValidationText();
-        }
-    }
-
-    void SetAudiofileValidationText()
-    {
-        if (Cuesheet == null)
-        {
-            return;
-        }
-        var validationMessages = _validationService.Validate(Cuesheet, nameof(Cuesheet.Audiofiles));
-        if (validationMessages.Count() > 0)
-        {
-            _fileInputAudiofileErrorText = String.Join(Environment.NewLine, validationMessages);
-        }
-        else
-        {
-            _fileInputAudiofileErrorText = null;
-        }
+        _catalogueNumber = _cuesheet?.Cataloguenumber;
     }
 
     void OnCDTextfileSelected(IBrowserFile? browserFile)
     {
-        if (Cuesheet == null)
+        if (_cuesheet == null)
         {
             return;
         }
-        _fileInputCDTextfileErrorText = null;
-        try
+        CDTextfile? newValue = null;
+        if (browserFile != null)
         {
-            CDTextfile? newValue = null;
-            if (browserFile != null)
-            {
-                newValue = _fileInputManager.CreateCDTextfile(browserFile.ContentType, browserFile.Name);
-            }
-            _cuesheetManager.SetProperty(x => x.CDTextfile, newValue);
+            newValue = _fileInputManager.CreateCDTextfile(browserFile.ContentType, browserFile.Name);
         }
-        catch (ArgumentException ae)
-        {
-            _fileInputCDTextfileErrorText = ae.Message;
-        }
+        _cuesheetManager.SetProperty(x => x.CDTextfile, newValue);
     }
 
     async Task CDTextFileRename()
     {
-        var newFileName = await ShowInputDialog(Cuesheet?.CDTextfile?.Name);
+        var newFileName = await ShowInputDialog(_cuesheet?.CDTextfile?.Name);
         if (String.IsNullOrEmpty(newFileName) == false)
         {
-            var cdTextFile = Cuesheet?.CDTextfile;
+            var cdTextFile = _cuesheet?.CDTextfile;
             if (cdTextFile != null)
             {
                 cdTextFile.Name = newFileName;
             }
         }
-    }
-
-    async Task AudioFileRename()
-    {
-        //TODO
-        // var newFileName = await ShowInputDialog(Cuesheet?.Audiofile?.Name);
-        // if (String.IsNullOrEmpty(newFileName) == false)
-        // {
-        //     var audioFile = Cuesheet?.Audiofile;
-        //     if (audioFile != null)
-        //     {
-        //         audioFile.Name = newFileName;
-        //     }
-        // }
     }
 
     async Task<String?> ShowInputDialog(string? initialValue)
@@ -230,13 +135,13 @@ along with Foobar.  If not, see
 
     void TraceChangeManager_RedoDone(object? sender, EventArgs e)
     {
-        _catalogueNumber = Cuesheet?.Cataloguenumber;
+        _catalogueNumber = _cuesheet?.Cataloguenumber;
         _catalogueNumberTextField?.ResetAsync();
     }
 
     void TraceChangeManager_UndoDone(object? sender, EventArgs e)
     {
-        _catalogueNumber = Cuesheet?.Cataloguenumber;
+        _catalogueNumber = _cuesheet?.Cataloguenumber;
         _catalogueNumberTextField?.ResetAsync();
     }
 

@@ -48,25 +48,26 @@ along with Foobar.  If not, see
     {
         <MudExpansionPanel Expanded>
             <TitleContent>
-                @{
-                    var fileInputId = $"Audiofile_{Guid.NewGuid()}";
-                }
-                <FileInput Id="@fileInputId" Label="@_localizer["Audiofile"]" FileName="@file.Name" OnFileSelected="(IBrowserFile? browserFile) => _audiofileManager.SetPropertiesAsync(file, browserFile, fileInputId)"
-                            OnFileRenameClicked="(IBrowserFile? browserFile) => FileRenameClicked(file, browserFile)" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
-                           FileRenameDisabled="file.Name == null" Error="@(file.Name == null ? _validationMessageLocalizer["No file selected!"].Value : null)" />
+                <MudStack Row AlignItems="AlignItems.Start" StretchItems="StretchItems.End">
+                    <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" Class="mt-2" />
+                    @{
+                        var fileInputId = $"Audiofile_{Guid.NewGuid()}";
+                    }
+                    <FileInput Id="@fileInputId" Label="@_localizer["Audiofile"]" FileName="@file.Name" OnFileSelected="(IBrowserFile? browserFile) => _audiofileManager.SetPropertiesAsync(file, browserFile, fileInputId)"
+                               OnFileRenameClicked="() => FileRenameClicked(file)" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
+                               FileRenameDisabled="file.Name == null" Error="file.Name == null" />
+                </MudStack>
             </TitleContent>
             <ChildContent>
-                
+                <TrackList />
             </ChildContent>
         </MudExpansionPanel>
     }
 </MudExpansionPanels>
 
 @code {
-    //TODO: Remove audiofile button
     //TODO: Tracklist below each file
     //TODO: Localization
-    //TODO: Move up/down buttons
 
     Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
 
@@ -76,6 +77,12 @@ along with Foobar.  If not, see
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
+
+    [Parameter]
+    public HashSet<Audiofile> SelectedFiles { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<HashSet<Audiofile>> SelectedFilesChanged { get; set; }
 
     async Task<String?> ShowInputDialog(string? initialValue)
     {
@@ -99,12 +106,25 @@ along with Foobar.  If not, see
         }
     }
 
-    async Task FileRenameClicked(Audiofile audiofile, IBrowserFile? browserFile)
+    async Task FileRenameClicked(Audiofile audiofile)
     {
-        var newFileName = await ShowInputDialog(browserFile?.Name);
+        var newFileName = await ShowInputDialog(audiofile.Name);
         if (String.IsNullOrEmpty(newFileName) == false)
         {
             _audiofileManager.SetProperty(audiofile, x => x.Name, newFileName);
         }
+    }
+
+    void SelectedChanged(Audiofile audiofile, Boolean selected)
+    {
+        if (selected)
+        {
+            SelectedFiles.Add(audiofile);
+        }
+        else
+        {
+            SelectedFiles.Remove(audiofile);
+        }
+        SelectedFilesChanged.InvokeAsync(SelectedFiles);
     }
 }

@@ -23,25 +23,21 @@ along with Foobar.  If not, see
     <MudFileUpload identifier="@Id" T="IBrowserFile" @ref="_fileUpload" Files="_selectedFile" FilesChanged="SetSelectedFileAsync" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-10"
                    Accept="@Filter" aria-label="Upload file">
         <CustomContent Context="fileUpload">
-            <MudTextField Value="_textFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" Error="String.IsNullOrEmpty(Error) == false" />
+            <MudTextField Value="_textFieldValue" Label="@Label" ReadOnly Variant="Variant.Outlined" FullWidth Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AttachFile" @onclick="() => fileUpload.OpenFilePickerAsync()" Error="Error" />
         </CustomContent>
         <SelectedTemplate></SelectedTemplate>
     </MudFileUpload>
     <MudHidden Breakpoint="Breakpoint.Xs">
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-2" Style="height: 56px;" StartIcon="@Icons.Material.Outlined.Search" OnClick="PickFilesClickedAsync" aria-label="@_localizer["Search"]">@_localizer["Search"]</MudButton>
+        <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" aria-label="Clear file" />
     </MudHidden>
-    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Class="mt-2" Style="height: 56px;" Icon="@Icons.Material.Outlined.Clear" OnClick="ClearClickedAsync" Disabled="String.IsNullOrEmpty(FileName)" aria-label="Clear file" />
-    @if (DisplayMenu)
-    {
-        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled" AriaLabel="More">
-            <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(_selectedFile)" aria-label="@_localizer["Rename file"]">@_localizer["Rename file"]</MudMenuItem>
-        </MudMenu>
-    }
+    <MudMenu Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Info" Class="mt-1" Style="height: 56px;" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Variant="Variant.Filled" AriaLabel="More">
+        <MudHidden Breakpoint="Breakpoint.Xs" Invert>
+            <MudMenuItem Icon="@Icons.Material.Outlined.Clear" Disabled="String.IsNullOrEmpty(FileName)" OnClick="ClearClickedAsync" aria-label="Clear file">@_localizer["Clear file"]</MudMenuItem>
+        </MudHidden>
+        <MudMenuItem Icon="@Icons.Material.Outlined.EditAttributes" Disabled="FileRenameDisabled" OnClick="() => OnFileRenameClicked.InvokeAsync(_selectedFile)" aria-label="@_localizer["Rename file"]">@_localizer["Rename file"]</MudMenuItem>
+    </MudMenu>
 </MudStack>
-@if(String.IsNullOrEmpty(Error) == false)
-{
-    <MudText Color="Color.Error" Typo="@Typo.caption">@Error</MudText>
-}
 
 @code {
     [Parameter]
@@ -61,16 +57,13 @@ along with Foobar.  If not, see
     public String Id { get; set; } = $"FileInput_{Guid.NewGuid()}";
 
     [Parameter]
-    public String? Error { get; set; }
+    public Boolean Error { get; set; }
 
     [Parameter]
     public String? Filter { get; set; }
 
     [Parameter]
     public String? FileName { get; set; }
-
-    [Parameter]
-    public Boolean DisplayMenu { get; set; } = true;
 
     IBrowserFile? _selectedFile;
     MudFileUpload<IBrowserFile>? _fileUpload;
