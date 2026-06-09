@@ -132,15 +132,16 @@ along with Foobar.  If not, see
     {
         if (Cuesheet.IsRecording == true)
         {
-            _cuesheetManager.AddTrack(_currentRecordingTrack);
-            _currentRecordingTrack = new()
-            {
-                IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
-            };
-            if (_artistInput != null)
-            {
-                await _artistInput.FocusAsync();
-            }
+            //TODO
+            // _cuesheetManager.AddTrack(_currentRecordingTrack);
+            // _currentRecordingTrack = new()
+            // {
+            //     IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
+            // };
+            // if (_artistInput != null)
+            // {
+            //     await _artistInput.FocusAsync();
+            // }
         }
     }
 

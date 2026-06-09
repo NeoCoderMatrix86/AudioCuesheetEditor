@@ -50,11 +50,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <returns></returns>
         void StopRecording();
         /// <summary>
-        /// Adds a track to the cuesheet
-        /// </summary>
-        /// <param name="track"></param>
-        void AddTrack(Track track);
-        /// <summary>
         /// Remove tracks from cuesheet
         /// </summary>
         /// <param name="tracksToRemove"></param>

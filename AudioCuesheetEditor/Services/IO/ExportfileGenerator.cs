@@ -33,7 +33,8 @@ namespace AudioCuesheetEditor.Services.IO
             List<ValidationMessage> validationMessages = [];
             validationMessages.AddRange(exportprofile.Validate().ValidationMessages);
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
-            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
+            //TODO
+            //validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
             if (validationMessages.Count != 0)
             {
                 return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
@@ -72,39 +73,40 @@ namespace AudioCuesheetEditor.Services.IO
                     .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                     .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
                 builder.AppendLine(header);
-                IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
-                if (tracks.Any())
-                {
-                    //Position, Begin and End should always start from 0 even with splitpoints
-                    int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);
-                    foreach (var track in tracks)
-                    {
-                        TimeSpan begin;
-                        var end = track.End;
-                        if (track.Begin.HasValue)
-                        {
-                            begin = track.Begin.Value;
-                        }
-                        else
-                        {
-                            throw new NullReferenceException(string.Format("{0} may not be null!", nameof(Track.Begin)));
-                        }
-                        var trackLine = exportprofile.SchemeTracks
-                            .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
-                            .Replace(Exportprofile.SchemeTrackTitle, track.Title)
-                            .Replace(Exportprofile.SchemeTrackPosition, (track.Position + positionDifference).ToString())
-                            .Replace(Exportprofile.SchemeTrackBegin, begin.ToString())
-                            .Replace(Exportprofile.SchemeTrackEnd, end.ToString())
-                            .Replace(Exportprofile.SchemeTrackLength, (end - begin).ToString())
-                            .Replace(Exportprofile.SchemeTrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
-                            .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : string.Empty)
-                            .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : string.Empty)
-                            .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
-                            .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
-                        builder.AppendLine(trackLine);
-                    }
-                }
+                //TODO
+                //IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
+                //if (tracks.Any())
+                //{
+                //    //Position, Begin and End should always start from 0 even with splitpoints
+                //    int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);
+                //    foreach (var track in tracks)
+                //    {
+                //        TimeSpan begin;
+                //        var end = track.End;
+                //        if (track.Begin.HasValue)
+                //        {
+                //            begin = track.Begin.Value;
+                //        }
+                //        else
+                //        {
+                //            throw new NullReferenceException(string.Format("{0} may not be null!", nameof(Track.Begin)));
+                //        }
+                //        var trackLine = exportprofile.SchemeTracks
+                //            .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
+                //            .Replace(Exportprofile.SchemeTrackTitle, track.Title)
+                //            .Replace(Exportprofile.SchemeTrackPosition, (track.Position + positionDifference).ToString())
+                //            .Replace(Exportprofile.SchemeTrackBegin, begin.ToString())
+                //            .Replace(Exportprofile.SchemeTrackEnd, end.ToString())
+                //            .Replace(Exportprofile.SchemeTrackLength, (end - begin).ToString())
+                //            .Replace(Exportprofile.SchemeTrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
+                //            .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : string.Empty)
+                //            .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : string.Empty)
+                //            .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
+                //            .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                //            .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
+                //        builder.AppendLine(trackLine);
+                //    }
+                //}
                 var footer = exportprofile.SchemeFooter
                     .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)

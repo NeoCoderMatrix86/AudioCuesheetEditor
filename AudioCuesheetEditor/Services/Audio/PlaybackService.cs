@@ -46,7 +46,7 @@ namespace AudioCuesheetEditor.Services.Audio
                 }
             }
         }
-        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
+        public Track? CurrentlyPlayingTrack => null;//TODO_sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
         public TimeSpan? TotalTime => null; //TODO _sessionStateContainer.Cuesheet.Audiofile?.Duration;
         public Boolean IsPlaying { get; private set; } = false;
         public Boolean IsPlaybackPossible
@@ -59,8 +59,8 @@ namespace AudioCuesheetEditor.Services.Audio
                 return false;
             }
         }
-        public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
-        public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+        public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null); //TODO && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
+        public Boolean IsNextPossible => (CurrentlyPlayingTrack != null); //TODO && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
 
         public PlaybackService(ISessionStateContainer sessionStateContainer, IHowl howl)
         {
@@ -138,11 +138,12 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (CurrentlyPlayingTrack != null)
             {
-                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
-                if (trackToPlay != null)
-                {
-                    await PlayAsync(trackToPlay);
-                }
+                //TODO
+                //var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
+                //if (trackToPlay != null)
+                //{
+                //    await PlayAsync(trackToPlay);
+                //}
             }
         }
 
@@ -150,11 +151,12 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (CurrentlyPlayingTrack != null)
             {
-                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
-                if (trackToPlay != null)
-                {
-                    await PlayAsync(trackToPlay);
-                }
+                //TODO
+                //var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
+                //if (trackToPlay != null)
+                //{
+                //    await PlayAsync(trackToPlay);
+                //}
             }
         }
 

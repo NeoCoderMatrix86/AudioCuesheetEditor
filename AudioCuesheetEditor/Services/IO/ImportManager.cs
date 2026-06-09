@@ -187,8 +187,8 @@ namespace AudioCuesheetEditor.Services.IO
             IEnumerable<ITrack>? tracks = null;
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
-                tracks = originCuesheet.Tracks;
                 //TODO
+                //tracks = originCuesheet.Tracks;
                 //target.Audiofile = originCuesheet.Audiofile;
                 target.CDTextfile = originCuesheet.CDTextfile;
                 target.Cataloguenumber = originCuesheet.Cataloguenumber;
@@ -245,7 +245,8 @@ namespace AudioCuesheetEditor.Services.IO
                     }
                     // Copy track
                     var track = _trackManager.Clone(importTrack);
-                    track.Cuesheet = target;
+                    //TODO
+                    //track.Cuesheet = target;
                     // Special treatment for StartDateTime of ImportTrack
                     if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null && nextTrack is ImportTrack nextImportTrackReference)
                     {
@@ -270,7 +271,8 @@ namespace AudioCuesheetEditor.Services.IO
                     position++;
                     targetTracks.Add(track);
                 }
-                target.Tracks = targetTracks;
+                //TODO
+                //target.Tracks = targetTracks;
             }
             else
             {
@@ -282,7 +284,8 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                _traceChangeManager.RemoveTracedChanges([_sessionStateContainer.ImportCuesheet, .. _sessionStateContainer.ImportCuesheet.Tracks]);
+                //TODO
+                //_traceChangeManager.RemoveTracedChanges([_sessionStateContainer.ImportCuesheet, .. _sessionStateContainer.ImportCuesheet.Tracks]);
             }
         }
     }

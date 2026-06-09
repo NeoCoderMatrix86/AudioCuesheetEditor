@@ -13,6 +13,7 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Linq.Expressions;
@@ -36,5 +37,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="propertyExpression"></param>
         /// <param name="value"></param>
         void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value);
+        /// <summary>
+        /// Adds a track to the audiofile
+        /// </summary>
+        /// <param name="track"></param>
+        void AddTrack(Audiofile audiofile, Track track);
     }
 }

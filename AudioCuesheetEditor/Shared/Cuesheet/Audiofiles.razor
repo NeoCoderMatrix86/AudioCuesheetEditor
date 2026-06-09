@@ -59,14 +59,13 @@ along with Foobar.  If not, see
                 </MudStack>
             </TitleContent>
             <ChildContent>
-                <TrackList />
+                <TrackList Audiofile="file" />
             </ChildContent>
         </MudExpansionPanel>
     }
 </MudExpansionPanels>
 
 @code {
-    //TODO: Tracklist below each file
     //TODO: Localization
 
     Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();

@@ -110,62 +110,65 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return null;
             }
-            if (track.Position.HasValue && (track.Cuesheet?.Tracks.All(x => x.Position.HasValue) == true))
-            {
-                return track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
-            }
-            if (track.Begin.HasValue)
-            {
-                return track.Cuesheet?.Tracks.OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin && Equals(x, track) == false);
-            }
+            //TODO
+            //if (track.Position.HasValue && (track.Cuesheet?.Tracks.All(x => x.Position.HasValue) == true))
+            //{
+            //    return track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
+            //}
+            //if (track.Begin.HasValue)
+            //{
+            //    return track.Cuesheet?.Tracks.OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin && Equals(x, track) == false);
+            //}
             return null;
         }
 
         /// <inheritdoc/>
         public Track? GetNextLinkedTrack(Track track)
         {
-            if (track.Position.HasValue && (track.Cuesheet?.Tracks.All(x => x.Position.HasValue) == true))
-            {
-                return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).FirstOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
-            }
-            if (track.End.HasValue)
-            {
-                return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
-            }
+            //TODO
+            //if (track.Position.HasValue && (track.Cuesheet?.Tracks.All(x => x.Position.HasValue) == true))
+            //{
+            //    return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).FirstOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
+            //}
+            //if (track.End.HasValue)
+            //{
+            //    return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
+            //}
             return null;
         }
 
         /// <inheritdoc/>
         public void RecalculateLinkedTracksProperties(Track track)
         {
-            if (track.Cuesheet != null)
-            {
-                var previousTrack = GetPreviousLinkedTrack(track);
-                if (previousTrack != null)
-                {
-                    if (track.Position.HasValue == false && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
-                    {
-                        SetValue(track, x => x.Position, (ushort?)(previousTrack.Position + 1));
-                    }
-                    if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
-                    {
-                        SetValue(track, x => x.Begin, previousTrack.End);
-                    }
-                    if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
-                    {
-                        SetValue(previousTrack, x => x.End, track.Begin);
-                    }
-                }
-                var nextTrack = GetNextLinkedTrack(track);
-                if (nextTrack != null)
-                {
-                    if (track.Position.HasValue)
-                    {
-                        SetValue(nextTrack, x => x.Position, (ushort?)(track.Position + 1));
-                    }
-                    SetValue(nextTrack, x => x.Begin, track.End);
-                }
-            }
+            //TODO
+            //if (track.Cuesheet != null)
+            //{
+            //    var previousTrack = GetPreviousLinkedTrack(track);
+            //    if (previousTrack != null)
+            //    {
+            //        if (track.Position.HasValue == false && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
+            //        {
+            //            SetValue(track, x => x.Position, (ushort?)(previousTrack.Position + 1));
+            //        }
+            //        if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+            //        {
+            //            SetValue(track, x => x.Begin, previousTrack.End);
+            //        }
+            //        if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
+            //        {
+            //            SetValue(previousTrack, x => x.End, track.Begin);
+            //        }
+            //    }
+            //    var nextTrack = GetNextLinkedTrack(track);
+            //    if (nextTrack != null)
+            //    {
+            //        if (track.Position.HasValue)
+            //        {
+            //            SetValue(nextTrack, x => x.Position, (ushort?)(track.Position + 1));
+            //        }
+            //        SetValue(nextTrack, x => x.Begin, track.End);
+            //    }
+            //}
         }
 
         void SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)

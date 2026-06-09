@@ -37,13 +37,14 @@ namespace AudioCuesheetEditor.Model.IO
         public static Cuesheet? ImportFile(string fileContent)
         {
             var cuesheet = JsonSerializer.Deserialize<Cuesheet>(fileContent, Options);
-            if (cuesheet != null)
-            {
-                foreach (var track in cuesheet.Tracks)
-                {
-                    track.Cuesheet = cuesheet;
-                }
-            }
+            //TODO
+            //if (cuesheet != null)
+            //{
+            //    foreach (var track in cuesheet.Tracks)
+            //    {
+            //        track.Cuesheet = cuesheet;
+            //    }
+            //}
             return cuesheet;
         }
 
