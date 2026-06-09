@@ -25,7 +25,6 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
-@inject ISessionStateContainer _sessionStateContainer
 @inject ITrackManager _trackManager
 @inject ICuesheetManager _cuesheetManager
 @inject ITraceChangeManager _traceChangeManager
@@ -129,13 +128,12 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-    @code {
+@code {
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
     Track? _contextMenuTrack;
     ApplicationOptions? _applicationOptions;
     MudForm? _form;
-    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
 
     [Parameter]
     [EditorRequired]
@@ -148,8 +146,6 @@ along with Foobar.  If not, see
     {
         base.Dispose(disposing);
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -157,8 +153,6 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     void AddTrackClicked()
@@ -301,15 +295,5 @@ along with Foobar.  If not, see
         {
             await _form.ValidateAsync();
         }
-    }
-
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
     }
 }

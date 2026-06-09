@@ -90,6 +90,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
             else
             {
+                //TODO: calculate position and begin/end upgoing
                 //TODO: adapt to multiple audio files
                 var lastTrack = GetLastTrack(cuesheet!);
                 //if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
