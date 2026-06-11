@@ -65,6 +65,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                 }
             }
         }
+        [JsonIgnore]
+        public Cuesheet? Cuesheet { get; set; }
         [JsonInclude]
         public IEnumerable<Flag> Flags { get; set; } = [];
         /// <inheritdoc/>
@@ -99,16 +101,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
                         else
                         {
                             // Check correct track position
-                            //TODO
-                            //if (Cuesheet != null)
-                            //{
-                            //    var positionTrackShouldHave = Cuesheet.Tracks.OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
-                            //    if (positionTrackShouldHave != Position)
-                            //    {
-                            //        validationMessages ??= [];
-                            //        validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
-                            //    }
-                            //}
+                            if (Cuesheet != null)
+                            {
+                                var positionTrackShouldHave = Cuesheet.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
+                                if (positionTrackShouldHave != Position)
+                                {
+                                    validationMessages ??= [];
+                                    validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
+                                }
+                            }
                         }
                     }
                     break;
