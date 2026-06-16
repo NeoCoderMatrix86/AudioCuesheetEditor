@@ -27,8 +27,8 @@ along with Foobar.  If not, see
 @inject ISnackbar _snackbar
 @inject ICuesheetManager _cuesheetManager
 
-<CascadingValue Value="currentViewmode">
-    <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
+<CascadingValue Value="_currentViewmode">
+    <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)_currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
         <MudTabPanel Text="@_localizer["Detail view"]" Icon="@Icons.Material.Outlined.Edit">
             <ViewModeFull />
         </MudTabPanel>
@@ -42,14 +42,14 @@ along with Foobar.  If not, see
 </CascadingValue>
 
 @code{
-    ViewOptions? options;
-    ViewMode currentViewmode = ViewMode.DetailView;
+    ViewOptions? _viewOptions;
+    ViewMode _currentViewmode = ViewMode.DetailView;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        options = await base.LocalStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
-        currentViewmode = options.ActiveTab;
+        _viewOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        _currentViewmode = _viewOptions.ActiveTab;
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         _importManager.UploadFilesFinished += ImportManager_UploadFilesFinished;
     }
@@ -66,16 +66,16 @@ along with Foobar.  If not, see
 
     async Task ActiveTabIndexChanged(int tabIndex)
     {
-        currentViewmode = (ViewMode)tabIndex;
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, currentViewmode);
+        _currentViewmode = (ViewMode)tabIndex;
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, _currentViewmode);
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
     {
         if (option is ViewOptions viewOptions)
         {
-            options = viewOptions;
-            currentViewmode = options.ActiveTab;
+            _viewOptions = viewOptions;
+            _currentViewmode = _viewOptions.ActiveTab;
             StateHasChanged();
         }
     }
