@@ -73,56 +73,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void AddTrack(Audiofile audiofile, Track track)
         {
             //TODO: Tests
-            //Calculate track properties
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            if (cuesheet?.IsRecording == true)
-            {
-                _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
-            }
-            if (cuesheet?.Audiofiles.SelectMany(x => x.Tracks).Any() == false)
-            {
-                _trackManager.SetProperty(track, x => x.Position, (ushort)(1));
-                if ((track.Begin.HasValue == false) || cuesheet?.IsRecording == true)
-                {
-                    _trackManager.SetProperty(track, x => x.Begin, TimeSpan.Zero);
-                }
-            }
-            else
-            {
-                //TODO: calculate position and begin/end upgoing
-                //TODO: adapt to multiple audio files
-                var lastTrack = GetLastTrack(cuesheet!);
-                //if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
-                //{
-                //    _trackManager.SetProperty(lastTrack, x => x.End, null);
-                //}
-                if (track.Position.HasValue == false)
-                {
-                    _trackManager.SetProperty(track, x => x.Position, (ushort?)(lastTrack?.Position + 1));
-                }
-                if (track.Begin.HasValue == false)
-                {
-                    _trackManager.SetProperty(track, x => x.Begin, lastTrack?.End);
-                }
-                else
-                {
-                    if (lastTrack?.End.HasValue == false)
-                    {
-                        _trackManager.SetProperty(lastTrack, x => x.End, track.Begin);
-                    }
-                }
-                if (cuesheet?.IsRecording == true && lastTrack != null)
-                {
-                    _trackManager.SetProperty(lastTrack, x => x.End, track.Begin);
-                }
-            }
+            track.Cuesheet = cuesheet;
             var newValue = new List<Track>(audiofile.Tracks)
             {
                 track
             };
             SetValue(audiofile, x => x.Tracks, newValue);
-            SetLastTrackEnd(cuesheet!);
+            RecalculateTrackProperties(cuesheet!);
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -148,6 +107,25 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.AddChange(new(audiofile, new(previousValue, propertyInfo.Name)));
         }
 
+        void RecalculateTrackProperties(Cuesheet cuesheet)
+        {
+            //TODO: Recalculate position, begin and end ascending
+            ushort position = 1;
+            foreach (var audiofile in cuesheet.Audiofiles)
+            {
+                foreach (var track in audiofile.Tracks)
+                {
+                    if (track.Position != position)
+                    {
+                        _trackManager.SetProperty(track, x => x.Position, position);
+                    }
+                    position++;
+                }
+            }
+            //TODO: SetFirstTrackBegin
+            //TODO: SetLastTrackEnd
+        }
+
         void SetLastTrackEnd(Cuesheet cuesheet)
         {
             var lastTrack = GetLastTrack(cuesheet);
@@ -158,6 +136,16 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             //}
         }
 
+        void SetFirstTrackBegin(Cuesheet cuesheet)
+        {
+            var firstTrack = GetFirstTrack(cuesheet);
+            //TODO
+            //if ((firstTrack?.Begin.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
+            //{
+            //    _trackManager.SetProperty(firstTrack, x => x.Begin, TimeSpan.Zero);
+            //}
+        }
+
         static Track? GetLastTrack(Cuesheet cuesheet)
         {
             return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
@@ -165,6 +153,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
                 .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
                 .LastOrDefault();
+        }
+
+        static Track? GetFirstTrack(Cuesheet cuesheet)
+        {
+            return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
+                .OrderBy(x => x.Position.HasValue).ThenBy(x => x.Position)
+                .ThenBy(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+                .ThenBy(x => x.End.HasValue).ThenBy(x => x.End)
+                .FirstOrDefault();
         }
     }
 }
