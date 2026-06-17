@@ -42,5 +42,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// </summary>
         /// <param name="track"></param>
         void AddTrack(Audiofile audiofile, Track track);
+        /// <summary>
+        /// Remove tracks from the audiofile
+        /// </summary>
+        /// <param name="audiofile"></param>
+        /// <param name="tracksToRemove"></param>
+        void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove);
     }
 }

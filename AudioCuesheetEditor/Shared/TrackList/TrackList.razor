@@ -65,7 +65,7 @@ along with Foobar.  If not, see
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks([context.Item])" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile, [context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
@@ -171,7 +171,7 @@ along with Foobar.  If not, see
 
     void DeleteSelectedTracksClicked()
     {
-        _cuesheetManager.RemoveTracks(_selectedTracks);
+        _audiofileManager.RemoveTracks(Audiofile, _selectedTracks);
         _selectedTracks.Clear();
     }
 

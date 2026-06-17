@@ -85,6 +85,31 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.BulkEdit = false;
         }
 
+        /// <inheritdoc/>
+        public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove)
+        {
+            //TODO: Tests
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var intersection = audiofile.Tracks.Intersect(tracksToRemove);
+            ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
+            //TODO Calculate position and begin of all leftover tracks
+            //ushort position = 1;
+            //foreach (var track in newValue.OrderBy(x => x.Position))
+            //{
+            //    track.Position = position;
+            //    position++;
+            //    var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
+            //    if (previousTrack?.End.HasValue == true)
+            //    {
+            //        track.Begin = previousTrack.End;
+            //    }
+            //}
+            _traceChangeManager.BulkEdit = true;
+            SetValue(audiofile, x => x.Tracks, newValue);
+            //TODO: SetLastTrackEnd(cuesheet);
+            _traceChangeManager.BulkEdit = false;
+        }
+
         void SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
@@ -110,6 +135,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         void RecalculateTrackProperties(Cuesheet cuesheet)
         {
             //TODO: Recalculate position, begin and end ascending
+            // Unset first track begin
+            var firstTrack = GetFirstTrack(cuesheet);
+            if (firstTrack?.Begin == TimeSpan.Zero)
+            {
+                _trackManager.SetProperty(firstTrack, x => x.Begin, null);
+            }
             ushort position = 1;
             foreach (var audiofile in cuesheet.Audiofiles)
             {
@@ -119,10 +150,20 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                     {
                         _trackManager.SetProperty(track, x => x.Position, position);
                     }
+                    var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
+                    if (previousTrack?.End.HasValue == true)
+                    {
+                        _trackManager.SetProperty(track, x => x.Begin, previousTrack.End);
+                    }
                     position++;
                 }
             }
-            //TODO: SetFirstTrackBegin
+            // Set first track begin
+            firstTrack = GetFirstTrack(cuesheet);
+            if (firstTrack?.Begin.HasValue == false)
+            {
+                _trackManager.SetProperty(firstTrack, x => x.Begin, TimeSpan.Zero);
+            }
             //TODO: SetLastTrackEnd
         }
 
@@ -133,16 +174,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             //if ((lastTrack?.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
             //{
             //    _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
-            //}
-        }
-
-        void SetFirstTrackBegin(Cuesheet cuesheet)
-        {
-            var firstTrack = GetFirstTrack(cuesheet);
-            //TODO
-            //if ((firstTrack?.Begin.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
-            //{
-            //    _trackManager.SetProperty(firstTrack, x => x.Begin, TimeSpan.Zero);
             //}
         }
 
@@ -158,10 +189,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         static Track? GetFirstTrack(Cuesheet cuesheet)
         {
             return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
-                .OrderBy(x => x.Position.HasValue).ThenBy(x => x.Position)
-                .ThenBy(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-                .ThenBy(x => x.End.HasValue).ThenBy(x => x.End)
+                .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+                .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+                .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
                 .FirstOrDefault();
         }
+
     }
 }

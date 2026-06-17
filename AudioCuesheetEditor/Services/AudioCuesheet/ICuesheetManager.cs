@@ -50,11 +50,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <returns></returns>
         void StopRecording();
         /// <summary>
-        /// Remove tracks from cuesheet
-        /// </summary>
-        /// <param name="tracksToRemove"></param>
-        void RemoveTracks(IEnumerable<Track> tracksToRemove);
-        /// <summary>
         /// Determines if moving tracks up is possible
         /// </summary>
         /// <param name="selectedTracks"></param>

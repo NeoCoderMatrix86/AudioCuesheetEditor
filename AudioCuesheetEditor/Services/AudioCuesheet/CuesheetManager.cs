@@ -95,31 +95,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public void RemoveTracks(IEnumerable<Track> tracksToRemove)
-        {
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            //TODO
-            //var intersection = cuesheet!.Tracks.Intersect(tracksToRemove);
-            //ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
-            ////Calculate position and begin of new tracks
-            //ushort position = 1;
-            //foreach (var track in newValue.OrderBy(x => x.Position))
-            //{
-            //    track.Position = position;
-            //    position++;
-            //    var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
-            //    if (previousTrack?.End.HasValue == true)
-            //    {
-            //        track.Begin = previousTrack.End;
-            //    }
-            //}
-            //_traceChangeManager.BulkEdit = true;
-            //SetValue(cuesheet, x => x.Tracks, newValue);
-            //SetLastTrackEnd(cuesheet);
-            //_traceChangeManager.BulkEdit = false;
-        }
-
-        /// <inheritdoc/>
         public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
 
         /// <inheritdoc/>
