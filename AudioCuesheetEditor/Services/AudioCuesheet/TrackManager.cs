@@ -138,35 +138,34 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void RecalculateLinkedTracksProperties(Track track)
         {
-            //TODO
-            //if (track.Cuesheet != null)
-            //{
-            //    var previousTrack = GetPreviousLinkedTrack(track);
-            //    if (previousTrack != null)
-            //    {
-            //        if (track.Position.HasValue == false && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
-            //        {
-            //            SetValue(track, x => x.Position, (ushort?)(previousTrack.Position + 1));
-            //        }
-            //        if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
-            //        {
-            //            SetValue(track, x => x.Begin, previousTrack.End);
-            //        }
-            //        if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
-            //        {
-            //            SetValue(previousTrack, x => x.End, track.Begin);
-            //        }
-            //    }
-            //    var nextTrack = GetNextLinkedTrack(track);
-            //    if (nextTrack != null)
-            //    {
-            //        if (track.Position.HasValue)
-            //        {
-            //            SetValue(nextTrack, x => x.Position, (ushort?)(track.Position + 1));
-            //        }
-            //        SetValue(nextTrack, x => x.Begin, track.End);
-            //    }
-            //}
+            if (track.Cuesheet != null)
+            {
+                var previousTrack = GetPreviousLinkedTrack(track);
+                if (previousTrack != null)
+                {
+                    if (track.Position.HasValue == false && previousTrack.Position.HasValue && (track.Position != previousTrack.Position.Value + 1))
+                    {
+                        SetValue(track, x => x.Position, (ushort?)(previousTrack.Position + 1));
+                    }
+                    if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+                    {
+                        SetValue(track, x => x.Begin, previousTrack.End);
+                    }
+                    if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
+                    {
+                        SetValue(previousTrack, x => x.End, track.Begin);
+                    }
+                }
+                var nextTrack = GetNextLinkedTrack(track);
+                if (nextTrack != null)
+                {
+                    if (track.Position.HasValue)
+                    {
+                        SetValue(nextTrack, x => x.Position, (ushort?)(track.Position + 1));
+                    }
+                    SetValue(nextTrack, x => x.Begin, track.End);
+                }
+            }
         }
 
         void SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)

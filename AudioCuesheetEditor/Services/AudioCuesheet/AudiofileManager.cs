@@ -93,11 +93,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var intersection = audiofile.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
             //TODO Calculate position and begin of all leftover tracks
-            //ushort position = 1;
             //foreach (var track in newValue.OrderBy(x => x.Position))
             //{
             //    track.Position = position;
-            //    position++;
             //    var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
             //    if (previousTrack?.End.HasValue == true)
             //    {
