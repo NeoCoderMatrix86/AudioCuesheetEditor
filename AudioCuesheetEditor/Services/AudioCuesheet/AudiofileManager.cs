@@ -92,19 +92,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             var intersection = audiofile.Tracks.Intersect(tracksToRemove);
             ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
-            //TODO Calculate position and begin of all leftover tracks
-            //foreach (var track in newValue.OrderBy(x => x.Position))
-            //{
-            //    track.Position = position;
-            //    var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
-            //    if (previousTrack?.End.HasValue == true)
-            //    {
-            //        track.Begin = previousTrack.End;
-            //    }
-            //}
             _traceChangeManager.BulkEdit = true;
             SetValue(audiofile, x => x.Tracks, newValue);
-            //TODO: SetLastTrackEnd(cuesheet);
+            RecalculateTrackProperties(cuesheet!);
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -132,13 +122,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         void RecalculateTrackProperties(Cuesheet cuesheet)
         {
-            //TODO: Recalculate position, begin and end ascending
             // Unset first track begin
             var firstTrack = GetFirstTrack(cuesheet);
             if (firstTrack?.Begin == TimeSpan.Zero)
             {
                 _trackManager.SetProperty(firstTrack, x => x.Begin, null);
             }
+            // Recalculate position, begin and end ascending
             ushort position = 1;
             foreach (var audiofile in cuesheet.Audiofiles)
             {
