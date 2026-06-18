@@ -38,18 +38,13 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         private AudioCodec? _audioCodec;
         private String? _name;
         
-        [JsonConstructor]
-        public Audiofile(String? name) : this()
-        {
-            _name = name;
-        }
-        //TODO: Remove constructors?!
-        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this(name)
+        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
         {
             if (String.IsNullOrEmpty(objectURL))
             {
                 throw new ArgumentNullException(nameof(objectURL));
             }
+            Name = name;
             ObjectURL = objectURL;
             AudioCodec = audioCodec;
             Duration = duration;

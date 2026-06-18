@@ -36,8 +36,8 @@ namespace AudioCuesheetEditor.Tests.Model.IO
                 Artist = "CuesheetArtist",
                 Title = "CuesheetTitle",
                 Audiofiles = [
-                    new ("AudioFile.mp3"),
-                    new ("Other audiofile.wav")
+                    new () { Name = "AudioFile.mp3" },
+                    new () { Name = "Other audiofile.wav" }
                 ],
                 CDTextfile = new CDTextfile("CDTextfile.cdt"),
                 Cataloguenumber = "A123"

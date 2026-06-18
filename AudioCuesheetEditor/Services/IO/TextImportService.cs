@@ -213,7 +213,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
             if (property.PropertyType == typeof(Audiofile))
             {
-                property.SetValue(entity, new Audiofile(value));
+                property.SetValue(entity, new Audiofile() { Name = value });
             }
             if (property.PropertyType == typeof(DateTime?))
             {

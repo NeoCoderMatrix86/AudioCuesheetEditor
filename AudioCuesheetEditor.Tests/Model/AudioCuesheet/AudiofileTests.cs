@@ -40,7 +40,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
         public void Validate_TracksEmpty_ReturnsValidationStatusError()
         {
             // Arrange
-            var audiofile = new Audiofile("Test audiofile.mp3");
+            var audiofile = new Audiofile();
             // Act
             var validationResult = audiofile.Validate(nameof(Audiofile.Tracks));
             // Assert
