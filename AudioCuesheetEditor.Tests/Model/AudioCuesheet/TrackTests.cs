@@ -60,10 +60,7 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             {
                 Position = 1
             };
-            var cuesheet = new Cuesheet()
-            {
-                Tracks = [track1, track]
-            };
+            var cuesheet = new Cuesheet();
             track1.Cuesheet = cuesheet;
             track.Cuesheet = cuesheet;
             // Act
