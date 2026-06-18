@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
@@ -89,7 +88,5 @@ namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
             Assert.AreEqual(nameof(Cuesheet.Cataloguenumber), validationResult.ValidationMessages.First().Parameter?.First().ToString());
             Assert.AreEqual(13, validationResult.ValidationMessages.First().Parameter?.Last());
         }
-        
-        //TODO: Validation for audio files
     }
 }
