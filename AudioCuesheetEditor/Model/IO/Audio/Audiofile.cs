@@ -99,7 +99,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
             List<ValidationMessage>? validationMessages = null;
             switch (property)
             {
-                //TODO: Validate Name, Audiocodec, etc.
                 case nameof(Tracks):
                     validationStatus = ValidationStatus.Success;
                     if (Tracks.Count == 0)
@@ -138,6 +137,14 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                                 }
                             }
                         }
+                    }
+                    break;
+                case nameof(Name):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(Name))
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
                     }
                     break;
             }

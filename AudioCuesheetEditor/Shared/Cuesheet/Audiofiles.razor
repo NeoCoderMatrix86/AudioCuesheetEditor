@@ -55,7 +55,7 @@ along with Foobar.  If not, see
                     }
                     <FileInput Id="@fileInputId" Label="@_localizer["Audiofile"]" FileName="@file.Name" OnFileSelected="(IBrowserFile? browserFile) => _audiofileManager.SetPropertiesAsync(file, browserFile, fileInputId)"
                                OnFileRenameClicked="() => FileRenameClicked(file)" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
-                               FileRenameDisabled="file.Name == null" Error="file.Name == null" />
+                               FileRenameDisabled="file.Name == null" Error="file.Validate().Status == ValidationStatus.Error" />
                 </MudStack>
             </TitleContent>
             <ChildContent>
