@@ -142,6 +142,14 @@ namespace AudioCuesheetEditor.Model.IO.Audio
                         validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
                     }
                     break;
+                case nameof(AudioCodec):
+                    validationStatus = ValidationStatus.Success;
+                    if (AudioCodec == null)
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(AudioCodec)));
+                    }
+                    break;
             }
             return ValidationResult.Create(validationStatus, validationMessages);
         }
