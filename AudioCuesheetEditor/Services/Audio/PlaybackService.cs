@@ -30,7 +30,7 @@ namespace AudioCuesheetEditor.Services.Audio
         private Timer? _updateTimer;
         private readonly Lock _timerLock = new();
         private TimeSpan? _currentPosition;
-        private ElementReference? _audioElement;
+        private DotNetObjectReference<PlaybackService>? _dotNetObjectReference;
 
         public event Action? CurrentPositionChanged;
 
@@ -64,16 +64,17 @@ namespace AudioCuesheetEditor.Services.Audio
         public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
         public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
 
-        public void Initialize(ElementReference audioElement)
+        public async Task InitializeAsync(ElementReference audioElement)
         {
-            _audioElement = audioElement;
+            _dotNetObjectReference = DotNetObjectReference.Create(this);
+            await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference, audioElement);
         }
 
         public async Task PlayOrPauseAsync()
         {
             if (IsPlaying)
             {
-                await _jsRuntime.InvokeVoidAsync("audioInterop.pauseAudio", _audioElement);
+                await _jsRuntime.InvokeVoidAsync("audioInterop.pauseAudio");
                 IsPlaying = false;
             }
             else
@@ -88,7 +89,7 @@ namespace AudioCuesheetEditor.Services.Audio
                     var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
                     if (audiofileToPlay != null)
                     {
-                        await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", _audioElement, audiofileToPlay.ObjectURL);
+                        await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", audiofileToPlay.ObjectURL);
                         IsPlaying = true;
                         StartTimer();
                     }
@@ -107,7 +108,7 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task StopAsync()
         {
-            await _jsRuntime.InvokeVoidAsync("audioInterop.stopAudio", _audioElement);
+            await _jsRuntime.InvokeVoidAsync("audioInterop.stopAudio");
             _currentlyPlayingAudiofile = null;
             IsPlaying = false; 
             StopTimer();    
@@ -144,7 +145,17 @@ namespace AudioCuesheetEditor.Services.Audio
                 await PlayOrPauseAsync();
             }
             var seconds = time.TotalSeconds;
-            await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", _audioElement, seconds);
+            await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", seconds);
+        }
+
+        [JSInvokable]
+        public void OnPlaybackEnded()
+        {
+            //TODO: Maybe we can use this event to get to the next audiofile
+            StopTimer();
+            _currentlyPlayingAudiofile = null;
+            CurrentPosition = null;
+            IsPlaying = false;
         }
 
         private void StartTimer()
@@ -168,7 +179,7 @@ namespace AudioCuesheetEditor.Services.Audio
                     StopTimer();
                 }
             }
-            var currentTime = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime", _audioElement);
+            var currentTime = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
             CurrentPosition = TimeSpan.FromSeconds(currentTime);
         }
     }

@@ -91,10 +91,10 @@ along with Foobar.  If not, see
             .Add(Key.MediaStop, StopAsync);
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
-        _playbackService.Initialize(_audioElement);
+        await base.OnAfterRenderAsync(firstRender);
+        await _playbackService.InitializeAsync(_audioElement);
     }
 
     async Task OnPlayOrPauseClicked()

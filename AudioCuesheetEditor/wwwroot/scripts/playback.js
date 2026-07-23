@@ -1,23 +1,35 @@
 ﻿window.audioInterop = {
-    playAudio: (audioElement, objectUrl) => {
-        audioElement.src = objectUrl;
-        audioElement.play();
+    dotnetRef: null,
+    audioElement: null,
+
+    register: (dotnetObject, audioElement) => {
+        window.audioInterop.dotnetRef = dotnetObject;
+        window.audioInterop.audioElement = audioElement;
+
+        audioElement.addEventListener('ended', () => {
+            window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackEnded');
+        });
     },
 
-    seekAudio: (audioElement, seconds) => {
-        audioElement.currentTime = seconds;
+    playAudio: (objectUrl) => {
+        window.audioInterop.audioElement.src = objectUrl;
+        window.audioInterop.audioElement.play();
     },
 
-    pauseAudio: (audioElement) => {
-        audioElement.pause();
+    seekAudio: (seconds) => {
+        window.audioInterop.audioElement.currentTime = seconds;
     },
 
-    stopAudio: (audioElement) => {
-        audioElement.pause();
-        audioElement.currentTime = 0;
+    pauseAudio: () => {
+        window.audioInterop.audioElement.pause();
     },
 
-    getAudioCurrentTime: (audioElement) => {
-        return audioElement.currentTime;
-    }
+    stopAudio: () => {
+        window.audioInterop.audioElement.pause();
+        window.audioInterop.audioElement.currentTime = 0;
+    },
+
+    getAudioCurrentTime: () => {
+        return window.audioInterop.audioElement.currentTime;
+    },
 };
