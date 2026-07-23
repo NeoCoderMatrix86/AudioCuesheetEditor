@@ -93,6 +93,7 @@ namespace AudioCuesheetEditor.Services.Audio
                 var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
                 if (audiofileToPlay != null)
                 {
+                    //TODO: Make a method for setting source, so we can switch source for next audiofile
                     await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", audiofileToPlay.ObjectURL);
                 }
                 _currentlyPlayingAudiofile = audiofileToPlay;
