@@ -16,19 +16,22 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService
+    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer)
     {
-        private readonly ISessionStateContainer _sessionStateContainer;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
         private int? _currentPlayingSoundId;
         private Audiofile? _currentlyPlayingAudiofile;
         private Timer? _updateTimer;
-        private bool _disposedValue;
         private readonly Lock _timerLock = new();
         private TimeSpan? _currentPosition;
+        private ElementReference? _audioElement;
 
         public event Action? CurrentPositionChanged;
 
@@ -59,6 +62,11 @@ namespace AudioCuesheetEditor.Services.Audio
         }
         public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null); //TODO && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
         public Boolean IsNextPossible => (CurrentlyPlayingTrack != null); //TODO && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+
+        public void Initialize(ElementReference audioElement)
+        {
+            _audioElement = audioElement;
+        }
 
         public async Task PlayOrPauseAsync()
         {

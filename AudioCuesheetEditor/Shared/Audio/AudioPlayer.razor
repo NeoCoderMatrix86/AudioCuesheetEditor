@@ -22,6 +22,8 @@ along with Foobar.  If not, see
 @inject PlaybackService _playbackService
 @inject HotKeys _hotKeys
 
+<audio @ref="_audioElement" hidden />
+
 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
     @if (_playbackService.CurrentPosition.HasValue)
     {
@@ -65,6 +67,7 @@ along with Foobar.  If not, see
 @code {
     double sliderValue;
     HotKeysContext? hotKeysContext;
+    ElementReference _audioElement;
 
     protected override void Dispose(bool disposing)
     {
@@ -77,6 +80,7 @@ along with Foobar.  If not, see
     {
         base.OnInitialized();
         _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
+        _playbackService.Initialize(_audioElement);
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKey.Ctrl, Key.p, OnPlayOrPauseClicked)
             .Add(ModKey.Ctrl, Key.ArrowRight, PlayNextTrackAsync)
