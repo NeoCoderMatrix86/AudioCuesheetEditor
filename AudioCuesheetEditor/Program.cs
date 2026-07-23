@@ -24,7 +24,6 @@ using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Services.Validation;
 using BlazorDownloadFile;
-using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -40,9 +39,6 @@ builder.Services.AddMudServices(config =>
 {
     config.PopoverOptions.OverflowPadding = 0;
 });
-
-builder.Services.AddScoped<IHowl, Howl>();
-builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 builder.Services.AddBlazorDownloadFile();
 
