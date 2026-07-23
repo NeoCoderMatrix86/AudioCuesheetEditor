@@ -60,7 +60,7 @@ namespace AudioCuesheetEditor.Services.Audio
                 return null;
             }
         }
-        public Boolean IsPlaying { get; private set; } = false;
+        public Boolean IsPaused { get; private set; } = false;
         public Boolean IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
         public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
         public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
@@ -77,29 +77,25 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task PlayOrPauseAsync()
         {
-            if (IsPlaying)
+            if (_currentlyPlayingAudiofile != null)
             {
-                await _jsRuntime.InvokeVoidAsync("audioInterop.pauseAudio");
-                IsPlaying = false;
-            }
-            else
-            {
-                if (_currentlyPlayingAudiofile != null)
+                if (IsPaused == false)
                 {
-                    //TODO: Check if we need to switch to the next audio file or if we can resume the current one
-                    //TODO: Resume current playback
+                    await _jsRuntime.InvokeVoidAsync("audioInterop.pauseAudio");
                 }
                 else
                 {
-                    var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
-                    if (audiofileToPlay != null)
-                    {
-                        await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", audiofileToPlay.ObjectURL);
-                        IsPlaying = true;
-                        StartTimer();
-                    }
-                    _currentlyPlayingAudiofile = audiofileToPlay;
+                    //TODO: Resume current playback
                 }
+            }
+            else
+            {
+                var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+                if (audiofileToPlay != null)
+                {
+                    await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", audiofileToPlay.ObjectURL);
+                }
+                _currentlyPlayingAudiofile = audiofileToPlay;
             }
         }
 
@@ -114,9 +110,8 @@ namespace AudioCuesheetEditor.Services.Audio
         public async Task StopAsync()
         {
             await _jsRuntime.InvokeVoidAsync("audioInterop.stopAudio");
-            _currentlyPlayingAudiofile = null;
-            IsPlaying = false; 
-            StopTimer();    
+            _currentlyPlayingAudiofile = null; 
+            StopTimer();
         }
 
         public async Task PlayNextTrackAsync()
@@ -145,12 +140,19 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task SeekAsync(TimeSpan time)
         {
-            if (IsPlaying == false)
+            if (IsPaused == false)
             {
                 await PlayOrPauseAsync();
             }
             var seconds = time.TotalSeconds;
             await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", seconds);
+        }
+
+        [JSInvokable]
+        public void OnPlaybackStarted()
+        {
+            IsPaused = false;
+            StartTimer();
         }
 
         [JSInvokable]
@@ -160,7 +162,13 @@ namespace AudioCuesheetEditor.Services.Audio
             StopTimer();
             _currentlyPlayingAudiofile = null;
             CurrentPosition = null;
-            IsPlaying = false;
+            IsPaused = false;
+        }
+
+        [JSInvokable]
+        public void OnPlaybackPaused()
+        {
+            IsPaused = true;
         }
 
         public async ValueTask DisposeAsync()
@@ -187,7 +195,7 @@ namespace AudioCuesheetEditor.Services.Audio
             // Thread-safe access
             lock (_timerLock)
             {
-                if (_currentlyPlayingAudiofile == null || !IsPlaying)
+                if (_currentlyPlayingAudiofile == null || !IsPaused)
                 {
                     StopTimer();
                 }

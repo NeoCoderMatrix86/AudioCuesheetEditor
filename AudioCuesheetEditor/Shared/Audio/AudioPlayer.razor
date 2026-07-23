@@ -49,7 +49,7 @@ along with Foobar.  If not, see
 </MudStack>
 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center">
     <MudTooltip Text="@_localizer["Play or pause the current audio"]">
-        <MudIconButton Icon="@(_playbackService.IsPlaying ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.IsPlaybackPossible" OnClick="OnPlayOrPauseClicked" aria-label="Play" />
+        <MudIconButton Icon="@(_playbackService.IsPaused ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)" Variant="Variant.Filled" Color="Color.Primary" Disabled="!_playbackService.IsPlaybackPossible" OnClick="OnPlayOrPauseClicked" aria-label="Play" />
     </MudTooltip>
     <MudButtonGroup OverrideStyles="false">
         <MudTooltip Text="@_localizer["Jump to previous track"]">

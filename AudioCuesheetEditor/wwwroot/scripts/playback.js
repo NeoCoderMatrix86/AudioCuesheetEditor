@@ -6,8 +6,14 @@
         window.audioInterop.dotnetRef = dotnetObject;
         window.audioInterop.audioElement = audioElement;
 
+        audioElement.addEventListener('play', () => {
+            window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackStarted');
+        });
         audioElement.addEventListener('ended', () => {
             window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackEnded');
+        });
+        audioElement.addEventListener('pause', () => {
+            window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackPaused');
         });
     },
 
