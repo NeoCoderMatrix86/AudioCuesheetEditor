@@ -30,6 +30,7 @@ namespace AudioCuesheetEditor.Services.Audio
         private Timer? _updateTimer;
         private readonly Lock _timerLock = new();
         private TimeSpan? _currentPosition;
+        private ElementReference? _audioElement;
         private DotNetObjectReference<PlaybackService>? _dotNetObjectReference;
 
         public event Action? CurrentPositionChanged;
@@ -66,8 +67,12 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task InitializeAsync(ElementReference audioElement)
         {
-            _dotNetObjectReference = DotNetObjectReference.Create(this);
-            await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference, audioElement);
+            if (audioElement.Equals(_audioElement) == false)
+            {
+                _audioElement = audioElement;
+                _dotNetObjectReference = DotNetObjectReference.Create(this);
+                await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference, audioElement);
+            }
         }
 
         public async Task PlayOrPauseAsync()
@@ -163,6 +168,7 @@ namespace AudioCuesheetEditor.Services.Audio
             GC.SuppressFinalize(this);
             await _jsRuntime.InvokeVoidAsync("audioInterop.unregister");
             _dotNetObjectReference?.Dispose();
+            _audioElement = null;
         }
 
         private void StartTimer()
