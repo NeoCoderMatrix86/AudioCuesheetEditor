@@ -21,7 +21,7 @@ using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer)
+    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer) : IAsyncDisposable
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly IJSRuntime _jsRuntime = jsRuntime;
@@ -158,6 +158,13 @@ namespace AudioCuesheetEditor.Services.Audio
             IsPlaying = false;
         }
 
+        public async ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            await _jsRuntime.InvokeVoidAsync("audioInterop.unregister");
+            _dotNetObjectReference?.Dispose();
+        }
+
         private void StartTimer()
         {
             _updateTimer ??= new Timer(UpdateCurrentPosition, null, 0, 500);
@@ -182,5 +189,6 @@ namespace AudioCuesheetEditor.Services.Audio
             var currentTime = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
             CurrentPosition = TimeSpan.FromSeconds(currentTime);
         }
+
     }
 }

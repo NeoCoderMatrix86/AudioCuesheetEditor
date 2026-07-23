@@ -11,6 +11,11 @@
         });
     },
 
+    unregister: () => {
+        window.audioInterop.dotnetRef = null;
+        window.audioInterop.audioElement = null;
+    },
+
     playAudio: (objectUrl) => {
         window.audioInterop.audioElement.src = objectUrl;
         window.audioInterop.audioElement.play();
