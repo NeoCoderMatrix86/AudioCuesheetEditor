@@ -80,7 +80,6 @@ along with Foobar.  If not, see
     {
         base.OnInitialized();
         _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
-        _playbackService.Initialize(_audioElement);
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKey.Ctrl, Key.p, OnPlayOrPauseClicked)
             .Add(ModKey.Ctrl, Key.ArrowRight, PlayNextTrackAsync)
@@ -90,6 +89,12 @@ along with Foobar.  If not, see
             .Add(Key.MediaTrackNext, PlayNextTrackAsync)
             .Add(Key.MediaTrackPrevious, PlayPreviousTrackAsync)
             .Add(Key.MediaStop, StopAsync);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        _playbackService.Initialize(_audioElement);
     }
 
     async Task OnPlayOrPauseClicked()

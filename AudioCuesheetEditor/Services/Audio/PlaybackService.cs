@@ -26,7 +26,6 @@ namespace AudioCuesheetEditor.Services.Audio
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly IJSRuntime _jsRuntime = jsRuntime;
 
-        private int? _currentPlayingSoundId;
         private Audiofile? _currentlyPlayingAudiofile;
         private Timer? _updateTimer;
         private readonly Lock _timerLock = new();
@@ -47,21 +46,23 @@ namespace AudioCuesheetEditor.Services.Audio
                 }
             }
         }
-        public Track? CurrentlyPlayingTrack => null;//TODO_sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
-        public TimeSpan? TotalTime => null; //TODO _sessionStateContainer.Cuesheet.Audiofile?.Duration;
-        public Boolean IsPlaying { get; private set; } = false;
-        public Boolean IsPlaybackPossible
+        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
+        public TimeSpan? TotalTime
         {
             get
             {
-                //TODO
-                //var audiofile = _sessionStateContainer.Cuesheet.Audiofile;
-                //return String.IsNullOrEmpty(audiofile?.ObjectURL) == false && String.IsNullOrEmpty(audiofile?.AudioFileType) == false;
-                return false;
+                var durations = _sessionStateContainer.Cuesheet.Audiofiles.Where(a => a.Duration.HasValue).Select(x => x.Duration);
+                if (durations.Any())
+                {
+                    return durations.Aggregate((sum, a) => sum + a);
+                }
+                return null;
             }
         }
-        public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null); //TODO && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
-        public Boolean IsNextPossible => (CurrentlyPlayingTrack != null); //TODO && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+        public Boolean IsPlaying { get; private set; } = false;
+        public Boolean IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+        public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
+        public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
 
         public void Initialize(ElementReference audioElement)
         {
@@ -70,78 +71,57 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task PlayOrPauseAsync()
         {
-            //TODO
-            ////Reset if the last played audiofile is not the current one
-            //if (_currentlyPlayingAudiofile != _sessionStateContainer.Cuesheet.Audiofile)
-            //{
-            //    _currentPlayingSoundId = null;
-            //}
-            ////If the current audiofile already started, we just pause
-            //if (_currentPlayingSoundId != null)
-            //{
-            //    await _howl.Pause(_currentPlayingSoundId.Value);
-            //}
-            //else
-            //{
-            //    if (IsPlaybackPossible)
-            //    {
-            //        string[]? sources = null;
-            //        string[]? formats = null;
-            //        if (_sessionStateContainer.Cuesheet.Audiofile?.ObjectURL != null)
-            //        {
-            //            sources = [_sessionStateContainer.Cuesheet.Audiofile.ObjectURL];
-            //        }
-            //        if (_sessionStateContainer.Cuesheet.Audiofile?.AudioFileType != null)
-            //        {
-            //            formats = [_sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower()];
-            //        }
-            //        var options = new HowlOptions
-            //        {
-            //            Sources = sources,
-            //            Formats = formats,
-            //            Html5 = true
-            //        };
-            //        _currentPlayingSoundId = await _howl.Play(options);
-            //        _currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
-            //    }
-            //}
+            if (IsPlaying)
+            {
+                await _jsRuntime.InvokeVoidAsync("audioInterop.pauseAudio", _audioElement);
+                IsPlaying = false;
+            }
+            else
+            {
+                if (_currentlyPlayingAudiofile != null)
+                {
+                    //TODO: Check if we need to switch to the next audio file or if we can resume the current one
+                    //TODO: Resume current playback
+                }
+                else
+                {
+                    var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+                    if (audiofileToPlay != null)
+                    {
+                        await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", _audioElement, audiofileToPlay.ObjectURL);
+                        IsPlaying = true;
+                        StartTimer();
+                    }
+                    _currentlyPlayingAudiofile = audiofileToPlay;
+                }
+            }
         }
 
         public async Task PlayAsync(Track trackToPlay)
         {
             if (trackToPlay?.Begin.HasValue == true)
             {
-                if (IsPlaying == false)
-                {
-                    await PlayOrPauseAsync();
-                }
-                if (_currentPlayingSoundId.HasValue)
-                {
-                    //TODO
-                    //await _howl.Seek(_currentPlayingSoundId.Value, trackToPlay.Begin.Value);
-                }
+                await SeekAsync(trackToPlay.Begin.Value);
             }
         }
 
         public async Task StopAsync()
         {
-            if (_currentPlayingSoundId != null)
-            {
-                //TODO
-                //await _howl.Stop(_currentPlayingSoundId.Value);
-            }
+            await _jsRuntime.InvokeVoidAsync("audioInterop.stopAudio", _audioElement);
+            _currentlyPlayingAudiofile = null;
+            IsPlaying = false; 
+            StopTimer();    
         }
 
         public async Task PlayNextTrackAsync()
         {
             if (CurrentlyPlayingTrack != null)
             {
-                //TODO
-                //var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
-                //if (trackToPlay != null)
-                //{
-                //    await PlayAsync(trackToPlay);
-                //}
+                var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
+                if (trackToPlay != null)
+                {
+                    await PlayAsync(trackToPlay);
+                }
             }
         }
 
@@ -149,30 +129,22 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (CurrentlyPlayingTrack != null)
             {
-                //TODO
-                //var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
-                //if (trackToPlay != null)
-                //{
-                //    await PlayAsync(trackToPlay);
-                //}
+                var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
+                if (trackToPlay != null)
+                {
+                    await PlayAsync(trackToPlay);
+                }
             }
         }
 
         public async Task SeekAsync(TimeSpan time)
         {
-            if (_currentPlayingSoundId.HasValue == false)
+            if (IsPlaying == false)
             {
                 await PlayOrPauseAsync();
             }
-            if (_currentPlayingSoundId.HasValue)
-            {
-                if (IsPlaying == false)
-                {
-                    await PlayOrPauseAsync();
-                }
-                //TODO
-                //await _howl.Seek(_currentPlayingSoundId.Value, time);
-            }
+            var seconds = time.TotalSeconds;
+            await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", _audioElement, seconds);
         }
 
         private void StartTimer()
@@ -191,14 +163,13 @@ namespace AudioCuesheetEditor.Services.Audio
             // Thread-safe access
             lock (_timerLock)
             {
-                if (_currentPlayingSoundId == null || !IsPlaying) return;
+                if (_currentlyPlayingAudiofile == null || !IsPlaying)
+                {
+                    StopTimer();
+                }
             }
-            //TODO
-            //CurrentPosition = await _howl.GetCurrentTime(_currentPlayingSoundId.Value);
-            //if (_sessionStateContainer.Cuesheet.Audiofile != _currentlyPlayingAudiofile)
-            //{
-            //    await _howl.Stop(_currentPlayingSoundId.Value);
-            //}
+            var currentTime = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime", _audioElement);
+            CurrentPosition = TimeSpan.FromSeconds(currentTime);
         }
     }
 }

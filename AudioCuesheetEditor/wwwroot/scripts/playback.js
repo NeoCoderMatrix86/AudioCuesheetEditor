@@ -1,21 +1,23 @@
-﻿window.playAudio = (audioElement, objectUrl) => {
-    audioElement.src = objectUrl;
-    audioElement.play();
-};
+﻿window.audioInterop = {
+    playAudio: (audioElement, objectUrl) => {
+        audioElement.src = objectUrl;
+        audioElement.play();
+    },
 
-window.seekAudio = (audioElement, seconds) => {
-    audioElement.currentTime = seconds;
-};
+    seekAudio: (audioElement, seconds) => {
+        audioElement.currentTime = seconds;
+    },
 
-window.pauseAudio = (audioElement) => {
-    audioElement.pause();
-};
+    pauseAudio: (audioElement) => {
+        audioElement.pause();
+    },
 
-window.stopAudio = (audioElement) => {
-    audioElement.pause();
-    audioElement.currentTime = 0;
-}
+    stopAudio: (audioElement) => {
+        audioElement.pause();
+        audioElement.currentTime = 0;
+    },
 
-window.getAudioCurrentTime = (audioElement) => {
-    return audioElement.currentTime;
+    getAudioCurrentTime: (audioElement) => {
+        return audioElement.currentTime;
+    }
 };
