@@ -189,7 +189,7 @@ namespace AudioCuesheetEditor.Services.Audio
         }
 
         [JSInvokable]
-        public void OnPlaybackStarted(string objectUrl)
+        public void OnPlaybackStarted()
         {
             IsPaused = false;
             StartTimer();
@@ -221,7 +221,7 @@ namespace AudioCuesheetEditor.Services.Audio
         }
 
         [JSInvokable]
-        public void OnPlaybackPaused(string objectUrl)
+        public void OnPlaybackPaused()
         {
             IsPaused = true;
             StopTimer();
