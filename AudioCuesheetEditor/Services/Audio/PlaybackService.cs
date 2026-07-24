@@ -94,11 +94,8 @@ namespace AudioCuesheetEditor.Services.Audio
                 var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
                 if (audiofileToPlay != null)
                 {
-                    await _jsRuntime.InvokeVoidAsync("audioInterop.setAudioSource", audiofileToPlay.ObjectURL);
-                    await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio");
+                    await PlayAsync(audiofileToPlay);
                 }
-                _currentlyPlayingAudiofile = audiofileToPlay;
-                _audiofileDurationsBeforeCurrentlyPlayingAudiofile = null;
             }
         }
 
@@ -142,46 +139,57 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task SeekAsync(TimeSpan time)
         {
-            double secondsToSeek;
-            //TODO: Check if time is before the current playing audio file (like it is when PlayPreviousTrackAsync was called)
-            if (time <= _currentlyPlayingAudiofile?.Duration)
+            TimeSpan cumulativeDuration = TimeSpan.Zero;
+            Audiofile? targetAudiofile = null;
+            TimeSpan targetPositionInAudiofile = TimeSpan.Zero;
+
+            foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
             {
-                if (IsPaused)
+                if (string.IsNullOrEmpty(audiofile.ObjectURL))
                 {
-                    await PlayOrPauseAsync();
+                    continue;
                 }
-                secondsToSeek = time.TotalSeconds;
-            }
-            else
-            {
-                TimeSpan? currentPosition = TimeSpan.Zero;
-                int index = 0;
-                do
+
+                if (audiofile.Duration.HasValue)
                 {
-                    currentPosition += _sessionStateContainer.Cuesheet.Audiofiles[index].Duration;
-                    index++;
-                } while ((time <= currentPosition) && (index < _sessionStateContainer.Cuesheet.Audiofiles.Count - 1));
-                var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.Where(x => string.IsNullOrEmpty(x.ObjectURL) == false).Skip(index - 1).First();
-                await _jsRuntime.InvokeVoidAsync("audioInterop.setAudioSource", audiofileToPlay.ObjectURL);
-                await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio");
-                _currentlyPlayingAudiofile = audiofileToPlay;
-                _audiofileDurationsBeforeCurrentlyPlayingAudiofile = null;
-                CalculateDurationsBeforeCurrentlyPlayingAudiofile();
-                // Since there might be no audio file before the seek (because currently there is no playback), we need to check if _audiofileDurationsBeforeCurrentlyPlayingAudiofile has a value
-                if (_audiofileDurationsBeforeCurrentlyPlayingAudiofile.HasValue)
-                {
-                    secondsToSeek = (time - _audiofileDurationsBeforeCurrentlyPlayingAudiofile.Value).TotalSeconds;
-                }
-                else
-                {
-                    secondsToSeek = time.TotalSeconds;
+                    TimeSpan nextCumulativeDuration = cumulativeDuration + audiofile.Duration.Value;
+
+                    if (time >= cumulativeDuration && time < nextCumulativeDuration)
+                    {
+                        targetAudiofile = audiofile;
+                        targetPositionInAudiofile = time - cumulativeDuration;
+                        break;
+                    }
+
+                    cumulativeDuration = nextCumulativeDuration;
                 }
             }
-            await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", secondsToSeek);
+
+            if (targetAudiofile == null)
+            {
+                targetAudiofile = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+
+                if (targetAudiofile == null)
+                {
+                    return;
+                }
+            }
+
+            if (_currentlyPlayingAudiofile != targetAudiofile)
+            {
+                await PlayAsync(targetAudiofile);
+            }
+
+            if (IsPaused)
+            {
+                await PlayOrPauseAsync();
+            }
+
+            await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", targetPositionInAudiofile.TotalSeconds);
         }
 
         [JSInvokable]
-        public void OnPlaybackStarted()
+        public void OnPlaybackStarted(string objectUrl)
         {
             IsPaused = false;
             StartTimer();
@@ -213,7 +221,7 @@ namespace AudioCuesheetEditor.Services.Audio
         }
 
         [JSInvokable]
-        public void OnPlaybackPaused()
+        public void OnPlaybackPaused(string objectUrl)
         {
             IsPaused = true;
             StopTimer();
