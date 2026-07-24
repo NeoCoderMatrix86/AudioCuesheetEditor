@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         
         public String? Title { get; set; }
 
-        public ICollection<Audiofile> Audiofiles { get; set; } = [];
+        public IList<Audiofile> Audiofiles { get; set; } = [];
 
         public CDTextfile? CDTextfile { get; set; }
 

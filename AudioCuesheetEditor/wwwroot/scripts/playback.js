@@ -16,7 +16,8 @@
         };
 
         window.audioInterop.eventHandlers.onEnded = () => {
-            window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackEnded');
+            const currentObjectUrl = window.audioInterop.audioElement.src;
+            window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackEnded', currentObjectUrl);
         };
 
         window.audioInterop.eventHandlers.onPause = () => {
