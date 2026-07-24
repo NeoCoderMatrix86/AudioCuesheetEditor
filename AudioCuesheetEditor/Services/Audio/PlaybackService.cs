@@ -93,8 +93,8 @@ namespace AudioCuesheetEditor.Services.Audio
                 var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
                 if (audiofileToPlay != null)
                 {
-                    //TODO: Make a method for setting source, so we can switch source for next audiofile
-                    await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio", audiofileToPlay.ObjectURL);
+                    await _jsRuntime.InvokeVoidAsync("audioInterop.setAudioSource", audiofileToPlay.ObjectURL);
+                    await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio");
                 }
                 _currentlyPlayingAudiofile = audiofileToPlay;
             }
@@ -145,6 +145,7 @@ namespace AudioCuesheetEditor.Services.Audio
             {
                 await PlayOrPauseAsync();
             }
+            //TODO: calculate which audiofile should be played before seeking to the position, maybe an update of the source is needed
             var seconds = time.TotalSeconds;
             await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", seconds);
         }
@@ -201,6 +202,7 @@ namespace AudioCuesheetEditor.Services.Audio
                     StopTimer();
                 }
             }
+            //TODO: Calculate which audiofile is currently playing and update the CurrentPosition accordingly
             var currentTime = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
             CurrentPosition = TimeSpan.FromSeconds(currentTime);
         }
