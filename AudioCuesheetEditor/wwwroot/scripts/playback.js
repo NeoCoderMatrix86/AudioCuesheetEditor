@@ -7,9 +7,10 @@
         onPause: null
     },
 
-    register: (dotnetObject, audioElement) => {
+    register: (dotnetObject) => {
+        const audio = new Audio();
         window.audioInterop.dotnetRef = dotnetObject;
-        window.audioInterop.audioElement = audioElement;
+        window.audioInterop.audioElement = audio;
 
         window.audioInterop.eventHandlers.onPlay = () => {
             window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackStarted');
@@ -24,9 +25,9 @@
             window.audioInterop.dotnetRef.invokeMethodAsync('OnPlaybackPaused');
         };
 
-        audioElement.addEventListener('play', window.audioInterop.eventHandlers.onPlay);
-        audioElement.addEventListener('ended', window.audioInterop.eventHandlers.onEnded);
-        audioElement.addEventListener('pause', window.audioInterop.eventHandlers.onPause);
+        window.audioInterop.audioElement.addEventListener('play', window.audioInterop.eventHandlers.onPlay);
+        window.audioInterop.audioElement.addEventListener('ended', window.audioInterop.eventHandlers.onEnded);
+        window.audioInterop.audioElement.addEventListener('pause', window.audioInterop.eventHandlers.onPause);
     },
 
     unregister: () => {

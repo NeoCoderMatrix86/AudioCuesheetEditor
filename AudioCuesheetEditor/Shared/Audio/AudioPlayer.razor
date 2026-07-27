@@ -22,8 +22,6 @@ along with Foobar.  If not, see
 @inject PlaybackService _playbackService
 @inject HotKeys _hotKeys
 
-<audio @ref="_audioElement" hidden />
-
 <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Style="display: grid !important; grid-template-columns: auto 1fr auto; gap: 8px;">
     @if (_playbackService.CurrentPosition.HasValue)
     {
@@ -67,7 +65,6 @@ along with Foobar.  If not, see
 @code {
     double sliderValue;
     HotKeysContext? hotKeysContext;
-    ElementReference _audioElement;
     //TODO: When audio playback starts, the play button doesnt switch to a pause icon
 
     protected override void Dispose(bool disposing)
@@ -77,9 +74,9 @@ along with Foobar.  If not, see
         hotKeysContext?.DisposeAsync();
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        await base.OnInitializedAsync();
         _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
         hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKey.Ctrl, Key.p, OnPlayOrPauseClicked)
@@ -90,12 +87,7 @@ along with Foobar.  If not, see
             .Add(Key.MediaTrackNext, PlayNextTrackAsync)
             .Add(Key.MediaTrackPrevious, PlayPreviousTrackAsync)
             .Add(Key.MediaStop, StopAsync);
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-        await _playbackService.InitializeAsync(_audioElement);
+        await _playbackService.InitializeAsync();
     }
 
     async Task OnPlayOrPauseClicked()
