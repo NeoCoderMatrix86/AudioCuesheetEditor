@@ -63,6 +63,7 @@ namespace AudioCuesheetEditor.Services.Audio
         public Boolean IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
         public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
         public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+        public Boolean IsPlaying => _currentlyPlayingAudiofile != null;
 
         public async Task InitializeAsync()
         {
@@ -222,6 +223,7 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             IsPaused = true;
             StopTimer();
+            UpdateCurrentPosition(null);
         }
 
         public async ValueTask DisposeAsync()
@@ -261,10 +263,12 @@ namespace AudioCuesheetEditor.Services.Audio
 
         async void UpdateCurrentPosition(object? state)
         {
-            // Thread-safe access
             lock (_timerLock)
             {
-                if (_currentlyPlayingAudiofile == null || IsPaused) return;
+                if (_currentlyPlayingAudiofile == null)
+                {
+                    StopTimer();
+                }
             }
             CalculateDurationsBeforeCurrentlyPlayingAudiofile();
             var currentSecondsInCurrentlyPlayingAudiofile = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
