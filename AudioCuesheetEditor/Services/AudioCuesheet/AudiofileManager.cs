@@ -39,6 +39,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.BulkEdit = true;
             if (browserFile == null)
             {
+                if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
+                {
+                    await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+                }
                 SetValue(audiofile, x => x.AudioCodec, null);
                 SetValue(audiofile, x => x.Name, null);
                 SetValue(audiofile, x => x.ObjectURL, null);

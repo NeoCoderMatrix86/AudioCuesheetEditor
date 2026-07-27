@@ -1,9 +1,9 @@
 ﻿window.addEventListener('beforeunload', beforeunload);
 
+window._audioObjectURLCache = {};
 window.getObjectURLFromMudFileUpload = function (inputOrFieldId) {
-    if (window._mudFileObjectURL) {
-        try { URL.revokeObjectURL(window._mudFileObjectURL); } catch (e) { /* ignore */ }
-        window._mudFileObjectURL = null;
+    if (window._audioObjectURLCache[inputOrFieldId]) {
+        return window._audioObjectURLCache[inputOrFieldId];
     }
 
     let inputElem = inputOrFieldId;
@@ -17,10 +17,21 @@ window.getObjectURLFromMudFileUpload = function (inputOrFieldId) {
     for (let i = 0; i < files.length; i++) {
         const f = files[i];
         if (f && f.type && f.type.startsWith("audio/")) {
-            window._mudFileObjectURL = URL.createObjectURL(f);
-            return window._mudFileObjectURL;
+            const newObjectURL = URL.createObjectURL(f);
+            window._audioObjectURLCache[inputOrFieldId] = newObjectURL;
+            return newObjectURL;
         }
     }
+    return null;
+};
+
+window.revokeAudioObjectURL = function (objectUrl) {
+    Object.keys(window._audioObjectURLCache).forEach(key => {
+        if (window._audioObjectURLCache[key] === objectUrl) {
+            delete window._audioObjectURLCache[key];
+        }
+    });
+    URL.revokeObjectURL(objectUrl);
 };
 
 function resetLocalStorage() {

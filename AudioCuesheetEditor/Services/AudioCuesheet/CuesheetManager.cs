@@ -42,6 +42,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             //{
             //    SetLastTrackEnd(cuesheet!);
             //}
+            //TODO: Check if an audiofile has been removed, if so, we need to revoke its object url via library.js (revokeAudioObjectURL)
             _traceChangeManager.BulkEdit = false;
         }
 

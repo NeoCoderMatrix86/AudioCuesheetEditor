@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
-using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.Audio

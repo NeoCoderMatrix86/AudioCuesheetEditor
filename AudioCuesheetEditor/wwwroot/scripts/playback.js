@@ -49,7 +49,9 @@
     },
 
     playAudio: () => {
-        window.audioInterop.audioElement.play();
+        window.audioInterop.audioElement.play().catch(error => {
+            console.error('Play error:', error);
+        });
     },
 
     seekAudio: (seconds) => {
