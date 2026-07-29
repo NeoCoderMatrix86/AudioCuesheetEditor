@@ -158,7 +158,8 @@ namespace AudioCuesheetEditor.Services.IO
                         {
                             var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
                             string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
-                            cuesheet!.Tracks.Add(track);
+                            //TODO
+                            //cuesheet!.Tracks.Add(track);
                             return marked;
                         }
                     );
@@ -178,7 +179,8 @@ namespace AudioCuesheetEditor.Services.IO
                                 var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importProfile.TimeSpanFormat);
                                 if (!string.Equals(markedLine, line))
                                 {
-                                    cuesheet!.Tracks.Add(track);
+                                    //TODO
+                                    //cuesheet!.Tracks.Add(track);
                                 }
                                 sb.AppendLine(markedLine);
                             }
@@ -230,7 +232,8 @@ namespace AudioCuesheetEditor.Services.IO
             [
                 nameof(ImportCuesheet.Artist),
                 nameof(ImportCuesheet.Title),
-                nameof(ImportCuesheet.Audiofile),
+                //TODO
+                //nameof(ImportCuesheet.Audiofile),
                 nameof(ImportCuesheet.CDTextfile),
                 nameof(ImportCuesheet.Cataloguenumber)
             ];

@@ -195,8 +195,8 @@ namespace AudioCuesheetEditor.Services.IO
             }
             if (cuesheetToCopy is ImportCuesheet importCuesheet)
             {
-                tracks = importCuesheet.Tracks;
                 //TODO
+                //tracks = importCuesheet.Tracks;
                 //if (String.IsNullOrEmpty(importCuesheet.Audiofile) == false)
                 //{
                 //    target.Audiofile = new Audiofile(importCuesheet.Audiofile);
