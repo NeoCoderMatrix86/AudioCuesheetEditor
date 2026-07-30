@@ -179,7 +179,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
+        void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
         {
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
@@ -279,7 +279,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private void ResetTracing()
+        void ResetTracing()
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
