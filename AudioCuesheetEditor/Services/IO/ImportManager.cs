@@ -191,7 +191,6 @@ namespace AudioCuesheetEditor.Services.IO
                 //tracks = originCuesheet.Tracks;
                 //target.Audiofile = originCuesheet.Audiofile;
                 target.CDTextfile = originCuesheet.CDTextfile;
-                target.Cataloguenumber = originCuesheet.Cataloguenumber;
             }
             if (cuesheetToCopy is ImportCuesheet importCuesheet)
             {
