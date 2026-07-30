@@ -57,6 +57,7 @@ namespace AudioCuesheetEditor.Services.IO
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
                 ImportTrack? track = null;
+                ImportAudiofile? audiofile = null;
                 StringBuilder recognizedContent = new();
                 foreach (var line in fileContent.Split(Environment.NewLine))
                 {
@@ -100,9 +101,8 @@ namespace AudioCuesheetEditor.Services.IO
                             var matchGroup = match.Groups.GetValueOrDefault(cuesheetFileNameGroupName);
                             if (matchGroup != null)
                             {
-                                var audioFile = matchGroup.Value;
-                                //TODO
-                                //importfile.AnalyzedCuesheet.Audiofile = audioFile;
+                                audiofile = new() { Name = matchGroup.Value };
+                                importfile.AnalyzedCuesheet.Audiofiles.Add(audiofile);
                             }
                             else
                             {
@@ -244,15 +244,7 @@ namespace AudioCuesheetEditor.Services.IO
                             {
                                 throw new ArgumentException(String.Format("Group '{0}' was null!", trackIndex01GroupName));
                             }
-                            if (track != null)
-                            {
-                                //TODO
-                                //importfile.AnalyzedCuesheet.Tracks.Add(track);
-                            }
-                            else
-                            {
-                                throw new NullReferenceException(String.Format("Track was null during input {0}", line));
-                            }
+                            audiofile?.Tracks.Add(track);
                         }
                         if (regexTrackPostGap.IsMatch(line) == true)
                         {
