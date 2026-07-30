@@ -38,7 +38,7 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         private AudioCodec? _audioCodec;
         private String? _name;
         
-        public Audiofile(String name, String objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
+        public Audiofile(String? name, String? objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
         {
             if (String.IsNullOrEmpty(objectURL))
             {

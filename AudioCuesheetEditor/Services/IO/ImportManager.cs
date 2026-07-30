@@ -21,6 +21,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
+using System.Collections;
 using System.Diagnostics;
 
 namespace AudioCuesheetEditor.Services.IO
@@ -91,6 +92,7 @@ namespace AudioCuesheetEditor.Services.IO
                     case ImportFileType.Textfile:
                         var importCuesheet = new Cuesheet();
                         CopyCuesheet(importCuesheet, _sessionStateContainer.Importfile.AnalyzedCuesheet);
+                        SortTracks(importCuesheet);
                         _sessionStateContainer.ImportCuesheet = importCuesheet;
                         break;
                 }
@@ -110,6 +112,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 var newCuesheet = _sessionStateContainer.ImportCuesheet;
                 CopyCuesheet(newCuesheet, _sessionStateContainer.ImportCuesheet);
+                SortTracks(newCuesheet);
                 var previousValue = _sessionStateContainer.Cuesheet;
                 _sessionStateContainer.Cuesheet = newCuesheet;
                 _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
@@ -184,98 +187,117 @@ namespace AudioCuesheetEditor.Services.IO
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
             target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
-            IEnumerable<ITrack>? tracks = null;
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
-                //TODO
-                //tracks = originCuesheet.Tracks;
-                //target.Audiofile = originCuesheet.Audiofile;
                 target.CDTextfile = originCuesheet.CDTextfile;
+                AttachClonedAudiofiles(target, originCuesheet.Audiofiles);
             }
             if (cuesheetToCopy is ImportCuesheet importCuesheet)
             {
-                //TODO
-                //tracks = importCuesheet.Tracks;
-                //if (String.IsNullOrEmpty(importCuesheet.Audiofile) == false)
-                //{
-                //    target.Audiofile = new Audiofile(importCuesheet.Audiofile);
-                //}
                 if (String.IsNullOrEmpty(importCuesheet.CDTextfile) == false)
                 {
                     target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
                 }
+                AttachClonedAudiofiles(target, importCuesheet.Audiofiles);
             }
-            if (tracks != null)
+        }
+
+        void AttachClonedAudiofiles(Cuesheet target, IEnumerable audiofiles)
+        {
+            foreach (var audiofile in audiofiles)
             {
-                IOrderedEnumerable<ITrack> sortedTracks;
-                if (tracks.All(x => x.Position.HasValue))
+                Audiofile? targetAudiofile = null;
+                IEnumerable<ITrack>? tracks = null;
+                if (audiofile is ImportAudiofile importAudiofile)
                 {
-                    sortedTracks = tracks.OrderBy(x => x.Position);
-                }
-                else
-                {
-                    sortedTracks = tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position);
-                }
-                if (sortedTracks.All(x => x.Begin.HasValue))
-                {
-                    sortedTracks = sortedTracks.ThenBy(x => x.Begin);
-                }
-                else
-                {
-                    sortedTracks = sortedTracks.ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin);
-                }
-                if (sortedTracks.All(x => x.End.HasValue))
-                {
-                    sortedTracks = sortedTracks.ThenBy(x => x.End);
-                }
-                else
-                {
-                    sortedTracks = sortedTracks.ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End);
-                }
-                List<Track> targetTracks = [];
-                TimeSpan? begin = TimeSpan.Zero;
-                ushort position = 1;
-                foreach (var (importTrack, index) in sortedTracks.Select((track, i) => (track, i)))
-                {
-                    ITrack? nextTrack = null;
-                    if (index < sortedTracks.Count() - 1)
+                    targetAudiofile = new Audiofile()
                     {
-                        nextTrack = sortedTracks.ElementAt(index + 1);
-                    }
-                    // Copy track
-                    var track = _trackManager.Clone(importTrack);
-                    //TODO
-                    //track.Cuesheet = target;
-                    // Special treatment for StartDateTime of ImportTrack
-                    if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null && nextTrack is ImportTrack nextImportTrackReference)
-                    {
-                        var length = nextImportTrackReference.StartDateTime - importTrackReference.StartDateTime;
-                        track.Begin = begin;
-                        track.End = begin + length;
-                    }
-                    // Calculate properties
-                    if (track.Position.HasValue == false)
-                    {
-                        track.Position = position;
-                    }
-                    if (track.Begin.HasValue == false)
-                    {
-                        track.Begin = begin;
-                    }
-                    if ((track.End.HasValue == false) && (nextTrack?.Begin.HasValue == true))
-                    {
-                        track.End = nextTrack.Begin;
-                    }
-                    begin = track.End;
-                    position++;
-                    targetTracks.Add(track);
+                        Name = importAudiofile.Name,
+                    };
+                    tracks = importAudiofile.Tracks;
                 }
-                //TODO
-                //target.Tracks = targetTracks;
+                if (audiofile is Audiofile sourceAudiofile)
+                {
+                    targetAudiofile = new Audiofile(sourceAudiofile.Name, sourceAudiofile.ObjectURL, sourceAudiofile.AudioCodec, sourceAudiofile.Duration);
+                    tracks = sourceAudiofile.Tracks;
+                }
+                if (targetAudiofile == null || tracks == null)
+                {
+                    throw new NullReferenceException();
+                }
+                foreach (var track in tracks)
+                {
+                    var clone = _trackManager.Clone(track);
+                    targetAudiofile.Tracks.Add(clone);
+                }
+                target.Audiofiles.Add(targetAudiofile);
+            }
+        }
+
+        void SortTracks(Cuesheet target)
+        {
+            var tracks = target.Audiofiles.SelectMany(x => x.Tracks);
+            IOrderedEnumerable<ITrack> sortedTracks;
+            if (tracks.All(x => x.Position.HasValue))
+            {
+                sortedTracks = tracks.OrderBy(x => x.Position);
             }
             else
             {
-                throw new NullReferenceException();
+                sortedTracks = tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position);
+            }
+            if (sortedTracks.All(x => x.Begin.HasValue))
+            {
+                sortedTracks = sortedTracks.ThenBy(x => x.Begin);
+            }
+            else
+            {
+                sortedTracks = sortedTracks.ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin);
+            }
+            if (sortedTracks.All(x => x.End.HasValue))
+            {
+                sortedTracks = sortedTracks.ThenBy(x => x.End);
+            }
+            else
+            {
+                sortedTracks = sortedTracks.ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End);
+            }
+            List<Track> targetTracks = [];
+            TimeSpan? begin = TimeSpan.Zero;
+            ushort position = 1;
+            foreach (var (importTrack, index) in sortedTracks.Select((track, i) => (track, i)))
+            {
+                ITrack? nextTrack = null;
+                if (index < sortedTracks.Count() - 1)
+                {
+                    nextTrack = sortedTracks.ElementAt(index + 1);
+                }
+                // Copy track
+                var track = _trackManager.Clone(importTrack);
+                track.Cuesheet = target;
+                // Special treatment for StartDateTime of ImportTrack
+                if (importTrack is ImportTrack importTrackReference && importTrackReference.StartDateTime != null && nextTrack is ImportTrack nextImportTrackReference)
+                {
+                    var length = nextImportTrackReference.StartDateTime - importTrackReference.StartDateTime;
+                    track.Begin = begin;
+                    track.End = begin + length;
+                }
+                // Calculate properties
+                if (track.Position.HasValue == false)
+                {
+                    track.Position = position;
+                }
+                if (track.Begin.HasValue == false)
+                {
+                    track.Begin = begin;
+                }
+                if ((track.End.HasValue == false) && (nextTrack?.Begin.HasValue == true))
+                {
+                    track.End = nextTrack.Begin;
+                }
+                begin = track.End;
+                position++;
+                targetTracks.Add(track);
             }
         }
 

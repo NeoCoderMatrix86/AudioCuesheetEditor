@@ -3,6 +3,6 @@
     public class ImportAudiofile
     {
         public String? Name { get; set;  }
-        public ICollection<ImportTrack> Tracks { get; } = [];
+        public IList<ImportTrack> Tracks { get; } = [];
     }
 }
