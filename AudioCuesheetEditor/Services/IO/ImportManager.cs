@@ -110,7 +110,7 @@ namespace AudioCuesheetEditor.Services.IO
             ResetTracing();
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                var newCuesheet = _sessionStateContainer.ImportCuesheet;
+                var newCuesheet = new Cuesheet();
                 CopyCuesheet(newCuesheet, _sessionStateContainer.ImportCuesheet);
                 SortTracks(newCuesheet);
                 var previousValue = _sessionStateContainer.Cuesheet;
@@ -305,8 +305,7 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (_sessionStateContainer.ImportCuesheet != null)
             {
-                //TODO
-                //_traceChangeManager.RemoveTracedChanges([_sessionStateContainer.ImportCuesheet, .. _sessionStateContainer.ImportCuesheet.Tracks]);
+                _traceChangeManager.RemoveTracedChanges([_sessionStateContainer.ImportCuesheet, .. _sessionStateContainer.ImportCuesheet.Audiofiles, .. _sessionStateContainer.ImportCuesheet.Audiofiles.SelectMany(x => x.Tracks)]);
             }
         }
     }

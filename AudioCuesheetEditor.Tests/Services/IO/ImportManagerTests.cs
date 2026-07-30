@@ -398,6 +398,8 @@ TRACK 08 AUDIO
                 Audiofiles = [
                     new Audiofile()
                     {
+                        Name = "song.mp3",
+                        ObjectURL = "Just a test",
                         Tracks = [track1, track2]
                     }
                 ]
