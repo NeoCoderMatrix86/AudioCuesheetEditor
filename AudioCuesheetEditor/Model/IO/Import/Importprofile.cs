@@ -36,6 +36,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
         public String? Name { get; set; }
         public Boolean UseRegularExpression { get; set; }
         public String? SchemeCuesheet { get; set; }
+        public String? SchemeAudiofiles { get; set; }
         public String? SchemeTracks { get; set; }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
         public override ValidationResult Validate(string property)
