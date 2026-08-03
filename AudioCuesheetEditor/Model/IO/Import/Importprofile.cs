@@ -16,22 +16,19 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Utility;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class Importprofile : Validateable
     {
-        public static readonly IEnumerable<String> AvailableSchemeCuesheet;
-        public static readonly IEnumerable<String> AvailableSchemesTrack;
+        public static readonly IEnumerable<String> AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
 
-        static Importprofile()
-        {
-            //TODO
-            //AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.Audiofile), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
-            AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
-            AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
-        }
+        public static readonly IEnumerable<String> AvailableSchemeAudiofiles = [nameof(Audiofile.Name)];
+
+        public static readonly IEnumerable<String> AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
+
         public Guid Id { get; init; } = Guid.NewGuid();
         public String? Name { get; set; }
         public Boolean UseRegularExpression { get; set; }
@@ -56,12 +53,32 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             do
                             {
                                 containsPlaceHolder = SchemeCuesheet?.Contains(enumerator.Current) == true;
-                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                            } while ((containsPlaceHolder == false) && enumerator.MoveNext());
                         }
                         if (containsPlaceHolder == false)
                         {
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeCuesheet)));
+                        }
+                    }
+                    break;
+                case nameof(SchemeAudiofiles):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(SchemeAudiofiles) == false)
+                    {
+                        var containsPlaceHolder = false;
+                        var enumerator = AvailableSchemeAudiofiles.GetEnumerator();
+                        if (enumerator.MoveNext())
+                        {
+                            do
+                            {
+                                containsPlaceHolder = SchemeAudiofiles?.Contains(enumerator.Current) == true;
+                            } while ((containsPlaceHolder == false) && enumerator.MoveNext());
+                        }
+                        if (containsPlaceHolder == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeAudiofiles)));
                         }
                     }
                     break;
@@ -76,7 +93,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             do
                             {
                                 containsPlaceHolder = SchemeTracks?.Contains(enumerator.Current) == true;
-                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                            } while ((containsPlaceHolder == false) && enumerator.MoveNext());
                         }
                         if (containsPlaceHolder == false)
                         {
