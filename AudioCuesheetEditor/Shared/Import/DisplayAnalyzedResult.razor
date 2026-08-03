@@ -46,10 +46,10 @@ else
     </MudCard>
     <MudCard Outlined>
         <MudCardHeader>
-            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+            <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
         </MudCardHeader>
         <MudCardContent>
-            <TrackList />
+            <Audiofiles Files="_sessionStateContainer.ImportCuesheet?.Audiofiles" />
         </MudCardContent>
     </MudCard>
 }
