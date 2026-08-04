@@ -13,21 +13,19 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.Utility;
 
 namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class Importprofile : Validateable
     {
-        public static readonly IEnumerable<String> AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
+        public static readonly IEnumerable<String> AvailableSchemeCuesheet = [nameof(ImportCuesheet.Artist), nameof(ImportCuesheet.Title), nameof(ImportCuesheet.CDTextfile), nameof(ImportCuesheet.Cataloguenumber)];
 
-        public static readonly IEnumerable<String> AvailableSchemeAudiofiles = [nameof(Audiofile.Name)];
+        public static readonly IEnumerable<String> AvailableSchemeAudiofiles = [nameof(ImportAudiofile.Name)];
 
-        public static readonly IEnumerable<String> AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
+        public static readonly IEnumerable<String> AvailableSchemesTrack = [nameof(ImportTrack.Artist), nameof(ImportTrack.Title), nameof(ImportTrack.Begin), nameof(ImportTrack.End), nameof(ImportTrack.Length), nameof(ImportTrack.Position), nameof(ImportTrack.Flags), nameof(ImportTrack.PreGap), nameof(ImportTrack.PostGap), nameof(ImportTrack.StartDateTime)];
 
         public Guid Id { get; init; } = Guid.NewGuid();
         public String? Name { get; set; }
