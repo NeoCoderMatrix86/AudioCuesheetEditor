@@ -247,6 +247,7 @@ namespace AudioCuesheetEditor.Services.IO
                         sb.AppendLine(markedLine);
                         if (stopSearch)
                         {
+                            sb.Append(reader.ReadToEnd());
                             break;
                         }
                     }
