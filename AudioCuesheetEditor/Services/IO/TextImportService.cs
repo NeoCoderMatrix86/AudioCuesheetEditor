@@ -104,7 +104,14 @@ namespace AudioCuesheetEditor.Services.IO
                 importFile.FileContentRecognized ??= fileContent;
                 if (importProfile.UseRegularExpression)
                 {
-                    var regex = new Regex(importProfile.SchemeCuesheet, RegexOptions.Multiline);
+                    var regex = new Regex(importProfile.SchemeCuesheet);
+                    importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
+                        match =>
+                        {
+                            string marked = ApplyRegexAndMarkGroups(cuesheet!, regex, match.Value, importProfile.TimeSpanFormat);
+                            return marked;
+                        }
+                    );
                     importFile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importProfile.TimeSpanFormat);
                 }
                 else
@@ -132,7 +139,7 @@ namespace AudioCuesheetEditor.Services.IO
                 importFile.FileContentRecognized ??= fileContent;
                 if (importProfile.UseRegularExpression)
                 {
-                    var regex = new Regex(importProfile.SchemeAudiofiles, RegexOptions.Multiline);
+                    var regex = new Regex(importProfile.SchemeAudiofiles);
                     importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
@@ -173,7 +180,7 @@ namespace AudioCuesheetEditor.Services.IO
                 importFile.FileContentRecognized ??= fileContent;
                 if (importProfile.UseRegularExpression)
                 {
-                    var regex = new Regex(importProfile.SchemeTracks, RegexOptions.Multiline);
+                    var regex = new Regex(importProfile.SchemeTracks);
                     importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
