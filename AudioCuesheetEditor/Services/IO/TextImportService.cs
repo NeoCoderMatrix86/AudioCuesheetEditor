@@ -101,45 +101,24 @@ namespace AudioCuesheetEditor.Services.IO
             if (string.IsNullOrWhiteSpace(importProfile.SchemeCuesheet) == false)
             {
                 var cuesheet = importFile.AnalyzedCuesheet;
-                Regex regex;
-                if (importProfile.UseRegularExpression == true)
+                importFile.FileContentRecognized ??= fileContent;
+                if (importProfile.UseRegularExpression)
                 {
-                    regex = new Regex(importProfile.SchemeCuesheet, RegexOptions.Multiline);
+                    var regex = new Regex(importProfile.SchemeCuesheet, RegexOptions.Multiline);
+                    importFile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importProfile.TimeSpanFormat);
                 }
                 else
                 {
-                    regex = CreateRegexPattern(importProfile.SchemeCuesheet, [
+                    var regex = CreateRegexPattern(importProfile.SchemeCuesheet, [
                         nameof(ImportCuesheet.Artist),
                         nameof(ImportCuesheet.Title),
                         nameof(ImportCuesheet.CDTextfile),
                         nameof(ImportCuesheet.Cataloguenumber)
                     ]);
-                }
-
-                if (importProfile.UseRegularExpression)
-                {
-                    importFile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importProfile.TimeSpanFormat);
-                }
-                else
-                {
-                    var sb = new StringBuilder();
-                    using (var reader = new StringReader(fileContent))
+                    importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, cuesheet!, (position) =>
                     {
-                        string? line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            var markedLine = ApplyRegexAndMarkGroups(cuesheet!, regex, line, importProfile.TimeSpanFormat);
-                            sb.AppendLine(markedLine);
-                            if (!string.Equals(markedLine, line))
-                            {
-                                //We found the first occurrence, break the loop
-                                //Attach the rest of the file to FileContentRecognized
-                                sb.Append(reader.ReadToEnd());
-                                break;
-                            }
-                        }
-                    }
-                    importFile.FileContentRecognized = sb.ToString();
+                        return true;
+                    }, regex, importProfile);
                 }
             }
         }
@@ -150,18 +129,10 @@ namespace AudioCuesheetEditor.Services.IO
             var cuesheet = importFile.AnalyzedCuesheet;
             if (string.IsNullOrWhiteSpace(importProfile.SchemeAudiofiles) == false)
             {
-                Regex regex;
-                if (importProfile.UseRegularExpression == true)
-                {
-                    regex = new Regex(importProfile.SchemeAudiofiles, RegexOptions.Multiline);
-                }
-                else
-                {
-                    regex = CreateRegexPattern(importProfile.SchemeAudiofiles, [nameof(ImportAudiofile.Name)]);
-                }
                 importFile.FileContentRecognized ??= fileContent;
                 if (importProfile.UseRegularExpression)
                 {
+                    var regex = new Regex(importProfile.SchemeAudiofiles, RegexOptions.Multiline);
                     importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
@@ -175,33 +146,14 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 else
                 {
-                    var sb = new StringBuilder();
-                    using (var reader = new StringReader(importFile.FileContentRecognized))
+                    var regex = CreateRegexPattern(importProfile.SchemeAudiofiles, [nameof(ImportAudiofile.Name)]);
+                    var audiofile = new ImportAudiofile();
+                    importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, audiofile, (position) =>
                     {
-                        string? line;
-                        int pos = 0;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            // Check if this line is already analyzed
-                            if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
-                            {
-                                var audiofile = new ImportAudiofile();
-                                var markedLine = ApplyRegexAndMarkGroups(audiofile, regex, line, importProfile.TimeSpanFormat);
-                                if (!string.Equals(markedLine, line))
-                                {
-                                    cuesheet!.Audiofiles.Add(audiofile);
-                                    _audiofileStartIndices.Add(audiofile, pos);
-                                }
-                                sb.AppendLine(markedLine);
-                            }
-                            else
-                            {
-                                sb.AppendLine(line);
-                            }
-                            pos += line.Length + Environment.NewLine.Length;
-                        }
-                    }
-                    importFile.FileContentRecognized = sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                        cuesheet!.Audiofiles.Add(audiofile);
+                        _audiofileStartIndices.Add(audiofile, position);
+                        return false;
+                    }, regex, importProfile);
                 }
             }
             else
@@ -217,31 +169,11 @@ namespace AudioCuesheetEditor.Services.IO
         {
             if (string.IsNullOrWhiteSpace(importProfile.SchemeTracks) == false)
             {
-                Regex regex;
-                if (importProfile.UseRegularExpression == true)
-                {
-                    regex = new Regex(importProfile.SchemeTracks, RegexOptions.Multiline);
-                }
-                else
-                {
-                    regex = CreateRegexPattern(importProfile.SchemeTracks,
-                    [
-                        nameof(ImportTrack.Artist),
-                        nameof(ImportTrack.Title),
-                        nameof(ImportTrack.Begin),
-                        nameof(ImportTrack.End),
-                        nameof(ImportTrack.Length),
-                        nameof(ImportTrack.Position),
-                        nameof(ImportTrack.Flags),
-                        nameof(ImportTrack.PreGap),
-                        nameof(ImportTrack.PostGap),
-                        nameof(ImportTrack.StartDateTime)
-                    ]);
-                }
                 var cuesheet = importFile.AnalyzedCuesheet;
                 importFile.FileContentRecognized ??= fileContent;
                 if (importProfile.UseRegularExpression)
                 {
+                    var regex = new Regex(importProfile.SchemeTracks, RegexOptions.Multiline);
                     importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
@@ -259,39 +191,66 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 else
                 {
-                    var sb = new StringBuilder();
-                    using (var reader = new StringReader(importFile.FileContentRecognized))
+                    var regex = CreateRegexPattern(importProfile.SchemeTracks,
+                    [
+                        nameof(ImportTrack.Artist),
+                        nameof(ImportTrack.Title),
+                        nameof(ImportTrack.Begin),
+                        nameof(ImportTrack.End),
+                        nameof(ImportTrack.Length),
+                        nameof(ImportTrack.Position),
+                        nameof(ImportTrack.Flags),
+                        nameof(ImportTrack.PreGap),
+                        nameof(ImportTrack.PostGap),
+                        nameof(ImportTrack.StartDateTime)
+                    ]);
+                    var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
+                    importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, track, (position) =>
                     {
-                        string? line;
-                        int pos = 0;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            // Check if this line is already analyzed
-                            if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
-                            {
-                                var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
-                                var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importProfile.TimeSpanFormat);
-                                if (!string.Equals(markedLine, line))
-                                {
-                                    var audiofile = _audiofileStartIndices
-                                        .Where(kv => kv.Value <= pos)
+                        var audiofile = _audiofileStartIndices
+                                        .Where(kv => kv.Value <= position)
                                         .OrderBy(kv => kv.Value)
                                         .Select(kv => kv.Key)
                                         .LastOrDefault();
-                                    audiofile?.Tracks.Add(track);
-                                }
-                                sb.AppendLine(markedLine);
-                            }
-                            else
-                            {
-                                sb.AppendLine(line);
-                            }
-                            pos += line.Length + Environment.NewLine.Length;
-                        }
-                    }
-                    importFile.FileContentRecognized = sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+                        audiofile?.Tracks.Add(track);
+                        return false;
+                    }, regex, importProfile);
                 }
             }
+        }
+
+        static string SearchLineByLineForEntry(string fileContent, object entity, Func<int, bool> ifEntityFound, Regex regex, Importprofile importProfile)
+        {
+            var sb = new StringBuilder();
+            using (var reader = new StringReader(fileContent))
+            {
+                string? line;
+                int pos = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Boolean stopSearch = false;
+                    // Check if this line is already analyzed
+                    if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
+                    {
+                        var markedLine = ApplyRegexAndMarkGroups(entity, regex, line, importProfile.TimeSpanFormat);
+                        if (!string.Equals(markedLine, line))
+                        {
+                            stopSearch = ifEntityFound.Invoke(pos);
+                        }
+                        sb.AppendLine(markedLine);
+                        if (stopSearch)
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendLine(line);
+                    }
+                    pos += line.Length + Environment.NewLine.Length;
+                }
+            }
+            return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
         }
 
         static void SetValue(object entity, PropertyInfo property, string value, TimeSpanFormat? timeSpanFormat)
