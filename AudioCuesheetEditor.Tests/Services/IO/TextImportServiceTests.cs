@@ -382,17 +382,17 @@ Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS";
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
             Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
             Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(2).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(2).Flags.Contains(Flag.PRE));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(3).Flags.Contains(Flag.FourCH));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Flags.Contains(Flag.FourCH));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Flags.Contains(Flag.PRE));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags.Contains(Flag.DCP));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags.Contains(Flag.PRE));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags.Contains(Flag.FourCH));
-            Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags.Contains(Flag.SCMS));
+            Assert.Contains(Flag.DCP, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Flags);
+            Assert.Contains(Flag.DCP, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(2).Flags);
+            Assert.Contains(Flag.PRE, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(2).Flags);
+            Assert.Contains(Flag.FourCH, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(3).Flags);
+            Assert.Contains(Flag.FourCH, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Flags);
+            Assert.Contains(Flag.PRE, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Flags);
+            Assert.Contains(Flag.DCP, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Flags);
+            Assert.Contains(Flag.DCP, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags);
+            Assert.Contains(Flag.PRE, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags);
+            Assert.Contains(Flag.FourCH, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags);
+            Assert.Contains(Flag.SCMS, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Flags);
         }
 
         [TestMethod()]
