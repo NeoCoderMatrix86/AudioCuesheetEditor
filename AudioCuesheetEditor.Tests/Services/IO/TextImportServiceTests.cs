@@ -45,7 +45,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         public async Task AnalyseAsync_SampleCuesheet_CreatesValidCuesheetAsync()
         {
             // Arrange
-            var fileContent = @"CuesheetArtist - CuesheetTitle				c:\tmp\Testfile.mp3
+            var fileContent = @"CuesheetArtist - CuesheetTitle
+- c:\tmp\Testfile.mp3
 Sample Artist 1 - Sample Title 1				00:05:00
 Sample Artist 2 - Sample Title 2				00:09:23
 Sample Artist 3 - Sample Title 3				00:15:54
@@ -447,7 +448,8 @@ Sample Artist 8 - Sample Title 8		00:00:02		01:15:54		00:00:00";
         public async Task AnalyseAsync_SchemeCuesheetOnly_CreatesFileContentRecognizedOnlyForCuesheetAsync()
         {
             // Arrange
-            var fileContent = @"CuesheetArtist - CuesheetTitle				c:\tmp\Testfile.mp3
+            var fileContent = @"CuesheetArtist - CuesheetTitle
+- c:\tmp\Testfile.mp3
 Sample Artist 1 - Sample Title 1				00:05:00
 Sample Artist 2 - Sample Title 2				00:09:23
 Sample Artist 3 - Sample Title 3				00:15:54
@@ -456,41 +458,39 @@ Sample Artist 5 - Sample Title 5				00:24:54
 Sample Artist 6 - Sample Title 6				00:31:54
 Sample Artist 7 - Sample Title 7				00:45:54
 Sample Artist 8 - Sample Title 8				01:15:54";
-            //TODO
-            //var profile = new Importprofile()
-            //{
-            //    SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}\t{nameof(ImportCuesheet.Audiofile)}"
-            //};
-            //var options = new ImportOptions
-            //{
-            //    SelectedImportProfile = profile
-            //};
-            //_localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
-            //var applicationOptions = new ApplicationOptions();
-            //_localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
-            //// Act
-            //var importFile = await _textImportService.AnalyseAsync(fileContent);
-            //// Assert
-            //Assert.IsNull(importFile.AnalyseException);
-            //Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            //Assert.IsNotNull(importFile.FileContentRecognized);
-            //var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
-            //Assert.AreEqual(string.Format("{0} - {1}				{2}",
-            //    string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
-            //    string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"),
-            //    string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\tmp\\Testfile.mp3")), lines.First());
-            //Assert.AreEqual("CuesheetArtist", importFile.AnalyzedCuesheet.Artist);
-            //Assert.AreEqual("CuesheetTitle", importFile.AnalyzedCuesheet.Title);
-            //Assert.AreEqual("c:\\tmp\\Testfile.mp3", importFile.AnalyzedCuesheet.Audiofile);
-            //Assert.HasCount(0, importFile.AnalyzedCuesheet.Tracks);
-            //Assert.AreEqual("Sample Artist 1 - Sample Title 1				00:05:00", lines.ElementAt(1));
-            //Assert.AreEqual("Sample Artist 2 - Sample Title 2				00:09:23", lines.ElementAt(2));
-            //Assert.AreEqual("Sample Artist 3 - Sample Title 3				00:15:54", lines.ElementAt(3));
-            //Assert.AreEqual("Sample Artist 4 - Sample Title 4				00:20:13", lines.ElementAt(4));
-            //Assert.AreEqual("Sample Artist 5 - Sample Title 5				00:24:54", lines.ElementAt(5));
-            //Assert.AreEqual("Sample Artist 6 - Sample Title 6				00:31:54", lines.ElementAt(6));
-            //Assert.AreEqual("Sample Artist 7 - Sample Title 7				00:45:54", lines.ElementAt(7));
-            //Assert.AreEqual("Sample Artist 8 - Sample Title 8				01:15:54", lines.ElementAt(8));
+            var profile = new Importprofile()
+            {
+                SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}"
+            };
+            var options = new ImportOptions
+            {
+                SelectedImportProfile = profile
+            };
+            _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+            var applicationOptions = new ApplicationOptions();
+            _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+            // Act
+            var importFile = await _textImportService.AnalyseAsync(fileContent);
+            // Assert
+            Assert.IsNull(importFile.AnalyseException);
+            Assert.IsNotNull(importFile.AnalyzedCuesheet);
+            Assert.IsNotNull(importFile.FileContentRecognized);
+            var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
+            Assert.AreEqual(string.Format("{0} - {1}",
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle")), lines.First());
+            Assert.AreEqual("CuesheetArtist", importFile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle", importFile.AnalyzedCuesheet.Title);
+            Assert.HasCount(0, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
+            Assert.AreEqual("- c:\\tmp\\Testfile.mp3", lines.ElementAt(1));
+            Assert.AreEqual("Sample Artist 1 - Sample Title 1				00:05:00", lines.ElementAt(2));
+            Assert.AreEqual("Sample Artist 2 - Sample Title 2				00:09:23", lines.ElementAt(3));
+            Assert.AreEqual("Sample Artist 3 - Sample Title 3				00:15:54", lines.ElementAt(4));
+            Assert.AreEqual("Sample Artist 4 - Sample Title 4				00:20:13", lines.ElementAt(5));
+            Assert.AreEqual("Sample Artist 5 - Sample Title 5				00:24:54", lines.ElementAt(6));
+            Assert.AreEqual("Sample Artist 6 - Sample Title 6				00:31:54", lines.ElementAt(7));
+            Assert.AreEqual("Sample Artist 7 - Sample Title 7				00:45:54", lines.ElementAt(8));
+            Assert.AreEqual("Sample Artist 8 - Sample Title 8				01:15:54", lines.ElementAt(9));
         }
 
         [TestMethod()]
@@ -506,9 +506,16 @@ Sample Artist 5 - Sample Title 5				00:24:54
 Sample Artist 6 - Sample Title 6				00:31:54
 Sample Artist 7 - Sample Title 7				00:45:54
 Sample Artist 8 - Sample Title 8				01:15:54";
+            var importProfile = new Importprofile()
+            {
+                UseRegularExpression = true,
+                SchemeCuesheet = @$"^(?<{nameof(ImportCuesheet.Artist)}>.+?)\s*-\s*(?<{nameof(ImportCuesheet.Title)}>.+?)\t+",
+                SchemeAudiofiles = @$"\s+(?<{nameof(ImportAudiofile.Name)}>\S+.mp3)",
+                SchemeTracks = @$"(?<{nameof(ImportTrack.Artist)}>.+?)\s*-\s*(?<{nameof(ImportTrack.Title)}>.+?)\s+(?<{nameof(ImportTrack.End)}>\d{{2}}:\d{{2}}:\d{{2}})"
+            };
             var options = new ImportOptions
             {
-                SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile
+                SelectedImportProfile = importProfile
             };
             _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
             var applicationOptions = new ApplicationOptions();
@@ -713,8 +720,9 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
             var profile = new Importprofile()
             {
                 UseRegularExpression = false,
-                SchemeCuesheet = "Artist - Title\tAudiofile",
-                SchemeTracks = "Artist - Title\tBegin"
+                SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}",
+                SchemeAudiofiles = $"- {nameof(ImportAudiofile.Name)}",
+                SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.StartDateTime)}"
             };
             var fileContent = File.ReadAllText("Resources/Sample_Inputfile.txt");
             var options = new ImportOptions
@@ -731,8 +739,8 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
             Assert.AreEqual("CuesheetArtist", importFile.AnalyzedCuesheet.Artist);
             Assert.AreEqual("CuesheetTitle", importFile.AnalyzedCuesheet.Title);
-            //TODO
-            //Assert.AreEqual("c:\\AudioFile.mp3", importFile.AnalyzedCuesheet.Audiofile);
+            Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
+            Assert.AreEqual("c:\\AudioFile.mp3", importFile.AnalyzedCuesheet.Audiofiles.First().Name);
             Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
             Assert.IsNotNull(importFile.FileContentRecognized);
             Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"), importFile.FileContentRecognized);
