@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using AudioCuesheetEditor.Model.IO.Audio;
 using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.AudioCuesheet
@@ -77,6 +78,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet
         /// Set that this track is linked to the previous track in cuesheet
         /// </summary>
         public Boolean IsLinkedToPreviousTrack { get; set; }
+        [JsonIgnore]
+        public Audiofile? Audiofile { get; set; }
 
         public override ValidationResult Validate(string property)
         {

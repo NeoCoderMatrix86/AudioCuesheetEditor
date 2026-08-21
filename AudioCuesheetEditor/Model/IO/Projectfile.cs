@@ -39,9 +39,13 @@ namespace AudioCuesheetEditor.Model.IO
             var cuesheet = JsonSerializer.Deserialize<Cuesheet>(fileContent, Options);
             if (cuesheet != null)
             {
-                foreach (var track in cuesheet.Audiofiles.SelectMany(x => x.Tracks))
+                foreach (var audiofile in cuesheet.Audiofiles)
                 {
-                    track.Cuesheet = cuesheet;
+                    foreach (var track in audiofile.Tracks)
+                    {
+                        track.Audiofile = audiofile;
+                        track.Cuesheet = cuesheet;
+                    }
                 }
             }
             return cuesheet;

@@ -160,6 +160,7 @@ along with Foobar.  If not, see
     {
         var newTrack = new Track()
         {
+            Audiofile = Audiofile,
             IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
         _audiofileManager.AddTrack(Audiofile, newTrack);
