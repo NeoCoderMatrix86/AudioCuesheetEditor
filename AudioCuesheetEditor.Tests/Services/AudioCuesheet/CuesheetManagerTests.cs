@@ -14,15 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
-using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
-using AudioCuesheetEditor.Services;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -36,11 +33,13 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         private readonly Mock<ITraceChangeManager> _traceChangeManager;
         private readonly Mock<ISessionStateContainer> _sessionStateContainer;
         private readonly Mock<ITrackManager> _trackManager;
+        private readonly Mock<IAudiofileManager> _audiofileManager;
         
         public CuesheetManagerTests()
         {
             _traceChangeManager = new();
             _sessionStateContainer = new();
+            _audiofileManager = new();
             _trackManager = new();
             _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(),It.IsAny<Expression<Func<Track, It.IsAnyType>>>(),It.IsAny<It.IsAnyType>()))
                 .Callback((Track track, LambdaExpression propExpr, object value) =>
@@ -67,7 +66,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 }
                 return null;
             });
-            _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object);
+            _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object, _audiofileManager.Object);
         }
 
         [TestMethod]

@@ -77,6 +77,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             track.Cuesheet = cuesheet;
+            track.Audiofile = audiofile;
             var newValue = new List<Track>(audiofile.Tracks)
             {
                 track
@@ -91,6 +92,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             var intersection = audiofile.Tracks.Intersect(tracksToRemove);
+            foreach (var track in intersection)
+            {
+                track.Audiofile = null;
+            }
             ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
             _traceChangeManager.BulkEdit = true;
             SetValue(audiofile, x => x.Tracks, newValue);

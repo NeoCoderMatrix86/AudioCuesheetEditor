@@ -154,6 +154,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             Assert.Contains(track, audiofile.Tracks);
             Assert.AreEqual(cuesheet, track.Cuesheet);
+            Assert.AreEqual(audiofile, track.Audiofile);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.AtLeastOnce);
             _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.AtLeastOnce);
         }
@@ -181,6 +182,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             Assert.DoesNotContain(track1, audiofile.Tracks);
             Assert.Contains(track2, audiofile.Tracks);
+            Assert.IsNull(track1.Audiofile);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.AtLeastOnce);
             _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.AtLeastOnce);
         }
