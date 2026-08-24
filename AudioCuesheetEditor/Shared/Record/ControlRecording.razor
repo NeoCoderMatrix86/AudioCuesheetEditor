@@ -96,23 +96,32 @@ along with Foobar.  If not, see
     {
         base.OnInitialized();
         _updateGUITimer.AutoReset = true;
-        _updateGUITimer.Elapsed += delegate
-        {
-            StateHasChanged();
-            Boolean startRecordTimeEnabled = false;
-            if (_startRecordTimer != null)
-            {
-                startRecordTimeEnabled = _startRecordTimer.Enabled;
-            }
-            if ((startRecordTimeEnabled == false) && (Cuesheet.IsRecording == false))
-            {
-                _updateGUITimer.Stop();
-            }
-        };
+        _updateGUITimer.Elapsed += UpdateGUITimer_Elapsed;
         var result = _cuesheetManager.IsRecordingPossible;
         if (result.IsSuccess == false)
         {
             _errorMessage = result.Error!.Message;
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _updateGUITimer.Elapsed -= UpdateGUITimer_Elapsed;
+        _updateGUITimer.Dispose();
+    }
+
+    void UpdateGUITimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        StateHasChanged();
+        Boolean startRecordTimeEnabled = false;
+        if (_startRecordTimer != null)
+        {
+            startRecordTimeEnabled = _startRecordTimer.Enabled;
+        }
+        if ((startRecordTimeEnabled == false) && (Cuesheet.IsRecording == false))
+        {
+            _updateGUITimer.Stop();
         }
     }
 
