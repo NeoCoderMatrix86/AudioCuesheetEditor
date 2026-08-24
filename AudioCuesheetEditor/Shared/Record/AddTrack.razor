@@ -22,6 +22,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
+@inject IAudiofileManager _audiofileManager
 
 <MudCard Outlined>
     <MudCardContent>
@@ -83,6 +84,10 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
+    [Parameter]
+    [EditorRequired]
+    public Audiofile? Audiofile { get; set; }
+
     public Cuesheet Cuesheet => _sessionStateContainer.Cuesheet;
 
     Track _currentRecordingTrack = new();
@@ -90,17 +95,12 @@ along with Foobar.  If not, see
     MudAutocomplete<MusicBrainzTrack>? _titleInput;
     ApplicationOptions? _applicationOptions;
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         _currentRecordingTrack = new()
         {
             IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
@@ -110,10 +110,7 @@ along with Foobar.  If not, see
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        if (Cuesheet != null)
-        {
-            _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
-        }
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
@@ -132,16 +129,15 @@ along with Foobar.  If not, see
     {
         if (Cuesheet.IsRecording == true)
         {
-            //TODO
-            // _cuesheetManager.AddTrack(_currentRecordingTrack);
-            // _currentRecordingTrack = new()
-            // {
-            //     IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
-            // };
-            // if (_artistInput != null)
-            // {
-            //     await _artistInput.FocusAsync();
-            // }
+            _audiofileManager.AddTrack(Audiofile!, _currentRecordingTrack);
+            _currentRecordingTrack = new()
+            {
+                IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
+            };
+            if (_artistInput != null)
+            {
+                await _artistInput.FocusAsync();
+            }
         }
     }
 

@@ -51,13 +51,17 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result IsRecordingPossible
         {
+            //TODO: Tests
             get
             {
-                //TODO
-                //if (_sessionStateContainer.Cuesheet.Tracks.Any())
-                //{
-                //    return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
-                //}
+                if (_sessionStateContainer.Cuesheet.IsRecording == true)
+                {
+                    return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
+                }
+                if (_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any())
+                {
+                    return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
+                }
                 return Result.Success();
             }
         }
@@ -65,6 +69,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result StartRecording()
         {
+            //TODO: Tests
             var isRecordingPossibleResult = IsRecordingPossible;
             if (isRecordingPossibleResult.IsSuccess)
             {
@@ -74,6 +79,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                     return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
                 }
                 cuesheet.RecordingStart = DateTime.UtcNow;
+                if (cuesheet.Audiofiles.Count == 0)
+                {
+                    cuesheet.Audiofiles.Add(new Audiofile());
+                }
                 IsRecordingChanged?.Invoke(this, EventArgs.Empty);
                 return Result.Success();
             }
@@ -83,15 +92,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void StopRecording()
         {
+            //TODO: Tests
             var cuesheet = _sessionStateContainer.Cuesheet;
             if (cuesheet.IsRecording == true)
             {
-                //TODO
-                //var lastTrack = cuesheet.Tracks.LastOrDefault();
-                //if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
-                //{
-                //    lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
-                //}
+                var lastTrack = cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault();
+                if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
+                {
+                    lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+                }
                 cuesheet.RecordingStart = null;
                 IsRecordingChanged?.Invoke(this, EventArgs.Empty);
             }

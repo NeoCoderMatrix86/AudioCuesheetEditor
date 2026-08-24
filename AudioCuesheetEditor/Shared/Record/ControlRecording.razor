@@ -96,6 +96,7 @@ along with Foobar.  If not, see
         base.OnInitialized();
         _updateGUITimer.AutoReset = true;
         _updateGUITimer.Elapsed += UpdateGUITimer_Elapsed;
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
         var result = _cuesheetManager.IsRecordingPossible;
         if (result.IsSuccess == false)
         {
@@ -107,6 +108,7 @@ along with Foobar.  If not, see
     {
         base.Dispose(disposing);
         _updateGUITimer.Elapsed -= UpdateGUITimer_Elapsed;
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
         _updateGUITimer.Dispose();
     }
 
@@ -160,6 +162,15 @@ along with Foobar.  If not, see
             _startRecordTimer.Start();
             _updateGUITimer.Start();
             _recordTimerStarted = DateTime.Now;
+        }
+    }
+
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs e)
+    {
+        var result = _cuesheetManager.IsRecordingPossible;
+        if (result.IsSuccess == false)
+        {
+            _errorMessage = result.Error!.Message;
         }
     }
 }

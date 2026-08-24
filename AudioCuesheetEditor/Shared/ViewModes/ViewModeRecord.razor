@@ -18,17 +18,19 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeRecord> _localizer
+@inject ICuesheetManager _cuesheetManager
+@inject ISessionStateContainer _sessionStateContainer
 
 <ControlRecording />
 <br />
-<AddTrack />
+<AddTrack Audiofile="_recordingAudiofile" />
 <br/>
 <MudCard Outlined>
     <MudCardHeader>
         <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
     </MudCardHeader>
     <MudCardContent>
-        <TrackList />
+        <TrackList Audiofile="_recordingAudiofile" />
     </MudCardContent>
 </MudCard>
 <MudCard Outlined>
@@ -39,3 +41,35 @@ along with Foobar.  If not, see
         <CuesheetData />
     </MudCardContent>
 </MudCard>
+
+@code {
+    Audiofile? _recordingAudiofile;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
+        SetRecordingAudiofile();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
+    }
+
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs e)
+    {
+        SetRecordingAudiofile();
+        StateHasChanged();
+    }
+
+    void SetRecordingAudiofile()
+    {
+        var cuesheet = _sessionStateContainer.Cuesheet;
+        if (cuesheet.IsRecording)
+        {
+            _recordingAudiofile = cuesheet.Audiofiles.First();
+        }
+    }
+}

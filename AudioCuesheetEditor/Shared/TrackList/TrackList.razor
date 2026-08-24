@@ -34,7 +34,7 @@ along with Foobar.  If not, see
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        var validationResult = Audiofile.Validate(nameof(Audiofile.Tracks));
+        var validationResult = Audiofile?.Validate(nameof(Audiofile.Tracks));
         if (validationResult?.Status == ValidationStatus.Error)
         {
             <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
@@ -48,7 +48,7 @@ along with Foobar.  If not, see
         <div aria-label="@_localizer["Track table controls"]">
             <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
-                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile.Tracks.Any() == false"
+                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile?.Tracks.Any() == false"
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUp(_selectedTracks)"
                                      MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
@@ -58,14 +58,14 @@ along with Foobar.  If not, see
 }
 
 <MudForm @ref="_form">
-    <MudDataGrid T="Track" Items="Audiofile.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+    <MudDataGrid T="Track" Items="Audiofile?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
                  EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
                  FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" Validator="_form" Virtualize SortMode="SortMode.None">
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile, [context.Item])" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile!, [context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
@@ -108,7 +108,7 @@ along with Foobar.  If not, see
             </PropertyColumn>
             <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
                 <EditTemplate>
-                    @if (Audiofile.Tracks.FirstOrDefault() != context.Item)
+                    @if (Audiofile?.Tracks.FirstOrDefault() != context.Item)
                     {
                         <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">
                             <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => _trackManager.SetProperty(context.Item, x => x.IsLinkedToPreviousTrack, !context.Item.IsLinkedToPreviousTrack)" />
@@ -138,7 +138,7 @@ along with Foobar.  If not, see
 
     [Parameter]
     [EditorRequired]
-    public Audiofile Audiofile { get; set; }
+    public Audiofile? Audiofile { get; set; }
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -163,7 +163,7 @@ along with Foobar.  If not, see
             Audiofile = Audiofile,
             IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
-        _audiofileManager.AddTrack(Audiofile, newTrack);
+        _audiofileManager.AddTrack(Audiofile!, newTrack);
     }
 
     async Task EditSelectedTracksClicked()
@@ -173,7 +173,7 @@ along with Foobar.  If not, see
 
     void DeleteSelectedTracksClicked()
     {
-        _audiofileManager.RemoveTracks(Audiofile, _selectedTracks);
+        _audiofileManager.RemoveTracks(Audiofile!, _selectedTracks);
         _selectedTracks.Clear();
     }
 
@@ -187,9 +187,8 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            //TODO: Switch to Audiofile
-            // _cuesheetManager.RemoveTracks(_cuesheet!.Tracks);
-            // _selectedTracks.Clear();
+            _audiofileManager.RemoveTracks(Audiofile!, Audiofile!.Tracks);
+            _selectedTracks.Clear();
         }
     }
 
@@ -225,7 +224,7 @@ along with Foobar.  If not, see
             copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
             copy.Begin = trackThatWillBeCopied.End;
             copy.End = null;
-            _audiofileManager.AddTrack(Audiofile, copy);
+            _audiofileManager.AddTrack(Audiofile!, copy);
             await EditTrackModalClicked(copy);
         }
     }
