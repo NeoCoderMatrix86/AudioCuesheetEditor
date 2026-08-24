@@ -51,7 +51,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result IsRecordingPossible
         {
-            //TODO: Tests
             get
             {
                 if (_sessionStateContainer.Cuesheet.IsRecording == true)
@@ -69,7 +68,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result StartRecording()
         {
-            //TODO: Tests
             var isRecordingPossibleResult = IsRecordingPossible;
             if (isRecordingPossibleResult.IsSuccess)
             {
@@ -92,7 +90,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void StopRecording()
         {
-            //TODO: Tests
             var cuesheet = _sessionStateContainer.Cuesheet;
             if (cuesheet.IsRecording == true)
             {

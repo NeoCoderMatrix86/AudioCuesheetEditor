@@ -120,142 +120,176 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         //    Assert.AreEqual(duration, track.End);
         //}
 
-        //[TestMethod]
-        //public void IsRecordingPossible_WithoutTracks_ReturnsSuccess()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet();
-        //    _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.IsRecordingPossible;
-        //    // Assert
-        //    Assert.IsTrue(result.IsSuccess);
-        //}
+        [TestMethod]
+        public void IsRecordingPossible_WithoutTracks_ReturnsSuccess()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            // Act
+            var result = _cuesheetManager.IsRecordingPossible;
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+        }
 
-        //[TestMethod]
-        //public void IsRecordingPossible_WithTracks_ReturnsFailure()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [
-        //            new()
-        //        ]
-        //    };
-        //    _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.IsRecordingPossible;
-        //    // Assert
-        //    Assert.IsFalse(result.IsSuccess);
-        //    Assert.AreEqual("Cuesheet already contains tracks!", result.Error!.Message);
-        //}
+        [TestMethod]
+        public void IsRecordingPossible_WithTracks_ReturnsFailure()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [
+                            new()
+                        ]
+                    }
+                ]
+            };
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            // Act
+            var result = _cuesheetManager.IsRecordingPossible;
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual("Cuesheet already contains tracks!", result.Error!.Message);
+        }
 
-        //[TestMethod]
-        //public void StartRecording_RecordingPossible_ReturnsSuccess()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet();
-        //    _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-        //    var isRecordingChanged = false;
-        //    _cuesheetManager.IsRecordingChanged += delegate
-        //    {
-        //        isRecordingChanged = true;
-        //    };
-        //    // Act
-        //    var result = _cuesheetManager.StartRecording();
-        //    // Assert
-        //    Assert.IsTrue(result.IsSuccess);
-        //    Assert.IsTrue(isRecordingChanged);
-        //    Assert.IsNotNull(cuesheet.RecordingStart);
-        //}
+        [TestMethod]
+        public void IsRecordingPossible_RecordingAlreadyRunning_ReturnsFailure()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet
+            {
+                Audiofiles = [
+                    new() {
+                    }
+                ],
+                RecordingStart = DateTime.UtcNow
+            };
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            // Act
+            var result = _cuesheetManager.IsRecordingPossible;
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual("Record is already running!", result.Error!.Message);
+        }
 
-        //[TestMethod]
-        //public void StartRecording_RecordingNotPossible_ReturnsFailure()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        RecordingStart = DateTime.UtcNow.AddDays(-1)
-        //    };
-        //    _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-        //    var isRecordingChanged = false;
-        //    _cuesheetManager.IsRecordingChanged += delegate
-        //    {
-        //        isRecordingChanged = true;
-        //    };
-        //    // Act
-        //    var result = _cuesheetManager.StartRecording();
-        //    // Assert
-        //    Assert.IsFalse(result.IsSuccess);
-        //    Assert.IsFalse(isRecordingChanged);
-        //    Assert.AreEqual("Record is already running!", result.Error!.Message);
-        //}
+        [TestMethod]
+        public void StartRecording_RecordingPossible_ReturnsSuccess()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet();
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            var isRecordingChanged = false;
+            _cuesheetManager.IsRecordingChanged += delegate
+            {
+                isRecordingChanged = true;
+            };
+            // Act
+            var result = _cuesheetManager.StartRecording();
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(isRecordingChanged);
+            Assert.IsNotNull(cuesheet.RecordingStart);
+            Assert.HasCount(1, cuesheet.Audiofiles);
+        }
 
-        //[TestMethod]
-        //public void StopRecording_WithActiveRecording_StopsRecordAndSetsTrackDetails()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        RecordingStart = DateTime.UtcNow.AddDays(-1),
-        //        Tracks = [
-        //            new() {
-        //                Position = 1,
-        //                Begin = TimeSpan.Zero,
-        //                End = new TimeSpan(0, 3, 12)
-        //            },
-        //            new() {
-        //                Position = 2,
-        //                Begin = new TimeSpan(0, 3, 12)
-        //            }
-        //        ]
-        //    };
-        //    _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-        //    var isRecordingChanged = false;
-        //    _cuesheetManager.IsRecordingChanged += delegate
-        //    {
-        //        isRecordingChanged = true;
-        //    };
-        //    // Act
-        //    _cuesheetManager.StopRecording();
-        //    // Assert
-        //    Assert.IsFalse(cuesheet.IsRecording);
-        //    Assert.IsNull(cuesheet.RecordingStart);
-        //    Assert.IsTrue(isRecordingChanged);
-        //    Assert.IsNotNull(cuesheet.Tracks.Last().End);
-        //}
+        [TestMethod]
+        public void StartRecording_RecordingNotPossible_ReturnsFailure()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet()
+            {
+                RecordingStart = DateTime.UtcNow.AddDays(-1)
+            };
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            var isRecordingChanged = false;
+            _cuesheetManager.IsRecordingChanged += delegate
+            {
+                isRecordingChanged = true;
+            };
+            // Act
+            var result = _cuesheetManager.StartRecording();
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.IsFalse(isRecordingChanged);
+            Assert.AreEqual("Record is already running!", result.Error!.Message);
+        }
 
-        //[TestMethod]
-        //public void StopRecording_WithoutActiveRecording_ChangesNothing()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [
-        //            new() {
-        //                Position = 1,
-        //                Begin = TimeSpan.Zero,
-        //                End = new TimeSpan(0, 3, 12)
-        //            },
-        //            new() {
-        //                Position = 2,
-        //                Begin = new TimeSpan(0, 3, 12)
-        //            }
-        //        ]
-        //    };
-        //    _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
-        //    var isRecordingChanged = false;
-        //    _cuesheetManager.IsRecordingChanged += delegate
-        //    {
-        //        isRecordingChanged = true;
-        //    };
-        //    // Act
-        //    _cuesheetManager.StopRecording();
-        //    // Assert
-        //    Assert.IsFalse(isRecordingChanged);
-        //    Assert.IsNull(cuesheet.Tracks.Last().End);
-        //}
+        [TestMethod]
+        public void StopRecording_WithActiveRecording_StopsRecordAndSetsTrackDetails()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet()
+            {
+                RecordingStart = DateTime.UtcNow.AddDays(-1),
+                Audiofiles = [
+                    new() {
+                        Tracks = [
+                            new() {
+                                Position = 1,
+                                Begin = TimeSpan.Zero,
+                                End = new TimeSpan(0, 3, 12)
+                            },
+                            new() {
+                                Position = 2,
+                                Begin = new TimeSpan(0, 3, 12)
+                            }
+                        ]
+                    }
+                ]
+            };
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            var isRecordingChanged = false;
+            _cuesheetManager.IsRecordingChanged += delegate
+            {
+                isRecordingChanged = true;
+            };
+            // Act
+            _cuesheetManager.StopRecording();
+            // Assert
+            Assert.IsFalse(cuesheet.IsRecording);
+            Assert.IsNull(cuesheet.RecordingStart);
+            Assert.IsTrue(isRecordingChanged);
+            Assert.IsNotNull(cuesheet.Audiofiles.First().Tracks.Last().End);
+        }
 
+        [TestMethod]
+        public void StopRecording_WithoutActiveRecording_ChangesNothing()
+        {
+            // Arrange
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [
+                            new() {
+                                Position = 1,
+                                Begin = TimeSpan.Zero,
+                                End = new TimeSpan(0, 3, 12)
+                            },
+                            new() {
+                                Position = 2,
+                                Begin = new TimeSpan(0, 3, 12)
+                            }
+                        ]
+                    }
+                ]
+            };
+            _sessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+            var isRecordingChanged = false;
+            _cuesheetManager.IsRecordingChanged += delegate
+            {
+                isRecordingChanged = true;
+            };
+            // Act
+            _cuesheetManager.StopRecording();
+            // Assert
+            Assert.IsFalse(isRecordingChanged);
+            Assert.IsNull(cuesheet.Audiofiles.First().Tracks.Last().End);
+        }
+
+        //TODO
         //[TestMethod]
         //public void AddTrack_FirstTrack_AddsNewTrackWithCalulatedTrackProperties()
         //{
