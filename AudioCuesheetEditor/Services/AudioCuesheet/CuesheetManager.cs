@@ -96,7 +96,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.Cuesheet;
             if (cuesheet.IsRecording == true)
             {
-                var lastTrack = cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault();
+                var lastTrack = GetLastTrack(cuesheet);
                 if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
                 {
                     lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
@@ -244,13 +244,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
 
         static Track? GetLastTrack(Cuesheet cuesheet)
         {
-            //TODO
-            return null;
-            //return cuesheet.Tracks
-            //    .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
-            //    .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-            //    .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
-            //    .LastOrDefault();
+            return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
+                .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+                .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+                .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
+                .LastOrDefault();
         }
     }
 }
