@@ -74,10 +74,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void AddTrack(Audiofile audiofile, Track track)
         {
+            //TODO: Tests with recording cuesheet
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             track.Cuesheet = cuesheet;
             track.Audiofile = audiofile;
+            if ((cuesheet?.IsRecording == true) && cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any(x => x.Position >= 1)) 
+            {
+                _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
+            }
             var newValue = new List<Track>(audiofile.Tracks)
             {
                 track
@@ -147,6 +152,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                     if (previousTrack?.End.HasValue == true)
                     {
                         _trackManager.SetProperty(track, x => x.Begin, previousTrack.End);
+                    }
+                    else
+                    {
+                        if (previousTrack != null)
+                        {
+                            _trackManager.SetProperty(previousTrack, x => x.End, track.Begin);
+                        }
                     }
                     position++;
                 }
