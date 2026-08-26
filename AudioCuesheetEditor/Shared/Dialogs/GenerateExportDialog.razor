@@ -82,6 +82,24 @@ along with Foobar.  If not, see
                             </MudMenuItem>
                         }
                     </MudMenu>
+                    <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.SchemeAudiofiles" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeAudiofiles, newValue)" 
+                                  Label="@_localizer["Scheme Audiofiles"]" Placeholder="@_localizer["Enter the audiofiles scheme for this profile here"]" Variant="Variant.Outlined" Clearable
+                                  Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeAudiofiles))"
+                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(_schemeAudiofilesMenu, args)" />
+                    <MudMenu @ref="_schemeAudiofilesMenu" PositionAtCursor>
+                        @foreach (var placeholder in Exportprofile.AvailableAudiofileSchemes)
+                        {
+                            <MudMenuItem OnClick="() =>
+                            {
+                                if (_exportOptions.SelectedExportProfile != null)
+                                {
+                                    _exportOptions.SelectedExportProfile.SchemeAudiofiles += placeholder.Value;
+                                }
+                            }">
+                                @_localizer[placeholder.Key]
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
                     <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeTracks, newValue)" 
                                   Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" Clearable
                                   Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))"
@@ -132,7 +150,7 @@ along with Foobar.  If not, see
     ExportOptions? _exportOptions;
     Exportfile? _exportFile;
     Boolean _configureExportCompleted = false;
-    MudMenu? _schemeHeadMenu, _schemeTracksMenu, _schemeFooterMenu;
+    MudMenu? _schemeHeadMenu, _schemeAudiofilesMenu, _schemeTracksMenu, _schemeFooterMenu;
     Dictionary<Exportfile, Boolean> _displayContentDialogVisible = new();
 
     private readonly DialogOptions _displayContentDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.ExtraExtraLarge };

@@ -136,7 +136,7 @@ namespace AudioCuesheetEditor.Model.IO.Export
                     break;
                 case nameof(SchemeAudiofiles):
                     validationStatus = ValidationStatus.Success;
-                    validationMessages = CheckForUnresolvablePlaceholders(SchemeAudiofiles, nameof(SchemeAudiofiles), [AvailableTrackSchemes, AvailableTrackSchemes]);
+                    validationMessages = CheckForUnresolvablePlaceholders(SchemeAudiofiles, nameof(SchemeAudiofiles), [AvailableTrackSchemes, AvailableCuesheetSchemes]);
                     break;
                 case nameof(SchemeFooter):
                     validationStatus = ValidationStatus.Success;

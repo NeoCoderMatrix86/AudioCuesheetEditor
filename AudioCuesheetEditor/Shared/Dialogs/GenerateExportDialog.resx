@@ -207,4 +207,10 @@
   <data name="No export profile selected!" xml:space="preserve">
     <value>No export profile selected!</value>
   </data>
+  <data name="Scheme Audiofiles" xml:space="preserve">
+    <value>Scheme Audiofiles</value>
+  </data>
+  <data name="Enter the audiofiles scheme for this profile here" xml:space="preserve">
+    <value>Enter the audiofiles scheme for this profile here</value>
+  </data>
 </root>

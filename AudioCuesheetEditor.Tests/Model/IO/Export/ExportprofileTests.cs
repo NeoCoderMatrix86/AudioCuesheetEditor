@@ -73,6 +73,23 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
         }
 
         [TestMethod()]
+        public void Validate_SchemeHeadWithAudiofilePlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeHead = Exportprofile.SchemeAudiofileName
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeHead));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeHead), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeAudiofileName, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
         public void Validate_SchemeTrackWithCuesheetPlaceholder_ReturnsError()
         {
             // Arrange
@@ -87,6 +104,23 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
             Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
             Assert.AreEqual(nameof(Exportprofile.SchemeTracks), validationResult.ValidationMessages.First().Parameter?.First().ToString());
             Assert.AreEqual(Exportprofile.SchemeCuesheetArtist, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeTrackWithAudiofilePlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeTracks = Exportprofile.SchemeAudiofileName
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeTracks));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeTracks), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeAudiofileName, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
         }
 
         [TestMethod()]
@@ -107,6 +141,23 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
         }
 
         [TestMethod()]
+        public void Validate_SchemeFooterWithAudiofilePlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeFooter = Exportprofile.SchemeAudiofileName
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeFooter));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeFooter), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeAudiofileName, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
         public void Validate_SchemeHeadCorrectPlaceholder_ReturnsSuccess()
         {
             // Arrange
@@ -122,7 +173,7 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
         }
 
         [TestMethod()]
-        public void Validate_SchemeTracksCorrectPlaceholder_ReturnsSuccess()
+        public void Validate_SchemeTrackCorrectPlaceholder_ReturnsSuccess()
         {
             // Arrange
             var exportprofile = new Exportprofile
@@ -151,6 +202,23 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
             Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
             Assert.AreEqual(nameof(Exportprofile.SchemeAudiofiles), validationResult.ValidationMessages.First().Parameter?.First().ToString());
             Assert.AreEqual(Exportprofile.SchemeTrackArtist, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeAudiofilesWithCuesheetPlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeAudiofiles = Exportprofile.SchemeCuesheetCatalogueNumber
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeAudiofiles));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeAudiofiles), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeCuesheetCatalogueNumber, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
         }
 
         [TestMethod()]
