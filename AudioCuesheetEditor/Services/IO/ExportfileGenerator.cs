@@ -33,8 +33,8 @@ namespace AudioCuesheetEditor.Services.IO
             List<ValidationMessage> validationMessages = [];
             validationMessages.AddRange(exportprofile.Validate().ValidationMessages);
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
-            //TODO
-            //validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
             if (validationMessages.Count != 0)
             {
                 return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
@@ -49,16 +49,10 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 return Result<Exportfile>.Failure(new Error(ErrorType.ValidationFailed, validationResult.Error!.Message));
             }
-            string? content = null;
-            //TODO
-            //if (_sessionStateContainer.Cuesheet.Audiofile != null)
-            //{
-            //    content = WriteExport(exportprofile, _sessionStateContainer.Cuesheet.Audiofile.Name);
-            //}
-            return Result<Exportfile>.Success(new Exportfile() { Name = exportprofile.Filename, Content = content});
+            return Result<Exportfile>.Success(new Exportfile() { Name = exportprofile.Filename, Content = WriteExport(exportprofile) });
         }
 
-        private string WriteExport(Exportprofile exportprofile, string? audiofileName)
+        private string WriteExport(Exportprofile exportprofile)
         {
             var builder = new StringBuilder();
             if (exportprofile != null)
@@ -66,51 +60,43 @@ namespace AudioCuesheetEditor.Services.IO
                 var header = exportprofile.SchemeHead
                     .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)
-                    .Replace(Exportprofile.SchemeAudiofileName, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                     .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                     .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
                 builder.AppendLine(header);
-                //TODO
-                //IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
-                //if (tracks.Any())
-                //{
-                //    //Position, Begin and End should always start from 0 even with splitpoints
-                //    int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);
-                //    foreach (var track in tracks)
-                //    {
-                //        TimeSpan begin;
-                //        var end = track.End;
-                //        if (track.Begin.HasValue)
-                //        {
-                //            begin = track.Begin.Value;
-                //        }
-                //        else
-                //        {
-                //            throw new NullReferenceException(string.Format("{0} may not be null!", nameof(Track.Begin)));
-                //        }
-                //        var trackLine = exportprofile.SchemeTracks
-                //            .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
-                //            .Replace(Exportprofile.SchemeTrackTitle, track.Title)
-                //            .Replace(Exportprofile.SchemeTrackPosition, (track.Position + positionDifference).ToString())
-                //            .Replace(Exportprofile.SchemeTrackBegin, begin.ToString())
-                //            .Replace(Exportprofile.SchemeTrackEnd, end.ToString())
-                //            .Replace(Exportprofile.SchemeTrackLength, (end - begin).ToString())
-                //            .Replace(Exportprofile.SchemeTrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
-                //            .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : string.Empty)
-                //            .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : string.Empty)
-                //            .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
-                //            .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
-                //            .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
-                //        builder.AppendLine(trackLine);
-                //    }
-                //}
+                foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
+                {
+                    var audiofileLine = exportprofile.SchemeAudiofiles
+                        .Replace(Exportprofile.SchemeAudiofileName, audiofile.Name);
+                    builder.AppendLine(audiofileLine);
+                    IEnumerable<Track> tracks = audiofile.Tracks.OrderBy(x => x.Position);
+                    if (tracks.Any())
+                    {
+                        foreach (var track in tracks)
+                        {
+                            var trackLine = exportprofile.SchemeTracks
+                                .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
+                                .Replace(Exportprofile.SchemeTrackTitle, track.Title)
+                                .Replace(Exportprofile.SchemeTrackPosition, track.Position.ToString())
+                                .Replace(Exportprofile.SchemeTrackBegin, track.Begin.ToString())
+                                .Replace(Exportprofile.SchemeTrackEnd, track.End.ToString())
+                                .Replace(Exportprofile.SchemeTrackLength, track.Length.ToString())
+                                .Replace(Exportprofile.SchemeTrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
+                                .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : string.Empty)
+                                .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : string.Empty)
+                                .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
+                                .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                                .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
+                            builder.AppendLine(trackLine);
+                        }
+                    }
+                }
+                
                 var footer = exportprofile.SchemeFooter
                     .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)
-                    .Replace(Exportprofile.SchemeAudiofileName, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())

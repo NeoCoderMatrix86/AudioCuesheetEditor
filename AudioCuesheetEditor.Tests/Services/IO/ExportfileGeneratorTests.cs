@@ -48,6 +48,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Name = "TestProfile",
                 SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeAudiofiles = Exportprofile.SchemeAudiofileName,
                 SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
                 Filename = "TestExport.txt"
             };
@@ -100,10 +101,12 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var content = result.Value!.Content;
             Assert.IsNotNull(content);
             Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
-        1 Test artist 1 - Test title 1
-        2 Test artist 2 - Test title 2
+Test audiofile.mp3
+1 Test artist 1 - Test title 1
+Test audiofile 2.wav
+1 Test artist 1 - Test title 1
 
-        ", content);
+", content);
         }
 
         [TestMethod]
