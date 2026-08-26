@@ -75,11 +75,13 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                     new()
                     {
                         Name = "Test audiofile.mp3",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
                         Tracks = [track1]
                     },
                     new() 
                     {
                         Name = "Test audiofile 2.wav",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".wav"),
                         Tracks = [track1]
                     }
                 ]
@@ -133,6 +135,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                     new()
                     {
                         Name = "Test audiofile.mp3",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
                         Tracks = [track1, track2]
                     }
                 ]
@@ -184,6 +187,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                     new() 
                     {
                         Name = "Test audiofile.mp3",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
                         Tracks = [track1, track2]
                     }
                 ]
