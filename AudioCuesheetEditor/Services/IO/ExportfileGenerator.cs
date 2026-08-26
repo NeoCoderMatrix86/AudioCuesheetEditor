@@ -66,7 +66,7 @@ namespace AudioCuesheetEditor.Services.IO
                 var header = exportprofile.SchemeHead
                     .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)
-                    .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
+                    .Replace(Exportprofile.SchemeAudiofileName, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
@@ -110,7 +110,7 @@ namespace AudioCuesheetEditor.Services.IO
                 var footer = exportprofile.SchemeFooter
                     .Replace(Exportprofile.SchemeCuesheetArtist, _sessionStateContainer.Cuesheet.Artist)
                     .Replace(Exportprofile.SchemeCuesheetTitle, _sessionStateContainer.Cuesheet.Title)
-                    .Replace(Exportprofile.SchemeCuesheetAudiofile, audiofileName)
+                    .Replace(Exportprofile.SchemeAudiofileName, audiofileName)
                     .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                     .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
                     .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())

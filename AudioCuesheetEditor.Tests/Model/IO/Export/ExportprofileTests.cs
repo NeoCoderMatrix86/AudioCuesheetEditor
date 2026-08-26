@@ -16,7 +16,7 @@
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Export;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Model.IO.Export
 {
@@ -24,23 +24,148 @@ namespace AudioCuesheetEditor.Tests.Model.IO.Export
     public class ExportprofileTests
     {
         [TestMethod()]
-        public void ValidateTest()
+        public void Validate_EmptyFilename_ReturnsError()
         {
+            // Arrange
             var exportprofile = new Exportprofile
             {
                 Filename = string.Empty
             };
-            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(nameof(Exportprofile.Filename)).Status);
-            exportprofile.Filename = "Test123";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.Filename)).Status);
-            exportprofile.SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;%Cuesheet.Cataloguenumber%;%Cuesheet.CDTextfile%";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.SchemeHead)).Status);
-            exportprofile.SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%;%Track.PreGap%;%Track.PostGap%";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.SchemeTracks)).Status);
-            exportprofile.SchemeFooter = "Exported %Cuesheet.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Success, exportprofile.Validate(nameof(Exportprofile.SchemeFooter)).Status);
-            exportprofile.SchemeFooter = "Exported %Track.Title% from %Cuesheet.Artist% using AudioCuesheetEditor at %Date%";
-            Assert.AreEqual(ValidationStatus.Error, exportprofile.Validate(nameof(Exportprofile.SchemeFooter)).Status);
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.Filename));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} has no value!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.Filename), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_EmptyName_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                Name = string.Empty
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.Name));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} has no value!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.Name), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeHeadWithTrackPlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeHead = Exportprofile.SchemeTrackTitle
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeHead));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeHead), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeTrackTitle, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeTrackWithCuesheetPlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeTracks = Exportprofile.SchemeCuesheetArtist
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeTracks));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeTracks), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeCuesheetArtist, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeFooterWithTrackPlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeFooter = Exportprofile.SchemeTrackBegin
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeFooter));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeFooter), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeTrackBegin, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeHeadCorrectPlaceholder_ReturnsSuccess()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeHead = Exportprofile.SchemeCuesheetTitle
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeHead));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            Assert.IsEmpty(validationResult.ValidationMessages);
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeTracksCorrectPlaceholder_ReturnsSuccess()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeTracks = Exportprofile.SchemeTrackPreGap
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeTracks));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            Assert.IsEmpty(validationResult.ValidationMessages);
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeAudiofilesWithTrackPlaceholder_ReturnsError()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeAudiofiles = Exportprofile.SchemeTrackArtist
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeAudiofiles));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+            Assert.AreEqual("{0} contains placeholder '{1}' that can not be resolved!", validationResult.ValidationMessages.First().Message);
+            Assert.AreEqual(nameof(Exportprofile.SchemeAudiofiles), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+            Assert.AreEqual(Exportprofile.SchemeTrackArtist, validationResult.ValidationMessages.First().Parameter?.ElementAt(1).ToString());
+        }
+
+        [TestMethod()]
+        public void Validate_SchemeAudiofilesCorrectPlaceholder_ReturnsNoValidation()
+        {
+            // Arrange
+            var exportprofile = new Exportprofile
+            {
+                SchemeAudiofiles = Exportprofile.SchemeAudiofileName
+            };
+            // Act
+            var validationResult = exportprofile.Validate(nameof(Exportprofile.SchemeAudiofiles));
+            // Assert
+            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+            Assert.IsEmpty(validationResult.ValidationMessages);
         }
     }
 }
