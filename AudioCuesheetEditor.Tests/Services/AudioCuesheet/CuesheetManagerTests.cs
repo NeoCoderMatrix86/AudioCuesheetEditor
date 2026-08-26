@@ -14,7 +14,9 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
+using AudioCuesheetEditor.Services;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -528,494 +530,557 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == importCuesheet && y.TraceableChange.PreviousValue == previousValue && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Once);
         //}
 
-        //[TestMethod]
-        //public void IsMoveTracksUpPossible_TracksAbove_ReturnsTrue()
-        //{
-        //    // Arrange
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = new TimeSpan(0, 3, 12),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = new TimeSpan(0, 3, 12),
-        //        End = new TimeSpan(0, 7, 34),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = new TimeSpan(0, 7, 34),
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    // Act
-        //    var result = _cuesheetManager.IsMoveTracksUpPossible([track2, track3]);
-        //    // Assert
-        //    Assert.IsTrue(result);
-        //}
+        [TestMethod]
+        public void IsMoveTracksUpPossible_TracksAbove_ReturnsTrue()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([track2, track3]);
+            // Assert
+            Assert.IsTrue(result);
+        }
 
-        //[TestMethod]
-        //public void IsMoveTracksUpPossible_NoTracksAbove_ReturnsFalse()
-        //{
-        //    // Arrange
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = new TimeSpan(0, 3, 12),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = new TimeSpan(0, 3, 12),
-        //        End = new TimeSpan(0, 7, 34),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = new TimeSpan(0, 7, 34),
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track2, track1, track3]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    // Act
-        //    var result = _cuesheetManager.IsMoveTracksUpPossible([track1, track2]);
-        //    // Assert
-        //    Assert.IsFalse(result);
-        //}
+        [TestMethod]
+        public void IsMoveTracksUpPossible_NoTracksAbove_ReturnsFalse()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track2, track1, track3]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([track1, track2]);
+            // Assert
+            Assert.IsFalse(result);
+        }
 
-        //[TestMethod]
-        //public void IsMoveTracksUpPossible_EmptyCollection_ReturnsFalse()
-        //{
-        //    // Arrange
-        //    // Act
-        //    var result = _cuesheetManager.IsMoveTracksUpPossible([]);
-        //    // Assert
-        //    Assert.IsFalse(result);
-        //}
+        [TestMethod]
+        public void IsMoveTracksUpPossible_EmptyCollection_ReturnsFalse()
+        {
+            // Arrange
+            // Act
+            var result = _cuesheetManager.IsMoveTracksUpPossible([]);
+            // Assert
+            Assert.IsFalse(result);
+        }
 
-        //[TestMethod]
-        //public void IsMoveTracksDownPossible_TracksBelow_ReturnsTrue()
-        //{
-        //    // Arrange
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = new TimeSpan(0, 3, 12),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = new TimeSpan(0, 3, 12),
-        //        End = new TimeSpan(0, 7, 34),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = new TimeSpan(0, 7, 34),
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.IsMoveTracksDownPossible([track2, track1]);
-        //    // Assert
-        //    Assert.IsTrue(result);
-        //}
+        [TestMethod]
+        public void IsMoveTracksDownPossible_TracksBelow_ReturnsTrue()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.IsMoveTracksDownPossible([track2, track1]);
+            // Assert
+            Assert.IsTrue(result);
+        }
 
-        //[TestMethod]
-        //public void IsMoveTracksDownPossible_NoTracksBelow_ReturnsFalse()
-        //{
-        //    // Arrange
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = new TimeSpan(0, 3, 12),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = new TimeSpan(0, 3, 12),
-        //        End = new TimeSpan(0, 7, 34),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = new TimeSpan(0, 7, 34),
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track2, track1, track3]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    // Act
-        //    var result = _cuesheetManager.IsMoveTracksDownPossible([track3, track2]);
-        //    // Assert
-        //    Assert.IsFalse(result);
-        //}
+        [TestMethod]
+        public void IsMoveTracksDownPossible_NoTracksBelow_ReturnsFalse()
+        {
+            // Arrange
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = new TimeSpan(0, 3, 12),
+                IsLinkedToPreviousTrack = true
+            };
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = new TimeSpan(0, 3, 12),
+                End = new TimeSpan(0, 7, 34),
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = new TimeSpan(0, 7, 34),
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            // Act
+            var result = _cuesheetManager.IsMoveTracksDownPossible([track3, track2]);
+            // Assert
+            Assert.IsFalse(result);
+        }
 
-        //[TestMethod]
-        //public void IsMoveTracksDownPossible_EmptyCollection_ReturnsFalse()
-        //{
-        //    // Arrange
-        //    var cuesheet = new Cuesheet();
-        //    // Act
-        //    var result = _cuesheetManager.IsMoveTracksDownPossible([]);
-        //    // Assert
-        //    Assert.IsFalse(result);
-        //}
+        [TestMethod]
+        public void IsMoveTracksDownPossible_EmptyCollection_ReturnsFalse()
+        {
+            // Arrange
+            // Act
+            var result = _cuesheetManager.IsMoveTracksDownPossible([]);
+            // Assert
+            Assert.IsFalse(result);
+        }
 
-        //[TestMethod]
-        //public void MoveTracksUp_TracksAbove_ReturnsSuccess()
-        //{
-        //    // Arrange
-        //    var track1End = new TimeSpan(0, 3, 12);
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = track1End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2End = new TimeSpan(0, 7, 34);
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = track1End,
-        //        End = track2End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = track2End,
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.MoveTracksUp([track2, track3]);
-        //    // Assert
-        //    Assert.IsTrue(result.IsSuccess);
-        //    Assert.AreEqual((ushort?)1, track2.Position);
-        //    Assert.AreEqual(TimeSpan.Zero, track2.Begin);
-        //    Assert.AreEqual(track1End, track2.End);
-        //    Assert.AreEqual((ushort?)2, track3.Position);
-        //    Assert.AreEqual(track1End, track3.Begin);
-        //    Assert.AreEqual(track2End, track3.End);
-        //    Assert.AreEqual((ushort?)3, track1.Position);
-        //    Assert.AreEqual(track2End, track1.Begin);
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Once);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
-        //}
+        [TestMethod]
+        public void MoveTracksUp_TracksAbove_ReturnsSuccess()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track1]
+                    },
+                    new() {
+                        Tracks = [track3, track2]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.Last();
+            track3.Audiofile = cuesheet.Audiofiles.Last();
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveTracksUp([track2, track3]);
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual((ushort?)1, track2.Position);
+            Assert.AreEqual(TimeSpan.Zero, track2.Begin);
+            Assert.AreEqual(track1End, track2.End);
+            Assert.AreEqual((ushort?)2, track3.Position);
+            Assert.AreEqual(track1End, track3.Begin);
+            Assert.AreEqual(track2End, track3.End);
+            Assert.AreEqual((ushort?)3, track1.Position);
+            Assert.AreEqual(track2End, track1.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Exactly(2));
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
+        }
 
-        //[TestMethod]
-        //public void MoveTracksUp_NoTracksAbove_ReturnsFailure()
-        //{
-        //    // Arrange
-        //    var track1End = new TimeSpan(0, 3, 12);
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = track1End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2End = new TimeSpan(0, 7, 34);
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = track1End,
-        //        End = track2End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = track2End,
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.MoveTracksUp([track2, track1]);
-        //    // Assert
-        //    Assert.IsFalse(result.IsSuccess);
-        //    Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
-        //    Assert.AreEqual((ushort?)1, track1.Position);
-        //    Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        //    Assert.AreEqual(track1End, track1.End);
-        //    Assert.AreEqual((ushort?)2, track2.Position);
-        //    Assert.AreEqual(track1End, track2.Begin);
-        //    Assert.AreEqual(track2End, track2.End);
-        //    Assert.AreEqual((ushort?)3, track3.Position);
-        //    Assert.AreEqual(track2End, track3.Begin);
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
-        //}
+        [TestMethod]
+        public void MoveTracksUp_NoTracksAbove_ReturnsFailure()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.First();
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveTracksUp([track2, track1]);
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+            Assert.AreEqual((ushort?)1, track1.Position);
+            Assert.AreEqual(TimeSpan.Zero, track1.Begin);
+            Assert.AreEqual(track1End, track1.End);
+            Assert.AreEqual((ushort?)2, track2.Position);
+            Assert.AreEqual(track1End, track2.Begin);
+            Assert.AreEqual(track2End, track2.End);
+            Assert.AreEqual((ushort?)3, track3.Position);
+            Assert.AreEqual(track2End, track3.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
+        }
 
-        //[TestMethod]
-        //public void MoveTracksUp_NoTracksSelected_ReturnsFailure()
-        //{
-        //    // Arrange
-        //    var track1End = new TimeSpan(0, 3, 12);
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = track1End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2End = new TimeSpan(0, 7, 34);
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = track1End,
-        //        End = track2End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = track2End,
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.MoveTracksUp([]);
-        //    // Assert
-        //    Assert.IsFalse(result.IsSuccess);
-        //    Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
-        //    Assert.AreEqual((ushort?)1, track1.Position);
-        //    Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        //    Assert.AreEqual(track1End, track1.End);
-        //    Assert.AreEqual((ushort?)2, track2.Position);
-        //    Assert.AreEqual(track1End, track2.Begin);
-        //    Assert.AreEqual(track2End, track2.End);
-        //    Assert.AreEqual((ushort?)3, track3.Position);
-        //    Assert.AreEqual(track2End, track3.Begin);
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
-        //}
+        [TestMethod]
+        public void MoveTracksUp_NoTracksSelected_ReturnsFailure()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.First();
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveTracksUp([]);
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+            Assert.AreEqual((ushort?)1, track1.Position);
+            Assert.AreEqual(TimeSpan.Zero, track1.Begin);
+            Assert.AreEqual(track1End, track1.End);
+            Assert.AreEqual((ushort?)2, track2.Position);
+            Assert.AreEqual(track1End, track2.Begin);
+            Assert.AreEqual(track2End, track2.End);
+            Assert.AreEqual((ushort?)3, track3.Position);
+            Assert.AreEqual(track2End, track3.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
+        }
 
-        //[TestMethod]
-        //public void MoveTracksDown_TracksBelow_ReturnsSucess()
-        //{
-        //    // Arrange
-        //    var track1End = new TimeSpan(0, 3, 12);
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = track1End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2End = new TimeSpan(0, 7, 34);
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = track1End,
-        //        End = track2End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = track2End,
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.MoveTracksDown([track2, track1]);
-        //    // Assert
-        //    Assert.IsTrue(result.IsSuccess);
-        //    Assert.AreEqual((ushort?)1, track3.Position);
-        //    Assert.AreEqual(TimeSpan.Zero, track3.Begin);
-        //    Assert.AreEqual(track1End, track3.End);
-        //    Assert.AreEqual((ushort?)2, track1.Position);
-        //    Assert.AreEqual(track1End, track1.Begin);
-        //    Assert.AreEqual(track2End, track1.End);
-        //    Assert.AreEqual((ushort?)3, track2.Position);
-        //    Assert.AreEqual(track2End, track2.Begin);
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Once);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
-        //}
+        [TestMethod]
+        public void MoveTracksDown_TracksBelow_ReturnsSucess()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track2, track1]
+                    },
+                    new() {
+                        Tracks = [track3]
+                    }
+                ]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.Last();
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveTracksDown([track2, track1]);
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual((ushort?)1, track3.Position);
+            Assert.AreEqual(TimeSpan.Zero, track3.Begin);
+            Assert.AreEqual(track1End, track3.End);
+            Assert.AreEqual((ushort?)2, track1.Position);
+            Assert.AreEqual(track1End, track1.Begin);
+            Assert.AreEqual(track2End, track1.End);
+            Assert.AreEqual((ushort?)3, track2.Position);
+            Assert.AreEqual(track2End, track2.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Exactly(2));
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
+        }
 
-        //[TestMethod]
-        //public void MoveTracksDown_NoTracksBelow_ReturnsFailure()
-        //{
-        //    // Arrange
-        //    var track1End = new TimeSpan(0, 3, 12);
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = track1End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2End = new TimeSpan(0, 7, 34);
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = track1End,
-        //        End = track2End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = track2End,
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.MoveTracksDown([track2, track3]);
-        //    // Assert
-        //    Assert.IsFalse(result.IsSuccess);
-        //    Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
-        //    Assert.AreEqual((ushort?)1, track1.Position);
-        //    Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        //    Assert.AreEqual(track1End, track1.End);
-        //    Assert.AreEqual((ushort?)2, track2.Position);
-        //    Assert.AreEqual(track1End, track2.Begin);
-        //    Assert.AreEqual(track2End, track2.End);
-        //    Assert.AreEqual((ushort?)3, track3.Position);
-        //    Assert.AreEqual(track2End, track3.Begin);
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
-        //}
+        [TestMethod]
+        public void MoveTracksDown_NoTracksBelow_ReturnsFailure()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.First();
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveTracksDown([track2, track3]);
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+            Assert.AreEqual((ushort?)1, track1.Position);
+            Assert.AreEqual(TimeSpan.Zero, track1.Begin);
+            Assert.AreEqual(track1End, track1.End);
+            Assert.AreEqual((ushort?)2, track2.Position);
+            Assert.AreEqual(track1End, track2.Begin);
+            Assert.AreEqual(track2End, track2.End);
+            Assert.AreEqual((ushort?)3, track3.Position);
+            Assert.AreEqual(track2End, track3.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
+        }
 
-        //[TestMethod]
-        //public void MoveTracksDown_NoTracksSelected_ReturnsFailure()
-        //{
-        //    // Arrange
-        //    var track1End = new TimeSpan(0, 3, 12);
-        //    var track1 = new Track()
-        //    {
-        //        Position = 1,
-        //        Begin = TimeSpan.Zero,
-        //        End = track1End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track2End = new TimeSpan(0, 7, 34);
-        //    var track2 = new Track()
-        //    {
-        //        Position = 2,
-        //        Begin = track1End,
-        //        End = track2End,
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var track3 = new Track()
-        //    {
-        //        Position = 3,
-        //        Begin = track2End,
-        //        End = new TimeSpan(0, 10, 4),
-        //        IsLinkedToPreviousTrack = true
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track3, track2, track1]
-        //    };
-        //    track1.Cuesheet = cuesheet;
-        //    track2.Cuesheet = cuesheet;
-        //    track3.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
-        //    // Act
-        //    var result = _cuesheetManager.MoveTracksDown([]);
-        //    // Assert
-        //    Assert.IsFalse(result.IsSuccess);
-        //    Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
-        //    Assert.AreEqual((ushort?)1, track1.Position);
-        //    Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        //    Assert.AreEqual(track1End, track1.End);
-        //    Assert.AreEqual((ushort?)2, track2.Position);
-        //    Assert.AreEqual(track1End, track2.Begin);
-        //    Assert.AreEqual(track2End, track2.End);
-        //    Assert.AreEqual((ushort?)3, track3.Position);
-        //    Assert.AreEqual(track2End, track3.Begin);
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PropertyName == nameof(Cuesheet.Tracks))), Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
-        //    _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
-        //}
+        [TestMethod]
+        public void MoveTracksDown_NoTracksSelected_ReturnsFailure()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = new TimeSpan(0, 10, 4),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track3, track2, track1]
+                    }
+                ]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.First();
+            _sessionStateContainer.Setup(x => x.Cuesheet).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveTracksDown([]);
+            // Assert
+            Assert.IsFalse(result.IsSuccess);
+            Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+            Assert.AreEqual((ushort?)1, track1.Position);
+            Assert.AreEqual(TimeSpan.Zero, track1.Begin);
+            Assert.AreEqual(track1End, track1.End);
+            Assert.AreEqual((ushort?)2, track2.Position);
+            Assert.AreEqual(track1End, track2.Begin);
+            Assert.AreEqual(track2End, track2.End);
+            Assert.AreEqual((ushort?)3, track3.Position);
+            Assert.AreEqual(track2End, track3.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
+        }
     }
 }

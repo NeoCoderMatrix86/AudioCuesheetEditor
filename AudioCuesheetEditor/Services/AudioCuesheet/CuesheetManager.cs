@@ -155,22 +155,18 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
+            _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
+            foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
             {
                 var nextTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
                 var newBegin = nextTrack?.Begin;
                 var newEnd = nextTrack?.End;
                 if (nextTrack != null)
                 {
-                    var nextTrackAudiofile = nextTrack.Audiofile;
-                    var selectedTrackAudiofile = selectedTrack.Audiofile;
-                    if (nextTrackAudiofile != selectedTrackAudiofile)
+                    if (nextTrack.Audiofile != selectedTrack.Audiofile)
                     {
-                        if (nextTrack.Audiofile != selectedTrack.Audiofile)
-                        {
-                            SwitchAudiofile(selectedTrack, nextTrack);
-                        }
+                        SwitchAudiofile(selectedTrack, nextTrack);
                     }
                     _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
                     _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
