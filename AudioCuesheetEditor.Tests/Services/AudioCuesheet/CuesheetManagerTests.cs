@@ -19,7 +19,6 @@ using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
-using AudioCuesheetEditor.Shared.Cuesheet;
 using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -132,30 +131,6 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             _jsRuntime.Verify(x => x.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>("revokeAudioObjectURL", It.Is<object[]>(args => args.Length == 1 && args[0].Equals(audiofile2.ObjectURL))), Times.Once());
         }
-
-        //TODO
-        //[TestMethod]
-        //public void SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso()
-        //{
-        //    // Arrange
-        //    var track = new Track()
-        //    {
-        //        Position = 1
-        //    };
-        //    var cuesheet = new Cuesheet()
-        //    {
-        //        Tracks = [track]
-        //    };
-        //    track.Cuesheet = cuesheet;
-        //    _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
-        //    var duration = new TimeSpan(0, 5, 23);
-        //    var audiofile = new Audiofile("Test.mp3", nameof(SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso), Audiofile.AudioCodecs.First(), duration);
-        //    // Act
-        //    _cuesheetManager.SetProperty(x => x.Audiofile, audiofile);
-        //    // Assert
-        //    _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Cuesheet.Audiofile))), Times.Once);
-        //    Assert.AreEqual(duration, track.End);
-        //}
 
         [TestMethod]
         public void IsRecordingPossible_WithoutTracks_ReturnsSuccess()

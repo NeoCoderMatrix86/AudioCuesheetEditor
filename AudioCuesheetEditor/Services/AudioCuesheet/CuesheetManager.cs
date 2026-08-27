@@ -16,7 +16,6 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
-using AudioCuesheetEditor.Shared.Cuesheet;
 using Microsoft.JSInterop;
 using System.Linq.Expressions;
 using System.Reflection;

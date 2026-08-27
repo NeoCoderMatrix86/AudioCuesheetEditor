@@ -61,7 +61,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 SetValue(audiofile, x => x.Name, browserFile.Name);
                 SetValue(audiofile, x => x.ObjectURL, objectUrl);
                 SetValue(audiofile, x => x.Duration, duration);
-                //TODO: Tests
                 SetLastTrackEnd(audiofile);
             }
             _traceChangeManager.BulkEdit = false;
@@ -71,7 +70,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
         {
             SetValue(audiofile, propertyExpression, value);
-            //TODO: Tests
             SetLastTrackEnd(audiofile);
         }
 
