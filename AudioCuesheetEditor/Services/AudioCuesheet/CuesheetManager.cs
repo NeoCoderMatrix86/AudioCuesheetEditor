@@ -39,14 +39,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            //TODO
-            //var audiofile = cuesheet?.Audiofile;
             SetValue(cuesheet!, propertyExpression, value);
-            //// If audiofile has been set, we need to calculate last track end
-            //if (audiofile != cuesheet?.Audiofile)
-            //{
-            //    SetLastTrackEnd(cuesheet!);
-            //}
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -239,16 +232,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             trackToMoveAudiofileTracks.Add(currentTrackPosition);
             _traceChangeManager.AddChange(new(trackToMoveTrackAudiofile, new(trackToMoveTrackAudiofile.Tracks, nameof(Audiofile.Tracks))));
             trackToMoveTrackAudiofile.Tracks = trackToMoveAudiofileTracks;
-        }
-
-        void SetLastTrackEnd(Cuesheet cuesheet)
-        {
-            var lastTrack = GetLastTrack(cuesheet);
-            //TODO
-            //if ((lastTrack?.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
-            //{
-            //    _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
-            //}
         }
 
         static Track? GetLastTrack(Cuesheet cuesheet)
