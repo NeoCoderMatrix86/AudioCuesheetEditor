@@ -123,4 +123,7 @@
   <data name="Files" xml:space="preserve">
     <value>Files</value>
   </data>
+  <data name="Playback" xml:space="preserve">
+    <value>Playback</value>
+  </data>
 </root>
