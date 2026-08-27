@@ -62,8 +62,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 SetValue(audiofile, x => x.ObjectURL, objectUrl);
                 SetValue(audiofile, x => x.Duration, duration);
                 //TODO: Tests
-                var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-                RecalculateTrackProperties(cuesheet!);
+                SetLastTrackEnd(audiofile);
             }
             _traceChangeManager.BulkEdit = false;
         }
@@ -72,6 +71,8 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
         {
             SetValue(audiofile, propertyExpression, value);
+            //TODO: Tests
+            SetLastTrackEnd(audiofile);
         }
 
         /// <inheritdoc/>
@@ -175,14 +176,19 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             // Set track ends based on audiofile duration
             foreach (var audiofile in cuesheet.Audiofiles)
             {
-                var lastTrack = audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+                SetLastTrackEnd(audiofile);
+            }
+        }
+
+        void SetLastTrackEnd(Audiofile audiofile)
+        {
+            var lastTrack = audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
                     .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
                     .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
                     .LastOrDefault();
-                if ((lastTrack?.End.HasValue == false) && (audiofile.Duration.HasValue == true))
-                {
-                    _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);
-                }
+            if ((lastTrack?.End.HasValue == false) && (audiofile.Duration.HasValue == true))
+            {
+                _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);
             }
         }
 
