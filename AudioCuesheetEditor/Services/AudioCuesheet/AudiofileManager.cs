@@ -61,6 +61,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 SetValue(audiofile, x => x.Name, browserFile.Name);
                 SetValue(audiofile, x => x.ObjectURL, objectUrl);
                 SetValue(audiofile, x => x.Duration, duration);
+                //TODO: Tests
+                var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+                RecalculateTrackProperties(cuesheet!);
             }
             _traceChangeManager.BulkEdit = false;
         }
