@@ -19,9 +19,12 @@ using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
+using AudioCuesheetEditor.Shared.Cuesheet;
+using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -36,13 +39,15 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         private readonly Mock<ISessionStateContainer> _sessionStateContainer;
         private readonly Mock<ITrackManager> _trackManager;
         private readonly Mock<IAudiofileManager> _audiofileManager;
-        
+        private readonly Mock<IJSRuntime> _jsRuntime;
+
         public CuesheetManagerTests()
         {
             _traceChangeManager = new();
             _sessionStateContainer = new();
             _audiofileManager = new();
             _trackManager = new();
+            _jsRuntime = new Mock<IJSRuntime>();
             _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(),It.IsAny<Expression<Func<Track, It.IsAnyType>>>(),It.IsAny<It.IsAnyType>()))
                 .Callback((Track track, LambdaExpression propExpr, object value) =>
                 {
@@ -68,7 +73,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 }
                 return null;
             });
-            _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object, _audiofileManager.Object);
+            _cuesheetManager = new(_traceChangeManager.Object, _sessionStateContainer.Object, _trackManager.Object, _audiofileManager.Object, _jsRuntime.Object);
         }
 
         [TestMethod]
@@ -98,6 +103,36 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Cuesheet.Artist))), Times.Never);
         }
+
+        [TestMethod]
+        public void SetProperty_DeletedAudiofile_RevokesObjectURLs()
+        {
+            // Arrange
+            var audiofile1 = new Audiofile()
+            {
+                Name = "Test 1.mp3",
+                AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                ObjectURL = "objecturl 1"
+            };
+            var audiofile2 = new Audiofile()
+            {
+                Name = "Test 2.mp3",
+                AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                ObjectURL = "objecturl 2"
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [audiofile1, audiofile2]
+            };
+            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            var files = new List<Audiofile>(cuesheet.Audiofiles);
+            files.Remove(audiofile2);
+            // Act
+            _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+            // Assert
+            _jsRuntime.Verify(x => x.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>("revokeAudioObjectURL", It.Is<object[]>(args => args.Length == 1 && args[0].Equals(audiofile2.ObjectURL))), Times.Once());
+        }
+
         //TODO
         //[TestMethod]
         //public void SetProperty_AudiofileWithDuration_SetsLastTrackEndAlso()

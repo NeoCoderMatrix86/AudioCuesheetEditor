@@ -16,18 +16,21 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
+using AudioCuesheetEditor.Shared.Cuesheet;
+using Microsoft.JSInterop;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager, IAudiofileManager audiofileManager) : ICuesheetManager
+    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager, IAudiofileManager audiofileManager, IJSRuntime jsRuntime) : ICuesheetManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITrackManager _trackManager = trackManager;
         private readonly IAudiofileManager _audiofileManager = audiofileManager;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
         public event EventHandler? IsRecordingChanged;
 
@@ -44,7 +47,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             //{
             //    SetLastTrackEnd(cuesheet!);
             //}
-            //TODO: Check if an audiofile has been removed, if so, we need to revoke its object url via library.js (revokeAudioObjectURL)
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -204,6 +206,22 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             propertyInfo.SetValue(cuesheet, value);
 
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
+            _ = RevokeObjectUrlOfRemovedAudiofilesAsync(cuesheet, propertyInfo, previousValue);
+        }
+
+        async Task RevokeObjectUrlOfRemovedAudiofilesAsync(Cuesheet cuesheet, PropertyInfo propertyInfo, object? previousValue)
+        {
+            if (propertyInfo.Name == nameof(Cuesheet.Audiofiles))
+            {
+                var deletedAudiofiles = ((IList<Audiofile>)previousValue!).Except(cuesheet.Audiofiles);
+                foreach (var deletedAudiofile in deletedAudiofiles)
+                {
+                    if (!string.IsNullOrEmpty(deletedAudiofile.ObjectURL))
+                    {
+                        await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", deletedAudiofile.ObjectURL);
+                    }
+                }
+            }
         }
 
         void SwitchAudiofile(Track trackToMove, Track currentTrackPosition)
