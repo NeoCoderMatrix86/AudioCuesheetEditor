@@ -19,7 +19,7 @@ using System.Text.Json.Serialization;
 
 namespace AudioCuesheetEditor.Model.IO.Audio
 {
-    public class Audiofile() : Validateable
+    public class Audiofile() : Validateable, IAudiofile
     {
         public static readonly AudioCodec AudioCodecWEBM = new("audio/webm", ".webm", "AudioCodec WEBM");
 
@@ -40,10 +40,6 @@ namespace AudioCuesheetEditor.Model.IO.Audio
         
         public Audiofile(String? name, String? objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
         {
-            if (String.IsNullOrEmpty(objectURL))
-            {
-                throw new ArgumentNullException(nameof(objectURL));
-            }
             Name = name;
             ObjectURL = objectURL;
             AudioCodec = audioCodec;

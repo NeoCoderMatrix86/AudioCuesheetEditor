@@ -25,7 +25,7 @@ namespace AudioCuesheetEditor.Services.UI
         public event EventHandler? ImportCuesheetChanged;
         public Cuesheet Cuesheet { get; set; }
         public Cuesheet? ImportCuesheet { get; set; }
-        public Audiofile? ImportAudiofile { get; set; }
+        public IList<Audiofile> ImportAudiofiles { get; set; }
         public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; }
         public void ResetImport();

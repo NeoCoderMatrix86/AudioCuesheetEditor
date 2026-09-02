@@ -170,6 +170,8 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             };
             _textImportServiceMock.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
             _sessionStateContainerMock.SetupGet(x => x.Importfile).Returns(importFile);
+            IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
+            _sessionStateContainerMock.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
             Cuesheet? sessionStateContainerImportCuesheet = null;
             _sessionStateContainerMock.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
             _sessionStateContainerMock.SetupGet(x => x.ImportCuesheet).Returns(() => sessionStateContainerImportCuesheet);
@@ -265,7 +267,8 @@ TRACK 08 AUDIO
                 FileContent = fileContent,
                 FileType = ImportFileType.Cuesheet
             };
-
+            IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
+            _sessionStateContainerMock.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
             _sessionStateContainerMock.SetupGet(x => x.Importfile).Returns(() => sessionStateContainerImportFile);
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(importfile => sessionStateContainerImportFile = importfile);
 
@@ -365,14 +368,15 @@ TRACK 08 AUDIO
 
             IImportfile? sessionStateContainerImportfile = null;
             _sessionStateContainerMock.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
-            Audiofile? sessionStateContainerImportAudiofile = null;
-            _sessionStateContainerMock.SetupSet(x => x.ImportAudiofile = It.IsAny<Audiofile>()).Callback<Audiofile>(x => sessionStateContainerImportAudiofile = x);
+            IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
+            _sessionStateContainerMock.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
+            _sessionStateContainerMock.SetupSet(x => x.ImportAudiofiles = It.IsAny<IList<Audiofile>>()).Callback<IList<Audiofile>>(x => sessionStateContainerImportAudiofiles = x);
             // Act
             await _service.UploadFilesAsync([file]);
 
             // Assert
             Assert.IsNull(sessionStateContainerImportfile);
-            Assert.IsNotNull(sessionStateContainerImportAudiofile);
+            Assert.HasCount(1, sessionStateContainerImportAudiofiles);
         }
 
         [TestMethod]
@@ -410,6 +414,8 @@ TRACK 08 AUDIO
             Cuesheet sessionStateContainerCuesheet = new();
             _sessionStateContainerMock.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
             _sessionStateContainerMock.SetupGet(x => x.Cuesheet).Returns(() => sessionStateContainerCuesheet);
+            IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
+            _sessionStateContainerMock.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
             // Act
             _service.ImportCuesheet();
             // Assert

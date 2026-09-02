@@ -63,6 +63,7 @@ namespace AudioCuesheetEditor.Services.IO
         
         public async Task AnalyseImportfile()
         {
+            //TODO: Currently has a bug setting position when import not run with position in scheme
             ResetTracing();
             var stopwatch = Stopwatch.StartNew();
             var fileContent = _sessionStateContainer.Importfile?.FileContent;
@@ -166,7 +167,10 @@ namespace AudioCuesheetEditor.Services.IO
                     if (_fileInputManager.IsValidAudiofile(file.ContentType, file.Name))
                     {
                         var audioFile = await _fileInputManager.CreateAudiofileAsync(file);
-                        _sessionStateContainer.ImportAudiofile = audioFile;
+                        if (audioFile != null)
+                        {
+                            _sessionStateContainer.ImportAudiofiles.Add(audioFile);
+                        }
                     }
                 }
                 else
@@ -202,15 +206,21 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        void AttachClonedAudiofiles(Cuesheet target, IEnumerable audiofiles)
+        void AttachClonedAudiofiles(Cuesheet target, IEnumerable<IAudiofile> audiofiles) 
         {
             foreach (var audiofile in audiofiles)
             {
                 Audiofile? targetAudiofile = null;
                 IEnumerable<ITrack>? tracks = null;
+                // Map uploaded import audiofiles by name
+                var importAudiofileFound = _sessionStateContainer.ImportAudiofiles.FirstOrDefault(x => x.Name == audiofile.Name);
+                if (importAudiofileFound != null)
+                {
+                    targetAudiofile = new Audiofile(importAudiofileFound.Name, importAudiofileFound.ObjectURL, importAudiofileFound.AudioCodec, importAudiofileFound.Duration);
+                }
                 if (audiofile is ImportAudiofile importAudiofile)
                 {
-                    targetAudiofile = new Audiofile()
+                    targetAudiofile ??= new Audiofile()
                     {
                         Name = importAudiofile.Name,
                     };
@@ -218,7 +228,7 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 if (audiofile is Audiofile sourceAudiofile)
                 {
-                    targetAudiofile = new Audiofile(sourceAudiofile.Name, sourceAudiofile.ObjectURL, sourceAudiofile.AudioCodec, sourceAudiofile.Duration);
+                    targetAudiofile ??= new Audiofile(sourceAudiofile.Name, sourceAudiofile.ObjectURL, sourceAudiofile.AudioCodec, sourceAudiofile.Duration);
                     tracks = sourceAudiofile.Tracks;
                 }
                 if (targetAudiofile == null || tracks == null)

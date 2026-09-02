@@ -63,7 +63,7 @@ namespace AudioCuesheetEditor.Services.UI
                 ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
-        public Audiofile? ImportAudiofile { get; set; }
+        public IList<Audiofile> ImportAudiofiles { get; set; } = [];
         public IImportfile? Importfile{ get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;
 
@@ -76,7 +76,7 @@ namespace AudioCuesheetEditor.Services.UI
         public void ResetImport()
         {
             Importfile = null;
-            ImportAudiofile = null;
+            ImportAudiofiles = [];
             ImportCuesheet = null;
         }
 
