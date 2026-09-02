@@ -284,6 +284,8 @@ TRACK 08 AUDIO
             Assert.AreEqual("Sample Artist 1", sessionStateContainerImportFile.AnalyzedCuesheet.Audiofiles.First().Tracks.First().Artist);
             Assert.AreEqual(TimeSpan.Zero, sessionStateContainerImportFile.AnalyzedCuesheet.Audiofiles.First().Tracks.First().Begin);
             Assert.AreEqual("Sample Title 1", sessionStateContainerImportFile.AnalyzedCuesheet.Audiofiles.First().Tracks.First().Title);
+            Assert.AreEqual((ushort)1, sessionStateContainerImportFile.AnalyzedCuesheet.Audiofiles.First().Tracks.First().Position);
+            Assert.AreEqual((ushort)8, sessionStateContainerImportFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Position);
         }
 
         [TestMethod]
