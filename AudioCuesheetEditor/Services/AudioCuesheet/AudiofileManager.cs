@@ -76,7 +76,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void AddTrack(Audiofile audiofile, Track track)
         {
-            //TODO: Tests with recording cuesheet
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             track.Cuesheet = cuesheet;
