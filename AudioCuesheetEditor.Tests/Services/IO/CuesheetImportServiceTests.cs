@@ -186,8 +186,8 @@ TRACK 08 AUDIO
             Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
             Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
             Assert.IsNotNull(importFile.AnalyzedCuesheet.CDTextfile);
-            Assert.AreEqual(4, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Flags.Count());
-            Assert.AreEqual(2, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags.Count());
+            Assert.HasCount(4, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Flags);
+            Assert.HasCount(2, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags);
             Assert.IsNotNull(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "DCP"));
             Assert.IsNotNull(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
             Assert.AreEqual(new TimeSpan(0, 0, 2), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(4).PostGap);
