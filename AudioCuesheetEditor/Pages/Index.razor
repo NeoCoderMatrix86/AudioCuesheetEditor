@@ -82,6 +82,7 @@ along with Foobar.  If not, see
 
     void ImportManager_UploadFilesFinished(object? sender, IEnumerable<string> invalidFiles)
     {
+        //TODO: Bug importing a project file causes many undo actions beeing available
         InvokeAsync(async () =>
         {
             try
