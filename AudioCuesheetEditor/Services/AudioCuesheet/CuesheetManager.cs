@@ -98,15 +98,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
+        public bool IsMoveUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
 
         /// <inheritdoc/>
-        public bool IsMoveTracksDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 &&  selectedTracks.Max(x => x.Position) < _sessionStateContainer.GetActiveCuesheet()?.Audiofiles.SelectMany(x => x.Tracks).Max(x => x.Position);
+        public bool IsMoveDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 &&  selectedTracks.Max(x => x.Position) < _sessionStateContainer.GetActiveCuesheet()?.Audiofiles.SelectMany(x => x.Tracks).Max(x => x.Position);
 
         /// <inheritdoc/>
-        public Result MoveTracksUp(HashSet<Track> selectedTracks)
+        public Result MoveUp(HashSet<Track> selectedTracks)
         {
-            if (IsMoveTracksUpPossible(selectedTracks) == false)
+            if (IsMoveUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
             }
@@ -141,9 +141,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public Result MoveTracksDown(HashSet<Track> selectedTracks)
+        public Result MoveDown(HashSet<Track> selectedTracks)
         {
-            if (IsMoveTracksDownPossible(selectedTracks) == false)
+            if (IsMoveDownPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }

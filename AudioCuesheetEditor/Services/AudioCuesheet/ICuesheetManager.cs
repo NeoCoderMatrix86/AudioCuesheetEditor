@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using System.Linq.Expressions;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
@@ -54,23 +55,23 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Boolean IsMoveTracksUpPossible(HashSet<Track> selectedTracks);
+        Boolean IsMoveUpPossible(HashSet<Track> selectedTracks);
         /// <summary>
         /// Determines if moving tracks down is possible
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Boolean IsMoveTracksDownPossible(HashSet<Track> selectedTracks);
+        Boolean IsMoveDownPossible(HashSet<Track> selectedTracks);
         /// <summary>
         /// Moves selected tracks up
         /// </summary>
         /// <param name="selectedTracks"></param>
-        Result MoveTracksUp(HashSet<Track> selectedTracks);
+        Result MoveUp(HashSet<Track> selectedTracks);
         /// <summary>
         /// Moves selected tracks down
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Result MoveTracksDown(HashSet<Track> selectedTracks);
+        Result MoveDown(HashSet<Track> selectedTracks);
     }
 }
