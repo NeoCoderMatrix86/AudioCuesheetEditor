@@ -286,7 +286,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void IsMoveTracksUpPossible_TracksAbove_ReturnsTrue()
+        public void IsMoveUpPossible_TracksAbove_ReturnsTrue()
         {
             // Arrange
             var track1 = new Track()
@@ -328,7 +328,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void IsMoveTracksUpPossible_NoTracksAbove_ReturnsFalse()
+        public void IsMoveUpPossible_NoTracksAbove_ReturnsFalse()
         {
             // Arrange
             var track1 = new Track()
@@ -370,17 +370,17 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void IsMoveTracksUpPossible_EmptyCollection_ReturnsFalse()
+        public void IsMoveUpPossible_EmptyTracksCollection_ReturnsFalse()
         {
             // Arrange
             // Act
-            var result = _cuesheetManager.IsMoveUpPossible([]);
+            var result = _cuesheetManager.IsMoveUpPossible(new HashSet<Track>());
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public void IsMoveTracksDownPossible_TracksBelow_ReturnsTrue()
+        public void IsMoveDownPossible_TracksBelow_ReturnsTrue()
         {
             // Arrange
             var track1 = new Track()
@@ -423,7 +423,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void IsMoveTracksDownPossible_NoTracksBelow_ReturnsFalse()
+        public void IsMoveDownPossible_NoTracksBelow_ReturnsFalse()
         {
             // Arrange
             var track1 = new Track()
@@ -465,7 +465,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void IsMoveTracksDownPossible_EmptyCollection_ReturnsFalse()
+        public void IsMoveDownPossible_EmptyTracksCollection_ReturnsFalse()
         {
             // Arrange
             // Act
@@ -475,7 +475,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveTracksUp_TracksAbove_ReturnsSuccess()
+        public void MoveUp_TracksAbove_ReturnsSuccess()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -537,7 +537,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveTracksUp_NoTracksAbove_ReturnsFailure()
+        public void MoveUp_NoTracksAbove_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -597,7 +597,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveTracksUp_NoTracksSelected_ReturnsFailure()
+        public void MoveUp_NoTracksSelected_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -657,7 +657,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveTracksDown_TracksBelow_ReturnsSucess()
+        public void MoveDown_TracksBelow_ReturnsSucess()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -719,7 +719,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveTracksDown_NoTracksBelow_ReturnsFailure()
+        public void MoveDown_NoTracksBelow_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
@@ -779,7 +779,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveTracksDown_NoTracksSelected_ReturnsFailure()
+        public void MoveDown_NoTracksSelected_ReturnsFailure()
         {
             // Arrange
             var track1End = new TimeSpan(0, 3, 12);
