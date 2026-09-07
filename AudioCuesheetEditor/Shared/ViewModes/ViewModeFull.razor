@@ -43,6 +43,9 @@ along with Foobar.  If not, see
                 <MudTooltip Text="@_localizer["Move selected files up"]">
                     <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.MoveUp" Disabled="!_cuesheetManager.IsMoveUpPossible(_selectedAudiofiles)" OnClick="() => _cuesheetManager.MoveUp(_selectedAudiofiles)" aria-label="@_localizer["Move selected files up"]" />
                 </MudTooltip>
+                <MudTooltip Text="@_localizer["Move selected files down"]">
+                    <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.MoveDown" Disabled="!_cuesheetManager.IsMoveDownPossible(_selectedAudiofiles)" OnClick="() => _cuesheetManager.MoveDown(_selectedAudiofiles)" aria-label="@_localizer["Move selected files down"]" />
+                </MudTooltip>
             </MudButtonGroup>
             <MudButtonGroup OverrideStyles="false">
                 <MudTooltip Text="@_localizer["Delete selected files"]">

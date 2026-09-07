@@ -69,6 +69,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <returns></returns>
         Boolean IsMoveDownPossible(HashSet<Track> selectedTracks);
         /// <summary>
+        /// Determines if moving audiofiles down is possible
+        /// </summary>
+        /// <param name="selectedTracks"></param>
+        /// <returns></returns>
+        Boolean IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles);
+        /// <summary>
         /// Moves selected tracks up
         /// </summary>
         /// <param name="selectedTracks"></param>
@@ -85,5 +91,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
         Result MoveDown(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Moves selected audiofiles down
+        /// </summary>
+        /// <param name="selectedAudiofiles"></param>
+        /// <returns></returns>
+        Result MoveDown(HashSet<Audiofile> selectedAudiofiles);
     }
 }
