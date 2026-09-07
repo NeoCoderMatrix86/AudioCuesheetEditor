@@ -1110,7 +1110,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public void MoveDown_NoÂudiofilesBelow_ReturnsFailure()
+        public void MoveDown_NoAudiofilesBelow_ReturnsFailure()
         {
             // Arrange
             var file1 = new Audiofile();
