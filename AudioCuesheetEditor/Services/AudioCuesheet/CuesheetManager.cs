@@ -136,6 +136,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result MoveUp(HashSet<Track> selectedTracks)
         {
+            //TODO: Currently moves selected tracks up a file but the track available at the file down, this is not inteded
             if (IsMoveUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
@@ -207,6 +208,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result MoveDown(HashSet<Track> selectedTracks)
         {
+            //TODO: Currently moves selected tracks up a file but the track available at the file down, this is not inteded
             if (IsMoveDownPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
