@@ -52,15 +52,15 @@ along with Foobar.  If not, see
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
                                      MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
+                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" />
         </div>
         break;
 }
 
 <MudForm @ref="_form">
     <MudDataGrid T="Track" Items="Audiofile?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
-                 FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" Validator="_form" Virtualize SortMode="SortMode.None">
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_fixedTableHeader == true ? "600px" : null)"
+                 FixedHeader="_fixedTableHeader" Validator="_form" Virtualize SortMode="SortMode.None">
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
@@ -128,12 +128,13 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-@code {
+    @code {
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
     Track? _contextMenuTrack;
     ApplicationOptions? _applicationOptions;
     MudForm? _form;
+    Boolean _fixedTableHeader = false;
 
     [Parameter]
     [EditorRequired]
