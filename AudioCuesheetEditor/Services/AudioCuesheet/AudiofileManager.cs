@@ -76,6 +76,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true)
         {
+            //TODO: Adding a second track to an audiofile doesn't reset first track end if it is duration of audiofile
             if (setTracing)
             {
                 _traceChangeManager.BulkEdit = true;
