@@ -74,9 +74,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public void AddTrack(Audiofile audiofile, Track track)
+        public void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true)
         {
-            _traceChangeManager.BulkEdit = true;
+            if (setTracing)
+            {
+                _traceChangeManager.BulkEdit = true;
+            }
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             track.Cuesheet = cuesheet;
             track.Audiofile = audiofile;
@@ -90,11 +93,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             };
             SetValue(audiofile, x => x.Tracks, newValue);
             RecalculateTrackProperties(cuesheet!);
-            _traceChangeManager.BulkEdit = false;
+            if (setTracing)
+            {
+                _traceChangeManager.BulkEdit = false;
+            }
         }
 
         /// <inheritdoc/>
-        public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove)
+        public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true)
         {
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             var intersection = audiofile.Tracks.Intersect(tracksToRemove);
@@ -103,10 +109,16 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 track.Audiofile = null;
             }
             ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
-            _traceChangeManager.BulkEdit = true;
+            if (setTracing)
+            {
+                _traceChangeManager.BulkEdit = true;
+            }
             SetValue(audiofile, x => x.Tracks, newValue);
             RecalculateTrackProperties(cuesheet!);
-            _traceChangeManager.BulkEdit = false;
+            if (setTracing)
+            {
+                _traceChangeManager.BulkEdit = false;
+            }
         }
 
         void SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)

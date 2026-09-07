@@ -40,13 +40,16 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <summary>
         /// Adds a track to the audiofile
         /// </summary>
+        /// <param name="audiofile"></param>
         /// <param name="track"></param>
-        void AddTrack(Audiofile audiofile, Track track);
+        /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
+        void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true);
         /// <summary>
         /// Remove tracks from the audiofile
         /// </summary>
         /// <param name="audiofile"></param>
         /// <param name="tracksToRemove"></param>
-        void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove);
+        /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
+        void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true);
     }
 }

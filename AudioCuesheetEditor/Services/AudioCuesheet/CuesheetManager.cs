@@ -188,15 +188,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 newAudiofiles[index - 1] = audiofile;
                 var previousAudiofileTracks = previousAudiofile.Tracks;
                 var audiofileTracks = audiofile.Tracks;
-                _audiofileManager.RemoveTracks(previousAudiofile, previousAudiofileTracks);
-                _audiofileManager.RemoveTracks(audiofile, audiofileTracks);
+                _audiofileManager.RemoveTracks(previousAudiofile, previousAudiofileTracks, false);
+                _audiofileManager.RemoveTracks(audiofile, audiofileTracks, false);
                 foreach (var track in previousAudiofileTracks)
                 {
-                    _audiofileManager.AddTrack(audiofile, track);
+                    _audiofileManager.AddTrack(audiofile, track, false);
                 }
                 foreach (var track in audiofileTracks)
                 {
-                    _audiofileManager.AddTrack(previousAudiofile, track);
+                    _audiofileManager.AddTrack(previousAudiofile, track, false);
                 }
             }
             SetValue(cuesheet, x => x.Audiofiles, newAudiofiles);
@@ -259,15 +259,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 newAudiofiles[index + 1] = audiofile;
                 var nextAudiofileTracks = nextAudiofile.Tracks;
                 var audiofileTracks = audiofile.Tracks;
-                _audiofileManager.RemoveTracks(nextAudiofile, nextAudiofileTracks);
-                _audiofileManager.RemoveTracks(audiofile, audiofileTracks);
+                _audiofileManager.RemoveTracks(nextAudiofile, nextAudiofileTracks, false);
+                _audiofileManager.RemoveTracks(audiofile, audiofileTracks, false);
                 foreach (var track in nextAudiofileTracks)
                 {
-                    _audiofileManager.AddTrack(audiofile, track);
+                    _audiofileManager.AddTrack(audiofile, track, false);
                 }
                 foreach (var track in audiofileTracks)
                 {
-                    _audiofileManager.AddTrack(nextAudiofile, track);
+                    _audiofileManager.AddTrack(nextAudiofile, track, false);
                 }
             }
             SetValue(cuesheet, x => x.Audiofiles, newAudiofiles);
