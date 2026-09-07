@@ -76,7 +76,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true)
         {
-            //TODO: Adding a second track to an audiofile doesn't reset first track end if it is duration of audiofile
             if (setTracing)
             {
                 _traceChangeManager.BulkEdit = true;
@@ -87,6 +86,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             if ((cuesheet?.IsRecording == true) && cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any(x => x.Position >= 1)) 
             {
                 _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
+            }
+            var lastTrack = GetLastTrack(audiofile);
+            if ((audiofile.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == audiofile.Duration))
+            {
+                _trackManager.SetProperty(lastTrack, x => x.End, null);
             }
             var newValue = new List<Track>(audiofile.Tracks)
             {
@@ -190,12 +194,17 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
         }
 
+        Track? GetLastTrack(Audiofile audiofile)
+        {
+            return audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+                .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+                .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
+                .LastOrDefault();
+        }
+
         void SetLastTrackEnd(Audiofile audiofile)
         {
-            var lastTrack = audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
-                    .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-                    .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
-                    .LastOrDefault();
+            var lastTrack = GetLastTrack(audiofile);
             if ((lastTrack?.End.HasValue == false) && (audiofile.Duration.HasValue == true))
             {
                 _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);

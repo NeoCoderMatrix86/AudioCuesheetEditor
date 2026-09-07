@@ -290,7 +290,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 {
                     Position = 1,
                     Begin = TimeSpan.Zero,
-                    End = new TimeSpan(3, 12, 0),
+                    End = duration,
                     IsLinkedToPreviousTrack = true
                 }
             };
@@ -312,7 +312,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             Assert.HasCount(2, audiofile.Tracks);
             Assert.AreEqual((ushort)2, audiofile.Tracks.Last().Position);
-            Assert.AreEqual(audiofile.Tracks.First().End, audiofile.Tracks.Last().Begin);
+            Assert.IsFalse(audiofile.Tracks.First().End.HasValue);
             Assert.AreEqual(duration, audiofile.Tracks.Last().End);
             Assert.AreEqual(cuesheet, track.Cuesheet);
             Assert.AreEqual(audiofile, track.Audiofile);
