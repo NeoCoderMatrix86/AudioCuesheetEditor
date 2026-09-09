@@ -78,8 +78,6 @@ along with Foobar.  If not, see
 </MudCard>
 
 @code {
-    //TODO: Localization
-
     Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
     ICollection<Audiofile> _audiofiles => _cuesheet != null ? _cuesheet.Audiofiles : [];
     HashSet<Audiofile> _selectedAudiofiles = [];
