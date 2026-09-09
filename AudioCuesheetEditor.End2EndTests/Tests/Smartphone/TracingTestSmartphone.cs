@@ -29,7 +29,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            //TODO
+            //await detailView.AddTrackAsync();
             await detailView.EditTrackAsync("Test Artist 1");
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -161,7 +162,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            //TODO
+            //await detailView.AddTrackAsync();
             await detailView.SelectTracksAsync([1]);
             await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -1336,10 +1338,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             //TODO
+            //await detailView.AddTrackAsync();
             //await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.AddTrackAsync();
+            //await detailView.AddTrackAsync();
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:

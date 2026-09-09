@@ -47,9 +47,9 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
         }
 
-        internal async Task AddTrackAsync()
+        internal async Task AddTrackAsync(int audiofileIndex)
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).Nth(audiofileIndex).ClickAsync();
         }
 
         internal async Task EditTrackAsync(string? artist = null, string? title = null)

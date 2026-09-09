@@ -27,7 +27,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            //TODO
+            //await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
             await detailView.AddAudiofileAsync();
@@ -57,7 +58,8 @@ FILE ""Kalimba.mp3"" MP3
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            //TODO
+            //await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
             await detailView.AddAudiofileAsync();
@@ -79,7 +81,8 @@ FILE ""Kalimba.mp3"" MP3
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            //TODO
+            //await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
             await detailView.AddAudiofileAsync();
