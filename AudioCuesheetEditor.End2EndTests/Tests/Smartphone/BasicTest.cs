@@ -19,7 +19,7 @@ using Microsoft.Playwright;
 namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
 {
     [TestClass]
-    public class BasicTestSmartphone : PlaywrightTestBase
+    public class BasicTest : PlaywrightTestBase
     {
         protected override string? DeviceName => "iPhone 13";
 

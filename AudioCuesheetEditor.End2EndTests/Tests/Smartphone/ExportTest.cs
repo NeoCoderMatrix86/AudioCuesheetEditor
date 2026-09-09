@@ -19,8 +19,10 @@ using Microsoft.Playwright;
 namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
 {
     [TestClass]
-    public class ExportTestSmartphone : PlaywrightTestBase
+    public class ExportTest : PlaywrightTestBase
     {
+        protected override string? DeviceName => "iPhone 13";
+
         [TestMethod]
         public async Task DownloadCuesheet_GeneratesCuesheetFile_WhenCuesheetIsValid()
         {
