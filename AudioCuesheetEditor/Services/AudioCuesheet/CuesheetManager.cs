@@ -136,7 +136,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result MoveUp(HashSet<Track> selectedTracks)
         {
-            //TODO: Currently moves selected tracks up a file but the track available at the file down, this is not inteded
+            //TODO: Tests
             if (IsMoveUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
@@ -146,21 +146,25 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
             {
                 var previousTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
-                var newBegin = previousTrack?.Begin;
-                var newEnd = previousTrack?.End;
-                if (previousTrack != null)
+                if (previousTrack?.Audiofile != null && previousTrack.Audiofile != selectedTrack.Audiofile)
                 {
-                    if (previousTrack.Audiofile != selectedTrack.Audiofile)
-                    {
-                        SwitchAudiofile(selectedTrack, previousTrack);
-                    }
-                    _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
-                    _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
-                    _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                    SwitchAudiofile(selectedTrack, previousTrack.Audiofile);
                 }
-                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
-                _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                else
+                {
+                    var newBegin = previousTrack?.Begin;
+                    var newEnd = previousTrack?.End;
+                    if (previousTrack != null)
+                    {
+                        _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
+                        _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
+                        _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                    }
+                    _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
+                    _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                }
+                
             }
             foreach (var audiofile in cuesheet!.Audiofiles)
             {
@@ -208,7 +212,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result MoveDown(HashSet<Track> selectedTracks)
         {
-            //TODO: Currently moves selected tracks up a file but the track available at the file down, this is not inteded
             if (IsMoveDownPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
@@ -218,21 +221,24 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
             {
                 var nextTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
-                var newBegin = nextTrack?.Begin;
-                var newEnd = nextTrack?.End;
-                if (nextTrack != null)
+                if (nextTrack?.Audiofile != null && nextTrack.Audiofile != selectedTrack.Audiofile)
                 {
-                    if (nextTrack.Audiofile != selectedTrack.Audiofile)
-                    {
-                        SwitchAudiofile(selectedTrack, nextTrack);
-                    }
-                    _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
-                    _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
-                    _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                    SwitchAudiofile(selectedTrack, nextTrack.Audiofile);
                 }
-                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
-                _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                else
+                {
+                    var newBegin = nextTrack?.Begin;
+                    var newEnd = nextTrack?.End;
+                    if (nextTrack != null)
+                    {
+                        _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
+                        _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
+                        _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                    }
+                    _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
+                    _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                }
             }
             foreach (var audiofile in cuesheet!.Audiofiles)
             {
@@ -316,21 +322,21 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
         }
 
-        void SwitchAudiofile(Track trackToMove, Track currentTrackPosition)
+        void SwitchAudiofile(Track trackToMove, Audiofile audiofileToMoveTo)
         {
-            var currentTrackPositionAudiofile = currentTrackPosition.Audiofile;
-            var trackToMoveTrackAudiofile = trackToMove.Audiofile;
+            var currentTrackPositionAudiofile = trackToMove.Audiofile;
             //Switch audiofiles without audiofilemanager since methods there capsulate much logic
             var currentTrackPositionAudiofileTracks = new List<Track>(currentTrackPositionAudiofile!.Tracks);
-            currentTrackPositionAudiofileTracks.Remove(currentTrackPosition);
-            currentTrackPositionAudiofileTracks.Add(trackToMove);
+            currentTrackPositionAudiofileTracks.Remove(trackToMove);
             _traceChangeManager.AddChange(new(currentTrackPositionAudiofile, new(currentTrackPositionAudiofile.Tracks, nameof(Audiofile.Tracks))));
             currentTrackPositionAudiofile.Tracks = currentTrackPositionAudiofileTracks;
-            var trackToMoveAudiofileTracks = new List<Track>(trackToMoveTrackAudiofile!.Tracks);
-            trackToMoveAudiofileTracks.Remove(trackToMove);
-            trackToMoveAudiofileTracks.Add(currentTrackPosition);
-            _traceChangeManager.AddChange(new(trackToMoveTrackAudiofile, new(trackToMoveTrackAudiofile.Tracks, nameof(Audiofile.Tracks))));
-            trackToMoveTrackAudiofile.Tracks = trackToMoveAudiofileTracks;
+            var audiofileToMoveToTracks = new List<Track>(audiofileToMoveTo.Tracks)
+            {
+                trackToMove
+            };
+            trackToMove.Audiofile = audiofileToMoveTo;
+            _traceChangeManager.AddChange(new(audiofileToMoveTo, new(audiofileToMoveTo.Tracks, nameof(Audiofile.Tracks))));
+            audiofileToMoveTo.Tracks = audiofileToMoveToTracks;
         }
 
         static Track? GetLastTrack(Cuesheet cuesheet)
