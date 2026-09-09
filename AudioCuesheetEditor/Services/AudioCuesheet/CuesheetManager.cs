@@ -136,7 +136,6 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Result MoveUp(HashSet<Track> selectedTracks)
         {
-            //TODO: Tests
             if (IsMoveUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
