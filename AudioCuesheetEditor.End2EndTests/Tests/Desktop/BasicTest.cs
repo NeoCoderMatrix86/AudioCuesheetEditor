@@ -45,8 +45,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         {
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.RenameAudiofileAsync("Kalimba test 123.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.RenameAudiofileAsync(0, "Kalimba test 123.mp3");
             await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Kalimba test 123.mp3");
         }
 
@@ -130,8 +131,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
             await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.OpenRenameAudiofileDialogAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.OpenRenameAudiofileDialogAsync(0);
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
             await detailView.NewFileNameInput.FillAsync("Test 123");
             await TestPage.Keyboard.PressAsync("Enter");

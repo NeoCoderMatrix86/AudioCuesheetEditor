@@ -23,8 +23,6 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         private readonly IPage _page = page;
 
-        internal ILocator AudiofileInput => _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Locator("input[type=\"file\"]");
-
         internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
 
         internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
@@ -37,6 +35,16 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.WaitForURLAsync(BaseUrl);
             await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
             await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        }
+
+        internal async Task AddAudiofileAsync()
+        {
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Add file" }).ClickAsync();
+        }
+
+        internal async Task SetAudiofileInputFileAsync(int audiofileIndex, string file)
+        {
+            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
         }
 
         internal async Task AddTrackAsync()
@@ -105,16 +113,16 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
         }
 
-        internal async Task RenameAudiofileAsync(string filename)
+        internal async Task RenameAudiofileAsync(int audiofileIndex, string filename)
         {
-            await OpenRenameAudiofileDialogAsync();
+            await OpenRenameAudiofileDialogAsync(audiofileIndex);
             await NewFileNameInput.FillAsync(filename);
             await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
         }
 
-        internal async Task OpenRenameAudiofileDialogAsync()
+        internal async Task OpenRenameAudiofileDialogAsync(int audiofileIndex)
         {
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).GetByLabel("More").ClickAsync();
+            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).GetByLabel("More").ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
         }
     }

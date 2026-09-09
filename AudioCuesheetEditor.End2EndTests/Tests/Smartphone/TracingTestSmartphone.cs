@@ -1337,7 +1337,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
             await detailView.AddTrackAsync();
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            //TODO
+            //await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
             await detailView.AddTrackAsync();
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();

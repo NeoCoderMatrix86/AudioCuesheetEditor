@@ -30,7 +30,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Cuesheet");
             var downloadTask = TestPage.WaitForDownloadAsync();
@@ -59,7 +60,8 @@ FILE ""Kalimba.mp3"" MP3
             await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Projectfile");
             var downloadTask = TestPage.WaitForDownloadAsync();
@@ -80,7 +82,8 @@ FILE ""Kalimba.mp3"" MP3
             await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Textfile");
             await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next", Exact = true }).ClickAsync();
