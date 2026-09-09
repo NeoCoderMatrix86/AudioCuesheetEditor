@@ -183,7 +183,7 @@
   <data name="{0} has an invalid length. Allowed length is {1}!" xml:space="preserve">
     <value>{0} hat eine ungültige Länge. Erlaubte Länge ist {1}!</value>
   </data>
-  <data name="{0} has invalid Count ({1})!" xml:space="preserve">
+  <data name="{0} has invalid count ({1})!" xml:space="preserve">
     <value>{0} hat ungültige Anzahl ({1})!</value>
   </data>
   <data name="{0} has no value!" xml:space="preserve">
