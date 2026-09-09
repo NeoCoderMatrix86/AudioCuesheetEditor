@@ -27,7 +27,6 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
         {
             var importView = new ImportView(TestPage, DeviceName != null);
-            var detailView = new DetailView(TestPage);
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile.txt");
             await importView.Analyze();
@@ -249,8 +248,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-            //TODO
-            //await Expect(detailView.AudiofileInput).ToBeEmptyAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToHaveValueAsync(@"c:\AudioFile.mp3");
             await importView.GotoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
         }
