@@ -29,8 +29,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            //TODO
-            //await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Test Artist 1");
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -162,8 +162,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            //TODO
-            //await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
             await detailView.SelectTracksAsync([1]);
             await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -263,6 +263,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
             await importView.SetSchemeCommonDataAsync("Artist - Title - ");
             await importView.SelectSchemeCommonDataPlaceholderAsync("Cataloguenumber");
+            await importView.ClearSchemeAudiofilesAsync();
             await importView.Analyze();
             await Expect(bar.UndoButton).ToBeDisabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -1338,10 +1339,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            //TODO
-            //await detailView.AddTrackAsync();
-            //await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            //await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
