@@ -191,9 +191,12 @@ namespace AudioCuesheetEditor.Services.IO
                                 .OrderBy(kv => kv.Value)
                                 .Select(kv => kv.Key)
                                 .LastOrDefault();
-                            audiofile?.Tracks.Add(track);
-                            string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
-                            return marked;
+                            if (audiofile != null)
+                            {
+                                audiofile.Tracks.Add(track);
+                                return ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
+                            }
+                            return match.Value;
                         }
                     );
                 }
@@ -212,16 +215,19 @@ namespace AudioCuesheetEditor.Services.IO
                         nameof(ImportTrack.PostGap),
                         nameof(ImportTrack.StartDateTime)
                     ]);
-                    importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, () => new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack }, (position, entity) =>
+                    if (_audiofileStartIndices.Count > 0)
                     {
-                        var audiofile = _audiofileStartIndices
-                                        .Where(kv => kv.Value <= position)
-                                        .OrderBy(kv => kv.Value)
-                                        .Select(kv => kv.Key)
-                                        .LastOrDefault();
-                        audiofile?.Tracks.Add((ImportTrack)entity);
-                        return false;
-                    }, regex, importProfile);
+                        importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, () => new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack }, (position, entity) =>
+                        {
+                            var audiofile = _audiofileStartIndices
+                                            .Where(kv => kv.Value <= position)
+                                            .OrderBy(kv => kv.Value)
+                                            .Select(kv => kv.Key)
+                                            .LastOrDefault();
+                            audiofile?.Tracks.Add((ImportTrack)entity);
+                            return false;
+                        }, regex, importProfile);
+                    }
                 }
             }
         }

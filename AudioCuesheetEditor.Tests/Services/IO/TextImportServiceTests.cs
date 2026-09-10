@@ -83,6 +83,45 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         }
 
         [TestMethod()]
+        public async Task AnalyseAsync_InvalidAudiofileSchemeWithMatchingTrackScheme_DoesNotMarkTracksFoundAsync()
+        {
+            // Arrange
+            var fileContent = @"CuesheetArtist - CuesheetTitle				c:\tmp\Testfile.mp3
+Sample Artist 1 - Sample Title 1				00:05:00
+Sample Artist 2 - Sample Title 2				00:09:23
+Sample Artist 3 - Sample Title 3				00:15:54
+Sample Artist 4 - Sample Title 4				00:20:13
+Sample Artist 5 - Sample Title 5				00:24:54
+Sample Artist 6 - Sample Title 6				00:31:54
+Sample Artist 7 - Sample Title 7				00:45:54
+Sample Artist 8 - Sample Title 8				01:15:54";
+
+            var importOptions = new ImportOptions
+            {
+                SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile
+            };
+            _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(importOptions);
+            var applicationOptions = new ApplicationOptions()
+            {
+                DefaultIsLinkedToPreviousTrack = true
+            };
+            _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+            // Act
+            var importFile = await _textImportService.AnalyseAsync(fileContent);
+            // Assert
+            Assert.IsNull(importFile.AnalyseException);
+            Assert.IsNotNull(importFile.AnalyzedCuesheet);
+            Assert.AreEqual("CuesheetArtist", importFile.AnalyzedCuesheet.Artist);
+            Assert.AreEqual("CuesheetTitle\t\t\t\tc:\\tmp\\Testfile.mp3", importFile.AnalyzedCuesheet.Title);
+            Assert.IsEmpty(importFile.AnalyzedCuesheet.Audiofiles);
+            var lines = importFile.FileContentRecognized!.Split(Environment.NewLine);
+            Assert.AreEqual(string.Format("{0} - {1}",
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
+                string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle\t\t\t\tc:\\tmp\\Testfile.mp3")), lines.First());
+            Assert.AreEqual("Sample Artist 8 - Sample Title 8\t\t\t\t01:15:54", lines.Last());
+        }
+
+        [TestMethod()]
         public async Task AnalyseAsync_InvalidSchemeTracks_CreatesAnalyseExceptionAsync()
         {
             // Arrange
