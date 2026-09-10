@@ -36,9 +36,11 @@ along with Foobar.  If not, see
             <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
-            <MudTooltip Text="@_localizer["Add file"]">
-                <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
-            </MudTooltip>
+            <MudButtonGroup OverrideStyles="false">
+                <MudTooltip Text="@_localizer["Add file"]">
+                    <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
+                </MudTooltip>
+            </MudButtonGroup>
             <MudButtonGroup OverrideStyles="false">
                 <MudTooltip Text="@_localizer["Move selected files up"]">
                     <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.MoveUp" Disabled="!_cuesheetManager.IsMoveUpPossible(_selectedAudiofiles)" OnClick="() => _cuesheetManager.MoveUp(_selectedAudiofiles)" aria-label="@_localizer["Move selected files up"]" />

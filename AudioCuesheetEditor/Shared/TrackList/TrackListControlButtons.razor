@@ -76,9 +76,13 @@ along with Foobar.  If not, see
     </MudButtonGroup>
 </MudHidden>
 
-<MudTooltip Text="@_localizer["Fixed table header"]">
-    <MudToggleIconButton Variant="Variant.Filled" Toggled="FixedHeader" ToggledChanged="FixedHeaderClicked" Icon="@Icons.Material.Outlined.Link" ToggledIcon="@Icons.Material.Outlined.LinkOff" aria-label="@_localizer["Fixed table header"]" />
-</MudTooltip>
+<MudHidden Breakpoint="Breakpoint.Xs">
+    <MudButtonGroup OverrideStyles="false">
+        <MudTooltip Text="@_localizer["Fixed table header"]">
+            <MudToggleIconButton Variant="Variant.Filled" Toggled="FixedHeader" ToggledChanged="FixedHeaderClicked" Icon="@Icons.Material.Outlined.Link" ToggledIcon="@Icons.Material.Outlined.LinkOff" aria-label="@_localizer["Fixed table header"]" />
+        </MudTooltip>
+    </MudButtonGroup>
+</MudHidden>
 
 @code {
     [Parameter]
