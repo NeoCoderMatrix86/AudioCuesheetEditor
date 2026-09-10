@@ -198,7 +198,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End End has no value! Length Length has no value! Status"" [selected]':
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End Length Status"" [selected]':
       - cell ""Select row"":
         - checkbox ""Select row"" [checked]
         - text: Select row
@@ -214,14 +214,12 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:00:00"":
         - text: Begin
         - textbox: 00:00:00
-      - cell ""End End has no value!"":
+      - cell ""End"":
         - text: End
         - textbox
-        - text: End has no value!
-      - cell ""Length Length has no value!"":
+      - cell ""Length"":
         - text: Length
         - textbox
-        - text: Length has no value!
       - cell ""Status""");
             await bar.RedoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -1348,7 +1346,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End End has no value! Length Length has no value! Status""':
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End Length Status""':
       - cell ""Select row"":
         - checkbox ""Select row""
         - text: Select row
@@ -1364,14 +1362,12 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:00:00"":
         - text: Begin
         - textbox: 00:00:00
-      - cell ""End End has no value!"":
+      - cell ""End"":
         - text: End
         - textbox
-        - text: End has no value!
-      - cell ""Length Length has no value!"":
+      - cell ""Length"":
         - text: Length
         - textbox
-        - text: Length has no value!
       - cell ""Status""
     - 'row ""Select row # 2 Artist Title Begin End 00:05:48.0608330 Length Status""':
       - cell ""Select row"":

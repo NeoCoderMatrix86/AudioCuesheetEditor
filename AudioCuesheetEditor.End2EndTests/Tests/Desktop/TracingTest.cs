@@ -241,7 +241,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Select row 1 00:00:00 End has no value! Length has no value!"" [selected]:
+    - row ""Select row 1 00:00:00"" [selected]:
       - cell ""Select row"":
         - checkbox ""Select row"" [checked]
         - text: Select row
@@ -254,12 +254,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
       - cell ""00:00:00"":
         - textbox: 00:00:00
-      - cell ""End has no value!"":
+      - cell:
         - textbox
-        - text: End has no value!
-      - cell ""Length has no value!"":
+      - cell:
         - textbox
-        - text: Length has no value!
       - cell
   - rowgroup:
     - row");
@@ -1184,7 +1182,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Select row 1 00:00:00 End has no value! Length has no value!"":
+    - row ""Select row 1 00:00:00"":
       - cell ""Select row"":
         - checkbox ""Select row""
         - text: Select row
@@ -1197,12 +1195,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
       - cell ""00:00:00"":
         - textbox: 00:00:00
-      - cell ""End has no value!"":
+      - cell:
         - textbox
-        - text: End has no value!
-      - cell ""Length has no value!"":
+      - cell:
         - textbox
-        - text: Length has no value!
       - cell
     - row ""Select row 2 00:05:48.0608330"":
       - cell ""Select row"":
