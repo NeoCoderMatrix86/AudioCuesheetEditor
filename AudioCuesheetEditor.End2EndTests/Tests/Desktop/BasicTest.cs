@@ -153,7 +153,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
 - group:
   - button ""Move selected tracks up"" [disabled]
   - button ""Move selected tracks down""
-- button ""Fixed table header""");
+- group:
+  - button ""Fixed table header""");
         }
 
         [TestMethod]

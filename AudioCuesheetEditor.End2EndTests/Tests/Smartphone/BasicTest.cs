@@ -151,8 +151,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
   - button ""Edit selected tracks""
   - button
   - button ""Delete all tracks""
-  - button
-- button ""Fixed table header""");
+  - button");
         }
 
         [TestMethod]
