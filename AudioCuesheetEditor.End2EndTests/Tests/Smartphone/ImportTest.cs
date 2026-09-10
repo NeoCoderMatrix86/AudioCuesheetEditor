@@ -1438,6 +1438,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile2.txt");
             await importView.ClearSchemeCommonDataAsync();
+            await importView.ClearSchemeAudiofilesAsync();
             await importView.Analyze();
             await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
             await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
@@ -2955,7 +2956,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button
-    - 'row ""Select row # 8 Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End Length Status""':
+    - 'row ""Select row # 8 Artist Sample Artist 8 Clear Title Sample Title 8 Clear Begin 00:45:54 End 01:15:54 Length 00:30:00 Status""':
       - cell ""Select row"":
         - checkbox ""Select row""
         - text: Select row
@@ -2973,17 +2974,17 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:45:54"":
         - text: Begin
         - textbox: 00:45:54
-      - cell ""End"":
+      - cell ""End 01:15:54"":
         - text: End
-        - textbox
-      - cell ""Length"":
+        - textbox: 01:15:54
+      - cell ""Length 00:30:00"":
         - text: Length
-        - textbox
+        - textbox: 00:30:00
       - cell ""Status"":
         - text: Status
         - button");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
         }
 
         [TestMethod]
@@ -3213,7 +3214,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - text: Status
         - button");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
         }
 
         [TestMethod]

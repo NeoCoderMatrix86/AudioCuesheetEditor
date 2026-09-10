@@ -1182,6 +1182,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.GotoAsync();
             await importView.ImportFileAsync("Sample_Inputfile2.txt");
             await importView.ClearSchemeCommonDataAsync();
+            await importView.ClearSchemeAudiofilesAsync();
             await importView.Analyze();
             await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
             await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
@@ -2406,7 +2407,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - textbox: 00:14:00
       - cell:
         - button
-    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54"":
+    - row ""Select row 8 Sample Artist 8 Clear Sample Title 8 Clear 00:45:54 01:15:54 00:30:00"":
       - cell ""Select row"":
         - checkbox ""Select row""
         - text: Select row
@@ -2421,16 +2422,16 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
       - cell ""00:45:54"":
         - textbox: 00:45:54
-      - cell:
-        - textbox
-      - cell:
-        - textbox
+      - cell ""01:15:54"":
+        - textbox: 01:15:54
+      - cell ""00:30:00"":
+        - textbox: 00:30:00
       - cell:
         - button
   - rowgroup:
     - row");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
         }
 
         [TestMethod]
@@ -2625,7 +2626,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
   - rowgroup:
     - row");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Tracks has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
         }
 
         [TestMethod]
