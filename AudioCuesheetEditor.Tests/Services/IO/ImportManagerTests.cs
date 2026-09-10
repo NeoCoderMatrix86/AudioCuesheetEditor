@@ -278,17 +278,17 @@ TRACK 08 AUDIO
             // Act
             await _service.AnalyseImportfile();
             // Assert
-            Assert.IsNotNull(_sessionStateContainerMock.Object.ImportCuesheet);
-            Assert.AreEqual("Sample CD Artist", _sessionStateContainerMock.Object.ImportCuesheet.Artist);
-            Assert.AreEqual("Sample CD Title", _sessionStateContainerMock.Object.ImportCuesheet.Title);
-            Assert.HasCount(1, _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles);
-            Assert.AreEqual("Sample.mp3", _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Name);
-            Assert.HasCount(8, _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Tracks);
-            Assert.AreEqual("Sample Artist 1", _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Tracks.First().Artist);
-            Assert.AreEqual(TimeSpan.Zero, _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Tracks.First().Begin);
-            Assert.AreEqual("Sample Title 1", _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Tracks.First().Title);
-            Assert.AreEqual((ushort)1, _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Tracks.First().Position);
-            Assert.AreEqual((ushort)8, _sessionStateContainerMock.Object.ImportCuesheet.Audiofiles.First().Tracks.Last().Position);
+            Assert.IsNotNull(sessionStateContainerImportCuesheet);
+            Assert.AreEqual("Sample CD Artist", sessionStateContainerImportCuesheet.Artist);
+            Assert.AreEqual("Sample CD Title", sessionStateContainerImportCuesheet.Title);
+            Assert.HasCount(1, sessionStateContainerImportCuesheet.Audiofiles);
+            Assert.AreEqual("Sample.mp3", sessionStateContainerImportCuesheet.Audiofiles.First().Name);
+            Assert.HasCount(8, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks);
+            Assert.AreEqual("Sample Artist 1", sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Artist);
+            Assert.AreEqual(TimeSpan.Zero, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Begin);
+            Assert.AreEqual("Sample Title 1", sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Title);
+            Assert.AreEqual((ushort)1, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Position);
+            Assert.AreEqual((ushort)8, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.Last().Position);
         }
 
         [TestMethod]
