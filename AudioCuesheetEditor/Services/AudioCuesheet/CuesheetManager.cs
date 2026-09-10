@@ -14,18 +14,22 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
+using Microsoft.JSInterop;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
 {
     /// <inheritdoc/>
-    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager) : ICuesheetManager
+    public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionStateContainer sessionStateContainer, ITrackManager trackManager, IAudiofileManager audiofileManager, IJSRuntime jsRuntime) : ICuesheetManager
     {
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly ITrackManager _trackManager = trackManager;
+        private readonly IAudiofileManager _audiofileManager = audiofileManager;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
         public event EventHandler? IsRecordingChanged;
 
@@ -34,13 +38,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             _traceChangeManager.BulkEdit = true;
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            var audiofile = cuesheet?.Audiofile;
             SetValue(cuesheet!, propertyExpression, value);
-            // If audiofile has been set, we need to calculate last track end
-            if (audiofile != cuesheet?.Audiofile)
-            {
-                SetLastTrackEnd(cuesheet!);
-            }
             _traceChangeManager.BulkEdit = false;
         }
 
@@ -49,7 +47,11 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         {
             get
             {
-                if (_sessionStateContainer.Cuesheet.Tracks.Any())
+                if (_sessionStateContainer.Cuesheet.IsRecording == true)
+                {
+                    return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
+                }
+                if (_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any())
                 {
                     return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
                 }
@@ -69,6 +71,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                     return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
                 }
                 cuesheet.RecordingStart = DateTime.UtcNow;
+                if (cuesheet.Audiofiles.Count == 0)
+                {
+                    cuesheet.Audiofiles.Add(new Audiofile());
+                }
                 IsRecordingChanged?.Invoke(this, EventArgs.Empty);
                 return Result.Success();
             }
@@ -81,7 +87,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.Cuesheet;
             if (cuesheet.IsRecording == true)
             {
-                var lastTrack = cuesheet.Tracks.LastOrDefault();
+                var lastTrack = GetLastTrack(cuesheet);
                 if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
                 {
                     lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
@@ -92,94 +98,45 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public void AddTrack(Track track)
+        public bool IsMoveUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
+
+        /// <inheritdoc/>
+        public bool IsMoveUpPossible(HashSet<Audiofile> selectedAudiofiles)
         {
+            if (selectedAudiofiles.Count == 0)
+            {
+                return false;
+            }
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            track.Cuesheet = cuesheet;
-            // Calculate track properties
-            _traceChangeManager.BulkEdit = true;
-            if (cuesheet?.IsRecording == true)
+            if (cuesheet?.Audiofiles.Count > 0)
             {
-                _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
+                return !selectedAudiofiles.Contains(cuesheet.Audiofiles.First());
             }
-            if (cuesheet?.Tracks.Any() == false)
-            {
-                _trackManager.SetProperty(track, x => x.Position, (ushort)(1));
-                if ((track.Begin.HasValue == false) || cuesheet.IsRecording)
-                {
-                    _trackManager.SetProperty(track, x => x.Begin, TimeSpan.Zero);
-                }
-            }
-            else
-            {
-                var lastTrack = GetLastTrack(cuesheet!);
-                if ((cuesheet?.Audiofile?.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == cuesheet.Audiofile.Duration))
-                {
-                    _trackManager.SetProperty(lastTrack, x => x.End, null);
-                }
-                if (track.Position.HasValue == false)
-                {
-                    _trackManager.SetProperty(track, x => x.Position, (ushort?)(lastTrack?.Position + 1));
-                }
-                if (track.Begin.HasValue == false)
-                {
-                    _trackManager.SetProperty(track, x => x.Begin, lastTrack?.End);
-                }
-                else
-                {
-                    if (lastTrack?.End.HasValue == false)
-                    {
-                        _trackManager.SetProperty(lastTrack, x => x.End, track.Begin);
-                    }
-                }
-                if (cuesheet?.IsRecording == true && lastTrack != null)
-                {
-                    _trackManager.SetProperty(lastTrack, x => x.End, track.Begin);
-                }
-            }
-            var newValue = new List<Track>(cuesheet!.Tracks)
-            {
-                track
-            };
-            SetValue(cuesheet, x => x.Tracks, newValue);
-            SetLastTrackEnd(cuesheet);
-            _traceChangeManager.BulkEdit = false;
+            return false;
         }
 
         /// <inheritdoc/>
-        public void RemoveTracks(IEnumerable<Track> tracksToRemove)
+        public bool IsMoveDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 &&  selectedTracks.Max(x => x.Position) < _sessionStateContainer.GetActiveCuesheet()?.Audiofiles.SelectMany(x => x.Tracks).Max(x => x.Position);
+
+        /// <inheritdoc/>
+        public bool IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles)
         {
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            var intersection = cuesheet!.Tracks.Intersect(tracksToRemove);
-            ICollection<Track> newValue = [.. cuesheet.Tracks.Except(intersection)];
-            //Calculate position and begin of new tracks
-            ushort position = 1;
-            foreach (var track in newValue.OrderBy(x => x.Position))
+            if (selectedAudiofiles.Count == 0)
             {
-                track.Position = position;
-                position++;
-                var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
-                if (previousTrack?.End.HasValue == true)
-                {
-                    track.Begin = previousTrack.End;
-                }
+                return false;
             }
-            _traceChangeManager.BulkEdit = true;
-            SetValue(cuesheet, x => x.Tracks, newValue);
-            SetLastTrackEnd(cuesheet);
-            _traceChangeManager.BulkEdit = false;
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            if (cuesheet?.Audiofiles.Count > 0)
+            {
+                return !selectedAudiofiles.Contains(cuesheet.Audiofiles.Last());
+            }
+            return false;
         }
 
         /// <inheritdoc/>
-        public bool IsMoveTracksUpPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Min(x => x.Position) >= 2;
-
-        /// <inheritdoc/>
-        public bool IsMoveTracksDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 && selectedTracks.Max(x => x.Position) < _sessionStateContainer.GetActiveCuesheet()?.Tracks.Max(x => x.Position);
-
-        /// <inheritdoc/>
-        public Result MoveTracksUp(HashSet<Track> selectedTracks)
+        public Result MoveUp(HashSet<Track> selectedTracks)
         {
-            if (IsMoveTracksUpPossible(selectedTracks) == false)
+            if (IsMoveUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
             }
@@ -187,50 +144,140 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
             {
-                var previousTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
-                var newBegin = previousTrack?.Begin;
-                var newEnd = previousTrack?.End;
-                if (previousTrack != null)
+                var previousTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
+                if (previousTrack?.Audiofile != null && previousTrack.Audiofile != selectedTrack.Audiofile)
                 {
-                    _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
-                    _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
-                    _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                    SwitchAudiofile(selectedTrack, previousTrack.Audiofile);
                 }
-                _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
-                _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                else
+                {
+                    var newBegin = previousTrack?.Begin;
+                    var newEnd = previousTrack?.End;
+                    if (previousTrack != null)
+                    {
+                        _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
+                        _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
+                        _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                    }
+                    _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
+                    _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                }
+                
             }
-            SetValue(cuesheet!, x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            foreach (var audiofile in cuesheet!.Audiofiles)
+            {
+                var orderedTracks = audiofile.Tracks.OrderBy(x => x.Position).ToList();
+                _audiofileManager.SetProperty(audiofile, x => x.Tracks, orderedTracks);
+            }
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
         }
 
         /// <inheritdoc/>
-        public Result MoveTracksDown(HashSet<Track> selectedTracks)
+        public Result MoveUp(HashSet<Audiofile> selectedAudiofiles)
         {
+            if (IsMoveUpPossible(selectedAudiofiles) == false)
+            {
+                return Result.Failure(new Error(ErrorType.NotPossible, "Moving audiofiles up is not possible!"));
+            }
             var cuesheet = _sessionStateContainer.GetActiveCuesheet();
-            if (IsMoveTracksDownPossible(selectedTracks) == false)
+            _traceChangeManager.BulkEdit = true;
+            var newAudiofiles = new List<Audiofile>(cuesheet!.Audiofiles);
+            foreach (var audiofile in selectedAudiofiles)
+            {
+                var index = newAudiofiles.IndexOf(audiofile);
+                var previousAudiofile = newAudiofiles[index - 1];
+                newAudiofiles[index] = previousAudiofile;
+                newAudiofiles[index - 1] = audiofile;
+                var previousAudiofileTracks = previousAudiofile.Tracks;
+                var audiofileTracks = audiofile.Tracks;
+                _audiofileManager.RemoveTracks(previousAudiofile, previousAudiofileTracks, false);
+                _audiofileManager.RemoveTracks(audiofile, audiofileTracks, false);
+                foreach (var track in previousAudiofileTracks)
+                {
+                    _audiofileManager.AddTrack(audiofile, track, false);
+                }
+                foreach (var track in audiofileTracks)
+                {
+                    _audiofileManager.AddTrack(previousAudiofile, track, false);
+                }
+            }
+            SetValue(cuesheet, x => x.Audiofiles, newAudiofiles);
+            _traceChangeManager.BulkEdit = false;
+            return Result.Success();
+        }
+
+        /// <inheritdoc/>
+        public Result MoveDown(HashSet<Track> selectedTracks)
+        {
+            if (IsMoveDownPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
             foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
             {
-                var nextTrack = cuesheet?.Tracks.FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
-                var newBegin = nextTrack?.Begin;
-                var newEnd = nextTrack?.End;
-                if (nextTrack != null)
+                var nextTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
+                if (nextTrack?.Audiofile != null && nextTrack.Audiofile != selectedTrack.Audiofile)
                 {
-                    _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
-                    _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
-                    _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                    SwitchAudiofile(selectedTrack, nextTrack.Audiofile);
                 }
-                var newPosition = (ushort?)(selectedTrack.Position + 1);
-                _trackManager.SetProperty(selectedTrack, x => x.Position, newPosition);
-                _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                else
+                {
+                    var newBegin = nextTrack?.Begin;
+                    var newEnd = nextTrack?.End;
+                    if (nextTrack != null)
+                    {
+                        _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
+                        _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
+                        _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                    }
+                    _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
+                    _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                }
             }
-            SetValue(cuesheet!, x => x.Tracks, cuesheet?.Tracks.OrderBy(x => x.Position));
+            foreach (var audiofile in cuesheet!.Audiofiles)
+            {
+                var orderedTracks = audiofile.Tracks.OrderBy(x => x.Position).ToList();
+                _audiofileManager.SetProperty(audiofile, x => x.Tracks, orderedTracks);
+            }
+            _traceChangeManager.BulkEdit = false;
+            return Result.Success();
+        }
+
+        /// <inheritdoc/>
+        public Result MoveDown(HashSet<Audiofile> selectedAudiofiles)
+        {
+            if (IsMoveDownPossible(selectedAudiofiles) == false)
+            {
+                return Result.Failure(new Error(ErrorType.NotPossible, "Moving audiofiles down is not possible!"));
+            }
+            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            _traceChangeManager.BulkEdit = true;
+            var newAudiofiles = new List<Audiofile>(cuesheet!.Audiofiles);
+            foreach (var audiofile in selectedAudiofiles)
+            {
+                var index = newAudiofiles.IndexOf(audiofile);
+                var nextAudiofile = newAudiofiles[index + 1];
+                newAudiofiles[index] = nextAudiofile;
+                newAudiofiles[index + 1] = audiofile;
+                var nextAudiofileTracks = nextAudiofile.Tracks;
+                var audiofileTracks = audiofile.Tracks;
+                _audiofileManager.RemoveTracks(nextAudiofile, nextAudiofileTracks, false);
+                _audiofileManager.RemoveTracks(audiofile, audiofileTracks, false);
+                foreach (var track in nextAudiofileTracks)
+                {
+                    _audiofileManager.AddTrack(audiofile, track, false);
+                }
+                foreach (var track in audiofileTracks)
+                {
+                    _audiofileManager.AddTrack(nextAudiofile, track, false);
+                }
+            }
+            SetValue(cuesheet, x => x.Audiofiles, newAudiofiles);
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
         }
@@ -256,20 +303,44 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             propertyInfo.SetValue(cuesheet, value);
 
             _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
+            _ = RevokeObjectUrlOfRemovedAudiofilesAsync(cuesheet, propertyInfo, previousValue);
         }
 
-        void SetLastTrackEnd(Cuesheet cuesheet)
+        async Task RevokeObjectUrlOfRemovedAudiofilesAsync(Cuesheet cuesheet, PropertyInfo propertyInfo, object? previousValue)
         {
-            var lastTrack = GetLastTrack(cuesheet);
-            if ((lastTrack?.End.HasValue == false) && (cuesheet.Audiofile?.Duration.HasValue == true))
+            if (propertyInfo.Name == nameof(Cuesheet.Audiofiles))
             {
-                _trackManager.SetProperty(lastTrack, x => x.End, cuesheet.Audiofile.Duration);
+                var deletedAudiofiles = ((IList<Audiofile>)previousValue!).Except(cuesheet.Audiofiles);
+                foreach (var deletedAudiofile in deletedAudiofiles)
+                {
+                    if (!string.IsNullOrEmpty(deletedAudiofile.ObjectURL))
+                    {
+                        await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", deletedAudiofile.ObjectURL);
+                    }
+                }
             }
+        }
+
+        void SwitchAudiofile(Track trackToMove, Audiofile audiofileToMoveTo)
+        {
+            var currentTrackPositionAudiofile = trackToMove.Audiofile;
+            //Switch audiofiles without audiofilemanager since methods there capsulate much logic
+            var currentTrackPositionAudiofileTracks = new List<Track>(currentTrackPositionAudiofile!.Tracks);
+            currentTrackPositionAudiofileTracks.Remove(trackToMove);
+            _traceChangeManager.AddChange(new(currentTrackPositionAudiofile, new(currentTrackPositionAudiofile.Tracks, nameof(Audiofile.Tracks))));
+            currentTrackPositionAudiofile.Tracks = currentTrackPositionAudiofileTracks;
+            var audiofileToMoveToTracks = new List<Track>(audiofileToMoveTo.Tracks)
+            {
+                trackToMove
+            };
+            trackToMove.Audiofile = audiofileToMoveTo;
+            _traceChangeManager.AddChange(new(audiofileToMoveTo, new(audiofileToMoveTo.Tracks, nameof(Audiofile.Tracks))));
+            audiofileToMoveTo.Tracks = audiofileToMoveToTracks;
         }
 
         static Track? GetLastTrack(Cuesheet cuesheet)
         {
-            return cuesheet.Tracks
+            return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
                 .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
                 .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
                 .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)

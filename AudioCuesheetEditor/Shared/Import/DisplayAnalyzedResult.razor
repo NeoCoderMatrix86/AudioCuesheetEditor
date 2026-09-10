@@ -36,29 +36,25 @@ along with Foobar.  If not, see
 }
 else
 {
-    <MudExpansionPanels MultiExpansion>
-        <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <CuesheetData />
-            </ChildContent>
-        </MudExpansionPanel>
-        <MudExpansionPanel @bind-Expanded="cuesheetTracksExpanded">
-            <TitleContent>
-                <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-            </TitleContent>
-            <ChildContent>
-                <TrackList />
-            </ChildContent>
-        </MudExpansionPanel>
-    </MudExpansionPanels>
+    <MudCard Outlined>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <CuesheetData />
+        </MudCardContent>
+    </MudCard>
+    <MudCard Outlined>
+        <MudCardHeader>
+            <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <Audiofiles Files="_sessionStateContainer.ImportCuesheet?.Audiofiles" />
+        </MudCardContent>
+    </MudCard>
 }
 
 @code {
-    Boolean cuesheetDataExpanded = true, cuesheetTracksExpanded = true;
-
     public String? FileContentRecognized => _sessionStateContainer.Importfile?.FileContentRecognized;
 
     string SanitizeHTML(string input)

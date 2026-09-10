@@ -27,7 +27,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Test Artist 1");
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -187,7 +188,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
             await detailView.SelectTracksAsync([1]);
             await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -239,7 +241,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Select row 1 00:00:00 End has no value! Length has no value!"" [selected]:
+    - row ""Select row 1 00:00:00"" [selected]:
       - cell ""Select row"":
         - checkbox ""Select row"" [checked]
         - text: Select row
@@ -252,12 +254,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
       - cell ""00:00:00"":
         - textbox: 00:00:00
-      - cell ""End has no value!"":
+      - cell:
         - textbox
-        - text: End has no value!
-      - cell ""Length has no value!"":
+      - cell:
         - textbox
-        - text: Length has no value!
       - cell
   - rowgroup:
     - row");
@@ -308,6 +308,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
             await importView.SetSchemeCommonDataAsync("Artist - Title - ");
             await importView.SelectSchemeCommonDataPlaceholderAsync("Cataloguenumber");
+            await importView.ClearSchemeAudiofilesAsync();
             await importView.Analyze();
             await Expect(bar.UndoButton).ToBeDisabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -1162,9 +1163,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -1180,7 +1182,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - columnheader ""Length""
       - columnheader ""Status""
   - rowgroup:
-    - row ""Select row 1 00:00:00 End has no value! Length has no value!"":
+    - row ""Select row 1 00:00:00"":
       - cell ""Select row"":
         - checkbox ""Select row""
         - text: Select row
@@ -1193,12 +1195,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
       - cell ""00:00:00"":
         - textbox: 00:00:00
-      - cell ""End has no value!"":
+      - cell:
         - textbox
-        - text: End has no value!
-      - cell ""Length has no value!"":
+      - cell:
         - textbox
-        - text: Length has no value!
       - cell
     - row ""Select row 2 00:05:48.0608330"":
       - cell ""Select row"":

@@ -27,10 +27,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Cuesheet");
             var downloadTask = TestPage.WaitForDownloadAsync();
@@ -56,10 +57,11 @@ FILE ""Kalimba.mp3"" MP3
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Projectfile");
             var downloadTask = TestPage.WaitForDownloadAsync();
@@ -68,7 +70,7 @@ FILE ""Kalimba.mp3"" MP3
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
             var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-            Assert.AreEqual("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofile\":{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"}}}", content);
+            Assert.AreEqual("{\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofiles\":[{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}]}]}", content);
         }
 
         [TestMethod]
@@ -77,10 +79,11 @@ FILE ""Kalimba.mp3"" MP3
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Textfile");
             await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next", Exact = true }).ClickAsync();
@@ -92,6 +95,7 @@ FILE ""Kalimba.mp3"" MP3
             var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
             content = content.Replace("\n", Environment.NewLine);
             Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
+
 Track Artist 1 - Track Title 1 00:00:00
 
 ", content);

@@ -25,7 +25,8 @@ namespace AudioCuesheetEditor.Model.Options
         {
             Name = "Textfile (common data in first line)",
             UseRegularExpression = false,
-            SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}\t{nameof(ImportCuesheet.Audiofile)}",
+            SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}",
+            SchemeAudiofiles = $"- {nameof(ImportAudiofile.Name)}",
             SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
         };
 

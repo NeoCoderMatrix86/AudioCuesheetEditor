@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using System.Linq.Expressions;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet
@@ -50,37 +51,51 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <returns></returns>
         void StopRecording();
         /// <summary>
-        /// Adds a track to the cuesheet
-        /// </summary>
-        /// <param name="track"></param>
-        void AddTrack(Track track);
-        /// <summary>
-        /// Remove tracks from cuesheet
-        /// </summary>
-        /// <param name="tracksToRemove"></param>
-        void RemoveTracks(IEnumerable<Track> tracksToRemove);
-        /// <summary>
         /// Determines if moving tracks up is possible
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Boolean IsMoveTracksUpPossible(HashSet<Track> selectedTracks);
+        Boolean IsMoveUpPossible(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Determines if moving audiofiles up is possible
+        /// </summary>
+        /// <param name="selectedAudiofiles"></param>
+        /// <returns></returns>
+        Boolean IsMoveUpPossible(HashSet<Audiofile> selectedAudiofiles);
         /// <summary>
         /// Determines if moving tracks down is possible
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Boolean IsMoveTracksDownPossible(HashSet<Track> selectedTracks);
+        Boolean IsMoveDownPossible(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Determines if moving audiofiles down is possible
+        /// </summary>
+        /// <param name="selectedTracks"></param>
+        /// <returns></returns>
+        Boolean IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles);
         /// <summary>
         /// Moves selected tracks up
         /// </summary>
         /// <param name="selectedTracks"></param>
-        Result MoveTracksUp(HashSet<Track> selectedTracks);
+        Result MoveUp(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Moves selected audiofiles up
+        /// </summary>
+        /// <param name="selectedAudiofiles"></param>
+        /// <returns></returns>
+        Result MoveUp(HashSet<Audiofile> selectedAudiofiles);
         /// <summary>
         /// Moves selected tracks down
         /// </summary>
         /// <param name="selectedTracks"></param>
         /// <returns></returns>
-        Result MoveTracksDown(HashSet<Track> selectedTracks);
+        Result MoveDown(HashSet<Track> selectedTracks);
+        /// <summary>
+        /// Moves selected audiofiles down
+        /// </summary>
+        /// <param name="selectedAudiofiles"></param>
+        /// <returns></returns>
+        Result MoveDown(HashSet<Audiofile> selectedAudiofiles);
     }
 }

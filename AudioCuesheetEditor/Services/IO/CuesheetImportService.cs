@@ -57,6 +57,7 @@ namespace AudioCuesheetEditor.Services.IO
                 var regexCDTextfile = new Regex("^" + CuesheetConstants.CuesheetCDTextfile + " \"(?'" + cuesheetCDTextfileGroupName + "'.{0,})\"");
                 var regexCatalogueNumber = new Regex("^" + CuesheetConstants.CuesheetCatalogueNumber + " (?'" + cuesheetCatalogueNumberGroupName + "'.{0,})");
                 ImportTrack? track = null;
+                ImportAudiofile? audiofile = null;
                 StringBuilder recognizedContent = new();
                 foreach (var line in fileContent.Split(Environment.NewLine))
                 {
@@ -100,8 +101,8 @@ namespace AudioCuesheetEditor.Services.IO
                             var matchGroup = match.Groups.GetValueOrDefault(cuesheetFileNameGroupName);
                             if (matchGroup != null)
                             {
-                                var audioFile = matchGroup.Value;
-                                importfile.AnalyzedCuesheet.Audiofile = audioFile;
+                                audiofile = new() { Name = matchGroup.Value };
+                                importfile.AnalyzedCuesheet.Audiofiles.Add(audiofile);
                             }
                             else
                             {
@@ -203,12 +204,12 @@ namespace AudioCuesheetEditor.Services.IO
                             var matchGroup = match.Groups.GetValueOrDefault(trackPreGapGroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')]);
                                 var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
+                                var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..]);
                                 if (track != null)
                                 {
-                                    track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
+                                    track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                                 }
                                 else
                                 {
@@ -227,12 +228,12 @@ namespace AudioCuesheetEditor.Services.IO
                             var matchGroup = match.Groups.GetValueOrDefault(trackIndex01GroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')]);
                                 var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
+                                var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..]);
                                 if (track != null)
                                 {
-                                    track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
+                                    track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                                 }
                                 else
                                 {
@@ -243,14 +244,7 @@ namespace AudioCuesheetEditor.Services.IO
                             {
                                 throw new ArgumentException(String.Format("Group '{0}' was null!", trackIndex01GroupName));
                             }
-                            if (track != null)
-                            {
-                                importfile.AnalyzedCuesheet.Tracks.Add(track);
-                            }
-                            else
-                            {
-                                throw new NullReferenceException(String.Format("Track was null during input {0}", line));
-                            }
+                            audiofile?.Tracks.Add(track);
                         }
                         if (regexTrackPostGap.IsMatch(line) == true)
                         {
@@ -259,12 +253,12 @@ namespace AudioCuesheetEditor.Services.IO
                             var matchGroup = match.Groups.GetValueOrDefault(trackPostGapGroupName);
                             if (matchGroup != null)
                             {
-                                var minutes = int.Parse(matchGroup.Value.Substring(0, matchGroup.Value.IndexOf(':')));
+                                var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')]);
                                 var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
-                                var frames = int.Parse(matchGroup.Value.Substring(matchGroup.Value.LastIndexOf(':') + 1));
+                                var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..]);
                                 if (track != null)
                                 {
-                                    track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32((frames / 75.0) * 1000));
+                                    track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                                 }
                                 else
                                 {

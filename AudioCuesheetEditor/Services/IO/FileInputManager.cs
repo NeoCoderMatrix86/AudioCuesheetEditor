@@ -21,10 +21,9 @@ using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.IO
 {
-    public class FileInputManager(IJSRuntime jsRuntime, HttpClient httpClient, ILogger<FileInputManager> logger) : IFileInputManager
+    public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> logger) : IFileInputManager
     {
         private readonly IJSRuntime _jsRuntime = jsRuntime;
-        private readonly HttpClient _httpClient = httpClient;
         private readonly ILogger<FileInputManager> _logger = logger;
 
         public AudioCodec? GetAudioCodec(string? fileContentType, string fileName)
@@ -44,6 +43,12 @@ namespace AudioCuesheetEditor.Services.IO
                 foundAudioCodec = audioCodecsFound.FirstOrDefault();
             }
             return foundAudioCodec;
+        }
+
+        /// <inheritdoc/>
+        public async Task<String> GetObjectUrlAsync(string fileInputId)
+        {
+            return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
         }
 
         public bool IsValidAudiofile(string? fileContentType, string fileName)

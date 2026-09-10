@@ -123,7 +123,7 @@
   <data name="Error during textimport" xml:space="preserve">
     <value>Error during textimport</value>
   </data>
-  <data name="Tracks" xml:space="preserve">
-    <value>Tracks</value>
+  <data name="Files" xml:space="preserve">
+    <value>Files</value>
   </data>
 </root>

@@ -19,7 +19,7 @@ using Microsoft.Playwright;
 namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
 {
     [TestClass]
-    public class TracingTestSmartphone : PlaywrightTestBase
+    public class TracingTest : PlaywrightTestBase
     {
         protected override string? DeviceName => "iPhone 13";
 
@@ -29,7 +29,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Test Artist 1");
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -161,7 +162,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
             await detailView.SelectTracksAsync([1]);
             await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -196,7 +198,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End End has no value! Length Length has no value! Status"" [selected]':
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End Length Status"" [selected]':
       - cell ""Select row"":
         - checkbox ""Select row"" [checked]
         - text: Select row
@@ -212,14 +214,12 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:00:00"":
         - text: Begin
         - textbox: 00:00:00
-      - cell ""End End has no value!"":
+      - cell ""End"":
         - text: End
         - textbox
-        - text: End has no value!
-      - cell ""Length Length has no value!"":
+      - cell ""Length"":
         - text: Length
         - textbox
-        - text: Length has no value!
       - cell ""Status""");
             await bar.RedoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
@@ -261,6 +261,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
             await importView.SetSchemeCommonDataAsync("Artist - Title - ");
             await importView.SelectSchemeCommonDataPlaceholderAsync("Cataloguenumber");
+            await importView.ClearSchemeAudiofilesAsync();
             await importView.Analyze();
             await Expect(bar.UndoButton).ToBeDisabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
@@ -1336,15 +1337,16 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
             await Expect(bar.UndoButton).ToBeEnabledAsync();
             await Expect(bar.RedoButton).ToBeDisabledAsync();
             await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
-    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End End has no value! Length Length has no value! Status""':
+    - 'row ""Select row # 1 Artist Title Begin 00:00:00 End Length Status""':
       - cell ""Select row"":
         - checkbox ""Select row""
         - text: Select row
@@ -1360,14 +1362,12 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Begin 00:00:00"":
         - text: Begin
         - textbox: 00:00:00
-      - cell ""End End has no value!"":
+      - cell ""End"":
         - text: End
         - textbox
-        - text: End has no value!
-      - cell ""Length Length has no value!"":
+      - cell ""Length"":
         - text: Length
         - textbox
-        - text: Length has no value!
       - cell ""Status""
     - 'row ""Select row # 2 Artist Title Begin End 00:05:48.0608330 Length Status""':
       - cell ""Select row"":

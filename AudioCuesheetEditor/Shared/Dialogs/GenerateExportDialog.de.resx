@@ -154,7 +154,7 @@
     <value>Schema Titel</value>
   </data>
   <data name="Enter the tracks scheme for this profile here" xml:space="preserve">
-    <value>Geben Sie hier das Spuren-Schema für dieses Profil ein</value>
+    <value>Geben Sie hier das Titel-Schema für dieses Profil ein</value>
   </data>
   <data name="Scheme footer" xml:space="preserve">
     <value>Schema Fuß</value>
@@ -206,5 +206,11 @@
   </data>
   <data name="No export profile selected!" xml:space="preserve">
     <value>Kein Exportprofil ausgewählt!</value>
+  </data>
+  <data name="Scheme Audiofiles" xml:space="preserve">
+    <value>Schema Audiodateien</value>
+  </data>
+  <data name="Enter the audiofiles scheme for this profile here" xml:space="preserve">
+    <value>Geben Sie hier das Audiodatei-Schema für dieses Profil ein</value>
   </data>
 </root>

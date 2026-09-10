@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Utility;
@@ -22,18 +21,17 @@ namespace AudioCuesheetEditor.Model.IO.Import
 {
     public class Importprofile : Validateable
     {
-        public static readonly IEnumerable<String> AvailableSchemeCuesheet;
-        public static readonly IEnumerable<String> AvailableSchemesTrack;
+        public static readonly IEnumerable<String> AvailableSchemeCuesheet = [nameof(ImportCuesheet.Artist), nameof(ImportCuesheet.Title), nameof(ImportCuesheet.CDTextfile), nameof(ImportCuesheet.Cataloguenumber)];
 
-        static Importprofile()
-        {
-            AvailableSchemeCuesheet = [nameof(Cuesheet.Artist), nameof(Cuesheet.Title), nameof(Cuesheet.Audiofile), nameof(Cuesheet.CDTextfile), nameof(Cuesheet.Cataloguenumber)];
-            AvailableSchemesTrack = [nameof(Track.Artist), nameof(Track.Title), nameof(Track.Begin), nameof(Track.End), nameof(Track.Length), nameof(Track.Position), nameof(Track.Flags), nameof(Track.PreGap), nameof(Track.PostGap), nameof(ImportTrack.StartDateTime)];
-        }
+        public static readonly IEnumerable<String> AvailableSchemeAudiofiles = [nameof(ImportAudiofile.Name)];
+
+        public static readonly IEnumerable<String> AvailableSchemesTrack = [nameof(ImportTrack.Artist), nameof(ImportTrack.Title), nameof(ImportTrack.Begin), nameof(ImportTrack.End), nameof(ImportTrack.Length), nameof(ImportTrack.Position), nameof(ImportTrack.Flags), nameof(ImportTrack.PreGap), nameof(ImportTrack.PostGap), nameof(ImportTrack.StartDateTime)];
+
         public Guid Id { get; init; } = Guid.NewGuid();
         public String? Name { get; set; }
         public Boolean UseRegularExpression { get; set; }
         public String? SchemeCuesheet { get; set; }
+        public String? SchemeAudiofiles { get; set; }
         public String? SchemeTracks { get; set; }
         public TimeSpanFormat? TimeSpanFormat { get; set; }
         public override ValidationResult Validate(string property)
@@ -53,12 +51,32 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             do
                             {
                                 containsPlaceHolder = SchemeCuesheet?.Contains(enumerator.Current) == true;
-                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                            } while ((containsPlaceHolder == false) && enumerator.MoveNext());
                         }
                         if (containsPlaceHolder == false)
                         {
                             validationMessages ??= [];
                             validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeCuesheet)));
+                        }
+                    }
+                    break;
+                case nameof(SchemeAudiofiles):
+                    validationStatus = ValidationStatus.Success;
+                    if (String.IsNullOrEmpty(SchemeAudiofiles) == false)
+                    {
+                        var containsPlaceHolder = false;
+                        var enumerator = AvailableSchemeAudiofiles.GetEnumerator();
+                        if (enumerator.MoveNext())
+                        {
+                            do
+                            {
+                                containsPlaceHolder = SchemeAudiofiles?.Contains(enumerator.Current) == true;
+                            } while ((containsPlaceHolder == false) && enumerator.MoveNext());
+                        }
+                        if (containsPlaceHolder == false)
+                        {
+                            validationMessages ??= [];
+                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(SchemeAudiofiles)));
                         }
                     }
                     break;
@@ -73,7 +91,7 @@ namespace AudioCuesheetEditor.Model.IO.Import
                             do
                             {
                                 containsPlaceHolder = SchemeTracks?.Contains(enumerator.Current) == true;
-                            } while ((containsPlaceHolder == false) && (enumerator.MoveNext()));
+                            } while ((containsPlaceHolder == false) && enumerator.MoveNext());
                         }
                         if (containsPlaceHolder == false)
                         {

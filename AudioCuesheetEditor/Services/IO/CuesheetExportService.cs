@@ -38,7 +38,8 @@ namespace AudioCuesheetEditor.Services.IO
                 validationMessages.Add(new ValidationMessage("File extension is not '{0}'", FileExtensions.Cuesheet));
             }
             validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
-            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Tracks.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
+            validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
             if (validationMessages.Count != 0)
             {
                 return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
@@ -53,20 +54,10 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 return Result<Exportfile>.Failure(new Error(ErrorType.ValidationFailed, validationResult.Error!.Message));
             }
-            string? content = null;
-            var extension = Path.GetExtension(filename);
-            if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-            {
-                filename = $"{filename}{FileExtensions.Cuesheet}";
-            }
-            if (_sessionStateContainer.Cuesheet.Audiofile != null)
-            {
-                content = WriteCuesheet(_sessionStateContainer.Cuesheet.Audiofile.Name);
-            }
-            return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = content });
+            return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = WriteCuesheet() });
         }
 
-        private string WriteCuesheet(string? audiofileName)
+        string WriteCuesheet()
         {
             var builder = new StringBuilder();
             if (string.IsNullOrEmpty(_sessionStateContainer.Cuesheet.Cataloguenumber) == false)
@@ -79,15 +70,12 @@ namespace AudioCuesheetEditor.Services.IO
             }
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, _sessionStateContainer.Cuesheet.Title));
             builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
-            builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofileName, _sessionStateContainer.Cuesheet.Audiofile?.AudioFileType));
-            IEnumerable<Track> tracks = _sessionStateContainer.Cuesheet.Tracks.OrderBy(x => x.Position);
-            if (tracks.Any())
+            foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
             {
-                //Position and begin should always start from 0 even with splitpoints
-                int positionDifference = 1 - Convert.ToInt32(tracks.First().Position);
-                foreach (var track in tracks)
+                builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofile.Name, audiofile.AudioCodec?.FileExtension.Replace(".",string.Empty).ToUpper()));
+                foreach(var track in audiofile.Tracks)
                 {
-                    builder.AppendLine(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position + positionDifference, CuesheetConstants.CuesheetTrackAudio));
+                    builder.AppendLine(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
                     builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
                     builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
                     if (track.Flags.Any())

@@ -13,17 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-
-
-namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
+namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public class ImportCuesheet : ICuesheet
+    public interface IAudiofile
     {
-        public string? Artist { get; set; }
-        public string? Title { get; set; }
-        public IList<ImportAudiofile> Audiofiles { get; set; } = [];
-        /// <inheritdoc/>
-        public string? CDTextfile { get; set; }
-        public string? Cataloguenumber { get; set; }
+        String? Name { get; set; }
     }
 }

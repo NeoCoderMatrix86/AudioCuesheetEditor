@@ -26,6 +26,12 @@ namespace AudioCuesheetEditor.Services.IO
         bool IsValidAudiofile(string? fileContentType, string fileName);
         AudioCodec? GetAudioCodec(string? fileContentType, string fileName);
         /// <summary>
+        /// Get object url from a mud file upload
+        /// </summary>
+        /// <param name="fileInputId"></param>
+        /// <returns></returns>
+        Task<String> GetObjectUrlAsync(string fileInputId);
+        /// <summary>
         /// Checks if a file content type and name matches given parameters
         /// </summary>
         /// <param name="fileContentType"></param>

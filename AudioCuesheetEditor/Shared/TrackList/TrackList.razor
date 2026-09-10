@@ -25,16 +25,16 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
-@inject ISessionStateContainer _sessionStateContainer
 @inject ITrackManager _trackManager
 @inject ICuesheetManager _cuesheetManager
 @inject ITraceChangeManager _traceChangeManager
+@inject IAudiofileManager _audiofileManager
 
 @switch (CurrentViewMode)
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Tracks));
+        var validationResult = Audiofile?.Validate(nameof(Audiofile.Tracks));
         if (validationResult?.Status == ValidationStatus.Error)
         {
             <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
@@ -48,24 +48,24 @@ along with Foobar.  If not, see
         <div aria-label="@_localizer["Track table controls"]">
             <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
-                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Cuesheet?.Tracks.Any() == false"
-                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveTracksUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveTracksUp(_selectedTracks)"
-                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveTracksDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveTracksDown(_selectedTracks)"
+                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile?.Tracks.Any() == false"
+                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" FixedHeaderClicked="() => base.LocalStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.FixedTracksTableHeader, !_applicationOptions?.FixedTracksTableHeader)" />
+                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" />
         </div>
         break;
 }
 
 <MudForm @ref="_form">
-    <MudDataGrid T="Track" Items="Cuesheet?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
-                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_applicationOptions?.FixedTracksTableHeader == true ? "600px" : null)" 
-                 FixedHeader="_applicationOptions?.FixedTracksTableHeader == true" Validator="_form" Virtualize SortMode="SortMode.None">
+    <MudDataGrid T="Track" Items="Audiofile?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_fixedTableHeader == true ? "600px" : null)"
+                 FixedHeader="_fixedTableHeader" Validator="_form" Virtualize SortMode="SortMode.None">
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _cuesheetManager.RemoveTracks([context.Item])" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile!, [context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
@@ -108,7 +108,7 @@ along with Foobar.  If not, see
             </PropertyColumn>
             <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
                 <EditTemplate>
-                    @if (Cuesheet?.Tracks.FirstOrDefault() != context.Item)
+                    @if (Audiofile?.Tracks.FirstOrDefault() != context.Item)
                     {
                         <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">
                             <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => _trackManager.SetProperty(context.Item, x => x.IsLinkedToPreviousTrack, !context.Item.IsLinkedToPreviousTrack)" />
@@ -128,24 +128,17 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-@code {
+    @code {
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
     Track? _contextMenuTrack;
     ApplicationOptions? _applicationOptions;
     MudForm? _form;
+    Boolean _fixedTableHeader = false;
 
-    public Cuesheet? Cuesheet
-    {
-        get
-        {
-            if (CurrentViewMode == ViewMode.ImportView)
-            {
-                return _sessionStateContainer.ImportCuesheet;
-            }
-            return _sessionStateContainer.Cuesheet;
-        }
-    }
+    [Parameter]
+    [EditorRequired]
+    public Audiofile? Audiofile { get; set; }
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -154,8 +147,6 @@ along with Foobar.  If not, see
     {
         base.Dispose(disposing);
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override async Task OnInitializedAsync()
@@ -163,17 +154,16 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     void AddTrackClicked()
     {
         var newTrack = new Track()
         {
+            Audiofile = Audiofile,
             IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
         };
-        _cuesheetManager.AddTrack(newTrack);
+        _audiofileManager.AddTrack(Audiofile!, newTrack);
     }
 
     async Task EditSelectedTracksClicked()
@@ -183,7 +173,7 @@ along with Foobar.  If not, see
 
     void DeleteSelectedTracksClicked()
     {
-        _cuesheetManager.RemoveTracks(_selectedTracks);
+        _audiofileManager.RemoveTracks(Audiofile!, _selectedTracks);
         _selectedTracks.Clear();
     }
 
@@ -197,7 +187,7 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            _cuesheetManager.RemoveTracks(Cuesheet!.Tracks);
+            _audiofileManager.RemoveTracks(Audiofile!, Audiofile!.Tracks);
             _selectedTracks.Clear();
         }
     }
@@ -234,7 +224,7 @@ along with Foobar.  If not, see
             copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
             copy.Begin = trackThatWillBeCopied.End;
             copy.End = null;
-            _cuesheetManager.AddTrack(copy);
+            _audiofileManager.AddTrack(Audiofile!, copy);
             await EditTrackModalClicked(copy);
         }
     }
@@ -306,15 +296,5 @@ along with Foobar.  If not, see
         {
             await _form.ValidateAsync();
         }
-    }
-
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
     }
 }

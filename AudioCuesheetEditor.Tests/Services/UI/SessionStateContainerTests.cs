@@ -79,7 +79,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
 
             // Assert
             Assert.IsNull(_sessionStateContainer.Importfile);
-            Assert.IsNull(_sessionStateContainer.ImportAudiofile);
+            Assert.IsEmpty(_sessionStateContainer.ImportAudiofiles);
             Assert.IsNull(_sessionStateContainer.ImportCuesheet);
         }
 

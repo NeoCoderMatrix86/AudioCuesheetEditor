@@ -31,13 +31,14 @@ namespace AudioCuesheetEditor.Services.IO
     {
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
 
+        private readonly Dictionary<ImportAudiofile, int> _audiofileStartIndices = [];
+
         public async Task<IImportfile> AnalyseAsync(string fileContent)
         {
             Importfile importFile = new()
             {
                 FileContent = fileContent,
                 FileContentRecognized = fileContent,
-                AnalyzedCuesheet = new ImportCuesheet(),
                 FileType = ImportFileType.Textfile
             };
             try
@@ -46,6 +47,7 @@ namespace AudioCuesheetEditor.Services.IO
                 var applicationOptions = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
                 var importProfile = importOptions.SelectedImportProfile ?? throw new InvalidOperationException("Selected import profiles is not set!");
                 SearchForCuesheetData(ref importFile, fileContent, importProfile);
+                SearchForAudiofileData(ref importFile, fileContent, importProfile);
                 SearchForTrackData(ref importFile, fileContent, importProfile, applicationOptions.DefaultIsLinkedToPreviousTrack);
             }
             catch (Exception ex)
@@ -57,7 +59,7 @@ namespace AudioCuesheetEditor.Services.IO
             return importFile;
         }
 
-        private static string ApplyRegexAndMarkGroups(object entity, Regex regex, string input, TimeSpanFormat? timeSpanFormat)
+        static string ApplyRegexAndMarkGroups(object entity, Regex regex, string input, TimeSpanFormat? timeSpanFormat)
         {
             return regex.Replace(input, match =>
             {
@@ -93,107 +95,180 @@ namespace AudioCuesheetEditor.Services.IO
             });
         }
 
-        private static void SearchForCuesheetData(ref Importfile importFile, string fileContent, Importprofile importProfile)
+        static void SearchForCuesheetData(ref Importfile importFile, string fileContent, Importprofile importProfile)
         {
+            var cuesheet = new ImportCuesheet();
             if (string.IsNullOrWhiteSpace(importProfile.SchemeCuesheet) == false)
             {
-                var cuesheet = importFile.AnalyzedCuesheet;
-                Regex regex;
-                if (importProfile.UseRegularExpression == true)
-                {
-                    regex = new Regex(importProfile.SchemeCuesheet, RegexOptions.Multiline);
-                }
-                else
-                {
-                    regex = CreateCuesheetRegexPattern(importProfile.SchemeCuesheet);
-                }
-
-                if (importProfile.UseRegularExpression)
-                {
-                    importFile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet!, regex, fileContent, importProfile.TimeSpanFormat);
-                }
-                else
-                {
-                    var sb = new StringBuilder();
-                    using (var reader = new StringReader(fileContent))
-                    {
-                        string? line;
-                        while ((line = reader.ReadLine()) != null)
-                        {
-                            var markedLine = ApplyRegexAndMarkGroups(cuesheet!, regex, line, importProfile.TimeSpanFormat);
-                            sb.AppendLine(markedLine);
-                            if (!string.Equals(markedLine, line))
-                            {
-                                //We found the first occurrence, break the loop
-                                //Attach the rest of the file to FileContentRecognized
-                                sb.Append(reader.ReadToEnd());
-                                break;
-                            }
-                        }
-                    }
-                    importFile.FileContentRecognized = sb.ToString();
-                }
-            }
-        }
-
-        private static void SearchForTrackData(ref Importfile importFile, string fileContent, Importprofile importProfile, bool defaultIsLinkedToPreviousTrack)
-        {
-            if (string.IsNullOrWhiteSpace(importProfile.SchemeTracks) == false)
-            {
-                Regex regex;
-                if (importProfile.UseRegularExpression == true)
-                {
-                    regex = new Regex(importProfile.SchemeTracks, RegexOptions.Multiline);
-                }
-                else
-                {
-                    regex = CreateTrackRegexPattern(importProfile.SchemeTracks);
-                }
-                var cuesheet = importFile.AnalyzedCuesheet;
                 importFile.FileContentRecognized ??= fileContent;
                 if (importProfile.UseRegularExpression)
                 {
+                    var regex = new Regex(importProfile.SchemeCuesheet);
                     importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                         match =>
                         {
-                            var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
-                            string marked = ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
-                            cuesheet!.Tracks.Add(track);
+                            string marked = ApplyRegexAndMarkGroups(cuesheet, regex, match.Value, importProfile.TimeSpanFormat);
+                            return marked;
+                        }
+                    );
+                    importFile.FileContentRecognized = ApplyRegexAndMarkGroups(cuesheet, regex, fileContent, importProfile.TimeSpanFormat);
+                }
+                else
+                {
+                    var regex = CreateRegexPattern(importProfile.SchemeCuesheet, [
+                        nameof(ImportCuesheet.Artist),
+                        nameof(ImportCuesheet.Title),
+                        nameof(ImportCuesheet.CDTextfile),
+                        nameof(ImportCuesheet.Cataloguenumber)
+                    ]);
+                    importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, () => new ImportCuesheet(), (position, entity) =>
+                    {
+                        cuesheet = (ImportCuesheet)entity;
+                        return true;
+                    }, regex, importProfile);
+                }
+            }
+            importFile.AnalyzedCuesheet = cuesheet;
+        }
+
+        void SearchForAudiofileData(ref Importfile importFile, string fileContent, Importprofile importProfile)
+        {
+            _audiofileStartIndices.Clear();
+            var cuesheet = importFile.AnalyzedCuesheet;
+            if (string.IsNullOrWhiteSpace(importProfile.SchemeAudiofiles) == false)
+            {
+                importFile.FileContentRecognized ??= fileContent;
+                if (importProfile.UseRegularExpression)
+                {
+                    var regex = new Regex(importProfile.SchemeAudiofiles);
+                    importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
+                        match =>
+                        {
+                            var audiofile = new ImportAudiofile();
+                            string marked = ApplyRegexAndMarkGroups(audiofile, regex, match.Value, importProfile.TimeSpanFormat);
+                            cuesheet!.Audiofiles.Add(audiofile);
+                            _audiofileStartIndices.Add(audiofile, match.Index);
                             return marked;
                         }
                     );
                 }
                 else
                 {
-                    var sb = new StringBuilder();
-                    using (var reader = new StringReader(importFile.FileContentRecognized))
+                    var regex = CreateRegexPattern(importProfile.SchemeAudiofiles, [nameof(ImportAudiofile.Name)]);
+                    importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, () => new ImportAudiofile(), (position, entity) =>
                     {
-                        string? line;
-                        while ((line = reader.ReadLine()) != null)
+                        var audiofile = (ImportAudiofile)entity;
+                        cuesheet!.Audiofiles.Add(audiofile);
+                        _audiofileStartIndices.Add(audiofile, position);
+                        return false;
+                    }, regex, importProfile);
+                }
+            }
+            else
+            {
+                //Add an empty audiofile to the cuesheet if no scheme is provided, so that tracks can be added to it
+                var audiofile = new ImportAudiofile();
+                _audiofileStartIndices.Add(audiofile, 0);
+                cuesheet!.Audiofiles.Add(audiofile);
+            }
+        }
+
+        void SearchForTrackData(ref Importfile importFile, string fileContent, Importprofile importProfile, bool defaultIsLinkedToPreviousTrack)
+        {
+            if (string.IsNullOrWhiteSpace(importProfile.SchemeTracks) == false)
+            {
+                var cuesheet = importFile.AnalyzedCuesheet;
+                importFile.FileContentRecognized ??= fileContent;
+                if (importProfile.UseRegularExpression)
+                {
+                    var regex = new Regex(importProfile.SchemeTracks);
+                    importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
+                        match =>
                         {
-                            // Check if this line is already analyzed
-                            if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
+                            var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
+                            var audiofile = _audiofileStartIndices
+                                .Where(kv => kv.Value <= match.Index)
+                                .OrderBy(kv => kv.Value)
+                                .Select(kv => kv.Key)
+                                .LastOrDefault();
+                            if (audiofile != null)
                             {
-                                var track = new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack };
-                                var markedLine = ApplyRegexAndMarkGroups(track, regex, line, importProfile.TimeSpanFormat);
-                                if (!string.Equals(markedLine, line))
-                                {
-                                    cuesheet!.Tracks.Add(track);
-                                }
-                                sb.AppendLine(markedLine);
+                                audiofile.Tracks.Add(track);
+                                return ApplyRegexAndMarkGroups(track, regex, match.Value, importProfile.TimeSpanFormat);
                             }
-                            else
-                            {
-                                sb.AppendLine(line);
-                            }
+                            return match.Value;
                         }
+                    );
+                }
+                else
+                {
+                    var regex = CreateRegexPattern(importProfile.SchemeTracks,
+                    [
+                        nameof(ImportTrack.Artist),
+                        nameof(ImportTrack.Title),
+                        nameof(ImportTrack.Begin),
+                        nameof(ImportTrack.End),
+                        nameof(ImportTrack.Length),
+                        nameof(ImportTrack.Position),
+                        nameof(ImportTrack.Flags),
+                        nameof(ImportTrack.PreGap),
+                        nameof(ImportTrack.PostGap),
+                        nameof(ImportTrack.StartDateTime)
+                    ]);
+                    if (_audiofileStartIndices.Count > 0)
+                    {
+                        importFile.FileContentRecognized = SearchLineByLineForEntry(importFile.FileContentRecognized, () => new ImportTrack() { IsLinkedToPreviousTrack = defaultIsLinkedToPreviousTrack }, (position, entity) =>
+                        {
+                            var audiofile = _audiofileStartIndices
+                                            .Where(kv => kv.Value <= position)
+                                            .OrderBy(kv => kv.Value)
+                                            .Select(kv => kv.Key)
+                                            .LastOrDefault();
+                            audiofile?.Tracks.Add((ImportTrack)entity);
+                            return false;
+                        }, regex, importProfile);
                     }
-                    importFile.FileContentRecognized = sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
                 }
             }
         }
 
-        private static void SetValue(object entity, PropertyInfo property, string value, TimeSpanFormat? timeSpanFormat)
+        static string SearchLineByLineForEntry(string fileContent, Func<object> entityCreation, Func<int, object, bool> ifEntityFound, Regex regex, Importprofile importProfile)
+        {
+            var sb = new StringBuilder();
+            using (var reader = new StringReader(fileContent))
+            {
+                string? line;
+                int pos = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Boolean stopSearch = false;
+                    // Check if this line is already analyzed
+                    if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
+                    {
+                        var entity = entityCreation.Invoke();
+                        var markedLine = ApplyRegexAndMarkGroups(entity, regex, line, importProfile.TimeSpanFormat);
+                        if (!string.Equals(markedLine, line))
+                        {
+                            stopSearch = ifEntityFound.Invoke(pos, entity);
+                        }
+                        sb.AppendLine(markedLine);
+                        if (stopSearch)
+                        {
+                            sb.Append(reader.ReadToEnd());
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        sb.AppendLine(line);
+                    }
+                    pos += line.Length + Environment.NewLine.Length;
+                }
+            }
+            return sb.ToString().TrimEnd(Environment.NewLine.ToCharArray());
+        }
+
+        static void SetValue(object entity, PropertyInfo property, string value, TimeSpanFormat? timeSpanFormat)
         {
             if (property.PropertyType == typeof(TimeSpan?))
             {
@@ -213,7 +288,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
             if (property.PropertyType == typeof(Audiofile))
             {
-                property.SetValue(entity, new Audiofile(value));
+                property.SetValue(entity, new Audiofile() { Name = value });
             }
             if (property.PropertyType == typeof(DateTime?))
             {
@@ -224,85 +299,8 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
 
-        private static Regex CreateCuesheetRegexPattern(string scheme)
+        static Regex CreateRegexPattern(string scheme, string[] fieldNames)
         {
-            string[] fieldNames =
-            [
-                nameof(ImportCuesheet.Artist),
-                nameof(ImportCuesheet.Title),
-                nameof(ImportCuesheet.Audiofile),
-                nameof(ImportCuesheet.CDTextfile),
-                nameof(ImportCuesheet.Cataloguenumber)
-            ];
-            var parts = new List<string>();
-            int idx = 0;
-            while (idx < scheme.Length)
-            {
-                var field = fieldNames.FirstOrDefault(fn => scheme.IndexOf(fn, idx, StringComparison.Ordinal) == idx);
-                if (field != null)
-                {
-                    parts.Add(field);
-                    idx += field.Length;
-                }
-                else
-                {
-                    int nextFieldIdx = scheme.Length;
-                    foreach (var fn in fieldNames)
-                    {
-                        int pos = scheme.IndexOf(fn, idx, StringComparison.Ordinal);
-                        if (pos >= 0 && pos < nextFieldIdx)
-                        {
-                            nextFieldIdx = pos;
-                        }
-                    }
-                    string separator = scheme[idx..nextFieldIdx];
-                    parts.Add(separator);
-                    idx = nextFieldIdx;
-                }
-            }
-
-            var regexBuilder = new StringBuilder("^");
-            for (int i = 0; i < parts.Count; i++)
-            {
-                var part = parts[i];
-                if (fieldNames.Contains(part))
-                {
-                    bool isLast = i == parts.Count - 1 || parts.Skip(i + 1).All(p => !fieldNames.Contains(p));
-                    if (isLast)
-                    {
-                        regexBuilder.Append($@"(?<{part}>.+)");
-                    }
-                    else
-                    {
-                        regexBuilder.Append($@"(?<{part}>.+?)");
-                    }
-                }
-                else
-                {
-                    string sep = Regex.Escape(part).Replace("\\t", @"\t{1,}");
-                    regexBuilder.Append(sep);
-                }
-            }
-            regexBuilder.Append('$');
-
-            return new Regex(regexBuilder.ToString());
-        }
-
-        private static Regex CreateTrackRegexPattern(string scheme)
-        {
-            string[] fieldNames =
-            [
-                nameof(ImportTrack.Artist),
-                nameof(ImportTrack.Title),
-                nameof(ImportTrack.Begin),
-                nameof(ImportTrack.End),
-                nameof(ImportTrack.Length),
-                nameof(ImportTrack.Position),
-                nameof(ImportTrack.Flags),
-                nameof(ImportTrack.PreGap),
-                nameof(ImportTrack.PostGap),
-                nameof(ImportTrack.StartDateTime)
-            ];
             var parts = new List<string>();
             int idx = 0;
             while (idx < scheme.Length)

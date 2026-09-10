@@ -1,0 +1,127 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<Audiofiles> _localizer
+@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
+@inject IAudiofileManager _audiofileManager
+@inject IDialogService _dialogService
+
+@switch (CurrentViewMode)
+{
+    case ViewMode.DetailView:
+    case ViewMode.ImportView:
+        var validationResult = _cuesheet?.Validate(nameof(Cuesheet.Audiofiles));
+        if (validationResult?.Status == ValidationStatus.Error)
+        {
+            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
+                @foreach (var message in validationResult.ValidationMessages)
+                {
+                    <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
+                }
+            </MudAlert>
+            <br />
+        }
+        break;
+}
+
+<MudExpansionPanels MultiExpansion>
+    @foreach (var file in Files)
+    {
+        <MudExpansionPanel Expanded>
+            <TitleContent>
+                <MudStack Row AlignItems="AlignItems.Start" StretchItems="StretchItems.End">
+                    <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" Class="mt-2" />
+                    @{
+                        var fileInputId = $"Audiofile_{Guid.NewGuid()}";
+                    }
+                    <FileInput Id="@fileInputId" Label="@_localizer["Audiofile"]" FileName="@file.Name" OnFileSelected="(IBrowserFile? browserFile) => _audiofileManager.SetPropertiesAsync(file, browserFile, fileInputId)"
+                               OnFileRenameClicked="() => FileRenameClicked(file)" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
+                               FileRenameDisabled="file.Name == null" Error="file.Validate().Status == ValidationStatus.Error" />
+                </MudStack>
+            </TitleContent>
+            <ChildContent>
+                <TrackList Audiofile="file" />
+            </ChildContent>
+        </MudExpansionPanel>
+    }
+</MudExpansionPanels>
+
+@code {
+    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
+
+    [Parameter]
+    [EditorRequired]
+    public ICollection<Audiofile> Files { get; set; }
+
+    [CascadingParameter]
+    public ViewMode CurrentViewMode { get; set; }
+
+    [Parameter]
+    public HashSet<Audiofile> SelectedFiles { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<HashSet<Audiofile>> SelectedFilesChanged { get; set; }
+
+    async Task<String?> ShowInputDialog(string? initialValue)
+    {
+        var parameters = new DialogParameters<InputTextDialog>
+        {
+            { x => x.Placeholder, _localizer["Enter the new file name here"] },
+            { x => x.Label, _localizer["New file name"] },
+            { x => x.InitialValue, initialValue }
+        };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
+        var result = await dialog.Result;
+        var newFileName = result?.Data as string;
+        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
+        {
+            return newFileName;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    async Task FileRenameClicked(Audiofile audiofile)
+    {
+        var newFileName = await ShowInputDialog(audiofile.Name);
+        if (String.IsNullOrEmpty(newFileName) == false)
+        {
+            _audiofileManager.SetProperty(audiofile, x => x.Name, newFileName);
+        }
+    }
+
+    void SelectedChanged(Audiofile audiofile, Boolean selected)
+    {
+        if (selected)
+        {
+            SelectedFiles.Add(audiofile);
+        }
+        else
+        {
+            SelectedFiles.Remove(audiofile);
+        }
+        SelectedFilesChanged.InvokeAsync(SelectedFiles);
+    }
+}

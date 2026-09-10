@@ -45,8 +45,9 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         {
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.RenameAudiofileAsync("Kalimba test 123.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.RenameAudiofileAsync(0, "Kalimba test 123.mp3");
             await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Kalimba test 123.mp3");
         }
 
@@ -70,12 +71,65 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await bar.ChangeLanguageAsync("German (Germany)");
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Allgemeine Informationen" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Titel" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Dateien" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
             await bar.OpenExportDialogAsync("Textdatei", "Datei");
-            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToMatchAriaSnapshotAsync("- tabpanel:\n  - text: \"Export ist derzeit nicht möglich: Titel hat ungültige Anzahl (0)! Künstler hat keinen Wert! Titel hat keinen Wert! Audiodatei hat keinen Wert! YouTube\"\n  - group \"Exportprofil auswählen\"\n  - text: Exportprofil auswählen\n  - group:\n    - button \"Neues Exportprofil hinzufügen\"\n    - button \"Ausgewähltes Exportprofil löschen\"\n  - separator\n  - textbox \"Name\": YouTube\n  - group \"Name\"\n  - text: Name\n  - textbox \"Dateiname\": YouTube.txt\n  - group \"Dateiname\"\n  - text: Dateiname\n  - textbox \"Schema Kopf\": \"%Cuesheet.Artist% - %Cuesheet.Title%\"\n  - button \"Clear\"\n  - button\n  - group \"Schema Kopf\"\n  - text: Schema Kopf\n  - textbox \"Schema Titel\": \"%Track.Artist% - %Track.Title% %Track.Begin%\"\n  - button \"Clear\"\n  - button\n  - group \"Schema Titel\"\n  - text: Schema Titel\n  - textbox \"Schema Fuß\"\n  - button\n  - group \"Schema Fuß\"\n  - text: Schema Fuß");
+            await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToMatchAriaSnapshotAsync(@"- dialog ""Exportprofile Close"":
+  - heading ""Exportprofile"" [level=6]
+  - button ""Close""
+  - tablist:
+    - tab ""Export konfigurieren"" [selected]:
+      - paragraph: Export konfigurieren
+    - tab ""2 Export herunterladen"" [disabled]:
+      - text: ""2""
+      - paragraph: Export herunterladen
+  - tabpanel ""Export konfigurieren"":
+    - text: ""Export ist derzeit nicht möglich: Künstler hat keinen Wert! Titel hat keinen Wert! Audiodateien hat ungültige Anzahl (0)!""
+    - combobox ""Exportprofil auswählen"": YouTube
+    - group ""Exportprofil auswählen""
+    - text: Exportprofil auswählen
+    - group:
+      - button ""Neues Exportprofil hinzufügen""
+      - button ""Ausgewähltes Exportprofil löschen""
+    - separator
+    - textbox ""Name"":
+      - /placeholder: Geben Sie hier den Namen für dieses Profil ein
+      - text: YouTube
+    - group ""Name""
+    - text: Name
+    - textbox ""Dateiname"":
+      - /placeholder: Geben Sie hier den Dateinamen für dieses Profil ein
+      - text: YouTube.txt
+    - group ""Dateiname""
+    - text: Dateiname
+    - textbox ""Schema Kopf"":
+      - /placeholder: Geben Sie hier das Kopf-Schema für dieses Profil ein
+      - text: ""%Cuesheet.Artist% - %Cuesheet.Title%""
+    - button ""Clear""
+    - button
+    - group ""Schema Kopf""
+    - text: Schema Kopf
+    - textbox ""Schema Audiodateien"":
+      - /placeholder: Geben Sie hier das Audiodatei-Schema für dieses Profil ein
+    - button
+    - group ""Schema Audiodateien""
+    - text: Schema Audiodateien
+    - textbox ""Schema Titel"":
+      - /placeholder: Geben Sie hier das Titel-Schema für dieses Profil ein
+      - text: ""%Track.Artist% - %Track.Title% %Track.Begin%""
+    - button ""Clear""
+    - button
+    - group ""Schema Titel""
+    - text: Schema Titel
+    - textbox ""Schema Fuß"":
+      - /placeholder: Geben Sie hier das Fuß-Schema für dieses Profil ein
+    - button
+    - group ""Schema Fuß""
+    - text: Schema Fuß
+  - button ""Previous"" [disabled]
+  - button ""Next"" [disabled]");
             await exportDialog.OpenSchemeMenuAsync("Schema Kopf");
-            await Expect(TestPage.Locator("#app")).ToMatchAriaSnapshotAsync("- paragraph: Künstler\n- paragraph: Titel\n- paragraph: Audiodatei\n- paragraph: CDTextdatei\n- paragraph: Katalognummer\n- paragraph: Datum\n- paragraph: Datum & Uhrzeit\n- paragraph: Uhrzeit");
+            await Expect(TestPage.Locator("#app")).ToMatchAriaSnapshotAsync("- paragraph: Künstler\n- paragraph: Titel\n- paragraph: CDTextdatei\n- paragraph: Katalognummer\n- paragraph: Datum\n- paragraph: Datum & Uhrzeit\n- paragraph: Uhrzeit");
             await TestPage.GetByText("CDTextdatei").ClickAsync();
             await exportDialog.OpenSchemeMenuAsync("Schema Titel");
             await Expect(TestPage.GetByTestId("menu-wrapper")).ToMatchAriaSnapshotAsync("- paragraph: Position\n- paragraph: Künstler\n- paragraph: Titel\n- paragraph: Begin\n- paragraph: End\n- paragraph: Länge\n- paragraph: Markierungen\n- paragraph: Vorlücke\n- paragraph: Nachlücke");
@@ -84,23 +138,23 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         [TestMethod]
         public async Task TrackTableControls_ShouldBeEnabled_WhenSelectingFirstTrackAsync()
         {
-            var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
-            await detailView.AddTrackAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
             await detailView.SelectTracksAsync([1]);
-            await bar.ChangeLanguageAsync("German (Germany)");
             await Expect(TestPage.GetByLabel("Track table controls")).ToMatchAriaSnapshotAsync(@"- group:
-  - button ""Neuen Titel hinzufügen""
-  - button ""Ausgewählte Titel bearbeiten""
-  - button ""Ausgewählten Titel kopieren""
-  - button ""Ausgewählte Titel löschen""
-  - button ""Alle Titel löschen""
+  - button ""Add new track""
+  - button ""Edit selected tracks""
+  - button ""Copy selected tracks""
+  - button ""Delete selected tracks""
+  - button ""Delete all tracks""
 - group:
-  - button ""Ausgewählte Titel nach oben bewegen"" [disabled]
-  - button ""Ausgewählte Titel nach unten bewegen""
-- button ""Fester Tabellenkopf""");
+  - button ""Move selected tracks up"" [disabled]
+  - button ""Move selected tracks down""
+- group:
+  - button ""Fixed table header""");
         }
 
         [TestMethod]
@@ -112,26 +166,32 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenExportDialogAsync("Cuesheet");
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.GetByRole(AriaRole.Dialog).FocusAsync();
             await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenExportDialogAsync("Projectfile");
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.GetByRole(AriaRole.Dialog).FocusAsync();
             await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenExportDialogAsync("Textfile");
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.GetByRole(AriaRole.Dialog).FocusAsync();
             await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenSettingsAsync();
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.GetByRole(AriaRole.Dialog).FocusAsync();
             await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
             await bar.OpenDisplayHotkeysAsync();
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
+            await TestPage.GetByRole(AriaRole.Dialog).FocusAsync();
             await TestPage.Keyboard.PressAsync("Escape");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.OpenRenameAudiofileDialogAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.OpenRenameAudiofileDialogAsync(0);
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
             await detailView.NewFileNameInput.FillAsync("Test 123");
             await TestPage.Keyboard.PressAsync("Enter");

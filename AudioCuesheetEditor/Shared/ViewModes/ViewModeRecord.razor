@@ -18,33 +18,58 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ViewModeRecord> _localizer
-@inject IJSRuntime _jsRuntime
+@inject ICuesheetManager _cuesheetManager
 @inject ISessionStateContainer _sessionStateContainer
-@inject IFileInputManager _fileInputManager
 
 <ControlRecording />
 <br />
-<AddTrack />
+<AddTrack Audiofile="_recordingAudiofile" />
 <br/>
-<MudExpansionPanels MultiExpansion>
-    <MudExpansionPanel @bind-Expanded="tracksExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <TrackList />
-        </ChildContent>
-    </MudExpansionPanel>
-    <MudExpansionPanel @bind-Expanded="cuesheetDataExpanded">
-        <TitleContent>
-            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-        </TitleContent>
-        <ChildContent>
-            <CuesheetData />
-        </ChildContent>
-    </MudExpansionPanel>
-</MudExpansionPanels>
+<MudCard Outlined>
+    <MudCardHeader>
+        <MudText Typo="Typo.h5">@_localizer["Tracks"]</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <TrackList Audiofile="_recordingAudiofile" />
+    </MudCardContent>
+</MudCard>
+<MudCard Outlined>
+    <MudCardHeader>
+        <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <CuesheetData />
+    </MudCardContent>
+</MudCard>
 
 @code {
-    Boolean cuesheetDataExpanded = false, tracksExpanded = true;
+    Audiofile? _recordingAudiofile;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
+        SetRecordingAudiofile();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
+    }
+
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs e)
+    {
+        SetRecordingAudiofile();
+        StateHasChanged();
+    }
+
+    void SetRecordingAudiofile()
+    {
+        var cuesheet = _sessionStateContainer.Cuesheet;
+        if (cuesheet.IsRecording)
+        {
+            _recordingAudiofile = cuesheet.Audiofiles.First();
+        }
+    }
 }
