@@ -146,6 +146,7 @@ along with Foobar.  If not, see
 }
 
 @code {
+    //TODO: Check what is going on with complete button, maybe we can remove it or close the dialog
     ExportOptions? _exportOptions;
     Exportfile? _exportFile;
     Boolean _configureExportCompleted = false;
@@ -199,6 +200,7 @@ along with Foobar.  If not, see
 
     String? GetGenerationValidationMessages()
     {
+        //TODO: Get validation errors only once for rendering performance
         String? validationErrorMessage = null;
         var selectedExportProfile = _exportOptions?.SelectedExportProfile;
         if (selectedExportProfile != null)
