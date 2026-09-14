@@ -56,35 +56,19 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         {
             if (artist != null)
             {
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(3)").ClickAsync();
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(3)").Last.GetByRole(AriaRole.Textbox).FillAsync(artist);
-                // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-                await _page.WaitForTimeoutAsync(100);
+                await EditTrackFieldAsync(trackPosition, "Artist", artist);
             }
             if (title != null)
             {
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(4)").ClickAsync();
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(4)").Last.GetByRole(AriaRole.Textbox).FillAsync(title);
-                // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-                await _page.WaitForTimeoutAsync(100);
+                await EditTrackFieldAsync(trackPosition, "Title", title);
             }
             if (begin != null)
             {
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(5)").ClickAsync();
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(5)").Last.GetByRole(AriaRole.Textbox).FillAsync(begin.ToString() ?? string.Empty);
-                // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-                await _page.WaitForTimeoutAsync(100);
+                await EditTrackFieldAsync(trackPosition, "Begin", begin.ToString() ?? string.Empty);
             }
             if (end != null)
             {
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(6)").ClickAsync();
-                await _page.Locator($"tr:nth-child({trackPosition + 1}) > td:nth-child(6)").Last.GetByRole(AriaRole.Textbox).FillAsync(end.ToString() ?? string.Empty);
-                // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-                await _page.WaitForTimeoutAsync(100);
+                await EditTrackFieldAsync(trackPosition, "End", end.ToString() ?? string.Empty);
             }
         }
 
@@ -134,6 +118,18 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         {
             await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).GetByLabel("More").ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
+        }
+
+        async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)
+        {
+            var row = _page.Locator("tbody tr:not([aria-hidden='true'])").Nth(trackPosition - 1);
+            var cell = row.Locator($"td[data-label='{dataLabel}']");
+            await cell.ClickAsync();
+            var textbox = cell.Locator("input[type='text']");
+            await textbox.FillAsync(value);
+            // Click outside the autocomplete to have an focus lost event for getting the value written to model
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
+            await _page.WaitForTimeoutAsync(100);
         }
     }
 }
