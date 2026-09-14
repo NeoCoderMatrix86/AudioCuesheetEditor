@@ -28,12 +28,12 @@ along with Foobar.  If not, see
     <MudDialog>
         <DialogContent>
             <MudStepper NonLinear OnPreviewInteraction="PreviewInteraction" ActiveIndexChanged="ActiveIndexChanged">
-                <MudStep Title="@_localizer["Configure export"]" HasError="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false" Completed="_configureExportCompleted">
-                    @if (String.IsNullOrEmpty(GetGenerationValidationMessages()) == false)
+                <MudStep Title="@_localizer["Configure export"]" HasError="String.IsNullOrEmpty(_validationErrorMessage) == false" Completed="_configureExportCompleted">
+                    @if (String.IsNullOrEmpty(_validationErrorMessage) == false)
                     {
                         <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
                             @_localizer["Export is currently not possible:"]
-                            @((MarkupString)GetGenerationValidationMessages()!)
+                            @((MarkupString)_validationErrorMessage)
                         </MudAlert>
                     }
                     <MudSelect T="Exportprofile" Variant="Variant.Outlined" Label="@_localizer["Select export profile"]" Value="_exportOptions.SelectedExportProfile" ValueChanged="(newSelectedProfile) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ExportOptions>(x => x.SelectedExportProfile, newSelectedProfile)">
@@ -137,7 +137,7 @@ along with Foobar.  If not, see
                         }
                     </MudMenu>
                 </MudStep>
-                <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false">
+                <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false">
                     <DisplayExportfileContent Exportfile="_exportFile" />
                 </MudStep>
             </MudStepper>
@@ -152,6 +152,7 @@ along with Foobar.  If not, see
     Boolean _configureExportCompleted = false;
     MudMenu? _schemeHeadMenu, _schemeAudiofilesMenu, _schemeTracksMenu, _schemeFooterMenu;
     Dictionary<Exportfile, Boolean> _displayContentDialogVisible = new();
+    String? _validationErrorMessage = null;
 
     private readonly DialogOptions _displayContentDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.ExtraExtraLarge };
 
@@ -166,6 +167,7 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         _exportOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ExportOptions>();
+        SetValidationErrors();
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
@@ -173,6 +175,7 @@ along with Foobar.  If not, see
         if (option is ExportOptions exportOption)
         {
             _exportOptions = exportOption;
+            SetValidationErrors();
             StateHasChanged();
         }
     }
@@ -198,31 +201,28 @@ along with Foobar.  If not, see
         }
     }
 
-    String? GetGenerationValidationMessages()
+    void SetValidationErrors()
     {
-        //TODO: Get validation errors only once for rendering performance
-        String? validationErrorMessage = null;
         var selectedExportProfile = _exportOptions?.SelectedExportProfile;
         if (selectedExportProfile != null)
         {
             var result = _exportfileGenerator.CanGenerateExportfile(selectedExportProfile);
             if (result.IsSuccess == false)
             {
-                validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
+                _validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
             }
         }
         else
         {
-            validationErrorMessage = _localizer["No export profile selected!"];
+            _validationErrorMessage = _localizer["No export profile selected!"];
         }
-        return validationErrorMessage;
     }
 
     Task PreviewInteraction(StepperInteractionEventArgs arg)
     {
         if (arg.StepIndex == 0)
         {
-            arg.Cancel = String.IsNullOrEmpty(GetGenerationValidationMessages()) == false;
+            arg.Cancel = String.IsNullOrEmpty(_validationErrorMessage) == false;
         }
         return Task.CompletedTask;
     }
