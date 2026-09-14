@@ -1,0 +1,92 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<SelectExportProfile> _localizer
+
+@if (_exportOptions != null)
+{
+    <MudSelect T="Exportprofile" Variant="Variant.Outlined" Label="@_localizer["Select export profile"]" Value="_exportOptions.SelectedExportProfile" ValueChanged="(newSelectedProfile) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ExportOptions>(x => x.SelectedExportProfile, newSelectedProfile)">
+        @foreach (var profile in _exportOptions.ExportProfiles)
+        {
+            <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
+        }
+    </MudSelect>
+    <MudButtonGroup OverrideStyles="false">
+        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]">@_localizer["Add new export profile"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+            <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]" />
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+            <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Delete" Disabled="_exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]">@_localizer["Delete selected export profile"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" Variant="Variant.Filled" Disabled="_exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]" />
+        </MudHidden>
+    </MudButtonGroup>
+}
+
+@code {
+    //TODO: Localization
+    ExportOptions? _exportOptions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _exportOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ExportOptions>();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ExportOptions exportOption)
+        {
+            _exportOptions = exportOption;
+            StateHasChanged();
+        }
+    }
+
+    async Task AddClick()
+    {
+        if (_exportOptions != null)
+        {
+            var newProfile = new Exportprofile();
+            _exportOptions.ExportProfiles.Add(newProfile);
+            _exportOptions.SelectedExportProfile = newProfile;
+            await LocalStorageOptionsProvider.SaveOptionsAsync(_exportOptions);
+        }
+    }
+
+    async Task DeleteClick()
+    {
+        if (_exportOptions?.SelectedExportProfile != null)
+        {
+            _exportOptions.ExportProfiles.Remove(_exportOptions.SelectedExportProfile);
+            _exportOptions.SelectedExportProfile = _exportOptions.ExportProfiles.LastOrDefault();
+            await LocalStorageOptionsProvider.SaveOptionsAsync(_exportOptions);
+        }
+    }
+}

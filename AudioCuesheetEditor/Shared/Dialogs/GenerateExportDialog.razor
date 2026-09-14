@@ -36,26 +36,7 @@ along with Foobar.  If not, see
                             @((MarkupString)_validationErrorMessage)
                         </MudAlert>
                     }
-                    <MudSelect T="Exportprofile" Variant="Variant.Outlined" Label="@_localizer["Select export profile"]" Value="_exportOptions.SelectedExportProfile" ValueChanged="(newSelectedProfile) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ExportOptions>(x => x.SelectedExportProfile, newSelectedProfile)">
-                        @foreach (var profile in _exportOptions.ExportProfiles)
-                        {
-                            <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <MudButtonGroup OverrideStyles="false">
-                        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-                            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]">@_localizer["Add new export profile"]</MudButton>
-                        </MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                            <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]" />
-                        </MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                            <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Delete" Disabled="_exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]">@_localizer["Delete selected export profile"]</MudButton>
-                        </MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" Variant="Variant.Filled" Disabled="_exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]" />
-                        </MudHidden>
-                    </MudButtonGroup>
+                    <SelectExportProfile />
                     <br />
                     <MudDivider />
                     <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.Name" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Name, newValue)"
@@ -177,27 +158,6 @@ along with Foobar.  If not, see
             _exportOptions = exportOption;
             SetValidationErrors();
             StateHasChanged();
-        }
-    }
-
-    async Task AddClick()
-    {
-        if (_exportOptions != null)
-        {
-            var newProfile = new Exportprofile();
-            _exportOptions.ExportProfiles.Add(newProfile);
-            _exportOptions.SelectedExportProfile = newProfile;
-            await LocalStorageOptionsProvider.SaveOptionsAsync(_exportOptions);
-        }
-    }
-
-    async Task DeleteClick()
-    {
-        if (_exportOptions?.SelectedExportProfile != null)
-        {
-            _exportOptions.ExportProfiles.Remove(_exportOptions.SelectedExportProfile);
-            _exportOptions.SelectedExportProfile = _exportOptions.ExportProfiles.LastOrDefault();
-            await LocalStorageOptionsProvider.SaveOptionsAsync(_exportOptions);
         }
     }
 

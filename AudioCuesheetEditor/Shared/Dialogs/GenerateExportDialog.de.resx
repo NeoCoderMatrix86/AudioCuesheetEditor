@@ -123,15 +123,6 @@
   <data name="Export is currently not possible:" xml:space="preserve">
     <value>Export ist derzeit nicht möglich:</value>
   </data>
-  <data name="Select export profile" xml:space="preserve">
-    <value>Exportprofil auswählen</value>
-  </data>
-  <data name="Add new export profile" xml:space="preserve">
-    <value>Neues Exportprofil hinzufügen</value>
-  </data>
-  <data name="Delete selected export profile" xml:space="preserve">
-    <value>Ausgewähltes Exportprofil löschen</value>
-  </data>
   <data name="Enter the name for this profile here" xml:space="preserve">
     <value>Geben Sie hier den Namen für dieses Profil ein</value>
   </data>
