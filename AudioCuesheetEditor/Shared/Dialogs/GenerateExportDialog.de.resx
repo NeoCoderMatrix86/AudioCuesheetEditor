@@ -123,7 +123,10 @@
   <data name="Export is currently not possible:" xml:space="preserve">
     <value>Export ist derzeit nicht möglich:</value>
   </data>
-  <data name="Download export" xml:space="preserve">
-    <value>Export herunterladen</value>
+  <data name="Generate export" xml:space="preserve">
+    <value>Export erzeugen</value>
+  </data>
+  <data name="View export" xml:space="preserve">
+    <value>Export anzeigen</value>
   </data>
 </root>

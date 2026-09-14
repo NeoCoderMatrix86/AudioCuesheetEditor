@@ -24,34 +24,37 @@ along with Foobar.  If not, see
 {
     <MudDialog>
         <DialogContent>
-            <MudStepper NonLinear OnPreviewInteraction="PreviewInteraction" ActiveIndexChanged="ActiveIndexChanged">
-                <MudStep Title="@_localizer["Configure export"]" HasError="String.IsNullOrEmpty(_validationErrorMessage) == false" Completed="_configureExportCompleted">
-                    @if (String.IsNullOrEmpty(_validationErrorMessage) == false)
-                    {
-                        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                            @_localizer["Export is currently not possible:"]
-                            @((MarkupString)_validationErrorMessage)
-                        </MudAlert>
-                    }
+            @if (String.IsNullOrEmpty(_validationErrorMessage) == false)
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                    @_localizer["Export is currently not possible:"]
+                    @((MarkupString)_validationErrorMessage)
+                </MudAlert>
+            }
+            <MudTabs ActivePanelIndexChanged="ActiveIndexChanged" ActivePanelIndex="_activeTabIndex">
+                <MudTabPanel Text="@_localizer["Configure export"]" Icon="@Icons.Material.Outlined.Build" BadgeIcon="@_configureExportBadgeIcon" BadgeColor="Color.Success">
                     <SelectExportProfile />
                     <br />
                     <MudDivider />
                     <EditExportProfile />
-                </MudStep>
-                <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false">
+                    <MudStack Row Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ActiveIndexChanged(1)" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false">@_localizer["Generate export"]</MudButton>
+                    </MudStack>
+                </MudTabPanel>
+                <MudTabPanel Text="@_localizer["View export"]" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false" Icon="@Icons.Material.Outlined.TextSnippet">
                     <DisplayExportfileContent Exportfile="_exportFile" />
-                </MudStep>
-            </MudStepper>
+                </MudTabPanel>
+            </MudTabs>
         </DialogContent>
     </MudDialog>
 }
 
 @code {
-    //TODO: Check what is going on with complete button, maybe we can remove it or close the dialog
     ExportOptions? _exportOptions;
     Exportfile? _exportFile;
-    Boolean _configureExportCompleted = false;
     String? _validationErrorMessage = null;
+    string? _configureExportBadgeIcon = null;
+    int _activeTabIndex = 0;
 
     protected override void Dispose(bool disposing)
     {
@@ -105,6 +108,11 @@ along with Foobar.  If not, see
 
     void ActiveIndexChanged(int newIndex)
     {
+        _activeTabIndex = newIndex;
+        if (newIndex == 0)
+        {
+            _configureExportBadgeIcon = null;
+        }
         if (newIndex == 1) 
         {
             var selectedExportProfile = _exportOptions?.SelectedExportProfile;
@@ -112,7 +120,7 @@ along with Foobar.  If not, see
             {
                 var result = _exportfileGenerator.GenerateExportfile(selectedExportProfile);
                 _exportFile = result.Value;
-                _configureExportCompleted = result.IsSuccess;
+                _configureExportBadgeIcon = Icons.Material.Filled.Check;
             }
         }
     }
