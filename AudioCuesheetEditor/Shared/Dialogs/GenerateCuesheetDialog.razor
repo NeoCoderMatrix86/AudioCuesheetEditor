@@ -24,49 +24,35 @@ along with Foobar.  If not, see
 
 <MudDialog>
     <DialogContent>
-        @if (String.IsNullOrEmpty(GetGenerationValidationMessages()) == false)
+        @if (String.IsNullOrEmpty(_validationErrorMessage) == false)
         {
             <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
                 @_localizer["Export is currently not possible:"]
-                @((MarkupString)GetGenerationValidationMessages()!)
+                @((MarkupString)_validationErrorMessage)
             </MudAlert>
         }
         <MudTextField T="string" Label="@_localizer["Filename"]" Variant="Variant.Outlined" Text="@_options?.CuesheetFilename" TextChanged="CuesheetFilenameChanged"
-                      Error="String.IsNullOrEmpty(GetValidationErrorMessage()) == false" ErrorText="@GetValidationErrorMessage()" />
-        <br />
-        <MudTable Items="_exportfiles">
-            <HeaderContent>
-                <MudTh>@_localizer["Name"]</MudTh>
-                <MudTh>@_localizer["Content"]</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="@_localizer["Name"]">@context.Name</MudTd>
-                @{
-                    var ariaLabel = $"Download-{context.Name}";
-                    <MudTd DataLabel="@_localizer["Content"]"><MudIconButton Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(context.Name, context.Content, System.Text.Encoding.Default, "text/plain")' aria-label="@ariaLabel" /></MudTd>
-                }
-            </RowTemplate>
-        </MudTable>
-        <br />
+                      Error="String.IsNullOrEmpty(_fileNameValidationErrorMessage) == false" ErrorText="@_fileNameValidationErrorMessage" />
     </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="OnDownloadClick" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false">@_localizer["Download"]</MudButton>
+    </DialogActions>
 </MudDialog>
 
 @code {
-    //TODO: Get validation messages only once during rendering and use the reference for better performance
-    //TODO: Will be a single file when #548 gets done
-    IEnumerable<Exportfile> _exportfiles = [];
     DownloadOptions? _options;
+    String? _fileNameValidationErrorMessage = null;
+    String? _validationErrorMessage = null;
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         _options = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
         base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-        var result = _cuesheetExportService.GenerateExportfile(_options?.CuesheetFilename);
-        if (result.IsSuccess)
-        {
-            _exportfiles = [result.Value!];
-        }
+        SetValidationErrors();
     }
 
     protected override void Dispose(bool disposing)
@@ -75,39 +61,43 @@ along with Foobar.  If not, see
         base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
-    String? GetValidationErrorMessage()
+    async Task OnDownloadClick()
     {
-        String? validationErrorMessage = null;
-        if (_options != null)
+        MudDialog?.Close();
+        var generateExportResult = _cuesheetExportService.GenerateExportfile(_options!.CuesheetFilename);
+        if (generateExportResult.IsSuccess == false)
         {
-            var validationMessages = _validationService.Validate(_options, nameof(DownloadOptions.CuesheetFilename));
-            if (validationMessages.Count() > 0)
-            {
-                validationErrorMessage = String.Join(Environment.NewLine, validationMessages);
-            }
+            throw new InvalidOperationException($"Could not generate export file: {generateExportResult.Error?.Message}");
         }
-        return validationErrorMessage;
+        var exportfile = generateExportResult.Value!;
+        await _blazorDownloadFileService.DownloadFile(exportfile.Name, exportfile.Content, "text/plain");
     }
 
-    String? GetGenerationValidationMessages()
+    void SetValidationErrors()
     {
-        String? validationErrorMessage = null;
+        _validationErrorMessage = null;
         var result = _cuesheetExportService.CanGenerateExportfile(_options?.CuesheetFilename);
         if (result.IsSuccess == false)
         {
-            validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
+            _validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
         }
-        return validationErrorMessage;
+        SetFileNameValidationError();
     }
 
-    async Task CuesheetFilenameChanged(string newFilename)
+    void SetFileNameValidationError()
     {
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, newFilename);
-        var result = _cuesheetExportService.GenerateExportfile(_options?.CuesheetFilename);
-        if (result.IsSuccess)
+        _fileNameValidationErrorMessage = null;
+        var validationMessages = _validationService.Validate(_options, nameof(DownloadOptions.CuesheetFilename));
+        if (validationMessages.Count() > 0)
         {
-            _exportfiles = [result.Value!];
+            _fileNameValidationErrorMessage = String.Join(Environment.NewLine, validationMessages);
         }
+    }
+
+    async Task CuesheetFilenameChanged(string? newFilename)
+    {
+        //TODO: an empty filename is not valid and results in options not beeing stored
+        await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, newFilename);
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
@@ -115,6 +105,7 @@ along with Foobar.  If not, see
         if (option is DownloadOptions downloadOptions)
         {
             _options = downloadOptions;
+            SetValidationErrors();
             StateHasChanged();
         }
     }
