@@ -95,10 +95,10 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync(artist);
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).PressAsync("Tab");
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync(title);
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).FillAsync(artist);
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).PressAsync("Tab");
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "End" }).FillAsync(end);
             foreach (var flag in flagsToSelect)
             {
