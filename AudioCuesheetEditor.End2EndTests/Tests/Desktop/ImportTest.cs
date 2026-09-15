@@ -48,11 +48,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
-        - textbox: Sample Artist 1
+        - combobox: Sample Artist 1
         - button ""Clear""
         - button
       - cell ""Sample Title 1 Clear"":
-        - textbox: Sample Title 1
+        - combobox: Sample Title 1
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -68,11 +68,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
-        - textbox: Sample Artist 2
+        - combobox: Sample Artist 2
         - button ""Clear""
         - button
       - cell ""Sample Title 2 Clear"":
-        - textbox: Sample Title 2
+        - combobox: Sample Title 2
         - button ""Clear""
         - button
       - cell ""00:05:00"":
@@ -89,11 +89,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
-        - textbox: Sample Artist 3
+        - combobox: Sample Artist 3
         - button ""Clear""
         - button
       - cell ""Sample Title 3 Clear"":
-        - textbox: Sample Title 3
+        - combobox: Sample Title 3
         - button ""Clear""
         - button
       - cell ""00:09:23"":
@@ -110,11 +110,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
-        - textbox: Sample Artist 4
+        - combobox: Sample Artist 4
         - button ""Clear""
         - button
       - cell ""Sample Title 4 Clear"":
-        - textbox: Sample Title 4
+        - combobox: Sample Title 4
         - button ""Clear""
         - button
       - cell ""00:15:54"":
@@ -131,11 +131,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
-        - textbox: Sample Artist 5
+        - combobox: Sample Artist 5
         - button ""Clear""
         - button
       - cell ""Sample Title 5 Clear"":
-        - textbox: Sample Title 5
+        - combobox: Sample Title 5
         - button ""Clear""
         - button
       - cell ""00:20:13"":
@@ -152,11 +152,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
-        - textbox: Sample Artist 6
+        - combobox: Sample Artist 6
         - button ""Clear""
         - button
       - cell ""Sample Title 6 Clear"":
-        - textbox: Sample Title 6
+        - combobox: Sample Title 6
         - button ""Clear""
         - button
       - cell ""00:24:54"":
@@ -173,11 +173,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
-        - textbox: Sample Artist 7
+        - combobox: Sample Artist 7
         - button ""Clear""
         - button
       - cell ""Sample Title 7 Clear"":
-        - textbox: Sample Title 7
+        - combobox: Sample Title 7
         - button ""Clear""
         - button
       - cell ""00:31:54"":
@@ -194,11 +194,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
-        - textbox: Sample Artist 8
+        - combobox: Sample Artist 8
         - button ""Clear""
         - button
       - cell ""Sample Title 8 Clear"":
-        - textbox: Sample Title 8
+        - combobox: Sample Title 8
         - button ""Clear""
         - button
       - cell ""00:45:54"":
@@ -245,11 +245,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
-        - textbox: Sample Artist 1
+        - combobox: Sample Artist 1
         - button ""Clear""
         - button
       - cell ""Sample Title 1 Clear"":
-        - textbox: Sample Title 1
+        - combobox: Sample Title 1
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -265,11 +265,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
-        - textbox: Sample Artist 2
+        - combobox: Sample Artist 2
         - button ""Clear""
         - button
       - cell ""Sample Title 2 Clear"":
-        - textbox: Sample Title 2
+        - combobox: Sample Title 2
         - button ""Clear""
         - button
       - cell ""00:05:00"":
@@ -286,11 +286,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
-        - textbox: Sample Artist 3
+        - combobox: Sample Artist 3
         - button ""Clear""
         - button
       - cell ""Sample Title 3 Clear"":
-        - textbox: Sample Title 3
+        - combobox: Sample Title 3
         - button ""Clear""
         - button
       - cell ""00:09:23"":
@@ -307,11 +307,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
-        - textbox: Sample Artist 4
+        - combobox: Sample Artist 4
         - button ""Clear""
         - button
       - cell ""Sample Title 4 Clear"":
-        - textbox: Sample Title 4
+        - combobox: Sample Title 4
         - button ""Clear""
         - button
       - cell ""00:15:54"":
@@ -328,11 +328,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
-        - textbox: Sample Artist 5
+        - combobox: Sample Artist 5
         - button ""Clear""
         - button
       - cell ""Sample Title Edited 5 Clear"":
-        - textbox: Sample Title Edited 5
+        - combobox: Sample Title Edited 5
         - button ""Clear""
         - button
       - cell ""00:20:13"":
@@ -349,11 +349,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
-        - textbox: Sample Artist 6
+        - combobox: Sample Artist 6
         - button ""Clear""
         - button
       - cell ""Sample Title 6 Clear"":
-        - textbox: Sample Title 6
+        - combobox: Sample Title 6
         - button ""Clear""
         - button
       - cell ""00:24:54"":
@@ -370,11 +370,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
-        - textbox: Sample Artist 7
+        - combobox: Sample Artist 7
         - button ""Clear""
         - button
       - cell ""Sample Title 7 Clear"":
-        - textbox: Sample Title 7
+        - combobox: Sample Title 7
         - button ""Clear""
         - button
       - cell ""00:31:54"":
@@ -391,11 +391,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
-        - textbox: Sample Artist 8
+        - combobox: Sample Artist 8
         - button ""Clear""
         - button
       - cell ""Sample Title 8 Clear"":
-        - textbox: Sample Title 8
+        - combobox: Sample Title 8
         - button ""Clear""
         - button
       - cell ""00:45:54"":
@@ -436,11 +436,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Adriatique Clear"":
-        - textbox: Adriatique
+        - combobox: Adriatique
         - button ""Clear""
         - button
       - cell ""X. Clear"":
-        - textbox: X.
+        - combobox: X.
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -455,11 +455,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Third Harmony Clear"":
-        - textbox: Third Harmony
+        - combobox: Third Harmony
         - button ""Clear""
         - button
       - cell ""Fears And Dreams (Original Mix) Clear"":
-        - textbox: Fears And Dreams (Original Mix)
+        - combobox: Fears And Dreams (Original Mix)
         - button ""Clear""
         - button
       - cell ""00:05:24"":
@@ -474,11 +474,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Dele Sosimi Afrobeat Orchestra Clear"":
-        - textbox: Dele Sosimi Afrobeat Orchestra
+        - combobox: Dele Sosimi Afrobeat Orchestra
         - button ""Clear""
         - button
       - cell ""Too Much Information (Laolu Remix; Edit) Clear"":
-        - textbox: Too Much Information (Laolu Remix; Edit)
+        - combobox: Too Much Information (Laolu Remix; Edit)
         - button ""Clear""
         - button
       - cell ""00:10:39"":
@@ -493,11 +493,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Edem, Govan Clear"":
-        - textbox: Edem, Govan
+        - combobox: Edem, Govan
         - button ""Clear""
         - button
       - cell ""Ankh (Onetwo MX Remix) Clear"":
-        - textbox: Ankh (Onetwo MX Remix)
+        - combobox: Ankh (Onetwo MX Remix)
         - button ""Clear""
         - button
       - cell ""00:17:06"":
@@ -512,11 +512,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Jody Wisternoff Clear"":
-        - textbox: Jody Wisternoff
+        - combobox: Jody Wisternoff
         - button ""Clear""
         - button
       - cell ""For All Time (feat. Hendrik Burkhard) (Extended Mix) Clear"":
-        - textbox: For All Time (feat. Hendrik Burkhard) (Extended Mix)
+        - combobox: For All Time (feat. Hendrik Burkhard) (Extended Mix)
         - button ""Clear""
         - button
       - cell ""00:23:21"":
@@ -531,11 +531,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Einmusik Clear"":
-        - textbox: Einmusik
+        - combobox: Einmusik
         - button ""Clear""
         - button
       - cell ""Bead (Original Mix) Clear"":
-        - textbox: Bead (Original Mix)
+        - combobox: Bead (Original Mix)
         - button ""Clear""
         - button
       - cell ""00:29:02"":
@@ -550,11 +550,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sebastien Leger Clear"":
-        - textbox: Sebastien Leger
+        - combobox: Sebastien Leger
         - button ""Clear""
         - button
       - cell ""La Danse du Scorpion Clear"":
-        - textbox: La Danse du Scorpion
+        - combobox: La Danse du Scorpion
         - button ""Clear""
         - button
       - cell ""00:34:27"":
@@ -569,11 +569,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Paul Thomas & Solid Stone Clear"":
-        - textbox: Paul Thomas & Solid Stone
+        - combobox: Paul Thomas & Solid Stone
         - button ""Clear""
         - button
       - cell ""La Bombo (Solid Stone Remix) Clear"":
-        - textbox: La Bombo (Solid Stone Remix)
+        - combobox: La Bombo (Solid Stone Remix)
         - button ""Clear""
         - button
       - cell ""00:40:59"":
@@ -588,11 +588,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""9""
       - cell ""GusGus Clear"":
-        - textbox: GusGus
+        - combobox: GusGus
         - button ""Clear""
         - button
       - cell ""Crossfade (Maceo Plex Mix) Clear"":
-        - textbox: Crossfade (Maceo Plex Mix)
+        - combobox: Crossfade (Maceo Plex Mix)
         - button ""Clear""
         - button
       - cell ""00:46:19"":
@@ -607,11 +607,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""10""
       - cell ""Klangkarussell Clear"":
-        - textbox: Klangkarussell
+        - combobox: Klangkarussell
         - button ""Clear""
         - button
       - cell ""Time (Original Mix) Clear"":
-        - textbox: Time (Original Mix)
+        - combobox: Time (Original Mix)
         - button ""Clear""
         - button
       - cell ""00:52:20"":
@@ -626,11 +626,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""11""
       - cell ""Anysense & Un:said Clear"":
-        - textbox: Anysense & Un:said
+        - combobox: Anysense & Un:said
         - button ""Clear""
         - button
       - cell ""Missing Path (Original Mix) Clear"":
-        - textbox: Missing Path (Original Mix)
+        - combobox: Missing Path (Original Mix)
         - button ""Clear""
         - button
       - cell ""00:56:19"":
@@ -645,11 +645,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""12""
       - cell ""Space Food Clear"":
-        - textbox: Space Food
+        - combobox: Space Food
         - button ""Clear""
         - button
       - cell ""Bombay Clear"":
-        - textbox: Bombay
+        - combobox: Bombay
         - button ""Clear""
         - button
       - cell ""01:01:41"":
@@ -664,11 +664,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""13""
       - cell ""SHDW & Obscure Shape Clear"":
-        - textbox: SHDW & Obscure Shape
+        - combobox: SHDW & Obscure Shape
         - button ""Clear""
         - button
       - cell ""Wächter der Nacht (Original Mix) Clear"":
-        - textbox: Wächter der Nacht (Original Mix)
+        - combobox: Wächter der Nacht (Original Mix)
         - button ""Clear""
         - button
       - cell ""01:06:33"":
@@ -683,11 +683,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""14""
       - cell ""HOSH Clear"":
-        - textbox: HOSH
+        - combobox: HOSH
         - button ""Clear""
         - button
       - cell ""Karma Clear"":
-        - textbox: Karma
+        - combobox: Karma
         - button ""Clear""
         - button
       - cell ""01:11:04"":
@@ -702,11 +702,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""15""
       - cell ""Alexey Union Clear"":
-        - textbox: Alexey Union
+        - combobox: Alexey Union
         - button ""Clear""
         - button
       - cell ""Olympia (Original Mix) Clear"":
-        - textbox: Olympia (Original Mix)
+        - combobox: Olympia (Original Mix)
         - button ""Clear""
         - button
       - cell ""01:15:28"":
@@ -721,11 +721,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""16""
       - cell ""Paul Taylor Clear"":
-        - textbox: Paul Taylor
+        - combobox: Paul Taylor
         - button ""Clear""
         - button
       - cell ""Afterglow Clear"":
-        - textbox: Afterglow
+        - combobox: Afterglow
         - button ""Clear""
         - button
       - cell ""01:21:08"":
@@ -740,11 +740,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""17""
       - cell ""Philter Clear"":
-        - textbox: Philter
+        - combobox: Philter
         - button ""Clear""
         - button
       - cell ""Stranger Clear"":
-        - textbox: Stranger
+        - combobox: Stranger
         - button ""Clear""
         - button
       - cell ""01:25:38"":
@@ -759,11 +759,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""18""
       - cell ""Skizologic Clear"":
-        - textbox: Skizologic
+        - combobox: Skizologic
         - button ""Clear""
         - button
       - cell ""Hypersphere (Original Mix) Clear"":
-        - textbox: Hypersphere (Original Mix)
+        - combobox: Hypersphere (Original Mix)
         - button ""Clear""
         - button
       - cell ""01:31:52"":
@@ -778,11 +778,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""19""
       - cell ""Thomas Schumacher, Caitlin Clear"":
-        - textbox: Thomas Schumacher, Caitlin
+        - combobox: Thomas Schumacher, Caitlin
         - button ""Clear""
         - button
       - cell ""All of You (Remix) Clear"":
-        - textbox: All of You (Remix)
+        - combobox: All of You (Remix)
         - button ""Clear""
         - button
       - cell ""01:36:40"":
@@ -797,11 +797,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""20""
       - cell ""A. Skomoroh Clear"":
-        - textbox: A. Skomoroh
+        - combobox: A. Skomoroh
         - button ""Clear""
         - button
       - cell ""White Horse Conquest (Original Mix) Clear"":
-        - textbox: White Horse Conquest (Original Mix)
+        - combobox: White Horse Conquest (Original Mix)
         - button ""Clear""
         - button
       - cell ""01:42:16"":
@@ -816,11 +816,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""21""
       - cell ""Patrik Berg Clear"":
-        - textbox: Patrik Berg
+        - combobox: Patrik Berg
         - button ""Clear""
         - button
       - cell ""Bright (Original Mix) Clear"":
-        - textbox: Bright (Original Mix)
+        - combobox: Bright (Original Mix)
         - button ""Clear""
         - button
       - cell ""01:47:04"":
@@ -835,11 +835,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""22""
       - cell ""Hidden Empire Clear"":
-        - textbox: Hidden Empire
+        - combobox: Hidden Empire
         - button ""Clear""
         - button
       - cell ""Bengal Clear"":
-        - textbox: Bengal
+        - combobox: Bengal
         - button ""Clear""
         - button
       - cell ""01:52:37"":
@@ -854,11 +854,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""23""
       - cell ""Mario Ochoa Clear"":
-        - textbox: Mario Ochoa
+        - combobox: Mario Ochoa
         - button ""Clear""
         - button
       - cell ""Levitate Clear"":
-        - textbox: Levitate
+        - combobox: Levitate
         - button ""Clear""
         - button
       - cell ""01:58:05"":
@@ -873,11 +873,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""24""
       - cell ""Raul Facio Clear"":
-        - textbox: Raul Facio
+        - combobox: Raul Facio
         - button ""Clear""
         - button
       - cell ""Eyes Wide Shut (Original Mix) Clear"":
-        - textbox: Eyes Wide Shut (Original Mix)
+        - combobox: Eyes Wide Shut (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:03:00"":
@@ -892,11 +892,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""25""
       - cell ""Soolver Clear"":
-        - textbox: Soolver
+        - combobox: Soolver
         - button ""Clear""
         - button
       - cell ""Regular (Original Mix) Clear"":
-        - textbox: Regular (Original Mix)
+        - combobox: Regular (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:08:21"":
@@ -911,11 +911,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""26""
       - cell ""Weska Clear"":
-        - textbox: Weska
+        - combobox: Weska
         - button ""Clear""
         - button
       - cell ""EQ64 (Original Mix) Clear"":
-        - textbox: EQ64 (Original Mix)
+        - combobox: EQ64 (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:14:31"":
@@ -930,11 +930,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""27""
       - cell ""Tempo Giusto Clear"":
-        - textbox: Tempo Giusto
+        - combobox: Tempo Giusto
         - button ""Clear""
         - button
       - cell ""The Fall (Extended Mix) Clear"":
-        - textbox: The Fall (Extended Mix)
+        - combobox: The Fall (Extended Mix)
         - button ""Clear""
         - button
       - cell ""02:18:35"":
@@ -949,11 +949,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""28""
       - cell ""Vlind & Asteroid & Gary Leroy Clear"":
-        - textbox: Vlind & Asteroid & Gary Leroy
+        - combobox: Vlind & Asteroid & Gary Leroy
         - button ""Clear""
         - button
       - cell ""Trinity (Extended Mix) Clear"":
-        - textbox: Trinity (Extended Mix)
+        - combobox: Trinity (Extended Mix)
         - button ""Clear""
         - button
       - cell ""02:24:12"":
@@ -968,11 +968,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""29""
       - cell ""Astral Legacy Clear"":
-        - textbox: Astral Legacy
+        - combobox: Astral Legacy
         - button ""Clear""
         - button
       - cell ""Vaveyla (Original Mix) Clear"":
-        - textbox: Vaveyla (Original Mix)
+        - combobox: Vaveyla (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:29:38"":
@@ -987,11 +987,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""30""
       - cell ""Gerrox Clear"":
-        - textbox: Gerrox
+        - combobox: Gerrox
         - button ""Clear""
         - button
       - cell ""Chakra (Original Mix) Clear"":
-        - textbox: Chakra (Original Mix)
+        - combobox: Chakra (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:32:52"":
@@ -1006,11 +1006,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""31""
       - cell ""Charlotte De Witte Clear"":
-        - textbox: Charlotte De Witte
+        - combobox: Charlotte De Witte
         - button ""Clear""
         - button
       - cell ""Pattern Clear"":
-        - textbox: Pattern
+        - combobox: Pattern
         - button ""Clear""
         - button
       - cell ""02:37:00"":
@@ -1025,11 +1025,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""32""
       - cell ""Space Food Clear"":
-        - textbox: Space Food
+        - combobox: Space Food
         - button ""Clear""
         - button
       - cell ""Amabey Clear"":
-        - textbox: Amabey
+        - combobox: Amabey
         - button ""Clear""
         - button
       - cell ""02:41:55"":
@@ -1044,11 +1044,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""33""
       - cell ""ARTBAT Clear"":
-        - textbox: ARTBAT
+        - combobox: ARTBAT
         - button ""Clear""
         - button
       - cell ""Papilion (Original Mix) Clear"":
-        - textbox: Papilion (Original Mix)
+        - combobox: Papilion (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:46:55"":
@@ -1063,11 +1063,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""34""
       - cell ""PETER PAHN Clear"":
-        - textbox: PETER PAHN
+        - combobox: PETER PAHN
         - button ""Clear""
         - button
       - cell ""Enjoy Infinity (Original Mix) Clear"":
-        - textbox: Enjoy Infinity (Original Mix)
+        - combobox: Enjoy Infinity (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:51:13"":
@@ -1082,11 +1082,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""35""
       - cell ""Solitek Clear"":
-        - textbox: Solitek
+        - combobox: Solitek
         - button ""Clear""
         - button
       - cell ""Instinct (Original Mix) Clear"":
-        - textbox: Instinct (Original Mix)
+        - combobox: Instinct (Original Mix)
         - button ""Clear""
         - button
       - cell ""02:56:08"":
@@ -1101,11 +1101,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""36""
       - cell ""Veerus Clear"":
-        - textbox: Veerus
+        - combobox: Veerus
         - button ""Clear""
         - button
       - cell ""Heavy Clear"":
-        - textbox: Heavy
+        - combobox: Heavy
         - button ""Clear""
         - button
       - cell ""03:00:57"":
@@ -1120,11 +1120,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""37""
       - cell ""Secret Cinema & Reinier Zonneveld Clear"":
-        - textbox: Secret Cinema & Reinier Zonneveld
+        - combobox: Secret Cinema & Reinier Zonneveld
         - button ""Clear""
         - button
       - cell ""Pain Thing (Original Mix) Clear"":
-        - textbox: Pain Thing (Original Mix)
+        - combobox: Pain Thing (Original Mix)
         - button ""Clear""
         - button
       - cell ""03:05:19"":
@@ -1139,11 +1139,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""38""
       - cell ""Amelie Lens Clear"":
-        - textbox: Amelie Lens
+        - combobox: Amelie Lens
         - button ""Clear""
         - button
       - cell ""Hypnotized Clear"":
-        - textbox: Hypnotized
+        - combobox: Hypnotized
         - button ""Clear""
         - button
       - cell ""03:09:38"":
@@ -1158,11 +1158,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""39""
       - cell ""Nikolay Kirov Clear"":
-        - textbox: Nikolay Kirov
+        - combobox: Nikolay Kirov
         - button ""Clear""
         - button
       - cell ""Chasing the Sun (Original Mix) Clear"":
-        - textbox: Chasing the Sun (Original Mix)
+        - combobox: Chasing the Sun (Original Mix)
         - button ""Clear""
         - button
       - cell ""03:13:13"":
@@ -1204,11 +1204,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
-        - textbox: Sample Artist 1
+        - combobox: Sample Artist 1
         - button ""Clear""
         - button
       - cell ""Sample Title 1 Clear"":
-        - textbox: Sample Title 1
+        - combobox: Sample Title 1
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -1223,11 +1223,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
-        - textbox: Sample Artist 2
+        - combobox: Sample Artist 2
         - button ""Clear""
         - button
       - cell ""Sample Title 2 Clear"":
-        - textbox: Sample Title 2
+        - combobox: Sample Title 2
         - button ""Clear""
         - button
       - cell ""00:05:00"":
@@ -1242,11 +1242,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
-        - textbox: Sample Artist 3
+        - combobox: Sample Artist 3
         - button ""Clear""
         - button
       - cell ""Sample Title 3 Clear"":
-        - textbox: Sample Title 3
+        - combobox: Sample Title 3
         - button ""Clear""
         - button
       - cell ""00:09:23"":
@@ -1261,11 +1261,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
-        - textbox: Sample Artist 4
+        - combobox: Sample Artist 4
         - button ""Clear""
         - button
       - cell ""Sample Title 4 Clear"":
-        - textbox: Sample Title 4
+        - combobox: Sample Title 4
         - button ""Clear""
         - button
       - cell ""00:15:54"":
@@ -1280,11 +1280,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
-        - textbox: Sample Artist 5
+        - combobox: Sample Artist 5
         - button ""Clear""
         - button
       - cell ""Sample Title 5 Clear"":
-        - textbox: Sample Title 5
+        - combobox: Sample Title 5
         - button ""Clear""
         - button
       - cell ""00:20:13"":
@@ -1299,11 +1299,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
-        - textbox: Sample Artist 6
+        - combobox: Sample Artist 6
         - button ""Clear""
         - button
       - cell ""Sample Title 6 Clear"":
-        - textbox: Sample Title 6
+        - combobox: Sample Title 6
         - button ""Clear""
         - button
       - cell ""00:24:54"":
@@ -1318,11 +1318,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
-        - textbox: Sample Artist 7
+        - combobox: Sample Artist 7
         - button ""Clear""
         - button
       - cell ""Sample Title 7 Clear"":
-        - textbox: Sample Title 7
+        - combobox: Sample Title 7
         - button ""Clear""
         - button
       - cell ""00:31:54"":
@@ -1337,11 +1337,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
-        - textbox: Sample Artist 8
+        - combobox: Sample Artist 8
         - button ""Clear""
         - button
       - cell ""Sample Title 8 Clear"":
-        - textbox: Sample Title 8
+        - combobox: Sample Title 8
         - button ""Clear""
         - button
       - cell ""00:45:54"":
@@ -1382,11 +1382,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Nachap Clear"":
-        - textbox: Nachap
+        - combobox: Nachap
         - button ""Clear""
         - button
       - cell ""Glass Clear"":
-        - textbox: Glass
+        - combobox: Glass
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -1402,10 +1402,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell:
-        - textbox
+        - combobox
         - button
       - cell ""Progressive + Melodic DECK Clear"":
-        - textbox: Progressive + Melodic DECK
+        - combobox: Progressive + Melodic DECK
         - button ""Clear""
         - button
       - cell ""00:11:56"":
@@ -1422,11 +1422,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Nomer 21 Clear"":
-        - textbox: Nomer 21
+        - combobox: Nomer 21
         - button ""Clear""
         - button
       - cell ""Depersonalization Clear"":
-        - textbox: Depersonalization
+        - combobox: Depersonalization
         - button ""Clear""
         - button
       - cell ""00:13:31"":
@@ -1443,11 +1443,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
-        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - combobox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
         - button
       - cell ""Showing Off Clear"":
-        - textbox: Showing Off
+        - combobox: Showing Off
         - button ""Clear""
         - button
       - cell ""00:19:14"":
@@ -1464,11 +1464,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Carlo Whale Clear"":
-        - textbox: Carlo Whale
+        - combobox: Carlo Whale
         - button ""Clear""
         - button
       - cell ""Unconscious Clear"":
-        - textbox: Unconscious
+        - combobox: Unconscious
         - button ""Clear""
         - button
       - cell ""00:24:02"":
@@ -1485,11 +1485,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Arba Han Clear"":
-        - textbox: Arba Han
+        - combobox: Arba Han
         - button ""Clear""
         - button
       - cell ""Timelaps Clear"":
-        - textbox: Timelaps
+        - combobox: Timelaps
         - button ""Clear""
         - button
       - cell ""00:29:37"":
@@ -1506,11 +1506,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Savill Clear"":
-        - textbox: Savill
+        - combobox: Savill
         - button ""Clear""
         - button
       - cell ""Energy Surrounds Clear"":
-        - textbox: Energy Surrounds
+        - combobox: Energy Surrounds
         - button ""Clear""
         - button
       - cell ""00:33:13"":
@@ -1527,11 +1527,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Teklix Clear"":
-        - textbox: Teklix
+        - combobox: Teklix
         - button ""Clear""
         - button
       - cell ""The Tribal Code Clear"":
-        - textbox: The Tribal Code
+        - combobox: The Tribal Code
         - button ""Clear""
         - button
       - cell ""00:40:30"":
@@ -1548,11 +1548,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""9""
       - cell ""Neuralis Clear"":
-        - textbox: Neuralis
+        - combobox: Neuralis
         - button ""Clear""
         - button
       - cell ""I'm Looking for Answers Clear"":
-        - textbox: I'm Looking for Answers
+        - combobox: I'm Looking for Answers
         - button ""Clear""
         - button
       - cell ""00:48:53"":
@@ -1569,11 +1569,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""10""
       - cell ""Nopopstar &amp; Arsia Clear"":
-        - textbox: Nopopstar &amp; Arsia
+        - combobox: Nopopstar &amp; Arsia
         - button ""Clear""
         - button
       - cell ""Dirty Moves Clear"":
-        - textbox: Dirty Moves
+        - combobox: Dirty Moves
         - button ""Clear""
         - button
       - cell ""00:54:34"":
@@ -1590,11 +1590,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""11""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
-        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - combobox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
         - button
       - cell ""Lost (Maze 28 Remix) Clear"":
-        - textbox: Lost (Maze 28 Remix)
+        - combobox: Lost (Maze 28 Remix)
         - button ""Clear""
         - button
       - cell ""01:00:24"":
@@ -1611,11 +1611,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""12""
       - cell ""SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
-        - textbox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - combobox: SevenEver, Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
         - button
       - cell ""Lost (Redspace Remix) Clear"":
-        - textbox: Lost (Redspace Remix)
+        - combobox: Lost (Redspace Remix)
         - button ""Clear""
         - button
       - cell ""01:05:17"":
@@ -1632,11 +1632,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""13""
       - cell ""Gadoz Clear"":
-        - textbox: Gadoz
+        - combobox: Gadoz
         - button ""Clear""
         - button
       - cell ""5d Clear"":
-        - textbox: 5d
+        - combobox: 5d
         - button ""Clear""
         - button
       - cell ""01:08:22"":
@@ -1653,11 +1653,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""14""
       - cell ""DJ Danzik Clear"":
-        - textbox: DJ Danzik
+        - combobox: DJ Danzik
         - button ""Clear""
         - button
       - cell ""Out of Space Clear"":
-        - textbox: Out of Space
+        - combobox: Out of Space
         - button ""Clear""
         - button
       - cell ""01:16:34"":
@@ -1674,11 +1674,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""15""
       - cell ""Enis Çoban Clear"":
-        - textbox: Enis Çoban
+        - combobox: Enis Çoban
         - button ""Clear""
         - button
       - cell ""Internet Clear"":
-        - textbox: Internet
+        - combobox: Internet
         - button ""Clear""
         - button
       - cell ""01:19:22"":
@@ -1695,11 +1695,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""16""
       - cell ""Cold Mind &amp; Alex Yikker Clear"":
-        - textbox: Cold Mind &amp; Alex Yikker
+        - combobox: Cold Mind &amp; Alex Yikker
         - button ""Clear""
         - button
       - cell ""Rage Clear"":
-        - textbox: Rage
+        - combobox: Rage
         - button ""Clear""
         - button
       - cell ""01:25:14"":
@@ -1716,11 +1716,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""17""
       - cell ""Maze 28 Clear"":
-        - textbox: Maze 28
+        - combobox: Maze 28
         - button ""Clear""
         - button
       - cell ""Sol (JAHAYA Remix) Clear"":
-        - textbox: Sol (JAHAYA Remix)
+        - combobox: Sol (JAHAYA Remix)
         - button ""Clear""
         - button
       - cell ""01:31:33"":
@@ -1737,11 +1737,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""18""
       - cell ""Alex Grafton Clear"":
-        - textbox: Alex Grafton
+        - combobox: Alex Grafton
         - button ""Clear""
         - button
       - cell ""Hi Baby Clear"":
-        - textbox: Hi Baby
+        - combobox: Hi Baby
         - button ""Clear""
         - button
       - cell ""01:32:51"":
@@ -1758,11 +1758,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""19""
       - cell ""Che&amp;Mos &amp; Halo Far Clear"":
-        - textbox: Che&amp;Mos &amp; Halo Far
+        - combobox: Che&amp;Mos &amp; Halo Far
         - button ""Clear""
         - button
       - cell ""Daddy Clear"":
-        - textbox: Daddy
+        - combobox: Daddy
         - button ""Clear""
         - button
       - cell ""01:42:13"":
@@ -1779,11 +1779,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""20""
       - cell ""K KARDEN Clear"":
-        - textbox: K KARDEN
+        - combobox: K KARDEN
         - button ""Clear""
         - button
       - cell ""Acid Rain Clear"":
-        - textbox: Acid Rain
+        - combobox: Acid Rain
         - button ""Clear""
         - button
       - cell ""01:45:22"":
@@ -1800,11 +1800,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""21""
       - cell ""Dobrov &amp; Gar1sson Clear"":
-        - textbox: Dobrov &amp; Gar1sson
+        - combobox: Dobrov &amp; Gar1sson
         - button ""Clear""
         - button
       - cell ""Analogic (Redspace Remix) Clear"":
-        - textbox: Analogic (Redspace Remix)
+        - combobox: Analogic (Redspace Remix)
         - button ""Clear""
         - button
       - cell ""01:48:40"":
@@ -1821,11 +1821,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""22""
       - cell ""Gazfluz Clear"":
-        - textbox: Gazfluz
+        - combobox: Gazfluz
         - button ""Clear""
         - button
       - cell ""Vargan Clear"":
-        - textbox: Vargan
+        - combobox: Vargan
         - button ""Clear""
         - button
       - cell ""01:56:40"":
@@ -1842,11 +1842,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""23""
       - cell ""SHKAPOV Clear"":
-        - textbox: SHKAPOV
+        - combobox: SHKAPOV
         - button ""Clear""
         - button
       - cell ""Control Clear"":
-        - textbox: Control
+        - combobox: Control
         - button ""Clear""
         - button
       - cell ""02:00:39"":
@@ -1863,11 +1863,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""24""
       - cell ""QazaQ Clear"":
-        - textbox: QazaQ
+        - combobox: QazaQ
         - button ""Clear""
         - button
       - cell ""On the Line Clear"":
-        - textbox: On the Line
+        - combobox: On the Line
         - button ""Clear""
         - button
       - cell ""02:06:47"":
@@ -1884,11 +1884,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""25""
       - cell ""Alex Schaufel Clear"":
-        - textbox: Alex Schaufel
+        - combobox: Alex Schaufel
         - button ""Clear""
         - button
       - cell ""Elizabeth (Larsun Hesh Remix) Clear"":
-        - textbox: Elizabeth (Larsun Hesh Remix)
+        - combobox: Elizabeth (Larsun Hesh Remix)
         - button ""Clear""
         - button
       - cell ""02:09:09"":
@@ -1905,11 +1905,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""26""
       - cell ""Oiro Clear"":
-        - textbox: Oiro
+        - combobox: Oiro
         - button ""Clear""
         - button
       - cell ""Just Business Clear"":
-        - textbox: Just Business
+        - combobox: Just Business
         - button ""Clear""
         - button
       - cell ""02:14:18"":
@@ -1926,11 +1926,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""27""
       - cell ""Molex Clear"":
-        - textbox: Molex
+        - combobox: Molex
         - button ""Clear""
         - button
       - cell ""Mind Split (Redspace Remix) Clear"":
-        - textbox: Mind Split (Redspace Remix)
+        - combobox: Mind Split (Redspace Remix)
         - button ""Clear""
         - button
       - cell ""02:19:22"":
@@ -1947,11 +1947,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""28""
       - cell ""SOLI Clear"":
-        - textbox: SOLI
+        - combobox: SOLI
         - button ""Clear""
         - button
       - cell ""Give Me Your Mind Clear"":
-        - textbox: Give Me Your Mind
+        - combobox: Give Me Your Mind
         - button ""Clear""
         - button
       - cell ""02:27:48"":
@@ -1968,11 +1968,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""29""
       - cell ""MANDU Clear"":
-        - textbox: MANDU
+        - combobox: MANDU
         - button ""Clear""
         - button
       - cell ""Jacky Clear"":
-        - textbox: Jacky
+        - combobox: Jacky
         - button ""Clear""
         - button
       - cell ""02:33:48"":
@@ -1989,11 +1989,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""30""
       - cell ""SOLI Clear"":
-        - textbox: SOLI
+        - combobox: SOLI
         - button ""Clear""
         - button
       - cell ""Spacetoon Clear"":
-        - textbox: Spacetoon
+        - combobox: Spacetoon
         - button ""Clear""
         - button
       - cell ""02:39:05"":
@@ -2010,11 +2010,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""31""
       - cell ""Sasha Fashion Clear"":
-        - textbox: Sasha Fashion
+        - combobox: Sasha Fashion
         - button ""Clear""
         - button
       - cell ""Moqton Clear"":
-        - textbox: Moqton
+        - combobox: Moqton
         - button ""Clear""
         - button
       - cell ""02:41:31"":
@@ -2031,11 +2031,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""32""
       - cell ""NAASA Clear"":
-        - textbox: NAASA
+        - combobox: NAASA
         - button ""Clear""
         - button
       - cell ""Poison Clear"":
-        - textbox: Poison
+        - combobox: Poison
         - button ""Clear""
         - button
       - cell ""02:50:18"":
@@ -2052,11 +2052,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""33""
       - cell ""Nopopstar, 2JOHN'S &amp; Eugene Jay Clear"":
-        - textbox: Nopopstar, 2JOHN'S &amp; Eugene Jay
+        - combobox: Nopopstar, 2JOHN'S &amp; Eugene Jay
         - button ""Clear""
         - button
       - cell ""Nightlong Clear"":
-        - textbox: Nightlong
+        - combobox: Nightlong
         - button ""Clear""
         - button
       - cell ""02:56:45"":
@@ -2073,11 +2073,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""34""
       - cell ""Skillz jay Clear"":
-        - textbox: Skillz jay
+        - combobox: Skillz jay
         - button ""Clear""
         - button
       - cell ""Choir Clear"":
-        - textbox: Choir
+        - combobox: Choir
         - button ""Clear""
         - button
       - cell ""02:59:14"":
@@ -2094,11 +2094,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""35""
       - cell ""Kovax Clear"":
-        - textbox: Kovax
+        - combobox: Kovax
         - button ""Clear""
         - button
       - cell ""Controller Clear"":
-        - textbox: Controller
+        - combobox: Controller
         - button ""Clear""
         - button
       - cell ""03:05:49"":
@@ -2115,11 +2115,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""36""
       - cell ""Mumboi Clear"":
-        - textbox: Mumboi
+        - combobox: Mumboi
         - button ""Clear""
         - button
       - cell ""Just a Beat Clear"":
-        - textbox: Just a Beat
+        - combobox: Just a Beat
         - button ""Clear""
         - button
       - cell ""03:08:31"":
@@ -2136,11 +2136,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""37""
       - cell ""Eclept Clear"":
-        - textbox: Eclept
+        - combobox: Eclept
         - button ""Clear""
         - button
       - cell ""Sprut Clear"":
-        - textbox: Sprut
+        - combobox: Sprut
         - button ""Clear""
         - button
       - cell ""03:15:18"":
@@ -2157,11 +2157,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""38""
       - cell ""Rudensky Clear"":
-        - textbox: Rudensky
+        - combobox: Rudensky
         - button ""Clear""
         - button
       - cell ""Dark Escort Clear"":
-        - textbox: Dark Escort
+        - combobox: Dark Escort
         - button ""Clear""
         - button
       - cell ""03:20:35"":
@@ -2178,11 +2178,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""39""
       - cell ""Alexey Union, Kinky Sound &amp; KOCHETOV Clear"":
-        - textbox: Alexey Union, Kinky Sound &amp; KOCHETOV
+        - combobox: Alexey Union, Kinky Sound &amp; KOCHETOV
         - button ""Clear""
         - button
       - cell ""Connected Clear"":
-        - textbox: Connected
+        - combobox: Connected
         - button ""Clear""
         - button
       - cell ""03:25:02"":
@@ -2199,11 +2199,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""40""
       - cell ""ANMA (MD) Clear"":
-        - textbox: ANMA (MD)
+        - combobox: ANMA (MD)
         - button ""Clear""
         - button
       - cell ""Space Yoda (Snyl Remix) Clear"":
-        - textbox: Space Yoda (Snyl Remix)
+        - combobox: Space Yoda (Snyl Remix)
         - button ""Clear""
         - button
       - cell ""03:32:30"":
@@ -2220,11 +2220,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""41""
       - cell ""Inache Clear"":
-        - textbox: Inache
+        - combobox: Inache
         - button ""Clear""
         - button
       - cell ""Andale (MONTA (TN) Remix) Clear"":
-        - textbox: Andale (MONTA (TN) Remix)
+        - combobox: Andale (MONTA (TN) Remix)
         - button ""Clear""
         - button
       - cell ""03:37:53"":
@@ -2267,11 +2267,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
-        - textbox: Sample Artist 1
+        - combobox: Sample Artist 1
         - button ""Clear""
         - button
       - cell ""Sample Title 1 Clear"":
-        - textbox: Sample Title 1
+        - combobox: Sample Title 1
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -2287,11 +2287,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
-        - textbox: Sample Artist 2
+        - combobox: Sample Artist 2
         - button ""Clear""
         - button
       - cell ""Sample Title 2 Clear"":
-        - textbox: Sample Title 2
+        - combobox: Sample Title 2
         - button ""Clear""
         - button
       - cell ""00:05:00"":
@@ -2308,11 +2308,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
-        - textbox: Sample Artist 3
+        - combobox: Sample Artist 3
         - button ""Clear""
         - button
       - cell ""Sample Title 3 Clear"":
-        - textbox: Sample Title 3
+        - combobox: Sample Title 3
         - button ""Clear""
         - button
       - cell ""00:09:23"":
@@ -2329,11 +2329,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
-        - textbox: Sample Artist 4
+        - combobox: Sample Artist 4
         - button ""Clear""
         - button
       - cell ""Sample Title 4 Clear"":
-        - textbox: Sample Title 4
+        - combobox: Sample Title 4
         - button ""Clear""
         - button
       - cell ""00:15:54"":
@@ -2350,11 +2350,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
-        - textbox: Sample Artist 5
+        - combobox: Sample Artist 5
         - button ""Clear""
         - button
       - cell ""Sample Title 5 Clear"":
-        - textbox: Sample Title 5
+        - combobox: Sample Title 5
         - button ""Clear""
         - button
       - cell ""00:20:13"":
@@ -2371,11 +2371,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
-        - textbox: Sample Artist 6
+        - combobox: Sample Artist 6
         - button ""Clear""
         - button
       - cell ""Sample Title 6 Clear"":
-        - textbox: Sample Title 6
+        - combobox: Sample Title 6
         - button ""Clear""
         - button
       - cell ""00:24:54"":
@@ -2392,11 +2392,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
-        - textbox: Sample Artist 7
+        - combobox: Sample Artist 7
         - button ""Clear""
         - button
       - cell ""Sample Title 7 Clear"":
-        - textbox: Sample Title 7
+        - combobox: Sample Title 7
         - button ""Clear""
         - button
       - cell ""00:31:54"":
@@ -2413,11 +2413,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
-        - textbox: Sample Artist 8
+        - combobox: Sample Artist 8
         - button ""Clear""
         - button
       - cell ""Sample Title 8 Clear"":
-        - textbox: Sample Title 8
+        - combobox: Sample Title 8
         - button ""Clear""
         - button
       - cell ""00:45:54"":
@@ -2462,11 +2462,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
-        - textbox: Sample Artist 1
+        - combobox: Sample Artist 1
         - button ""Clear""
         - button
       - cell ""Sample Title 1 Clear"":
-        - textbox: Sample Title 1
+        - combobox: Sample Title 1
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -2482,11 +2482,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
-        - textbox: Sample Artist 2
+        - combobox: Sample Artist 2
         - button ""Clear""
         - button
       - cell ""Sample Title 2 Clear"":
-        - textbox: Sample Title 2
+        - combobox: Sample Title 2
         - button ""Clear""
         - button
       - cell ""00:05:00"":
@@ -2503,11 +2503,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
-        - textbox: Sample Artist 3
+        - combobox: Sample Artist 3
         - button ""Clear""
         - button
       - cell ""Sample Title 3 Clear"":
-        - textbox: Sample Title 3
+        - combobox: Sample Title 3
         - button ""Clear""
         - button
       - cell ""00:09:23"":
@@ -2524,11 +2524,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
-        - textbox: Sample Artist 4
+        - combobox: Sample Artist 4
         - button ""Clear""
         - button
       - cell ""Sample Title 4 Clear"":
-        - textbox: Sample Title 4
+        - combobox: Sample Title 4
         - button ""Clear""
         - button
       - cell ""00:15:54"":
@@ -2545,11 +2545,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
-        - textbox: Sample Artist 5
+        - combobox: Sample Artist 5
         - button ""Clear""
         - button
       - cell ""Sample Title 5 Clear"":
-        - textbox: Sample Title 5
+        - combobox: Sample Title 5
         - button ""Clear""
         - button
       - cell ""00:20:13"":
@@ -2566,11 +2566,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
-        - textbox: Sample Artist 6
+        - combobox: Sample Artist 6
         - button ""Clear""
         - button
       - cell ""Sample Title 6 Clear"":
-        - textbox: Sample Title 6
+        - combobox: Sample Title 6
         - button ""Clear""
         - button
       - cell ""00:24:54"":
@@ -2587,11 +2587,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
-        - textbox: Sample Artist 7
+        - combobox: Sample Artist 7
         - button ""Clear""
         - button
       - cell ""Sample Title 7 Clear"":
-        - textbox: Sample Title 7
+        - combobox: Sample Title 7
         - button ""Clear""
         - button
       - cell ""00:31:54"":
@@ -2608,11 +2608,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
-        - textbox: Sample Artist 8
+        - combobox: Sample Artist 8
         - button ""Clear""
         - button
       - cell ""Sample Title 8 Clear"":
-        - textbox: Sample Title 8
+        - combobox: Sample Title 8
         - button ""Clear""
         - button
       - cell ""00:45:54"":
@@ -2657,11 +2657,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""1""
       - cell ""Sample Artist 1 Clear"":
-        - textbox: Sample Artist 1
+        - combobox: Sample Artist 1
         - button ""Clear""
         - button
       - cell ""Sample Title 1 Clear"":
-        - textbox: Sample Title 1
+        - combobox: Sample Title 1
         - button ""Clear""
         - button
       - cell ""00:00:00"":
@@ -2677,11 +2677,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""2""
       - cell ""Sample Artist 2 Clear"":
-        - textbox: Sample Artist 2
+        - combobox: Sample Artist 2
         - button ""Clear""
         - button
       - cell ""Sample Title 2 Clear"":
-        - textbox: Sample Title 2
+        - combobox: Sample Title 2
         - button ""Clear""
         - button
       - cell ""00:05:00"":
@@ -2698,11 +2698,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""3""
       - cell ""Sample Artist 3 Clear"":
-        - textbox: Sample Artist 3
+        - combobox: Sample Artist 3
         - button ""Clear""
         - button
       - cell ""Sample Title 3 Clear"":
-        - textbox: Sample Title 3
+        - combobox: Sample Title 3
         - button ""Clear""
         - button
       - cell ""00:09:23"":
@@ -2719,11 +2719,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""4""
       - cell ""Sample Artist 4 Clear"":
-        - textbox: Sample Artist 4
+        - combobox: Sample Artist 4
         - button ""Clear""
         - button
       - cell ""Sample Title 4 Clear"":
-        - textbox: Sample Title 4
+        - combobox: Sample Title 4
         - button ""Clear""
         - button
       - cell ""00:15:54"":
@@ -2740,11 +2740,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""5""
       - cell ""Sample Artist 5 Clear"":
-        - textbox: Sample Artist 5
+        - combobox: Sample Artist 5
         - button ""Clear""
         - button
       - cell ""Sample Title 5 Clear"":
-        - textbox: Sample Title 5
+        - combobox: Sample Title 5
         - button ""Clear""
         - button
       - cell ""00:20:13"":
@@ -2761,11 +2761,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""6""
       - cell ""Sample Artist 6 Clear"":
-        - textbox: Sample Artist 6
+        - combobox: Sample Artist 6
         - button ""Clear""
         - button
       - cell ""Sample Title 6 Clear"":
-        - textbox: Sample Title 6
+        - combobox: Sample Title 6
         - button ""Clear""
         - button
       - cell ""00:24:54"":
@@ -2782,11 +2782,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""7""
       - cell ""Sample Artist 7 Clear"":
-        - textbox: Sample Artist 7
+        - combobox: Sample Artist 7
         - button ""Clear""
         - button
       - cell ""Sample Title 7 Clear"":
-        - textbox: Sample Title 7
+        - combobox: Sample Title 7
         - button ""Clear""
         - button
       - cell ""00:31:54"":
@@ -2803,11 +2803,11 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - text: Select row
       - cell ""8""
       - cell ""Sample Artist 8 Clear"":
-        - textbox: Sample Artist 8
+        - combobox: Sample Artist 8
         - button ""Clear""
         - button
       - cell ""Sample Title 8 Clear"":
-        - textbox: Sample Title 8
+        - combobox: Sample Title 8
         - button ""Clear""
         - button
       - cell ""00:45:54"":

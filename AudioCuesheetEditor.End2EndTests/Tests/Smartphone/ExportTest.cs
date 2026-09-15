@@ -110,7 +110,7 @@ FILE ""Kalimba.mp3"" MP3
             await detailView.EditTrackAsync("Track Artist 11", "Track Title 11", new TimeSpan(0, 5, 0), new TimeSpan(0, 5, 30), 11);
             await detailView.EditTrackAsync("Track Artist 12", "Track Title 12", new TimeSpan(0, 5, 30), null, 12);
             await bar.OpenExportDialogAsync("Textfile");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next", Exact = true }).ClickAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Generate export" }).ClickAsync();
             //TODO: Assert scrollbars
             var downloadTask = TestPage.WaitForDownloadAsync();
             await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
