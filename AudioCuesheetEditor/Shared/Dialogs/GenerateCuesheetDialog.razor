@@ -35,7 +35,7 @@ along with Foobar.  If not, see
                       Error="String.IsNullOrEmpty(_fileNameValidationErrorMessage) == false" ErrorText="@_fileNameValidationErrorMessage" />
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="OnDownloadClick" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false">@_localizer["Download"]</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="OnDownloadClick" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false || String.IsNullOrEmpty(_fileNameValidationErrorMessage) == false">@_localizer["Download"]</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -70,7 +70,7 @@ along with Foobar.  If not, see
             throw new InvalidOperationException($"Could not generate export file: {generateExportResult.Error?.Message}");
         }
         var exportfile = generateExportResult.Value!;
-        await _blazorDownloadFileService.DownloadFile(exportfile.Name, exportfile.Content, "text/plain");
+        await _blazorDownloadFileService.DownloadFileFromText(exportfile.Name, exportfile.Content, System.Text.Encoding.Default, "text/plain");
     }
 
     void SetValidationErrors()
@@ -96,8 +96,11 @@ along with Foobar.  If not, see
 
     async Task CuesheetFilenameChanged(string? newFilename)
     {
-        //TODO: an empty filename is not valid and results in options not beeing stored
-        await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, newFilename);
+        var result = await LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, newFilename);
+        if (result.IsSuccess == false)
+        {
+            _fileNameValidationErrorMessage = result.Error?.Message;
+        }
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
