@@ -117,16 +117,79 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Configure export" xml:space="preserve">
-    <value>Export konfigurieren</value>
+  <data name="Artist" xml:space="preserve">
+    <value>Artist</value>
   </data>
-  <data name="Export is currently not possible:" xml:space="preserve">
-    <value>Export ist derzeit nicht möglich:</value>
+  <data name="Audiofile" xml:space="preserve">
+    <value>Audiofile</value>
   </data>
-  <data name="Generate export" xml:space="preserve">
-    <value>Export erzeugen</value>
+  <data name="Cataloguenumber" xml:space="preserve">
+    <value>Cataloguenumber</value>
   </data>
-  <data name="View export" xml:space="preserve">
-    <value>Export anzeigen</value>
+  <data name="CDTextfile" xml:space="preserve">
+    <value>CDTextfile</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DateTime" xml:space="preserve">
+    <value>Date &amp; Time</value>
+  </data>
+  <data name="Enter the audiofiles scheme for this profile here" xml:space="preserve">
+    <value>Enter the audiofiles scheme for this profile here</value>
+  </data>
+  <data name="Enter the filename for this profile here" xml:space="preserve">
+    <value>Enter the filename for this profile here</value>
+  </data>
+  <data name="Enter the footer scheme for this profile here" xml:space="preserve">
+    <value>Enter the footer scheme for this profile here</value>
+  </data>
+  <data name="Enter the header scheme for this profile here" xml:space="preserve">
+    <value>Enter the header scheme for this profile here</value>
+  </data>
+  <data name="Enter the name for this profile here" xml:space="preserve">
+    <value>Enter the name for this profile here</value>
+  </data>
+  <data name="Enter the tracks scheme for this profile here" xml:space="preserve">
+    <value>Enter the tracks scheme for this profile here</value>
+  </data>
+  <data name="Filename" xml:space="preserve">
+    <value>Filename</value>
+  </data>
+  <data name="Flags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="Length" xml:space="preserve">
+    <value>Length</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="PostGap" xml:space="preserve">
+    <value>PostGap</value>
+  </data>
+  <data name="PreGap" xml:space="preserve">
+    <value>PreGap</value>
+  </data>
+  <data name="Scheme Audiofiles" xml:space="preserve">
+    <value>Scheme Audiofiles</value>
+  </data>
+  <data name="Scheme footer" xml:space="preserve">
+    <value>Scheme footer</value>
+  </data>
+  <data name="Scheme head" xml:space="preserve">
+    <value>Scheme head</value>
+  </data>
+  <data name="Scheme tracks" xml:space="preserve">
+    <value>Scheme tracks</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
   </data>
 </root>

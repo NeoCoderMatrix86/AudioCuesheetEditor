@@ -23,7 +23,9 @@ along with Foobar.  If not, see
 @inject ISnackbar _snackbar
 
 <MudField Variant="Variant.Outlined">
-    <MudTextField Lines="@_lineCount" ReadOnly Value="@Exportfile?.Content" FullWidth Underline="false" />
+    <MudPaper Elevation="0" MaxHeight="50vh" Style="overflow: auto">
+        <pre>@Exportfile?.Content</pre>
+    </MudPaper>
     <MudStack Row Justify="Justify.FlexEnd">
         <MudButton Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.CopyAll" OnClick='() => CopyClipboardClicked()' aria-label="Copy to clipboard">@_localizer["Copy"]</MudButton>
         <MudIconButton Color="Color.Success" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Outlined.FileDownload" OnClick='() => _blazorDownloadFileService.DownloadFileFromText(Exportfile?.Name, Exportfile?.Content, System.Text.Encoding.Default, "text/plain")' aria-label="Download" />
@@ -31,17 +33,9 @@ along with Foobar.  If not, see
 </MudField>
 
 @code {
-    private int _lineCount;
-
     [Parameter]
     [EditorRequired]
     public Exportfile? Exportfile { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        _lineCount = Exportfile?.Content?.Split(Environment.NewLine).Length ?? 1;
-    }
 
     async Task CopyClipboardClicked()
     {

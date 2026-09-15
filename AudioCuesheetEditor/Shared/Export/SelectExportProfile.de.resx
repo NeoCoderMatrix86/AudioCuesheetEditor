@@ -117,16 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Configure export" xml:space="preserve">
-    <value>Export konfigurieren</value>
+  <data name="Add new export profile" xml:space="preserve">
+    <value>Neues Exportprofil hinzufügen</value>
   </data>
-  <data name="Export is currently not possible:" xml:space="preserve">
-    <value>Export ist derzeit nicht möglich:</value>
+  <data name="Delete selected export profile" xml:space="preserve">
+    <value>Ausgewähltes Exportprofil löschen</value>
   </data>
-  <data name="Generate export" xml:space="preserve">
-    <value>Export erzeugen</value>
-  </data>
-  <data name="View export" xml:space="preserve">
-    <value>Export anzeigen</value>
+  <data name="Select export profile" xml:space="preserve">
+    <value>Exportprofil auswählen</value>
   </data>
 </root>

@@ -52,23 +52,23 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).Nth(audiofileIndex).ClickAsync();
         }
 
-        internal async Task EditTrackAsync(string? artist = null, string? title = null)
+        internal async Task EditTrackAsync(string? artist = null, string? title = null, TimeSpan? begin = null, TimeSpan? end = null, int trackPosition = 1)
         {
             if (artist != null)
             {
-                await _page.Locator("td:nth-child(3)").ClickAsync();
-                await _page.Locator("td:nth-child(3)").Last.GetByRole(AriaRole.Textbox).FillAsync(artist);
-                // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-                await _page.WaitForTimeoutAsync(100);
+                await EditTrackFieldAsync(trackPosition, "Artist", artist);
             }
             if (title != null)
             {
-                await _page.Locator("td:nth-child(4)").ClickAsync();
-                await _page.Locator("td:nth-child(4)").Last.GetByRole(AriaRole.Textbox).FillAsync(title);
-                // Click outside the autocomplete to have an focus lost event for getting the value written to model
-                await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-                await _page.WaitForTimeoutAsync(100);
+                await EditTrackFieldAsync(trackPosition, "Title", title);
+            }
+            if (begin != null)
+            {
+                await EditTrackFieldAsync(trackPosition, "Begin", begin.ToString() ?? string.Empty);
+            }
+            if (end != null)
+            {
+                await EditTrackFieldAsync(trackPosition, "End", end.ToString() ?? string.Empty);
             }
         }
 
@@ -95,10 +95,10 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).FillAsync(artist);
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Artist", Exact = true }).PressAsync("Tab");
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync(title);
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).FillAsync(artist);
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).PressAsync("Tab");
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
             await _page.GetByRole(AriaRole.Textbox, new() { Name = "End" }).FillAsync(end);
             foreach (var flag in flagsToSelect)
             {
@@ -118,6 +118,18 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         {
             await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).GetByLabel("More").ClickAsync();
             await _page.GetByText("Rename file").ClickAsync();
+        }
+
+        async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)
+        {
+            var row = _page.Locator("tbody tr:not([aria-hidden='true'])").Nth(trackPosition - 1);
+            var cell = row.Locator($"td[data-label='{dataLabel}']");
+            await cell.ClickAsync();
+            var textbox = cell.Locator("input[type='text']");
+            await textbox.FillAsync(value);
+            // Click outside the autocomplete to have an focus lost event for getting the value written to model
+            await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
+            await _page.WaitForTimeoutAsync(100);
         }
     }
 }
