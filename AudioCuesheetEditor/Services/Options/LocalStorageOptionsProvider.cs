@@ -64,7 +64,6 @@ namespace AudioCuesheetEditor.Services.Options
 
         public async Task<Result> SaveOptionsAsync(IOptions options)
         {
-            //TODO: Tests
             if (options is IValidateable validateable)
             {
                 var validationResult = validateable.Validate();
@@ -72,14 +71,9 @@ namespace AudioCuesheetEditor.Services.Options
                 {
                     return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
                 }
-                await WriteOptionsAsync(options);
-                return Result.Success();
             }
-            else
-            {
-                await WriteOptionsAsync(options);
-                return Result.Success();
-            }
+            await WriteOptionsAsync(options);
+            return Result.Success();
         }
 
         public async Task<Result> SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
