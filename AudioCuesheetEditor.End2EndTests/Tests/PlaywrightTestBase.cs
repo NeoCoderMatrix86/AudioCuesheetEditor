@@ -40,6 +40,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
                 _testContextInstance = Context;
                 TestPage = Page;
             }
+            await _testContextInstance.ClearCookiesAsync();
             await _testContextInstance.Tracing.StartAsync(new()
             {
                 Title = $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}",
@@ -68,6 +69,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests
                     $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}.zip"
                 ) : null,
             });
+            await _testContextInstance.CloseAsync();
         }
     }
 }
