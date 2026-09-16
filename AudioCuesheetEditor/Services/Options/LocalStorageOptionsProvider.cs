@@ -15,20 +15,21 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
+using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 
-namespace AudioCuesheetEditor.Data.Options
+namespace AudioCuesheetEditor.Services.Options
 {
-    public class LocalStorageOptionsProvider(IJSRuntime jsRuntime): ILocalStorageOptionsProvider
+    public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<ValidationMessage> localizer) : ILocalStorageOptionsProvider
     {
         public event EventHandler<IOptions>? OptionSaved;
 
         private readonly IJSRuntime _jsRuntime = jsRuntime;
-
-        private readonly JsonSerializerOptions SerializerOptions = new()
+        private readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
+        private readonly JsonSerializerOptions _serializerOptions = new()
         {
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
@@ -61,22 +62,21 @@ namespace AudioCuesheetEditor.Data.Options
             }
         }
 
-        public async Task SaveOptionsAsync(IOptions options)
+        public async Task<Result> SaveOptionsAsync(IOptions options)
         {
-            bool saveOptions = true;
             if (options is IValidateable validateable)
             {
-                saveOptions = validateable.Validate().Status != ValidationStatus.Error;
+                var validationResult = validateable.Validate();
+                if (validationResult.Status == ValidationStatus.Error)
+                {
+                    return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
+                }
             }
-            if (saveOptions)
-            {
-                var optionsJson = JsonSerializer.Serialize<object>(options, SerializerOptions);
-                await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
-                OptionSaved?.Invoke(this, options);
-            }
+            await WriteOptionsAsync(options);
+            return Result.Success();
         }
 
-        public async Task SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
+        public async Task<Result> SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new()
         {
             var options = await GetOptionsAsync<T>();
             PropertyInfo? propertyInfo = null;
@@ -99,7 +99,7 @@ namespace AudioCuesheetEditor.Data.Options
             {
                 throw new ArgumentException("The provided expression does not reference a valid property.");
             }
-            await SaveOptionsAsync(options);
+            return await SaveOptionsAsync(options);
         }
 
         public async Task SaveNestedOptionValueAsync<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new()
@@ -151,6 +151,13 @@ namespace AudioCuesheetEditor.Data.Options
             }
 
             return propertyInfo;
+        }
+
+        async Task WriteOptionsAsync(IOptions options)
+        {
+            var optionsJson = JsonSerializer.Serialize<object>(options, _serializerOptions);
+            await _jsRuntime.InvokeVoidAsync("AppSettings.set", options.GetType().Name, optionsJson);
+            OptionSaved?.Invoke(this, options);
         }
     }
 }

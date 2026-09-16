@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Cuesheet");
             var downloadTask = TestPage.WaitForDownloadAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download-Cuesheet.cue" }).ClickAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
             var download = await downloadTask;
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);

@@ -16,14 +16,14 @@
 using AudioCuesheetEditor.Model.Options;
 using System.Linq.Expressions;
 
-namespace AudioCuesheetEditor.Data.Options
+namespace AudioCuesheetEditor.Services.Options
 {
     public interface ILocalStorageOptionsProvider
     {
         event EventHandler<IOptions>? OptionSaved;
         Task<T> GetOptionsAsync<T>() where T : IOptions;
-        Task SaveOptionsAsync(IOptions options);
-        Task SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new();
+        Task<Result> SaveOptionsAsync(IOptions options);
+        Task<Result> SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new();
         Task SaveNestedOptionValueAsync<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new();
     }
 }

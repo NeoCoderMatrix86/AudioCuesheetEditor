@@ -14,13 +14,13 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-using AudioCuesheetEditor.Data.Options;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
+using AudioCuesheetEditor.Services.Options;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
