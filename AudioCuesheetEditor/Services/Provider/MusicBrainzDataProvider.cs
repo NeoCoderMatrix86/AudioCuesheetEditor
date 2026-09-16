@@ -18,7 +18,7 @@ using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
 using System.Reflection;
 
-namespace AudioCuesheetEditor.Data.Services
+namespace AudioCuesheetEditor.Services.Provider
 {
     public class MusicBrainzArtist
     {
