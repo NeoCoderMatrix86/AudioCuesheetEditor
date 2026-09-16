@@ -17,7 +17,7 @@ using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services;
 using System.Linq.Expressions;
 
-namespace AudioCuesheetEditor.Data.Options
+namespace AudioCuesheetEditor.Services.Options
 {
     public interface ILocalStorageOptionsProvider
     {

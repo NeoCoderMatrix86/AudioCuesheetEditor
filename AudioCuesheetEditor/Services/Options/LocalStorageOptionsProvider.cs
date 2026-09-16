@@ -15,14 +15,13 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
-using AudioCuesheetEditor.Services;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 
-namespace AudioCuesheetEditor.Data.Options
+namespace AudioCuesheetEditor.Services.Options
 {
     public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<ValidationMessage> localizer) : ILocalStorageOptionsProvider
     {
