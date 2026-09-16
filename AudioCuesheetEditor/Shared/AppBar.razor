@@ -47,7 +47,7 @@ along with Foobar.  If not, see
     <MudSpacer />
     @if (DisplayExportMenu)
     {
-        <MudMenu Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.FileDownload">
+        <MudMenu Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.FileDownload" AriaLabel="Export menu">
             <MudMenuItem Icon="@Icons.Material.Outlined.AudioFile" OnClick="DownloadCuesheetClicked">@_localizer["Cuesheet"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.FileCopy" OnClick="DownloadProjectfileClicked">@_localizer["Projectfile"]</MudMenuItem>
             <MudMenuItem Icon="@Icons.Material.Outlined.ImportExport" OnClick="DownloadExportClicked">@_localizer["Textfile"]</MudMenuItem>

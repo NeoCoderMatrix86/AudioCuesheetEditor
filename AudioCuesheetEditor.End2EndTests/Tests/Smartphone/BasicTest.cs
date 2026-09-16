@@ -75,7 +75,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await Expect(TestPage.GetByText("Aufnahmeansicht")).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Dateien" })).ToBeVisibleAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Wiedergabe" })).ToBeVisibleAsync();
-            await bar.OpenExportDialogAsync("Textdatei", "Datei");
+            await bar.OpenExportDialogAsync("Textdatei");
             await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToMatchAriaSnapshotAsync(@"- dialog ""Exportprofile Close"":
   - heading ""Exportprofile"" [level=6]
   - button ""Close""
