@@ -122,11 +122,12 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)
         {
-            var row = _page.Locator("tbody tr:not([aria-hidden='true'])").Nth(trackPosition - 1);
+            var row = _page.Locator("tbody tr").Nth(trackPosition);
             var cell = row.Locator($"td[data-label='{dataLabel}']");
             await cell.ClickAsync();
             var textbox = cell.Locator("input[type='text']");
             await textbox.FillAsync(value);
+            await textbox.PressAsync("Tab");
             // Click outside the autocomplete to have an focus lost event for getting the value written to model
             await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
             await _page.WaitForTimeoutAsync(100);
