@@ -138,9 +138,6 @@
   <data name="Download cuesheet" xml:space="preserve">
     <value>Cuesheet runterladen</value>
   </data>
-  <data name="Export" xml:space="preserve">
-    <value>Export</value>
-  </data>
   <data name="Export profiles" xml:space="preserve">
     <value>Exportprofile</value>
   </data>
@@ -153,8 +150,8 @@
   <data name="Hotkeys" xml:space="preserve">
     <value>Tastenkürzel</value>
   </data>
-  <data name="Open" xml:space="preserve">
-    <value>Öffnen</value>
+  <data name="Open file" xml:space="preserve">
+    <value>Datei öffnen</value>
   </data>
   <data name="Preview environment" xml:space="preserve">
     <value>Vorschauumgebung</value>
