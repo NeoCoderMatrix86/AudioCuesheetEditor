@@ -267,7 +267,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [audiofile]
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             var track = new Track();
             // Act
             _audiofileManager.AddTrack(audiofile, track);
@@ -302,7 +302,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [audiofile]
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             var track = new Track()
             {
                 IsLinkedToPreviousTrack = true
@@ -343,7 +343,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 RecordingStart = DateTime.UtcNow,
                 Audiofiles = [audiofile]
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             var track = new Track()
             {
                 IsLinkedToPreviousTrack = true
@@ -372,7 +372,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [audiofile]
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(importCuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
             var track = new Track();
             // Act
             _audiofileManager.AddTrack(audiofile, track);
@@ -441,7 +441,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track3.Cuesheet = cuesheet;
             track4.Cuesheet = cuesheet;
             track5.Cuesheet = cuesheet;
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             _audiofileManager.RemoveTracks(audiofile,  [track2, track4]);
             // Assert
@@ -519,7 +519,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track3.Audiofile = audiofile;
             track4.Audiofile = audiofile;
             track5.Audiofile = audiofile;
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(importCuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
             // Act
             _audiofileManager.RemoveTracks(audiofile, [track2, track4]);
             // Assert

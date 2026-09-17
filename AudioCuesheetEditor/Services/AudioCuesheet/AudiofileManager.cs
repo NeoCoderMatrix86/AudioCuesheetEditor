@@ -80,7 +80,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 _traceChangeManager.BulkEdit = true;
             }
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             track.Cuesheet = cuesheet;
             track.Audiofile = audiofile;
             if ((cuesheet?.IsRecording == true) && cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any(x => x.Position >= 1)) 
@@ -107,7 +107,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true)
         {
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             var intersection = audiofile.Tracks.Intersect(tracksToRemove);
             foreach (var track in intersection)
             {
@@ -194,7 +194,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
         }
 
-        Track? GetLastTrack(Audiofile audiofile)
+        static Track? GetLastTrack(Audiofile audiofile)
         {
             return audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
                 .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)

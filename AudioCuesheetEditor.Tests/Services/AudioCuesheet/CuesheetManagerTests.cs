@@ -64,7 +64,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         {
             // Arrange
             var cuesheet = new Cuesheet();
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             _cuesheetManager.SetProperty(x => x.Artist, "Artist");
             // Assert
@@ -80,7 +80,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Artist = "Artist"
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             _cuesheetManager.SetProperty(x => x.Artist, cuesheet.Artist);
             // Assert
@@ -107,7 +107,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [audiofile1, audiofile2]
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             var files = new List<Audiofile>(cuesheet.Audiofiles);
             files.Remove(audiofile2);
             // Act
@@ -390,7 +390,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.IsMoveUpPossible([file2, file3]);
             // Assert
@@ -408,7 +408,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.IsMoveUpPossible([file1, file2]);
             // Assert
@@ -461,7 +461,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.IsMoveDownPossible([track2, track1]);
             // Assert
@@ -531,7 +531,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.IsMoveDownPossible([file2, file1]);
             // Assert
@@ -549,7 +549,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.IsMoveDownPossible([file3, file2]);
             // Assert
@@ -610,7 +610,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Audiofile = cuesheet.Audiofiles.First();
             track2.Audiofile = cuesheet.Audiofiles.Last();
             track3.Audiofile = cuesheet.Audiofiles.Last();
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveUp([track2, track3]);
             // Assert
@@ -672,7 +672,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Audiofile = cuesheet.Audiofiles.First();
             track2.Audiofile = cuesheet.Audiofiles.First();
             track3.Audiofile = cuesheet.Audiofiles.First();
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveUp([track2, track3]);
             // Assert
@@ -850,19 +850,18 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             track1.Audiofile = file2;
             track2.Audiofile = file2;
             track3.Audiofile = file3;
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveUp([file2, file3]);
             // Assert
             Assert.IsTrue(result.IsSuccess);
-            CollectionAssert.AreEquivalent(new List<Audiofile>([file2, file3, file1]), cuesheet.Audiofiles.ToList());
+            Assert.AreSequenceEqual(new List<Audiofile>([file2, file3, file1]), cuesheet.Audiofiles);
             Assert.IsEmpty(file1.Tracks);
             Assert.AreEqual((ushort?)1, track1.Position);
             Assert.AreEqual(TimeSpan.Zero, track1.Begin);
@@ -890,7 +889,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveUp([file1, file2]);
             // Assert
@@ -911,7 +910,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveUp(new HashSet<Audiofile>());
             // Assert
@@ -965,7 +964,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Audiofile = cuesheet.Audiofiles.First();
             track2.Audiofile = cuesheet.Audiofiles.First();
             track3.Audiofile = cuesheet.Audiofiles.Last();
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveDown([track2, track1]);
             // Assert
@@ -1027,7 +1026,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track1.Audiofile = cuesheet.Audiofiles.First();
             track2.Audiofile = cuesheet.Audiofiles.First();
             track3.Audiofile = cuesheet.Audiofiles.First();
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveDown([track2, track1]);
             // Assert
@@ -1205,19 +1204,18 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
             track3.Cuesheet = cuesheet;
             track1.Audiofile = file2;
             track2.Audiofile = file2;
             track3.Audiofile = file3;
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveDown([file2, file1]);
             // Assert
             Assert.IsTrue(result.IsSuccess);
-            CollectionAssert.AreEquivalent(new List<Audiofile>([file3, file2, file1]), cuesheet.Audiofiles.ToList());
+            Assert.AreSequenceEqual(new List<Audiofile>([file3, file2, file1]), cuesheet.Audiofiles);
             Assert.AreEqual((ushort?)1, track1.Position);
             Assert.AreEqual(TimeSpan.Zero, track1.Begin);
             Assert.AreEqual(track1End, track1.End);
@@ -1244,7 +1242,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveDown([file2, file3]);
             // Assert
@@ -1265,7 +1263,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Audiofiles = [file1, file2, file3],
             };
-            _sessionStateContainer.Setup(x => x.GetActiveCuesheet()).Returns(cuesheet);
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             var result = _cuesheetManager.MoveDown(new HashSet<Audiofile>());
             // Assert
