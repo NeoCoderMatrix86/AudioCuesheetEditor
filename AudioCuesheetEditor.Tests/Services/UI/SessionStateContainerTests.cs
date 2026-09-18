@@ -124,6 +124,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             await _sessionStateContainer.InitializeAsync();
             _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
             _sessionStateContainer.ImportCuesheet = new Cuesheet();
+            _sessionStateContainer.ImportIsAnalyzed = true;
 
             // Act
             _sessionStateContainer.ResetImport();
@@ -132,6 +133,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             Assert.IsNull(_sessionStateContainer.Importfile);
             Assert.IsEmpty(_sessionStateContainer.ImportAudiofiles);
             Assert.IsNull(_sessionStateContainer.ImportCuesheet);
+            Assert.IsFalse(_sessionStateContainer.ImportIsAnalyzed);
         }
 
         [TestMethod]

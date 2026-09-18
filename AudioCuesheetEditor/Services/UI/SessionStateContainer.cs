@@ -79,6 +79,7 @@ namespace AudioCuesheetEditor.Services.UI
             Importfile = null;
             ImportAudiofiles = [];
             ImportCuesheet = null;
+            ImportIsAnalyzed = false;
         }
 
         /// <inheritdoc/>
