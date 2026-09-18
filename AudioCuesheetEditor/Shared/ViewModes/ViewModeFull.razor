@@ -27,7 +27,7 @@ along with Foobar.  If not, see
         <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
     </MudCardHeader>
     <MudCardContent>
-        <CuesheetData />
+        <CuesheetData Cuesheet="_sessionStateContainer.Cuesheet" />
     </MudCardContent>
 </MudCard>
 <MudCard Outlined>
@@ -65,7 +65,7 @@ along with Foobar.  If not, see
         </CardHeaderActions>
     </MudCardHeader>
     <MudCardContent>
-        <Audiofiles Files="_audiofiles" @bind-SelectedFiles="_selectedAudiofiles" />
+        <Audiofiles Cuesheet="_cuesheet" Files="_audiofiles" @bind-SelectedFiles="_selectedAudiofiles" />
     </MudCardContent>
 </MudCard>
 <MudCard Outlined>
@@ -80,9 +80,21 @@ along with Foobar.  If not, see
 </MudCard>
 
 @code {
-    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
+    Cuesheet? _cuesheet => _sessionStateContainer.ActiveCuesheet;
     ICollection<Audiofile> _audiofiles => _cuesheet != null ? _cuesheet.Audiofiles : [];
     HashSet<Audiofile> _selectedAudiofiles = [];
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _sessionStateContainer.ActiveCuesheetChanged += SessionStateContainer_ActiveCuesheetChanged;
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _sessionStateContainer.ActiveCuesheetChanged -= SessionStateContainer_ActiveCuesheetChanged;
+    }
 
     void AddButtonClicked()
     {
@@ -112,5 +124,10 @@ along with Foobar.  If not, see
             var files = new List<Audiofile>();
             _cuesheetManager.SetProperty(x => x.Audiofiles, files);
         }
+    }
+
+    void SessionStateContainer_ActiveCuesheetChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
     }
 }

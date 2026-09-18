@@ -19,8 +19,6 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<Audiofiles> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
-@inject ISessionStateContainer _sessionStateContainer
-@inject ICuesheetManager _cuesheetManager
 @inject IAudiofileManager _audiofileManager
 @inject IDialogService _dialogService
 
@@ -28,7 +26,7 @@ along with Foobar.  If not, see
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        var validationResult = _cuesheet?.Validate(nameof(Cuesheet.Audiofiles));
+        var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Audiofiles));
         if (validationResult?.Status == ValidationStatus.Error)
         {
             <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
@@ -66,7 +64,9 @@ along with Foobar.  If not, see
 </MudExpansionPanels>
 
 @code {
-    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
+    [Parameter]
+    [EditorRequired]
+    public Cuesheet? Cuesheet { get; set; }
 
     [Parameter]
     [EditorRequired]

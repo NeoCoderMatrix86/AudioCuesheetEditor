@@ -24,20 +24,20 @@ along with Foobar.  If not, see
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
 
-@if (_cuesheet != null)
+@if (Cuesheet != null)
 {
-    <MudForm @ref="_form" Model="_cuesheet">
-        <MudTextField Text="@_cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Artist, newValue)" For="(() => _cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]"
+    <MudForm @ref="_form" Model="Cuesheet">
+        <MudTextField Text="@Cuesheet.Artist" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Artist, newValue)" For="(() => Cuesheet.Artist)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet artist"]"
                       Placeholder="@_localizer["Enter the cuesheet artist here"]" Variant="Variant.Outlined" />
-        <MudTextField Text="@_cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Title, newValue)" For="(() => _cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
+        <MudTextField Text="@Cuesheet.Title" TextChanged="(newValue) => _cuesheetManager.SetProperty(x => x.Title, newValue)" For="(() => Cuesheet.Title)" Validation="_validationService.ValidateProperty" Label="@_localizer["Cuesheet title"]"
                       Placeholder="@_localizer["Enter the cuesheet title here"]" Variant="Variant.Outlined" />
         @switch(CurrentViewMode)
         {
             case ViewMode.ImportView:
             case ViewMode.DetailView:
-                <FileInput Label="@_localizer["CD Textfile"]" FileName="@_cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile"
-                           OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="_cuesheet.CDTextfile == null" />
-                <MudTextField @ref="_catalogueNumberTextField" @bind-Value="_catalogueNumber" For="(() => _cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
+                <FileInput Label="@_localizer["CD Textfile"]" FileName="@Cuesheet.CDTextfile?.Name" OnFileSelected="OnCDTextfileSelected" Filter="@FileExtensions.CDTextfile"
+                           OnFileRenameClicked="CDTextFileRename" FileRenameDisabled="Cuesheet.CDTextfile == null" />
+                <MudTextField @ref="_catalogueNumberTextField" @bind-Value="_catalogueNumber" For="(() => Cuesheet.Cataloguenumber)" Validation="_validationService.ValidateProperty"
                               Label="@_localizer["Cataloguenumber"]" Placeholder="@_localizer["Enter the cuesheet catalogue number here"]" Variant="Variant.Outlined"
                               Mask="@(new PatternMask("00 00000 00000 0"))" OnBlur="CataloguenumberOnBlur" />
                 break;
@@ -46,10 +46,13 @@ along with Foobar.  If not, see
     </MudForm>
 }
 @code {
+    [Parameter]
+    [EditorRequired]
+    public Cuesheet? Cuesheet { get; set; }
+
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    Cuesheet? _cuesheet => _sessionStateContainer.GetActiveCuesheet();
     string? _catalogueNumber;
     MudForm? _form;
     MudTextField<string>? _catalogueNumberTextField;
@@ -59,8 +62,6 @@ along with Foobar.  If not, see
         base.OnInitialized();
         TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
         TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
-        _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged += SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override void Dispose(bool disposing)
@@ -68,19 +69,17 @@ along with Foobar.  If not, see
         base.Dispose(disposing);
         TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
         TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
-        _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
-        _sessionStateContainer.ImportCuesheetChanged -= SessionStateContainer_ImportCuesheetChanged;
     }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        _catalogueNumber = _cuesheet?.Cataloguenumber;
+        _catalogueNumber = Cuesheet?.Cataloguenumber;
     }
 
     void OnCDTextfileSelected(IBrowserFile? browserFile)
     {
-        if (_cuesheet == null)
+        if (Cuesheet == null)
         {
             return;
         }
@@ -94,10 +93,10 @@ along with Foobar.  If not, see
 
     async Task CDTextFileRename()
     {
-        var newFileName = await ShowInputDialog(_cuesheet?.CDTextfile?.Name);
+        var newFileName = await ShowInputDialog(Cuesheet?.CDTextfile?.Name);
         if (String.IsNullOrEmpty(newFileName) == false)
         {
-            var cdTextFile = _cuesheet?.CDTextfile;
+            var cdTextFile = Cuesheet?.CDTextfile;
             if (cdTextFile != null)
             {
                 cdTextFile.Name = newFileName;
@@ -135,23 +134,13 @@ along with Foobar.  If not, see
 
     void TraceChangeManager_RedoDone(object? sender, EventArgs e)
     {
-        _catalogueNumber = _cuesheet?.Cataloguenumber;
+        _catalogueNumber = Cuesheet?.Cataloguenumber;
         _catalogueNumberTextField?.ResetAsync();
     }
 
     void TraceChangeManager_UndoDone(object? sender, EventArgs e)
     {
-        _catalogueNumber = _cuesheet?.Cataloguenumber;
+        _catalogueNumber = Cuesheet?.Cataloguenumber;
         _catalogueNumberTextField?.ResetAsync();
-    }
-
-    void SessionStateContainer_CuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
-    }
-
-    void SessionStateContainer_ImportCuesheetChanged(object? sender, EventArgs args)
-    {
-        StateHasChanged();
     }
 }

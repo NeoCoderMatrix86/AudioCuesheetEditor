@@ -21,8 +21,7 @@ namespace AudioCuesheetEditor.Services.UI
 {
     public interface ISessionStateContainer
     {
-        public event EventHandler? CuesheetChanged;
-        public event EventHandler? ImportCuesheetChanged;
+        public event EventHandler? ActiveCuesheetChanged;
         public Cuesheet Cuesheet { get; set; }
         public Cuesheet? ImportCuesheet { get; set; }
         public IList<Audiofile> ImportAudiofiles { get; set; }
@@ -37,7 +36,6 @@ namespace AudioCuesheetEditor.Services.UI
         /// <summary>
         /// Get current cuesheet based on current view
         /// </summary>
-        /// <returns></returns>
-        public Cuesheet? GetActiveCuesheet();
+        public Cuesheet? ActiveCuesheet { get; }
     }
 }

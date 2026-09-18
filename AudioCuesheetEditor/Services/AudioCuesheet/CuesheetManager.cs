@@ -37,7 +37,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             SetValue(cuesheet!, propertyExpression, value);
             _traceChangeManager.BulkEdit = false;
         }
@@ -107,7 +107,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return false;
             }
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             if (cuesheet?.Audiofiles.Count > 0)
             {
                 return !selectedAudiofiles.Contains(cuesheet.Audiofiles.First());
@@ -116,7 +116,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public bool IsMoveDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 &&  selectedTracks.Max(x => x.Position) < _sessionStateContainer.GetActiveCuesheet()?.Audiofiles.SelectMany(x => x.Tracks).Max(x => x.Position);
+        public bool IsMoveDownPossible(HashSet<Track> selectedTracks) => selectedTracks.Count > 0 &&  selectedTracks.Max(x => x.Position) < _sessionStateContainer.ActiveCuesheet?.Audiofiles.SelectMany(x => x.Tracks).Max(x => x.Position);
 
         /// <inheritdoc/>
         public bool IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles)
@@ -125,7 +125,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return false;
             }
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             if (cuesheet?.Audiofiles.Count > 0)
             {
                 return !selectedAudiofiles.Contains(cuesheet.Audiofiles.Last());
@@ -141,7 +141,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
             {
                 var previousTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
@@ -181,7 +181,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving audiofiles up is not possible!"));
             }
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             _traceChangeManager.BulkEdit = true;
             var newAudiofiles = new List<Audiofile>(cuesheet!.Audiofiles);
             foreach (var audiofile in selectedAudiofiles)
@@ -216,7 +216,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
             {
                 var nextTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
@@ -255,7 +255,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving audiofiles down is not possible!"));
             }
-            var cuesheet = _sessionStateContainer.GetActiveCuesheet();
+            var cuesheet = _sessionStateContainer.ActiveCuesheet;
             _traceChangeManager.BulkEdit = true;
             var newAudiofiles = new List<Audiofile>(cuesheet!.Audiofiles);
             foreach (var audiofile in selectedAudiofiles)
