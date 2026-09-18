@@ -1215,7 +1215,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             var result = _cuesheetManager.MoveDown([file2, file1]);
             // Assert
             Assert.IsTrue(result.IsSuccess);
-            Assert.AreSequenceEqual(new List<Audiofile>([file3, file2, file1]), cuesheet.Audiofiles);
+            Assert.AreSequenceEqual(new List<Audiofile>([file3, file1, file2]), cuesheet.Audiofiles);
             Assert.AreEqual((ushort?)1, track1.Position);
             Assert.AreEqual(TimeSpan.Zero, track1.Begin);
             Assert.AreEqual(track1End, track1.End);

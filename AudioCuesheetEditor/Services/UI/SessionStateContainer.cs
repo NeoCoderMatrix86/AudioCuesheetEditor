@@ -28,11 +28,9 @@ namespace AudioCuesheetEditor.Services.UI
         private Cuesheet _cuesheet = new();
         private Cuesheet? _importCuesheet;
         private Cuesheet? _activeCuesheet;
-        private Boolean _initialized = false;
+        private ViewOptions? _viewOptions;
         private bool disposedValue;
 
-        public event EventHandler? CuesheetChanged;
-        public event EventHandler? ImportCuesheetChanged;
         public event EventHandler? ActiveCuesheetChanged;
 
         public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider)
@@ -53,7 +51,7 @@ namespace AudioCuesheetEditor.Services.UI
             set
             {
                 _cuesheet = value;
-                CuesheetChanged?.Invoke(this, EventArgs.Empty);
+                SetActiveCuesheet();
             }
         }
         public Cuesheet? ImportCuesheet 
@@ -62,22 +60,18 @@ namespace AudioCuesheetEditor.Services.UI
             set
             {
                 _importCuesheet = value;
-                ImportCuesheetChanged?.Invoke(this, EventArgs.Empty);
+                SetActiveCuesheet();
             }
         }
         public IList<Audiofile> ImportAudiofiles { get; set; } = [];
-        public IImportfile? Importfile{ get; set; }
+        public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;
 
         /// <inheritdoc/>
         public async Task InitializeAsync()
         {
-            if (_initialized == false)
-            {
-                var viewOptions = await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
-                SetActiveCuesheet(viewOptions);
-            }
-            _initialized = true;
+            _viewOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+            SetActiveCuesheet();
         }
 
         public void ResetImport()
@@ -106,13 +100,18 @@ namespace AudioCuesheetEditor.Services.UI
         {
             if (options is ViewOptions viewOptions)
             {
-                SetActiveCuesheet(viewOptions);
+                _viewOptions = viewOptions;
+                SetActiveCuesheet();
             }
         }
 
-        void SetActiveCuesheet(ViewOptions viewOptions)
+        void SetActiveCuesheet()
         {
-            if (viewOptions.ActiveTab == ViewMode.ImportView)
+            if (_viewOptions == null)
+            {
+                throw new InvalidOperationException("Not initialized!");
+            }
+            if (_viewOptions.ActiveTab == ViewMode.ImportView)
             {
                 if (_activeCuesheet != ImportCuesheet)
                 {

@@ -21,7 +21,6 @@ using AudioCuesheetEditor.Services.UI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.UI
@@ -39,12 +38,15 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod]
-        public void Cuesheet_SetNewValue_ShouldTriggerCuesheetChangedEvent()
+        public async Task Cuesheet_SetNewValueInDetailView_ShouldTriggerActiveCuesheetChangedEventAsync()
         {
             // Arrange
             var newCuesheet = new Cuesheet();
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
             bool eventTriggered = false;
-            _sessionStateContainer.CuesheetChanged += (sender, args) => eventTriggered = true;
+            _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
 
             // Act
             _sessionStateContainer.Cuesheet = newCuesheet;
@@ -54,12 +56,39 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod]
-        public void ImportCuesheet_SetNewValue_ShouldTriggerImportCuesheetChangedEvent()
+        public async Task Cuesheet_SetNewValueInImportView_ShouldNotTriggerActiveCuesheetChangedEventAsync()
+        {
+            // Arrange
+            var newCuesheet = new Cuesheet();
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.ImportView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            bool eventTriggered = false;
+            _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
+
+            // Act
+            _sessionStateContainer.Cuesheet = newCuesheet;
+
+            // Assert
+            Assert.IsFalse(eventTriggered);
+        }
+
+        [TestMethod]
+        public async Task ImportCuesheet_SetNewValueInImportView_ShouldTriggerActiveCuesheetChangedEventAsync()
         {
             // Arrange
             var newImportCuesheet = new Cuesheet();
+            var viewOptions = new ViewOptions()
+            {
+                ActiveTab = ViewMode.ImportView
+            };
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
             bool eventTriggered = false;
-            _sessionStateContainer.ImportCuesheetChanged += (sender, args) => eventTriggered = true;
+            _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
 
             // Act
             _sessionStateContainer.ImportCuesheet = newImportCuesheet;
@@ -69,9 +98,30 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod]
-        public void ResetImport_ShouldClearImportProperties()
+        public async Task ImportCuesheet_SetNewValueInDetailView_ShouldTriggerActiveCuesheetChangedEventAsync()
         {
             // Arrange
+            var newImportCuesheet = new Cuesheet();
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            bool eventTriggered = false;
+            _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
+
+            // Act
+            _sessionStateContainer.ImportCuesheet = newImportCuesheet;
+
+            // Assert
+            Assert.IsFalse(eventTriggered);
+        }
+
+        [TestMethod]
+        public async Task ResetImport_InitializedService_ShouldClearPropertiesAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
             _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
             _sessionStateContainer.ImportCuesheet = new Cuesheet();
 
