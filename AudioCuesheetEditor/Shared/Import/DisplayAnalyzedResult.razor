@@ -36,22 +36,25 @@ along with Foobar.  If not, see
 }
 else
 {
-    <MudCard Outlined>
-        <MudCardHeader>
-            <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <CuesheetData />
-        </MudCardContent>
-    </MudCard>
-    <MudCard Outlined>
-        <MudCardHeader>
-            <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
-        </MudCardHeader>
-        <MudCardContent>
-            <Audiofiles Files="_sessionStateContainer.ImportCuesheet?.Audiofiles" />
-        </MudCardContent>
-    </MudCard>
+    @if (_sessionStateContainer.ImportCuesheet != null)
+    {
+        <MudCard Outlined>
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <CuesheetData />
+            </MudCardContent>
+        </MudCard>
+        <MudCard Outlined>
+            <MudCardHeader>
+                <MudText Typo="Typo.h5">@_localizer["Files"]</MudText>
+            </MudCardHeader>
+            <MudCardContent>
+                <Audiofiles Files="_sessionStateContainer.ImportCuesheet.Audiofiles" />
+            </MudCardContent>
+        </MudCard>
+    }
 }
 
 @code {
