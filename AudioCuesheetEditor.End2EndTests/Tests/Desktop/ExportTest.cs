@@ -27,14 +27,15 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Cuesheet");
             var downloadTask = TestPage.WaitForDownloadAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download-Cuesheet.cue" }).ClickAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
             var download = await downloadTask;
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
@@ -56,10 +57,11 @@ FILE ""Kalimba.mp3"" MP3
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
             await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
             await bar.OpenExportDialogAsync("Projectfile");
             var downloadTask = TestPage.WaitForDownloadAsync();
@@ -68,7 +70,7 @@ FILE ""Kalimba.mp3"" MP3
             using var stream = await download.CreateReadStreamAsync();
             using var reader = new StreamReader(stream);
             var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-            Assert.AreEqual("{\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}],\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofile\":{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"}}}", content);
+            Assert.AreEqual("{\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofiles\":[{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}]}]}", content);
         }
 
         [TestMethod]
@@ -77,13 +79,46 @@ FILE ""Kalimba.mp3"" MP3
             var bar = new AppBar(TestPage);
             var detailView = new DetailView(TestPage);
             await detailView.GotoAsync();
-            await detailView.AddTrackAsync();
             await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
             await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AudiofileInput.SetInputFilesAsync("Kalimba.mp3");
-            await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.AddTrackAsync(0);
+            await detailView.EditTrackAsync("Track Artist 1", "Track Title 1", TimeSpan.Zero, new TimeSpan(0, 0, 10), 1);
+            await detailView.EditTrackAsync("Track Artist 2", "Track Title 2", new TimeSpan(0, 0, 10), new TimeSpan(0, 0, 20), 2);
+            await detailView.EditTrackAsync("Track Artist 3", "Track Title 3", new TimeSpan(0, 0, 20), new TimeSpan(0, 0, 30), 3);
+            await detailView.EditTrackAsync("Track Artist 4", "Track Title 4", new TimeSpan(0, 0, 30), new TimeSpan(0, 0, 40), 4);
+            await detailView.EditTrackAsync("Track Artist 5", "Track Title 5", new TimeSpan(0, 0, 40), new TimeSpan(0, 0, 50), 5);
+            await detailView.EditTrackAsync("Track Artist 6", "Track Title 6", new TimeSpan(0, 0, 50), new TimeSpan(0, 1, 0), 6);
+            await detailView.EditTrackAsync("Track Artist 7", "Track Title 7", new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 10), 7);
+            await detailView.EditTrackAsync("Track Artist 8", "Track Title 8", new TimeSpan(0, 1, 10), new TimeSpan(0, 1, 20), 8);
+            await detailView.EditTrackAsync("Track Artist 9", "Track Title 9", new TimeSpan(0, 1, 20), new TimeSpan(0, 1, 30), 9);
+            await detailView.EditTrackAsync("Track Artist 10", "Track Title 10", new TimeSpan(0, 1, 30), new TimeSpan(0, 1, 40), 10);
+            await detailView.EditTrackAsync("Track Artist 11", "Track Title 11", new TimeSpan(0, 1, 40), new TimeSpan(0, 1, 50), 11);
+            await detailView.EditTrackAsync("Track Artist 12", "Track Title 12", new TimeSpan(0, 1, 50), new TimeSpan(0, 2, 0), 12);
+            await detailView.EditTrackAsync("Track Artist 13", "Track Title 13", new TimeSpan(0, 2, 0), new TimeSpan(0, 2, 10), 13);
+            await detailView.EditTrackAsync("Track Artist 14", "Track Title 14", new TimeSpan(0, 2, 10), new TimeSpan(0, 2, 20), 14);
+            await detailView.EditTrackAsync("Track Artist 15", "Track Title 15", new TimeSpan(0, 2, 20), new TimeSpan(0, 2, 30), 15);
+            await detailView.EditTrackAsync("Track Artist 16", "Track Title 16", new TimeSpan(0, 2, 30), null, 16);
             await bar.OpenExportDialogAsync("Textfile");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Next", Exact = true }).ClickAsync();
+            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Generate export" }).ClickAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Copy to clipboard" })).ToBeVisibleAsync();
             var downloadTask = TestPage.WaitForDownloadAsync();
             await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
             var download = await downloadTask;
@@ -92,7 +127,23 @@ FILE ""Kalimba.mp3"" MP3
             var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
             content = content.Replace("\n", Environment.NewLine);
             Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
+
 Track Artist 1 - Track Title 1 00:00:00
+Track Artist 2 - Track Title 2 00:00:10
+Track Artist 3 - Track Title 3 00:00:20
+Track Artist 4 - Track Title 4 00:00:30
+Track Artist 5 - Track Title 5 00:00:40
+Track Artist 6 - Track Title 6 00:00:50
+Track Artist 7 - Track Title 7 00:01:00
+Track Artist 8 - Track Title 8 00:01:10
+Track Artist 9 - Track Title 9 00:01:20
+Track Artist 10 - Track Title 10 00:01:30
+Track Artist 11 - Track Title 11 00:01:40
+Track Artist 12 - Track Title 12 00:01:50
+Track Artist 13 - Track Title 13 00:02:00
+Track Artist 14 - Track Title 14 00:02:10
+Track Artist 15 - Track Title 15 00:02:20
+Track Artist 16 - Track Title 16 00:02:30
 
 ", content);
         }

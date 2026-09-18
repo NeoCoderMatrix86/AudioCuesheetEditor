@@ -25,5 +25,11 @@ namespace AudioCuesheetEditor.Extensions
             var localizationService = host.Services.GetRequiredService<LocalizationService>();
             await localizationService.SetCultureFromConfigurationAsync();
         }
+
+        public async static Task InitializeSessionStateContainer(this WebAssemblyHost host)
+        {
+            var sessionStateContainer = host.Services.GetRequiredService<ISessionStateContainer>();
+            await sessionStateContainer.InitializeAsync();
+        }
     }
 }

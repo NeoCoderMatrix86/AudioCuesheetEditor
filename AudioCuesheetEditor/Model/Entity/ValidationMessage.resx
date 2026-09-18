@@ -165,6 +165,9 @@
   <data name="Title" xml:space="preserve">
     <value>Title</value>
   </data>
+  <data name="Audiofiles" xml:space="preserve">
+    <value>Audiofiles</value>
+  </data>
   <data name="Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!" xml:space="preserve">
     <value>Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!</value>
   </data>
@@ -180,8 +183,8 @@
   <data name="{0} has an invalid length. Allowed length is {1}!" xml:space="preserve">
     <value>{0} has an invalid length. Allowed length is {1}!</value>
   </data>
-  <data name="{0} has invalid Count ({1})!" xml:space="preserve">
-    <value>{0} has invalid Count ({1})!</value>
+  <data name="{0} has invalid count ({1})!" xml:space="preserve">
+    <value>{0} has invalid count ({1})!</value>
   </data>
   <data name="{0} has no value!" xml:space="preserve">
     <value>{0} has no value!</value>

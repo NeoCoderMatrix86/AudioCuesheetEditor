@@ -72,7 +72,8 @@ TRACK 08 AUDIO
             Assert.IsNotNull(importFile);
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            Assert.HasCount(8, importFile.AnalyzedCuesheet.Tracks);
+            Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
+            Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
             Assert.IsNotNull(importFile.FileContentRecognized);
             var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format(CuesheetConstants.RecognizedMarkHTML, "PERFORMER \"Sample CD Artist\""), lines.ElementAt(0));
@@ -108,8 +109,9 @@ TRACK 08 AUDIO
             //Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            Assert.HasCount(39, importFile.AnalyzedCuesheet.Tracks);
-            Assert.AreEqual(new TimeSpan(2, 8, 21), importFile.AnalyzedCuesheet.Tracks.ElementAt(24).Begin);
+            Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
+            Assert.HasCount(39, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
+            Assert.AreEqual(new TimeSpan(2, 8, 21), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(24).Begin);
         }
 
         [TestMethod()]
@@ -122,8 +124,9 @@ TRACK 08 AUDIO
             //Assert
             Assert.IsNull(importFile.AnalyseException);
             Assert.IsNotNull(importFile.AnalyzedCuesheet);
-            Assert.HasCount(12, importFile.AnalyzedCuesheet.Tracks);
-            Assert.AreEqual(new TimeSpan(0, 0, 9, 15, 600), importFile.AnalyzedCuesheet.Tracks.ElementAt(2).Begin);
+            Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
+            Assert.HasCount(12, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
+            Assert.AreEqual(new TimeSpan(0, 0, 9, 15, 600), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(2).Begin);
         }
 
         [TestMethod()]
@@ -132,7 +135,7 @@ TRACK 08 AUDIO
             // Arrange
             var fileContent = @"PERFORMER ""Sample CD Artist""
 TITLE ""Sample CD Title""
-FILE ""AC DC - TNT.mp3"" MP3
+FILE ""Sample Audiofile.mp3"" MP3
 CDTEXTFILE ""Testfile.cdt""
 CATALOG 0123456789012
 TRACK 01 AUDIO
@@ -153,24 +156,25 @@ TRACK 04 AUDIO
 	PERFORMER ""Sample Artist 4""
 	TITLE ""Sample Title 4""
 	INDEX 01 15:54:00
+FILE ""Sample Input.wav"" WAVE
 TRACK 05 AUDIO
 	PERFORMER ""Sample Artist 5""
 	TITLE ""Sample Title 5""
-	INDEX 01 20:13:00
+	INDEX 01 00:00:00
 	POSTGAP 00:02:00
 TRACK 06 AUDIO
 	PERFORMER ""Sample Artist 6""
 	TITLE ""Sample Title 6""
-	INDEX 01 24:54:00
+	INDEX 01 04:54:00
 TRACK 07 AUDIO
 	PERFORMER ""Sample Artist 7""
 	TITLE ""Sample Title 7""
 	PREGAP 00:04:00
-	INDEX 01 31:54:00
+	INDEX 01 11:54:00
 TRACK 08 AUDIO
 	PERFORMER ""Sample Artist 8""
 	TITLE ""Sample Title 8""
-	INDEX 01 45:51:00";
+	INDEX 01 25:51:00";
             // Act
             var importFile = CuesheetImportService.Analyse(fileContent);
             // Assert
@@ -179,15 +183,18 @@ TRACK 08 AUDIO
             Assert.IsNotNull(importFile.FileContentRecognized);
             var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
             Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "FLAGS 4CH DCP PRE SCMS")), lines.ElementAt(8));
-            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PREGAP 00:04:00")), lines.ElementAt(35));
-            Assert.HasCount(8, importFile.AnalyzedCuesheet.Tracks);
+            Assert.AreEqual(string.Format("	{0}", string.Format(CuesheetConstants.RecognizedMarkHTML, "PREGAP 00:04:00")), lines.ElementAt(36));
+            Assert.HasCount(2, importFile.AnalyzedCuesheet.Audiofiles);
+            Assert.AreEqual("Sample Audiofile.mp3", importFile.AnalyzedCuesheet.Audiofiles.First().Name);
+            Assert.AreEqual("Sample Input.wav", importFile.AnalyzedCuesheet.Audiofiles.Last().Name);
+            Assert.HasCount(4, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
             Assert.IsNotNull(importFile.AnalyzedCuesheet.CDTextfile);
-            Assert.AreEqual(4, importFile.AnalyzedCuesheet.Tracks.ElementAt(0).Flags.Count());
-            Assert.AreEqual(2, importFile.AnalyzedCuesheet.Tracks.ElementAt(1).Flags.Count());
-            Assert.IsNotNull(importFile.AnalyzedCuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "DCP"));
-            Assert.IsNotNull(importFile.AnalyzedCuesheet.Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
-            Assert.AreEqual(new TimeSpan(0, 0, 2), importFile.AnalyzedCuesheet.Tracks.ElementAt(4).PostGap);
-            Assert.AreEqual(new TimeSpan(0, 0, 4), importFile.AnalyzedCuesheet.Tracks.ElementAt(6).PreGap);
+            Assert.HasCount(4, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Flags);
+            Assert.HasCount(2, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags);
+            Assert.IsNotNull(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "DCP"));
+            Assert.IsNotNull(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(1).Flags.SingleOrDefault(x => x.CuesheetLabel == "PRE"));
+            Assert.AreEqual(new TimeSpan(0, 0, 2), importFile.AnalyzedCuesheet.Audiofiles.Last().Tracks.ElementAt(0).PostGap);
+            Assert.AreEqual(new TimeSpan(0, 0, 4), importFile.AnalyzedCuesheet.Audiofiles.Last().Tracks.ElementAt(2).PreGap);
         }
     }
 }

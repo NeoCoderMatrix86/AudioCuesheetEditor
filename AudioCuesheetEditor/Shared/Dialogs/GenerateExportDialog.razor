@@ -18,111 +18,33 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<GenerateExportDialog> _localizer
-@inject ValidationService _validationService
 @inject ExportfileGenerator _exportfileGenerator
-@inject IBlazorDownloadFileService _blazorDownloadFileService
-@inject IDialogService _dialogService
 
 @if (_exportOptions != null)
 {
     <MudDialog>
         <DialogContent>
-            <MudStepper NonLinear OnPreviewInteraction="PreviewInteraction" ActiveIndexChanged="ActiveIndexChanged">
-                <MudStep Title="@_localizer["Configure export"]" HasError="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false" Completed="_configureExportCompleted">
-                    @if (String.IsNullOrEmpty(GetGenerationValidationMessages()) == false)
-                    {
-                        <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                            @_localizer["Export is currently not possible:"]
-                            @((MarkupString)GetGenerationValidationMessages()!)
-                        </MudAlert>
-                    }
-                    <MudSelect T="Exportprofile" Variant="Variant.Outlined" Label="@_localizer["Select export profile"]" Value="_exportOptions.SelectedExportProfile" ValueChanged="(newSelectedProfile) => LocalStorageOptionsProvider.SaveOptionsValueAsync<ExportOptions>(x => x.SelectedExportProfile, newSelectedProfile)">
-                        @foreach (var profile in _exportOptions.ExportProfiles)
-                        {
-                            <MudSelectItem Value="profile">@profile.Name</MudSelectItem>
-                        }
-                    </MudSelect>
-                    <MudButtonGroup OverrideStyles="false">
-                        <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert>
-                            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]">@_localizer["Add new export profile"]</MudButton>
-                        </MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                            <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="Color.Primary" Variant="Variant.Filled" OnClick="AddClick" aria-label="@_localizer["Add new export profile"]" />
-                        </MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                            <MudButton Color="Color.Error" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Delete" Disabled="_exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]">@_localizer["Delete selected export profile"]</MudButton>
-                        </MudHidden>
-                        <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" Variant="Variant.Filled" Disabled="_exportOptions.SelectedExportProfile == null" OnClick="DeleteClick" aria-label="@_localizer["Delete selected export profile"]" />
-                        </MudHidden>
-                    </MudButtonGroup>
+            @if (String.IsNullOrEmpty(_validationErrorMessage) == false)
+            {
+                <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
+                    @_localizer["Export is currently not possible:"]
+                    @((MarkupString)_validationErrorMessage)
+                </MudAlert>
+            }
+            <MudTabs ActivePanelIndexChanged="ActiveIndexChanged" ActivePanelIndex="_activeTabIndex">
+                <MudTabPanel Text="@_localizer["Configure export"]" Icon="@Icons.Material.Outlined.Build" BadgeIcon="@_configureExportBadgeIcon" BadgeColor="Color.Success">
+                    <SelectExportProfile />
                     <br />
                     <MudDivider />
-                    <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.Name" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Name, newValue)"
-                                  Label="@_localizer["Name"]" Placeholder="@_localizer["Enter the name for this profile here"]" Variant="Variant.Outlined"
-                                  Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.Name))" />
-                    <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.Filename" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.Filename, newValue)" 
-                                  Label="@_localizer["Filename"]" Placeholder="@_localizer["Enter the filename for this profile here"]" Variant="Variant.Outlined"
-                                  Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.Filename))" />
-                    <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.SchemeHead" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeHead, newValue)" 
-                                  Label="@_localizer["Scheme head"]" Placeholder="@_localizer["Enter the header scheme for this profile here"]" Variant="Variant.Outlined" Clearable
-                                  Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeHead))"
-                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(_schemeHeadMenu, args)" />
-                    <MudMenu @ref="_schemeHeadMenu" PositionAtCursor>
-                        @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
-                        {
-                            <MudMenuItem OnClick="() => 
-                            {
-                                if (_exportOptions.SelectedExportProfile != null)
-                                {
-                                    _exportOptions.SelectedExportProfile.SchemeHead += placeholder.Value;
-                                }
-                            }">
-                                @_localizer[placeholder.Key]
-                            </MudMenuItem>
-                        }
-                    </MudMenu>
-                    <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.SchemeTracks" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeTracks, newValue)" 
-                                  Label="@_localizer["Scheme tracks"]" Placeholder="@_localizer["Enter the tracks scheme for this profile here"]" Variant="Variant.Outlined" Clearable
-                                  Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeTracks))"
-                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(_schemeTracksMenu, args)" />
-                    <MudMenu @ref="_schemeTracksMenu" PositionAtCursor>
-                        @foreach (var placeholder in Exportprofile.AvailableTrackSchemes)
-                        {
-                            <MudMenuItem OnClick="() =>
-                            {
-                                if (_exportOptions.SelectedExportProfile != null)
-                                {
-                                    _exportOptions.SelectedExportProfile.SchemeTracks += placeholder.Value;
-                                }
-                            }">
-                                @_localizer[placeholder.Key]
-                            </MudMenuItem>
-                        }
-                    </MudMenu>
-                    <MudTextField T="string" Value="_exportOptions.SelectedExportProfile?.SchemeFooter" ValueChanged="(newValue) => LocalStorageOptionsProvider.SaveNestedOptionValueAsync<ExportOptions, Exportprofile?, String>(x => x.SelectedExportProfile, x => x!.SchemeFooter, newValue)" 
-                                  Label="@_localizer["Scheme footer"]" Placeholder="@_localizer["Enter the footer scheme for this profile here"]" Variant="Variant.Outlined" Clearable
-                                  Validation="(string? newValue) => _validationService.Validate(_exportOptions.SelectedExportProfile, nameof(Exportprofile.SchemeFooter))"
-                                  Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.AddBox" OnAdornmentClick="(args) => AdornmentClickAsync(_schemeFooterMenu, args)" />
-                    <MudMenu @ref="_schemeFooterMenu" PositionAtCursor>
-                        @foreach (var placeholder in Exportprofile.AvailableCuesheetSchemes)
-                        {
-                            <MudMenuItem OnClick="() =>
-                            {
-                                if (_exportOptions.SelectedExportProfile != null)
-                                {
-                                    _exportOptions.SelectedExportProfile.SchemeFooter += placeholder.Value;
-                                }
-                            }">
-                                @_localizer[placeholder.Key]
-                            </MudMenuItem>
-                        }
-                    </MudMenu>
-                </MudStep>
-                <MudStep Title="@_localizer["Download export"]" Disabled="String.IsNullOrEmpty(GetGenerationValidationMessages()) == false">
+                    <EditExportProfile />
+                    <MudStack Row Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => ActiveIndexChanged(1)" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false">@_localizer["Generate export"]</MudButton>
+                    </MudStack>
+                </MudTabPanel>
+                <MudTabPanel Text="@_localizer["View export"]" Disabled="String.IsNullOrEmpty(_validationErrorMessage) == false" Icon="@Icons.Material.Outlined.TextSnippet">
                     <DisplayExportfileContent Exportfile="_exportFile" />
-                </MudStep>
-            </MudStepper>
+                </MudTabPanel>
+            </MudTabs>
         </DialogContent>
     </MudDialog>
 }
@@ -130,11 +52,9 @@ along with Foobar.  If not, see
 @code {
     ExportOptions? _exportOptions;
     Exportfile? _exportFile;
-    Boolean _configureExportCompleted = false;
-    MudMenu? _schemeHeadMenu, _schemeTracksMenu, _schemeFooterMenu;
-    Dictionary<Exportfile, Boolean> _displayContentDialogVisible = new();
-
-    private readonly DialogOptions _displayContentDialogOptions = new() { CloseButton = true, CloseOnEscapeKey = true, FullWidth = true, MaxWidth = MaxWidth.ExtraExtraLarge };
+    String? _validationErrorMessage = null;
+    string? _configureExportBadgeIcon = null;
+    int _activeTabIndex = 0;
 
     protected override void Dispose(bool disposing)
     {
@@ -147,6 +67,7 @@ along with Foobar.  If not, see
         await base.OnInitializedAsync();
         LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
         _exportOptions = await LocalStorageOptionsProvider.GetOptionsAsync<ExportOptions>();
+        SetValidationErrors();
     }
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
@@ -154,61 +75,44 @@ along with Foobar.  If not, see
         if (option is ExportOptions exportOption)
         {
             _exportOptions = exportOption;
+            SetValidationErrors();
             StateHasChanged();
         }
     }
 
-    async Task AddClick()
+    void SetValidationErrors()
     {
-        if (_exportOptions != null)
-        {
-            var newProfile = new Exportprofile();
-            _exportOptions.ExportProfiles.Add(newProfile);
-            _exportOptions.SelectedExportProfile = newProfile;
-            await LocalStorageOptionsProvider.SaveOptionsAsync(_exportOptions);
-        }
-    }
-
-    async Task DeleteClick()
-    {
-        if (_exportOptions?.SelectedExportProfile != null)
-        {
-            _exportOptions.ExportProfiles.Remove(_exportOptions.SelectedExportProfile);
-            _exportOptions.SelectedExportProfile = _exportOptions.ExportProfiles.LastOrDefault();
-            await LocalStorageOptionsProvider.SaveOptionsAsync(_exportOptions);
-        }
-    }
-
-    String? GetGenerationValidationMessages()
-    {
-        String? validationErrorMessage = null;
         var selectedExportProfile = _exportOptions?.SelectedExportProfile;
         if (selectedExportProfile != null)
         {
             var result = _exportfileGenerator.CanGenerateExportfile(selectedExportProfile);
             if (result.IsSuccess == false)
             {
-                validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
+                _validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
             }
         }
         else
         {
-            validationErrorMessage = _localizer["No export profile selected!"];
+            _validationErrorMessage = _localizer["No export profile selected!"];
         }
-        return validationErrorMessage;
     }
 
     Task PreviewInteraction(StepperInteractionEventArgs arg)
     {
         if (arg.StepIndex == 0)
         {
-            arg.Cancel = String.IsNullOrEmpty(GetGenerationValidationMessages()) == false;
+            arg.Cancel = String.IsNullOrEmpty(_validationErrorMessage) == false;
         }
         return Task.CompletedTask;
     }
 
     void ActiveIndexChanged(int newIndex)
     {
+        _activeTabIndex = newIndex;
+        if (newIndex == 0)
+        {
+            _configureExportBadgeIcon = null;
+        }
         if (newIndex == 1) 
         {
             var selectedExportProfile = _exportOptions?.SelectedExportProfile;
@@ -216,16 +120,8 @@ along with Foobar.  If not, see
             {
                 var result = _exportfileGenerator.GenerateExportfile(selectedExportProfile);
                 _exportFile = result.Value;
-                _configureExportCompleted = result.IsSuccess;
+                _configureExportBadgeIcon = Icons.Material.Filled.Check;
             }
-        }
-    }
-
-    async Task AdornmentClickAsync(MudMenu? menu, MouseEventArgs args)
-    {
-        if (menu != null)
-        {
-            await menu.OpenMenuAsync(args);
         }
     }
 }

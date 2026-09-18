@@ -138,9 +138,6 @@
   <data name="Download cuesheet" xml:space="preserve">
     <value>Download cuesheet</value>
   </data>
-  <data name="Export" xml:space="preserve">
-    <value>Export</value>
-  </data>
   <data name="Export profiles" xml:space="preserve">
     <value>Export profiles</value>
   </data>
@@ -153,8 +150,8 @@
   <data name="Hotkeys" xml:space="preserve">
     <value>Hotkeys</value>
   </data>
-  <data name="Open" xml:space="preserve">
-    <value>Open</value>
+  <data name="Open file" xml:space="preserve">
+    <value>Open file</value>
   </data>
   <data name="Preview environment" xml:space="preserve">
     <value>Preview environment</value>

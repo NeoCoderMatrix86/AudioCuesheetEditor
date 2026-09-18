@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -39,8 +40,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 setLength = false;
             }
+            Audiofile? audiofile = null;
+            if (track is Track trackReference)
+            {
+                audiofile = trackReference.Audiofile;
+            }
             var clone = new Track()
             {
+                Audiofile = audiofile,
                 IsLinkedToPreviousTrack = track.IsLinkedToPreviousTrack,
                 Position = track.Position,
                 Artist = track.Artist,
@@ -110,13 +117,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 return null;
             }
-            if (track.Position.HasValue && (track.Cuesheet?.Tracks.All(x => x.Position.HasValue) == true))
+            if (track.Position.HasValue && (track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).All(x => x.Position.HasValue) == true))
             {
-                return track.Cuesheet?.Tracks.LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
+                return track.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault(x => x.Position == track.Position - 1 && Equals(x, track) == false);
             }
             if (track.Begin.HasValue)
             {
-                return track.Cuesheet?.Tracks.OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin && Equals(x, track) == false);
+                return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin && Equals(x, track) == false);
             }
             return null;
         }
@@ -124,13 +131,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public Track? GetNextLinkedTrack(Track track)
         {
-            if (track.Position.HasValue && (track.Cuesheet?.Tracks.All(x => x.Position.HasValue) == true))
+            if (track.Position.HasValue && (track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).All(x => x.Position.HasValue) == true))
             {
-                return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).FirstOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
+                return track.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin).FirstOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
             }
             if (track.End.HasValue)
             {
-                return track.Cuesheet?.Tracks.OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
+                return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
             }
             return null;
         }

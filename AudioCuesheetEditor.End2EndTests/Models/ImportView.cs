@@ -23,6 +23,9 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         [GeneratedRegex("^Scheme common data$")]
         private static partial Regex SchemeCommonData();
 
+        [GeneratedRegex("^Scheme audiofiles$")]
+        private static partial Regex SchemeAudiofiles();
+
         internal const string BaseUrl = "http://localhost:5132/";
 
         private readonly IPage _page = page;
@@ -89,8 +92,8 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task EditTracksModalAsync(string title)
         {
             await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).FillAsync(title);
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Title", Exact = true }).PressAsync("Tab");
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
+            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
             await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
         }
 
@@ -103,6 +106,11 @@ namespace AudioCuesheetEditor.End2EndTests.Models
         internal async Task ClearSchemeCommonDataAsync()
         {
             await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByLabel("Clear").ClickAsync();
+        }
+
+        internal async Task ClearSchemeAudiofilesAsync()
+        {
+            await _page.Locator("div").Filter(new() { HasTextRegex = SchemeAudiofiles() }).GetByLabel("Clear").ClickAsync();
         }
 
         internal async Task SetSchemeCommonDataAsync(string schemeCommonData)

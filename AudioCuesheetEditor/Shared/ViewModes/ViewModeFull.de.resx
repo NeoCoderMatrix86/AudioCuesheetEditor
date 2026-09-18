@@ -117,10 +117,34 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Add file" xml:space="preserve">
+    <value>Datei hinzufügen</value>
+  </data>
+  <data name="Are you sure you want to remove all files?" xml:space="preserve">
+    <value>Sind Sie sicher, dass sie alle Dateien löschen wollen?</value>
+  </data>
   <data name="Common data" xml:space="preserve">
     <value>Allgemeine Informationen</value>
   </data>
-  <data name="Tracks" xml:space="preserve">
-    <value>Titel</value>
+  <data name="Confirm" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="Delete all files" xml:space="preserve">
+    <value>Alle Dateien löschen</value>
+  </data>
+  <data name="Delete selected files" xml:space="preserve">
+    <value>Ausgewählte Dateien löschen</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Dateien</value>
+  </data>
+  <data name="Move selected files down" xml:space="preserve">
+    <value>Ausgewählte Dateien nach unten bewegen</value>
+  </data>
+  <data name="Move selected files up" xml:space="preserve">
+    <value>Ausgewählte Dateien nach oben bewegen</value>
+  </data>
+  <data name="Playback" xml:space="preserve">
+    <value>Wiedergabe</value>
   </data>
 </root>

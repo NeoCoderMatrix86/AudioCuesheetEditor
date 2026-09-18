@@ -13,17 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AudioCuesheetEditor.Model.Options;
-using System.Linq.Expressions;
-
-namespace AudioCuesheetEditor.Data.Options
+namespace AudioCuesheetEditor.Model.AudioCuesheet
 {
-    public interface ILocalStorageOptionsProvider
+    public interface IAudiofile
     {
-        event EventHandler<IOptions>? OptionSaved;
-        Task<T> GetOptionsAsync<T>() where T : IOptions;
-        Task SaveOptionsAsync(IOptions options);
-        Task SaveOptionsValueAsync<T>(Expression<Func<T, object?>> propertyExpression, object? value) where T : class, IOptions, new();
-        Task SaveNestedOptionValueAsync<T, TNested, TValue>(Expression<Func<T, TNested>> nestedPropertyExpression, Expression<Func<TNested, TValue>> valuePropertyExpression, TValue value) where T : class, IOptions, new();
+        String? Name { get; set; }
     }
 }

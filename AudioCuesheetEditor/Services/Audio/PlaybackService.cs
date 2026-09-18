@@ -16,21 +16,21 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
-using Howler.Blazor.Components;
+using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService : IDisposable
+    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer) : IAsyncDisposable
     {
-        private readonly ISessionStateContainer _sessionStateContainer;
-        private readonly IHowl _howl;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly IJSRuntime _jsRuntime = jsRuntime;
 
-        private int? _currentPlayingSoundId;
         private Audiofile? _currentlyPlayingAudiofile;
         private Timer? _updateTimer;
-        private bool _disposedValue;
         private readonly Lock _timerLock = new();
         private TimeSpan? _currentPosition;
+        private DotNetObjectReference<PlaybackService>? _dotNetObjectReference;
+        private TimeSpan? _audiofileDurationsBeforeCurrentlyPlayingAudiofile;
 
         public event Action? CurrentPositionChanged;
 
@@ -46,64 +46,53 @@ namespace AudioCuesheetEditor.Services.Audio
                 }
             }
         }
-        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Tracks.SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
-        public TimeSpan? TotalTime => _sessionStateContainer.Cuesheet.Audiofile?.Duration;
-        public Boolean IsPlaying { get; private set; } = false;
-        public Boolean IsPlaybackPossible
+        public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
+        public TimeSpan? TotalTime
         {
             get
             {
-                var audiofile = _sessionStateContainer.Cuesheet.Audiofile;
-                return String.IsNullOrEmpty(audiofile?.ObjectURL) == false && String.IsNullOrEmpty(audiofile?.AudioFileType) == false;
+                var durations = _sessionStateContainer.Cuesheet.Audiofiles.Where(a => a.Duration.HasValue).Select(x => x.Duration);
+                if (durations.Any())
+                {
+                    return durations.Aggregate((sum, a) => sum + a);
+                }
+                return null;
             }
         }
-        public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
-        public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+        public Boolean IsPaused { get; private set; } = false;
+        public Boolean IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+        public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
+        public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+        public Boolean IsPlaying => _currentlyPlayingAudiofile != null;
 
-        public PlaybackService(ISessionStateContainer sessionStateContainer, IHowl howl)
+        public async Task InitializeAsync()
         {
-            _sessionStateContainer = sessionStateContainer;
-            _howl = howl;
-            _howl.OnPlay += Howl_OnPlay;
-            _howl.OnPause += Howl_OnPause;
-            _howl.OnEnd += Howl_OnEnd;
-            _howl.OnStop += Howl_OnStop;
+            if (_dotNetObjectReference == null)
+            {
+                _dotNetObjectReference = DotNetObjectReference.Create(this);
+                await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference);
+            }
         }
 
         public async Task PlayOrPauseAsync()
         {
-            //Reset if the last played audiofile is not the current one
-            if (_currentlyPlayingAudiofile != _sessionStateContainer.Cuesheet.Audiofile)
+            if (_currentlyPlayingAudiofile != null)
             {
-                _currentPlayingSoundId = null;
-            }
-            //If the current audiofile already started, we just pause
-            if (_currentPlayingSoundId != null)
-            {
-                await _howl.Pause(_currentPlayingSoundId.Value);
+                if (IsPaused == false)
+                {
+                    await _jsRuntime.InvokeVoidAsync("audioInterop.pauseAudio");
+                }
+                else
+                {
+                    await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio");
+                }
             }
             else
             {
-                if (IsPlaybackPossible)
+                var audiofileToPlay = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+                if (audiofileToPlay != null)
                 {
-                    string[]? sources = null;
-                    string[]? formats = null;
-                    if (_sessionStateContainer.Cuesheet.Audiofile?.ObjectURL != null)
-                    {
-                        sources = [_sessionStateContainer.Cuesheet.Audiofile.ObjectURL];
-                    }
-                    if (_sessionStateContainer.Cuesheet.Audiofile?.AudioFileType != null)
-                    {
-                        formats = [_sessionStateContainer.Cuesheet.Audiofile.AudioFileType.ToLower()];
-                    }
-                    var options = new HowlOptions
-                    {
-                        Sources = sources,
-                        Formats = formats,
-                        Html5 = true
-                    };
-                    _currentPlayingSoundId = await _howl.Play(options);
-                    _currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
+                    await PlayAsync(audiofileToPlay);
                 }
             }
         }
@@ -112,30 +101,21 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (trackToPlay?.Begin.HasValue == true)
             {
-                if (IsPlaying == false)
-                {
-                    await PlayOrPauseAsync();
-                }
-                if (_currentPlayingSoundId.HasValue)
-                {
-                    await _howl.Seek(_currentPlayingSoundId.Value, trackToPlay.Begin.Value);
-                }
+                await SeekAsync(trackToPlay.Begin.Value);
             }
         }
 
         public async Task StopAsync()
         {
-            if (_currentPlayingSoundId != null)
-            {
-                await _howl.Stop(_currentPlayingSoundId.Value);
-            }
+            Reset();
+            await _jsRuntime.InvokeVoidAsync("audioInterop.stopAudio");
         }
 
         public async Task PlayNextTrackAsync()
         {
             if (CurrentlyPlayingTrack != null)
             {
-                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
+                var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
                 if (trackToPlay != null)
                 {
                     await PlayAsync(trackToPlay);
@@ -147,7 +127,7 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             if (CurrentlyPlayingTrack != null)
             {
-                var trackToPlay = _sessionStateContainer.Cuesheet.Tracks.LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
+                var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
                 if (trackToPlay != null)
                 {
                     await PlayAsync(trackToPlay);
@@ -157,92 +137,163 @@ namespace AudioCuesheetEditor.Services.Audio
 
         public async Task SeekAsync(TimeSpan time)
         {
-            if (_currentPlayingSoundId.HasValue == false)
+            TimeSpan cumulativeDuration = TimeSpan.Zero;
+            Audiofile? targetAudiofile = null;
+            TimeSpan targetPositionInAudiofile = TimeSpan.Zero;
+
+            foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
+            {
+                if (string.IsNullOrEmpty(audiofile.ObjectURL))
+                {
+                    continue;
+                }
+
+                if (audiofile.Duration.HasValue)
+                {
+                    TimeSpan nextCumulativeDuration = cumulativeDuration + audiofile.Duration.Value;
+
+                    if (time >= cumulativeDuration && time < nextCumulativeDuration)
+                    {
+                        targetAudiofile = audiofile;
+                        targetPositionInAudiofile = time - cumulativeDuration;
+                        break;
+                    }
+
+                    cumulativeDuration = nextCumulativeDuration;
+                }
+            }
+
+            if (targetAudiofile == null)
+            {
+                targetAudiofile = _sessionStateContainer.Cuesheet.Audiofiles.FirstOrDefault(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+
+                if (targetAudiofile == null)
+                {
+                    return;
+                }
+            }
+
+            if (_currentlyPlayingAudiofile != targetAudiofile)
+            {
+                await PlayAsync(targetAudiofile);
+            }
+
+            if (IsPaused)
             {
                 await PlayOrPauseAsync();
             }
-            if (_currentPlayingSoundId.HasValue)
-            {
-                if (IsPlaying == false)
-                {
-                    await PlayOrPauseAsync();
-                }
-                await _howl.Seek(_currentPlayingSoundId.Value, time);
-            }
+
+            await _jsRuntime.InvokeVoidAsync("audioInterop.seekAudio", targetPositionInAudiofile.TotalSeconds);
         }
 
-        public void Dispose()
+        [JSInvokable]
+        public void OnPlaybackStarted()
         {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposedValue)
-            {
-                if (disposing)
-                {
-                    _howl.OnPlay -= Howl_OnPlay;
-                    _howl.OnPause -= Howl_OnPause;
-                    _howl.OnEnd -= Howl_OnEnd;
-                    _howl.OnStop -= Howl_OnStop;
-                }
-                _disposedValue = true;
-            }
-        }
-
-        private void Howl_OnStop(Howler.Blazor.Components.Events.HowlEventArgs obj)
-        {
-            IsPlaying = false;
-            _currentPlayingSoundId = null;
-            StopTimer();
-            CurrentPosition = null;
-            _currentlyPlayingAudiofile = _sessionStateContainer.Cuesheet.Audiofile;
-        }
-
-        private void Howl_OnEnd(Howler.Blazor.Components.Events.HowlEventArgs obj)
-        {
-            IsPlaying = false;
-            StopTimer();
-            CurrentPosition = null;
-        }
-
-        private void Howl_OnPause(Howler.Blazor.Components.Events.HowlEventArgs obj)
-        {
-            IsPlaying = false;
-            StopTimer();
-        }
-
-        private void Howl_OnPlay(Howler.Blazor.Components.Events.HowlPlayEventArgs obj)
-        {
-            IsPlaying = true;
+            IsPaused = false;
             StartTimer();
         }
 
-        private void StartTimer()
+        [JSInvokable]
+        public void OnPlaybackEnded(string objectUrlEnded)
+        {
+            var audioFileEnded = _sessionStateContainer.Cuesheet.Audiofiles.Single(x => x.ObjectURL == objectUrlEnded);
+            var index = _sessionStateContainer.Cuesheet.Audiofiles.IndexOf(audioFileEnded);
+            if (index < _sessionStateContainer.Cuesheet.Audiofiles.Count - 1)
+            {
+                var nextAudioFile = _sessionStateContainer.Cuesheet.Audiofiles.Where(x => string.IsNullOrEmpty(x.ObjectURL) == false).Skip(index + 1).FirstOrDefault();
+                if (nextAudioFile != null)
+                {
+                    _ = PlayAsync(nextAudioFile);
+                }
+                else
+                {
+                    // No more audio files to play, we stop playback
+                    Reset();
+                }
+            }
+            else
+            {
+                // No more audio files to play, we stop playback
+                Reset();
+            }
+        }
+
+        [JSInvokable]
+        public void OnPlaybackPaused()
+        {
+            IsPaused = true;
+            StopTimer();
+            UpdateCurrentPosition(null);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            await _jsRuntime.InvokeVoidAsync("audioInterop.unregister");
+            _dotNetObjectReference?.Dispose();
+        }
+
+        async Task PlayAsync(Audiofile audiofileToPlay)
+        {
+            await _jsRuntime.InvokeVoidAsync("audioInterop.setAudioSource", audiofileToPlay.ObjectURL);
+            await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio");            
+            _currentlyPlayingAudiofile = audiofileToPlay;
+            _audiofileDurationsBeforeCurrentlyPlayingAudiofile = null;
+        }
+
+        void Reset()
+        {
+            StopTimer();
+            _currentlyPlayingAudiofile = null;
+            _audiofileDurationsBeforeCurrentlyPlayingAudiofile = null;
+            CurrentPosition = null;
+            IsPaused = false;
+        }
+
+        void StartTimer()
         {
             _updateTimer ??= new Timer(UpdateCurrentPosition, null, 0, 500);
         }
 
-        private void StopTimer()
+        void StopTimer()
         {
             _updateTimer?.Dispose();
             _updateTimer = null;
         }
 
-        private async void UpdateCurrentPosition(object? state)
+        async void UpdateCurrentPosition(object? state)
         {
-            // Thread-safe access
             lock (_timerLock)
             {
-                if (_currentPlayingSoundId == null || !IsPlaying) return;
+                if (_currentlyPlayingAudiofile == null)
+                {
+                    StopTimer();
+                }
             }
-            CurrentPosition = await _howl.GetCurrentTime(_currentPlayingSoundId.Value);
-            if (_sessionStateContainer.Cuesheet.Audiofile != _currentlyPlayingAudiofile)
+            CalculateDurationsBeforeCurrentlyPlayingAudiofile();
+            var currentSecondsInCurrentlyPlayingAudiofile = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
+            if (_audiofileDurationsBeforeCurrentlyPlayingAudiofile.HasValue)
             {
-                await _howl.Stop(_currentPlayingSoundId.Value);
+                CurrentPosition = _audiofileDurationsBeforeCurrentlyPlayingAudiofile + TimeSpan.FromSeconds(currentSecondsInCurrentlyPlayingAudiofile);
+            }
+            else
+            {
+                CurrentPosition = TimeSpan.FromSeconds(currentSecondsInCurrentlyPlayingAudiofile);
+            }
+        }
+
+        void CalculateDurationsBeforeCurrentlyPlayingAudiofile()
+        {
+            if ((_audiofileDurationsBeforeCurrentlyPlayingAudiofile != null) || (_currentlyPlayingAudiofile == null))
+            {
+                return;
+            }
+            _audiofileDurationsBeforeCurrentlyPlayingAudiofile = TimeSpan.Zero;
+            var index = _sessionStateContainer.Cuesheet.Audiofiles.IndexOf(_currentlyPlayingAudiofile);
+            for (int i = 0; i < index; i++)
+            {
+                var audiofile = _sessionStateContainer.Cuesheet.Audiofiles[i];
+                _audiofileDurationsBeforeCurrentlyPlayingAudiofile += audiofile.Duration;
             }
         }
     }

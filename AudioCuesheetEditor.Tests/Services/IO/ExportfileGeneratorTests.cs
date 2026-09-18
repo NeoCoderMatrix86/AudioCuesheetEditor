@@ -23,6 +23,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Services.IO
 {
@@ -38,15 +39,16 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var mockLocalizer = new Mock<IStringLocalizer<ValidationMessage>>();
             _exportfileGenerator = new ExportfileGenerator(_mockSessionStateContainer.Object, mockLocalizer.Object);
         }
-        
+
         [TestMethod]
-        public void GenerateExportFile_ShouldGenerateExportfile_WithoutSections()
+        public void GenerateExportFile_SeveralAudiofiles_ReturnsSuccess()
         {
             // Arrange
             var exportProfile = new Exportprofile
             {
                 Name = "TestProfile",
                 SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+                SchemeAudiofiles = Exportprofile.SchemeAudiofileName,
                 SchemeTracks = "%Track.Position% %Track.Artist% - %Track.Title%",
                 Filename = "TestExport.txt"
             };
@@ -70,11 +72,25 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3"),
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Name = "Test audiofile.mp3",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                        Tracks = [track1]
+                    },
+                    new() 
+                    {
+                        Name = "Test audiofile 2.wav",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".wav"),
+                        Tracks = [track1]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.Last();
             _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -85,14 +101,16 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var content = result.Value!.Content;
             Assert.IsNotNull(content);
             Assert.AreEqual(@"Test artist cuesheet - Test title cuesheet
+Test audiofile.mp3
 1 Test artist 1 - Test title 1
-2 Test artist 2 - Test title 2
+Test audiofile 2.wav
+1 Test artist 1 - Test title 1
 
 ", content);
         }
 
         [TestMethod]
-        public void GenerateExportFile_ShouldHandleEmptyProfile()
+        public void GenerateExportFile_EmptyExportprofile_ReturnsSuccess()
         {
             // Arrange
             var exportProfile = new Exportprofile();
@@ -116,11 +134,19 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3"),
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Name = "Test audiofile.mp3",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
             _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act
@@ -160,11 +186,19 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             {
                 Artist = "Test artist cuesheet",
                 Title = "Test title cuesheet",
-                Audiofile = new Audiofile("Test audiofile.mp3"),
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new() 
+                    {
+                        Name = "Test audiofile.mp3",
+                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
             _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
             // Act

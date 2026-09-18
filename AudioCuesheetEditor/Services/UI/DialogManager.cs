@@ -194,7 +194,7 @@ namespace AudioCuesheetEditor.Services.UI
             if (_loadingDialog == null)
             { 
                 var options = new DialogOptions() { BackdropClick = false, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall, NoHeader = true };
-                _loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(null, options);
+                _loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(options);
                 await Task.Delay(1);
             }
         }

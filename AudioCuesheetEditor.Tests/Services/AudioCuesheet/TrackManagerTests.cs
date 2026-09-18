@@ -93,7 +93,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(importTrack.Position, track.Position);
             Assert.AreEqual(importTrack.PostGap, track.PostGap);
             Assert.AreEqual(importTrack.PreGap, track.PreGap);
-            Assert.AreEqual(importTrack.Flags, track.Flags);
+            Assert.AreEquivalent(importTrack.Flags, track.Flags);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Never);
         }
 
@@ -125,7 +125,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(importTrack.Position, track.Position);
             Assert.AreEqual(importTrack.PostGap, track.PostGap);
             Assert.AreEqual(importTrack.PreGap, track.PreGap);
-            Assert.AreEqual(importTrack.Flags, track.Flags);
+            Assert.AreEquivalent(importTrack.Flags, track.Flags);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track)), Times.Never);
         }
 
@@ -157,7 +157,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(source.Position, target.Position);
             Assert.AreEqual(source.PostGap, target.PostGap);
             Assert.AreEqual(source.PreGap, target.PreGap);
-            Assert.AreEqual(source.Flags, target.Flags);
+            Assert.AreEquivalent(source.Flags, target.Flags);
             Assert.AreEqual(source.Length, target.Length);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Exactly(9));
         }
@@ -190,7 +190,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(source.Position, target.Position);
             Assert.AreNotEqual(source.PostGap, target.PostGap);
             Assert.AreEqual(source.PreGap, target.PreGap);
-            Assert.AreNotEqual(source.Flags, target.Flags);
+            Assert.AreNotEquivalent(source.Flags, target.Flags);
             Assert.AreNotEqual(source.Length, target.Length);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == target)), Times.Exactly(6));
         }
@@ -211,7 +211,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -236,7 +241,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -261,7 +271,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -289,7 +304,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -316,7 +336,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -341,7 +366,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -366,7 +396,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -395,7 +430,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -416,10 +456,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Begin = TimeSpan.Zero,
                 End = new TimeSpan(0, 8, 32)
             };
-            var cuesheet = new Cuesheet()
-            {
-                Tracks = [track1]
-            };
+            var cuesheet = new Cuesheet();
             track1.Cuesheet = cuesheet;
             // Act
             var linkedTrack = _trackManager.GetNextLinkedTrack(track1);
@@ -454,7 +491,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track1, track2, track3]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2, track3]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -483,7 +525,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track2, track1]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -511,7 +558,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track2, track1]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -539,7 +591,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track2, track1]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -567,7 +624,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track2, track1]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -595,7 +657,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track2, track1]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;
@@ -623,7 +690,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var cuesheet = new Cuesheet()
             {
-                Tracks = [track2, track1]
+                Audiofiles = [
+                    new()
+                    {
+                        Tracks = [track1, track2]
+                    }
+                ]
             };
             track1.Cuesheet = cuesheet;
             track2.Cuesheet = cuesheet;

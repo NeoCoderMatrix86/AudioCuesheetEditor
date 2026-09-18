@@ -19,7 +19,6 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ControlRecording> _localizer
 @inject IDialogService _dialogService
-@inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
 
@@ -96,23 +95,34 @@ along with Foobar.  If not, see
     {
         base.OnInitialized();
         _updateGUITimer.AutoReset = true;
-        _updateGUITimer.Elapsed += delegate
-        {
-            StateHasChanged();
-            Boolean startRecordTimeEnabled = false;
-            if (_startRecordTimer != null)
-            {
-                startRecordTimeEnabled = _startRecordTimer.Enabled;
-            }
-            if ((startRecordTimeEnabled == false) && (Cuesheet.IsRecording == false))
-            {
-                _updateGUITimer.Stop();
-            }
-        };
+        _updateGUITimer.Elapsed += UpdateGUITimer_Elapsed;
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
         var result = _cuesheetManager.IsRecordingPossible;
         if (result.IsSuccess == false)
         {
             _errorMessage = result.Error!.Message;
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _updateGUITimer.Elapsed -= UpdateGUITimer_Elapsed;
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
+        _updateGUITimer.Dispose();
+    }
+
+    void UpdateGUITimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        StateHasChanged();
+        Boolean startRecordTimeEnabled = false;
+        if (_startRecordTimer != null)
+        {
+            startRecordTimeEnabled = _startRecordTimer.Enabled;
+        }
+        if ((startRecordTimeEnabled == false) && (Cuesheet.IsRecording == false))
+        {
+            _updateGUITimer.Stop();
         }
     }
 
@@ -137,7 +147,7 @@ along with Foobar.  If not, see
     async Task DisplayStartCountdownDialog()
     {
         var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, CloseButton = true };
-        var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(null, options);
+        var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(options);
         var result = await dialog.Result;
         var recordCountdownTimer = result?.Data as uint?;
         if ((result?.Canceled == false) && (recordCountdownTimer.HasValue))
@@ -152,6 +162,15 @@ along with Foobar.  If not, see
             _startRecordTimer.Start();
             _updateGUITimer.Start();
             _recordTimerStarted = DateTime.Now;
+        }
+    }
+
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs e)
+    {
+        var result = _cuesheetManager.IsRecordingPossible;
+        if (result.IsSuccess == false)
+        {
+            _errorMessage = result.Error!.Message;
         }
     }
 }

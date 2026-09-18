@@ -14,17 +14,16 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor;
-using AudioCuesheetEditor.Data.Options;
-using AudioCuesheetEditor.Data.Services;
 using AudioCuesheetEditor.Extensions;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Audio;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.IO;
+using AudioCuesheetEditor.Services.Options;
+using AudioCuesheetEditor.Services.Provider;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Services.Validation;
 using BlazorDownloadFile;
-using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
@@ -41,21 +40,11 @@ builder.Services.AddMudServices(config =>
     config.PopoverOptions.OverflowPadding = 0;
 });
 
-builder.Services.AddScoped<IHowl, Howl>();
-builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
-
 builder.Services.AddBlazorDownloadFile();
 
 builder.Services.AddScoped<ILocalStorageOptionsProvider, LocalStorageOptionsProvider>();
 builder.Services.AddScoped<MusicBrainzDataProvider>();
-
-builder.Services.AddScoped<ISessionStateContainer>(x =>
-{
-    var localStorageOptionsProvider = x.GetRequiredService<ILocalStorageOptionsProvider>();
-    var sessionStateContainer = new SessionStateContainer(localStorageOptionsProvider);
-    _ = sessionStateContainer.InitializeAsync();
-    return sessionStateContainer;
-});
+builder.Services.AddScoped<ISessionStateContainer, SessionStateContainer>();
 builder.Services.AddScoped<ITraceChangeManager, TraceChangeManager>();
 builder.Services.AddScoped<ImportManager>();
 builder.Services.AddScoped<ITextImportService, TextImportService>();
@@ -71,6 +60,7 @@ builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 builder.Services.AddScoped<ITrackManager, TrackManager>();
 builder.Services.AddScoped<ICuesheetManager, CuesheetManager>();
+builder.Services.AddScoped<IAudiofileManager, AudiofileManager>();
 
 builder.Services.AddLogging();
 // Read out configuration for loglevel
@@ -83,5 +73,5 @@ builder.Services.AddHotKeys2();
 var host = builder.Build();
 
 await host.SetCultureFromConfigurationAsync();
-
+await host.InitializeSessionStateContainer();
 await host.RunAsync();

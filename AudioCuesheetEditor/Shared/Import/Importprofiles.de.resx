@@ -147,6 +147,9 @@
   <data name="End" xml:space="preserve">
     <value>Ende</value>
   </data>
+  <data name="Enter the audiofiles scheme for this profile here" xml:space="preserve">
+    <value>Geben Sie hier das Audiodatei Schema für das Profil an</value>
+  </data>
   <data name="Enter the common data scheme for this profile here" xml:space="preserve">
     <value>Geben Sie hier das Allgemeine Informationen Schema für das Profil an</value>
   </data>
@@ -197,6 +200,9 @@
   </data>
   <data name="Reset import profiles" xml:space="preserve">
     <value>Importprofile zurücksetzen</value>
+  </data>
+  <data name="Scheme audiofiles" xml:space="preserve">
+    <value>Schema Audiodateien</value>
   </data>
   <data name="Scheme common data" xml:space="preserve">
     <value>Schema Allgemeine Informationen</value>

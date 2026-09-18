@@ -21,10 +21,9 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
     {
         public string? Artist { get; set; }
         public string? Title { get; set; }
-        public string? Audiofile { get;set; }
+        public IList<ImportAudiofile> Audiofiles { get; set; } = [];
         /// <inheritdoc/>
         public string? CDTextfile { get; set; }
         public string? Cataloguenumber { get; set; }
-        public ICollection<ImportTrack> Tracks { get; } = [];
     }
 }
