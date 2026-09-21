@@ -47,7 +47,6 @@ namespace AudioCuesheetEditor.Services.Audio
             }
         }
         public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
-        //TODO: Doesn't get reset when cuesheet or application is reset
         public TimeSpan? TotalTime
         {
             get
@@ -64,7 +63,6 @@ namespace AudioCuesheetEditor.Services.Audio
         public Boolean IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
         public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
         public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
-        //TODO: Doesn't stop playback when resetting cuesheet or application
         public Boolean IsPlaying => _currentlyPlayingAudiofile != null;
 
         public async Task InitializeAsync()
@@ -74,6 +72,12 @@ namespace AudioCuesheetEditor.Services.Audio
                 _dotNetObjectReference = DotNetObjectReference.Create(this);
                 await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference);
             }
+            _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        }
+
+        void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
+        {
+            _ = StopAsync();
         }
 
         public async Task PlayOrPauseAsync()
@@ -231,6 +235,7 @@ namespace AudioCuesheetEditor.Services.Audio
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
+            _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
             await _jsRuntime.InvokeVoidAsync("audioInterop.unregister");
             _dotNetObjectReference?.Dispose();
         }

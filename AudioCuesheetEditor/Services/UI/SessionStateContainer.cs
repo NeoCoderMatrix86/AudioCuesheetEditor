@@ -31,6 +31,7 @@ namespace AudioCuesheetEditor.Services.UI
         private ViewOptions? _viewOptions;
         private bool disposedValue;
 
+        public event EventHandler? CuesheetChanged;
         public event EventHandler? ActiveCuesheetChanged;
 
         public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider)
@@ -52,6 +53,7 @@ namespace AudioCuesheetEditor.Services.UI
             {
                 _cuesheet = value;
                 SetActiveCuesheet();
+                CuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         public Cuesheet? ImportCuesheet 
