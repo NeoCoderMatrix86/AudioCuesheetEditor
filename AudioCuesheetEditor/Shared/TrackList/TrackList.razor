@@ -85,7 +85,7 @@ along with Foobar.  If not, see
                 </CellTemplate>
                 <EditTemplate>
                     <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Begin, value)"
-                                  Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" />
+                                  Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" Style="width: 55px;" />
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -94,7 +94,7 @@ along with Foobar.  If not, see
                 </CellTemplate>
                 <EditTemplate>
                     <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.End, value)"
-                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" />
+                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" Style="width: 55px;" />
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -103,7 +103,7 @@ along with Foobar.  If not, see
                 </CellTemplate>
                 <EditTemplate>
                     <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Length, value)"
-                                  Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" />
+                                  Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" Style="width: 55px;" />
                 </EditTemplate>
             </PropertyColumn>
             <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
@@ -128,7 +128,7 @@ along with Foobar.  If not, see
     }
 </MudMenu>
 
-    @code {
+@code {
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
     Track? _contextMenuTrack;
