@@ -31,7 +31,7 @@ along with Foobar.  If not, see
     {
         <MudText>@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
     }
-    <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.IsPlaybackPossible" Value="sliderValue" ValueChanged="OnSliderValueChanged" ValueLabel aria-label="Playback slider">
+    <MudSlider T="double" Variant="Variant.Filled" Min="0" Max="100" Disabled="!_playbackService.IsPlaybackPossible" Value="_sliderValue" ValueChanged="OnSliderValueChanged" ValueLabel aria-label="Playback slider">
         <ValueLabelContent>
             @GetSliderTimeValue()
         </ValueLabelContent>
@@ -63,21 +63,21 @@ along with Foobar.  If not, see
 </MudStack>
 
 @code {
-    double sliderValue;
-    HotKeysContext? hotKeysContext;
+    double _sliderValue;
+    HotKeysContext? _hotKeysContext;
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
         _playbackService.CurrentPositionChanged -= PlaybackService_CurrentPositionChanged;
-        hotKeysContext?.DisposeAsync();
+        _hotKeysContext?.DisposeAsync();
     }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         _playbackService.CurrentPositionChanged += PlaybackService_CurrentPositionChanged;
-        hotKeysContext = _hotKeys.CreateContext()
+        _hotKeysContext = _hotKeys.CreateContext()
             .Add(ModKey.Ctrl, Key.p, OnPlayOrPauseClicked)
             .Add(ModKey.Ctrl, Key.ArrowRight, PlayNextTrackAsync)
             .Add(ModKey.Ctrl, Key.ArrowLeft, PlayPreviousTrackAsync)
@@ -121,18 +121,18 @@ along with Foobar.  If not, see
     {
         if ((_playbackService.CurrentPosition.HasValue) && (_playbackService.TotalTime.HasValue))
         {
-            sliderValue = (_playbackService.CurrentPosition.Value / _playbackService.TotalTime.Value) * 100.0;
+            _sliderValue = (_playbackService.CurrentPosition.Value / _playbackService.TotalTime.Value) * 100.0;
         }
         else
         {
-            sliderValue = 0.0;
+            _sliderValue = 0.0;
         }
         InvokeAsync(StateHasChanged);
     }
 
     string GetSliderTimeValue()
     {
-        var time = sliderValue * _playbackService.TotalTime / 100.0;
+        var time = _sliderValue * _playbackService.TotalTime / 100.0;
         if (time.HasValue)
         {
             return time.Value.ToString(@"hh\:mm\:ss");
