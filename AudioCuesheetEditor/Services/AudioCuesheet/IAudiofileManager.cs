@@ -23,6 +23,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
     public interface IAudiofileManager
     {
         /// <summary>
+        /// Event triggered when an audiofile is changed
+        /// </summary>
+        public event EventHandler<Audiofile>? AudiofileChanged;
+        /// <summary>
         /// Set properties from a file upload
         /// </summary>
         /// <param name="audiofile"></param>

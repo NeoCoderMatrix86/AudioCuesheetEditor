@@ -15,15 +15,17 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer) : IAsyncDisposable
+    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer, IAudiofileManager audiofileManager) : IAsyncDisposable
     {
-        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly IJSRuntime _jsRuntime = jsRuntime;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly IAudiofileManager _audiofileManager = audiofileManager;
 
         private Audiofile? _currentlyPlayingAudiofile;
         private Timer? _updateTimer;
@@ -72,8 +74,19 @@ namespace AudioCuesheetEditor.Services.Audio
                 _dotNetObjectReference = DotNetObjectReference.Create(this);
                 await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference);
             }
-            //TODO: When audiofile gets cleared playback doesnt stop but the audioplayer doesn't offer stop anymore
+            _audiofileManager.AudiofileChanged += AudiofileManager_AudiofileChanged;
             _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        }
+
+        void AudiofileManager_AudiofileChanged(object? sender, Audiofile audiofile)
+        {
+            if (audiofile == _currentlyPlayingAudiofile)
+            {
+                if (string.IsNullOrEmpty(audiofile.ObjectURL))
+                {
+                    _ = StopAsync();
+                }
+            }
         }
 
         void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
@@ -236,6 +249,7 @@ namespace AudioCuesheetEditor.Services.Audio
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
+            _audiofileManager.AudiofileChanged -= AudiofileManager_AudiofileChanged;
             _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
             await _jsRuntime.InvokeVoidAsync("audioInterop.unregister");
             _dotNetObjectReference?.Dispose();
