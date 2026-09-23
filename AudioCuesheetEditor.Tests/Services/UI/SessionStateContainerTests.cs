@@ -45,14 +45,17 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             var viewOptions = new ViewOptions();
             _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             await _sessionStateContainer.InitializeAsync();
-            bool eventTriggered = false;
-            _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
+            bool activeCuesheetChangedEvent = false;
+            bool cuesheetChangedEvent = false;
+            _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => activeCuesheetChangedEvent = true;
+            _sessionStateContainer.CuesheetChanged += (sender, args) => cuesheetChangedEvent = true;
 
             // Act
             _sessionStateContainer.Cuesheet = newCuesheet;
 
             // Assert
-            Assert.IsTrue(eventTriggered);
+            Assert.IsTrue(activeCuesheetChangedEvent);
+            Assert.IsTrue(cuesheetChangedEvent);
         }
 
         [TestMethod]
@@ -67,13 +70,15 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
             await _sessionStateContainer.InitializeAsync();
             bool eventTriggered = false;
+            bool cuesheetChangedEvent = false;
             _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
-
+            _sessionStateContainer.CuesheetChanged += (sender, args) => cuesheetChangedEvent = true;
             // Act
             _sessionStateContainer.Cuesheet = newCuesheet;
 
             // Assert
             Assert.IsFalse(eventTriggered);
+            Assert.IsTrue(cuesheetChangedEvent);
         }
 
         [TestMethod]

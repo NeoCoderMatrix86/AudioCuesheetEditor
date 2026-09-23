@@ -31,6 +31,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         private readonly IJSRuntime _jsRuntime = jsRuntime;
         private readonly ITrackManager _trackManager = trackManager;
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        
+        /// <inheritdoc/>
+        public event EventHandler<Audiofile>? AudiofileChanged;
 
         /// <inheritdoc/>
         public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile? browserFile, string fileInputId)
@@ -145,6 +148,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
 
             propertyInfo.SetValue(audiofile, value);
+            AudiofileChanged?.Invoke(this, audiofile);
             _traceChangeManager.AddChange(new(audiofile, new(previousValue, propertyInfo.Name)));
         }
 
