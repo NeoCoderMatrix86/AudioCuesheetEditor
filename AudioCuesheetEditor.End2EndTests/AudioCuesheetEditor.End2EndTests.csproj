@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Playwright.MSTest.v4" Version="1.62.0" />
+    <PackageReference Include="Microsoft.Playwright.MSTest.v4" Version="1.63.0" />
     <PackageReference Include="MSTest" Version="4.4.1" />
   </ItemGroup>
 
