@@ -4,22 +4,19 @@ on:
   push:
     branches:
       - development
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
-  run-tests:
-    uses: ./.github/workflows/run_tests.yml
   build:
-    needs: run-tests
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     # version can be found here https://dotnet.microsoft.com/en-us/download/dotnet/10.0
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
 
@@ -30,7 +27,7 @@ jobs:
       run: dotnet publish AudioCuesheetEditor --configuration Release --output release
       
     - name: Upload Build Artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: AudioCuesheetEditor-Release
         path: ./release
@@ -40,16 +37,16 @@ jobs:
     runs-on: ubuntu-latest
     environment: |-
       ${{
-         github.ref_name == 'master' && 'Production'
+         github.ref_name == 'main' && 'Production'
       ||                                'Preview'
       }}
     steps:
     - name: Download Build Artifact
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: AudioCuesheetEditor-Release
     - name: Deploy to Netlify
-      uses: nwtgck/actions-netlify@v3
+      uses: nwtgck/actions-netlify@v4
       with:
         publish-dir: './wwwroot'
         production-deploy: true

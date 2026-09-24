@@ -15,22 +15,24 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.Audio
 {
-    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer) : IAsyncDisposable
+    public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessionStateContainer, IAudiofileManager audiofileManager) : IAsyncDisposable
     {
-        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly IJSRuntime _jsRuntime = jsRuntime;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+        private readonly IAudiofileManager _audiofileManager = audiofileManager;
 
         private Audiofile? _currentlyPlayingAudiofile;
         private Timer? _updateTimer;
         private readonly Lock _timerLock = new();
         private TimeSpan? _currentPosition;
         private DotNetObjectReference<PlaybackService>? _dotNetObjectReference;
-        private TimeSpan? _audiofileDurationsBeforeCurrentlyPlayingAudiofile;
+        private TimeSpan _durationBeforeCurrentlyPlayingAudiofile;
 
         public event Action? CurrentPositionChanged;
 
@@ -72,6 +74,24 @@ namespace AudioCuesheetEditor.Services.Audio
                 _dotNetObjectReference = DotNetObjectReference.Create(this);
                 await _jsRuntime.InvokeVoidAsync("audioInterop.register", _dotNetObjectReference);
             }
+            _audiofileManager.AudiofileChanged += AudiofileManager_AudiofileChanged;
+            _sessionStateContainer.CuesheetChanged += SessionStateContainer_CuesheetChanged;
+        }
+
+        void AudiofileManager_AudiofileChanged(object? sender, Audiofile audiofile)
+        {
+            if (audiofile == _currentlyPlayingAudiofile)
+            {
+                if (string.IsNullOrEmpty(audiofile.ObjectURL))
+                {
+                    _ = StopAsync();
+                }
+            }
+        }
+
+        void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
+        {
+            _ = StopAsync();
         }
 
         public async Task PlayOrPauseAsync()
@@ -223,12 +243,14 @@ namespace AudioCuesheetEditor.Services.Audio
         {
             IsPaused = true;
             StopTimer();
-            UpdateCurrentPosition(null);
+            UpdateCurrentPosition();
         }
 
         public async ValueTask DisposeAsync()
         {
             GC.SuppressFinalize(this);
+            _audiofileManager.AudiofileChanged -= AudiofileManager_AudiofileChanged;
+            _sessionStateContainer.CuesheetChanged -= SessionStateContainer_CuesheetChanged;
             await _jsRuntime.InvokeVoidAsync("audioInterop.unregister");
             _dotNetObjectReference?.Dispose();
         }
@@ -238,14 +260,14 @@ namespace AudioCuesheetEditor.Services.Audio
             await _jsRuntime.InvokeVoidAsync("audioInterop.setAudioSource", audiofileToPlay.ObjectURL);
             await _jsRuntime.InvokeVoidAsync("audioInterop.playAudio");            
             _currentlyPlayingAudiofile = audiofileToPlay;
-            _audiofileDurationsBeforeCurrentlyPlayingAudiofile = null;
+            _durationBeforeCurrentlyPlayingAudiofile = TimeSpan.Zero;
         }
 
         void Reset()
         {
             StopTimer();
             _currentlyPlayingAudiofile = null;
-            _audiofileDurationsBeforeCurrentlyPlayingAudiofile = null;
+            _durationBeforeCurrentlyPlayingAudiofile = TimeSpan.Zero;
             CurrentPosition = null;
             IsPaused = false;
         }
@@ -261,39 +283,42 @@ namespace AudioCuesheetEditor.Services.Audio
             _updateTimer = null;
         }
 
-        async void UpdateCurrentPosition(object? state)
+        async void UpdateCurrentPosition(object? state = null)
         {
             lock (_timerLock)
             {
-                if (_currentlyPlayingAudiofile == null)
+                if (IsPlaying == false)
                 {
-                    StopTimer();
+                    Reset();
+                    return;
+                }
+                else
+                {
+                    SetDurationBeforeCurrentlyPlayingAudiofile();
                 }
             }
-            CalculateDurationsBeforeCurrentlyPlayingAudiofile();
-            var currentSecondsInCurrentlyPlayingAudiofile = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
-            if (_audiofileDurationsBeforeCurrentlyPlayingAudiofile.HasValue)
+            if (IsPlaying)
             {
-                CurrentPosition = _audiofileDurationsBeforeCurrentlyPlayingAudiofile + TimeSpan.FromSeconds(currentSecondsInCurrentlyPlayingAudiofile);
-            }
-            else
-            {
-                CurrentPosition = TimeSpan.FromSeconds(currentSecondsInCurrentlyPlayingAudiofile);
+                var currentSecondsInCurrentlyPlayingAudiofile = await _jsRuntime.InvokeAsync<double>("audioInterop.getAudioCurrentTime");
+                CurrentPosition = _durationBeforeCurrentlyPlayingAudiofile + TimeSpan.FromSeconds(currentSecondsInCurrentlyPlayingAudiofile);
             }
         }
 
-        void CalculateDurationsBeforeCurrentlyPlayingAudiofile()
+        void SetDurationBeforeCurrentlyPlayingAudiofile()
         {
-            if ((_audiofileDurationsBeforeCurrentlyPlayingAudiofile != null) || (_currentlyPlayingAudiofile == null))
+            if (_currentlyPlayingAudiofile == null)
             {
                 return;
             }
-            _audiofileDurationsBeforeCurrentlyPlayingAudiofile = TimeSpan.Zero;
+            _durationBeforeCurrentlyPlayingAudiofile = TimeSpan.Zero;
             var index = _sessionStateContainer.Cuesheet.Audiofiles.IndexOf(_currentlyPlayingAudiofile);
             for (int i = 0; i < index; i++)
             {
                 var audiofile = _sessionStateContainer.Cuesheet.Audiofiles[i];
-                _audiofileDurationsBeforeCurrentlyPlayingAudiofile += audiofile.Duration;
+                if (audiofile.Duration.HasValue)
+                {
+                    _durationBeforeCurrentlyPlayingAudiofile += audiofile.Duration.Value;
+                }
             }
         }
     }
