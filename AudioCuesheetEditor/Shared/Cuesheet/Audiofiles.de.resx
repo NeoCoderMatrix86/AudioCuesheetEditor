@@ -129,6 +129,9 @@
   <data name="New file name" xml:space="preserve">
     <value>Neuer Dateiname</value>
   </data>
+  <data name="No file uploaded!" xml:space="preserve">
+    <value>Keine Datei hochgeladen!</value>
+  </data>
   <data name="Validation errors" xml:space="preserve">
     <value>Validierungsfehler</value>
   </data>
