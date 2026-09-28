@@ -51,6 +51,7 @@ along with Foobar.  If not, see
                         <SelectedTemplate />
                     </MudFileUpload>
                     <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.FileUpload" OnClick="() => _fileUploads[file].OpenFilePickerAsync()" aria-label="Upload file" />
+                    <MudIconButton Variant="Variant.Filled" Color="Color.Info" Icon="@Icons.Material.Outlined.EditAttributes" OnClick="() => FileRenameClicked(file)" Disabled="String.IsNullOrEmpty(file.Name)" aria-label="Rename file" />
                     <MudIconButton Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="() => _audiofileManager.ClearPropertiesAsync(file)" Disabled="String.IsNullOrEmpty(file.Name)" aria-label="Clear file" />
                 </MudStack>
             </TitleContent>
@@ -62,7 +63,7 @@ along with Foobar.  If not, see
 </MudExpansionPanels>
 
 @code {
-    //TODO: Rename file
+    //TODO: Multiple uploads fail
     
     [Parameter]
     [EditorRequired]

@@ -23,12 +23,11 @@ along with Foobar.  If not, see
 @if (ValidationResult.Status == ValidationStatus.Error)
 {
     <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-        <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
         @foreach (var message in ValidationResult.ValidationMessages)
         {
-            <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
+            @message.GetMessageLocalized(_validationMessageLocalizer)<MudFlexBreak />
         }
-        </MudAlert>
+    </MudAlert>
 }
 
 @code {
