@@ -27,17 +27,7 @@ along with Foobar.  If not, see
     case ViewMode.DetailView:
     case ViewMode.ImportView:
         var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Audiofiles));
-        if (validationResult?.Status == ValidationStatus.Error)
-        {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
-                @foreach (var message in validationResult.ValidationMessages)
-                {
-                    <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
-                }
-            </MudAlert>
-            <br />
-        }
+        <Alert ValidationResult="validationResult" />
         break;
 }
 
@@ -46,6 +36,10 @@ along with Foobar.  If not, see
     {
         <MudExpansionPanel Expanded>
             <TitleContent>
+                @{
+                    var validationResult = file.Validate();
+                    <Alert ValidationResult="validationResult" />
+                }
                 <MudStack Row AlignItems="AlignItems.Center">
                     <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" />
                     <MudText Typo="Typo.h6" Style="width: 100%; line-break: anywhere;">@GetFileName(file)</MudText>
@@ -68,7 +62,6 @@ along with Foobar.  If not, see
 </MudExpansionPanels>
 
 @code {
-    //TODO: Alert when file is invalid
     //TODO: Rename file
     
     [Parameter]
