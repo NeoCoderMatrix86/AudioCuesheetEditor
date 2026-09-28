@@ -78,7 +78,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task SetPropertiesAsync_EmptyBrowserFile_ShouldClearPropertiesAsync()
+        public async Task ClearPropertiesAsync_ValidBrowserFile_ShouldClearPropertiesAsync()
         {
             // Arrange
             var audiofile = new Audiofile
@@ -98,7 +98,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             var expectedUrl = audiofile.ObjectURL;
             // Act
-            await _audiofileManager.SetPropertiesAsync(audiofile, null, string.Empty);
+            await _audiofileManager.ClearPropertiesAsync(audiofile);
             // Assert
             Assert.IsNull(audiofile.AudioCodec);
             Assert.IsNull(audiofile.Name);
@@ -106,6 +106,8 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.IsNull(audiofile.Duration);
             Assert.IsTrue(audiofileChangedFired);
             _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == expectedUrl)), Times.Once);
+            _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);
         }
 
         [TestMethod]
@@ -201,7 +203,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
-        public async Task SetPropertiesAsync_NullBrowserFile_WithExistingObjectUrl_ShouldRevokeObjectUrl()
+        public async Task ClearPropertiesAsync_WithExistingObjectUrl_ShouldRevokeObjectUrl()
         {
             // Arrange
             var audiofile = new Audiofile
@@ -218,12 +220,14 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 }
             };
             // Act
-            await _audiofileManager.SetPropertiesAsync(audiofile, null, string.Empty);
+            await _audiofileManager.ClearPropertiesAsync(audiofile);
 
             // Assert
             Assert.IsTrue(audiofileChangedFired);
             _jsRuntime.Verify(js =>js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == expectedUrl)),Times.Once);
             Assert.IsNull(audiofile.ObjectURL);
+            _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);
         }
 
         [TestMethod]

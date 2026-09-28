@@ -32,7 +32,13 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <param name="audiofile"></param>
         /// <param name="browserFile"></param>
         /// <param name="fileInputId"></param>
-        Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile? browserFile, string fileInputId);
+        Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile, string fileInputId);
+        /// <summary>
+        /// Clear properties of an audiofile
+        /// </summary>
+        /// <param name="audiofile"></param>
+        /// <returns></returns>
+        Task ClearPropertiesAsync(Audiofile audiofile);
         /// <summary>
         /// Set property for an audio file
         /// </summary>
