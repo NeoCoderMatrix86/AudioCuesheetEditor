@@ -88,12 +88,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 ObjectURL = "Just a test",
                 Duration = TimeSpan.FromSeconds(120)
             };
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate(object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
                 }
             };
             var expectedUrl = audiofile.ObjectURL;
@@ -104,7 +104,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.IsNull(audiofile.Name);
             Assert.IsNull(audiofile.ObjectURL);
             Assert.IsNull(audiofile.Duration);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == expectedUrl)), Times.Once);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
             _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);
@@ -127,12 +127,13 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
 
             var audiofile = new Audiofile();
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
@@ -143,7 +144,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(filename, audiofile.Name);
             Assert.AreEqual(objectUrl, audiofile.ObjectURL);
             Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             _fileInputManager.Verify(f => f.GetAudioCodec("audio/mpeg", filename), Times.Once);
             _fileInputManager.Verify(f => f.GetObjectUrlAsync(inputId), Times.Once);
             _jsRuntime.Verify(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.Is<object?[]>(o => o[0] as string == audiofile.ObjectURL)), Times.Once);
@@ -179,12 +180,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Tracks = [track1, track2]
             };
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
                 }
             };
             // Act
@@ -196,10 +197,54 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(objectUrl, audiofile.ObjectURL);
             Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
             Assert.AreEqual(TimeSpan.FromSeconds(90), track2.End);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             _fileInputManager.Verify(f => f.GetAudioCodec("audio/mpeg", filename), Times.Once);
             _fileInputManager.Verify(f => f.GetObjectUrlAsync(inputId), Times.Once);
             _jsRuntime.Verify(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.Is<object?[]>(o => o[0] as string == audiofile.ObjectURL)), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task SetPropertiesAsync_PreviouslySetAudiofile_ShouldClearFirstAndSetPropertiesAsync()
+        {
+            // Arrange
+            var objectUrl = "blob:123";
+            var filename = "song.mp3";
+            var inputId = "inputId";
+            var browserFile = new Mock<IBrowserFile>();
+            browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
+            browserFile.SetupGet(b => b.Name).Returns(filename);
+
+            var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
+            _fileInputManager.Setup(f => f.GetAudioCodec("audio/mpeg", filename)).Returns(codec);
+            _fileInputManager.Setup(f => f.GetObjectUrlAsync(inputId)).ReturnsAsync(objectUrl);
+            _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
+
+            var audiofile = new Audiofile
+            {
+                ObjectURL = "previouslySetObjectUrl"
+            };
+            var audiofileChangedFired = 0;
+            _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
+            {
+                if (e == audiofile)
+                {
+                    audiofileChangedFired++;
+                }
+            };
+            // Act
+            await _audiofileManager.SetPropertiesAsync(audiofile, browserFile.Object, inputId);
+
+            // Assert
+            Assert.AreEqual(codec, audiofile.AudioCodec);
+            Assert.AreEqual(filename, audiofile.Name);
+            Assert.AreEqual(objectUrl, audiofile.ObjectURL);
+            Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
+            Assert.AreEqual(1, audiofileChangedFired);
+            _fileInputManager.Verify(f => f.GetAudioCodec("audio/mpeg", filename), Times.Once);
+            _fileInputManager.Verify(f => f.GetObjectUrlAsync(inputId), Times.Once);
+            _jsRuntime.Verify(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.Is<object?[]>(o => o[0] as string == audiofile.ObjectURL)), Times.Once);
+            _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);
         }
 
         [TestMethod]
@@ -211,19 +256,20 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 ObjectURL = "just a test"
             };
             var expectedUrl = audiofile.ObjectURL;
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
             await _audiofileManager.ClearPropertiesAsync(audiofile);
 
             // Assert
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             _jsRuntime.Verify(js =>js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == expectedUrl)),Times.Once);
             Assert.IsNull(audiofile.ObjectURL);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
@@ -238,12 +284,13 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Name = "oldname.mp3"
             };
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
@@ -251,7 +298,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
 
             // Assert
             Assert.AreEqual("newname.mp3", audiofile.Name);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && y.TraceableChange.PreviousValue!.Equals("oldname.mp3") && y.TraceableChange.PropertyName == nameof(Audiofile.Name))), Times.Once);
         }
 
@@ -263,19 +310,20 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 Name = "oldname.mp3"
             };
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
             _audiofileManager.SetProperty(audiofile, x => x.Name, "oldname.mp3");
 
             // Assert
-            Assert.IsFalse(audiofileChangedFired);
+            Assert.AreEqual(0, audiofileChangedFired);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && y.TraceableChange.PreviousValue!.Equals("oldname.mp3") && y.TraceableChange.PropertyName == nameof(Audiofile.Name))), Times.Never);
         }
 
@@ -299,12 +347,13 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Tracks = [track1, track2],
             };
             var duration = new TimeSpan(0, 3, 37, 12);
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
@@ -313,7 +362,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             // Assert
             Assert.AreEqual(duration, audiofile.Duration);
             Assert.AreEqual(duration, track2.End);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
         }
 
         [TestMethod]
@@ -327,12 +376,13 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
                 Audiofiles = [audiofile]
             };
             _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             var track = new Track();
@@ -340,7 +390,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             _audiofileManager.AddTrack(audiofile, track);
             // Assert
             Assert.HasCount(1, audiofile.Tracks);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             Assert.AreEqual((ushort)1, audiofile.Tracks.First().Position);
             Assert.AreEqual(TimeSpan.Zero, audiofile.Tracks.First().Begin);
             Assert.AreEqual(duration, audiofile.Tracks.First().End);
@@ -375,12 +425,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 IsLinkedToPreviousTrack = true
             };
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
                 }
             };
             // Act
@@ -392,7 +442,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(duration, audiofile.Tracks.Last().End);
             Assert.AreEqual(cuesheet, track.Cuesheet);
             Assert.AreEqual(audiofile, track.Audiofile);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && y.TraceableChange.PreviousValue == tracks && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Once);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
             _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);
@@ -425,18 +475,19 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             {
                 IsLinkedToPreviousTrack = true
             };
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
             _audiofileManager.AddTrack(audiofile, track);
             // Assert
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             Assert.HasCount(2, audiofile.Tracks);
             Assert.AreEqual((ushort)2, audiofile.Tracks.Last().Position);
             Assert.IsNotNull(audiofile.Tracks.First().End);
@@ -460,18 +511,19 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             };
             _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
             var track = new Track();
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
+
                 }
             };
             // Act
             _audiofileManager.AddTrack(audiofile, track);
             // Assert
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             Assert.HasCount(1, audiofile.Tracks);
             Assert.AreEqual((ushort)1, audiofile.Tracks.First().Position);
             Assert.AreEqual(TimeSpan.Zero, audiofile.Tracks.First().Begin);
@@ -537,12 +589,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track4.Cuesheet = cuesheet;
             track5.Cuesheet = cuesheet;
             _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
                 }
             };
             // Act
@@ -552,7 +604,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.Contains(track1, audiofile.Tracks);
             Assert.Contains(track3, audiofile.Tracks);
             Assert.Contains(track5, audiofile.Tracks);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             Assert.AreEqual((ushort)1, track1.Position);
             Assert.AreEqual(TimeSpan.Zero, track1.Begin);
             Assert.AreEqual(track1.End, track3.Begin);
@@ -624,12 +676,12 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             track4.Audiofile = audiofile;
             track5.Audiofile = audiofile;
             _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
-            var audiofileChangedFired = false;
+            var audiofileChangedFired = 0;
             _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
             {
                 if (e == audiofile)
                 {
-                    audiofileChangedFired = true;
+                    audiofileChangedFired++;
                 }
             };
             // Act
@@ -645,7 +697,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual((ushort)2, track3.Position);
             Assert.AreEqual(track5.Begin, track3.End);
             Assert.AreEqual((ushort)3, track5.Position);
-            Assert.IsTrue(audiofileChangedFired);
+            Assert.AreEqual(1, audiofileChangedFired);
             Assert.AreEqual(duration, track5.End);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && y.TraceableChange.PreviousValue == previousValue && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Once);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
