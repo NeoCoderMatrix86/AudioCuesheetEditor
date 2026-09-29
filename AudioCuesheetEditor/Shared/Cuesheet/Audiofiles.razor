@@ -26,8 +26,7 @@ along with Foobar.  If not, see
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Audiofiles));
-        <Alert ValidationResult="validationResult" />
+        <Alert ValidationResult="Cuesheet?.Validate(nameof(Cuesheet.Audiofiles))" />
         break;
 }
 
@@ -36,10 +35,7 @@ along with Foobar.  If not, see
     {
         <MudExpansionPanel Expanded>
             <TitleContent>
-                @{
-                    var validationResult = file.Validate();
-                    <Alert ValidationResult="validationResult" />
-                }
+                <Alert ValidationResult="file.Validate()" />
                 <MudStack Row AlignItems="AlignItems.Center">
                     <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" />
                     <MudText Typo="Typo.h6" Style="width: 100%; line-break: anywhere;">@GetFileName(file)</MudText>
