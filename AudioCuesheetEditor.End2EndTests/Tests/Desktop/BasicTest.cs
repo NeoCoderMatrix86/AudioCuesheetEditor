@@ -48,7 +48,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
             await detailView.AddAudiofileAsync();
             await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
             await detailView.RenameAudiofileAsync(0, "Kalimba test 123.mp3");
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Kalimba test 123.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "Kalimba test 123.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"Kalimba test 123.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
         }
 
         [TestMethod]
