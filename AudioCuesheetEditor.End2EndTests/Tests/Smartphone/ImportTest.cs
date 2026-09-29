@@ -2984,7 +2984,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - text: Status
         - button");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
         }
 
         [TestMethod]
@@ -3214,7 +3214,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         - text: Status
         - button");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
         }
 
         [TestMethod]

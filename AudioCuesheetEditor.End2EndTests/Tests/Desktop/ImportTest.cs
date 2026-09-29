@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
 {
@@ -2431,7 +2432,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
   - rowgroup:
     - row");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
         }
 
         [TestMethod]
@@ -2626,7 +2627,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
   - rowgroup:
     - row");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
         }
 
         [TestMethod]
