@@ -79,6 +79,7 @@ namespace AudioCuesheetEditor.Services.UI
         public void ResetImport()
         {
             Importfile = null;
+            //TODO: Revoke object url of ImportAudiofiles before removing them
             ImportAudiofiles = [];
             ImportCuesheet = null;
             ImportIsAnalyzed = false;
