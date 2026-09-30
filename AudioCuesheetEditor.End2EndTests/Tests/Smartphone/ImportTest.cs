@@ -248,7 +248,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToHaveValueAsync(@"c:\AudioFile.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "c:\\AudioFile.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"c:\\\\AudioFile.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
             await importView.GotoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
         }
