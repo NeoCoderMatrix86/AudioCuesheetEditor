@@ -43,7 +43,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 await ClearPropertiesAsync(audiofile, false);
             }
-            var codec = _fileInputManager.GetAudioCodec(browserFile.ContentType, browserFile.Name);
+            var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
             var objectUrl = await _fileInputManager.GetObjectUrlAsync(fileInputId);
             TimeSpan? duration = null;
             if (String.IsNullOrEmpty(objectUrl) == false)

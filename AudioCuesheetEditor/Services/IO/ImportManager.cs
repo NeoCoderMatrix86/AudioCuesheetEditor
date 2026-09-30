@@ -132,7 +132,7 @@ namespace AudioCuesheetEditor.Services.IO
                 if (_fileInputManager.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, [FileExtensions.Projectfile])
                     || _fileInputManager.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet])
                     || _fileInputManager.IsValidForImportView(file.ContentType, file.Name)
-                    || _fileInputManager.IsValidAudiofile(file.ContentType, file.Name))
+                    || _fileInputManager.IsValidAudiofile(file.Name, file.ContentType))
                 {
                     if (_fileInputManager.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
                     {
@@ -161,7 +161,7 @@ namespace AudioCuesheetEditor.Services.IO
                             FileType = ImportFileType.Textfile
                         };
                     }
-                    if (_fileInputManager.IsValidAudiofile(file.ContentType, file.Name))
+                    if (_fileInputManager.IsValidAudiofile(file.Name, file.ContentType))
                     {
                         var audioFile = await _fileInputManager.CreateAudiofileAsync(file);
                         if (audioFile != null)

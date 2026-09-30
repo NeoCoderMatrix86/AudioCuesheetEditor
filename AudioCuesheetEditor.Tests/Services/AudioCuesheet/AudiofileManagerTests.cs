@@ -122,7 +122,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             browserFile.SetupGet(b => b.Name).Returns(filename);
             
             var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
-            _fileInputManager.Setup(f => f.GetAudioCodec("audio/mpeg", filename)).Returns(codec);
+            _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
             _fileInputManager.Setup(f => f.GetObjectUrlAsync(inputId)).ReturnsAsync(objectUrl);
             _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
 
@@ -145,7 +145,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(objectUrl, audiofile.ObjectURL);
             Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
             Assert.AreEqual(1, audiofileChangedFired);
-            _fileInputManager.Verify(f => f.GetAudioCodec("audio/mpeg", filename), Times.Once);
+            _fileInputManager.Verify(f => f.GetAudioCodec(filename, "audio/mpeg"), Times.Once);
             _fileInputManager.Verify(f => f.GetObjectUrlAsync(inputId), Times.Once);
             _jsRuntime.Verify(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.Is<object?[]>(o => o[0] as string == audiofile.ObjectURL)), Times.Once);
         }
@@ -162,7 +162,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             browserFile.SetupGet(b => b.Name).Returns(filename);
 
             var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
-            _fileInputManager.Setup(f => f.GetAudioCodec("audio/mpeg", filename)).Returns(codec);
+            _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
             _fileInputManager.Setup(f => f.GetObjectUrlAsync(inputId)).ReturnsAsync(objectUrl);
             _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
             var track1 = new Track()
@@ -198,7 +198,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
             Assert.AreEqual(TimeSpan.FromSeconds(90), track2.End);
             Assert.AreEqual(1, audiofileChangedFired);
-            _fileInputManager.Verify(f => f.GetAudioCodec("audio/mpeg", filename), Times.Once);
+            _fileInputManager.Verify(f => f.GetAudioCodec(filename, "audio/mpeg"), Times.Once);
             _fileInputManager.Verify(f => f.GetObjectUrlAsync(inputId), Times.Once);
             _jsRuntime.Verify(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.Is<object?[]>(o => o[0] as string == audiofile.ObjectURL)), Times.Once);
         }
@@ -215,7 +215,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             browserFile.SetupGet(b => b.Name).Returns(filename);
 
             var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
-            _fileInputManager.Setup(f => f.GetAudioCodec("audio/mpeg", filename)).Returns(codec);
+            _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
             _fileInputManager.Setup(f => f.GetObjectUrlAsync(inputId)).ReturnsAsync(objectUrl);
             _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
 
@@ -240,7 +240,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(objectUrl, audiofile.ObjectURL);
             Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
             Assert.AreEqual(1, audiofileChangedFired);
-            _fileInputManager.Verify(f => f.GetAudioCodec("audio/mpeg", filename), Times.Once);
+            _fileInputManager.Verify(f => f.GetAudioCodec(filename, "audio/mpeg"), Times.Once);
             _fileInputManager.Verify(f => f.GetObjectUrlAsync(inputId), Times.Once);
             _jsRuntime.Verify(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.Is<object?[]>(o => o[0] as string == audiofile.ObjectURL)), Times.Once);
             _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);

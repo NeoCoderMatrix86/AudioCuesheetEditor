@@ -93,7 +93,7 @@ namespace AudioCuesheetEditor.Services.IO
             if (fileUpload.ObjectUrl != null)
             {
                 // Check file mime type
-                var codec = GetAudioCodec(fileUpload.ContentType, fileUpload.Name);
+                var codec = GetAudioCodec(fileUpload.Name, fileUpload.ContentType);
                 if (codec != null)
                 {
                     TimeSpan? duration = null;
