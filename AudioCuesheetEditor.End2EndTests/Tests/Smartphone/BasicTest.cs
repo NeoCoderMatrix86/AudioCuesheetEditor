@@ -192,7 +192,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.NewFileNameInput.FillAsync("Test 123");
             await TestPage.Keyboard.PressAsync("Enter");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Test 123.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "Test" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"Test 123\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
         }
     }
 }
