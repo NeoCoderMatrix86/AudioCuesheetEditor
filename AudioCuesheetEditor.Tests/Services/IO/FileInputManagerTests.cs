@@ -120,7 +120,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "audio/wav";
 
             // Act
-            var result = _service.IsValidAudiofile(contentType, fileName);
+            var result = _service.IsValidAudiofile(fileName, contentType);
 
             // Assert
             Assert.IsTrue(result);
@@ -134,7 +134,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "just a fantasy";
 
             // Act
-            var result = _service.IsValidAudiofile(contentType, fileName);
+            var result = _service.IsValidAudiofile(fileName, contentType);
 
             // Assert
             Assert.IsFalse(result);
@@ -148,7 +148,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "audio/webm";
 
             // Act
-            var result = _service.GetAudioCodec(contentType, fileName);
+            var result = _service.GetAudioCodec(fileName, contentType);
 
             // Assert
             Assert.IsNotNull(result);
@@ -163,7 +163,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "audio/webm";
 
             // Act
-            var result = _service.GetAudioCodec(contentType, fileName);
+            var result = _service.GetAudioCodec(fileName, contentType);
 
             // Assert
             Assert.IsNotNull(result);
@@ -178,10 +178,24 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "fantasy stuff";
 
             // Act
-            var result = _service.GetAudioCodec(contentType, fileName);
+            var result = _service.GetAudioCodec(fileName, contentType);
 
             // Assert
             Assert.IsNull(result);
+        }
+
+        [TestMethod()]
+        public void GetAudioCodec_ReturnsAudiocodec_WhenFileExtensionMatches()
+        {
+            // Arrange
+            var fileName = "test.mP3";
+
+            // Act
+            var result = _service.GetAudioCodec(fileName);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(Audiofile.AudioCodecs.Single(x => x.FileExtension.Equals(".mp3", StringComparison.OrdinalIgnoreCase)), result);
         }
 
         [TestMethod()]

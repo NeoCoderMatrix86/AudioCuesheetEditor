@@ -220,6 +220,7 @@ namespace AudioCuesheetEditor.Services.IO
                     targetAudiofile ??= new Audiofile()
                     {
                         Name = importAudiofile.Name,
+                        AudioCodec = String.IsNullOrEmpty(importAudiofile.Name) == false ? _fileInputManager.GetAudioCodec(importAudiofile.Name) : null
                     };
                     tracks = importAudiofile.Tracks;
                 }
