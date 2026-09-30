@@ -26,7 +26,10 @@ along with Foobar.  If not, see
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        <Alert ValidationResult="Cuesheet?.Validate(nameof(Cuesheet.Audiofiles))" />
+        if (Cuesheet != null)
+        {
+            <Alert ValidationResult="Cuesheet.Validate(nameof(Cuesheet.Audiofiles))" />
+        }
         break;
 }
 
