@@ -36,44 +36,67 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public event EventHandler<Audiofile>? AudiofileChanged;
 
         /// <inheritdoc/>
-        public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile? browserFile, string fileInputId)
+        public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile, string fileInputId)
         {
             _traceChangeManager.BulkEdit = true;
-            if (browserFile == null)
+            if (String.IsNullOrEmpty(audiofile.ObjectURL) == false)
             {
-                if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
-                {
-                    await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
-                }
-                SetValue(audiofile, x => x.AudioCodec, null);
-                SetValue(audiofile, x => x.Name, null);
-                SetValue(audiofile, x => x.ObjectURL, null);
-                SetValue(audiofile, x => x.Duration, null);
+                await ClearPropertiesAsync(audiofile, false);
             }
-            else
+            var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
+            var objectUrl = await _fileInputManager.GetObjectUrlAsync(fileInputId);
+            TimeSpan? duration = null;
+            if (String.IsNullOrEmpty(objectUrl) == false)
             {
-                var codec = _fileInputManager.GetAudioCodec(browserFile.ContentType, browserFile.Name);
-                var objectUrl = await _fileInputManager.GetObjectUrlAsync(fileInputId);
-                TimeSpan? duration = null;
-                if (String.IsNullOrEmpty(objectUrl) == false)
-                {
-                    var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", objectUrl);
-                    duration = TimeSpan.FromSeconds(durationSeconds);
-                }
-                SetValue(audiofile, x => x.AudioCodec, codec);
-                SetValue(audiofile, x => x.Name, browserFile.Name);
-                SetValue(audiofile, x => x.ObjectURL, objectUrl);
-                SetValue(audiofile, x => x.Duration, duration);
-                SetLastTrackEnd(audiofile);
+                var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", objectUrl);
+                duration = TimeSpan.FromSeconds(durationSeconds);
             }
+            var codecChanged = SetValue(audiofile, x => x.AudioCodec, codec);
+            var nameChanged = SetValue(audiofile, x => x.Name, browserFile.Name);
+            var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, objectUrl);
+            var durationChanged = SetValue(audiofile, x => x.Duration, duration);
+            SetLastTrackEnd(audiofile);
             _traceChangeManager.BulkEdit = false;
+            if (codecChanged || nameChanged || objectUrlChanged || durationChanged)
+            {
+                AudiofileChanged?.Invoke(this, audiofile);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true)
+        {
+            if (setTracing)
+            {
+                _traceChangeManager.BulkEdit = true;
+            }
+            if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
+            {
+                await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+            }
+            var codecChanged = SetValue(audiofile, x => x.AudioCodec, null);
+            var nameChanged = SetValue(audiofile, x => x.Name, null);
+            var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, null);
+            var durationChanged = SetValue(audiofile, x => x.Duration, null);
+            if (setTracing)
+            {
+                _traceChangeManager.BulkEdit = false;
+                if (codecChanged || nameChanged || objectUrlChanged || durationChanged)
+                {
+                    AudiofileChanged?.Invoke(this, audiofile);
+                }
+            }
         }
 
         /// <inheritdoc/>
         public void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
         {
-            SetValue(audiofile, propertyExpression, value);
+            var changed = SetValue(audiofile, propertyExpression, value);
             SetLastTrackEnd(audiofile);
+            if (changed)
+            {
+                AudiofileChanged?.Invoke(this, audiofile);
+            }
         }
 
         /// <inheritdoc/>
@@ -99,11 +122,15 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 track
             };
-            SetValue(audiofile, x => x.Tracks, newValue);
+            var changed = SetValue(audiofile, x => x.Tracks, newValue);
             RecalculateTrackProperties(cuesheet!);
             if (setTracing)
             {
                 _traceChangeManager.BulkEdit = false;
+            }
+            if (changed)
+            {
+                AudiofileChanged?.Invoke(this, audiofile);
             }
         }
 
@@ -121,15 +148,19 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             {
                 _traceChangeManager.BulkEdit = true;
             }
-            SetValue(audiofile, x => x.Tracks, newValue);
+            var changed = SetValue(audiofile, x => x.Tracks, newValue);
             RecalculateTrackProperties(cuesheet!);
             if (setTracing)
             {
                 _traceChangeManager.BulkEdit = false;
             }
+            if (changed)
+            {
+                AudiofileChanged?.Invoke(this, audiofile);
+            }
         }
 
-        void SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
+        Boolean SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
             {
@@ -144,12 +175,12 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             var previousValue = (TProperty?)propertyInfo.GetValue(audiofile);
             if (Equals(previousValue, value))
             {
-                return;
+                return false;
             }
 
             propertyInfo.SetValue(audiofile, value);
-            AudiofileChanged?.Invoke(this, audiofile);
             _traceChangeManager.AddChange(new(audiofile, new(previousValue, propertyInfo.Name)));
+            return true;
         }
 
         void RecalculateTrackProperties(Cuesheet cuesheet)

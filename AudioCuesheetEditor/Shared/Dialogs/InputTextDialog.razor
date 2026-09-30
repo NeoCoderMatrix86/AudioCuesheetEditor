@@ -22,7 +22,7 @@ along with Foobar.  If not, see
 
 <MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="inputValue" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="TextFieldKeyDown" />
+        <MudTextField @bind-Value="_inputValue" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="TextFieldKeyDown" />
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk">@_localizer["Ok"]</MudButton>
@@ -30,8 +30,8 @@ along with Foobar.  If not, see
 </MudDialog>
 
 @code {
-    HotKeysContext? hotKeysContext;
-    string? inputValue;
+    HotKeysContext? _hotKeysContext;
+    string? _inputValue;
 
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
@@ -43,36 +43,37 @@ along with Foobar.  If not, see
     public string? Placeholder { get; set; }
 
     [Parameter]
-    public String? InitialValue { get; set; }
+    public string? InitialValue { get; set; }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        hotKeysContext = _hotKeys.CreateContext().Add(ModKey.None, Key.Enter, CloseDialogOk);
+        _hotKeysContext = _hotKeys.CreateContext().Add(ModKey.None, Key.Enter, CloseDialogOk);
     }
 
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
-        hotKeysContext?.DisposeAsync();
+        _hotKeysContext?.DisposeAsync();
     }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        inputValue = InitialValue;
+        _inputValue = InitialValue;
     }
 
     void TextFieldKeyDown(KeyboardEventArgs args)
     {
         if (args.Key == "Enter")
         {
-            CloseDialogOk();
+            //Use a timer to close the dialog after a short delay to ensure that the keyboard event is fully processed before closing the dialog.
+            new System.Threading.Timer(CloseDialogOk, null, 0, 10);
         }
     }
 
-    void CloseDialogOk()
+    void CloseDialogOk(object? state = null)
     {
-        MudDialog?.Close(inputValue);
+        MudDialog?.Close(_inputValue);
     }
 }

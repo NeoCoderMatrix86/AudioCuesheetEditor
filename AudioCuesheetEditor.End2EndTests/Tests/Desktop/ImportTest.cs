@@ -15,6 +15,7 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
 {
@@ -211,7 +212,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
   - rowgroup:
     - row");
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToHaveValueAsync(@"c:\AudioFile.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "c:\\AudioFile.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"c:\\\\AudioFile.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
             await importView.GotoAsync();
             await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
         }
@@ -2431,7 +2432,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
   - rowgroup:
     - row");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
         }
 
         [TestMethod]
@@ -2626,7 +2627,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
   - rowgroup:
     - row");
             await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = "Audiofiles has invalid Count (0)!" })).ToBeVisibleAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
         }
 
         [TestMethod]

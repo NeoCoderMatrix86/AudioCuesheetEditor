@@ -26,7 +26,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly IJSRuntime _jsRuntime = jsRuntime;
         private readonly ILogger<FileInputManager> _logger = logger;
 
-        public AudioCodec? GetAudioCodec(string? fileContentType, string fileName)
+        public AudioCodec? GetAudioCodec(string fileName, string? fileContentType = null)
         {
             AudioCodec? foundAudioCodec = null;
             var extension = Path.GetExtension(fileName);
@@ -51,9 +51,9 @@ namespace AudioCuesheetEditor.Services.IO
             return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
         }
 
-        public bool IsValidAudiofile(string? fileContentType, string fileName)
+        public bool IsValidAudiofile(string fileName, string? fileContentType = null)
         {
-            return GetAudioCodec(fileContentType, fileName) != null;
+            return GetAudioCodec(fileName, fileContentType) != null;
         }
 
         public bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions)
@@ -93,7 +93,7 @@ namespace AudioCuesheetEditor.Services.IO
             if (fileUpload.ObjectUrl != null)
             {
                 // Check file mime type
-                var codec = GetAudioCodec(fileUpload.ContentType, fileUpload.Name);
+                var codec = GetAudioCodec(fileUpload.Name, fileUpload.ContentType);
                 if (codec != null)
                 {
                     TimeSpan? duration = null;
@@ -148,11 +148,11 @@ namespace AudioCuesheetEditor.Services.IO
                 if (CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, [FileExtensions.Projectfile])
                     || CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet])
                     || IsValidForImportView(file.ContentType, file.Name)
-                    || IsValidAudiofile(file.ContentType, file.Name))
+                    || IsValidAudiofile(file.Name, file.ContentType))
                 {
                     string? content = null;
                     string? objectUrl = null;
-                    if (IsValidAudiofile(file.ContentType, file.Name))
+                    if (IsValidAudiofile(file.Name, file.ContentType))
                     {
                         objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
                     }

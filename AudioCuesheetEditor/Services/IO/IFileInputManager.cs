@@ -23,8 +23,8 @@ namespace AudioCuesheetEditor.Services.IO
 {
     public interface IFileInputManager
     {
-        bool IsValidAudiofile(string? fileContentType, string fileName);
-        AudioCodec? GetAudioCodec(string? fileContentType, string fileName);
+        bool IsValidAudiofile(string fileName, string? fileContentType = null);
+        AudioCodec? GetAudioCodec(string fileName, string? fileContentType = null);
         /// <summary>
         /// Get object url from a mud file upload
         /// </summary>
