@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AngleSharp.Media.Dom;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
@@ -115,6 +114,7 @@ namespace AudioCuesheetEditor.Services.IO
                 _sessionStateContainer.Cuesheet = newCuesheet;
                 _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
+            //TODO: Import Audiofiles before resetting import
             _sessionStateContainer.ResetImport();
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
