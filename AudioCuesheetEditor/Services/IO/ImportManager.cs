@@ -188,10 +188,11 @@ namespace AudioCuesheetEditor.Services.IO
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
             target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
+            IEnumerable<IAudiofile> audiofiles = [];
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
                 target.CDTextfile = originCuesheet.CDTextfile;
-                AttachClonedAudiofiles(target, originCuesheet.Audiofiles);
+                audiofiles = originCuesheet.Audiofiles;
             }
             if (cuesheetToCopy is ImportCuesheet importCuesheet)
             {
@@ -199,8 +200,9 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
                 }
-                AttachClonedAudiofiles(target, importCuesheet.Audiofiles);
+                audiofiles = importCuesheet.Audiofiles;
             }
+            AttachClonedAudiofiles(target, audiofiles);
         }
 
         void AttachClonedAudiofiles(Cuesheet target, IEnumerable<IAudiofile> audiofiles) 
