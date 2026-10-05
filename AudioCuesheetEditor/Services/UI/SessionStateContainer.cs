@@ -81,6 +81,7 @@ namespace AudioCuesheetEditor.Services.UI
         {
             Importfile = null;
             //TODO: Revoke object url of ImportAudiofiles before removing them
+            ImportAudiofileMapping = [];
             ImportAudiofiles = [];
             ImportCuesheet = null;
             ImportIsAnalyzed = false;
