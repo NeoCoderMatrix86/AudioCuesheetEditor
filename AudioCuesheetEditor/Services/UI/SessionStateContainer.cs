@@ -66,6 +66,7 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
         public IList<Audiofile> ImportAudiofiles { get; set; } = [];
+        public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; } = [];
         public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;
 

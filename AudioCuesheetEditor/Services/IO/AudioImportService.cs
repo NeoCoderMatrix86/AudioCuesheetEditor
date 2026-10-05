@@ -29,16 +29,18 @@ namespace AudioCuesheetEditor.Services.IO
         /// <inheritdoc/>
         public async Task MapAudioImportAsync()
         {
-            //TODO: Tests
-            var mappedAudiofiles = _sessionStateContainer.ActiveCuesheet!.Audiofiles.ToDictionary(x => x, x => (Audiofile?)null);
+            //TODO: Tests            
+            foreach (var audiofile in _sessionStateContainer.ActiveCuesheet!.Audiofiles)
+            {
+                _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, null);
+            }
             //TODO: automatic mapping
             var parameters = new DialogParameters<ImportAudiofilesDialog> 
             {
-                { x => x.MappedAudiofiles, mappedAudiofiles },
+                { x => x.MappedAudiofiles, _sessionStateContainer.ImportAudiofileMapping },
                 { x => x.ImportAudiofiles, _sessionStateContainer.ImportAudiofiles }
             };
             var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
-            //TODO: Title
             var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
             var result = await dialog.Result;
             if (result?.Canceled == false)
