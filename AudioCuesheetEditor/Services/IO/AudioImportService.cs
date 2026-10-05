@@ -40,11 +40,17 @@ namespace AudioCuesheetEditor.Services.IO
             var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
             var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
             var result = await dialog.Result;
-            //TODO: get mapping from dialog and apply it to the cuesheet
-            //if ((result?.Canceled == false) && (result.Data is Track editedTrack))
-            //{
-
-            //}
+            if (result?.Canceled == false)
+            {
+                if (result.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
+                {
+                    //TODO: Apply mapping to cuesheet
+                }
+            }
+            else
+            {
+                _sessionStateContainer.ResetImport();
+            }
         }
     }
 }
