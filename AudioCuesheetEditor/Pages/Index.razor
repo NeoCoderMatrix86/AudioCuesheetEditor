@@ -26,6 +26,7 @@ along with Foobar.  If not, see
 @inject DialogManager _dialogManager
 @inject ISnackbar _snackbar
 @inject ICuesheetManager _cuesheetManager
+@inject IAudioImportService _audioImportService
 
 <CascadingValue Value="_currentViewmode">
     <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)_currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
@@ -118,6 +119,7 @@ along with Foobar.  If not, see
             {
                 _dialogManager.HideLoadingDialog();
             }
+            await _audioImportService.MapAudioImportAsync();
         });
     }
 }

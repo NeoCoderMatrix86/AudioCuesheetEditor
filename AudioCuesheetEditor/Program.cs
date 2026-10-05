@@ -61,6 +61,7 @@ builder.Services.AddScoped<AutocompleteManager>();
 builder.Services.AddScoped<ITrackManager, TrackManager>();
 builder.Services.AddScoped<ICuesheetManager, CuesheetManager>();
 builder.Services.AddScoped<IAudiofileManager, AudiofileManager>();
+builder.Services.AddScoped<IAudioImportService, AudioImportService>();
 
 builder.Services.AddLogging();
 // Read out configuration for loglevel
