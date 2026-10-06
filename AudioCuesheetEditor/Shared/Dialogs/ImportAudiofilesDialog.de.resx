@@ -120,6 +120,9 @@
   <data name="Abort" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
+  <data name="Add file" xml:space="preserve">
+    <value>Datei hinzufügen</value>
+  </data>
   <data name="Assign files" xml:space="preserve">
     <value>Dateien zuordnen</value>
   </data>
