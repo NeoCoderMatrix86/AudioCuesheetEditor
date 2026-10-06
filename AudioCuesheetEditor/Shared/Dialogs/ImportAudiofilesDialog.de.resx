@@ -123,7 +123,19 @@
   <data name="Assign files" xml:space="preserve">
     <value>Dateien zuordnen</value>
   </data>
+  <data name="Files" xml:space="preserve">
+    <value>Dateien</value>
+  </data>
+  <data name="No file uploaded!" xml:space="preserve">
+    <value>Keine Datei hochgeladen!</value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
+  </data>
+  <data name="Track count: {0}" xml:space="preserve">
+    <value>Anzahl Titel: {0}</value>
+  </data>
+  <data name="Uploaded files" xml:space="preserve">
+    <value>Hochgeladene Dateien</value>
   </data>
 </root>

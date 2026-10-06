@@ -123,7 +123,19 @@
   <data name="Assign files" xml:space="preserve">
     <value>Assign files</value>
   </data>
+  <data name="Files" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="No file uploaded!" xml:space="preserve">
+    <value>No file uploaded!</value>
+  </data>
   <data name="Ok" xml:space="preserve">
     <value>Ok</value>
+  </data>
+  <data name="Track count: {0}" xml:space="preserve">
+    <value>Track count: {0}</value>
+  </data>
+  <data name="Uploaded files" xml:space="preserve">
+    <value>Uploaded files</value>
   </data>
 </root>
