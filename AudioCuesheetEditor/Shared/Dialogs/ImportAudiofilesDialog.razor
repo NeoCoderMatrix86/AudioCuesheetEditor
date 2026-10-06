@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                 <MudStack>
                     @foreach (var dropzone in _dropzones)
                     {
-                        <MudDropZone T="Audiofile" Identifier="@dropzone.Key" CanDrop="(item) => MappedAudiofiles[dropzone.Value] == null" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-3">
+                        <MudDropZone T="Audiofile" Identifier="@dropzone.Key" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-3">
                             <MudText>@GetFileName(dropzone.Value)</MudText>
                         </MudDropZone>
                     }
@@ -130,7 +130,5 @@ along with Foobar.  If not, see
     //TODO: Add posibility to add new audiofiles to the cuesheet
     //TODO: Add posibility to move audiofiles up and down in the cuesheet
     //TODO: Add posibility to delete audiofiles in the cuesheet
-    //TODO: Loop over activecuesheet audiofiles and display relation to import audiofiles
-    //TODO: Actions
     //TODO: Disable Ok while not all files are mapped
 }
