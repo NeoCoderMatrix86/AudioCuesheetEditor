@@ -89,25 +89,22 @@ namespace AudioCuesheetEditor.Services.IO
 
         public async Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload)
         {
-            Audiofile? audiofile = null;
-            if (fileUpload.ObjectUrl != null)
+            // Check file mime type
+            var codec = GetAudioCodec(fileUpload.Name, fileUpload.ContentType);
+            Audiofile? audiofile;
+            if (codec != null)
             {
-                // Check file mime type
-                var codec = GetAudioCodec(fileUpload.Name, fileUpload.ContentType);
-                if (codec != null)
+                TimeSpan? duration = null;
+                if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
                 {
-                    TimeSpan? duration = null;
-                    if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
-                    {
-                        var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
-                        duration = TimeSpan.FromSeconds(durationSeconds);
-                    }
-                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration);
+                    var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
+                    duration = TimeSpan.FromSeconds(durationSeconds);
                 }
-                else
-                {
-                    throw new ArgumentException("The audiofile provided is not of a valid type.");
-                }
+                audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration);
+            }
+            else
+            {
+                throw new ArgumentException("The audiofile provided is not of a valid type.");
             }
             return audiofile;
         }
@@ -154,6 +151,7 @@ namespace AudioCuesheetEditor.Services.IO
                     string? objectUrl = null;
                     if (IsValidAudiofile(file.Name, file.ContentType))
                     {
+                        //TODO: Upload multiple audiofiles at once fails to get correct audio object url because of only one fileInputId
                         objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
                     }
                     else
