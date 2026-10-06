@@ -47,6 +47,7 @@ namespace AudioCuesheetEditor.Services.IO
             {
                 if (result.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
                 {
+                    _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
                     //TODO: Apply mapping to cuesheet
                 }
             }

@@ -26,7 +26,27 @@ along with Foobar.  If not, see
         </MudText>
     </TitleContent>
     <DialogContent>
-                
+        <MudDropContainer T="Audiofile" Items="_audiofiles" ItemsSelector="ItemsSelector" ItemPicked="ItemPicked" ItemDropped="ItemDropped" CanDropClass="mud-border-success" NoDropClass="mud-border-error"
+                          ApplyDropClassesOnDragStarted Class="d-flex flex-column flex-grow-1">
+            <ChildContent>
+                <MudText Typo="Typo.h6" Class="mb-2">@_localizer["Files"]</MudText>
+                <MudStack>
+                    @foreach (var dropzone in _dropzones)
+                    {
+                        <MudDropZone T="Audiofile" Identifier="@dropzone.Key" CanDrop="(item) => MappedAudiofiles[dropzone.Value] == null" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-3">
+                            <MudText>@GetFileName(dropzone.Value)</MudText>
+                        </MudDropZone>
+                    }
+                </MudStack>
+                <MudText Typo="Typo.h6" Class="mb-2 mt-2">@_localizer["Uploaded files"]</MudText>
+                <MudDropZone T="Audiofile" Identifier="@UploadedZoneIdentifier" CanDrop="(item) => false" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-4 flex-grow-1 d-flex flex-wrap" />
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Class="pa-2 ma-1 mud-theme-primary">
+                    <MudText Typo="Typo.body2">@context.Name</MudText>
+                </MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => _mudDialog?.Close(DialogResult.Ok(MappedAudiofiles))" aria-label="Ok">@_localizer["Ok"]</MudButton>
@@ -46,11 +66,71 @@ along with Foobar.  If not, see
     [EditorRequired]
     public Dictionary<Audiofile, Audiofile?> MappedAudiofiles { get; set; }
 
+    List<Audiofile> _audiofiles = [];
+    const string UploadedZoneIdentifier = "uploaded";
+    Dictionary<String, Audiofile> _dropzones = [];
+    string? _sourceZoneIdentifier;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _dropzones = MappedAudiofiles.ToDictionary(x => Guid.NewGuid().ToString(), x => x.Key);
+        SetImportAudiofiles();
+    }
+
+    bool ItemsSelector(Audiofile item, string zone)
+    {
+        if (zone == UploadedZoneIdentifier)
+        {
+            return ImportAudiofiles.Contains(item);
+        }
+        var audiofile = _dropzones[zone];
+        return MappedAudiofiles[audiofile] == item;
+    }
+
+    void ItemPicked(MudDragAndDropItemTransaction<Audiofile> itemTransaction)
+    {
+        _sourceZoneIdentifier = itemTransaction.SourceZoneIdentifier;
+    }
+
+    void ItemDropped(MudItemDropInfo<Audiofile> itemDropInfo)
+    {
+        if (_sourceZoneIdentifier != null && _sourceZoneIdentifier != UploadedZoneIdentifier)
+        {
+            var sourceAudiofile = _dropzones[_sourceZoneIdentifier];
+            var currentlyMapped = MappedAudiofiles[sourceAudiofile];
+            if (currentlyMapped != null)
+            {
+                ImportAudiofiles.Add(currentlyMapped);
+            }
+            MappedAudiofiles[sourceAudiofile] = null;
+        }
+        var targetAudiofile = _dropzones[itemDropInfo.DropzoneIdentifier];
+        var currentlyMappedFile = MappedAudiofiles[targetAudiofile];
+        MappedAudiofiles[targetAudiofile] = itemDropInfo.Item;
+        ImportAudiofiles.Remove(itemDropInfo.Item!);
+        if (currentlyMappedFile != null)
+        {
+            ImportAudiofiles.Add(currentlyMappedFile);
+        }
+        SetImportAudiofiles();
+        _sourceZoneIdentifier = null;
+    }
+
+    String GetFileName(Audiofile audiofile)
+    {
+        return String.IsNullOrEmpty(audiofile.Name) ? _localizer["No file uploaded!"] : audiofile.Name;
+    }
+
+    void SetImportAudiofiles()
+    {
+        _audiofiles = [.. ImportAudiofiles, .. MappedAudiofiles.Values.Where(x => x != null).Select(x => x!)];
+    }
+
     //TODO: Add posibility to add new audiofiles to the cuesheet
     //TODO: Add posibility to move audiofiles up and down in the cuesheet
     //TODO: Add posibility to delete audiofiles in the cuesheet
     //TODO: Loop over activecuesheet audiofiles and display relation to import audiofiles
     //TODO: Actions
-    //TODO: Mapping of import files to current files
-
+    //TODO: Disable Ok while not all files are mapped
 }
