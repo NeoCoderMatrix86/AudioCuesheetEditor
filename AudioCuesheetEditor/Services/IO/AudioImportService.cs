@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO.Audio;
+using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Shared.Dialogs;
 using MudBlazor;
@@ -21,15 +22,18 @@ using MudBlazor;
 namespace AudioCuesheetEditor.Services.IO
 {
     /// <inheritdoc/>
-    public class AudioImportService(IDialogService dialogService, ISessionStateContainer sessionStateContainer) : IAudioImportService
+    public class AudioImportService(IDialogService dialogService, ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IAudiofileManager audiofileManager) : IAudioImportService
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
         private readonly IDialogService _dialogService = dialogService;
+        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+        private readonly IAudiofileManager _audiofileManager = audiofileManager;
 
         /// <inheritdoc/>
         public async Task MapAudioImportAsync()
         {
             //TODO: Tests?
+            _sessionStateContainer.ImportAudiofileMapping.Clear();
             foreach (var audiofile in _sessionStateContainer.ActiveCuesheet!.Audiofiles)
             {
                 _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, null);
@@ -48,13 +52,26 @@ namespace AudioCuesheetEditor.Services.IO
                 if (result.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
                 {
                     _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
-                    //TODO: Apply mapping to cuesheet
+                    _traceChangeManager.BulkEdit = true;
+                    foreach (var mapping in _sessionStateContainer.ImportAudiofileMapping.Where(x => x.Value != null))
+                    {
+                        var audiofile = _sessionStateContainer.ActiveCuesheet.Audiofiles.FirstOrDefault(x => x.Equals(mapping.Key));
+                        if (audiofile != null)
+                        {
+                            _audiofileManager.SetProperty(audiofile, x => x.ObjectURL, mapping.Value!.ObjectURL);
+                            _audiofileManager.SetProperty(audiofile, x => x.AudioCodec, mapping.Value!.AudioCodec);
+                            _audiofileManager.SetProperty(audiofile, x => x.Duration, mapping.Value!.Duration);
+                            _audiofileManager.SetProperty(audiofile, x => x.Name, mapping.Value!.Name);
+                        }
+                        else
+                        {
+                            //TODO: add new audiofile to cuesheet
+                        }
+                    }
+                    _traceChangeManager.BulkEdit = false;
                 }
             }
-            else
-            {
-                _sessionStateContainer.ResetImport();
-            }
+            _sessionStateContainer.ResetImport();
         }
     }
 }
