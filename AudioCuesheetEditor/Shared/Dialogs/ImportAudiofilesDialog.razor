@@ -34,7 +34,10 @@ along with Foobar.  If not, see
                     @foreach (var dropzone in _dropzones)
                     {
                         <MudDropZone T="Audiofile" Identifier="@dropzone.Key" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-3">
-                            <MudText>@GetFileName(dropzone.Value)</MudText>
+                            <MudStack Row Justify="Justify.SpaceBetween">
+                                <MudText>@GetFileName(dropzone.Value)</MudText>
+                                <MudText>@_localizer["Track count: {0}", @dropzone.Value.Tracks.Count]</MudText>
+                            </MudStack>
                         </MudDropZone>
                     }
                 </MudStack>
