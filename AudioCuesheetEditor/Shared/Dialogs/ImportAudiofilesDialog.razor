@@ -49,7 +49,7 @@ along with Foobar.  If not, see
         </MudDropContainer>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="() => _mudDialog?.Close(DialogResult.Ok(MappedAudiofiles))" aria-label="Ok">@_localizer["Ok"]</MudButton>
+        <MudButton Color="Color.Info" Variant="Variant.Filled" Disabled="ImportAudiofiles.Count > 0" OnClick="() => _mudDialog?.Close(DialogResult.Ok(MappedAudiofiles))" aria-label="Ok">@_localizer["Ok"]</MudButton>
         <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => _mudDialog?.Cancel()" aria-label="Abort">@_localizer["Abort"]</MudButton>
     </DialogActions>
 </MudDialog>
@@ -130,5 +130,4 @@ along with Foobar.  If not, see
     //TODO: Add posibility to add new audiofiles to the cuesheet
     //TODO: Add posibility to move audiofiles up and down in the cuesheet
     //TODO: Add posibility to delete audiofiles in the cuesheet
-    //TODO: Disable Ok while not all files are mapped
 }
