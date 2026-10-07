@@ -1,18 +1,24 @@
 ﻿window.addEventListener('beforeunload', beforeunload);
 
-window.getObjectURLFromMudFileUpload = function (fileInputId) {
+window.getObjectURLFromMudFileUpload = function (fileName, fileSize, fileContentType, fileLastModified) {
+    const inputElement = document.querySelector(`input.file-upload-input`);
 
-    const inputElem = document.getElementById(fileInputId) ||
-        document.querySelector(`input[identifier="${fileInputId}"]`) ||
-        document.querySelector(`input[id="${fileInputId}"]`);
-
-    const files = inputElem.files;
+    const files = inputElement.files;
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (file && file.type && file.type.startsWith("audio/")) {
+
+        if (file &&
+            file.type &&
+            file.type.startsWith("audio/") &&
+            file.name === fileName &&
+            file.size === fileSize &&
+            file.type === fileContentType &&
+            file.lastModified === fileLastModified) {
+
             return URL.createObjectURL(file);
         }
     }
+
     return null;
 };
 

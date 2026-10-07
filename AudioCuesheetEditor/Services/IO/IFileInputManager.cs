@@ -58,8 +58,7 @@ namespace AudioCuesheetEditor.Services.IO
         /// Generates file upload references for files
         /// </summary>
         /// <param name="browserFiles"></param>
-        /// <param name="fileInputId"></param>
         /// <returns></returns>
-        Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null);
+        Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles);
     }
 }

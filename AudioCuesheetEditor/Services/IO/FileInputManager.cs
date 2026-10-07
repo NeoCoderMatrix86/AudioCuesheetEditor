@@ -137,7 +137,7 @@ namespace AudioCuesheetEditor.Services.IO
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null)
+        public async Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles)
         {
             List<FileUpload> fileUploads = [];
             foreach (var file in browserFiles)
@@ -151,8 +151,7 @@ namespace AudioCuesheetEditor.Services.IO
                     string? objectUrl = null;
                     if (IsValidAudiofile(file.Name, file.ContentType))
                     {
-                        //TODO: Upload multiple audiofiles at once fails to get correct audio object url because of only one fileInputId
-                        objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
+                        objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", file.Name, file.Size, file.ContentType, file.LastModified.ToUnixTimeMilliseconds());
                     }
                     else
                     {
