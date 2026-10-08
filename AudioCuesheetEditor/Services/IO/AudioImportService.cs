@@ -32,16 +32,15 @@ namespace AudioCuesheetEditor.Services.IO
         public async Task MapAudioImportAsync()
         {
             //TODO: Tests?
-            _sessionStateContainer.ImportAudiofileMapping.Clear();
-            foreach (var audiofile in _sessionStateContainer.ActiveCuesheet!.Audiofiles)
+            var mappingRequired = MapImportfiles();
+            var cancel = false;
+            if (mappingRequired)
             {
-                _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, null);
+                cancel = await DisplayMappingDialogAsync();
             }
-            //TODO: automatic mapping
-            var canceled = await DisplayMappingDialogAsync();
-            if (canceled == false)
+            if (cancel == false)
             {
-                var files = new List<Audiofile>(_sessionStateContainer.ActiveCuesheet.Audiofiles);
+                var files = new List<Audiofile>(_sessionStateContainer.ActiveCuesheet!.Audiofiles);
                 foreach (var mapping in _sessionStateContainer.ImportAudiofileMapping.Where(x => x.Value != null))
                 {
                     var audiofile = files.FirstOrDefault(x => x.Equals(mapping.Key));
@@ -57,7 +56,29 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 _cuesheetManager.SetProperty(x => x.Audiofiles, files);
             }
-            await _sessionStateContainer.ResetImportAsync(canceled);
+            await _sessionStateContainer.ResetImportAsync(cancel);
+        }
+
+        Boolean MapImportfiles()
+        {
+            _sessionStateContainer.ImportAudiofileMapping.Clear();
+            foreach (var audiofile in _sessionStateContainer.ActiveCuesheet!.Audiofiles)
+            {
+                if (string.IsNullOrEmpty(audiofile.Name))
+                {
+                    var importAudiofile = _sessionStateContainer.ImportAudiofiles.FirstOrDefault();
+                    _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, importAudiofile);
+                    if (importAudiofile != null)
+                    {
+                        _sessionStateContainer.ImportAudiofiles.Remove(importAudiofile);
+                    }
+                }
+                else
+                {
+                    _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, null);
+                }
+            }
+            return _sessionStateContainer.ImportAudiofiles.Count > 0;
         }
 
         async Task<Boolean> DisplayMappingDialogAsync()
@@ -78,7 +99,7 @@ namespace AudioCuesheetEditor.Services.IO
                     _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
                 }
             }
-            return !canceled;
+            return canceled;
         }
     }
 }
