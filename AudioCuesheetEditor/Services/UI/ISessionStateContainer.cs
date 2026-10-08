@@ -29,7 +29,7 @@ namespace AudioCuesheetEditor.Services.UI
         public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; }
         public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; }
-        public void ResetImport();
+        public Task ResetImportAsync(Boolean revokeObjectURLs);
         /// <summary>
         /// Initialize this class
         /// </summary>

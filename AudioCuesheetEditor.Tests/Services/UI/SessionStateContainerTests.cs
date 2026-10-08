@@ -14,10 +14,12 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Options;
 using AudioCuesheetEditor.Services.UI;
+using Microsoft.JSInterop;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
@@ -30,11 +32,13 @@ namespace AudioCuesheetEditor.Tests.Services.UI
     {
         private readonly SessionStateContainer _sessionStateContainer;
         private readonly Mock<ILocalStorageOptionsProvider> _localStorageOptionsProvider;
+        private readonly Mock<IJSRuntime> _jsRuntime;
 
         public SessionStateContainerTests()
         {
             _localStorageOptionsProvider = new();
-            _sessionStateContainer = new(_localStorageOptionsProvider.Object);
+            _jsRuntime = new();
+            _sessionStateContainer = new(_localStorageOptionsProvider.Object, _jsRuntime.Object);
         }
 
         [TestMethod]
@@ -121,7 +125,7 @@ namespace AudioCuesheetEditor.Tests.Services.UI
         }
 
         [TestMethod]
-        public async Task ResetImport_InitializedService_ShouldClearPropertiesAsync()
+        public async Task ResetImportAsync_RevokeObjectUrls_ShouldClearPropertiesAsync()
         {
             // Arrange
             var viewOptions = new ViewOptions();
@@ -130,15 +134,86 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
             _sessionStateContainer.ImportCuesheet = new Cuesheet();
             _sessionStateContainer.ImportIsAnalyzed = true;
+            var importAudiofile1 = new Audiofile()
+            {
+                ObjectURL = "File 1"
+            };
+            var importAudiofile2 = new Audiofile()
+            {
+                ObjectURL = "File 2"
+            };
+            _sessionStateContainer.ImportAudiofiles.Add(importAudiofile1);
+            _sessionStateContainer.ImportAudiofiles.Add(importAudiofile2);
+            var importAudiofile3 = new Audiofile()
+            {
+                ObjectURL = "File 3"
+            };
+            var importAudiofile4 = new Audiofile()
+            {
+                ObjectURL = "File 4"
+            };
+            _sessionStateContainer.ImportAudiofileMapping.Add(new(), importAudiofile3);
+            _sessionStateContainer.ImportAudiofileMapping.Add(new(), importAudiofile4);
 
             // Act
-            _sessionStateContainer.ResetImport();
+            await _sessionStateContainer.ResetImportAsync(true);
 
             // Assert
             Assert.IsNull(_sessionStateContainer.Importfile);
             Assert.IsEmpty(_sessionStateContainer.ImportAudiofiles);
             Assert.IsNull(_sessionStateContainer.ImportCuesheet);
             Assert.IsFalse(_sessionStateContainer.ImportIsAnalyzed);
+            Assert.IsEmpty(_sessionStateContainer.ImportAudiofileMapping);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile1.ObjectURL)), Times.Once);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile2.ObjectURL)), Times.Once);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile3.ObjectURL)), Times.Once);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile4.ObjectURL)), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task ResetImportAsync_RevokeObjectUrlsNotSet_ShouldClearPropertiesAsync()
+        {
+            // Arrange
+            var viewOptions = new ViewOptions();
+            _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+            await _sessionStateContainer.InitializeAsync();
+            _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
+            _sessionStateContainer.ImportCuesheet = new Cuesheet();
+            _sessionStateContainer.ImportIsAnalyzed = true;
+            var importAudiofile1 = new Audiofile()
+            {
+                ObjectURL = "File 1"
+            };
+            var importAudiofile2 = new Audiofile()
+            {
+                ObjectURL = "File 2"
+            };
+            _sessionStateContainer.ImportAudiofiles.Add(importAudiofile1);
+            _sessionStateContainer.ImportAudiofiles.Add(importAudiofile2);
+            var importAudiofile3 = new Audiofile()
+            {
+                ObjectURL = "File 3"
+            };
+            var importAudiofile4 = new Audiofile()
+            {
+                ObjectURL = "File 4"
+            };
+            _sessionStateContainer.ImportAudiofileMapping.Add(new(), importAudiofile3);
+            _sessionStateContainer.ImportAudiofileMapping.Add(new(), importAudiofile4);
+
+            // Act
+            await _sessionStateContainer.ResetImportAsync(false);
+
+            // Assert
+            Assert.IsNull(_sessionStateContainer.Importfile);
+            Assert.IsEmpty(_sessionStateContainer.ImportAudiofiles);
+            Assert.IsNull(_sessionStateContainer.ImportCuesheet);
+            Assert.IsFalse(_sessionStateContainer.ImportIsAnalyzed);
+            Assert.IsEmpty(_sessionStateContainer.ImportAudiofileMapping);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile1.ObjectURL)), Times.Never);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile2.ObjectURL)), Times.Never);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile3.ObjectURL)), Times.Never);
+            _jsRuntime.Verify(js => js.InvokeAsync<object>("revokeAudioObjectURL", It.Is<object?[]>(args => args != null && args.Length > 0 && (args[0] as string) == importAudiofile4.ObjectURL)), Times.Never);
         }
 
         [TestMethod]

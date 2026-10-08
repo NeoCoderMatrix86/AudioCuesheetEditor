@@ -103,12 +103,12 @@ along with Foobar.  If not, see
                 {
                     case ImportFileType.ProjectFile:
                         await _importManager.AnalyseImportfile();
-                        _sessionStateContainer.ResetImport();
+                        await _sessionStateContainer.ResetImportAsync(false);
                         break;
                     case ImportFileType.Cuesheet:
                         await _importManager.AnalyseImportfile();
-                        _importManager.ImportCuesheet();
-                        _sessionStateContainer.ResetImport();
+                        await _importManager.ImportCuesheetAsync();
+                        await _sessionStateContainer.ResetImportAsync(false);
                         break;
                     case ImportFileType.Textfile:
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);

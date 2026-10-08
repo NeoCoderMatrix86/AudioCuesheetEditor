@@ -101,9 +101,9 @@ else
         await _importManager.AnalyseImportfile();
     }
 
-    void ImportData()
+    async Task ImportData()
     {
-        _importManager.ImportCuesheet();
+        await _importManager.ImportCuesheetAsync();
         ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
         _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);

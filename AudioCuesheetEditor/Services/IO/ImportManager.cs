@@ -102,7 +102,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
         
-        public void ImportCuesheet()
+        public async Task ImportCuesheetAsync()
         {
             var stopwatch = Stopwatch.StartNew();
             ResetTracing();
@@ -115,7 +115,7 @@ namespace AudioCuesheetEditor.Services.IO
                 _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
             //TODO: Import Audiofiles before resetting import
-            _sessionStateContainer.ResetImport();
+            await _sessionStateContainer.ResetImportAsync(false);
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {

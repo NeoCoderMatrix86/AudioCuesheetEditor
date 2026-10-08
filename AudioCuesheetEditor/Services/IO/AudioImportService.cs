@@ -46,9 +46,10 @@ namespace AudioCuesheetEditor.Services.IO
             var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
             var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
             var result = await dialog.Result;
-            if (result?.Canceled == false)
+            var canceled = result?.Canceled ?? true;
+            if (canceled == false)
             {
-                if (result.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
+                if (result?.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
                 {
                     _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
                     var files = new List<Audiofile>(_sessionStateContainer.ActiveCuesheet.Audiofiles);
@@ -68,7 +69,7 @@ namespace AudioCuesheetEditor.Services.IO
                     _cuesheetManager.SetProperty(x => x.Audiofiles, files);
                 }
             }
-            _sessionStateContainer.ResetImport();
+            await _sessionStateContainer.ResetImportAsync(canceled);
         }
     }
 }

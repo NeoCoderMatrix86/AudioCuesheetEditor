@@ -425,7 +425,7 @@ TRACK 08 AUDIO
             IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
             _sessionStateContainerMock.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
             // Act
-            _service.ImportCuesheet();
+            _service.ImportCuesheetAsync();
             // Assert
             Assert.IsNotNull(sessionStateContainerCuesheet);
             Assert.AreEqual(sessionStateContainerImportCuesheet.Artist, sessionStateContainerCuesheet.Artist);
