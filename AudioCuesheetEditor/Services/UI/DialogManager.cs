@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
+using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.AudioCuesheet;
 using AudioCuesheetEditor.Shared.Dialogs;
@@ -21,11 +22,12 @@ using MudBlazor;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager)
+    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager, ISessionStateContainer sessionStateContainer)
     {
         private readonly IDialogService _dialogService = dialogService;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
         private readonly ITrackManager _trackManager = trackManager;
+        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
 
         private IDialogReference? _loadingDialog;
 
@@ -203,6 +205,27 @@ namespace AudioCuesheetEditor.Services.UI
         {
             _loadingDialog?.Close();
             _loadingDialog = null;
+        }
+
+        public async Task<Boolean> ShowImportAudiofilesDialogAsync()
+        {
+            var parameters = new DialogParameters<ImportAudiofilesDialog>
+            {
+                { x => x.MappedAudiofiles, _sessionStateContainer.ImportAudiofileMapping },
+                { x => x.ImportAudiofiles, _sessionStateContainer.ImportAudiofiles }
+            };
+            var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
+            var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
+            var result = await dialog.Result;
+            var canceled = result?.Canceled ?? true;
+            if (canceled == false)
+            {
+                if (result?.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
+                {
+                    _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
+                }
+            }
+            return canceled;
         }
     }
 }

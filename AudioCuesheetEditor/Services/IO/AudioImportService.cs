@@ -22,10 +22,10 @@ using MudBlazor;
 namespace AudioCuesheetEditor.Services.IO
 {
     /// <inheritdoc/>
-    public class AudioImportService(IDialogService dialogService, ISessionStateContainer sessionStateContainer, ICuesheetManager cuesheetManager) : IAudioImportService
+    public class AudioImportService(DialogManager dialogManager, ISessionStateContainer sessionStateContainer, ICuesheetManager cuesheetManager) : IAudioImportService
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
-        private readonly IDialogService _dialogService = dialogService;
+        private readonly DialogManager _dialogManager = dialogManager;
         private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         /// <inheritdoc/>
@@ -36,7 +36,7 @@ namespace AudioCuesheetEditor.Services.IO
             var cancel = false;
             if (mappingRequired)
             {
-                cancel = await DisplayMappingDialogAsync();
+                cancel = await _dialogManager.ShowImportAudiofilesDialogAsync();
             }
             if (cancel == false)
             {
@@ -79,27 +79,6 @@ namespace AudioCuesheetEditor.Services.IO
                 }
             }
             return _sessionStateContainer.ImportAudiofiles.Count > 0;
-        }
-
-        async Task<Boolean> DisplayMappingDialogAsync()
-        {
-            var parameters = new DialogParameters<ImportAudiofilesDialog>
-            {
-                { x => x.MappedAudiofiles, _sessionStateContainer.ImportAudiofileMapping },
-                { x => x.ImportAudiofiles, _sessionStateContainer.ImportAudiofiles }
-            };
-            var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
-            var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
-            var result = await dialog.Result;
-            var canceled = result?.Canceled ?? true;
-            if (canceled == false)
-            {
-                if (result?.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
-                {
-                    _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
-                }
-            }
-            return canceled;
         }
     }
 }
