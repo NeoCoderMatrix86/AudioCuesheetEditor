@@ -38,7 +38,31 @@ namespace AudioCuesheetEditor.Services.IO
                 _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, null);
             }
             //TODO: automatic mapping
-            var parameters = new DialogParameters<ImportAudiofilesDialog> 
+            var canceled = await DisplayMappingDialogAsync();
+            if (canceled == false)
+            {
+                var files = new List<Audiofile>(_sessionStateContainer.ActiveCuesheet.Audiofiles);
+                foreach (var mapping in _sessionStateContainer.ImportAudiofileMapping.Where(x => x.Value != null))
+                {
+                    var audiofile = files.FirstOrDefault(x => x.Equals(mapping.Key));
+                    if (audiofile == null)
+                    {
+                        audiofile = mapping.Key;
+                        files.Add(audiofile);
+                    }
+                    audiofile.ObjectURL = mapping.Value!.ObjectURL;
+                    audiofile.AudioCodec = mapping.Value!.AudioCodec;
+                    audiofile.Duration = mapping.Value!.Duration;
+                    audiofile.Name = mapping.Value!.Name;
+                }
+                _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+            }
+            await _sessionStateContainer.ResetImportAsync(canceled);
+        }
+
+        async Task<Boolean> DisplayMappingDialogAsync()
+        {
+            var parameters = new DialogParameters<ImportAudiofilesDialog>
             {
                 { x => x.MappedAudiofiles, _sessionStateContainer.ImportAudiofileMapping },
                 { x => x.ImportAudiofiles, _sessionStateContainer.ImportAudiofiles }
@@ -52,24 +76,9 @@ namespace AudioCuesheetEditor.Services.IO
                 if (result?.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
                 {
                     _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
-                    var files = new List<Audiofile>(_sessionStateContainer.ActiveCuesheet.Audiofiles);
-                    foreach (var mapping in _sessionStateContainer.ImportAudiofileMapping.Where(x => x.Value != null))
-                    {
-                        var audiofile = files.FirstOrDefault(x => x.Equals(mapping.Key));
-                        if (audiofile == null)
-                        {
-                            audiofile = mapping.Key;
-                            files.Add(audiofile);
-                        }
-                        audiofile.ObjectURL = mapping.Value!.ObjectURL;
-                        audiofile.AudioCodec = mapping.Value!.AudioCodec;
-                        audiofile.Duration = mapping.Value!.Duration;
-                        audiofile.Name = mapping.Value!.Name;
-                    }
-                    _cuesheetManager.SetProperty(x => x.Audiofiles, files);
                 }
             }
-            await _sessionStateContainer.ResetImportAsync(canceled);
+            return !canceled;
         }
     }
 }
